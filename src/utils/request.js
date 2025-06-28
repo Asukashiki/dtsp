@@ -7,7 +7,7 @@ const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/l
 const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
 
 // API基础URL配置
-const API_BASE_URL = import.meta.env.VITE_APP_API_URL || '/api'
+const API_BASE_URL = import.meta.env.DEV ? '' : import.meta.env.VITE_APP_API_URL
 // API认证上下文路径
 const AUTH_CONTEXT = '/auth'
 
@@ -45,13 +45,12 @@ request.interceptors.response.use(
         handleUnauthorized(res.message || '登录已过期，请重新登录')
       } else {
         ElMessage({
-          message: res.message || '请求错误',
+          message: res.msg || '请求错误',
           type: 'error',
           duration: 5 * 1000
         })
       }
-      
-      return Promise.reject(new Error(res.message || '请求错误'))
+      return Promise.reject(new Error(res.msg || '请求错误'))
     } else {
       return res
     }

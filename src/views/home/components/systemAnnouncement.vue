@@ -8,7 +8,7 @@
         </div>
       </div>
       
-      <div class="announcement-content">
+      <div class="announcement-content" v-loading="loading">
         <div 
           v-for="(item, index) in announcementList" 
           :key="index" 
@@ -21,11 +21,13 @@
             <div v-if="!item.isRead" class="unread-dot"></div>
           </div>
           <div class="item-content">
-            <div class="item-title">{{ item.title }}</div>
+            <div class="item-title">{{ item.name }}</div>
             <div class="item-desc">{{ item.content }}</div>
           </div>
-          <div class="item-time">{{ item.time }}</div>
+          <div class="item-time">{{ item.publicTime }}</div>
         </div>
+        
+        <el-empty v-if="announcementList.length === 0 && !loading" description="暂无系统公告" />
       </div>
       
       <div class="pagination-container">
@@ -50,90 +52,55 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import AnnouncementDetail from './AnnouncementDetail.vue'
+import { getNoticeList } from '@/api/home'
 
 const detailDialogVisible = ref(false)
 const currentAnnouncement = ref({})
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalItems = ref(17) // 假设总共有17条公告
+const announcementList = ref([])
+const loading = ref(false)
 
-const announcementList = reactive([
-  {
-    title: '系统升级通知',
-    content: '系统将于今晚 23:00 至次日凌晨 2:00 进行升级维护，期间服务将不可用，请提前做好准备。\n\n升级内容：\n1. 修复已知问题\n2. 优化性能表现\n3. 增加新的数据分析功能',
-    time: '10:30',
-    isRead: false,
-    publisher: '系统管理员',
-    important: true
-  },
-  {
-    title: '国庆节放假通知',
-    content: '集团国庆放假通知:10月1日-10月7日放假，10月8-9日上班，10月10日休息。放假期间审核中心与工作人员均不在线，有问题可留言。\n\n我们将在上班后尽快回复。如有任何问题，可于今日(9月30日)工作时间通过设计师微信群或工作上方联系我们处理。祝大家国庆快乐！',
-    time: '2025-06-11',
-    isRead: true,
-    publisher: 'HCM',
-    important: true,
-    attachments: [
-      { name: '国庆节放假安排表.xlsx', url: '#' }
-    ]
-  },
-  {
-    title: '数智化转型支撑平台升级通知',
-    content: '系统将于本周六凌晨 2 点进行升级维护，预计耗时 2 小时。请相关人员做好准备工作。',
-    time: '2025-06-13',
-    isRead: false,
-    publisher: '系统管理员'
-  },
-  {
-    title: '系统升级通知',
-    content: '系统将于今晚 23:00 至次日凌晨 2:00 进行升级维护，期间服务将不可用，请提前做好准备。',
-    time: '2025-06-16',
-    isRead: true,
-    publisher: '系统管理员'
-  },
-  {
-    title: '新功能发布',
-    content: '数据分析模块增加自定义表单功能，欢迎体验使用。\n\n主要功能包括：\n1. 自定义表单字段\n2. 拖拽式表单设计\n3. 数据验证规则配置\n4. 工作流集成',
-    time: '2025-06-09',
-    isRead: false,
-    publisher: '产品团队',
-    attachments: [
-      { name: '新功能使用说明.pdf', url: '#' },
-      { name: '功能演示视频.mp4', url: '#' }
-    ]
-  },
-  {
-    title: '数智化转型支撑平台升级通知',
-    content: '系统将于本周六凌晨 2 点进行升级维护，预计耗时 2 小时。',
-    time: '2025-06-07',
-    isRead: true,
-    publisher: '系统管理员'
-  },
-  {
-    title: '系统升级通知',
-    content: '系统将于今晚 23:00 至次日凌晨 2:00 进行升级维护，期间服务将不可用，请提前做好准备。',
-    time: '2025-06-05',
-    isRead: true,
-    publisher: '系统管理员'
+
+const getNoticeData = async () => {
+  loading.value = true
+  try {
+    const res = await getNoticeList({
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    })
+    if(res.code === 200 && res.data) {
+      announcementList.value = res.data
+      totalItems.value = res.total || totalItems.value
+    }
+  } catch (error) {
+    console.log('error',error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+
 
 const handleAnnouncementClick = (item) => {
-  // 标记为已读
   item.isRead = true
-  
-  // 设置当前选中的公告并打开详情弹窗
   currentAnnouncement.value = {...item}
   detailDialogVisible.value = true
 }
 
-const handlePageChange = (page) => {
+const handlePageChange = async (page) => {
   currentPage.value = page
-  // 在实际应用中，这里应该调用API获取对应页的数据
-  console.log('切换到页码:', page)
+  await getNoticeData()
 }
+
+onMounted(() => {
+  getNoticeData()
+})
+
+
 </script>
 
 <style scoped>
@@ -149,7 +116,7 @@ const handlePageChange = (page) => {
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  height: calc(100vh - 63px - 194px - 48px);
+  height: calc(100vh - 63px - 194px);
   display: flex;
   flex-direction: column;
 }

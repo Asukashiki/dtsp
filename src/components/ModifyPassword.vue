@@ -14,9 +14,14 @@
       </div>
     </template>
     
-    <div class="password-form">
-      <div class="form-item">
-        <div class="form-label">当前密码</div>
+    <el-form 
+      ref="formRef" 
+      :model="form" 
+      :rules="rules" 
+      label-position="top"
+      class="password-form"
+    >
+      <el-form-item prop="currentPassword" label="当前密码">
         <el-input
           v-model="form.currentPassword"
           type="password"
@@ -27,10 +32,9 @@
             <i class="ri-lock-line"></i>
           </template>
         </el-input>
-      </div>
+      </el-form-item>
       
-      <div class="form-item">
-        <div class="form-label">新密码</div>
+      <el-form-item prop="newPassword" label="新密码">
         <el-input
           v-model="form.newPassword"
           type="password"
@@ -41,10 +45,9 @@
             <i class="ri-lock-password-line"></i>
           </template>
         </el-input>
-      </div>
+      </el-form-item>
       
-      <div class="form-item">
-        <div class="form-label">确认新密码</div>
+      <el-form-item prop="confirmPassword" label="确认新密码">
         <el-input
           v-model="form.confirmPassword"
           type="password"
@@ -55,8 +58,8 @@
             <i class="ri-shield-keyhole-line"></i>
           </template>
         </el-input>
-      </div>
-    </div>
+      </el-form-item>
+    </el-form>
     
     <template #footer>
       <div class="dialog-footer">
@@ -70,6 +73,8 @@
 <script setup>
 import { ref, defineProps, defineEmits, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { postResetPassword } from '@/api/user'
+import { useUserStore } from '@/store'
 
 const props = defineProps({
   visible: {
@@ -82,12 +87,50 @@ const emit = defineEmits(['update:visible', 'confirm'])
 
 const dialogVisible = ref(props.visible)
 const loading = ref(false)
+const formRef = ref(null)
+const userStore = useUserStore()
 
 const form = ref({
   currentPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
+
+// 验证新密码是否符合规则
+const validateNewPassword = (rule, value, callback) => {
+  // 至少包含一位数字和一位字母，长度不少于8位
+  const pattern = /^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/
+  if (!pattern.test(value)) {
+    callback(new Error('密码应至少包含一位数字和一位字母，且不少于8位'))
+  } else if (value === form.value.currentPassword) {
+    callback(new Error('新密码不能与当前密码相同'))
+  } else {
+    callback()
+  }
+}
+
+// 验证确认密码是否与新密码一致
+const validateConfirmPassword = (rule, value, callback) => {
+  if (value !== form.value.newPassword) {
+    callback(new Error('两次输入的密码不一致'))
+  } else {
+    callback()
+  }
+}
+
+const rules = {
+  currentPassword: [
+    { required: true, message: '请输入当前密码', trigger: 'blur' }
+  ],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { validator: validateNewPassword, trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认新密码', trigger: 'blur' },
+    { validator: validateConfirmPassword, trigger: 'blur' }
+  ]
+}
 
 // 监听visible属性变化
 watch(
@@ -121,6 +164,9 @@ const handleCancel = () => {
 }
 
 const resetForm = () => {
+  if (formRef.value) {
+    formRef.value.resetFields()
+  }
   form.value = {
     currentPassword: '',
     newPassword: '',
@@ -128,54 +174,33 @@ const resetForm = () => {
   }
 }
 
-// 密码验证规则
-const validatePassword = (password) => {
-  // 至少包含一位数字和一位字母，长度不少于8位
-  const pattern = /^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/
-  return pattern.test(password)
-}
-
 const handleConfirm = () => {
-  // 表单验证
-  if (!form.value.currentPassword) {
-    ElMessage.warning('请输入当前密码')
-    return
-  }
+  if (!formRef.value) return
   
-  if (!form.value.newPassword) {
-    ElMessage.warning('请输入新密码')
-    return
-  }
-  
-  if (!validatePassword(form.value.newPassword)) {
-    ElMessage.warning('密码应至少包含一位数字和一位字母，且不少于8位')
-    return
-  }
-  
-  if (!form.value.confirmPassword) {
-    ElMessage.warning('请确认新密码')
-    return
-  }
-  
-  if (form.value.newPassword !== form.value.confirmPassword) {
-    ElMessage.error('两次输入的密码不一致')
-    return
-  }
-  
-  if (form.value.currentPassword === form.value.newPassword) {
-    ElMessage.warning('新密码不能与当前密码相同')
-    return
-  }
-  
-  // 模拟提交
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    ElMessage.success('密码修改成功')
-    resetForm()
-    emit('confirm', true)
-    emit('update:visible', false)
-  }, 1000)
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      loading.value = true
+      
+      try {
+        const userInfo = userStore.userInfo?.user || {}
+        // 实际调用API
+        await postResetPassword({
+          userId: userInfo.ID,
+          password: form.value.currentPassword,
+          newPassword: form.value.newPassword,
+          confirmPassword: form.value.confirmPassword
+        })      
+        ElMessage.success('密码修改成功')
+        resetForm()
+        emit('confirm', true)
+        emit('update:visible', false)
+      } catch (error) {
+        console.error(error, error)
+      } finally {
+        loading.value = false
+      }
+    }
+  })
 }
 </script>
 
@@ -184,14 +209,14 @@ const handleConfirm = () => {
   padding: 0 20px;
 }
 
-.form-item {
+:deep(.el-form-item) {
   margin-bottom: 24px;
 }
 
-.form-label {
+:deep(.el-form-item__label) {
   font-size: 14px;
   color: #606266;
-  margin-bottom: 8px;
+  padding-bottom: 0;
 }
 
 .el-input :deep(.el-input__prefix) {

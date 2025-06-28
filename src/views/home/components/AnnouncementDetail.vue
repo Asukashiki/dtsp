@@ -19,15 +19,15 @@
     </template>
     <div class="announcement-detail">
       <div class="detail-header">
-        <div class="detail-title">{{ announcement.title }}</div>
+        <div class="detail-title">{{ announcement.content }}</div>
         <div class="detail-meta">
           <span class="detail-time">
             <i class="ri-time-line"></i> 
-            公告时间: {{ announcement.time }}
+            公告时间: {{ announcement.publicTime }}
           </span>
-          <span class="detail-publisher" v-if="announcement.publisher">
+          <span class="detail-publisher" v-if="announcement.orgName">
             <i class="ri-user-line"></i> 
-            发布者: {{ announcement.publisher || 'HCM' }}
+            发布者: {{ announcement.orgName}}
           </span>
         </div>
       </div>

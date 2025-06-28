@@ -5,7 +5,7 @@
       <p>注册您的应用以获取验证，开始使用我们的服务</p>
     </div>
     
-    <div class="application-form">
+    <div class="application-form" v-loading="loading">
       <el-form
         :model="formData"
         label-position="top"
@@ -56,7 +56,7 @@
         
         <div class="form-actions">
           <el-button @click="cancelApplication">取消</el-button>
-          <el-button type="primary" color="#1C59E2" @click="submitApplication">提交申请</el-button>
+          <el-button type="primary" color="#1C59E2" @click="submitApplication" :loading="loading">提交申请</el-button>
         </div>
       </el-form>
     </div>
@@ -92,10 +92,12 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { postAppRegister } from '@/api/application'
 
 const appForm = ref(null)
+const loading = ref(false)
 
-const formData = reactive({
+const formData = ref({
   appCode: '',
   appName: '',
   appType: '',
@@ -135,12 +137,28 @@ const appCategoryOptions = [
   { value: 'other', label: '其他' }
 ]
 
-const submitApplication = () => {
-  appForm.value.validate((valid) => {
+const submitApplication = async () => {
+  appForm.value.validate(async (valid) => {
     if (valid) {
-      // 提交申请逻辑
-      console.log('提交申请', formData)
-      ElMessage.success('申请已提交，请等待审核')
+      loading.value = true
+      try {
+        await postAppRegister({
+          code: formData.value.appCode,
+          secret: formData.value.protocolType,
+          name: formData.value.appName,
+          type: formData.value.appType,
+          url: formData.value.callbackUrl,
+          protocal: formData.value.appCategory,
+          clientId: formData.value.clientCode,
+          shortName: formData.value.appShortName
+        })
+        ElMessage.success('申请已提交')
+      } catch (error) {
+        console.log('error', error)
+        // ElMessage.error('提交失败，请稍后重试')
+      } finally {
+        loading.value = false
+      }
     } else {
       ElMessage.error('请完善表单信息')
       return false

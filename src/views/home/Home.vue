@@ -22,10 +22,10 @@
                 <i class="ri-notification-3-line"></i>
               </div>
               <div class="item-content">
-                <div class="item-title">{{ item.title }}</div>
+                <div class="item-title">{{ item.name }}</div>
                 <div class="item-desc">{{ item.content }}</div>
               </div>
-              <div class="item-time">{{ item.time }}</div>
+              <div class="item-time">{{ item.publicTime }}</div>
             </div>
           </div>
         </div>
@@ -154,44 +154,36 @@
         </div>
       </div>
     </div>
+
+    <announcement-detail 
+      v-model:visible="detailDialogVisible" 
+      :announcement="currentAnnouncement"
+    />
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, toRefs, onUnmounted } from 'vue'
+import { reactive, onMounted, toRefs, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from '../../components/Header.vue'
 import CommonTable from '../../components/CommonTable.vue'
 import * as echarts from 'echarts'
 import { useUserStore } from '../../store'
+import { getNoticeList } from '@/api/home'
+import AnnouncementDetail from './components/AnnouncementDetail.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const detailDialogVisible = ref(false)
+const currentAnnouncement = ref({})
+const pages = ref({
+  pageNum:1,
+  pageSize: 4
+})
 
 const state = reactive({
   // 系统公告数据
-  announcementList: [
-    {
-      title: '系统升级通知',
-      content: '系统将于 23:00 至次日凌晨 2:00 进行升级维护，期间服务将不可用，请提前做好准备。',
-      time: '10:30'
-    },
-    {
-      title: '新功能发布',
-      content: '数据分析模块增加自定义表单功能，欢迎体验使用。',
-      time: '2025-06-11'
-    },
-    {
-      title: '数智化转型支撑平台升级通知',
-      content: '系统将于本周六凌晨 2 点进行升级维护，预计耗时 2 小时。',
-      time: '2025-06-13'
-    },
-    {
-      title: '系统升级通知',
-      content: '系统将于本周六凌晨 2 点进行升级维护，预计耗时 2 小时。',
-      time: '2025-06-16'
-    }
-  ],
+  announcementList: [],
   
   // 常用系统数据
   commonSystems: [
@@ -200,7 +192,7 @@ const state = reactive({
     { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
     { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
     { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
-    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/low-code' }
+    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
   ],
   
   // 系统入口数据
@@ -210,7 +202,7 @@ const state = reactive({
     { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
     { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
     { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
-    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/low-code' }
+    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
   ],
   
   // 表格列定义
@@ -321,10 +313,25 @@ const {
   guideItems
 } = toRefs(state)
 
+
+
 onMounted(async () => {
   // 初始化图表
+  await getNoticeData()
   initCharts()
 })
+
+// 获取公告数据
+const getNoticeData = async () => {
+  try {
+    const res = await getNoticeList(pages.value)
+    if(res.code === 200 && res.data) {
+      state.announcementList = res.data
+    }
+  } catch (error) {
+    console.log('error',error)
+  }
+}
 
 // 初始化图表
 const initCharts = () => {
@@ -360,7 +367,7 @@ const initCharts = () => {
       }
     ]
   })
-  
+
   // 初始化折线图
   const lineChart = echarts.init(document.getElementById('recent-visits-chart'))
   lineChart.setOption({
@@ -445,8 +452,10 @@ const handleNavChange = (index, path) => {
   console.log('导航切换:', index, path)
 }
 
+
 const handleAnnouncementClick = (item) => {
-  console.log('点击公告:', item)
+  currentAnnouncement.value = {...item}
+  detailDialogVisible.value = true
 }
 
 const handleMoreAnnouncements = () => {
@@ -454,10 +463,9 @@ const handleMoreAnnouncements = () => {
 }
 
 const handleSystemEntryClick = (entry) => {
-  console.log('点击系统入口:', entry)
-  if (entry.path) {
-    router.push(entry.path)
-  }
+  const isDev = import.meta.env.DEV
+  const url = isDev? `${import.meta.env.VITE_APP_API_URL}${entry.path}` : `${window.origin}${entry.path}`
+  window.open(url, '_blank')
 }
 
 const handleTodoRowClick = (row) => {

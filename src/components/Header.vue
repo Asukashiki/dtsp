@@ -46,7 +46,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../store'
+import { useUserStore } from '@/store'
 import UserDetails from './userDetails.vue'
 
 const props = defineProps({
@@ -110,12 +110,12 @@ watch(
 // 移除检查并获取用户信息的方法，仅保留更新用户详情的方法
 const updateUserDetails = () => {
   // 从store获取用户详情信息
-  const userInfo = userStore.userInfo || {}
+  const userInfo = userStore.userInfo?.user || {}
   userDetailsInfo.value = {
     name: userInfo.name || '',
     employeeId: userInfo.employeeId || '',
-    department: userInfo.department || '',
-    phone: userInfo.phone || '',
+    department: userInfo.organName || '',
+    phone: userInfo.mobile || '',
     email: userInfo.email || '',
     lastPasswordChange: userInfo.lastPasswordChange || ''
   }
@@ -131,11 +131,11 @@ const showUserDetails = () => {
   userDetailsVisible.value = true
 }
 
-const handleUserDetailsEdit = (data) => {
-  // 处理用户信息编辑
-  console.log('编辑用户信息:', data)
-  // 实际项目中可能需要调用API进行更新
-}
+// const handleUserDetailsEdit = (data) => {
+//   // 处理用户信息编辑
+//   console.log('编辑用户信息:', data)
+//   // 实际项目中可能需要调用API进行更新
+// }
 </script>
 
 <style scoped>

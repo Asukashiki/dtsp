@@ -84,6 +84,14 @@
       v-model:visible="passwordDialogVisible" 
       @confirm="handlePasswordChanged" 
     />
+
+    <!-- 引入修改联系方式弹窗 -->
+    <ModifyContact
+      v-model:visible="contactDialogVisible"
+      :type="contactEditType"
+      :current-value="contactCurrentValue"
+      @confirm="handleContactChanged"
+    />
   </el-drawer>
 </template>
 
@@ -91,6 +99,7 @@
 import { ref, defineProps, defineEmits } from 'vue'
 import { ElMessage } from 'element-plus'
 import ModifyPassword from './ModifyPassword.vue'
+import ModifyContact from './ModifyContact.vue'
 
 const props = defineProps({
   visible: {
@@ -99,27 +108,31 @@ const props = defineProps({
   },
   userInfo: {
     type: Object,
-    default: () => ({
-      name: '陈志强',
-      employeeId: 'PM20230615',
-      department: '产品研发中心产品设计组',
-      phone: '138 **** 5678',
-      email: 'siyuan.chen@company.com',
-      lastPasswordChange: '2024年1月15日'
-    })
+    default: () => {}
   }
 })
 
 const emit = defineEmits(['update:visible', 'edit'])
 const passwordDialogVisible = ref(false)
+const contactDialogVisible = ref(false)
+const contactEditType = ref('phone')
+const contactCurrentValue = ref('')
 
 const handleClose = () => {
   emit('update:visible', false)
 }
 
 const handleEditContact = (type) => {
-  ElMessage.info(`编辑${type === 'phone' ? '手机' : '邮箱'}`)
-  emit('edit', { type, value: props.userInfo[type] })
+  contactEditType.value = type
+  contactCurrentValue.value = props.userInfo[type]
+  contactDialogVisible.value = true
+}
+
+const handleContactChanged = (newValue) => {
+  emit('edit', { 
+    type: contactEditType.value, 
+    value: newValue 
+  })
 }
 
 const handleEditSecurity = (type) => {
