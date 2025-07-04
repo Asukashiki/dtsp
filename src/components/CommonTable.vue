@@ -14,6 +14,7 @@
       :header-cell-style="{ background: '#f5f7fa', color: '#606266' }"
       :row-style="{ cursor: 'pointer' }"
       @row-click="handleRowClick"
+      empty-text="暂无数据"
     >
       <el-table-column
         v-for="(column, index) in columns"
@@ -42,7 +43,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['row-click', 'more-click'])
+const emit = defineEmits()
 
 const handleRowClick = (row) => {
   emit('row-click', row)
@@ -89,5 +90,9 @@ const handleRowClick = (row) => {
 
 .more-link:hover {
   color: #1c59e2;
+}
+
+.section-container {
+  height: 100%;
 }
 </style> 

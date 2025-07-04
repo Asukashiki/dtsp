@@ -1,10 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '../store'
-
-// 外部登录系统URL - 与路由守卫中保持一致
-const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
-const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
+import { useUserStore } from '@/store'
 
 // API基础URL配置
 const API_BASE_URL = import.meta.env.DEV ? '' : import.meta.env.VITE_APP_API_URL
@@ -94,20 +90,14 @@ function handleUnauthorized(message) {
     duration: 3000
   })
   
-  // 清除用户信息
+  // 使用store中的完整登出流程
   const userStore = useUserStore()
-  userStore.logout()
+  userStore.logoutAndRedirect(1500)
   
-  // 重定向到登录页
+  // 重置标志位（虽然页面会跳转，但为了安全起见）
   setTimeout(() => {
-    const redirectUrl = encodeURIComponent(window.location.href)
-    window.location.href = `${LOGIN_URL}?appId=${APP_ID}&redirect=${redirectUrl}`
-    
-    // 重置标志位（虽然页面会跳转，但为了安全起见）
-    setTimeout(() => {
-      isRedirecting = false
-    }, 3000)
-  }, 1500)
+    isRedirecting = false
+  }, 3000)
 }
 
 export default request 

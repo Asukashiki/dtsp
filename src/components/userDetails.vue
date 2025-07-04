@@ -76,13 +76,15 @@
           </div>
           <div class="info-value">{{ userInfo.lastPasswordChange }}</div>
         </div>
+        <div class="logout-container">
+          <el-button type="danger" @click="handleLogout" class="logout-btn">退出登录</el-button>
+        </div>
       </div>
     </div>
     
     <!-- 引入修改密码弹窗 -->
     <ModifyPassword 
-      v-model:visible="passwordDialogVisible" 
-      @confirm="handlePasswordChanged" 
+      v-model:visible="passwordDialogVisible"
     />
 
     <!-- 引入修改联系方式弹窗 -->
@@ -90,16 +92,17 @@
       v-model:visible="contactDialogVisible"
       :type="contactEditType"
       :current-value="contactCurrentValue"
-      @confirm="handleContactChanged"
     />
   </el-drawer>
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import ModifyPassword from './ModifyPassword.vue'
 import ModifyContact from './ModifyContact.vue'
+import { useUserStore } from '@/store'
 
 const props = defineProps({
   visible: {
@@ -117,6 +120,7 @@ const passwordDialogVisible = ref(false)
 const contactDialogVisible = ref(false)
 const contactEditType = ref('phone')
 const contactCurrentValue = ref('')
+const userStore = useUserStore()
 
 const handleClose = () => {
   emit('update:visible', false)
@@ -128,34 +132,28 @@ const handleEditContact = (type) => {
   contactDialogVisible.value = true
 }
 
-const handleContactChanged = (newValue) => {
-  emit('edit', { 
-    type: contactEditType.value, 
-    value: newValue 
-  })
-}
-
 const handleEditSecurity = (type) => {
   if (type === 'password') {
     passwordDialogVisible.value = true
   }
 }
 
-const handlePasswordChanged = (success) => {
-  if (success) {
-    // 更新上次修改密码时间
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = now.getMonth() + 1
-    const day = now.getDate()
-    const formattedDate = `${year}年${month}月${day}日`
-    
-    // 这里实际项目中应该通知父组件更新userInfo
-    emit('edit', { 
-      type: 'passwordChanged',
-      value: formattedDate
+const handleLogout = () => {
+  ElMessageBox.confirm(
+    '确定要退出登录吗？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      userStore.logoutAndRedirect()
     })
-  }
+    .catch(() => {
+      // 用户取消操作，不做任何处理
+    })
 }
 </script>
 
@@ -296,5 +294,13 @@ input, button, a, div {
 /* 全局清除点击效果 */
 :deep(.user-details-drawer) * {
   -webkit-tap-highlight-color: transparent !important;
+}
+
+.logout-btn:hover {
+  opacity: 0.8;
+}
+
+.logout-container {
+  text-align: center;
 }
 </style>

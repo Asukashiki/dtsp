@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <div class="content-container">
+    <div class="content-container" v-loading="loading" >
       <div class="top-section-layout">
         <!-- 系统公告部分 -->
         <div class="section-container announcement-section">
@@ -9,7 +9,7 @@
               <img src="../../assets/Title.svg" alt="Title" class="title-icon">
               <span>系统公告</span>
             </div>
-            <div class="more-link" @click="handleMoreAnnouncements">查看更多 ></div>
+            <div class="more-link" @click="handleMoreAnnouncements('systemAnnouncement')">查看更多 ></div>
           </div>
           <div class="announcement-list">
             <div 
@@ -163,13 +163,12 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, toRefs, onUnmounted, ref } from 'vue'
+import { reactive, onMounted, toRefs, onUnmounted, ref, watchEffect, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import Header from '../../components/Header.vue'
-import CommonTable from '../../components/CommonTable.vue'
+import CommonTable from '@/components/CommonTable.vue'
 import * as echarts from 'echarts'
-import { useUserStore } from '../../store'
-import { getNoticeList } from '@/api/home'
+import { useUserStore } from '@/store'
+import { getNoticeList, postProcessList,postHistoryList,postHistoryListWeek } from '@/api/home'
 import AnnouncementDetail from './components/AnnouncementDetail.vue'
 
 const router = useRouter()
@@ -180,6 +179,18 @@ const pages = ref({
   pageNum:1,
   pageSize: 4
 })
+
+// 添加loading状态
+const loading = ref(false)
+
+// 图表数据ref
+const xAxisData = ref()
+const seriesData = ref([])
+// 折线图数据
+const lineChartLegend = ref()
+const lineChartSeries = ref([])
+
+const userId = ref(userStore.userInfo?.user?.ID ||  '')
 
 const state = reactive({
   // 系统公告数据
@@ -219,50 +230,9 @@ const state = reactive({
   ],
   
   // 表格数据
-  todoData: [
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    }
-  ],
+  todoData: [],
   
   pendingData: [
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    },
-    {
-      name: '请假申请单【2025年6月BO-资源科技】提交',
-      time: '2025-05-26',
-      system: 'HCM'
-    }
   ],
   
   // 操作指南数据
@@ -313,12 +283,66 @@ const {
   guideItems
 } = toRefs(state)
 
+// 封装初始化数据的方法
+const initPageData = async () => {
+  try {
+    // 设置loading状态为true
+    loading.value = true
+    
+    // 并行请求数据以提高加载速度
+    await Promise.all([
+      getNoticeData(),
+      getTodoList(),
+      getHistoryList(),
+      gettHistoryListWeek()
+    ])
+    
+    
+    // 使用nextTick确保DOM已经渲染完成后再初始化图表
+    nextTick(() => {
+      initCharts()
+    })
+  } catch (error) {
+    console.error('加载数据出错:', error)
+    // loading.value = false
+  } finally {
+    loading.value = false
+  }
+}
 
-
-onMounted(async () => {
-  // 初始化图表
-  await getNoticeData()
-  initCharts()
+onMounted(() => {
+  // 初始化页面数据
+  initPageData()
+  
+  // 监听折线图数据变化并更新图表
+  watchEffect(() => {
+    // 确保图表数据和DOM都已准备好
+    if (!lineChartLegend.value || !lineChartSeries.value) return
+    
+    // 使用nextTick确保DOM已渲染
+    nextTick(() => {
+      try {
+        const chartElement = document.getElementById('recent-visits-chart')
+        if (!chartElement) {
+          console.warn('折线图DOM元素不存在，无法更新图表')
+          return
+        }
+        
+        // 获取图表实例前先检查DOM元素
+        const lineChart = echarts.getInstanceByDom(chartElement)
+        if (lineChart) {
+          lineChart.setOption({
+            legend: {
+              data: lineChartLegend.value
+            },
+            series: lineChartSeries.value
+          })
+        }
+      } catch (error) {
+        console.error('更新折线图出错:', error)
+      }
+    })
+  })
 })
 
 // 获取公告数据
@@ -333,118 +357,246 @@ const getNoticeData = async () => {
   }
 }
 
+const getTodoList = async () => {
+  const todoList = await dodoList(0)
+  const pendingList = await dodoList(1)
+  state.todoData = todoList
+  state.pendingData = pendingList
+}
+
+
+
+const getHistoryList = async () => {
+  try {
+    const res = await postHistoryList();
+    if (res.code === 200 && res.data) {
+      const appNames = [];
+      const accessCounts = [];
+      
+      // 遍历数据
+      res.data.forEach(item => {
+        // 检查是否同时包含app_name和access_count
+        if (item.app_name && item.access_count !== undefined) {
+          appNames.push(item.app_name);
+          accessCounts.push(item.access_count);
+        }
+      });
+      
+      // 使用ref存储图表数据
+      xAxisData.value = appNames;
+      seriesData.value = accessCounts;
+      
+      return res.data;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.log('error', error);
+    return [];
+  }
+}
+
+const gettHistoryListWeek = async () => {
+  try {
+    const res = await postHistoryListWeek()
+    console.log('res.data',res.data)
+    if (res.code === 200 && res.data) {
+      const processedData = processWeeklyData(res.data)
+      // 更新ref变量
+      lineChartLegend.value = processedData.legendData
+      lineChartSeries.value = processedData.seriesData
+    }
+  } catch (error) {
+    console.log('error',error)
+  }
+}
+
+// 处理每周访问数据
+const processWeeklyData = (data) => {
+  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  const appNames = new Set()
+  
+  days.forEach(day => {
+    if (data[day] && Array.isArray(data[day])) {
+      data[day].forEach(item => {
+        if (item.app_name) {
+          appNames.add(item.app_name)
+        }
+      })
+    }
+  })
+  
+  const legendData = Array.from(appNames)
+  const seriesData = legendData.map(appName => {
+    const dayData = days.map(day => {
+      if (data[day] && Array.isArray(data[day])) {
+        const appData = data[day].find(item => item.app_name === appName)
+        return appData ? appData.access_count : 0
+      }
+      return 0
+    })
+    
+    const colors = ['#1c59e2', '#36CFC9', '#52C41A', '#F5222D', '#FAAD14']
+    const colorIndex = Math.floor(Math.random() * colors.length)
+    
+    return {
+      name: appName,
+      type: 'line',
+      data: dayData,
+      itemStyle: {
+        color: colors[colorIndex]
+      }
+    }
+  })
+  
+  return {
+    legendData,
+    seriesData
+  }
+}
+
+const dodoList = async (state) => {
+  try {
+    const params = {
+      processorId: userId.value,
+      ...pages.value,
+      status: state
+    }
+    const res = await postProcessList(params)
+    if(res.code === 200 && res.data) {
+      return res.data
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.log('error',error)
+  }
+}
+
 // 初始化图表
 const initCharts = () => {
-  // 初始化柱状图
-  const barChart = echarts.init(document.getElementById('system-visits-chart'))
-  barChart.setOption({
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: ['OA系统', 'CRM系统', 'ERP系统', 'HR系统', '财务系统'],
-      axisLabel: {
-        interval: 0,
-        rotate: 0
-      }
-    },
-    yAxis: {
-      type: 'value',
-      name: '访问次数'
-    },
-    series: [
-      {
-        data: [60000, 220000, 90000, 120000, 60000],
-        type: 'bar',
-        barWidth: '30%',
-        itemStyle: {
-          color: '#1c59e2'
-        }
-      }
-    ]
-  })
+  try {
+    // 确保DOM元素存在后再初始化图表
+    const systemVisitsEl = document.getElementById('system-visits-chart')
+    const recentVisitsEl = document.getElementById('recent-visits-chart')
+    
+    if (!systemVisitsEl || !recentVisitsEl) {
+      console.error('图表DOM元素不存在，跳过图表初始化')
+      return
+    }
+    
+    // 确保数据已准备好
+    if (!xAxisData.value || !seriesData.value || !lineChartLegend.value || !lineChartSeries.value) {
+      console.error('图表数据未准备好，跳过图表初始化')
+      return
+    }
+    
+    let barChart = null
+    let lineChart = null
+    
+    try {
+      // 初始化柱状图
+      barChart = echarts.init(systemVisitsEl)
+      barChart.setOption({
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: xAxisData.value,
+          axisLabel: {
+            interval: 0,
+            rotate: 0
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '访问次数'
+        },
+        series: [
+          {
+            data: seriesData.value,
+            type: 'bar',
+            barWidth: '30%',
+            itemStyle: {
+              color: '#1c59e2'
+            }
+          }
+        ]
+      })
+    } catch (barError) {
+      console.error('初始化柱状图失败:', barError)
+    }
 
-  // 初始化折线图
-  const lineChart = echarts.init(document.getElementById('recent-visits-chart'))
-  lineChart.setOption({
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    legend: {
-      data: ['OA系统', 'CRM系统', 'ERP系统', 'HR系统', '财务系统']
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    },
-    yAxis: {
-      type: 'value',
-      name: '访问次数'
-    },
-    series: [
-      {
-        name: 'OA系统',
-        type: 'line',
-        data: [5000, 6000, 10000, 8000, 7000, 6000, 9000],
-        itemStyle: {
-          color: '#1c59e2'
-        }
-      },
-      {
-        name: 'CRM系统',
-        type: 'line',
-        data: [15000, 14000, 18000, 20000, 19000, 19000, 21000],
-        itemStyle: {
-          color: '#36CFC9'
-        }
-      },
-      {
-        name: 'ERP系统',
-        type: 'line',
-        data: [10000, 12000, 10000, 8000, 10000, 9000, 11000],
-        itemStyle: {
-          color: '#52C41A'
-        }
-      },
-      {
-        name: 'HR系统',
-        type: 'line',
-        data: [3000, 5000, 8000, 4000, 2000, 3000, 5000],
-        itemStyle: {
-          color: '#F5222D'
-        }
-      },
-      {
-        name: '财务系统',
-        type: 'line',
-        data: [12000, 15000, 16000, 14000, 15000, 14000, 17000],
-        itemStyle: {
-          color: '#FAAD14'
+    try {
+      // 初始化折线图
+      lineChart = echarts.init(recentVisitsEl)
+      lineChart.setOption({
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        legend: {
+          data: lineChartLegend.value || []
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        },
+        yAxis: {
+          type: 'value',
+          name: '访问次数'
+        },
+        series: lineChartSeries.value || []
+      })
+    } catch (lineError) {
+      console.error('初始化折线图失败:', lineError)
+    }
+    
+    // 监听窗口大小变化，重绘图表
+    const resizeHandler = () => {
+      if (barChart && barChart.resize) {
+        try {
+          barChart.resize()
+        } catch (err) {
+          console.error('柱状图调整大小失败:', err)
         }
       }
-    ]
-  })
-  
-  // 监听窗口大小变化，重绘图表
-  const resizeHandler = () => {
-    barChart.resize()
-    lineChart.resize()
+      if (lineChart && lineChart.resize) {
+        try {
+          lineChart.resize()
+        } catch (err) {
+          console.error('折线图调整大小失败:', err)
+        }
+      }
+    }
+    
+    window.addEventListener('resize', resizeHandler)
+    
+    // 确保组件卸载时移除事件监听
+    onUnmounted(() => {
+      window.removeEventListener('resize', resizeHandler)
+      // 销毁图表实例
+      if (barChart && barChart.dispose) {
+        try {
+          barChart.dispose()
+        } catch (err) {}
+      }
+      if (lineChart && lineChart.dispose) {
+        try {
+          lineChart.dispose()
+        } catch (err) {}
+      }
+    })
+  } catch (error) {
+    console.error('图表初始化过程中发生错误:', error)
   }
-  
-  window.addEventListener('resize', resizeHandler)
-  
-  // 确保组件卸载时移除事件监听
-  onUnmounted(() => {
-    window.removeEventListener('resize', resizeHandler)
-  })
 }
 
 // 事件处理函数
@@ -458,8 +610,11 @@ const handleAnnouncementClick = (item) => {
   detailDialogVisible.value = true
 }
 
-const handleMoreAnnouncements = () => {
-  router.push('/system-announcement')
+const handleMoreAnnouncements = (name) => {
+  router.push({
+    path: '/dataList',
+    query: {name}
+  })
 }
 
 const handleSystemEntryClick = (entry) => {
@@ -473,7 +628,7 @@ const handleTodoRowClick = (row) => {
 }
 
 const handleMoreTodo = () => {
-  console.log('查看更多已办')
+  handleMoreAnnouncements('alreadyDone')
 }
 
 const handlePendingRowClick = (row) => {
@@ -481,7 +636,7 @@ const handlePendingRowClick = (row) => {
 }
 
 const handleMorePending = () => {
-  console.log('查看更多待办')
+  handleMoreAnnouncements('representative')
 }
 
 const handleGuideClick = (item) => {
@@ -519,7 +674,6 @@ const getIconClass = (icon) => {
   flex-direction: column;
   width: 100%;
 }
-
 .content-container {
   max-width: 1400px;
   width: 100%;

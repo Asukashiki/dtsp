@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '../store'
+import { useUserStore } from '@/store'
 import { getTokenFromUrl, getToken } from '../utils/auth'
 import { ElMessage } from 'element-plus'
 
@@ -35,9 +35,9 @@ const routes = [
         meta: { title: '知识中心', icon: 'knowledge', requiresAuth: true }
       },
       {
-        path: 'system-announcement',
-        name: 'SystemAnnouncement',
-        component: () => import('../views/home/components/systemAnnouncement.vue'),
+        path: 'dataList',
+        name: 'DataList',
+        component: () => import('../views/home/components/dataList.vue'),
         meta: { title: '系统公告', hideInMenu: true, requiresAuth: true }
       }
     ]
@@ -72,35 +72,32 @@ router.beforeEach(async (to, from, next) => {
     userStore.setToken(urlToken)
     try {
       await userStore.fetchUserInfo()
-      if (window.location.hash.includes('token=')) {
+      // 同时处理hash方式和查询参数方式的token
+      if (window.location.hash.includes('token=') || window.location.search.includes('token=')) {
         window.history.replaceState(null, '', window.location.pathname)
         return next('/home')
       }
       
     } catch (error) {
-      redirectToLogin(to.fullPath)
+      console.log('error',error)
+      redirectToLogin(to.fullPath, userStore)
       return next(false)
     }
   } else if(!storedToken) {
-    redirectToLogin(to.fullPath)
+    redirectToLogin(to.fullPath, userStore)
     return next(false)
   } else {
     next()
   }
 })
 
-function redirectToLogin(fullPath) {
-  console.log('fullPath',fullPath)
+function redirectToLogin(fullPath, userStore) {
   ElMessage({
     message: '请先登录后再访问此页面',
     type: 'warning',
     duration: 1000
   })
-  
-  setTimeout(() => {
-    const redirectUrl = encodeURIComponent(window.location.origin + fullPath)
-    window.location.href = `${LOGIN_URL}?appId=${APP_ID}&redirect=${redirectUrl}`
-  }, 1000)
+  userStore.logoutAndRedirect(1000)
 }
 
 export default router 

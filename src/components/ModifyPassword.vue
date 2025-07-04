@@ -190,12 +190,12 @@ const handleConfirm = () => {
           newPassword: form.value.newPassword,
           confirmPassword: form.value.confirmPassword
         })      
-        ElMessage.success('密码修改成功')
+        ElMessage.success('密码修改成功 即将跳转到登录页面')
         resetForm()
-        emit('confirm', true)
         emit('update:visible', false)
+        userStore.logoutAndRedirect(1000)
       } catch (error) {
-        console.error(error, error)
+        console.error(error)
       } finally {
         loading.value = false
       }

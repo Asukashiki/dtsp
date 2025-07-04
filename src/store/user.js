@@ -1,42 +1,75 @@
 import { defineStore } from 'pinia'
-import { getCurrentUserInfo } from '../api/user'
+import { getCurrentUserInfo, getLogout } from '@/api/user'
 import { 
   getToken, 
   setToken, 
   removeToken, 
   getUserInfo, 
   setUserInfo, 
-  removeUserInfo 
-} from '../utils/auth'
+  removeUserInfo,
+  redirectToLogin
+} from '@/utils/auth'
 
 export const useUserStore = defineStore('user', {
-  state: () => ({
-    token: getToken() || '',
-    userInfo: getUserInfo() || {}
-  }),
+  state: () => ({}),
   
   getters: {
-    isLogin: (state) => !!state.token,
-    hasToken: (state) => !!state.token,
-    hasUserInfo: (state) => !!state.userInfo && Object.keys(state.userInfo).length > 0
+    token() {
+      return getToken() || ''
+    },
+    userInfo() {
+      return getUserInfo() || {}
+    },
+    isLogin() {
+      return !!getToken()
+    },
+    hasToken() {
+      return !!getToken()
+    },
+    hasUserInfo() {
+      const userInfo = getUserInfo() || {}
+      return !!userInfo && Object.keys(userInfo).length > 0
+    }
   },
   
   actions: {
     setToken(token) {
-      this.token = token
       setToken(token)
     },
     
     setUserInfo(userInfo) {
-      this.userInfo = userInfo
       setUserInfo(userInfo)
     },
     
+    // 清除本地token和用户信息
     logout() {
-      this.token = ''
-      this.userInfo = {}
       removeToken()
       removeUserInfo()
+    },
+
+    async logoutAndRedirect(delay = 0) {
+      try {
+        await getLogout()
+        this.logout()
+        
+        if (delay > 0) {
+          setTimeout(() => {
+            redirectToLogin()
+          }, delay)
+        } else {
+          redirectToLogin()
+        }
+      } catch (error) {
+        console.error('登出失败', error)
+        this.logout()
+        if (delay > 0) {
+          setTimeout(() => {
+            redirectToLogin()
+          }, delay)
+        } else {
+          redirectToLogin()
+        }
+      }
     },
 
     // 获取用户信息

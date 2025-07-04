@@ -4,7 +4,7 @@
       <div class="announcement-header">
         <div class="page-title">
           <img src="../../../assets/Title.svg" alt="Title" class="title-icon">
-          <span>系统公告</span>
+          <span>{{ configName[name] }}</span>
         </div>
       </div>
       
@@ -27,7 +27,7 @@
           <div class="item-time">{{ item.publicTime }}</div>
         </div>
         
-        <el-empty v-if="announcementList.length === 0 && !loading" description="暂无系统公告" />
+        <el-empty v-if="announcementList.length === 0 && !loading" :description="`暂无${configName[name]}数据`" />
       </div>
       
       <div class="pagination-container">
@@ -54,8 +54,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import AnnouncementDetail from './AnnouncementDetail.vue'
-import { getNoticeList } from '@/api/home'
-
+import { getNoticeList, postProcessList } from '@/api/home'
+import { useRoute } from 'vue-router'
+import { useUserStore } from '@/store'
 const detailDialogVisible = ref(false)
 const currentAnnouncement = ref({})
 const currentPage = ref(1)
@@ -63,15 +64,42 @@ const pageSize = ref(10)
 const totalItems = ref(17) // 假设总共有17条公告
 const announcementList = ref([])
 const loading = ref(false)
+const route = useRoute()
+const name = route.query.name
+const userStore = useUserStore()
+
+const configUrl = ref({
+  systemAnnouncement: getNoticeList({
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }),
+    alreadyDone: postProcessList({
+      processorId: userStore.userInfo?.user?.ID ||  '',
+      pageNum: currentPage.value,
+      pageSize: pageSize.value,
+      status: 0
+    }),
+    representative: postProcessList({
+      processorId: userStore.userInfo?.user?.ID ||  '',
+      pageNum: currentPage.value,
+      pageSize: pageSize.value,
+      status: 1
+    })
+})
+
+const configName = ref({
+  systemAnnouncement: '系统公告',
+  alreadyDone: '我的已办',
+  representative: '我的待办'
+})
+
+
 
 
 const getNoticeData = async () => {
   loading.value = true
   try {
-    const res = await getNoticeList({
-      pageNum: currentPage.value,
-      pageSize: pageSize.value
-    })
+    const res = await configUrl.value[name]
     if(res.code === 200 && res.data) {
       announcementList.value = res.data
       totalItems.value = res.total || totalItems.value

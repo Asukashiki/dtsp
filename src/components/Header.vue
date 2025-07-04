@@ -38,8 +38,7 @@
   <!-- 将UserDetails组件放在顶层，不受header嵌套限制 -->
   <UserDetails 
     v-model:visible="userDetailsVisible"
-    :user-info="userDetailsInfo" 
-    @edit="handleUserDetailsEdit" 
+    :user-info="userDetailsInfo"
   />
 </template>
 
@@ -131,11 +130,6 @@ const showUserDetails = () => {
   userDetailsVisible.value = true
 }
 
-// const handleUserDetailsEdit = (data) => {
-//   // 处理用户信息编辑
-//   console.log('编辑用户信息:', data)
-//   // 实际项目中可能需要调用API进行更新
-// }
 </script>
 
 <style scoped>

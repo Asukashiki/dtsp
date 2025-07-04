@@ -12,7 +12,7 @@
         :rules="rules"
         ref="appForm"
       >
-        <div class="form-row">
+        <div class="form-row"> 
           <el-form-item label="应用编码" prop="appCode">
             <el-input v-model="formData.appCode" placeholder="请输入应用编码"></el-input>
           </el-form-item>
@@ -33,15 +33,18 @@
         </div>
         
         <div class="form-row">
-          <el-form-item label="协议类型" prop="protocolType">
-            <el-select v-model="formData.protocolType" placeholder="请选择协议类型" class="full-width">
+          <el-form-item label="协议类型" prop="potocal">
+            <el-select v-model="formData.potocal" placeholder="请选择协议类型" class="full-width">
               <el-option v-for="item in protocolTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="应用分类" prop="appCategory">
+          <!-- <el-form-item label="应用分类" prop="appCategory">
             <el-select v-model="formData.appCategory" placeholder="请选择应用分类" class="full-width">
               <el-option v-for="item in appCategoryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
+          </el-form-item> -->
+          <el-form-item label="回调地址" prop="callbackUrl">
+            <el-input v-model="formData.callbackUrl" placeholder="请输入回调地址"></el-input>
           </el-form-item>
         </div>
         
@@ -49,8 +52,8 @@
           <el-form-item label="客户端编码" prop="clientCode">
             <el-input v-model="formData.clientCode" placeholder="请输入客户端编码"></el-input>
           </el-form-item>
-          <el-form-item label="回调地址" prop="callbackUrl">
-            <el-input v-model="formData.callbackUrl" placeholder="请输入回调地址"></el-input>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="formData.remark" placeholder="请输入备注"></el-input>
           </el-form-item>
         </div>
         
@@ -101,8 +104,8 @@ const formData = ref({
   appCode: '',
   appName: '',
   appType: '',
-  appShortName: '',
-  protocolType: '',
+  remark: '',
+  potocal: '',
   appCategory: '',
   clientCode: '',
   callbackUrl: ''
@@ -112,22 +115,19 @@ const rules = reactive({
   appCode: [{ required: true, message: '请输入应用编码', trigger: 'blur' }],
   appName: [{ required: true, message: '请输入应用名称', trigger: 'blur' }],
   appType: [{ required: true, message: '请选择应用类型', trigger: 'change' }],
-  protocolType: [{ required: true, message: '请选择协议类型', trigger: 'change' }],
-  appCategory: [{ required: true, message: '请选择应用分类', trigger: 'change' }],
+  potocal: [{ required: true, message: '请选择协议类型', trigger: 'change' }],
   clientCode: [{ required: true, message: '请输入客户端编码', trigger: 'blur' }],
   callbackUrl: [{ required: true, message: '请输入回调地址', trigger: 'blur' }]
 })
 
 const appTypeOptions = [
-  { value: 'web', label: 'Web应用' },
-  { value: 'mobile', label: '移动应用' },
-  { value: 'server', label: '服务器应用' }
+  { value: '0', label: '内部' },
+  { value: '1', label: '外部' },
 ]
 
 const protocolTypeOptions = [
-  { value: 'oauth2', label: 'OAuth 2.0' },
-  { value: 'oidc', label: 'OpenID Connect' },
-  { value: 'saml', label: 'SAML 2.0' }
+  { value: 'http', label: 'http' },
+  { value: 'https', label: 'https' }
 ]
 
 const appCategoryOptions = [
@@ -144,11 +144,11 @@ const submitApplication = async () => {
       try {
         await postAppRegister({
           code: formData.value.appCode,
-          secret: formData.value.protocolType,
+          potocal: formData.value.potocal,
           name: formData.value.appName,
           type: formData.value.appType,
           url: formData.value.callbackUrl,
-          protocal: formData.value.appCategory,
+          remark: formData.value.remark,
           clientId: formData.value.clientCode,
           shortName: formData.value.appShortName
         })

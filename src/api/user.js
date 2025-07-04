@@ -26,3 +26,10 @@ export const postResetPassword = (params) => {
     data: params 
   })
 } 
+
+export const getLogout = () => {
+  return request({
+    url: '/oauth2/logout',
+    method: 'get'
+  })
+} 

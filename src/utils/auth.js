@@ -20,16 +20,6 @@ export function getTokenFromUrl() {
   return null
 }
 
-// 清除URL中的hash
-export function clearUrlHash() {
-  // 获取当前URL的基本部分（不包含hash和查询参数）
-  const url = window.location.href.split('#')[0].split('?')[0];
-  // 获取查询参数（如果有）
-  const search = window.location.search;
-  // 使用history API替换当前URL，保留查询参数但移除hash
-  window.history.replaceState(null, '', url + search);
-}
-
 // 从localStorage中获取token
 export function getToken() {
   return localStorage.getItem('token')
@@ -59,4 +49,14 @@ export function setUserInfo(userInfo) {
 // 移除用户信息
 export function removeUserInfo() {
   localStorage.removeItem('userInfo')
+}
+
+// 重定向到登录页
+export function redirectToLogin() {
+  const isDev = import.meta.env.DEV
+  const LOGIN_URL = isDev ? import.meta.env.VITE_APP_API_URL : location.origin
+  // const redirectUrl = encodeURIComponent(window.location.href)
+  const url = window.location
+  const redirectUrl = url.origin + url.pathname
+  window.location.href = `${LOGIN_URL}/auth/oauth2/authorize?response_type=token&client_id=icd&redirect_uri=${redirectUrl}`
 } 
