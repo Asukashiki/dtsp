@@ -9,7 +9,7 @@
         <div class="contact-row">
           <div class="info-item">联系方式：010-68558570</div>
           <div class="info-divider">|</div>
-          <div class="info-item">服务时间：工作日 09:00-17:00</div>
+          <div class="info-item">服务时间：工作日 08:30-17:30</div>
         </div>
         <div class="company-info">浪潮软件科技有限公司版权所有</div>
       </div>

@@ -40,7 +40,7 @@
           </div>
           <div class="common-system-content">
             <div 
-              v-for="(entry, index) in commonSystems.slice(0, 6)" 
+              v-for="(entry, index) in systemEntries.slice(0, 6)" 
               :key="index" 
               class="common-system-item"
               @click="handleSystemEntryClick(entry)"
@@ -197,14 +197,14 @@ const state = reactive({
   announcementList: [],
   
   // 常用系统数据
-  commonSystems: [
-    { name: '统一用户管理平台', icon: 'UserFilled', iconBg: '#1c59e2', path: '/user-mgmt' },
-    { name: '营销管理系统', icon: 'Promotion', iconBg: '#1c59e2', path: '/marketing' },
-    { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
-    { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
-    { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
-    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
-  ],
+  // commonSystems: [
+  //   { name: '统一用户管理平台', icon: 'UserFilled', iconBg: '#1c59e2', path: '/user-mgmt' },
+  //   { name: '营销管理系统', icon: 'Promotion', iconBg: '#1c59e2', path: '/marketing' },
+  //   { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
+  //   { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
+  //   { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
+  //   { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
+  // ],
   
   // 系统入口数据
   systemEntries: [

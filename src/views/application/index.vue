@@ -177,13 +177,13 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .application-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 30px;
+  padding: 20px 30px;
   background-color: #fff;
   box-sizing: border-box;
   height: calc(100vh - 63px - 194px);
@@ -192,13 +192,13 @@ html, body {
 
 .application-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .application-header h1 {
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #333;
 }
 
@@ -209,11 +209,12 @@ html, body {
 }
 
 .application-form {
-  /* background-color: #fff; */
-  padding: 30px;
+  padding: 20px 30px;
   border-radius: 4px;
-  /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05); */
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-row {
@@ -224,7 +225,7 @@ html, body {
 
 .el-form-item {
   flex: 1;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .full-width {
@@ -234,27 +235,26 @@ html, body {
 .form-actions {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 15px;
   gap: 20px;
 }
 
 .application-guide {
   background-color: #f0f7ff;
-  padding: 20px 30px;
+  padding: 15px 30px;
   border-radius: 4px;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 .guide-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .guide-icon {
   width: 24px;
   height: 24px;
-  /* background-color: #3B82F6; */
   color: white;
   border-radius: 50%;
   display: flex;
@@ -301,7 +301,7 @@ html, body {
 .step-item div {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #1C59E2;
   margin-top: 0;
 }
@@ -309,7 +309,7 @@ html, body {
 .step-item p {
   font-size: 14px;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.4;
   margin: 0;
 }
 
@@ -317,6 +317,32 @@ html, body {
 @media screen and (max-width: 1440px) {
   .application-container {
     max-width: 1000px;
+  }
+  
+  .application-header h1 {
+    font-size: 22px;
+  }
+  
+  .application-header p {
+    font-size: 13px;
+  }
+  
+  .step-item div {
+    font-size: 15px;
+  }
+  
+  .step-item p {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .application-form {
+    padding: 15px 20px;
+  }
+  
+  .application-guide {
+    padding: 12px 20px;
   }
 }
 
@@ -328,7 +354,7 @@ html, body {
   
   .guide-steps {
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
   }
   
   .step-item:not(:last-child)::after {
@@ -337,7 +363,7 @@ html, body {
   
   .step-item {
     padding: 0;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 }
 </style>
