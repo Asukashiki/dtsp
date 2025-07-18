@@ -16,15 +16,15 @@
         <div class="section-title">基本信息</div>
         <div class="info-item basic-info-item">
           <div class="info-label">姓名</div>
-          <div class="info-value">{{ userInfo.name }}</div>
+          <div class="info-value">{{ localUserInfo.name }}</div>
         </div>
         <div class="info-item basic-info-item">
           <div class="info-label">工号</div>
-          <div class="info-value">{{ userInfo.employeeId }}</div>
+          <div class="info-value">{{ localUserInfo.employeeId }}</div>
         </div>
         <div class="info-item basic-info-item">
           <div class="info-label">所属部门</div>
-          <div class="info-value">{{ userInfo.department }}</div>
+          <div class="info-value">{{ localUserInfo.department }}</div>
         </div>
       </div>
 
@@ -35,7 +35,7 @@
             <i class="ri-phone-line"></i> 
             手机
           </div>
-          <div class="info-value">{{ userInfo.phone }}</div>
+          <div class="info-value">{{ localUserInfo.phone }}</div>
           <div class="info-action" @click="handleEditContact('phone')">修改</div>
         </div>
         <div class="info-item">
@@ -43,7 +43,7 @@
             <i class="ri-mail-line"></i> 
             邮箱
           </div>
-          <div class="info-value">{{ userInfo.email }}</div>
+          <div class="info-value">{{ localUserInfo.email }}</div>
           <div class="info-action nowrap" @click="handleEditContact('email')">修改</div>
         </div>
       </div>
@@ -69,13 +69,13 @@
             </div>
           </div>
         </div>
-        <div class="info-item">
-          <div class="info-label">
+        <!-- <div class="info-item"> -->
+          <!-- <div class="info-label">
             <i class="ri-history-line"></i> 
             上次修改时间
-          </div>
-          <div class="info-value">{{ userInfo.lastPasswordChange }}</div>
-        </div>
+          </div> -->
+          <!-- <div class="info-value">{{ localUserInfo.lastPasswordChange }}</div> -->
+        <!-- </div> -->
         <div class="logout-container">
           <el-button type="danger" @click="handleLogout" class="logout-btn">退出登录</el-button>
         </div>
@@ -91,15 +91,15 @@
     <ModifyContact
       v-model:visible="contactDialogVisible"
       :type="contactEditType"
+      @confirm="handleMessage"
       :current-value="contactCurrentValue"
     />
   </el-drawer>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits, watch, reactive, nextTick } from 'vue'
 import { ElMessageBox } from 'element-plus'
-// import { ElMessage } from 'element-plus'
 import ModifyPassword from './ModifyPassword.vue'
 import ModifyContact from './ModifyContact.vue'
 import { useUserStore } from '@/store'
@@ -111,24 +111,68 @@ const props = defineProps({
   },
   userInfo: {
     type: Object,
-    default: () => {}
+    default: () => ({})
   }
 })
 
-const emit = defineEmits(['update:visible', 'edit'])
+const emit = defineEmits(['update:visible', 'confirm'])
 const passwordDialogVisible = ref(false)
 const contactDialogVisible = ref(false)
 const contactEditType = ref('phone')
 const contactCurrentValue = ref('')
 const userStore = useUserStore()
 
+// 创建本地响应式数据存储用户信息
+const localUserInfo = reactive({
+  name: '',
+  employeeId: '',
+  department: '',
+  phone: '',
+  email: '',
+  lastPasswordChange: ''
+})
+
+// 从store和props同步用户信息到本地
+const syncUserInfo = async () => {
+  try {
+    await userStore.fetchUserInfo()
+    const storeUserInfo = userStore.userInfo?.user || {}
+    localUserInfo.name = storeUserInfo.name || props.userInfo.name || ''
+    localUserInfo.employeeId = storeUserInfo.employeeId || props.userInfo.employeeId || ''
+    localUserInfo.department = storeUserInfo.organName || props.userInfo.department || ''
+    localUserInfo.phone = storeUserInfo.mobile || props.userInfo.phone || ''
+    localUserInfo.email = storeUserInfo.email || props.userInfo.email || ''
+    
+    // 确保视图更新
+    await nextTick()
+  } catch (error) {
+    console.log('error',error)
+  }
+}
+
+// 监听visible变化，当抽屉打开时同步用户信息
+watch(() => props.visible, async (isVisible) => {
+  if (isVisible) {
+    await syncUserInfo()
+  }
+}, { immediate: true })
+
 const handleClose = () => {
   emit('update:visible', false)
 }
 
+// 处理ModifyContact组件的confirm事件
+const handleMessage = async (data) => {
+  try {
+    await syncUserInfo()
+  } catch (error) {
+    console.error('处理用户信息更新失败', error)
+  }
+}
+
 const handleEditContact = (type) => {
   contactEditType.value = type
-  contactCurrentValue.value = props.userInfo[type]
+  contactCurrentValue.value = localUserInfo[type]
   contactDialogVisible.value = true
 }
 

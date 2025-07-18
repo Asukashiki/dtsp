@@ -1,7 +1,7 @@
 /**
  * 认证相关的工具函数
  */
-
+import {getLogout } from '@/api/user'
 // 从URL中获取token
 export function getTokenFromUrl() {
   // 检查URL hash中是否包含token
@@ -52,7 +52,7 @@ export function removeUserInfo() {
 }
 
 // 重定向到登录页
-export function redirectToLogin() {
+export async function redirectToLogin() {
   const isDev = import.meta.env.DEV
   const LOGIN_URL = isDev ? import.meta.env.VITE_APP_API_URL : location.origin
   // const redirectUrl = encodeURIComponent(window.location.href)

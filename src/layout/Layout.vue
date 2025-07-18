@@ -64,4 +64,22 @@ const handleNavChange = (index, path) => {
   position: relative; /* 添加相对定位 */
   z-index: 1; /* 确保内容在背景之上 */
 }
+
+.main-content:has(.knowledge-container) {
+  padding-top: 0;
+}
+
+.app-container:has(.knowledge-container) .footer {
+    background-color: #2c3e50 !important;
+    color: #fff !important;
+    padding: 30px 0 20px 0 !important;
+    width: 100% !important;
+    flex: 1 !important;
+    margin-top: 0;
+  }
+
+  
+.app-container:has(.knowledge-container) .main-content {
+    flex: none;
+  }
 </style> 

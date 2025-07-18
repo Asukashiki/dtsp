@@ -42,6 +42,7 @@
 import { ref, defineProps, defineEmits, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { postUserUpdate } from '@/api/user'
+import { useUserStore } from '@/store'
 
 const props = defineProps({
   visible: {
@@ -66,6 +67,7 @@ const form = ref({
   value: ''
 })
 const loading = ref(false)
+const userStore = useUserStore()
 
 // 根据type类型设置不同的校验规则
 const rules = computed(() => {
@@ -128,22 +130,35 @@ const handleConfirm = async () => {
     loading.value = true
     try {
       const res = await postUserUpdate(
-        isPhone ? {mobile: form.value.value }: {email: form.value.value}
+        isPhone ? {mobile: form.value.value, id: userStore.userInfo?.user?.ID ||  ''  }: {email: form.value.value, id: userStore.userInfo?.user?.ID ||  ''}
       )
       if(res.code === 200) {
         ElMessage.success(props.type === 'phone' ? '手机号修改成功' : '邮箱修改成功')
-        emit('confirm', form.value.value)
+        await userStore.fetchUserInfo()
+        if (userStore.userInfo && userStore.userInfo.user) {
+          if (isPhone) {
+            userStore.userInfo.user.mobile = form.value.value;
+          } else {
+            userStore.userInfo.user.email = form.value.value;
+          }
+          userStore.setUserInfo(userStore.userInfo);
+        }
+        
+        // 传递更新后的值给父组件
+        emit('confirm', {
+          type: props.type,
+          value: form.value.value
+        })
+        
         handleClose()
       }
      
     } catch (error) {
       console.log('error',error)
-      // ElMessage.error('修改失败，请稍后重试')
     } finally {
       loading.value = false
     }
   } catch (error) {
-    // 表单验证失败
     console.log('表单验证失败', error)
   }
 }

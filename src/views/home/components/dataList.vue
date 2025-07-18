@@ -21,10 +21,10 @@
             <div v-if="!item.isRead" class="unread-dot"></div>
           </div>
           <div class="item-content">
-            <div class="item-title">{{ item.name }}</div>
+            <div class="item-title">{{ item.name || item.title}}</div>
             <div class="item-desc">{{ item.content }}</div>
           </div>
-          <div class="item-time">{{ item.publicTime }}</div>
+          <div class="item-time">{{ item.publicTime || item.createTime }}</div>
         </div>
         
         <el-empty v-if="announcementList.length === 0 && !loading" :description="`暂无${configName[name]}数据`" />
@@ -69,21 +69,21 @@ const name = route.query.name
 const userStore = useUserStore()
 
 const configUrl = ref({
-  systemAnnouncement: getNoticeList({
+  systemAnnouncement: () => getNoticeList({
       pageNum: currentPage.value,
       pageSize: pageSize.value
     }),
-    alreadyDone: postProcessList({
+    alreadyDone: () => postProcessList({
       processorId: userStore.userInfo?.user?.ID ||  '',
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      status: 0
+      status: '0'
     }),
-    representative: postProcessList({
+    representative: () => postProcessList({
       processorId: userStore.userInfo?.user?.ID ||  '',
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      status: 1
+      status: '1'
     })
 })
 
@@ -99,10 +99,10 @@ const configName = ref({
 const getNoticeData = async () => {
   loading.value = true
   try {
-    const res = await configUrl.value[name]
+    const res = await configUrl.value[name]()
     if(res.code === 200 && res.data) {
-      announcementList.value = res.data
-      totalItems.value = res.total || totalItems.value
+      announcementList.value = res.data.data
+      totalItems.value = res.data.total || 0
     }
   } catch (error) {
     console.log('error',error)

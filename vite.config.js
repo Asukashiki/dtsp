@@ -8,6 +8,7 @@ export default ({ mode }) => {
   
   return defineConfig({
     plugins: [vue()],
+    base: '/ditp/', // 添加基础路径配置
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src')

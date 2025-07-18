@@ -12,9 +12,9 @@
     <template #header>
       <div class="dialog-header">
         <div class="title-icon">
-          <img src="@/assets/Title.svg" alt="系统公告" />
+          <img src="@/assets/Title.svg" />
         </div>
-        <span>系统公告</span>
+        <span>{{ configName[name] }}</span>
       </div>
     </template>
     <div class="announcement-detail">
@@ -23,7 +23,7 @@
         <div class="detail-meta">
           <span class="detail-time">
             <i class="ri-time-line"></i> 
-            公告时间: {{ announcement.publicTime }}
+            {{ configData[name] }}时间: {{ announcement.publicTime || announcement.createTime }}
           </span>
           <span class="detail-publisher" v-if="announcement.orgName">
             <i class="ri-user-line"></i> 
@@ -42,7 +42,7 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits } from 'vue';
-
+import { useRoute } from 'vue-router'
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -71,6 +71,20 @@ const dialogVisible = computed({
 const handleClose = () => {
   emit('update:visible', false);
 };
+
+const route = useRoute()
+const name = route.query.name
+const configName = ref({
+  systemAnnouncement: '系统公告',
+  alreadyDone: '我的已办',
+  representative: '我的待办'
+})
+
+const configData = ref({
+  systemAnnouncement: '系统',
+  alreadyDone: '已办',
+  representative: '发布'
+})
 </script>
 
 <style scoped>

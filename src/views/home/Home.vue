@@ -99,7 +99,7 @@
               <div class="guide-item-content">
                 <div class="guide-item-title">{{ item.title }}</div>
                 <div class="guide-item-desc">{{ item.desc }}</div>
-                <div class="guide-item-stats">{{ item.viewCount }} · {{ item.downloadCount }}</div>
+                <!-- <div class="guide-item-stats">{{ item.viewCount }} · {{ item.downloadCount }}</div> -->
               </div>
             </div>
           </div>
@@ -218,15 +218,15 @@ const state = reactive({
   
   // 表格列定义
   todoColumns: [
-    { prop: 'name', label: '事项名称', width: '400' },
-    { prop: 'time', label: '日期' },
-    { prop: 'system', label: '系统' }
+    { prop: 'title', label: '事项名称', width: '300' },
+    { prop: 'createTime', label: '日期' },
+    { prop: 'sourceSystem', label: '系统' }
   ],
   
   pendingColumns: [
-    { prop: 'name', label: '事项名称', width: '400' },
-    { prop: 'time', label: '日期' },
-    { prop: 'system', label: '系统' }
+    { prop: 'title', label: '事项名称', width: '300' },
+    { prop: 'createTime', label: '日期' },
+    { prop: 'sourceSystem', label: '系统' }
   ],
   
   // 表格数据
@@ -303,7 +303,7 @@ const initPageData = async () => {
       initCharts()
     })
   } catch (error) {
-    console.error('加载数据出错:', error)
+    console.error('error', error)
     // loading.value = false
   } finally {
     loading.value = false
@@ -350,7 +350,7 @@ const getNoticeData = async () => {
   try {
     const res = await getNoticeList(pages.value)
     if(res.code === 200 && res.data) {
-      state.announcementList = res.data
+      state.announcementList = res.data?.data ||[]
     }
   } catch (error) {
     console.log('error',error)
@@ -358,8 +358,8 @@ const getNoticeData = async () => {
 }
 
 const getTodoList = async () => {
-  const todoList = await dodoList(0)
-  const pendingList = await dodoList(1)
+  const todoList = await dodoList('0')
+  const pendingList = await dodoList('1')
   state.todoData = todoList
   state.pendingData = pendingList
 }
@@ -464,7 +464,7 @@ const dodoList = async (state) => {
     }
     const res = await postProcessList(params)
     if(res.code === 200 && res.data) {
-      return res.data
+      return res.data.data
     } else {
       return []
     }

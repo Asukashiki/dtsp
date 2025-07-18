@@ -32,13 +32,14 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   response => {
+    const userStore = useUserStore()
     const res = response.data
-    
     // 根据实际情况调整
-    if (res.code !== 200) {
-      // 处理特定错误，例如401权限问题
+    if (res.code !== 200 && userStore.token) {
       if (res.code === 401) {
         handleUnauthorized(res.message || '登录已过期，请重新登录')
+      } else if (res.code === 500) {
+          handleUnauthorized(res.message || '登录已过期，请重新登录')
       } else {
         ElMessage({
           message: res.msg || '请求错误',
@@ -55,7 +56,7 @@ request.interceptors.response.use(
     // 处理HTTP错误状态码
     if (error.response) {
       const { status } = error.response
-      
+      console.log('status',status)
       // 未授权或token过期
       if (status === 401) {
         handleUnauthorized('登录已过期，请重新登录')
@@ -99,5 +100,4 @@ function handleUnauthorized(message) {
     isRedirecting = false
   }, 3000)
 }
-
 export default request 

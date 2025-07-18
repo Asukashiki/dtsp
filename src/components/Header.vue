@@ -106,9 +106,8 @@ watch(
   }
 )
 
-// 移除检查并获取用户信息的方法，仅保留更新用户详情的方法
+// 更新用户详情信息方法
 const updateUserDetails = () => {
-  // 从store获取用户详情信息
   const userInfo = userStore.userInfo?.user || {}
   userDetailsInfo.value = {
     name: userInfo.name || '',
@@ -126,7 +125,7 @@ const handleNavClick = (index, path) => {
   router.push(path)
 }
 
-const showUserDetails = () => {
+const showUserDetails = async () => {
   userDetailsVisible.value = true
 }
 

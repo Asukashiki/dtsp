@@ -45,7 +45,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/ditp/'),
   routes
 })
 
@@ -72,19 +72,17 @@ router.beforeEach(async (to, from, next) => {
     userStore.setToken(urlToken)
     try {
       await userStore.fetchUserInfo()
-      // 同时处理hash方式和查询参数方式的token
       if (window.location.hash.includes('token=') || window.location.search.includes('token=')) {
         window.history.replaceState(null, '', window.location.pathname)
         return next('/home')
       }
       
     } catch (error) {
-      console.log('error',error)
       redirectToLogin(to.fullPath, userStore)
       return next(false)
     }
   } else if(!storedToken) {
-    redirectToLogin(to.fullPath, userStore)
+    userStore.logoutAndRedirect(1000)
     return next(false)
   } else {
     next()
