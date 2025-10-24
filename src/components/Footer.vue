@@ -6,11 +6,11 @@
         <span>数智化转型支撑平台</span>
       </div>
       <div class="footer-info">
-        <div class="contact-row">
+        <!-- <div class="contact-row">
           <div class="info-item">联系方式：010-68558570</div>
           <div class="info-divider">|</div>
           <div class="info-item">服务时间：工作日 08:30-17:30</div>
-        </div>
+        </div> -->
         <div class="company-info">浪潮软件科技有限公司版权所有</div>
       </div>
     </div>
@@ -28,7 +28,7 @@ export default {
   background-color: #2c3e50;
   color: #fff;
   padding: 20px 0;
-  margin-top: 20px;
+  margin-top: 24px;
   width: 100%;
 }
 

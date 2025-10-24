@@ -72,9 +72,8 @@ const handleNavChange = (index, path) => {
 .app-container:has(.knowledge-container) .footer {
     background-color: #2c3e50 !important;
     color: #fff !important;
-    padding: 30px 0 20px 0 !important;
+    padding: 20px 0 !important;
     width: 100% !important;
-    flex: 1 !important;
     margin-top: 0;
   }
 

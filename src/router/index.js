@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
 import { getTokenFromUrl, getToken } from '../utils/auth'
 import { ElMessage } from 'element-plus'
@@ -28,6 +28,12 @@ const routes = [
         component: () => import('../views/application/index.vue'),
         meta: { title: '应用注册申请', icon: 'application', requiresAuth: true }
       },
+      // {
+      //   path: 'application/record',
+      //   name: 'ApplicationRecord',
+      //   component: () => import('../views/application/recordList.vue'),
+      //   meta: { title: '应用申请记录', hideInMenu: true, requiresAuth: true }
+      // },
       {
         path: 'knowledge',
         name: 'Knowledge',
@@ -45,7 +51,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/ditp/'),
+  history: createWebHashHistory('/ditp/'),
   routes
 })
 

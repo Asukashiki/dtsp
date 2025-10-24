@@ -9,6 +9,7 @@ import './style.css'
 import 'remixicon/fonts/remixicon.css'
 // 引入Element Plus图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 // 引入ECharts
 import * as echarts from 'echarts'
 
@@ -25,5 +26,5 @@ app.config.globalProperties.$echarts = echarts
 
 app.use(router)
 app.use(pinia)
-app.use(ElementPlus)
+app.use(ElementPlus, { locale: zhCn })
 app.mount('#app')

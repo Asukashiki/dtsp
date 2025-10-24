@@ -39,17 +39,23 @@
             </div>
           </div>
           <div class="common-system-content">
-            <div 
-              v-for="(entry, index) in systemEntries.slice(0, 6)" 
-              :key="index" 
-              class="common-system-item"
-              @click="handleSystemEntryClick(entry)"
+            <el-tooltip 
+              v-for="(entry, index) in SYSTEMDATA.slice(0, 6)" 
+              :key="index"
+              :content="entry.name"
+              placement="top"
+              :show-after="500"
             >
-              <div class="common-system-icon" :style="{ backgroundColor: entry.iconBg || '#1c59e2' }">
-                <i :class="getIconClass(entry.icon)"></i>
+              <div 
+                class="common-system-item"
+                @click="handleSystemEntryClick(entry)"
+              >
+                <div class="common-system-icon" :style="{ backgroundColor: entry.iconBg || '#1c59e2' }">
+                  <i :class="getIconClass(entry.icon)"></i>
+                </div>
+                <div class="common-system-name">{{ entry.name }}</div>
               </div>
-              <div class="common-system-name">{{ entry.name }}</div>
-            </div>
+            </el-tooltip>
           </div>
         </div>
       </div>
@@ -64,7 +70,7 @@
         </div>
         <div class="entry-grid system-entries-grid">
           <div 
-            v-for="(entry, index) in systemEntries" 
+            v-for="(entry, index) in SYSTEMDATA" 
             :key="index" 
             class="entry-item"
             @click="handleSystemEntryClick(entry)"
@@ -170,6 +176,8 @@ import * as echarts from 'echarts'
 import { useUserStore } from '@/store'
 import { getNoticeList, postProcessList,postHistoryList,postHistoryListWeek } from '@/api/home'
 import AnnouncementDetail from './components/AnnouncementDetail.vue'
+import { ElMessage } from 'element-plus'
+import {SYSTEMDATA} from '@/utils/system-data-config'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -196,25 +204,6 @@ const state = reactive({
   // 系统公告数据
   announcementList: [],
   
-  // 常用系统数据
-  // commonSystems: [
-  //   { name: '统一用户管理平台', icon: 'UserFilled', iconBg: '#1c59e2', path: '/user-mgmt' },
-  //   { name: '营销管理系统', icon: 'Promotion', iconBg: '#1c59e2', path: '/marketing' },
-  //   { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
-  //   { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
-  //   { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
-  //   { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
-  // ],
-  
-  // 系统入口数据
-  systemEntries: [
-    { name: '统一用户管理平台', icon: 'UserFilled', iconBg: '#1c59e2', path: '/user-mgmt' },
-    { name: '营销管理系统', icon: 'Promotion', iconBg: '#1c59e2', path: '/marketing' },
-    { name: '一体化平台', icon: 'Connection', iconBg: '#1c59e2', path: '/integrated' },
-    { name: '运营管理系统', icon: 'Setting', iconBg: '#1c59e2', path: '/operation' },
-    { name: '知涌', icon: 'Collection', iconBg: '#1c59e2', path: '/knowledge' },
-    { name: '低代码平台', icon: 'Edit', iconBg: '#1c59e2', path: '/icd/' }
-  ],
   
   // 表格列定义
   todoColumns: [
@@ -275,7 +264,6 @@ const state = reactive({
 const {
   announcementList,
   commonSystems,
-  systemEntries,
   todoColumns,
   pendingColumns,
   todoData,
@@ -618,8 +606,33 @@ const handleMoreAnnouncements = (name) => {
 }
 
 const handleSystemEntryClick = (entry) => {
-  const isDev = import.meta.env.DEV
-  const url = isDev? `${import.meta.env.VITE_APP_API_URL}${entry.path}` : `${window.origin}${entry.path}`
+  let url = ''
+  const token = userStore.token || ''
+  const apiBaseUrl = import.meta.env.PROD ? window.origin : import.meta.env.VITE_APP_API_URL
+  const knowledgeBaseUrl = import.meta.env.VITE_APP_KNOWLEDGE_BASE_URL
+  
+  switch(entry.path) {
+    case '/icd/':
+      const icdRedirectUri = encodeURIComponent(`${apiBaseUrl}/icd/redirect_strict.html`)
+      const icdState = encodeURIComponent('target=management')
+      url = `${apiBaseUrl}/auth/oauth2/authorize?response_type=code&client_id=icd&redirect_uri=${icdRedirectUri}&state=${icdState}`
+      break
+      
+    case '/knowledge':
+      url = `${knowledgeBaseUrl}/damp-know-web/sso.html?token=${token}`
+      break
+      
+    case '/user-mgmt':
+      url = `${apiBaseUrl}/data-service-uc/callback?token=${token}`
+      break
+      
+    default:
+      ElMessage.info('暂未对接')
+      url = ''
+      break
+  }
+  
+  if (!url) return
   window.open(url, '_blank')
 }
 
@@ -842,7 +855,8 @@ const getIconClass = (icon) => {
 }
 
 .common-system-item {
-  flex: 1 0 calc(50% - 8px);
+  flex: 0 0 calc(50% - 8px);
+  max-width: calc(50% - 8px);
   display: flex;
   align-items: center;
   min-width: 0;

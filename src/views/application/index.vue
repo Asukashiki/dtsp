@@ -186,7 +186,7 @@ html, body {
   padding: 20px 30px;
   background-color: #fff;
   box-sizing: border-box;
-  height: calc(100vh - 63px - 194px);
+  height: calc(100vh - 64px - 161px);
   overflow-x: hidden;
 }
 

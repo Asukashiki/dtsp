@@ -36,7 +36,7 @@ const handleIframeLoaded = () => {
 <style scoped>
 .knowledge-container {
     width: 100%;
-    height: calc(100vh - 230px); /* 减去header高度 */
+    height: calc(100vh - 64px - 113px); /* Header(64px) + Footer(113px, margin-top为0) */
     overflow: hidden;
     position: relative;
 }
