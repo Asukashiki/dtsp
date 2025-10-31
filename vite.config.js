@@ -23,7 +23,7 @@ export default ({ mode }) => {
           changeOrigin: true,
           secure: false,
           headers: {
-            'Origin': 'http://10.110.149.140:30012'
+            'Origin': env.VITE_APP_API_URL
           }
         }
       }

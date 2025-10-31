@@ -1,8 +1,8 @@
 <template>
   <div class="application-container">
     <div class="application-header">
-      <h1>应用注册</h1>
-      <p>注册您的应用以获取验证，开始使用我们的服务</p>
+      <h1>{{ isDetailMode ? '应用详情' : '应用注册' }}</h1>
+      <p>{{ isDetailMode ? '查看应用申请详细信息' : '注册您的应用以获取验证，开始使用我们的服务' }}</p>
     </div>
     
     <div class="application-form" v-loading="loading">
@@ -11,30 +11,31 @@
         label-position="top"
         :rules="rules"
         ref="appForm"
+        :disabled="isDetailMode"
       >
         <div class="form-row"> 
           <el-form-item label="应用编码" prop="appCode">
-            <el-input v-model="formData.appCode" placeholder="请输入应用编码"></el-input>
+            <el-input v-model="formData.appCode" :placeholder="ph('请输入应用编码')"></el-input>
           </el-form-item>
           <el-form-item label="应用名称" prop="appName">
-            <el-input v-model="formData.appName" placeholder="请输入应用名称"></el-input>
+            <el-input v-model="formData.appName" :placeholder="ph('请输入应用名称')"></el-input>
           </el-form-item>
         </div>
         
         <div class="form-row">
           <el-form-item label="应用类型" prop="appType">
-            <el-select v-model="formData.appType" placeholder="请输入应用编码" class="full-width">
+            <el-select v-model="formData.appType" :placeholder="ph('请选择应用类型')" class="full-width">
               <el-option v-for="item in appTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="应用简称" prop="appShortName">
-            <el-input v-model="formData.appShortName" placeholder="请输入应用简称"></el-input>
+            <el-input v-model="formData.appShortName" :placeholder="ph('请输入应用简称')"></el-input>
           </el-form-item>
         </div>
         
         <div class="form-row">
           <el-form-item label="协议类型" prop="potocal">
-            <el-select v-model="formData.potocal" placeholder="请选择协议类型" class="full-width">
+            <el-select v-model="formData.potocal" :placeholder="ph('请选择协议类型')" class="full-width">
               <el-option v-for="item in protocolTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
@@ -44,24 +45,31 @@
             </el-select>
           </el-form-item> -->
           <el-form-item label="回调地址" prop="callbackUrl">
-            <el-input v-model="formData.callbackUrl" placeholder="请输入回调地址"></el-input>
+            <el-input v-model="formData.callbackUrl" :placeholder="ph('请输入回调地址')"></el-input>
           </el-form-item>
         </div>
         
         <div class="form-row">
           <el-form-item label="客户端编码" prop="clientCode">
-            <el-input v-model="formData.clientCode" placeholder="请输入客户端编码"></el-input>
+            <el-input v-model="formData.clientCode" :placeholder="ph('请输入客户端编码')"></el-input>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
-            <el-input v-model="formData.remark" placeholder="请输入备注"></el-input>
+            <el-input v-model="formData.remark" :placeholder="ph('请输入备注')"></el-input>
           </el-form-item>
         </div>
         
-        <div class="form-actions">
-          <el-button @click="cancelApplication">取消</el-button>
-          <el-button type="primary" color="#1C59E2" @click="submitApplication" :loading="loading">提交申请</el-button>
-        </div>
       </el-form>
+    </div>
+    <!-- 统一操作区：放在表单外，两个模式统一位置显示按钮 -->
+    <div class="form-actions">
+      <template v-if="!isDetailMode">
+        <el-button @click="cancelApplication">清空内容</el-button>
+        <el-button type="primary" color="#1C59E2" @click="submitApplication" :loading="loading">提交申请</el-button>
+        <el-button @click="goToRecordList">申请记录</el-button>
+      </template>
+      <template v-else>
+        <el-button @click="goBack">返回</el-button>
+      </template>
     </div>
     
     <div class="application-guide">
@@ -93,12 +101,21 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { postAppRegister } from '@/api/application'
+import { postAppRegister, getAppRecordDetail } from '@/api/application'
 
+const route = useRoute()
+const router = useRouter()
 const appForm = ref(null)
 const loading = ref(false)
+
+// 判断是否为详情模式
+const isDetailMode = computed(() => route.query.mode === 'detail' && route.query.id)
+
+// 占位符简化：详情模式返回空字符串，注册模式返回原文案
+const ph = (text) => (isDetailMode.value ? '' : text)
 
 const formData = ref({
   appCode: '',
@@ -108,7 +125,10 @@ const formData = ref({
   potocal: '',
   appCategory: '',
   clientCode: '',
-  callbackUrl: ''
+  callbackUrl: '',
+  appShortName: '',
+  auditStatus: '',
+  auditOpinion: ''
 })
 
 const rules = reactive({
@@ -170,6 +190,49 @@ const cancelApplication = () => {
   // 取消申请，重置表单
   appForm.value.resetFields()
 }
+
+// 跳转到申请记录页面
+const goToRecordList = () => {
+  router.push('/application/record')
+}
+
+// 返回申请记录页面
+const goBack = () => {
+  router.push('/application/record')
+}
+
+// 获取详情数据
+const fetchDetailData = async (appId) => {
+  loading.value = true
+  try {
+    const res = await getAppRecordDetail(appId)
+
+    if(res.code === 200 && res.data) {
+       formData.value = {
+        appCode: res.data.code || '',
+        appName: res.data.name || '',
+        appType: res.data.type || '',
+        appShortName: res.data.shortName || '',
+        potocal: res.data.potocal || '',
+        callbackUrl: res.data.url || '',
+        remark: res.data.remark || '',
+        clientCode: res.data.clientId || ''
+       
+       }
+    }
+  } catch (error) {
+    console.error('获取详情失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 组件挂载时，如果是详情模式则获取详情数据
+onMounted(() => {
+  if (isDetailMode.value) {
+    fetchDetailData(route.query.id)
+  }
+})
 </script>
 
 <style scoped>
@@ -209,12 +272,11 @@ html, body {
 }
 
 .application-form {
-  padding: 20px 30px;
   border-radius: 4px;
-  margin-bottom: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-bottom: 10px;
 }
 
 .form-row {
@@ -235,7 +297,6 @@ html, body {
 .form-actions {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
   gap: 20px;
 }
 
@@ -243,7 +304,7 @@ html, body {
   background-color: #f0f7ff;
   padding: 15px 30px;
   border-radius: 4px;
-  margin-bottom: 15px;
+  margin-top: 15px;
 }
 
 .guide-header {

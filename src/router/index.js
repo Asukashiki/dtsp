@@ -25,15 +25,21 @@ const routes = [
       {
         path: 'application',
         name: 'Application',
-        component: () => import('../views/application/index.vue'),
+        redirect: '/application/record',
         meta: { title: '应用注册申请', icon: 'application', requiresAuth: true }
       },
-      // {
-      //   path: 'application/record',
-      //   name: 'ApplicationRecord',
-      //   component: () => import('../views/application/recordList.vue'),
-      //   meta: { title: '应用申请记录', hideInMenu: true, requiresAuth: true }
-      // },
+      {
+        path: 'application/record',
+        name: 'ApplicationRecord',
+        component: () => import('../views/application/recordList.vue'),
+        meta: { title: '应用申请记录', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'application/register',
+        name: 'ApplicationRegister',
+        component: () => import('../views/application/index.vue'),
+        meta: { title: '应用注册申请', hideInMenu: true, requiresAuth: true }
+      },
       {
         path: 'knowledge',
         name: 'Knowledge',
