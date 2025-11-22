@@ -53,8 +53,8 @@ const props = defineProps({
     type: Array,
     default: () => [
       { title: '首页', path: '/home' },
-      { title: '应用注册申请', path: '/application' },
-      { title: '知识中心', path: '/knowledge' },
+      { title: '用户身份认证', path: '/identity' },
+      // { title: '知识中心', path: '/knowledge' }, // 需求下线，暂时移除
     ]
   }
 })

@@ -22,30 +22,57 @@ const routes = [
         component: () => import('../views/home/Home.vue'),
         meta: { title: '首页', icon: 'home', requiresAuth: true }
       },
+      // 应用注册申请逻辑按需求下线，以下路由整体注释保留
+      // {
+      //   path: 'application',
+      //   name: 'Application',
+      //   redirect: '/application/record',
+      //   meta: { title: '用户身份认证', icon: 'application', requiresAuth: true }
+      // },
+      // {
+      //   path: 'application/record',
+      //   name: 'ApplicationRecord',
+      //   component: () => import('../views/application/recordList.vue'),
+      //   meta: { title: '应用申请记录', hideInMenu: true, requiresAuth: true }
+      // },
+      // {
+      //   path: 'application/register',
+      //   name: 'ApplicationRegister',
+      //   component: () => import('../views/application/index.vue'),
+      //   meta: { title: '应用注册申请', hideInMenu: true, requiresAuth: true }
+      // },
+      // 新的用户身份认证入口页与表单页
       {
-        path: 'application',
-        name: 'Application',
-        redirect: '/application/record',
-        meta: { title: '应用注册申请', icon: 'application', requiresAuth: true }
+        path: 'identity',
+        name: 'Identity',
+        component: () => import('../views/identity/index.vue'),
+        meta: { title: '用户身份认证', icon: 'user', requiresAuth: true }
       },
       {
-        path: 'application/record',
-        name: 'ApplicationRecord',
-        component: () => import('../views/application/recordList.vue'),
-        meta: { title: '应用申请记录', hideInMenu: true, requiresAuth: true }
+        path: 'identity/farmer',
+        name: 'IdentityFarmer',
+        component: () => import('../views/identity/farmer.vue'),
+        meta: { title: '农民认证申请', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'application/register',
-        name: 'ApplicationRegister',
-        component: () => import('../views/application/index.vue'),
-        meta: { title: '应用注册申请', hideInMenu: true, requiresAuth: true }
+        path: 'identity/supplier',
+        name: 'IdentitySupplier',
+        component: () => import('../views/identity/supplier.vue'),
+        meta: { title: '供应商认证申请', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'knowledge',
-        name: 'Knowledge',
-        component: () => import('../views/knowledge/index.vue'),
-        meta: { title: '知识中心', icon: 'knowledge', requiresAuth: true }
+        path: 'identity/buyer',
+        name: 'IdentityBuyer',
+        component: () => import('../views/identity/buyer.vue'),
+        meta: { title: '收购商认证申请', hideInMenu: true, requiresAuth: true }
       },
+      // 知识中心逻辑按需求下线，以下路由整体注释保留
+      // {
+      //   path: 'knowledge',
+      //   name: 'Knowledge',
+      //   component: () => import('../views/knowledge/index.vue'),
+      //   meta: { title: '知识中心', icon: 'knowledge', requiresAuth: true }
+      // },
       {
         path: 'dataList',
         name: 'DataList',
