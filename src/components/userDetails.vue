@@ -1,172 +1,182 @@
 <template>
-  <el-drawer
-    :model-value="visible"
-    @update:model-value="$emit('update:visible', $event)"
-    title="个人信息"
-    :size="450"
-    destroy-on-close
-    direction="rtl"
-    class="user-details-drawer user-details-overlay"
-    :before-close="handleClose"
-    :close-on-click-modal="false"
-    :z-index="2000"
-  >
-    <div class="user-details">
-      <div class="details-section">
-        <div class="section-title">基本信息</div>
-        <div class="info-item basic-info-item">
-          <div class="info-label">姓名</div>
-          <div class="info-value">{{ localUserInfo.name }}</div>
+  <div class="user-info-container">
+    <div class="user-info-wrapper">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-icon">
+          <i class="ri-user-settings-line"></i>
         </div>
-        <div class="info-item basic-info-item">
-          <div class="info-label">工号</div>
-          <div class="info-value">{{ localUserInfo.employeeId }}</div>
-        </div>
-        <div class="info-item basic-info-item">
-          <div class="info-label">所属部门</div>
-          <div class="info-value">{{ localUserInfo.department }}</div>
+        <div class="header-content">
+          <h1 class="page-title">{{ $t('userInfo.title') }}</h1>
+          <p class="page-subtitle">{{ $t('userInfo.subtitle') }}</p>
         </div>
       </div>
 
-      <div class="details-section">
-        <div class="section-title">联系方式</div>
-        <div class="info-item">
-          <div class="info-label">
-            <i class="ri-phone-line"></i> 
-            手机
+      <!-- Content Grid -->
+      <div class="content-grid">
+        <!-- Basic Info Card -->
+        <div class="info-card basic-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-user-3-line"></i>
+              <span>{{ $t('userInfo.basicInfo') }}</span>
+            </div>
           </div>
-          <div class="info-value">{{ localUserInfo.phone }}</div>
-          <div class="info-action" @click="handleEditContact('phone')">修改</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">
-            <i class="ri-mail-line"></i> 
-            邮箱
-          </div>
-          <div class="info-value">{{ localUserInfo.email }}</div>
-          <div class="info-action nowrap" @click="handleEditContact('email')">修改</div>
-        </div>
-      </div>
-
-      <div class="details-section">
-        <div class="section-title">账户安全</div>
-        <div class="info-item">
-          <div class="info-label">
-            <i class="ri-lock-line"></i> 
-            登录密码
-          </div>
-          <div class="info-value">已设置</div>
-          <div class="info-action" @click="handleEditSecurity('password')">修改密码</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">
-            <i class="ri-shield-check-line"></i> 
-            安全等级
-          </div>
-          <div class="info-value">
-            <div class="security-level">
-              <span class="security-high">高</span>
+          <div class="card-body">
+            <div class="info-item">
+              <div class="item-label">
+                <i class="ri-user-line"></i>
+                {{ $t('userInfo.name') }}
+              </div>
+              <div class="item-value">{{ localUserInfo.name || '-' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="item-label">
+                <i class="ri-id-card-line"></i>
+                {{ $t('userInfo.employeeId') }}
+              </div>
+              <div class="item-value">{{ localUserInfo.employeeId || '-' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="item-label">
+                <i class="ri-building-line"></i>
+                {{ $t('userInfo.department') }}
+              </div>
+              <div class="item-value">{{ localUserInfo.department || '-' }}</div>
             </div>
           </div>
         </div>
-        <!-- <div class="info-item"> -->
-          <!-- <div class="info-label">
-            <i class="ri-history-line"></i> 
-            上次修改时间
-          </div> -->
-          <!-- <div class="info-value">{{ localUserInfo.lastPasswordChange }}</div> -->
-        <!-- </div> -->
-        <div class="logout-container">
-          <el-button type="danger" @click="handleLogout" class="logout-btn">退出登录</el-button>
+
+        <!-- Contact Info Card -->
+        <div class="info-card contact-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-contacts-line"></i>
+              <span>{{ $t('userInfo.contactInfo') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-item editable">
+              <div class="item-label">
+                <i class="ri-phone-line"></i>
+                {{ $t('userInfo.phone') }}
+              </div>
+              <div class="item-value">{{ localUserInfo.phone || '-' }}</div>
+              <el-button type="primary" plain size="small" @click="handleEditContact('phone')">
+                <i class="ri-edit-line"></i>
+                {{ $t('common.edit') }}
+              </el-button>
+            </div>
+            <div class="info-item editable">
+              <div class="item-label">
+                <i class="ri-mail-line"></i>
+                {{ $t('userInfo.email') }}
+              </div>
+              <div class="item-value">{{ localUserInfo.email || '-' }}</div>
+              <el-button type="primary" plain size="small" @click="handleEditContact('email')">
+                <i class="ri-edit-line"></i>
+                {{ $t('common.edit') }}
+              </el-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Card -->
+        <div class="info-card security-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-shield-check-line"></i>
+              <span>{{ $t('userInfo.accountSecurity') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-item editable">
+              <div class="item-label">
+                <i class="ri-lock-line"></i>
+                {{ $t('userInfo.password') }}
+              </div>
+              <div class="item-value">{{ $t('userInfo.passwordSet') }}</div>
+              <el-button type="primary" plain size="small" @click="handleEditPassword">
+                <i class="ri-lock-password-line"></i>
+                {{ $t('userInfo.modifyPassword') }}
+              </el-button>
+            </div>
+            <div class="info-item">
+              <div class="item-label">
+                <i class="ri-shield-star-line"></i>
+                {{ $t('userInfo.securityLevel') }}
+              </div>
+              <div class="item-value">
+                <span class="security-badge high">
+                  <i class="ri-shield-check-line"></i>
+                  {{ $t('userInfo.securityHigh') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="logout-section">
+              <el-button type="danger" class="logout-btn" @click="handleLogout">
+                <i class="ri-logout-box-line"></i>
+                {{ $t('header.logout') }}
+              </el-button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <!-- 引入修改密码弹窗 -->
-    <ModifyPassword 
-      v-model:visible="passwordDialogVisible"
-    />
 
-    <!-- 引入修改联系方式弹窗 -->
-    <ModifyContact
+    <!-- Modify Contact Dialog -->
+    <modify-contact
       v-model:visible="contactDialogVisible"
       :type="contactEditType"
-      @confirm="handleMessage"
       :current-value="contactCurrentValue"
+      @confirm="handleContactUpdated"
     />
-  </el-drawer>
+
+    <!-- Modify Password Dialog -->
+    <modify-password
+      v-model:visible="passwordDialogVisible"
+    />
+  </div>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch, reactive, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessageBox } from 'element-plus'
-import ModifyPassword from './ModifyPassword.vue'
 import ModifyContact from './ModifyContact.vue'
+import ModifyPassword from './ModifyPassword.vue'
 import { useUserStore } from '@/store'
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  },
-  userInfo: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-const emit = defineEmits(['update:visible', 'confirm'])
-const passwordDialogVisible = ref(false)
-const contactDialogVisible = ref(false)
-const contactEditType = ref('phone')
-const contactCurrentValue = ref('')
+const { t } = useI18n()
 const userStore = useUserStore()
 
-// 创建本地响应式数据存储用户信息
+const contactDialogVisible = ref(false)
+const passwordDialogVisible = ref(false)
+const contactEditType = ref('phone')
+const contactCurrentValue = ref('')
+
 const localUserInfo = reactive({
   name: '',
   employeeId: '',
   department: '',
   phone: '',
-  email: '',
-  lastPasswordChange: ''
+  email: ''
 })
 
-// 从store和props同步用户信息到本地
 const syncUserInfo = async () => {
   try {
     await userStore.fetchUserInfo()
     const storeUserInfo = userStore.userInfo?.user || {}
-    localUserInfo.name = storeUserInfo.name || props.userInfo.name || ''
-    localUserInfo.employeeId = storeUserInfo.employeeId || props.userInfo.employeeId || ''
-    localUserInfo.department = storeUserInfo.organName || props.userInfo.department || ''
-    localUserInfo.phone = storeUserInfo.mobile || props.userInfo.phone || ''
-    localUserInfo.email = storeUserInfo.email || props.userInfo.email || ''
-    
-    // 确保视图更新
+    localUserInfo.name = storeUserInfo.name || ''
+    localUserInfo.employeeId = storeUserInfo.employeeId || ''
+    localUserInfo.department = storeUserInfo.organName || ''
+    localUserInfo.phone = storeUserInfo.mobile || ''
+    localUserInfo.email = storeUserInfo.email || ''
     await nextTick()
   } catch (error) {
-    console.log('error',error)
-  }
-}
-
-// 监听visible变化，当抽屉打开时同步用户信息
-watch(() => props.visible, async (isVisible) => {
-  if (isVisible) {
-    await syncUserInfo()
-  }
-}, { immediate: true })
-
-const handleClose = () => {
-  emit('update:visible', false)
-}
-
-// 处理ModifyContact组件的confirm事件
-const handleMessage = async (data) => {
-  try {
-    await syncUserInfo()
-  } catch (error) {
-    console.error('处理用户信息更新失败', error)
+    console.log('error', error)
   }
 }
 
@@ -176,175 +186,307 @@ const handleEditContact = (type) => {
   contactDialogVisible.value = true
 }
 
-const handleEditSecurity = (type) => {
-  if (type === 'password') {
-    passwordDialogVisible.value = true
-  }
+const handleEditPassword = () => {
+  passwordDialogVisible.value = true
+}
+
+const handleContactUpdated = async () => {
+  await syncUserInfo()
 }
 
 const handleLogout = () => {
   ElMessageBox.confirm(
-    '确定要退出登录吗？',
-    '提示',
+    t('userInfo.confirmLogout'),
+    t('common.tips'),
     {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
     }
   )
     .then(() => {
       userStore.logoutAndRedirect()
     })
-    .catch(() => {
-      // 用户取消操作，不做任何处理
-    })
+    .catch(() => {})
 }
+
+onMounted(() => {
+  syncUserInfo()
+})
 </script>
 
-<style>
-/* 全局样式，解决黑色边框问题 */
-.el-drawer__header {
-    padding: 10px 0 0 20px;
-}
-
-/* .el-drawer__title {
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  text-align: left !important;
-  margin: 0 !important;
-  padding: 0 !important;
-} */
-
-/* .el-drawer__close-btn {
-  position: static !important;
-  transform: none !important;
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-  background-color: transparent !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-} */
-
-.el-drawer * {
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-/* 移动端点击高亮问题 */
-* {
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-/* 修复移动端点击闪烁问题 */
-html, body {
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-input, button, a, div {
-  -webkit-tap-highlight-color: transparent !important;
-  outline: none !important;
-}
-</style>
-
 <style scoped>
-.user-details {
-  padding: 0 16px;
+.user-info-container {
+  min-height: calc(100vh - 200px);
+  background: linear-gradient(to bottom, #f8fafb 0%, #ffffff 100%);
+  padding: 32px 24px;
 }
 
-.details-section {
-  margin-bottom: 24px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 16px;
+.user-info-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.details-section:last-child {
+/* Page Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding: 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+}
+
+.header-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 154, 68, 0.25);
+  flex-shrink: 0;
+}
+
+.header-icon i {
+  font-size: 40px;
+  color: white;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #009A44;
+  margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: #909399;
+  margin: 0;
+}
+
+/* Content Grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+/* Info Card */
+.info-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 154, 68, 0.12);
+  border-color: rgba(0, 154, 68, 0.2);
+}
+
+.card-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #009A44;
+}
+
+.card-title i {
+  font-size: 22px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+/* Info Item */
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-item:last-child {
   border-bottom: none;
 }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 16px;
-}
-
-.info-item {
+.item-label {
   display: flex;
-  margin-bottom: 16px;
   align-items: center;
-}
-
-.basic-info-item {
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.basic-info-item .info-label {
-  margin-bottom: 8px;
-}
-
-.basic-info-item .info-value {
-  padding-left: 0;
-}
-
-.info-label {
-  width: 120px;
+  gap: 8px;
+  min-width: 120px;
+  font-size: 14px;
+  font-weight: 500;
   color: #606266;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
 }
 
-.info-label i {
-  margin-right: 4px;
-  font-size: 16px;
+.item-label i {
+  font-size: 18px;
+  color: #009A44;
 }
 
-.info-value {
+.item-value {
   flex: 1;
+  font-size: 15px;
   color: #303133;
-  font-size: 14px;
+  font-weight: 500;
 }
 
-.info-action {
-  color: #1c59e2;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
+.info-item.editable {
+  gap: 16px;
 }
 
-.info-action:hover {
-  opacity: 0.8;
+.info-item.editable .item-value {
+  flex: 1;
+  min-width: 0;
 }
 
-.nowrap {
-  white-space: nowrap;
+/* Buttons */
+.info-item :deep(.el-button) {
+  border-radius: 8px;
+  font-weight: 600;
+  border-color: #009A44;
+  color: #009A44;
 }
 
-.security-level {
+.info-item :deep(.el-button:hover) {
+  background: rgba(0, 154, 68, 0.08);
+  border-color: #009A44;
+  color: #009A44;
+}
+
+.info-item :deep(.el-button i) {
+  margin-right: 4px;
+}
+
+/* Security Badge */
+.security-badge {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.security-high {
-  color: #67c23a;
-  background-color: rgba(103, 194, 58, 0.1);
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 12px;
+.security-badge.high {
+  background: rgba(0, 154, 68, 0.1);
+  color: #009A44;
+  border: 1px solid rgba(0, 154, 68, 0.2);
 }
 
-/* 全局清除点击效果 */
-:deep(.user-details-drawer) * {
-  -webkit-tap-highlight-color: transparent !important;
+.security-badge i {
+  font-size: 16px;
+}
+
+/* Logout Section */
+.logout-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.logout-btn {
+  min-width: 200px;
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #DA121A 0%, #FF3D47 100%);
+  border: none;
 }
 
 .logout-btn:hover {
-  opacity: 0.8;
+  background: linear-gradient(135deg, #C10F17 0%, #DA121A 100%);
 }
 
-.logout-container {
-  text-align: center;
+.logout-btn i {
+  margin-right: 6px;
+  font-size: 18px;
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .user-info-container {
+    padding: 16px;
+  }
+
+  .page-header {
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .header-icon i {
+    font-size: 32px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .card-header {
+    padding: 16px 20px;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .info-item.editable {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .item-label {
+    min-width: auto;
+  }
+
+  .item-value {
+    width: 100%;
+  }
+
+  .logout-btn {
+    width: 100%;
+  }
 }
 </style>

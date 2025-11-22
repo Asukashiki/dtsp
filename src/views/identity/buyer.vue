@@ -1,116 +1,226 @@
 <template>
   <div class="page-container">
-    <el-card class="panel" shadow="never">
-      <template #header>
-        <div class="panel-header">
-          <div class="panel-title">收购商身份认证申请</div>
-          <div class="panel-sub">请填写以下信息以完成收购主体认证</div>
+    <div class="page-card">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="header-icon">
+          <i class="ri-shopping-basket-2-line"></i>
         </div>
-      </template>
-
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="140px" class="form-body" status-icon>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="企业名称" prop="name">
-              <el-input v-model.trim="form.name" placeholder="请输入企业名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="统一社会信用代码" prop="uscc">
-              <el-input v-model.trim="form.uscc" placeholder="请输入统一社会信用代码（18位）" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="负责人姓名" prop="principalName">
-              <el-input v-model.trim="form.principalName" placeholder="请输入负责人姓名" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="负责人身份证号" prop="principalIdNo">
-              <el-input v-model.trim="form.principalIdNo" placeholder="请输入负责人身份证号" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="行政区划" prop="region">
-              <el-cascader v-model="form.region" :options="regionOptions" placeholder="请选择行政区划" filterable clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="主要收购产品类型" prop="productTypes">
-              <el-select v-model="form.productTypes" placeholder="请选择产品类型" multiple clearable collapse-tags collapse-tags-tooltip>
-                <el-option v-for="o in productTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24">
-            <el-form-item label="营业执照" prop="license">
-              <el-upload
-                class="upload-block"
-                action="#"
-                :auto-upload="false"
-                :on-change="handleFileChange"
-                :file-list="form.license"
-                :limit="3"
-                accept=".jpg,.jpeg,.png,.pdf"
-                list-type="text"
-              >
-                <el-button type="primary" plain>上传营业执照</el-button>
-                <template #tip>
-                  <div class="el-upload__tip">支持 jpg/png/pdf，最多3个文件</div>
-                </template>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="联系人姓名" prop="contactName">
-              <el-input v-model.trim="form.contactName" placeholder="请输入联系人姓名" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人手机" prop="contactMobile">
-              <el-input v-model.trim="form.contactMobile" placeholder="请输入联系人手机" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      <template v-if="isReview">
-        <el-divider />
-        <el-row :gutter="16">
-          <el-col :span="24">
-            <el-form-item label="审核意见" prop="auditOpinion">
-              <el-input type="textarea" v-model.trim="form.auditOpinion" placeholder="请输入审核意见" :rows="3" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="审核结果" prop="auditResult">
-              <el-radio-group v-model="form.auditResult">
-                <el-radio-button label="pass">通过</el-radio-button>
-                <el-radio-button label="reject">驳回</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </template>
-
-      <div class="actions">
-        <el-button @click="$router.back()">返回</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleSubmit">{{ isReview ? '提交审核结果' : '提交' }}</el-button>
+        <h1 class="header-title">{{ $t('identity.buyerTitle') }}</h1>
+        <p class="header-subtitle">{{ $t('identity.buyerSubtitle') }}</p>
       </div>
+
+      <!-- Form -->
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="160px" class="form-body" status-icon>
+        <!-- Company Info Section -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-building-4-line"></i>
+            <span>{{ $t('identity.form.entityName') }}</span>
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.entityName')" prop="name">
+                <el-input v-model.trim="form.name" :placeholder="$t('identity.placeholder.entityName')" clearable>
+                  <template #prefix>
+                    <i class="ri-building-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.uscc')" prop="uscc">
+                <el-input v-model.trim="form.uscc" :placeholder="$t('identity.placeholder.uscc')" clearable>
+                  <template #prefix>
+                    <i class="ri-barcode-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.region')" prop="region">
+                <el-cascader
+                  v-model="form.region"
+                  :options="regionOptions"
+                  :placeholder="$t('identity.placeholder.region')"
+                  filterable
+                  clearable
+                  class="full-width"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.productTypes')" prop="productTypes">
+                <el-select
+                  v-model="form.productTypes"
+                  :placeholder="$t('identity.placeholder.productTypes')"
+                  multiple
+                  clearable
+                  collapse-tags
+                  collapse-tags-tooltip
+                  class="full-width"
+                >
+                  <el-option v-for="o in productTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- Principal Section -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-user-settings-line"></i>
+            <span>{{ $t('identity.form.principalName') }}</span>
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.principalName')" prop="principalName">
+                <el-input v-model.trim="form.principalName" :placeholder="$t('identity.placeholder.principalName')" clearable>
+                  <template #prefix>
+                    <i class="ri-user-3-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.principalIdNo')" prop="principalIdNo">
+                <el-input v-model.trim="form.principalIdNo" :placeholder="$t('identity.placeholder.principalIdNo')" clearable>
+                  <template #prefix>
+                    <i class="ri-id-card-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- License Section -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-file-text-line"></i>
+            <span>{{ $t('identity.form.license') }}</span>
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item :label="$t('identity.form.license')" prop="license">
+                <el-upload
+                  class="upload-block"
+                  action="#"
+                  :auto-upload="false"
+                  :on-change="handleFileChange"
+                  :file-list="form.license"
+                  :limit="3"
+                  accept=".jpg,.jpeg,.png,.pdf"
+                  list-type="text"
+                >
+                  <el-button type="primary" plain class="upload-btn">
+                    <i class="ri-upload-2-line"></i>
+                    {{ $t('identity.form.license') }}
+                  </el-button>
+                  <template #tip>
+                    <div class="upload-tip">{{ $t('identity.uploadTip', { count: 3 }) }}</div>
+                  </template>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-contacts-line"></i>
+            <span>{{ $t('identity.form.contactName') }}</span>
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.contactName')" prop="contactName">
+                <el-input v-model.trim="form.contactName" :placeholder="$t('identity.placeholder.contactName')">
+                  <template #prefix>
+                    <i class="ri-user-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :xs="24">
+              <el-form-item :label="$t('identity.form.contactMobile')" prop="contactMobile">
+                <el-input v-model.trim="form.contactMobile" :placeholder="$t('identity.placeholder.contactMobile')">
+                  <template #prefix>
+                    <i class="ri-phone-line"></i>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- Audit Section (Review Mode) -->
+        <template v-if="isReview">
+          <div class="form-section audit-section">
+            <div class="section-title audit-title">
+              <i class="ri-checkbox-circle-line"></i>
+              <span>{{ $t('identity.form.auditResult') }}</span>
+            </div>
+
+            <el-row :gutter="24">
+              <el-col :span="24">
+                <el-form-item :label="$t('identity.form.auditOpinion')" prop="auditOpinion">
+                  <el-input
+                    type="textarea"
+                    v-model.trim="form.auditOpinion"
+                    :placeholder="$t('identity.placeholder.auditOpinion')"
+                    :rows="3"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item :label="$t('identity.form.auditResult')" prop="auditResult">
+                  <el-radio-group v-model="form.auditResult" class="audit-radio-group">
+                    <el-radio-button label="pass" class="pass-btn">
+                      <i class="ri-checkbox-circle-line"></i>
+                      {{ $t('identity.form.pass') }}
+                    </el-radio-button>
+                    <el-radio-button label="reject" class="reject-btn">
+                      <i class="ri-close-circle-line"></i>
+                      {{ $t('identity.form.reject') }}
+                    </el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+        </template>
+
+        <!-- Actions -->
+        <div class="actions">
+          <el-button class="back-btn" @click="$router.back()">
+            <i class="ri-arrow-left-line"></i>
+            {{ $t('common.back') }}
+          </el-button>
+          <el-button type="primary" class="submit-btn" :loading="submitting" @click="handleSubmit">
+            <i class="ri-check-line"></i>
+            {{ $t('common.submit') }}
+          </el-button>
+        </div>
       </el-form>
-    </el-card>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const { t } = useI18n()
 const isReview = computed(() => route.query.mode === 'review')
 
 const formRef = ref()
@@ -126,43 +236,55 @@ const form = reactive({
   license: [],
   contactName: '',
   contactMobile: '',
-  // 审核
   auditOpinion: '',
   auditResult: ''
 })
 
 const regionOptions = ref([
-  { value: 'ethiopia', label: '埃塞俄比亚', children: [
-    { value: 'oromia', label: '奥罗米亚' },
-    { value: 'amhara', label: '阿姆哈拉' }
+  { value: 'ethiopia', label: 'Ethiopia', children: [
+    { value: 'oromia', label: 'Oromia' },
+    { value: 'amhara', label: 'Amhara' },
+    { value: 'tigray', label: 'Tigray' },
+    { value: 'snnpr', label: 'SNNPR' }
   ]}
 ])
 
 const productTypeOptions = ref([
-  { value: 'coffee', label: '咖啡' },
-  { value: 'sesame', label: '芝麻' },
-  { value: 'maize', label: '玉米' },
-  { value: 'wheat', label: '小麦' }
+  { value: 'coffee', label: 'Coffee' },
+  { value: 'sesame', label: 'Sesame' },
+  { value: 'maize', label: 'Maize' },
+  { value: 'wheat', label: 'Wheat' },
+  { value: 'barley', label: 'Barley' },
+  { value: 'teff', label: 'Teff' }
 ])
 
-// 校验器
+// Validators
 const isUSCC = (val) => /^[0-9A-Z]{18}$/i.test(val)
 const isIdCard = (val) => /^[0-9A-Za-z]{6,20}$/.test(val)
 const isPhone = (val) => /^[0-9\-+()\s]{7,18}$/.test(val)
 
-const rules = reactive({
-  name: [{ required: true, message: '请输入企业名称', trigger: 'blur' }],
-  uscc: [ { required: true, message: '请输入统一社会信用代码', trigger: 'blur' }, { validator: (_r, v, cb) => isUSCC(v) ? cb() : cb(new Error('统一社会信用代码应为18位字母数字')), trigger: ['blur','change'] } ],
-  principalName: [{ required: true, message: '请输入负责人姓名', trigger: 'blur' }],
-  principalIdNo: [ { required: true, message: '请输入负责人身份证号', trigger: 'blur' }, { validator: (_r, v, cb) => isIdCard(v) ? cb() : cb(new Error('身份证号格式不正确')), trigger: ['blur','change'] } ],
-  region: [{ required: true, message: '请选择行政区划', trigger: 'change' }],
-  productTypes: [{ required: true, message: '请选择主要收购产品类型', trigger: 'change' }],
-  license: [{ required: true, message: '请上传营业执照', trigger: 'change' }],
-  contactName: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
-  contactMobile: [ { required: true, message: '请输入联系人手机', trigger: 'blur' }, { validator: (_r, v, cb) => isPhone(v) ? cb() : cb(new Error('手机格式不正确')), trigger: ['blur','change'] } ],
-  auditOpinion: [ { required: computed(() => isReview.value).value, message: '请输入审核意见', trigger: 'blur' } ],
-  auditResult: [ { required: computed(() => isReview.value).value, message: '请选择审核结果', trigger: 'change' } ]
-})
+const rules = computed(() => ({
+  name: [{ required: true, message: t('identity.placeholder.entityName'), trigger: 'blur' }],
+  uscc: [
+    { required: true, message: t('identity.placeholder.uscc'), trigger: 'blur' },
+    { validator: (_r, v, cb) => isUSCC(v) ? cb() : cb(new Error(t('identity.placeholder.uscc'))), trigger: ['blur', 'change'] }
+  ],
+  principalName: [{ required: true, message: t('identity.placeholder.principalName'), trigger: 'blur' }],
+  principalIdNo: [
+    { required: true, message: t('identity.placeholder.principalIdNo'), trigger: 'blur' },
+    { validator: (_r, v, cb) => isIdCard(v) ? cb() : cb(new Error(t('identity.placeholder.principalIdNo'))), trigger: ['blur', 'change'] }
+  ],
+  region: [{ required: true, message: t('identity.placeholder.region'), trigger: 'change' }],
+  productTypes: [{ required: true, message: t('identity.placeholder.productTypes'), trigger: 'change' }],
+  license: [{ required: true, message: t('identity.form.license'), trigger: 'change' }],
+  contactName: [{ required: true, message: t('identity.placeholder.contactName'), trigger: 'blur' }],
+  contactMobile: [
+    { required: true, message: t('identity.placeholder.contactMobile'), trigger: 'blur' },
+    { validator: (_r, v, cb) => isPhone(v) ? cb() : cb(new Error(t('identity.placeholder.contactMobile'))), trigger: ['blur', 'change'] }
+  ],
+  auditOpinion: [{ required: isReview.value, message: t('identity.placeholder.auditOpinion'), trigger: 'blur' }],
+  auditResult: [{ required: isReview.value, message: t('identity.form.auditResult'), trigger: 'change' }]
+}))
 
 const handleFileChange = (file, fileList) => {
   form.license = fileList
@@ -173,11 +295,10 @@ const handleSubmit = () => {
     if (!valid) return
     try {
       submitting.value = true
-      // TODO: 接入接口：提交收购商认证 / 审核
-      // await api.submitBuyer(form)
-      ElMessage.success(isReview.value ? '审核结果已提交' : '提交成功')
+      // TODO: Connect to API
+      ElMessage.success(t('common.success'))
     } catch (e) {
-      ElMessage.error('提交失败，请稍后重试')
+      ElMessage.error(t('common.failed'))
     } finally {
       submitting.value = false
     }
@@ -187,20 +308,248 @@ const handleSubmit = () => {
 
 <style scoped>
 .page-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  height: calc(100vh - 64px - 161px);
-  box-sizing: border-box;
+  padding: 32px 24px;
+  min-height: calc(100vh - 200px);
 }
-.panel { height: 100%; }
-.panel-header { text-align: center; }
-.panel-title { font-size: 20px; font-weight: 600; color: #303133; }
-.panel-sub { color: #909399; font-size: 13px; margin-top: 4px; }
-.mb16 { margin-bottom: 16px; }
-.form-body { padding-top: 8px; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
-.col-span-2 { grid-column: span 2; }
-.upload-block { width: 100%; }
-.actions { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
-@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .col-span-2 { grid-column: span 1; } }
+
+.page-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid rgba(218, 18, 26, 0.15);
+}
+
+.header-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #DA121A 0%, #FF3D47 100%);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(218, 18, 26, 0.3);
+}
+
+.header-icon i {
+  font-size: 36px;
+  color: white;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #DA121A;
+  margin: 0 0 10px 0;
+}
+
+.header-subtitle {
+  font-size: 15px;
+  color: #909399;
+  margin: 0;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(218, 18, 26, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(218, 18, 26, 0.1);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #DA121A;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(218, 18, 26, 0.12);
+}
+
+.section-title i {
+  font-size: 20px;
+}
+
+/* Audit Section */
+.audit-section {
+  background: rgba(0, 154, 68, 0.03);
+  border-color: rgba(0, 154, 68, 0.15);
+}
+
+.audit-title {
+  color: #009A44;
+  border-bottom-color: rgba(0, 154, 68, 0.15);
+}
+
+/* Form Items */
+.form-body :deep(.el-form-item__label) {
+  color: #606266;
+  font-weight: 500;
+}
+
+.form-body :deep(.el-input__wrapper),
+.form-body :deep(.el-textarea__inner) {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-body :deep(.el-input__wrapper:hover),
+.form-body :deep(.el-textarea__inner:hover) {
+  box-shadow: 0 0 0 1px #DA121A inset;
+}
+
+.form-body :deep(.el-input__wrapper.is-focus),
+.form-body :deep(.el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #DA121A inset;
+}
+
+.form-body :deep(.el-input__prefix) {
+  color: #909399;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Upload */
+.upload-block {
+  width: 100%;
+}
+
+.upload-btn {
+  border-color: #DA121A;
+  color: #DA121A;
+}
+
+.upload-btn:hover {
+  background: rgba(218, 18, 26, 0.08);
+}
+
+.upload-btn i {
+  margin-right: 6px;
+}
+
+.upload-tip {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 6px;
+}
+
+/* Audit Radio Group */
+.audit-radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+.audit-radio-group :deep(.el-radio-button__inner) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.audit-radio-group :deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-radius: 8px;
+}
+
+.audit-radio-group :deep(.el-radio-button:last-child .el-radio-button__inner) {
+  border-radius: 8px;
+}
+
+.audit-radio-group :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  background-color: #009A44;
+  border-color: #009A44;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.back-btn {
+  min-width: 120px;
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.back-btn i {
+  margin-right: 6px;
+}
+
+.submit-btn {
+  min-width: 140px;
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #DA121A 0%, #FF3D47 100%);
+  border: none;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #C10F17 0%, #DA121A 100%);
+}
+
+.submit-btn i {
+  margin-right: 6px;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+
+  .page-card {
+    padding: 24px 16px;
+  }
+
+  .header-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header-icon i {
+    font-size: 30px;
+  }
+
+  .header-title {
+    font-size: 24px;
+  }
+
+  .form-section {
+    padding: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .back-btn,
+  .submit-btn {
+    width: 100%;
+  }
+}
 </style>

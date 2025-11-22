@@ -1,81 +1,99 @@
 <template>
   <el-dialog
     v-model="dialogVisible"
-    width="520px"
+    width="560px"
     :close-on-click-modal="false"
     :before-close="handleClose"
     class="password-dialog"
-    :title="null"
   >
     <template #header>
-      <div class="dialog-title">
-        <img src="../assets/Title.svg" alt="标题图标" class="title-icon" />
-        <span>修改密码</span>
+      <div class="dialog-header">
+        <div class="header-icon">
+          <i class="ri-lock-password-line"></i>
+        </div>
+        <div class="header-title">
+          {{ $t('userInfo.modifyPassword') }}
+        </div>
       </div>
     </template>
-    
-    <el-form 
-      ref="formRef" 
-      :model="form" 
-      :rules="rules" 
+
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
       label-position="top"
       class="password-form"
     >
-      <el-form-item prop="currentPassword" label="当前密码">
+      <el-form-item prop="currentPassword" :label="$t('userInfo.currentPassword')">
         <el-input
           v-model="form.currentPassword"
           type="password"
-          placeholder="请输入当前密码"
+          :placeholder="$t('userInfo.enterCurrentPassword')"
           show-password
+          size="large"
         >
           <template #prefix>
             <i class="ri-lock-line"></i>
           </template>
         </el-input>
       </el-form-item>
-      
-      <el-form-item prop="newPassword" label="新密码">
+
+      <el-form-item prop="newPassword" :label="$t('userInfo.newPassword')">
         <el-input
           v-model="form.newPassword"
           type="password"
-          placeholder="请输入新密码"
+          :placeholder="$t('userInfo.enterNewPassword')"
           show-password
+          size="large"
         >
           <template #prefix>
             <i class="ri-lock-password-line"></i>
           </template>
         </el-input>
       </el-form-item>
-      
-      <el-form-item prop="confirmPassword" label="确认新密码">
+
+      <el-form-item prop="confirmPassword" :label="$t('userInfo.confirmPassword')">
         <el-input
           v-model="form.confirmPassword"
           type="password"
-          placeholder="再次输入新密码"
+          :placeholder="$t('userInfo.enterConfirmPassword')"
           show-password
+          size="large"
         >
           <template #prefix>
             <i class="ri-shield-keyhole-line"></i>
           </template>
         </el-input>
       </el-form-item>
+
+      <div class="password-hint">
+        <i class="ri-information-line"></i>
+        <span>{{ $t('userInfo.passwordRule') }}</span>
+      </div>
     </el-form>
-    
+
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="loading" class="confirm-btn">确认修改</el-button>
+        <el-button @click="handleCancel" size="large">
+          {{ $t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="handleConfirm" :loading="loading" class="confirm-btn" size="large">
+          <i class="ri-check-line"></i>
+          {{ $t('common.confirm') }}
+        </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue'
+import { ref, defineProps, defineEmits, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { postResetPassword } from '@/api/user'
 import { useUserStore } from '@/store'
 
+const { t } = useI18n()
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -84,7 +102,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:visible', 'confirm'])
-
 const dialogVisible = ref(props.visible)
 const loading = ref(false)
 const formRef = ref(null)
@@ -96,54 +113,49 @@ const form = ref({
   confirmPassword: ''
 })
 
-// 验证新密码是否符合规则
+// Validate new password
 const validateNewPassword = (rule, value, callback) => {
-  // 至少包含一位数字和一位字母，长度不少于8位
   const pattern = /^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/
   if (!pattern.test(value)) {
-    callback(new Error('密码应至少包含一位数字和一位字母，且不少于8位'))
+    callback(new Error(t('userInfo.passwordRule')))
   } else if (value === form.value.currentPassword) {
-    callback(new Error('新密码不能与当前密码相同'))
+    callback(new Error(t('userInfo.passwordNotSame')))
   } else {
     callback()
   }
 }
 
-// 验证确认密码是否与新密码一致
+// Validate confirm password
 const validateConfirmPassword = (rule, value, callback) => {
   if (value !== form.value.newPassword) {
-    callback(new Error('两次输入的密码不一致'))
+    callback(new Error(t('userInfo.passwordNotMatch')))
   } else {
     callback()
   }
 }
 
-const rules = {
-  currentPassword: [
-    { required: true, message: '请输入当前密码', trigger: 'blur' }
-  ],
+const rules = computed(() => ({
+  currentPassword: [{ required: true, message: t('userInfo.enterCurrentPassword'), trigger: 'blur' }],
   newPassword: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { required: true, message: t('userInfo.enterNewPassword'), trigger: 'blur' },
     { validator: validateNewPassword, trigger: 'blur' }
   ],
   confirmPassword: [
-    { required: true, message: '请确认新密码', trigger: 'blur' },
+    { required: true, message: t('userInfo.enterConfirmPassword'), trigger: 'blur' },
     { validator: validateConfirmPassword, trigger: 'blur' }
   ]
-}
+}))
 
-// 监听visible属性变化
 watch(
   () => props.visible,
   (val) => {
     dialogVisible.value = val
     if (val) {
-      resetForm() // 打开弹窗时重置表单
+      resetForm()
     }
   }
 )
 
-// 监听对话框状态变化
 watch(
   () => dialogVisible.value,
   (val) => {
@@ -176,21 +188,20 @@ const resetForm = () => {
 
 const handleConfirm = () => {
   if (!formRef.value) return
-  
+
   formRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
-      
+
       try {
         const userInfo = userStore.userInfo?.user || {}
-        // 实际调用API
         await postResetPassword({
           userId: userInfo.ID,
           password: form.value.currentPassword,
           newPassword: form.value.newPassword,
           confirmPassword: form.value.confirmPassword
-        })      
-        ElMessage.success('密码修改成功 即将跳转到登录页面')
+        })
+        ElMessage.success(t('userInfo.modifySuccess'))
         resetForm()
         emit('update:visible', false)
         userStore.logoutAndRedirect(1000)
@@ -205,8 +216,49 @@ const handleConfirm = () => {
 </script>
 
 <style scoped>
+/* Dialog Header */
+:deep(.el-dialog__header) {
+  padding: 24px 24px 20px;
+  margin: 0;
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.25);
+}
+
+.header-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #009A44;
+}
+
+/* Dialog Body */
+:deep(.el-dialog__body) {
+  padding: 32px 24px;
+}
+
 .password-form {
-  padding: 0 20px;
+  padding: 0;
 }
 
 :deep(.el-form-item) {
@@ -214,48 +266,106 @@ const handleConfirm = () => {
 }
 
 :deep(.el-form-item__label) {
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   color: #606266;
-  padding-bottom: 0;
+  padding-bottom: 10px;
 }
 
-.el-input :deep(.el-input__prefix) {
-  margin-right: 8px;
+:deep(.el-input__wrapper) {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  transition: all 0.3s ease;
+}
+
+:deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #009A44 inset;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #009A44 inset;
+}
+
+:deep(.el-input__prefix) {
+  color: #009A44;
+  font-size: 18px;
+}
+
+/* Password Hint */
+.password-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0, 154, 68, 0.05);
+  border-left: 3px solid #009A44;
+  border-radius: 4px;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.password-hint i {
+  font-size: 18px;
+  color: #009A44;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.password-hint span {
+  font-size: 13px;
+  color: #606266;
+  line-height: 1.6;
+}
+
+/* Dialog Footer */
+:deep(.el-dialog__footer) {
+  padding: 20px 24px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .dialog-footer {
   display: flex;
   justify-content: center;
-  padding-top: 8px;
+  gap: 12px;
 }
 
 :deep(.el-button) {
-  padding: 10px 32px;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-:deep(.confirm-btn) {
-  background-color: #1C59E2;
-  border-color: #1C59E2;
-}
-
-:deep(.confirm-btn:hover) {
-  background-color: #1950cc;
-  border-color: #1950cc;
-}
-
-.dialog-title {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
+  min-width: 120px;
+  border-radius: 8px;
   font-weight: 600;
-  color: #303133;
 }
 
-.title-icon {
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
+.confirm-btn {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border: none;
 }
-</style> 
+
+.confirm-btn:hover {
+  background: linear-gradient(135deg, #008038 0%, #009A44 100%);
+}
+
+.confirm-btn i {
+  margin-right: 4px;
+}
+
+/* Dialog */
+:deep(.el-dialog) {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  :deep(.el-dialog) {
+    width: 90% !important;
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+  }
+
+  :deep(.el-button) {
+    width: 100%;
+  }
+}
+</style>

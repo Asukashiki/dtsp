@@ -1,1097 +1,697 @@
 <template>
   <div class="home-container">
-    <div class="content-container" v-loading="loading" >
-      <div class="top-section-layout">
-        <!-- 系统公告部分 -->
-        <div class="section-container announcement-section">
-          <div class="section-header">
-            <div class="section-title">
-              <img src="../../assets/Title.svg" alt="Title" class="title-icon">
-              <span>系统公告</span>
-            </div>
-            <div class="more-link" @click="handleMoreAnnouncements('systemAnnouncement')">查看更多 ></div>
+    <div class="content-wrapper">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">{{ $t('home.heroTitle') }}</h1>
+            <p class="hero-subtitle">{{ $t('home.heroSubtitle') }}</p>
+            <p class="hero-description">{{ $t('home.heroDescription') }}</p>
           </div>
-          <div class="announcement-list">
-            <div 
-              v-for="(item, index) in announcementList" 
-              :key="index" 
-              class="announcement-item"
-              @click="handleAnnouncementClick(item)"
-            >
-              <div class="item-icon">
-                <i class="ri-notification-3-line"></i>
-              </div>
-              <div class="item-content">
-                <div class="item-title">{{ item.name }}</div>
-                <div class="item-desc">{{ item.content }}</div>
-              </div>
-              <div class="item-time">{{ item.publicTime }}</div>
-            </div>
-          </div>
-        </div>
-      
-        <!-- 常用系统部分 -->
-        <div class="section-container common-systems-section">
-          <div class="section-header common-systems-header">
-            <div class="section-title">
-              <img src="../../assets/Title_white.svg" alt="Title" class="title-icon">
-              <span>常用系统</span>
-            </div>
-          </div>
-          <div class="common-system-content">
-            <el-tooltip 
-              v-for="(entry, index) in SYSTEMDATA.slice(0, 6)" 
-              :key="index"
-              :content="entry.name"
-              placement="top"
-              :show-after="500"
-            >
-              <div 
-                class="common-system-item"
-                @click="handleSystemEntryClick(entry)"
-              >
-                <div class="common-system-icon" :style="{ backgroundColor: entry.iconBg || '#1c59e2' }">
-                  <i :class="getIconClass(entry.icon)"></i>
-                </div>
-                <div class="common-system-name">{{ entry.name }}</div>
-              </div>
-            </el-tooltip>
+          <div class="hero-image">
+            <i class="ri-plant-fill"></i>
+            <i class="ri-seedling-line"></i>
+            <i class="ri-leaf-line"></i>
           </div>
         </div>
       </div>
-      
-      <!-- 系统入口部分 -->
-      <div class="section-container system-entries-section">
+
+      <!-- Announcements Section -->
+      <div class="section announcements-section">
         <div class="section-header">
-          <div class="section-title">
-            <img src="../../assets/Title.svg" alt="Title" class="title-icon">
-            <span>系统入口</span>
+          <div class="section-title-wrapper">
+            <i class="ri-notification-3-line section-icon"></i>
+            <h2 class="section-title">{{ $t('home.announcement') }}</h2>
+          </div>
+          <div class="section-action" @click="handleMoreAnnouncements">
+            {{ $t('home.viewAll') }}
+            <i class="ri-arrow-right-line"></i>
           </div>
         </div>
-        <div class="entry-grid system-entries-grid">
-          <div 
-            v-for="(entry, index) in SYSTEMDATA" 
-            :key="index" 
-            class="entry-item"
-            @click="handleSystemEntryClick(entry)"
+        <div class="announcements-list">
+          <div
+            v-for="(item, index) in announcementList"
+            :key="index"
+            class="announcement-item"
+            @click="handleAnnouncementClick(item)"
           >
-            <div class="entry-icon" :style="{ backgroundColor: entry.iconBg || '#1c59e2' }">
-              <i :class="getIconClass(entry.icon)"></i>
+            <div class="announcement-icon">
+              <i class="ri-megaphone-line"></i>
             </div>
-            <div class="entry-name">{{ entry.name }}</div>
+            <div class="announcement-content">
+              <div class="announcement-title">{{ item.name }}</div>
+              <div class="announcement-desc">{{ item.content }}</div>
+            </div>
+            <div class="announcement-time">{{ item.publicTime }}</div>
+          </div>
+          <div v-if="!announcementList || announcementList.length === 0" class="empty-state">
+            <i class="ri-inbox-line"></i>
+            <p>{{ $t('home.noData') }}</p>
           </div>
         </div>
       </div>
-      
-      <!-- 操作指南部分 -->
-      <div class="section-container guide-section">
+
+      <!-- System Entries Section -->
+      <div class="section system-entries-section">
         <div class="section-header">
-          <div class="section-title">
-            <img src="../../assets/Title.svg" alt="Title" class="title-icon">
-            <span>操作指南</span>
+          <div class="section-title-wrapper">
+            <i class="ri-apps-line section-icon"></i>
+            <h2 class="section-title">{{ $t('home.systemEntries') }}</h2>
           </div>
         </div>
-        <div class="guide-content">
-          <div class="guide-items-row">
-            <div 
-              v-for="(item, index) in guideItems" 
-              :key="index" 
-              class="guide-item" 
-              @click="handleGuideClick(item)"
-            >
-              <div class="guide-item-icon" :style="{ color: item.color }">
-                <i :class="getGuideIconClass(item.icon)"></i>
-              </div>
-              <div class="guide-item-content">
-                <div class="guide-item-title">{{ item.title }}</div>
-                <div class="guide-item-desc">{{ item.desc }}</div>
-                <!-- <div class="guide-item-stats">{{ item.viewCount }} · {{ item.downloadCount }}</div> -->
-              </div>
+        <div class="system-grid">
+          <div
+            v-for="(module, key) in systemModules"
+            :key="key"
+            class="system-card"
+            @click="handleSystemClick(module)"
+          >
+            <div class="system-icon-wrapper" :style="{ background: module.gradient }">
+              <i :class="module.icon"></i>
+            </div>
+            <div class="system-info">
+              <h3 class="system-name">{{ module.name }}</h3>
+              <p class="system-desc">{{ module.desc }}</p>
+            </div>
+            <div class="system-arrow">
+              <i class="ri-arrow-right-s-line"></i>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- 我的已办和待办部分 -->
-      <div class="two-column-layout">
-        <div class="column">
-          <CommonTable
-            title="我的已办"
-            :data="todoData"
-            :columns="todoColumns"
-            @row-click="handleTodoRowClick"
-            @more-click="handleMoreTodo"
-          />
-        </div>
-        <div class="column">
-          <CommonTable
-            title="我的待办"
-            :data="pendingData"
-            :columns="pendingColumns"
-            @row-click="handlePendingRowClick"
-            @more-click="handleMorePending"
-          />
-        </div>
-      </div>
-      
-      <!-- 图表部分 -->
-      <div class="two-column-layout">
-        <div class="column">
-          <div class="section-container">
-            <div class="section-header">
-              <div class="section-title">
-                <img src="../../assets/Title.svg" alt="Title" class="title-icon">
-                <span>各系统访问总量</span>
-              </div>
-            </div>
-            <div id="system-visits-chart" style="height: 400px;"></div>
+
+      <!-- Operation Guide Section -->
+      <div class="section guide-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <i class="ri-book-open-line section-icon"></i>
+            <h2 class="section-title">{{ $t('home.operationGuide') }}</h2>
           </div>
         </div>
-        <div class="column">
-          <div class="section-container">
-            <div class="section-header">
-              <div class="section-title">
-                <img src="../../assets/Title.svg" alt="Title" class="title-icon">
-                <span>近期访问趋势</span>
-              </div>
+        <div class="guide-grid">
+          <div
+            v-for="(guide, key) in guideItems"
+            :key="key"
+            class="guide-card"
+            @click="handleGuideClick(guide)"
+          >
+            <div class="guide-icon" :style="{ color: guide.color }">
+              <i :class="guide.icon"></i>
             </div>
-            <div id="recent-visits-chart" style="height: 400px;"></div>
+            <div class="guide-content">
+              <h3 class="guide-title">{{ guide.title }}</h3>
+              <p class="guide-desc">{{ guide.desc }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <announcement-detail 
-      v-model:visible="detailDialogVisible" 
+    <!-- Announcement Detail Dialog -->
+    <announcement-detail
+      v-model:visible="detailDialogVisible"
       :announcement="currentAnnouncement"
     />
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, toRefs, onUnmounted, ref, watchEffect, nextTick } from 'vue'
+import { reactive, onMounted, toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import CommonTable from '@/components/CommonTable.vue'
-import * as echarts from 'echarts'
-import { useUserStore } from '@/store'
-import { getNoticeList, postProcessList,postHistoryList,postHistoryListWeek } from '@/api/home'
+import { useI18n } from 'vue-i18n'
+import { getNoticeList } from '@/api/home'
 import AnnouncementDetail from './components/AnnouncementDetail.vue'
-import { ElMessage } from 'element-plus'
-import {SYSTEMDATA} from '@/utils/system-data-config'
 
 const router = useRouter()
-const userStore = useUserStore()
+const { t } = useI18n()
+
 const detailDialogVisible = ref(false)
 const currentAnnouncement = ref({})
 const pages = ref({
-  pageNum:1,
-  pageSize: 4
+  pageNum: 1,
+  pageSize: 6
 })
-
-// 添加loading状态
-const loading = ref(false)
-
-// 图表数据ref
-const xAxisData = ref()
-const seriesData = ref([])
-// 折线图数据
-const lineChartLegend = ref()
-const lineChartSeries = ref([])
-
-const userId = ref(userStore.userInfo?.user?.ID ||  '')
 
 const state = reactive({
-  // 系统公告数据
   announcementList: [],
-  
-  
-  // 表格列定义
-  todoColumns: [
-    { prop: 'title', label: '事项名称', width: '300' },
-    { prop: 'createTime', label: '日期' },
-    { prop: 'sourceSystem', label: '系统' }
-  ],
-  
-  pendingColumns: [
-    { prop: 'title', label: '事项名称', width: '300' },
-    { prop: 'createTime', label: '日期' },
-    { prop: 'sourceSystem', label: '系统' }
-  ],
-  
-  // 表格数据
-  todoData: [],
-  
-  pendingData: [
-  ],
-  
-  // 操作指南数据
-  guideItems: [
-    {
-      title: '新手指南',
-      desc: '系统使用指南和常见问题解答',
-      icon: 'Document',
-      color: '#1c59e2',
-      viewCount: '2398次查看',
-      downloadCount: '1234次下载'
-    },
-    {
-      title: '技术文档',
-      desc: '集成文档，开发指南和API接口',
-      icon: 'Setting',
-      color: '#67C23A',
-      viewCount: '678次查看',
-      downloadCount: '215次下载'
-    },
-    {
-      title: '安全规范',
-      desc: '信息安全、防护和审计措施',
-      icon: 'Warning',
-      color: '#E6A23C',
-      viewCount: '1580次查看',
-      downloadCount: '876次下载'
-    },
-    {
-      title: '运维手册',
-      desc: '系统部署、运维和使用指南',
-      icon: 'Connection',
-      color: '#F56C6C',
-      viewCount: '523次查看',
-      downloadCount: '195次下载'
-    }
-  ]
 })
 
-const {
-  announcementList,
-  commonSystems,
-  todoColumns,
-  pendingColumns,
-  todoData,
-  pendingData,
-  guideItems
-} = toRefs(state)
+const { announcementList } = toRefs(state)
 
-// 封装初始化数据的方法
-const initPageData = async () => {
-  try {
-    // 设置loading状态为true
-    loading.value = true
-    
-    // 并行请求数据以提高加载速度
-    await Promise.all([
-      getNoticeData(),
-      getTodoList(),
-      getHistoryList(),
-      gettHistoryListWeek()
-    ])
-    
-    
-    // 使用nextTick确保DOM已经渲染完成后再初始化图表
-    nextTick(() => {
-      initCharts()
-    })
-  } catch (error) {
-    console.error('error', error)
-    // loading.value = false
-  } finally {
-    loading.value = false
+// 系统模块配置
+const systemModules = computed(() => ({
+  portal: {
+    name: t('home.modules.portal.name'),
+    desc: t('home.modules.portal.desc'),
+    icon: 'ri-login-box-line',
+    gradient: 'linear-gradient(135deg, #009A44 0%, #00b350 100%)',
+    path: '/portal'
+  },
+  research: {
+    name: t('home.modules.research.name'),
+    desc: t('home.modules.research.desc'),
+    icon: 'ri-flask-line',
+    gradient: 'linear-gradient(135deg, #FEDD00 0%, #FFE94D 100%)',
+    path: '/research'
+  },
+  input: {
+    name: t('home.modules.input.name'),
+    desc: t('home.modules.input.desc'),
+    icon: 'ri-database-2-line',
+    gradient: 'linear-gradient(135deg, #DA121A 0%, #FF3D47 100%)',
+    path: '/input'
+  },
+  production: {
+    name: t('home.modules.production.name'),
+    desc: t('home.modules.production.desc'),
+    icon: 'ri-seedling-line',
+    gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
+    path: '/production'
+  },
+  procurement: {
+    name: t('home.modules.procurement.name'),
+    desc: t('home.modules.procurement.desc'),
+    icon: 'ri-shopping-cart-line',
+    gradient: 'linear-gradient(135deg, #1890FF 0%, #40A9FF 100%)',
+    path: '/procurement'
+  },
+  traceability: {
+    name: t('home.modules.traceability.name'),
+    desc: t('home.modules.traceability.desc'),
+    icon: 'ri-qr-code-line',
+    gradient: 'linear-gradient(135deg, #722ED1 0%, #9254DE 100%)',
+    path: '/traceability'
+  },
+  data: {
+    name: t('home.modules.data.name'),
+    desc: t('home.modules.data.desc'),
+    icon: 'ri-bar-chart-box-line',
+    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFA940 100%)',
+    path: '/data'
   }
-}
+}))
+
+// 操作指南配置
+const guideItems = computed(() => ({
+  userManual: {
+    title: t('home.guides.userManual.title'),
+    desc: t('home.guides.userManual.desc'),
+    icon: 'ri-file-text-line',
+    color: '#009A44'
+  },
+  farmerGuide: {
+    title: t('home.guides.farmerGuide.title'),
+    desc: t('home.guides.farmerGuide.desc'),
+    icon: 'ri-user-line',
+    color: '#FEDD00'
+  },
+  supplierGuide: {
+    title: t('home.guides.supplierGuide.title'),
+    desc: t('home.guides.supplierGuide.desc'),
+    icon: 'ri-building-line',
+    color: '#DA121A'
+  },
+  apiDocs: {
+    title: t('home.guides.apiDocs.title'),
+    desc: t('home.guides.apiDocs.desc'),
+    icon: 'ri-code-box-line',
+    color: '#1890FF'
+  }
+}))
 
 onMounted(() => {
-  // 初始化页面数据
-  initPageData()
-  
-  // 监听折线图数据变化并更新图表
-  watchEffect(() => {
-    // 确保图表数据和DOM都已准备好
-    if (!lineChartLegend.value || !lineChartSeries.value) return
-    
-    // 使用nextTick确保DOM已渲染
-    nextTick(() => {
-      try {
-        const chartElement = document.getElementById('recent-visits-chart')
-        if (!chartElement) {
-          console.warn('折线图DOM元素不存在，无法更新图表')
-          return
-        }
-        
-        // 获取图表实例前先检查DOM元素
-        const lineChart = echarts.getInstanceByDom(chartElement)
-        if (lineChart) {
-          lineChart.setOption({
-            legend: {
-              data: lineChartLegend.value
-            },
-            series: lineChartSeries.value
-          })
-        }
-      } catch (error) {
-        console.error('更新折线图出错:', error)
-      }
-    })
-  })
+  getNoticeData()
 })
 
 // 获取公告数据
 const getNoticeData = async () => {
   try {
     const res = await getNoticeList(pages.value)
-    if(res.code === 200 && res.data) {
-      state.announcementList = res.data?.data ||[]
-    }
-  } catch (error) {
-    console.log('error',error)
-  }
-}
-
-const getTodoList = async () => {
-  const todoList = await dodoList('0')
-  const pendingList = await dodoList('1')
-  state.todoData = todoList
-  state.pendingData = pendingList
-}
-
-
-
-const getHistoryList = async () => {
-  try {
-    const res = await postHistoryList();
     if (res.code === 200 && res.data) {
-      const appNames = [];
-      const accessCounts = [];
-      
-      // 遍历数据
-      res.data.forEach(item => {
-        // 检查是否同时包含app_name和access_count
-        if (item.app_name && item.access_count !== undefined) {
-          appNames.push(item.app_name);
-          accessCounts.push(item.access_count);
-        }
-      });
-      
-      // 使用ref存储图表数据
-      xAxisData.value = appNames;
-      seriesData.value = accessCounts;
-      
-      return res.data;
-    } else {
-      return [];
+      state.announcementList = res.data?.data || []
     }
   } catch (error) {
-    console.log('error', error);
-    return [];
+    console.log('error', error)
   }
 }
-
-const gettHistoryListWeek = async () => {
-  try {
-    const res = await postHistoryListWeek()
-    console.log('res.data',res.data)
-    if (res.code === 200 && res.data) {
-      const processedData = processWeeklyData(res.data)
-      // 更新ref变量
-      lineChartLegend.value = processedData.legendData
-      lineChartSeries.value = processedData.seriesData
-    }
-  } catch (error) {
-    console.log('error',error)
-  }
-}
-
-// 处理每周访问数据
-const processWeeklyData = (data) => {
-  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-  const appNames = new Set()
-  
-  days.forEach(day => {
-    if (data[day] && Array.isArray(data[day])) {
-      data[day].forEach(item => {
-        if (item.app_name) {
-          appNames.add(item.app_name)
-        }
-      })
-    }
-  })
-  
-  const legendData = Array.from(appNames)
-  const seriesData = legendData.map(appName => {
-    const dayData = days.map(day => {
-      if (data[day] && Array.isArray(data[day])) {
-        const appData = data[day].find(item => item.app_name === appName)
-        return appData ? appData.access_count : 0
-      }
-      return 0
-    })
-    
-    const colors = ['#1c59e2', '#36CFC9', '#52C41A', '#F5222D', '#FAAD14']
-    const colorIndex = Math.floor(Math.random() * colors.length)
-    
-    return {
-      name: appName,
-      type: 'line',
-      data: dayData,
-      itemStyle: {
-        color: colors[colorIndex]
-      }
-    }
-  })
-  
-  return {
-    legendData,
-    seriesData
-  }
-}
-
-const dodoList = async (state) => {
-  try {
-    const params = {
-      processorId: userId.value,
-      ...pages.value,
-      status: state
-    }
-    const res = await postProcessList(params)
-    if(res.code === 200 && res.data) {
-      return res.data.data
-    } else {
-      return []
-    }
-  } catch (error) {
-    console.log('error',error)
-  }
-}
-
-// 初始化图表
-const initCharts = () => {
-  try {
-    // 确保DOM元素存在后再初始化图表
-    const systemVisitsEl = document.getElementById('system-visits-chart')
-    const recentVisitsEl = document.getElementById('recent-visits-chart')
-    
-    if (!systemVisitsEl || !recentVisitsEl) {
-      console.error('图表DOM元素不存在，跳过图表初始化')
-      return
-    }
-    
-    // 确保数据已准备好
-    if (!xAxisData.value || !seriesData.value || !lineChartLegend.value || !lineChartSeries.value) {
-      console.error('图表数据未准备好，跳过图表初始化')
-      return
-    }
-    
-    let barChart = null
-    let lineChart = null
-    
-    try {
-      // 初始化柱状图
-      barChart = echarts.init(systemVisitsEl)
-      barChart.setOption({
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          data: xAxisData.value,
-          axisLabel: {
-            interval: 0,
-            rotate: 0
-          }
-        },
-        yAxis: {
-          type: 'value',
-          name: '访问次数'
-        },
-        series: [
-          {
-            data: seriesData.value,
-            type: 'bar',
-            barWidth: '30%',
-            itemStyle: {
-              color: '#1c59e2'
-            }
-          }
-        ]
-      })
-    } catch (barError) {
-      console.error('初始化柱状图失败:', barError)
-    }
-
-    try {
-      // 初始化折线图
-      lineChart = echarts.init(recentVisitsEl)
-      lineChart.setOption({
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        legend: {
-          data: lineChartLegend.value || []
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        },
-        yAxis: {
-          type: 'value',
-          name: '访问次数'
-        },
-        series: lineChartSeries.value || []
-      })
-    } catch (lineError) {
-      console.error('初始化折线图失败:', lineError)
-    }
-    
-    // 监听窗口大小变化，重绘图表
-    const resizeHandler = () => {
-      if (barChart && barChart.resize) {
-        try {
-          barChart.resize()
-        } catch (err) {
-          console.error('柱状图调整大小失败:', err)
-        }
-      }
-      if (lineChart && lineChart.resize) {
-        try {
-          lineChart.resize()
-        } catch (err) {
-          console.error('折线图调整大小失败:', err)
-        }
-      }
-    }
-    
-    window.addEventListener('resize', resizeHandler)
-    
-    // 确保组件卸载时移除事件监听
-    onUnmounted(() => {
-      window.removeEventListener('resize', resizeHandler)
-      // 销毁图表实例
-      if (barChart && barChart.dispose) {
-        try {
-          barChart.dispose()
-        } catch (err) {}
-      }
-      if (lineChart && lineChart.dispose) {
-        try {
-          lineChart.dispose()
-        } catch (err) {}
-      }
-    })
-  } catch (error) {
-    console.error('图表初始化过程中发生错误:', error)
-  }
-}
-
-// 事件处理函数
-const handleNavChange = (index, path) => {
-  console.log('导航切换:', index, path)
-}
-
 
 const handleAnnouncementClick = (item) => {
-  currentAnnouncement.value = {...item}
+  currentAnnouncement.value = { ...item }
   detailDialogVisible.value = true
 }
 
-const handleMoreAnnouncements = (name) => {
+const handleMoreAnnouncements = () => {
   router.push({
     path: '/dataList',
-    query: {name}
+    query: { name: 'systemAnnouncement' }
   })
 }
 
-const handleSystemEntryClick = (entry) => {
-  let url = ''
-  const token = userStore.token || ''
-  const apiBaseUrl = import.meta.env.PROD ? window.origin : import.meta.env.VITE_APP_API_URL
-  const knowledgeBaseUrl = import.meta.env.VITE_APP_KNOWLEDGE_BASE_URL
-  
-  switch(entry.path) {
-    case '/icd/':
-      const icdRedirectUri = encodeURIComponent(`${apiBaseUrl}/icd/redirect_strict.html`)
-      const icdState = encodeURIComponent('target=management')
-      url = `${apiBaseUrl}/auth/oauth2/authorize?response_type=code&client_id=icd&redirect_uri=${icdRedirectUri}&state=${icdState}`
-      break
-      
-    case '/knowledge':
-      url = `${knowledgeBaseUrl}/damp-know-web/sso.html?token=${token}`
-      break
-      
-    case '/user-mgmt':
-      url = `${apiBaseUrl}/data-service-uc/callback?token=${token}`
-      break
-      
-    default:
-      ElMessage.info('暂未对接')
-      url = ''
-      break
-  }
-  
-  if (!url) return
-  window.open(url, '_blank')
+const handleSystemClick = (module) => {
+  console.log('点击系统模块:', module)
+  // TODO: 跳转到对应系统
 }
 
-const handleTodoRowClick = (row) => {
-  console.log('点击已办事项:', row)
-}
-
-const handleMoreTodo = () => {
-  handleMoreAnnouncements('alreadyDone')
-}
-
-const handlePendingRowClick = (row) => {
-  console.log('点击待办事项:', row)
-}
-
-const handleMorePending = () => {
-  handleMoreAnnouncements('representative')
-}
-
-const handleGuideClick = (item) => {
-  console.log('点击操作指南:', item)
-}
-
-const getGuideIconClass = (icon) => {
-  const iconMap = {
-    'Document': 'ri-file-text-line',
-    'Setting': 'ri-settings-3-line',
-    'Warning': 'ri-shield-keyhole-line',
-    'Connection': 'ri-terminal-box-line'
-  }
-  return iconMap[icon] || 'ri-file-text-line'
-}
-
-const getIconClass = (icon) => {
-  const iconMap = {
-    'UserFilled': 'ri-user-3-fill',
-    'Promotion': 'ri-advertisement-line',
-    'Connection': 'ri-link-m',
-    'Setting': 'ri-settings-3-line',
-    'Collection': 'ri-book-2-line',
-    'Edit': 'ri-code-box-line'
-  }
-  return iconMap[icon] || 'ri-app-line'
+const handleGuideClick = (guide) => {
+  console.log('点击操作指南:', guide)
+  // TODO: 打开文档
 }
 </script>
 
 <style scoped>
 .home-container {
   min-height: 100vh;
-  /* background-color: #f0f2f5; */
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  background: linear-gradient(to bottom, #f8fafb 0%, #ffffff 100%);
+  padding: 0;
 }
-.content-container {
+
+.content-wrapper {
   max-width: 1400px;
-  width: 100%;
   margin: 0 auto;
-  /* padding-top: 84px; 添加顶部边距，防止内容被固定导航栏遮挡 */
-  box-sizing: border-box;
-  flex: 1;
+  padding: 0 32px 40px;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 60px 0;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+  border-radius: 16px;
+  margin-bottom: 40px;
   position: relative;
-  padding: 0 16px;
+  overflow: hidden;
+}
+
+.hero-content {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
 }
 
-.top-section-layout {
-  display: flex;
-  gap: 16px;
-  position: relative;
-  z-index: 1;
-  margin-bottom: 16px;
-}
-
-.announcement-section {
-  flex: 2;
-  background: rgba(255, 255, 255, 0.8); /* 增加不透明度 */
-  backdrop-filter: blur(10px); /* 增加模糊效果 */
-  border-radius: 4px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* 增加阴影 */
-}
-
-.common-systems-section {
+.hero-text {
   flex: 1;
-  background: rgba(248, 250, 252, 0.85) !important; /* 增加不透明度 */
-  backdrop-filter: blur(10px); /* 增加模糊效果 */
-  /* PanelShadow */
-  box-shadow: 0px 4px 8px -3px rgba(0, 0, 0, 0.15) !important; /* 增强阴影 */
+  max-width: 700px;
 }
 
-.section-container {
-  background-color: rgba(255, 255, 255, 0.9); /* 增加不透明度 */
-  border-radius: 4px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* 增强阴影 */
-  /* height: 100%; */
-  /* margin-bottom: 16px; */
+.hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #009A44;
+  margin: 0 0 20px 0;
+  line-height: 1.2;
 }
 
-.system-entries-section, .guide-section {
-  margin-bottom: 16px;
+.hero-subtitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FEDD00;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.hero-description {
+  font-size: 16px;
+  color: #606266;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.hero-image {
+  flex-shrink: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.hero-image i {
+  font-size: 120px;
+  opacity: 0.15;
+}
+
+.hero-image i:nth-child(1) { color: #009A44; }
+.hero-image i:nth-child(2) { color: #FEDD00; }
+.hero-image i:nth-child(3) { color: #DA121A; }
+
+/* Section Styles */
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  height: 52px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 28px;
 }
 
-.common-systems-header {
-  background: linear-gradient(97deg, #0D48CE 0%, #3381FF 100%);
-  border-radius: 4px 4px 0 0;
-  backdrop-filter: blur(5px);
+.section-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.common-systems-header .section-title {
-  color: #fff;
+.section-icon {
+  font-size: 28px;
+  color: #009A44;
 }
 
 .section-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: #303133;
+  margin: 0;
+}
+
+.section-action {
   display: flex;
   align-items: center;
-}
-
-.title-icon {
-  width: 11px;
-  height: 12px;
-  margin-right: 8px;
-}
-
-.more-link {
+  gap: 6px;
   font-size: 14px;
-  color: #909399;
+  color: #009A44;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 8px;
 }
 
-.more-link:hover {
-  color: #1c59e2;
+.section-action:hover {
+  background: rgba(0, 154, 68, 0.08);
+  transform: translateX(4px);
 }
 
-/* 系统公告样式 */
-.announcement-list {
-  padding: 0;
-  height: calc(100% - 52px); /* 减去header高度 */
-  overflow: auto;
+.section-action i {
+  transition: transform 0.3s ease;
+}
+
+.section-action:hover i {
+  transform: translateX(4px);
+}
+
+/* Announcements */
+.announcements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .announcement-item {
   display: flex;
-  padding: 15px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.02) 0%, rgba(254, 221, 0, 0.01) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .announcement-item:hover {
-  background-color: #f5f7fa;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 154, 68, 0.1);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
 }
 
-.announcement-item:last-child {
-  border-bottom: none;
-}
-
-.item-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  color: #1c59e2;
-}
-
-.item-icon i {
-  font-size: 18px;
-}
-
-.item-content {
-  flex: 1;
-  margin: 0 10px;
-  overflow: hidden;
-}
-
-.item-title {
-  font-size: 14px;
-  color: #303133;
-  margin-bottom: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.item-desc {
-  font-size: 12px;
-  color: #909399;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.item-time {
-  font-size: 12px;
-  color: #909399;
-  min-width: 80px;
-  text-align: right;
-}
-
-/* 常用系统样式 */
-.common-system-content {
-  padding: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  /* height: calc(100% - 52px); 确保高度与系统公告一致 */
-}
-
-.common-system-item {
-  flex: 0 0 calc(50% - 8px);
-  max-width: calc(50% - 8px);
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  transition: all 0.3s;
-  background: #FFFFFF;
-  box-sizing: border-box;
-  /* Color Light/浅色边框色 */
-  border: 1px solid #F2F3F5;
-  box-shadow: inset 0px -2px 0px 0px #C8D5E2;
-}
-
-.common-system-item:hover {
-  background-color: #f5f7fa;
-}
-
-.common-system-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  color: #fff;
+.announcement-icon {
   flex-shrink: 0;
-}
-
-.common-system-icon i {
-  font-size: 20px;
-  color: #fff; /* 确保图标是白色 */
-}
-
-.common-system-name {
-  font-size: 14px;
-  color: #303133;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 系统入口样式 */
-.system-entries-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 16px;
-  padding: 16px;
-}
-
-.entry-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s;
-  padding: 16px;
-}
-
-.entry-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.entry-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
-  color: #fff;
 }
 
-.entry-icon i {
-  font-size: 28px;
+.announcement-icon i {
+  font-size: 24px;
+  color: white;
 }
 
-.entry-name {
-  font-size: 14px;
-  color: #606266;
-  text-align: center;
-}
-
-/* 操作指南样式 - 横向排列 */
-.guide-content {
-  padding: 16px;
-}
-
-.guide-items-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.guide-item {
-  flex: 1 0 calc(25% - 12px);
-  min-width: 250px;
-  display: flex;
-  background: linear-gradient(109deg, #F1F7FE 0%, #FFFFFF 100%);
-  border-radius: 4px;
-  padding: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-.guide-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.guide-item-icon {
-  font-size: 32px;
-  margin-right: 16px;
-}
-
-.guide-item-content {
+.announcement-content {
   flex: 1;
+  min-width: 0;
 }
 
-.guide-item-title {
+.announcement-title {
   font-size: 16px;
   font-weight: 600;
   color: #303133;
-  margin-bottom: 8px;
-}
-
-.guide-item-desc {
-  font-size: 14px;
-  color: #606266;
-  margin-bottom: 12px;
-}
-
-.guide-item-stats {
-  font-size: 12px;
-  color: #909399;
-}
-
-/* 两列布局 */
-.two-column-layout {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-  width: 100%;
+  margin-bottom: 6px;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.two-column-layout:last-child {
-  margin-bottom: 0;
+.announcement-desc {
+  font-size: 14px;
+  color: #909399;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.announcement-time {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #C0C4CC;
+  font-weight: 500;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #C0C4CC;
+}
+
+.empty-state i {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* System Grid */
+.system-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.system-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.system-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 154, 68, 0.3);
+}
+
+.system-icon-wrapper {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.system-icon-wrapper i {
+  font-size: 32px;
+  color: white;
+}
+
+.system-info {
   flex: 1;
-  min-height: 400px;
+  min-width: 0;
 }
 
-.column {
+.system-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #303133;
+  margin: 0 0 8px 0;
+}
+
+.system-desc {
+  font-size: 14px;
+  color: #909399;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.system-arrow {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 154, 68, 0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.system-card:hover .system-arrow {
+  background: rgba(0, 154, 68, 0.15);
+  transform: translateX(4px);
+}
+
+.system-arrow i {
+  font-size: 20px;
+  color: #009A44;
+}
+
+/* Guide Grid */
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.guide-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.02) 0%, rgba(255, 255, 255, 1) 100%);
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+  background: white;
+}
+
+.guide-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(0, 154, 68, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.guide-card:hover .guide-icon {
+  transform: scale(1.1);
+}
+
+.guide-icon i {
+  font-size: 36px;
+}
+
+.guide-content {
   flex: 1;
 }
 
-/* 响应式调整 */
-@media screen and (max-width: 1440px) {
-  .content-container {
-    max-width: 1200px;
-  }
+.guide-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #303133;
+  margin: 0 0 12px 0;
 }
 
+.guide-desc {
+  font-size: 14px;
+  color: #909399;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Responsive */
 @media screen and (max-width: 1200px) {
-  .top-section-layout {
-    flex-direction: column;
+  .content-wrapper {
+    padding: 0 24px 32px;
   }
-  
-  .system-entries-grid {
-    grid-template-columns: repeat(3, 1fr);
+
+  .hero-title {
+    font-size: 36px;
   }
-  
-  .two-column-layout {
-    flex-direction: column;
+
+  .hero-subtitle {
+    font-size: 20px;
   }
-  
-  .two-column-layout:last-child {
-    min-height: auto;
-  }
-  
-  .two-column-layout:last-child .column {
-    min-height: 400px;
+
+  .system-grid,
+  .guide-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
 @media screen and (max-width: 768px) {
-  .system-entries-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .content-wrapper {
+    padding: 0 16px 24px;
   }
-  
-  .guide-items-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  
-  .guide-item {
-    min-width: 100%;
-  }
-}
 
-@media screen and (max-width: 576px) {
-  .guide-items-row {
+  .hero-section {
+    padding: 40px 20px;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+  }
+
+  .hero-image {
+    display: none;
+  }
+
+  .section {
+    padding: 24px 16px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .system-grid,
+  .guide-grid {
     grid-template-columns: 1fr;
   }
-}
 
-#system-visits-chart, #recent-visits-chart {
-  height: 400px;
-  width: 100%;
-}
+  .announcement-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-@media screen and (max-width: 768px) {
-  #system-visits-chart, #recent-visits-chart {
-    height: 300px;
-  }
-  
-  .system-entries-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .guide-items-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  
-  .guide-item {
-    min-width: 100%;
+  .announcement-time {
+    align-self: flex-end;
   }
 }
-</style> 
+</style>

@@ -1,82 +1,106 @@
 <template>
   <div class="identity-container">
+    <!-- Page Header -->
     <div class="identity-header">
-      <div class="title-row">
-        <span class="line"></span>
-        <h2>用户身份认证</h2>
-        <span class="line"></span>
+      <div class="header-icon">
+        <i class="ri-shield-user-line"></i>
       </div>
-      <p>请选择认证类型</p>
+      <h1 class="header-title">{{ $t('identity.title') }}</h1>
+      <p class="header-subtitle">{{ $t('identity.subtitle') }}</p>
+      <p class="header-description">{{ $t('identity.description') }}</p>
     </div>
 
+    <!-- Identity Cards -->
     <div class="cards-wrapper">
       <div class="cards-row">
-        <!-- 农民认证 -->
-        <div class="identity-card" @click="goApply('farmer')">
-          <el-tag class="status-badge" :type="statusMap('farmer').tagType" effect="plain">
-            {{ statusMap('farmer').label }}
-          </el-tag>
+        <!-- Farmer Verification -->
+        <div class="identity-card farmer-card" @click="goApply('farmer')">
+          <div class="card-header">
+            <div class="status-badge" :class="getStatusClass('farmer')">
+              <i :class="getStatusIcon('farmer')"></i>
+              {{ getStatusLabel('farmer') }}
+            </div>
+          </div>
 
           <div class="card-visual">
-            <div class="beams"></div>
-            <div class="hexagon">
-              <i class="ri-shield-check-line"></i>
+            <div class="icon-wrapper farmer-icon">
+              <i class="ri-plant-line"></i>
             </div>
-            <div class="platform"></div>
+            <div class="visual-bg"></div>
           </div>
 
-          <div class="card-text">
-            <div class="card-title">农民认证申请</div>
-            <div class="card-desc">面向个人农户的身份认证，便于接入相关服务</div>
+          <div class="card-content">
+            <h3 class="card-title">{{ $t('identity.farmerTitle') }}</h3>
+            <p class="card-desc">{{ $t('identity.farmerDesc') }}</p>
           </div>
 
-          <div class="card-action">去填写 ></div>
+          <div class="card-action">
+            <span>{{ $t('identity.goApply') }}</span>
+            <i class="ri-arrow-right-line"></i>
+          </div>
         </div>
 
-        <!-- 供应商认证 -->
-        <div class="identity-card" @click="goApply('supplier')">
-          <el-tag class="status-badge" :type="statusMap('supplier').tagType" effect="plain">
-            {{ statusMap('supplier').label }}
-          </el-tag>
+        <!-- Supplier Verification -->
+        <div class="identity-card supplier-card" @click="goApply('supplier')">
+          <div class="card-header">
+            <div class="status-badge" :class="getStatusClass('supplier')">
+              <i :class="getStatusIcon('supplier')"></i>
+              {{ getStatusLabel('supplier') }}
+            </div>
+          </div>
 
           <div class="card-visual">
-            <div class="beams"></div>
-            <div class="hexagon">
-              <i class="ri-archive-stack-line"></i>
+            <div class="icon-wrapper supplier-icon">
+              <i class="ri-store-2-line"></i>
             </div>
-            <div class="platform"></div>
+            <div class="visual-bg"></div>
           </div>
 
-          <div class="card-text">
-            <div class="card-title">供应商认证申请</div>
-            <div class="card-desc">面向供应商主体的身份认证，支持供给侧业务接入</div>
+          <div class="card-content">
+            <h3 class="card-title">{{ $t('identity.supplierTitle') }}</h3>
+            <p class="card-desc">{{ $t('identity.supplierDesc') }}</p>
           </div>
 
-          <div class="card-action">去填写 ></div>
+          <div class="card-action">
+            <span>{{ $t('identity.goApply') }}</span>
+            <i class="ri-arrow-right-line"></i>
+          </div>
         </div>
 
-        <!-- 收购商认证 -->
-        <div class="identity-card" @click="goApply('buyer')">
-          <el-tag class="status-badge" :type="statusMap('buyer').tagType" effect="plain">
-            {{ statusMap('buyer').label }}
-          </el-tag>
+        <!-- Buyer Verification -->
+        <div class="identity-card buyer-card" @click="goApply('buyer')">
+          <div class="card-header">
+            <div class="status-badge" :class="getStatusClass('buyer')">
+              <i :class="getStatusIcon('buyer')"></i>
+              {{ getStatusLabel('buyer') }}
+            </div>
+          </div>
 
           <div class="card-visual">
-            <div class="beams"></div>
-            <div class="hexagon">
-              <i class="ri-user-3-line"></i>
+            <div class="icon-wrapper buyer-icon">
+              <i class="ri-shopping-basket-2-line"></i>
             </div>
-            <div class="platform"></div>
+            <div class="visual-bg"></div>
           </div>
 
-          <div class="card-text">
-            <div class="card-title">收购商认证申请</div>
-            <div class="card-desc">面向收购主体的身份认证，便于开展交易与协作</div>
+          <div class="card-content">
+            <h3 class="card-title">{{ $t('identity.buyerTitle') }}</h3>
+            <p class="card-desc">{{ $t('identity.buyerDesc') }}</p>
           </div>
 
-          <div class="card-action">去填写 ></div>
+          <div class="card-action">
+            <span>{{ $t('identity.goApply') }}</span>
+            <i class="ri-arrow-right-line"></i>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="decorative-elements">
+      <i class="ri-leaf-line deco-1"></i>
+      <i class="ri-seedling-line deco-2"></i>
+      <i class="ri-plant-fill deco-3"></i>
     </div>
   </div>
 </template>
@@ -84,29 +108,46 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 
 const router = useRouter()
+const { t } = useI18n()
 const userStore = useUserStore()
 
-// 模拟从后端或用户信息中获取当前三类认证状态
-// 可选状态：未认证、审核中、已认证、已驳回
-// 实际接入时从接口获取并替换该计算逻辑
+// Get certification status from backend or user info
+// Available statuses: notCertified, underReview, certified, rejected
 const identityStatus = computed(() => ({
-  farmer: '未认证',
-  supplier: '审核中',
-  buyer: '已驳回'
+  farmer: 'notCertified',
+  supplier: 'underReview',
+  buyer: 'rejected'
 }))
 
-const statusMap = (type) => {
-  const label = identityStatus.value[type] || '未认证'
-  const tagTypeMap = {
-    '未认证': 'info',
-    '审核中': 'warning',
-    '已认证': 'success',
-    '已驳回': 'danger'
+const getStatusLabel = (type) => {
+  const status = identityStatus.value[type] || 'notCertified'
+  return t(`identity.status.${status}`)
+}
+
+const getStatusClass = (type) => {
+  const status = identityStatus.value[type] || 'notCertified'
+  const classMap = {
+    notCertified: 'status-default',
+    underReview: 'status-warning',
+    certified: 'status-success',
+    rejected: 'status-danger'
   }
-  return { label, tagType: tagTypeMap[label] || 'info' }
+  return classMap[status] || 'status-default'
+}
+
+const getStatusIcon = (type) => {
+  const status = identityStatus.value[type] || 'notCertified'
+  const iconMap = {
+    notCertified: 'ri-question-line',
+    underReview: 'ri-time-line',
+    certified: 'ri-checkbox-circle-line',
+    rejected: 'ri-close-circle-line'
+  }
+  return iconMap[status] || 'ri-question-line'
 }
 
 const goApply = (type) => {
@@ -123,90 +164,365 @@ const goApply = (type) => {
 .identity-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 36px 16px;
+  padding: 48px 24px 80px;
+  position: relative;
+  min-height: calc(100vh - 200px);
 }
 
-.identity-header { text-align: center; }
-.title-row {
+/* Header Styles */
+.identity-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.header-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.1) 0%, rgba(254, 221, 0, 0.1) 100%);
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-}
-.title-row .line {
-  display: inline-block;
-  width: 120px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(28,89,226,0) 0%, #1c59e2 50%, rgba(28,89,226,0) 100%);
-}
-.identity-header h2 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: #2c3e50;
-}
-.identity-header p {
-  margin: 12px 0 0;
-  color: #7f8c8d;
+  border: 2px solid rgba(0, 154, 68, 0.2);
 }
 
-.cards-wrapper { display: flex; justify-content: center; }
+.header-icon i {
+  font-size: 40px;
+  color: #009A44;
+}
+
+.header-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #009A44;
+  margin: 0 0 12px 0;
+  letter-spacing: 1px;
+}
+
+.header-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0 0 8px 0;
+}
+
+.header-description {
+  font-size: 15px;
+  color: #909399;
+  margin: 0;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Cards Wrapper */
+.cards-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
 .cards-row {
-  margin-top: 28px; /* 中上位置 */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 32px;
   width: 100%;
 }
 
+/* Identity Card */
 .identity-card {
   position: relative;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 16px 16px 18px;
+  background: white;
+  border-radius: 16px;
+  padding: 28px 24px;
   cursor: pointer;
-  transition: all .25s ease;
-  border: 1px solid #e6ebf2;
+  transition: all 0.4s ease;
+  border: 2px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
-.identity-card:hover { box-shadow: 0 20px 48px rgba(28,89,226,.18); transform: translateY(-6px); border-color: #d7e3ff; }
 
-.status-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
-
-.card-visual { position: relative; height: 150px; display:flex; align-items:center; justify-content:center; }
-.beams {
-  position: absolute; bottom: 44px; width: 180px; height: 90px;
-  background: radial-gradient(ellipse at center, rgba(28,89,226,0.22), rgba(28,89,226,0) 70%);
-  filter: blur(1px);
-}
-.hexagon {
-  position: relative; width: 84px; height: 72px;
-  background: rgba(28,89,226,0.10);
-  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
-  border: 2px solid rgba(28,89,226,0.5);
-  box-shadow: 0 0 0 4px rgba(28,89,226,0.06) inset;
-}
-.hexagon::after {
-  content: ""; position: absolute; inset: -8px; clip-path: inherit; border: 6px solid rgba(28,89,226,0.08);
-  filter: blur(6px);
-}
-.hexagon i { position:absolute; left:50%; top:50%; transform: translate(-50%, -50%); font-size: 28px; color: #1c59e2; }
-.identity-card:hover .hexagon { border-color: #1c59e2; box-shadow: 0 0 0 6px rgba(28,89,226,0.08) inset, 0 0 18px rgba(28,89,226,0.25); }
-
-.platform {
-  position: absolute; bottom: 0; width: 180px; height: 18px; border-radius: 9px; background: #eef3fe; box-shadow: inset 0 -2px 0 #c8d5e2;
+.identity-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+  transition: all 0.3s ease;
 }
 
-.card-text { text-align: center; margin-top: 6px; }
-.card-title { font-size: 16px; font-weight: 600; color: #303133; }
-.card-desc { margin-top: 4px; color: #606266; font-size: 13px; }
-.card-action { margin-top: 10px; color: #1c59e2; font-size: 14px; text-align:center; }
-
-@media screen and (max-width: 1200px) {
-  .cards-row { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.farmer-card::before {
+  background: linear-gradient(90deg, #009A44 0%, #00b350 100%);
 }
-@media screen and (max-width: 992px) {
-  .cards-row { grid-template-columns: 1fr; }
+
+.supplier-card::before {
+  background: linear-gradient(90deg, #FEDD00 0%, #FFE94D 100%);
+}
+
+.buyer-card::before {
+  background: linear-gradient(90deg, #DA121A 0%, #FF3D47 100%);
+}
+
+.identity-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 154, 68, 0.15);
+  border-color: rgba(0, 154, 68, 0.3);
+}
+
+.identity-card:hover::before {
+  height: 6px;
+}
+
+/* Card Header */
+.card-header {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge i {
+  font-size: 14px;
+}
+
+.status-default {
+  background: rgba(144, 147, 153, 0.1);
+  color: #909399;
+  border: 1px solid rgba(144, 147, 153, 0.2);
+}
+
+.status-warning {
+  background: rgba(254, 221, 0, 0.15);
+  color: #B8860B;
+  border: 1px solid rgba(254, 221, 0, 0.3);
+}
+
+.status-success {
+  background: rgba(0, 154, 68, 0.1);
+  color: #009A44;
+  border: 1px solid rgba(0, 154, 68, 0.2);
+}
+
+.status-danger {
+  background: rgba(218, 18, 26, 0.1);
+  color: #DA121A;
+  border: 1px solid rgba(218, 18, 26, 0.2);
+}
+
+/* Card Visual */
+.card-visual {
+  position: relative;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.icon-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.icon-wrapper i {
+  font-size: 48px;
+  color: white;
+}
+
+.farmer-icon {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  box-shadow: 0 12px 24px rgba(0, 154, 68, 0.3);
+}
+
+.supplier-icon {
+  background: linear-gradient(135deg, #FEDD00 0%, #FFE94D 100%);
+  box-shadow: 0 12px 24px rgba(254, 221, 0, 0.4);
+}
+
+.supplier-icon i {
+  color: #333;
+}
+
+.buyer-icon {
+  background: linear-gradient(135deg, #DA121A 0%, #FF3D47 100%);
+  box-shadow: 0 12px 24px rgba(218, 18, 26, 0.3);
+}
+
+.identity-card:hover .icon-wrapper {
+  transform: scale(1.08);
+}
+
+.visual-bg {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 154, 68, 0.06) 0%, transparent 70%);
+}
+
+/* Card Content */
+.card-content {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #303133;
+  margin: 0 0 10px 0;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #909399;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Card Action */
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  color: #009A44;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.card-action i {
+  transition: transform 0.3s ease;
+}
+
+.identity-card:hover .card-action {
+  color: #007a36;
+}
+
+.identity-card:hover .card-action i {
+  transform: translateX(4px);
+}
+
+/* Decorative Elements */
+.decorative-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.decorative-elements i {
+  position: absolute;
+  opacity: 0.05;
+}
+
+.deco-1 {
+  font-size: 200px;
+  color: #009A44;
+  top: 10%;
+  left: -5%;
+  transform: rotate(-15deg);
+}
+
+.deco-2 {
+  font-size: 150px;
+  color: #FEDD00;
+  top: 60%;
+  right: -3%;
+  transform: rotate(20deg);
+}
+
+.deco-3 {
+  font-size: 120px;
+  color: #DA121A;
+  bottom: 5%;
+  left: 10%;
+  transform: rotate(-10deg);
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+  .cards-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .identity-container {
+    padding: 32px 16px 60px;
+  }
+
+  .header-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+  }
+
+  .header-icon i {
+    font-size: 32px;
+  }
+
+  .header-title {
+    font-size: 28px;
+  }
+
+  .header-subtitle {
+    font-size: 16px;
+  }
+
+  .cards-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .identity-card {
+    padding: 24px 20px;
+  }
+
+  .card-visual {
+    height: 120px;
+  }
+
+  .icon-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .icon-wrapper i {
+    font-size: 40px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .decorative-elements {
+    display: none;
+  }
 }
 </style>

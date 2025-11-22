@@ -22,6 +22,12 @@ const routes = [
         component: () => import('../views/home/Home.vue'),
         meta: { title: '首页', icon: 'home', requiresAuth: true }
       },
+      {
+        path: 'user',
+        name: 'user',
+        component: () => import('../components/userDetails.vue'),
+        meta: { title: '首页', icon: 'user', requiresAuth: true }
+      },
       // 应用注册申请逻辑按需求下线，以下路由整体注释保留
       // {
       //   path: 'application',

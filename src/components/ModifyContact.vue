@@ -5,21 +5,28 @@
     :close-on-click-modal="false"
     :before-close="handleClose"
     class="contact-dialog"
-    :title="null"
   >
     <template #header>
-      <div class="dialog-title">
-        <img src="../assets/Title.svg" alt="标题图标" class="title-icon" />
-        <span>{{ type === 'phone' ? '修改手机号' : '修改邮箱' }}</span>
+      <div class="dialog-header">
+        <div class="header-icon">
+          <i :class="type === 'phone' ? 'ri-phone-line' : 'ri-mail-line'"></i>
+        </div>
+        <div class="header-title">
+          {{ type === 'phone' ? $t('userInfo.modifyPhone') : $t('userInfo.modifyEmail') }}
+        </div>
       </div>
     </template>
-    
+
     <div class="contact-form">
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
-        <el-form-item :label="type === 'phone' ? '手机号' : '邮箱'" prop="value">
+        <el-form-item
+          :label="type === 'phone' ? $t('userInfo.phone') : $t('userInfo.email')"
+          prop="value"
+        >
           <el-input
             v-model="form.value"
-            :placeholder="type === 'phone' ? '请输入新手机号' : '请输入新邮箱'"
+            :placeholder="type === 'phone' ? $t('userInfo.enterNewPhone') : $t('userInfo.enterNewEmail')"
+            size="large"
           >
             <template #prefix>
               <i :class="type === 'phone' ? 'ri-phone-line' : 'ri-mail-line'"></i>
@@ -28,11 +35,16 @@
         </el-form-item>
       </el-form>
     </div>
-    
+
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="loading" class="confirm-btn">确认修改</el-button>
+        <el-button @click="handleClose" size="large">
+          {{ $t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="handleConfirm" :loading="loading" class="confirm-btn" size="large">
+          <i class="ri-check-line"></i>
+          {{ $t('common.confirm') }}
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -40,10 +52,12 @@
 
 <script setup>
 import { ref, defineProps, defineEmits, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { postUserUpdate } from '@/api/user'
 import { useUserStore } from '@/store'
 
+const { t } = useI18n()
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -51,7 +65,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'phone', // 'phone' 或 'email'
+    default: 'phone',
     validator: (value) => ['phone', 'email'].includes(value)
   },
   currentValue: {
@@ -69,13 +83,12 @@ const form = ref({
 const loading = ref(false)
 const userStore = useUserStore()
 
-// 根据type类型设置不同的校验规则
 const rules = computed(() => {
   const phoneValidator = (rule, value, callback) => {
     if (!value) {
-      callback(new Error('请输入手机号'))
+      callback(new Error(t('userInfo.enterNewPhone')))
     } else if (!/^1[3-9]\d{9}$/.test(value)) {
-      callback(new Error('请输入正确的手机号'))
+      callback(new Error(t('userInfo.phoneFormat')))
     } else {
       callback()
     }
@@ -83,9 +96,9 @@ const rules = computed(() => {
 
   const emailValidator = (rule, value, callback) => {
     if (!value) {
-      callback(new Error('请输入邮箱'))
+      callback(new Error(t('userInfo.enterNewEmail')))
     } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
-      callback(new Error('请输入正确的邮箱格式'))
+      callback(new Error(t('userInfo.emailFormat')))
     } else {
       callback()
     }
@@ -93,7 +106,11 @@ const rules = computed(() => {
 
   return {
     value: [
-      { required: true, message: props.type === 'phone' ? '请输入手机号' : '请输入邮箱', trigger: 'blur' },
+      {
+        required: true,
+        message: props.type === 'phone' ? t('userInfo.enterNewPhone') : t('userInfo.enterNewEmail'),
+        trigger: 'blur'
+      },
       { validator: props.type === 'phone' ? phoneValidator : emailValidator, trigger: 'blur' }
     ]
   }
@@ -123,38 +140,38 @@ const handleClose = () => {
 
 const handleConfirm = async () => {
   if (!formRef.value) return
-  
+
   try {
     const isPhone = props.type === 'phone'
     await formRef.value.validate()
     loading.value = true
     try {
       const res = await postUserUpdate(
-        isPhone ? {mobile: form.value.value, id: userStore.userInfo?.user?.ID ||  ''  }: {email: form.value.value, id: userStore.userInfo?.user?.ID ||  ''}
+        isPhone
+          ? { mobile: form.value.value, id: userStore.userInfo?.user?.ID || '' }
+          : { email: form.value.value, id: userStore.userInfo?.user?.ID || '' }
       )
-      if(res.code === 200) {
-        ElMessage.success(props.type === 'phone' ? '手机号修改成功' : '邮箱修改成功')
+      if (res.code === 200) {
+        ElMessage.success(t('userInfo.modifySuccess'))
         await userStore.fetchUserInfo()
         if (userStore.userInfo && userStore.userInfo.user) {
           if (isPhone) {
-            userStore.userInfo.user.mobile = form.value.value;
+            userStore.userInfo.user.mobile = form.value.value
           } else {
-            userStore.userInfo.user.email = form.value.value;
+            userStore.userInfo.user.email = form.value.value
           }
-          userStore.setUserInfo(userStore.userInfo);
+          userStore.setUserInfo(userStore.userInfo)
         }
-        
-        // 传递更新后的值给父组件
+
         emit('confirm', {
           type: props.type,
           value: form.value.value
         })
-        
+
         handleClose()
       }
-     
     } catch (error) {
-      console.log('error',error)
+      console.log('error', error)
     } finally {
       loading.value = false
     }
@@ -165,53 +182,126 @@ const handleConfirm = async () => {
 </script>
 
 <style scoped>
+/* Dialog Header */
+:deep(.el-dialog__header) {
+  padding: 24px 24px 20px;
+  margin: 0;
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.25);
+}
+
+.header-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #009A44;
+}
+
+/* Dialog Body */
+:deep(.el-dialog__body) {
+  padding: 32px 24px;
+}
+
 .contact-form {
-  padding: 0 20px;
+  padding: 0;
 }
 
-.el-form :deep(.el-form-item__label) {
-  font-size: 14px;
+:deep(.el-form-item__label) {
+  font-size: 15px;
+  font-weight: 600;
   color: #606266;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
 }
 
-.el-input :deep(.el-input__prefix) {
-  margin-right: 8px;
+:deep(.el-input__wrapper) {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  transition: all 0.3s ease;
+}
+
+:deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #009A44 inset;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #009A44 inset;
+}
+
+:deep(.el-input__prefix) {
+  color: #009A44;
+  font-size: 18px;
+}
+
+/* Dialog Footer */
+:deep(.el-dialog__footer) {
+  padding: 20px 24px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .dialog-footer {
   display: flex;
   justify-content: center;
-  padding-top: 8px;
+  gap: 12px;
 }
 
 :deep(.el-button) {
-  padding: 10px 32px;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-:deep(.confirm-btn) {
-  background-color: #1C59E2;
-  border-color: #1C59E2;
-}
-
-:deep(.confirm-btn:hover) {
-  background-color: #1950cc;
-  border-color: #1950cc;
-}
-
-.dialog-title {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
+  min-width: 120px;
+  border-radius: 8px;
   font-weight: 600;
-  color: #303133;
 }
 
-.title-icon {
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
+.confirm-btn {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border: none;
 }
-</style> 
+
+.confirm-btn:hover {
+  background: linear-gradient(135deg, #008038 0%, #009A44 100%);
+}
+
+.confirm-btn i {
+  margin-right: 4px;
+}
+
+/* Dialog */
+:deep(.el-dialog) {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  :deep(.el-dialog) {
+    width: 90% !important;
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+  }
+
+  :deep(.el-button) {
+    width: 100%;
+  }
+}
+</style>
