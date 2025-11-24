@@ -86,6 +86,105 @@ const routes = [
         meta: { title: '系统公告', hideInMenu: true, requiresAuth: true }
       }
     ]
+  },
+  // 农业投入品供应管理系统
+  {
+    path: '/input',
+    name: 'InputSystem',
+    component: () => import('../layout/InputLayout.vue'),
+    redirect: '/input/catalog',
+    meta: { requiresAuth: true },
+    children: [
+      // 投入品目录管理
+      {
+        path: 'catalog',
+        name: 'InputCatalog',
+        component: () => import('../views/input/catalog/index.vue'),
+        meta: { title: '投入品目录管理', requiresAuth: true }
+      },
+      {
+        path: 'catalog/add',
+        name: 'InputCatalogAdd',
+        component: () => import('../views/input/catalog/form.vue'),
+        meta: { title: '新增投入品', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'catalog/edit/:id',
+        name: 'InputCatalogEdit',
+        component: () => import('../views/input/catalog/form.vue'),
+        meta: { title: '编辑投入品', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'catalog/detail/:id',
+        name: 'InputCatalogDetail',
+        component: () => import('../views/input/catalog/detail.vue'),
+        meta: { title: '投入品详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 供应商投入品信息管理
+      {
+        path: 'supplier-input',
+        name: 'SupplierInput',
+        component: () => import('../views/input/supplier-input/index.vue'),
+        meta: { title: '供应商投入品信息管理', requiresAuth: true }
+      },
+      // 供应商管理
+      {
+        path: 'supplier/auth',
+        name: 'SupplierAuth',
+        component: () => import('../views/input/supplier/auth.vue'),
+        meta: { title: '供应商认证', requiresAuth: true }
+      },
+      {
+        path: 'supplier/approval',
+        name: 'SupplierApproval',
+        component: () => import('../views/input/supplier/approval.vue'),
+        meta: { title: '供应商认证审批', requiresAuth: true }
+      },
+      {
+        path: 'supplier/info',
+        name: 'SupplierInfo',
+        component: () => import('../views/input/supplier/info.vue'),
+        meta: { title: '供应商信息维护', requiresAuth: true }
+      },
+      // 库存管理
+      {
+        path: 'warehouse',
+        name: 'Warehouse',
+        component: () => import('../views/input/warehouse/index.vue'),
+        meta: { title: '仓库管理', requiresAuth: true }
+      },
+      {
+        path: 'stock-in',
+        name: 'StockIn',
+        component: () => import('../views/input/stock/in.vue'),
+        meta: { title: '入库管理', requiresAuth: true }
+      },
+      {
+        path: 'stock-out',
+        name: 'StockOut',
+        component: () => import('../views/input/stock/out.vue'),
+        meta: { title: '出库管理', requiresAuth: true }
+      },
+      {
+        path: 'storage',
+        name: 'Storage',
+        component: () => import('../views/input/storage/index.vue'),
+        meta: { title: '存储管理', requiresAuth: true }
+      },
+      // 大屏和反馈
+      {
+        path: 'dashboard',
+        name: 'InputDashboard',
+        component: () => import('../views/input/dashboard/index.vue'),
+        meta: { title: '大屏管理', requiresAuth: true }
+      },
+      {
+        path: 'feedback',
+        name: 'InputFeedback',
+        component: () => import('../views/input/feedback/index.vue'),
+        meta: { title: '信息反馈', requiresAuth: true }
+      }
+    ]
   }
 ]
 

@@ -290,4 +290,185 @@ export default {
     modifySuccess: '修改成功',
     confirmLogout: '确定要退出登录吗？',
   },
+
+  // 投入品管理系统
+  input: {
+    // 系统通用
+    systemName: '农业投入品供应管理系统',
+    systemDesc: '投入品管理、库存管理及供应链追溯',
+    backToHome: '返回首页',
+
+    // 菜单导航
+    menu: {
+      dashboard: '数据概览',
+      supplierManagement: '供应商管理',
+      supplierAuth: '供应商认证',
+      supplierAuthApproval: '供应商认证审批',
+      supplierInfo: '供应商信息维护',
+      inputManagement: '投入品管理',
+      inputCatalog: '投入品目录管理',
+      supplierInput: '供应商投入品信息管理',
+      inputSupply: '投入品供应管理',
+      inventoryManagement: '库存管理',
+      warehouse: '仓库管理',
+      stockIn: '入库管理',
+      stockOut: '出库管理',
+      storage: '存储管理',
+      dashboard: '大屏管理',
+      feedback: '信息反馈',
+    },
+
+    // 投入品目录管理
+    catalog: {
+      title: '投入品目录管理',
+      subtitle: '管理农业投入品基础信息、规格参数及资质要求',
+      list: '投入品列表',
+      add: '新增投入品',
+      edit: '编辑投入品',
+      detail: '投入品详情',
+      delete: '删除投入品',
+      deleteConfirm: '确定删除该投入品吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+
+      // 搜索和筛选
+      searchPlaceholder: '搜索产品名称、登记证号、生产批号',
+      filterByType: '按投入品类型筛选',
+      allTypes: '全部类型',
+
+      // 投入品类型
+      type: {
+        all: '全部',
+        pesticide: '农药',
+        fertilizer: '化肥',
+        seed: '种子',
+        other: '其他',
+      },
+
+      // 表单字段 - 基本信息
+      form: {
+        basicInfo: '基本信息',
+        productionInfo: '生产与责任信息',
+        regulatoryInfo: '法规与许可信息',
+        ingredientsInfo: '成分与使用信息',
+
+        inputName: '投入品名称',
+        inputType: '投入品类型',
+        inputSku: '唯一产品标识码/SKU',
+        trademark: '注册商标',
+        registerCode: '登记批号',
+        productionLicense: '生产许可证号',
+        productionStandard: '产品标准证号',
+        producerName: '生产企业名称',
+        producerAddress: '生产企业地址',
+        createTime: '创建时间',
+        createPeople: '创建人',
+        status: '状态',
+      },
+
+      // 表单占位符
+      placeholder: {
+        inputName: '请输入投入品名称（2-100个字符）',
+        inputType: '请选择投入品类型',
+        inputSku: '请输入唯一产品标识码（8-50个字符）',
+        trademark: '请输入注册商标',
+        registerCode: '请输入登记批号',
+        productionLicense: '请输入生产许可证号',
+        productionStandard: '请输入产品标准证号',
+        producerName: '请输入生产企业名称（2-200个字符）',
+        producerAddress: '请输入生产企业地址（5-255个字符）',
+      },
+
+      // 表单验证
+      rules: {
+        inputNameRequired: '请输入投入品名称',
+        inputNameLength: '投入品名称应为2-100个字符',
+        inputTypeRequired: '请选择投入品类型',
+        inputSkuRequired: '请输入唯一产品标识码',
+        inputSkuLength: '产品标识码应为8-50个字符',
+        trademarkRequired: '请输入注册商标',
+        registerCodeRequired: '请输入登记批号',
+        productionLicenseRequired: '请输入生产许可证号',
+        productionStandardRequired: '请输入产品标准证号',
+        producerNameRequired: '请输入生产企业名称',
+        producerNameLength: '企业名称应为2-200个字符',
+        producerAddressRequired: '请输入生产企业地址',
+        producerAddressLength: '企业地址应为5-255个字符',
+      },
+
+      // 农药特性字段
+      pesticide: {
+        title: '农药特性信息',
+        totalIngredientContent: '总有效成分含量',
+        toxicityLevel: '毒性等级',
+        targetCrops: '适用作物',
+        controlTargets: '防治对象',
+        applicationMethod: '施用方法',
+        dosage: '使用剂量',
+        dilutionRatio: '稀释倍数',
+        safetyInterval: '安全间隔期（天）',
+        precautions: '注意事项',
+        firstAid: '中毒急救措施',
+        storageRequirements: '储存要求',
+
+        toxicity: {
+          micro: '微毒',
+          low: '低毒',
+          medium: '中等毒',
+          high: '高毒',
+          severe: '剧毒',
+        },
+      },
+
+      // 化肥特性字段
+      fertilizer: {
+        title: '化肥特性信息',
+        fertilizerType: '肥料类型',
+        totalNutrientContent: '总养分含量',
+        nitrogenContent: '氮含量',
+        phosphorusContent: '磷含量(P₂O₅)',
+        potassiumContent: '钾含量(K₂O)',
+        organicMatterContent: '有机质含量',
+        mediumTraceElements: '中微量元素',
+        phValue: 'pH值',
+        suitableCrops: '适用作物',
+        applicationPeriod: '施用时期',
+        applicationMethod: '施用方法',
+        recommendedDosage: '建议用量',
+      },
+
+      // 种子特性字段
+      seed: {
+        title: '种子特性信息',
+        cropType: '作物种类',
+        varietyName: '品种名称',
+        varietyApprovalCode: '品种审定编号',
+        varietySource: '品种来源',
+        purity: '纯度(%)',
+        cleanliness: '净度(%)',
+        germinationRate: '发芽率(%)',
+        moistureContent: '水分含量(%)',
+      },
+
+      // 列表列
+      columns: {
+        inputName: '投入品名称',
+        inputType: '类型',
+        inputSku: '产品标识码',
+        trademark: '商标',
+        registerCode: '登记批号',
+        producerName: '生产企业',
+        createTime: '创建时间',
+        status: '状态',
+        actions: '操作',
+      },
+
+      // 状态
+      statusOptions: {
+        active: '启用',
+        inactive: '停用',
+      },
+    },
+  },
 }

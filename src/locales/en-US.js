@@ -290,4 +290,185 @@ export default {
     modifySuccess: 'Modified successfully',
     confirmLogout: 'Are you sure you want to logout?',
   },
+
+  // Agricultural Input Supply Management System
+  input: {
+    // System Common
+    systemName: 'Agricultural Input Supply Management System',
+    systemDesc: 'Input management, inventory management and supply chain traceability',
+    backToHome: 'Back to Home',
+
+    // Menu Navigation
+    menu: {
+      dashboard: 'Data Dashboard',
+      supplierManagement: 'Supplier Management',
+      supplierAuth: 'Supplier Authentication',
+      supplierAuthApproval: 'Supplier Auth Approval',
+      supplierInfo: 'Supplier Information',
+      inputManagement: 'Input Management',
+      inputCatalog: 'Input Catalog Management',
+      supplierInput: 'Supplier Input Information',
+      inputSupply: 'Input Supply Management',
+      inventoryManagement: 'Inventory Management',
+      warehouse: 'Warehouse Management',
+      stockIn: 'Stock In Management',
+      stockOut: 'Stock Out Management',
+      storage: 'Storage Management',
+      dashboard: 'Dashboard Management',
+      feedback: 'Information Feedback',
+    },
+
+    // Input Catalog Management
+    catalog: {
+      title: 'Input Catalog Management',
+      subtitle: 'Manage agricultural input basic information, specifications and qualification requirements',
+      list: 'Input List',
+      add: 'Add Input',
+      edit: 'Edit Input',
+      detail: 'Input Details',
+      delete: 'Delete Input',
+      deleteConfirm: 'Are you sure to delete this input?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Updated successfully',
+
+      // Search and Filter
+      searchPlaceholder: 'Search product name, registration number, batch number',
+      filterByType: 'Filter by input type',
+      allTypes: 'All Types',
+
+      // Input Types
+      type: {
+        all: 'All',
+        pesticide: 'Pesticide',
+        fertilizer: 'Fertilizer',
+        seed: 'Seed',
+        other: 'Other',
+      },
+
+      // Form Fields - Basic Info
+      form: {
+        basicInfo: 'Basic Information',
+        productionInfo: 'Production & Responsibility',
+        regulatoryInfo: 'Regulatory & Licensing',
+        ingredientsInfo: 'Ingredients & Usage',
+
+        inputName: 'Input Name',
+        inputType: 'Input Type',
+        inputSku: 'Product SKU',
+        trademark: 'Trademark',
+        registerCode: 'Registration Number',
+        productionLicense: 'Production License',
+        productionStandard: 'Product Standard',
+        producerName: 'Producer Name',
+        producerAddress: 'Producer Address',
+        createTime: 'Created Time',
+        createPeople: 'Creator',
+        status: 'Status',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        inputName: 'Enter input name (2-100 characters)',
+        inputType: 'Select input type',
+        inputSku: 'Enter product SKU (8-50 characters)',
+        trademark: 'Enter trademark',
+        registerCode: 'Enter registration number',
+        productionLicense: 'Enter production license',
+        productionStandard: 'Enter product standard',
+        producerName: 'Enter producer name (2-200 characters)',
+        producerAddress: 'Enter producer address (5-255 characters)',
+      },
+
+      // Form Rules
+      rules: {
+        inputNameRequired: 'Please enter input name',
+        inputNameLength: 'Input name should be 2-100 characters',
+        inputTypeRequired: 'Please select input type',
+        inputSkuRequired: 'Please enter product SKU',
+        inputSkuLength: 'Product SKU should be 8-50 characters',
+        trademarkRequired: 'Please enter trademark',
+        registerCodeRequired: 'Please enter registration number',
+        productionLicenseRequired: 'Please enter production license',
+        productionStandardRequired: 'Please enter product standard',
+        producerNameRequired: 'Please enter producer name',
+        producerNameLength: 'Producer name should be 2-200 characters',
+        producerAddressRequired: 'Please enter producer address',
+        producerAddressLength: 'Producer address should be 5-255 characters',
+      },
+
+      // Pesticide Properties
+      pesticide: {
+        title: 'Pesticide Properties',
+        totalIngredientContent: 'Total Active Ingredient',
+        toxicityLevel: 'Toxicity Level',
+        targetCrops: 'Target Crops',
+        controlTargets: 'Control Targets',
+        applicationMethod: 'Application Method',
+        dosage: 'Dosage',
+        dilutionRatio: 'Dilution Ratio',
+        safetyInterval: 'Safety Interval (days)',
+        precautions: 'Precautions',
+        firstAid: 'First Aid',
+        storageRequirements: 'Storage Requirements',
+
+        toxicity: {
+          micro: 'Micro-toxic',
+          low: 'Low Toxic',
+          medium: 'Medium Toxic',
+          high: 'High Toxic',
+          severe: 'Severe Toxic',
+        },
+      },
+
+      // Fertilizer Properties
+      fertilizer: {
+        title: 'Fertilizer Properties',
+        fertilizerType: 'Fertilizer Type',
+        totalNutrientContent: 'Total Nutrient',
+        nitrogenContent: 'Nitrogen Content',
+        phosphorusContent: 'Phosphorus (P₂O₅)',
+        potassiumContent: 'Potassium (K₂O)',
+        organicMatterContent: 'Organic Matter',
+        mediumTraceElements: 'Trace Elements',
+        phValue: 'pH Value',
+        suitableCrops: 'Suitable Crops',
+        applicationPeriod: 'Application Period',
+        applicationMethod: 'Application Method',
+        recommendedDosage: 'Recommended Dosage',
+      },
+
+      // Seed Properties
+      seed: {
+        title: 'Seed Properties',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        varietyApprovalCode: 'Approval Code',
+        varietySource: 'Variety Source',
+        purity: 'Purity (%)',
+        cleanliness: 'Cleanliness (%)',
+        germinationRate: 'Germination Rate (%)',
+        moistureContent: 'Moisture Content (%)',
+      },
+
+      // Table Columns
+      columns: {
+        inputName: 'Input Name',
+        inputType: 'Type',
+        inputSku: 'SKU',
+        trademark: 'Trademark',
+        registerCode: 'Reg. Number',
+        producerName: 'Producer',
+        createTime: 'Created',
+        status: 'Status',
+        actions: 'Actions',
+      },
+
+      // Status Options
+      statusOptions: {
+        active: 'Active',
+        inactive: 'Inactive',
+      },
+    },
+  },
 }
