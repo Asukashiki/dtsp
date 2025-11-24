@@ -241,6 +241,11 @@ export default {
     unread: 'Unread',
     read: 'Read',
     clickToView: 'Click to view details',
+    // Detail dialog
+    systemTime: 'System Time',
+    doneTime: 'Completed Time',
+    publishTime: 'Published Time',
+    publisher: 'Publisher',
   },
 
   userInfo: {

@@ -241,6 +241,11 @@ export default {
     unread: '未读',
     read: '已读',
     clickToView: '点击查看详情',
+    // 详情弹窗
+    systemTime: '系统时间',
+    doneTime: '已办时间',
+    publishTime: '发布时间',
+    publisher: '发布者',
   },
 
   userInfo: {
