@@ -143,7 +143,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const localeStore = useLocaleStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 侧边栏折叠状态
 const isCollapsed = ref(false)
@@ -218,6 +218,7 @@ const goHome = () => {
 // 语言切换
 const handleLanguageChange = (lang) => {
   localeStore.setLocale(lang)
+  locale.value = lang
 }
 
 // 用户操作
@@ -337,7 +338,7 @@ const handleUserAction = (command) => {
 
 /* PC端左侧菜单 */
 .input-sidebar {
-  width: 240px;
+  width: 280px;
   background-color: white;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   transition: width 0.3s;
