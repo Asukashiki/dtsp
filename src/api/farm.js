@@ -42,6 +42,26 @@ export const updatePassword = (userId, newPassword) => {
 // ==================== 土地信息相关接口 ====================
 
 /**
+ * 查询土地信息列表(分页)
+ * @param {Object} params - 查询参数
+ * @param {String} params.landName - 地块名称(模糊查询)
+ * @param {String} params.landType - 地块类型
+ * @param {String} params.currentStatus - 当前状态
+ * @param {String} params.adCode - 行政区划代码(模糊查询)
+ * @param {String} params.farmerUserId - 所属农民用户ID
+ * @param {String} params.keyword - 关键词搜索(会覆盖landName)
+ * @param {Number} params.page - 页码,默认1
+ * @param {Number} params.pageSize - 每页数量,默认10
+ */
+export const getLandList = (params) => {
+  return agricultureRequest({
+    url: '/api/land/list',
+    method: 'get',
+    params,
+  })
+}
+
+/**
  * 根据用户ID获取土地列表
  * @param {Number} userId - 用户ID
  */
@@ -131,7 +151,7 @@ export const approveFarmerCert = (certId, approverId) => {
   return agricultureRequest({
     url: `/api/farmer/certification/${certId}/approve`,
     method: 'post',
-    data: { approverId },
+    params: { approverId },
   })
 }
 
@@ -145,6 +165,7 @@ export const rejectFarmerCert = (certId, approverId, rejectReason) => {
   return agricultureRequest({
     url: `/api/farmer/certification/${certId}/reject`,
     method: 'post',
-    data: { approverId, rejectReason },
+    params: { approverId },
+    data: { rejectReason },
   })
 }

@@ -104,12 +104,12 @@
                   <el-form-item :label="$t('farm.farmerAuth.form.certDoc')" prop="certDocPath">
                     <el-upload
                       class="cert-upload"
-                      :action="uploadAction"
+                      :http-request="handleUploadRequest"
                       :file-list="fileList"
-                      :on-success="handleUploadSuccess"
                       :on-remove="handleRemove"
                       :limit="5"
-                      accept=".jpg,.png,.pdf"
+                      accept=".jpg,.jpeg,.png,.pdf"
+                      list-type="text"
                     >
                       <el-button type="primary" plain size="large">
                         <i class="ri-upload-2-line"></i>
@@ -177,6 +177,7 @@ import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { submitFarmerCert } from '@/api/farm'
+import { uploadFile } from '@/api/file'
 import { useUserStore } from '@/store'
 
 const { t } = useI18n()
@@ -200,11 +201,7 @@ const form = reactive({
 
 // 文件列表
 const fileList = ref([])
-
-// 上传地址（需要根据实际情况配置）
-const uploadAction = computed(() => {
-  return `${import.meta.env.VITE_APP_API_URL}/upload`
-})
+const uploadedFileIds = ref([]) // 存储上传成功的文件ID
 
 // 表单验证规则
 const rules = computed(() => ({
@@ -241,17 +238,53 @@ const rules = computed(() => ({
   ]
 }))
 
-// 文件上传成功
-const handleUploadSuccess = (response, file) => {
-  if (response.code === 200) {
-    form.certDocPath = response.data.path
-    ElMessage.success(t('common.uploadSuccess'))
+// 自定义上传处理
+const handleUploadRequest = async ({ file, onSuccess, onError, onProgress }) => {
+  try {
+    const res = await uploadFile(file)
+
+    if (res.code === 200) {
+      // 存储文件信息
+      const fileInfo = res.data
+      uploadedFileIds.value.push(fileInfo.id)
+
+      // 更新表单中的文件路径（使用dataId或id，因为filePath可能为null）
+      const fileIdentifier = fileInfo.dataId || fileInfo.id || fileInfo.fileName
+      if (form.certDocPath) {
+        form.certDocPath += ',' + fileIdentifier
+      } else {
+        form.certDocPath = fileIdentifier
+      }
+
+      ElMessage.success(t('common.uploadSuccess'))
+      onSuccess(res)
+    } else {
+      ElMessage.error(res.msg || t('common.uploadFailed'))
+      onError(new Error(res.msg || 'Upload failed'))
+    }
+  } catch (error) {
+    console.error('Upload error:', error)
+    ElMessage.error(t('common.uploadFailed'))
+    onError(error)
   }
 }
 
 // 文件移除
-const handleRemove = () => {
-  form.certDocPath = ''
+const handleRemove = (file, fileList) => {
+  // 从上传的文件ID列表中移除
+  const index = fileList.indexOf(file)
+  if (index > -1 && uploadedFileIds.value[index]) {
+    uploadedFileIds.value.splice(index, 1)
+  }
+
+  // 更新表单中的文件路径
+  const paths = form.certDocPath.split(',').filter(Boolean)
+  if (paths.length > 0) {
+    paths.splice(index, 1)
+    form.certDocPath = paths.join(',')
+  } else {
+    form.certDocPath = ''
+  }
 }
 
 // 提交表单
@@ -265,7 +298,7 @@ const handleSubmit = async () => {
     try {
       const data = {
         ...form,
-        userId: userStore.userInfo?.userId
+        userId: userStore.userInfo?.user?.id || userStore.userInfo?.userId
       }
 
       const res = await submitFarmerCert(data)
@@ -287,6 +320,7 @@ const handleSubmit = async () => {
 const handleReset = () => {
   formRef.value?.resetFields()
   fileList.value = []
+  uploadedFileIds.value = []
 }
 </script>
 

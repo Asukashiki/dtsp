@@ -345,7 +345,8 @@ const handleApprove = async (row) => {
     )
 
     try {
-      const res = await approveFarmerCert(row.certId, userStore.userInfo?.userId)
+      const approverId = userStore.userInfo?.user?.id || userStore.userInfo?.userId
+      const res = await approveFarmerCert(row.certId, approverId)
       if (res.code === 200) {
         ElMessage.success(t('farm.farmerApproval.approveSuccess'))
         loadData()
@@ -374,9 +375,10 @@ const confirmReject = async () => {
     submitLoading.value = true
 
     try {
+      const approverId = userStore.userInfo?.user?.id || userStore.userInfo?.userId
       const res = await rejectFarmerCert(
         currentItem.value.certId,
-        userStore.userInfo?.userId,
+        approverId,
         rejectForm.reason
       )
       if (res.code === 200) {

@@ -167,6 +167,19 @@
               </div>
               <el-empty v-if="!loading && tableData.length === 0" :description="$t('home.noData')" />
             </div>
+
+            <!-- 分页 -->
+            <div v-if="pagination.total > 0" class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="pagination.page"
+                v-model:page-size="pagination.pageSize"
+                :total="pagination.total"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                @current-change="handlePageChange"
+                @size-change="handleSizeChange"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -344,7 +357,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLandListByUser, addLand, updateLand, deleteLand } from '@/api/farm'
+import { getLandList, addLand, updateLand, deleteLand } from '@/api/farm'
 import { useUserStore } from '@/store'
 
 const { t } = useI18n()
@@ -359,6 +372,13 @@ const detailDialogVisible = ref(false)
 const isEdit = ref(false)
 const currentItem = ref(null)
 const submitLoading = ref(false)
+
+// 分页数据
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 0
+})
 
 // 表单引用
 const formRef = ref(null)
@@ -438,15 +458,29 @@ const formatDate = (dateStr) => {
 const loadData = async () => {
   loading.value = true
   try {
-    console.log('userStore.userInfo',userStore.userInfo)
-    const userId = userStore.userInfo?.user.id
+    const userId = userStore.userInfo?.user?.id
     if (!userId) {
       ElMessage.error('User not found')
       return
     }
-    const res = await getLandListByUser(userId)
+
+    const params = {
+      farmerUserId: userId,
+      page: pagination.page,
+      pageSize: pagination.pageSize
+    }
+
+    // 如果有搜索关键词，添加到参数中
+    if (searchKeyword.value) {
+      params.keyword = searchKeyword.value
+    }
+
+    const res = await getLandList(params)
     if (res.code === 200) {
-      tableData.value = res.data || []
+      tableData.value = res.data?.list || []
+      pagination.total = res.data?.total || 0
+      pagination.page = res.data?.page || 1
+      pagination.pageSize = res.data?.pageSize || 10
     }
   } catch (error) {
     console.error(error)
@@ -457,7 +491,19 @@ const loadData = async () => {
 
 // 搜索
 const handleSearch = () => {
-  // 实现搜索逻辑
+  pagination.page = 1
+  loadData()
+}
+
+// 分页变化
+const handlePageChange = (page) => {
+  pagination.page = page
+  loadData()
+}
+
+const handleSizeChange = (size) => {
+  pagination.pageSize = size
+  pagination.page = 1
   loadData()
 }
 
@@ -517,10 +563,11 @@ const handleSubmit = async () => {
     submitLoading.value = true
 
     try {
+      const userId = userStore.userInfo?.user?.id || userStore.userInfo?.userId
       const data = {
         ...form,
-        farmerUserId: userStore.userInfo?.userId,
-        createBy: userStore.userInfo?.userId
+        farmerUserId: String(userId),
+        createBy: String(userId)
       }
 
       let res
@@ -775,6 +822,27 @@ onMounted(() => {
 .item-value {
   flex: 1;
   color: #303133;
+}
+
+/* 分页 */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pagination-wrapper :deep(.el-pagination) {
+  gap: 8px;
+}
+
+.pagination-wrapper :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #009A44;
+}
+
+.pagination-wrapper :deep(.el-pagination.is-background .el-pager li:not(.is-disabled):hover) {
+  color: #009A44;
 }
 
 /* 响应式设计 */
