@@ -107,7 +107,7 @@ export async function redirectToLogin() {
   const CLIENT_ID = import.meta.env.VITE_APP_OAUTH2_CLIENT_ID
 
   // 构建回调地址
-  const redirectUrl = window.location.origin + '/ditp/#' + OAUTH2_CALLBACK
+  const redirectUrl = window.location.origin + '/agriculture/#' + OAUTH2_CALLBACK
 
   // 构建OAuth2授权码流程URL
   const authUrl = `${OAUTH2_SERVER}${OAUTH2_BASE_API}${OAUTH2_SERVER_CODE_GENERATE}?${OAUTH2_TYPE}&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUrl)}`

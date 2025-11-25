@@ -289,7 +289,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory('/ditp/'),
+  history: createWebHashHistory('/agriculture/'),
   routes
 })
 

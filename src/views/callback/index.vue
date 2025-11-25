@@ -42,7 +42,7 @@ const handleOAuth2Callback = async () => {
     // 构建登录数据
     const loginData = {
       code: code,
-      redirectUri: window.location.origin + '/ditp/#/callback',
+      redirectUri: window.location.origin + '/agriculture/#/callback',
       grantType: 'bsp'
     }
 
