@@ -112,13 +112,28 @@ const activeNavIndex = computed(() => {
   return index >= 0 ? index : 0
 })
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化激活的菜单项
   activeIndex.value = activeNavIndex.value
   // 从store获取用户详情信息
   updateUserDetails()
   // 同步 i18n locale
   locale.value = localeStore.currentLocale
+
+  console.log('Header mounted - token:', !!userStore.token, 'hasUserInfo:', userStore.hasUserInfo)
+  console.log('Header: 当前用户信息:', JSON.stringify(userStore.userInfo))
+
+  // 如果有 token 但没有用户信息，主动获取
+  if (userStore.token && !userStore.hasUserInfo) {
+    console.log('Header: 检测到有token但无用户信息，开始获取')
+    try {
+      await userStore.fetchUserInfo()
+      console.log('Header: 用户信息获取成功，更新显示')
+      updateUserDetails()
+    } catch (error) {
+      console.error('Header: 获取用户信息失败:', error)
+    }
+  }
 })
 
 // 监听路由变化，更新激活的菜单项
@@ -138,6 +153,16 @@ watch(
   (newLocale) => {
     locale.value = newLocale
   }
+)
+
+// 监听用户信息变化，自动更新显示
+watch(
+  () => userStore.userInfo,
+  (newVal) => {
+    console.log('Header: 监听到用户信息变化:', newVal ? '有数据' : '无数据')
+    updateUserDetails()
+  },
+  { deep: true }
 )
 
 // 更新用户详情信息方法

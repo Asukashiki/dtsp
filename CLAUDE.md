@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## During execution:
+
+- Do not generate documentation files (.md) for the code, test cases for the code, or execute any commands to run processes.
+- For maximum efficiency, when you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
+- If you create any temporary new files, scripts, or auxiliary files for iteration, clean up by deleting these files upon task completion.
+
+
 ## Project Overview
 
 **Oromia Smart Agriculture Value Chain Big Data Platform** (奥罗米亚智能农业价值链大数据平台)

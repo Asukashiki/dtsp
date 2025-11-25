@@ -76,7 +76,7 @@
         >
           <el-table-column type="selection" width="55" />
           <el-table-column prop="input_name" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="type" :label="$t('input.catalog.columns.inputType')" width="100" align="center">
+          <el-table-column prop="type" :label="$t('input.catalog.columns.inputType')" width="150" align="center">
             <template #default="{ row }">
               <el-tag :type="getTypeTag(row.type)" size="small">{{ $t(`input.catalog.type.${row.type}`) }}</el-tag>
             </template>

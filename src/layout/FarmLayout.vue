@@ -1,20 +1,20 @@
 <template>
-  <div class="input-layout">
+  <div class="farm-layout">
     <!-- 顶部导航栏 -->
-    <div class="input-header">
+    <div class="farm-header">
       <div class="header-content">
         <div class="header-left">
           <!-- 移动端菜单按钮 -->
           <div class="mobile-menu-btn" @click="toggleMobileMenu">
             <i class="ri-menu-line"></i>
           </div>
-          <i class="ri-database-2-line header-icon"></i>
-          <span class="system-name">{{ $t('input.systemName') }}</span>
+          <i class="ri-plant-line header-icon"></i>
+          <span class="system-name">{{ $t('farm.systemName') }}</span>
         </div>
         <div class="header-right">
           <el-button link class="header-btn" @click="goHome">
             <i class="ri-home-line"></i>
-            <span class="btn-text">{{ $t('input.backToHome') }}</span>
+            <span class="btn-text">{{ $t('farm.backToHome') }}</span>
           </el-button>
           <el-dropdown @command="handleLanguageChange">
             <el-button link class="header-btn">
@@ -45,9 +45,9 @@
     </div>
 
     <!-- 主体区域 -->
-    <div class="input-main">
+    <div class="farm-main">
       <!-- PC端左侧菜单 -->
-      <div class="input-sidebar pc-only" :class="{ collapsed: isCollapsed }">
+      <div class="farm-sidebar pc-only" :class="{ collapsed: isCollapsed }">
         <div class="collapse-btn" @click="toggleCollapse">
           <i :class="isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'"></i>
         </div>
@@ -89,8 +89,8 @@
         class="mobile-drawer"
       >
         <div class="mobile-menu-header">
-          <i class="ri-database-2-line"></i>
-          <span>{{ $t('input.systemName') }}</span>
+          <i class="ri-plant-line"></i>
+          <span>{{ $t('farm.systemName') }}</span>
         </div>
         <el-menu
           :default-active="activeMenu"
@@ -121,7 +121,7 @@
       </el-drawer>
 
       <!-- 右侧内容区 -->
-      <div class="input-content">
+      <div class="farm-content">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -153,37 +153,23 @@ const mobileMenuVisible = ref(false)
 // 菜单列表
 const menuList = computed(() => [
   {
-    index: 'input-management',
-    icon: 'ri-box-3-line',
-    title: t('input.menu.inputManagement'),
+    index: 'farmer-management',
+    icon: 'ri-user-3-line',
+    title: t('farm.menu.farmerManagement'),
     children: [
-      { index: '/input/catalog', icon: 'ri-list-check', title: t('input.menu.inputCatalog') },
-      { index: '/input/supplier-input', icon: 'ri-store-line', title: t('input.menu.supplierInput') }
+      { index: '/farm/farmer/auth', icon: 'ri-shield-user-line', title: t('farm.menu.farmerAuth') },
+      { index: '/farm/farmer/approval', icon: 'ri-checkbox-circle-line', title: t('farm.menu.farmerAuthApproval') },
+      { index: '/farm/farmer/info', icon: 'ri-user-settings-line', title: t('farm.menu.farmerInfo') }
     ]
   },
   {
-    index: 'supplier-management',
-    icon: 'ri-building-line',
-    title: t('input.menu.supplierManagement'),
+    index: 'land-management',
+    icon: 'ri-map-pin-line',
+    title: t('farm.menu.landManagement'),
     children: [
-      { index: '/input/supplier/auth', icon: 'ri-shield-check-line', title: t('input.menu.supplierAuth') },
-      { index: '/input/supplier/approval', icon: 'ri-checkbox-circle-line', title: t('input.menu.supplierAuthApproval') },
-      { index: '/input/supplier/info', icon: 'ri-information-line', title: t('input.menu.supplierInfo') }
+      { index: '/farm/land/list', icon: 'ri-landscape-line', title: t('farm.menu.landList') }
     ]
-  },
-  {
-    index: 'inventory-management',
-    icon: 'ri-archive-line',
-    title: t('input.menu.inventoryManagement'),
-    children: [
-      { index: '/input/warehouse', icon: 'ri-home-gear-line', title: t('input.menu.warehouse') },
-      { index: '/input/stock-in', icon: 'ri-download-line', title: t('input.menu.stockIn') },
-      { index: '/input/stock-out', icon: 'ri-upload-line', title: t('input.menu.stockOut') },
-      { index: '/input/storage', icon: 'ri-stack-line', title: t('input.menu.storage') }
-    ]
-  },
-  { index: '/input/dashboard', icon: 'ri-dashboard-line', title: t('input.menu.dashboard') },
-  { index: '/input/feedback', icon: 'ri-feedback-line', title: t('input.menu.feedback') }
+  }
 ])
 
 // 当前激活的菜单项
@@ -232,7 +218,7 @@ const handleUserAction = (command) => {
 </script>
 
 <style scoped>
-.input-layout {
+.farm-layout {
   min-height: 100vh;
   background-color: #f0f2f5;
   display: flex;
@@ -240,7 +226,7 @@ const handleUserAction = (command) => {
 }
 
 /* 顶部导航栏 */
-.input-header {
+.farm-header {
   height: 60px;
   background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -329,14 +315,14 @@ const handleUserAction = (command) => {
 }
 
 /* 主体区域 */
-.input-main {
+.farm-main {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
 
 /* PC端左侧菜单 */
-.input-sidebar {
+.farm-sidebar {
   width: 280px;
   background-color: white;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
@@ -344,7 +330,7 @@ const handleUserAction = (command) => {
   position: relative;
 }
 
-.input-sidebar.collapsed {
+.farm-sidebar.collapsed {
   width: 64px;
 }
 
@@ -424,7 +410,7 @@ const handleUserAction = (command) => {
 }
 
 /* 右侧内容区 */
-.input-content {
+.farm-content {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
@@ -453,15 +439,15 @@ const handleUserAction = (command) => {
     font-size: 16px;
   }
 
-  .input-sidebar {
+  .farm-sidebar {
     width: 200px;
   }
 
-  .input-sidebar.collapsed {
+  .farm-sidebar.collapsed {
     width: 64px;
   }
 
-  .input-content {
+  .farm-content {
     padding: 16px;
   }
 }
@@ -513,14 +499,14 @@ const handleUserAction = (command) => {
     display: none;
   }
 
-  .input-content {
+  .farm-content {
     padding: 12px;
   }
 }
 
 /* 超小屏幕 */
 @media screen and (max-width: 480px) {
-  .input-header {
+  .farm-header {
     height: 56px;
   }
 
@@ -529,7 +515,7 @@ const handleUserAction = (command) => {
     max-width: 100px;
   }
 
-  .input-content {
+  .farm-content {
     padding: 8px;
   }
 }

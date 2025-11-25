@@ -587,18 +587,18 @@ body {
 }
 
 .el-message--success {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.95) 0%, rgba(0, 179, 80, 0.95) 100%);
+  /* background: linear-gradient(135deg, rgba(0, 154, 68, 0.95) 0%, rgba(0, 179, 80, 0.95) 100%); */
   backdrop-filter: blur(10px);
 }
 
 .el-message--warning {
-  background: rgba(254, 221, 0, 0.95);
+  /* background: rgba(254, 221, 0, 0.95); */
   color: #303133;
   backdrop-filter: blur(10px);
 }
 
 .el-message--error {
-  background: linear-gradient(135deg, rgba(218, 18, 26, 0.95) 0%, rgba(255, 61, 71, 0.95) 100%);
+  /* background: linear-gradient(135deg, rgba(218, 18, 26, 0.95) 0%, rgba(255, 61, 71, 0.95) 100%); */
   backdrop-filter: blur(10px);
 }
 

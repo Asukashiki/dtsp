@@ -9,6 +9,13 @@ const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/l
 const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
 
 const routes = [
+  // OAuth2回调页面（不需要认证）
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/callback/index.vue'),
+    meta: { requiresAuth: false }
+  },
   {
     path: '/',
     name: 'Layout',
@@ -185,6 +192,42 @@ const routes = [
         meta: { title: '信息反馈', requiresAuth: true }
       }
     ]
+  },
+  // 农田管理系统
+  {
+    path: '/farm',
+    name: 'FarmSystem',
+    component: () => import('../layout/FarmLayout.vue'),
+    redirect: '/farm/farmer/auth',
+    meta: { requiresAuth: true },
+    children: [
+      // 农民管理
+      {
+        path: 'farmer/auth',
+        name: 'FarmerAuth',
+        component: () => import('../views/farm/farmer/auth.vue'),
+        meta: { title: '农民认证申请', requiresAuth: true }
+      },
+      {
+        path: 'farmer/approval',
+        name: 'FarmerApproval',
+        component: () => import('../views/farm/farmer/approval.vue'),
+        meta: { title: '农民认证审批', requiresAuth: true }
+      },
+      {
+        path: 'farmer/info',
+        name: 'FarmerInfo',
+        component: () => import('../components/userDetails.vue'),
+        meta: { title: '农民信息维护', requiresAuth: true }
+      },
+      // 土地信息管理
+      {
+        path: 'land/list',
+        name: 'LandList',
+        component: () => import('../views/farm/land/list.vue'),
+        meta: { title: '土地信息管理', requiresAuth: true }
+      }
+    ]
   }
 ]
 
@@ -196,21 +239,21 @@ const router = createRouter({
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-  
+
   // 检查是否需要身份验证
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false)
-  
+
   if (!requiresAuth) {
     return next()
   }
   const userStore = useUserStore()
-  
+
   // 1. 先判断 URL 上有没有 token
   const urlToken = getTokenFromUrl()
-  
+
   // 2. 判断 localStorage 有没有 token
   const storedToken = getToken()
-  
+
   // 3. 处理不同情况
   if (urlToken) {
     userStore.setToken(urlToken)
@@ -220,7 +263,7 @@ router.beforeEach(async (to, from, next) => {
         window.history.replaceState(null, '', window.location.pathname)
         return next('/home')
       }
-      
+
     } catch (error) {
       redirectToLogin(to.fullPath, userStore)
       return next(false)
@@ -229,6 +272,24 @@ router.beforeEach(async (to, from, next) => {
     userStore.logoutAndRedirect(1000)
     return next(false)
   } else {
+    // 有 token，检查是否有用户信息
+    console.log('路由守卫: 已有token，检查用户信息状态 - hasUserInfo:', userStore.hasUserInfo)
+
+    if (!userStore.hasUserInfo) {
+      console.log('路由守卫: 用户信息不存在，开始获取')
+      try {
+        const result = await userStore.fetchUserInfo()
+        console.log('路由守卫: 用户信息获取完成:', result ? '成功' : '失败')
+        console.log('路由守卫: 获取后状态 - hasUserInfo:', userStore.hasUserInfo)
+      } catch (error) {
+        console.error('路由守卫: 获取用户信息失败:', error)
+        // 如果获取用户信息失败，可能是 token 已过期，重新登录
+        userStore.logoutAndRedirect(1000)
+        return next(false)
+      }
+    } else {
+      console.log('路由守卫: 用户信息已存在，直接放行')
+    }
     next()
   }
 })
