@@ -272,7 +272,6 @@ const handleUserAction = (command) => {
 
 .header-content {
   height: 100%;
-  max-width: 1920px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;

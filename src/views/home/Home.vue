@@ -141,13 +141,6 @@ const { announcementList } = toRefs(state)
 
 // 系统模块配置
 const systemModules = computed(() => ({
-  portal: {
-    name: t('home.modules.portal.name'),
-    desc: t('home.modules.portal.desc'),
-    icon: 'ri-login-box-line',
-    gradient: 'linear-gradient(135deg, #009A44 0%, #00b350 100%)',
-    path: '/portal'
-  },
   research: {
     name: t('home.modules.research.name'),
     desc: t('home.modules.research.desc'),
@@ -161,6 +154,13 @@ const systemModules = computed(() => ({
     icon: 'ri-database-2-line',
     gradient: 'linear-gradient(135deg, #DA121A 0%, #FF3D47 100%)',
     path: '/input'
+  },
+  farm: {
+    name: t('home.modules.farm.name'),
+    desc: t('home.modules.farm.desc'),
+    icon: 'ri-landscape-line',
+    gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+    path: '/farm'
   },
   production: {
     name: t('home.modules.production.name'),
@@ -189,6 +189,13 @@ const systemModules = computed(() => ({
     icon: 'ri-bar-chart-box-line',
     gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFA940 100%)',
     path: '/data'
+  },
+  farm: {
+    name: t('home.modules.farm.name'),
+    desc: t('home.modules.farm.desc'),
+    icon: 'ri-landscape-line',
+    gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+    path: '/farm'
   }
 }))
 

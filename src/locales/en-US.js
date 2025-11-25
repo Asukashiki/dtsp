@@ -91,6 +91,10 @@ export default {
         name: 'Data Services',
         desc: 'Data collection, analysis display and decision support',
       },
+      farm: {
+        name: 'Farm Management System',
+        desc: 'Farmer authentication, land information management and farm data services',
+      },
     },
 
     // Operation Guide Section
