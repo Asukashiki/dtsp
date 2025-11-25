@@ -294,6 +294,682 @@ export default {
     confirmLogout: 'Are you sure you want to logout?',
   },
 
+  // Research & Development Management System
+  research: {
+    // System Common
+    systemName: 'Research & Development Management System',
+    systemDesc: 'Variety management, breeding management and seed information services',
+    backToHome: 'Back to Home',
+
+    // Menu Navigation
+    menu: {
+      enterpriseRegistration: 'Enterprise Registration',
+      enterpriseAuth: 'Seed Enterprise Authentication',
+      enterpriseAudit: 'Seed Enterprise Audit',
+      enterpriseList: 'Enterprise List',
+      varietyManagement: 'Variety Management',
+      varietyRegistration: 'Variety Registration',
+      varietyAudit: 'Variety Audit',
+      varietyPublish: 'Variety Publication',
+      breedingManagement: 'Breeding Management',
+      breedingPlan: 'Breeding Plan Management',
+      breedingMaterial: 'Breeding Material Registration',
+      breedingTracking: 'Breeding Tracking Management',
+      dataCollection: 'Data Collection',
+      trialData: 'Trial Basic Data Collection',
+      agronomicData: 'Agronomic Data Collection',
+      farmingRecord: 'Farming Record Collection',
+      environmentData: 'Environment & Soil Data Collection',
+      farmerData: 'Farmer & Plot Data Collection',
+      labData: 'Laboratory Test Data Collection',
+      yieldData: 'Yield Data Collection',
+      iotData: 'IOT Sensor Data Collection',
+      seedService: 'Seed Information Service',
+      promotionManagement: 'Seed Promotion Management',
+      seedInfo: 'Seed Information Publicity',
+    },
+
+    // Enterprise Registration
+    enterprise: {
+      title: 'Seed Enterprise Authentication',
+      subtitle: 'Fill in enterprise basic information and submit authentication application',
+      list: 'Enterprise List',
+      add: 'Add Enterprise Authentication',
+      edit: 'Edit Enterprise Information',
+      detail: 'Enterprise Details',
+      apply: 'Apply for Authentication',
+      viewDetail: 'View Details',
+
+      // Search and Filter
+      searchPlaceholder: 'Search enterprise name, credit code, license number',
+      filterByType: 'Filter by enterprise type',
+      filterByStatus: 'Filter by authentication status',
+      allTypes: 'All Types',
+      allStatus: 'All Status',
+
+      // Enterprise Type
+      type: {
+        production: 'Production-oriented',
+        trade: 'Trade-oriented',
+        integrated: 'Integrated',
+      },
+
+      // Authentication Status
+      status: {
+        pending: 'Pending Review',
+        approved: 'Approved',
+        rejected: 'Rejected',
+        draft: 'Draft',
+      },
+
+      // Form Fields - Enterprise Identity Information
+      form: {
+        identityInfo: 'Enterprise Identity Information',
+        locationInfo: 'Location & Operation Information',
+        extraInfo: 'Additional Enterprise Information',
+        documentsInfo: 'Required Documents',
+        operationInfo: 'Operation Information',
+
+        enterpriseName: 'Enterprise Name',
+        enterpriseId: 'Enterprise Registration ID',
+        unifiedSocialCreditCode: 'Unified Social Credit Code',
+        enterpriseType: 'Enterprise Type',
+        seedLicenseNo: 'Seed Business License Number',
+        licenseStartDate: 'License Start Date',
+        licenseEndDate: 'License Expiration Date',
+
+        region: 'Region',
+        zone: 'Zone',
+        county: 'County',
+        township: 'Township',
+        detailedAddress: 'Detailed Address',
+        businessScope: 'Business Scope',
+        annualProductionCapacity: 'Annual Production Capacity (tons/year)',
+
+        establishmentDate: 'Establishment Date',
+        legalPersonName: 'Legal Person Name',
+        legalPersonId: 'Legal Person ID',
+        contactPerson: 'Contact Person',
+        contactPhone: 'Contact Phone',
+        contactEmail: 'Email',
+
+        businessLicense: 'Business License',
+        seedLicense: 'Seed License',
+        taxRegistration: 'Tax Registration Certificate',
+        factoryLicense: 'Factory License',
+
+        operator: 'Operator',
+        operationOrg: 'Operation Organization',
+        operationTime: 'Operation Time',
+        certificationStatus: 'Authentication Status',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        enterpriseName: 'Please enter enterprise name',
+        unifiedSocialCreditCode: 'Please enter unified social credit code (18 digits)',
+        enterpriseType: 'Please select enterprise type',
+        seedLicenseNo: 'Please enter seed business license number',
+        licenseStartDate: 'Please select license start date',
+        licenseEndDate: 'Please select license expiration date',
+        region: 'Please select region',
+        zone: 'Please select zone',
+        county: 'Please select county',
+        township: 'Please select township',
+        detailedAddress: 'Please enter detailed address',
+        businessScope: 'Please enter business scope',
+        annualProductionCapacity: 'Please enter annual production capacity',
+        establishmentDate: 'Please select establishment date',
+        legalPersonName: 'Please enter legal person name',
+        legalPersonId: 'Please enter legal person ID',
+        contactPerson: 'Please enter contact person',
+        contactPhone: 'Please enter contact phone',
+        contactEmail: 'Please enter email (optional)',
+      },
+
+      // Form Rules
+      rules: {
+        enterpriseNameRequired: 'Please enter enterprise name',
+        unifiedSocialCreditCodeRequired: 'Please enter unified social credit code',
+        unifiedSocialCreditCodeLength: 'Unified social credit code should be 18 digits',
+        enterpriseTypeRequired: 'Please select enterprise type',
+        seedLicenseNoRequired: 'Please enter seed business license number',
+        licenseStartDateRequired: 'Please select license start date',
+        licenseEndDateRequired: 'Please select license expiration date',
+        regionRequired: 'Please select region',
+        zoneRequired: 'Please select zone',
+        countyRequired: 'Please select county',
+        townshipRequired: 'Please select township',
+        detailedAddressRequired: 'Please enter detailed address',
+        businessScopeRequired: 'Please enter business scope',
+        annualProductionCapacityRequired: 'Please enter annual production capacity',
+        establishmentDateRequired: 'Please select establishment date',
+        legalPersonNameRequired: 'Please enter legal person name',
+        legalPersonIdRequired: 'Please enter legal person ID',
+        contactPersonRequired: 'Please enter contact person',
+        contactPhoneRequired: 'Please enter contact phone',
+        contactPhoneFormat: 'Please enter a valid phone number',
+        contactEmailFormat: 'Please enter a valid email format',
+        businessLicenseRequired: 'Please upload business license',
+        seedLicenseRequired: 'Please upload seed license',
+        taxRegistrationRequired: 'Please upload tax registration certificate',
+        factoryLicenseRequired: 'Please upload factory license',
+      },
+
+      // Table Columns
+      columns: {
+        enterpriseName: 'Enterprise Name',
+        unifiedSocialCreditCode: 'Unified Social Credit Code',
+        enterpriseType: 'Enterprise Type',
+        seedLicenseNo: 'License Number',
+        licenseEndDate: 'License Expiration Date',
+        certificationStatus: 'Authentication Status',
+        applicationDate: 'Application Date',
+        auditStage: 'Audit Stage',
+        auditor: 'Auditor',
+        createTime: 'Created Time',
+        actions: 'Actions',
+      },
+
+      // Action Buttons
+      actions: {
+        submit: 'Submit Application',
+        saveDraft: 'Save as Draft',
+        edit: 'Edit',
+        view: 'View',
+        audit: 'Audit',
+        delete: 'Delete',
+        approve: 'Approve',
+        reject: 'Reject',
+      },
+
+      // Messages
+      messages: {
+        submitSuccess: 'Submitted successfully',
+        saveDraftSuccess: 'Draft saved successfully',
+        deleteConfirm: 'Are you sure to delete this enterprise authentication application?',
+        deleteSuccess: 'Deleted successfully',
+        uploadTip: 'Supports PDF, JPG formats, single file size less than 2MB',
+      },
+    },
+
+    // Enterprise Audit
+    audit: {
+      title: 'Seed Enterprise Audit',
+      subtitle: 'Review enterprise registration application materials',
+      taskList: 'Audit Task List',
+      taskDetail: 'Audit Task Details',
+      detailTitle: 'Audit Details',
+      detailSubtitle: 'View enterprise information and conduct audit',
+
+      // Search and Filter
+      search: {
+        placeholder: 'Search enterprise name, credit code',
+      },
+      filter: {
+        enterpriseType: 'Filter by enterprise type',
+        urgency: 'Filter by urgency',
+      },
+
+      // Urgency
+      urgency: {
+        high: 'High',
+        medium: 'Medium',
+        low: 'Low',
+      },
+
+      // Table Columns
+      columns: {
+        enterpriseName: 'Enterprise Name',
+        unifiedSocialCreditCode: 'Unified Social Credit Code',
+        enterpriseType: 'Enterprise Type',
+        seedLicenseNo: 'Seed License No.',
+        applicationDate: 'Application Date',
+        currentStage: 'Current Stage',
+        assignedAuditor: 'Assigned Auditor',
+        auditStatus: 'Audit Status',
+        submissionTime: 'Submission Time',
+        urgency: 'Urgency',
+        actions: 'Actions',
+      },
+
+      // Table Messages
+      table: {
+        noData: 'No data available',
+      },
+
+      // Audit Status
+      status: {
+        pending: 'In Review',
+        approved: 'Approved',
+        rejected: 'Rejected',
+      },
+
+      // Audit Stage
+      stage: {
+        initial: 'Initial Review',
+        recheck: 'Re-review',
+        final: 'Final Review',
+      },
+
+      // Audit Result
+      result: {
+        pass: 'Approve',
+        reject: 'Reject',
+      },
+
+      // Detail Page Section Titles
+      sections: {
+        basicInfo: 'Enterprise Basic Information',
+        extraInfo: 'Enterprise Additional Information',
+        documents: 'Required Documents',
+        auditOperation: 'Audit Operation',
+      },
+
+      // Enterprise Extra Information
+      extraInfo: {
+        establishmentDate: 'Establishment Date',
+        legalPersonName: 'Legal Person Name',
+        legalPersonId: 'Legal Person ID',
+        contactPersonName: 'Contact Person Name',
+        contactPhone: 'Contact Phone',
+        email: 'Email',
+      },
+
+      // Required Documents
+      documents: {
+        businessLicense: 'Business License',
+        seedLicense: 'Seed License',
+        taxRegistration: 'Tax Registration Certificate',
+        factoryPermit: 'Factory Permit',
+        otherDocuments: 'Other Documents',
+        viewDocument: 'View Document',
+        download: 'Download',
+      },
+
+      // Form Fields
+      form: {
+        auditResult: 'Audit Result',
+        auditOpinion: 'Audit Opinion',
+        auditor: 'Auditor',
+        auditTime: 'Audit Time',
+        rejectReason: 'Rejection Reason',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        auditOpinion: 'Please enter audit opinion',
+        rejectReason: 'Please enter rejection reason',
+      },
+
+      // Form Rules
+      rules: {
+        auditResultRequired: 'Please select audit result',
+        auditOpinionRequired: 'Please enter audit opinion',
+        rejectReasonRequired: 'Rejection reason is required when rejecting',
+      },
+
+      // Action Buttons
+      actions: {
+        submit: 'Submit Audit',
+        back: 'Back to List',
+        backToList: 'Back to List',
+        audit: 'Audit',
+        search: 'Search',
+        reset: 'Reset',
+      },
+
+      // Messages
+      messages: {
+        submitSuccess: 'Audit submitted successfully',
+        confirmSubmit: 'Are you sure to submit the audit result?',
+      },
+    },
+
+    // Variety Management
+    variety: {
+      // Variety Registration
+      registration: {
+        title: 'Variety Registration',
+        subtitle: 'Record seed variety basic information and submit registration application',
+        list: 'Variety Registration List',
+        add: 'Add Variety Registration',
+        edit: 'Edit Variety Information',
+        detail: 'Variety Details',
+        apply: 'Apply for Registration',
+
+        // Search and Filter
+        searchPlaceholder: 'Search variety name, variety code, crop type',
+        filterByCrop: 'Filter by crop type',
+        filterByStatus: 'Filter by registration status',
+        allCrops: 'All Crops',
+        allStatus: 'All Status',
+
+        // Registration Status
+        status: {
+          draft: 'Draft',
+          pending: 'In Review',
+          approved: 'Pending Publication',
+          published: 'Published',
+          rejected: 'Rejected',
+        },
+
+        // Form Sections
+        sections: {
+          enterpriseInfo: 'Registration Entity Information',
+          registrationInfo: 'Registration Basic Information',
+          identificationInfo: 'Variety Identification Information',
+          technicalInfo: 'Technical Characteristics Information',
+          trialInfo: 'Trial and Performance Information',
+          regulatoryInfo: 'Regulatory Information',
+        },
+
+        // Form Fields - Registration Basic Information
+        form: {
+          registrationType: 'Registration Type',
+          registrationDate: 'Registration Date',
+          registrationStatus: 'Registration Status',
+
+          // Variety Identification Information
+          varietyName: 'Variety Name',
+          varietyCode: 'Variety Code',
+          cropType: 'Crop Type',
+          species: 'Species',
+          genus: 'Genus',
+          family: 'Family',
+          breedingMethod: 'Breeding Method',
+          methodPedigree: 'Method Pedigree',
+          cultivationYear: 'Cultivation Year',
+
+          // Technical Characteristics Information
+          minYieldPotential: 'Minimum Yield Potential (qt/ha)',
+          maxYieldPotential: 'Maximum Yield Potential (qt/ha)',
+          diseaseResistance: 'Disease Resistance',
+          stressResistance: 'Stress Resistance',
+          growthPeriod: 'Growth Period (days)',
+          plantHeight: 'Plant Height (cm)',
+          grainQuality: 'Grain Quality Characteristics',
+
+          // Trial and Performance Information
+          trialLocation: 'Trial Location',
+          trialYear: 'Trial Year',
+          averageYield: 'Average Yield',
+          stabilityScore: 'Stability Score',
+          trialReport: 'Trial Report',
+          photos: 'Photos',
+
+          // Regulatory Information
+          approvalDocumentNo: 'Approval Document No.',
+          approvalAgency: 'Approval Agency',
+          approvalDate: 'Approval Date',
+          certificationDocument: 'Certification Document',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          varietyName: 'Please enter variety name',
+          varietyCode: 'Please enter variety code',
+          cropType: 'Please select crop type',
+          species: 'Please enter species',
+          genus: 'Please enter genus',
+          family: 'Please enter family',
+          breedingMethod: 'Please select breeding method',
+          methodPedigree: 'Please enter method pedigree',
+          cultivationYear: 'Please select cultivation year',
+          minYieldPotential: 'Please enter minimum yield potential',
+          maxYieldPotential: 'Please enter maximum yield potential',
+          diseaseResistance: 'Please enter disease resistance description',
+          stressResistance: 'Please enter stress resistance description',
+          growthPeriod: 'Please enter growth period',
+          plantHeight: 'Please enter plant height',
+          grainQuality: 'Please enter grain quality characteristics',
+          trialLocation: 'Please enter trial location',
+          trialYear: 'Please select trial year',
+          averageYield: 'Please enter average yield',
+          stabilityScore: 'Please enter stability score',
+          approvalDocumentNo: 'Please enter approval document number',
+          approvalAgency: 'Please enter approval agency',
+          approvalDate: 'Please select approval date',
+        },
+
+        // Form Rules
+        rules: {
+          varietyNameRequired: 'Please enter variety name',
+          varietyCodeRequired: 'Please enter variety code',
+          cropTypeRequired: 'Please select crop type',
+          speciesRequired: 'Please enter species',
+          breedingMethodRequired: 'Please select breeding method',
+          cultivationYearRequired: 'Please select cultivation year',
+        },
+
+        // List Columns
+        columns: {
+          registrationNo: 'Registration No.',
+          varietyName: 'Variety Name',
+          varietyCode: 'Variety Code',
+          cropType: 'Crop Type',
+          submittingUnit: 'Submitting Unit',
+          submitDate: 'Submit Date',
+          registrationStatus: 'Registration Status',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit Application',
+          saveDraft: 'Save Draft',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        // Messages
+        messages: {
+          submitSuccess: 'Submitted successfully',
+          saveDraftSuccess: 'Draft saved successfully',
+          deleteConfirm: 'Are you sure to delete this variety registration application?',
+          deleteSuccess: 'Deleted successfully',
+          uploadTip: 'Support PDF, JPG format, single file size less than 2MB',
+        },
+      },
+
+      // Variety Audit
+      audit: {
+        title: 'Variety Audit',
+        subtitle: 'Review the completeness, authenticity and compliance of variety registration applications',
+        taskList: 'Audit Task List',
+        taskDetail: 'Audit Task Details',
+
+        // Search and Filter
+        searchPlaceholder: 'Search variety name, submitting unit',
+        filterByStatus: 'Filter by audit status',
+        allStatus: 'All Status',
+
+        // Audit Status
+        status: {
+          pending: 'In Review',
+          approved: 'Approved',
+          rejected: 'Rejected',
+        },
+
+        // List Columns
+        columns: {
+          applicationNo: 'Application No.',
+          varietyName: 'Variety Name',
+          cropType: 'Crop Type',
+          submittingUnit: 'Submitting Unit',
+          submitDate: 'Submit Date',
+          auditStatus: 'Audit Status',
+          auditor: 'Auditor',
+          actions: 'Actions',
+        },
+
+        // Detail Page Section Titles
+        sections: {
+          basicInfo: 'Variety Basic Information',
+          identificationInfo: 'Variety Identification Information',
+          technicalInfo: 'Technical Characteristics Information',
+          trialInfo: 'Trial and Performance Data',
+          regulatoryInfo: 'Regulatory Data',
+          auditOperation: 'Audit Operation',
+        },
+
+        // Form Fields
+        form: {
+          auditResult: 'Audit Result',
+          auditOpinion: 'Audit Opinion',
+          auditor: 'Auditor',
+          auditTime: 'Audit Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          auditOpinion: 'Please enter audit opinion',
+        },
+
+        // Audit Result
+        result: {
+          pass: 'Approve',
+          reject: 'Reject',
+        },
+
+        // Form Rules
+        rules: {
+          auditResultRequired: 'Please select audit result',
+          auditOpinionRequired: 'Please enter audit opinion',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit Audit',
+          backToList: 'Back to List',
+          audit: 'Audit',
+          view: 'View',
+        },
+
+        // Messages
+        messages: {
+          submitSuccess: 'Audit submitted successfully',
+          confirmSubmit: 'Are you sure to submit the audit result?',
+        },
+      },
+
+      // Variety Publication
+      publish: {
+        title: 'Variety Publication Management',
+        subtitle: 'Register approved seed variety information into the variety registration database and publish',
+        list: 'Variety Publication List',
+        publishQueue: 'Pending Publication',
+        published: 'Published Varieties',
+
+        // Search and Filter
+        searchPlaceholder: 'Search variety name, crop type',
+        filterByCrop: 'Filter by crop type',
+        filterByStatus: 'Filter by publication status',
+        allCrops: 'All Crops',
+        allStatus: 'All Status',
+
+        // Publication Status
+        status: {
+          pending: 'Pending Publication',
+          published: 'Published',
+          offline: 'Offline',
+        },
+
+        // List Columns
+        columns: {
+          publishNo: 'Publication No.',
+          varietyName: 'Variety Name',
+          cropType: 'Crop Type',
+          approvalDate: 'Approval Date',
+          publishDate: 'Publication Date',
+          publishDept: 'Publishing Department',
+          publishStatus: 'Publication Status',
+          actions: 'Actions',
+        },
+
+        // Form Fields
+        form: {
+          publishNo: 'Publication No.',
+          publishDate: 'Publication Date',
+          publishDept: 'Publishing Department',
+          decisionExplanation: 'Decision Explanation',
+          publicDescription: 'Public Description',
+          recommendedRegion: 'Recommended Region',
+          sowingGuide: 'Sowing Guide',
+          photos: 'Photos',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          decisionExplanation: 'Please enter decision explanation',
+          publicDescription: 'Please enter public description',
+          recommendedRegion: 'Please enter recommended region',
+          sowingGuide: 'Please enter sowing guide',
+        },
+
+        // Action Buttons
+        actions: {
+          preview: 'Preview Publication Info',
+          publish: 'Publish Now',
+          offline: 'Take Offline',
+          view: 'View',
+        },
+
+        // Messages
+        messages: {
+          publishSuccess: 'Published successfully',
+          offlineSuccess: 'Taken offline successfully',
+          confirmPublish: 'Are you sure to publish this variety information?',
+          confirmOffline: 'Are you sure to take this variety information offline?',
+        },
+      },
+
+      // Variety Query
+      query: {
+        title: 'Seed Information Publicity',
+        subtitle: 'Query published seed variety information',
+        searchTitle: 'Variety Query',
+
+        // Search
+        searchPlaceholder: 'Search variety name',
+        filterByYear: 'Filter by year',
+        filterByCrop: 'Filter by crop type',
+        allYears: 'All Years',
+        allCrops: 'All Crops',
+
+        // List Columns
+        columns: {
+          publishNo: 'Publication No.',
+          varietyName: 'Variety Name',
+          cropType: 'Crop Type',
+          publishDate: 'Publication Date',
+          publishDept: 'Publishing Department',
+          actions: 'Actions',
+        },
+
+        // Detail Page
+        detail: {
+          basicInfo: 'Variety Basic Information',
+          technicalInfo: 'Technical Characteristics Information',
+          trialInfo: 'Trial Information',
+          publishInfo: 'Publication Information',
+          decisionExplanation: 'Decision Explanation',
+          publicDescription: 'Public Description',
+          recommendedRegion: 'Recommended Region',
+          sowingGuide: 'Sowing Guide',
+          photos: 'Photos',
+        },
+
+        // Action Buttons
+        actions: {
+          viewDetail: 'View Details',
+          back: 'Back',
+        },
+      },
+    },
+  },
+
   // Agricultural Input Supply Management System
   input: {
     // System Common

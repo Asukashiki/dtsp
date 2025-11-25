@@ -94,6 +94,54 @@ const routes = [
       }
     ]
   },
+  // 研究与开发管理系统
+  {
+    path: '/research',
+    name: 'ResearchSystem',
+    component: () => import('../layout/ResearchLayout.vue'),
+    redirect: '/research/enterprise/auth',
+    meta: { requiresAuth: true },
+    children: [
+      // 企业注册备案
+      {
+        path: 'enterprise/auth',
+        name: 'EnterpriseAuth',
+        component: () => import('../views/research/enterprise/EnterpriseAuth.vue'),
+        meta: { title: '种子企业认证', requiresAuth: true }
+      },
+      {
+        path: 'enterprise/audit',
+        name: 'EnterpriseAudit',
+        component: () => import('../views/research/enterprise/EnterpriseAudit.vue'),
+        meta: { title: '种子企业审核', requiresAuth: true }
+      },
+      // 品种管理
+      {
+        path: 'variety/registration',
+        name: 'VarietyRegistration',
+        component: () => import('../views/research/variety/VarietyRegistration.vue'),
+        meta: { title: '品种登记', requiresAuth: true }
+      },
+      {
+        path: 'variety/audit',
+        name: 'VarietyAudit',
+        component: () => import('../views/research/variety/VarietyAudit.vue'),
+        meta: { title: '品种审核', requiresAuth: true }
+      },
+      {
+        path: 'variety/publish',
+        name: 'VarietyPublish',
+        component: () => import('../views/research/variety/VarietyPublish.vue'),
+        meta: { title: '品种发布', requiresAuth: true }
+      },
+      {
+        path: 'variety/query',
+        name: 'VarietyQuery',
+        component: () => import('../views/research/variety/VarietyQuery.vue'),
+        meta: { title: '种子信息公示', requiresAuth: true }
+      }
+    ]
+  },
   // 农业投入品供应管理系统
   {
     path: '/input',
