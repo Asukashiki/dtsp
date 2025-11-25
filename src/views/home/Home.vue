@@ -250,7 +250,9 @@ const handleMoreAnnouncements = () => {
 
 const handleSystemClick = (module) => {
   console.log('点击系统模块:', module)
-  // TODO: 跳转到对应系统
+  if (module.path) {
+    router.push(module.path)
+  }
 }
 
 const handleGuideClick = (guide) => {
