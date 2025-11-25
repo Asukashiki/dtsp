@@ -97,7 +97,7 @@
                 <el-table-column
                   :label="$t('farm.land.columns.actions')"
                   fixed="right"
-                  min-width="180"
+                  min-width="300"
                 >
                   <template #default="{ row }">
                     <el-button type="primary" link @click="handleView(row)">
@@ -740,7 +740,6 @@ onMounted(() => {
 
 /* 移动端卡片列表 */
 .card-list {
-  display: flex;
   flex-direction: column;
   gap: 16px;
 }
