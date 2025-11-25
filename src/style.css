@@ -904,7 +904,7 @@ body {
 /* ==================== 响应式设计 ==================== */
 @media screen and (max-width: 768px) {
   .el-dialog {
-    width: 90% !important;
+    width: 100% !important;
     margin: 0 auto;
   }
 
@@ -1137,14 +1137,7 @@ body {
 }
 
 /* 修复选中项和占位符的对齐 */
-.el-select__placeholder,
-.el-select__selected-item {
-  display: flex;
-  align-items: center;
-  top: 0; /* 移除默认可能的 top 偏移 */
-  transform: none; /* 移除默认可能的 translateY */
-  position: relative; /* 确保在流布局中 */
-}
+
 
 /* 确保下拉箭头垂直居中 */
 .el-select__suffix {
@@ -1174,4 +1167,12 @@ body {
 .el-date-editor--small .el-input__wrapper {
   padding: 6px 10px;
   min-height: 30px;
+}
+
+.el-select__input-wrapper{
+  position: relative !important;
+}
+
+.el-range-editor.el-input__wrapper{
+  padding: 8px 10px !important;
 }

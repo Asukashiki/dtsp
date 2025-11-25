@@ -621,7 +621,6 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
   margin: 0 auto;
 }
 

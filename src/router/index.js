@@ -201,6 +201,12 @@ const routes = [
         component: () => import('../views/input/supplier/info.vue'),
         meta: { title: '供应商信息维护', requiresAuth: true }
       },
+      {
+        path: 'supplier/product',
+        name: 'SupplierProduct',
+        component: () => import('../views/input/supplier/product.vue'),
+        meta: { title: '供应商投入品管理', requiresAuth: true }
+      },
       // 库存管理
       {
         path: 'warehouse',

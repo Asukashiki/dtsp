@@ -20,6 +20,9 @@ export default {
     upload: '上传文件',
     uploadSuccess: '上传成功',
     add: '新增',
+    close: '关闭',
+    startDate: '开始时间',
+    endDate: '结束时间'
   },
 
   header: {
@@ -1151,6 +1154,313 @@ export default {
       statusOptions: {
         active: '启用',
         inactive: '停用',
+      },
+    },
+
+    // 供应商管理
+    supplier: {
+      // 供应商认证
+      auth: {
+        title: '供应商认证申请',
+        subtitle: '填写供应商身份认证所需的详细资料',
+        applySuccess: '认证申请提交成功',
+        applyFailed: '认证申请提交失败',
+
+        form: {
+          orgName: '企业/组织名称',
+          creditCode: '统一社会信用代码',
+          legalPerson: '法定代表人/负责人',
+          legalId: '法定代表人身份证号',
+          adCode: '行政区划',
+          businessScope: '经营范围/主要产品',
+          licensePath: '营业执照',
+          contactName: '联系人姓名',
+          contactPhone: '联系人手机',
+        },
+
+        placeholder: {
+          orgName: '请输入企业/组织名称',
+          creditCode: '请输入统一社会信用代码（18位）',
+          legalPerson: '请输入法定代表人/负责人',
+          legalId: '请输入身份证号',
+          adCode: '请选择行政区划',
+          businessScope: '请输入经营范围或主要产品',
+          contactName: '请输入联系人姓名',
+          contactPhone: '请输入联系人手机号',
+        },
+
+        rules: {
+          orgNameRequired: '请输入企业/组织名称',
+          creditCodeRequired: '请输入统一社会信用代码',
+          creditCodeLength: '统一社会信用代码应为18位',
+          legalPersonRequired: '请输入法定代表人/负责人',
+          legalIdRequired: '请输入法定代表人身份证号',
+          legalIdFormat: '请输入正确的身份证号',
+          adCodeRequired: '请选择行政区划',
+          businessScopeRequired: '请输入经营范围或主要产品',
+          licensePathRequired: '请上传营业执照',
+          contactNameRequired: '请输入联系人姓名',
+          contactPhoneRequired: '请输入联系人手机号',
+          contactPhoneFormat: '请输入正确的手机号码',
+        },
+
+        uploadTip: '支持 jpg/png/pdf，单个文件不超过2MB',
+      },
+
+      // 供应商认证审批
+      approval: {
+        title: '供应商认证审批',
+        subtitle: '审核供应商提交的身份认证申请材料',
+        list: '待审批列表',
+        detail: '审批详情',
+        approveSuccess: '审核已通过',
+        rejectSuccess: '已驳回',
+
+        searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
+        advancedSearch: '高级筛选',
+        showAdvanced: '展开高级筛选',
+        hideAdvanced: '收起高级筛选',
+        resetFilters: '重置筛选',
+        applyFilters: '应用筛选',
+
+        filter: {
+          keyword: '关键词',
+          status: '认证状态',
+          allStatus: '全部状态',
+          adCode: '行政区划',
+          allRegion: '全部区划',
+          applyTime: '申请时间',
+          approveTime: '审批时间',
+          timeTo: '至',
+        },
+
+        status: {
+          pending: '审核中',
+          approved: '已通过',
+          rejected: '已驳回',
+        },
+
+        columns: {
+          orgName: '企业/组织名称',
+          creditCode: '统一社会信用代码',
+          legalPerson: '法定代表人',
+          contactName: '联系人',
+          contactPhone: '联系电话',
+          applyTime: '申请时间',
+          status: '认证状态',
+          actions: '操作',
+        },
+
+        form: {
+          applicantInfo: '申请人信息',
+          certInfo: '认证信息',
+          auditInfo: '审核操作',
+          auditResult: '审核结果',
+          auditOpinion: '审核意见',
+          pass: '通过',
+          reject: '驳回',
+        },
+
+        placeholder: {
+          auditOpinion: '请输入审核意见',
+        },
+
+        rules: {
+          auditResultRequired: '请选择审核结果',
+          auditOpinionRequired: '请输入审核意见',
+        },
+
+        actions: {
+          submit: '提交审核',
+          audit: '审核',
+          view: '查看',
+        },
+
+        messages: {
+          submitSuccess: '审核提交成功',
+          confirmSubmit: '确定提交审核结果吗？',
+        },
+      },
+
+      // 供应商信息维护
+      info: {
+        title: '供应商信息维护',
+        subtitle: '查看和管理所有供应商的认证信息',
+        list: '供应商列表',
+        detail: '供应商详情',
+
+        searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
+        showAdvanced: '展开高级筛选',
+        hideAdvanced: '收起高级筛选',
+        resetFilters: '重置筛选',
+        applyFilters: '应用筛选',
+
+        filter: {
+          keyword: '关键词',
+          status: '认证状态',
+          allStatus: '全部状态',
+          adCode: '行政区划',
+          allRegion: '全部区划',
+          applyTime: '申请时间',
+          approveTime: '审批时间',
+        },
+
+        columns: {
+          orgName: '企业/组织名称',
+          creditCode: '统一社会信用代码',
+          legalPerson: '法定代表人',
+          contactName: '联系人',
+          contactPhone: '联系电话',
+          adCode: '行政区划',
+          applyTime: '申请时间',
+          approveTime: '审批时间',
+          status: '认证状态',
+          actions: '操作',
+        },
+
+        actions: {
+          view: '查看详情',
+          edit: '编辑',
+          delete: '删除',
+        },
+
+        status: {
+          pending: '审核中',
+          approved: '已通过',
+          rejected: '已驳回',
+        },
+      },
+
+      // 供应商投入品管理
+      product: {
+        title: '供应商投入品管理',
+        subtitle: '管理供应商与投入品的关联关系',
+        list: '投入品供应列表',
+        detail: '供应详情',
+        add: '新增供应关系',
+        edit: '编辑供应关系',
+        delete: '删除供应关系',
+        batchDelete: '批量删除',
+        deleteConfirm: '确定删除该供应关系吗？',
+        batchDeleteConfirm: '确定删除选中的供应关系吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索和筛选
+        searchPlaceholder: '搜索商品名称、商品编码、供应商',
+        filterBySupplier: '按供应商筛选',
+        filterByType: '按投入品类型筛选',
+        filterByQuality: '按质量评级筛选',
+        allSuppliers: '全部供应商',
+        allTypes: '全部类型',
+        allQuality: '全部评级',
+        keyword: '关键词',
+
+        // 投入品类型
+        inputType: {
+          all: '全部',
+          pesticide: '农药',
+          fertilizer: '化肥',
+          seed: '种子',
+          other: '其他',
+        },
+
+        // 质量评级
+        qualityRating: {
+          all: '全部',
+          A: 'A级（优秀）',
+          B: 'B级（良好）',
+          C: 'C级（一般）',
+          D: 'D级（较差）',
+        },
+
+        // 认证状态
+        certStatus: {
+          notPassed: '未通过',
+          pending: '审核中',
+          passed: '已通过',
+        },
+
+        // 表单字段
+        form: {
+          basicInfo: '基础信息',
+          supplyInfo: '供应信息',
+          productInfo: '商品详情',
+          qualityInfo: '质量信息',
+
+          supplierId: '供应商',
+          supplierName: '供应商名称',
+          inputId: '投入品',
+          inputName: '投入品名称',
+          inputType: '投入品类型',
+          inputSku: '投入品编码',
+          inputSpec: '商品规格',
+          supplierProductCode: '供应商商品编码',
+          supplierProductName: '供应商商品名称',
+          currentPrice: '当前价格',
+          qualityRating: '质量评级',
+          certStatus: '认证状态',
+          notes: '备注信息',
+          createTime: '创建时间',
+          updateTime: '更新时间',
+        },
+
+        // 表单占位符
+        placeholder: {
+          supplierId: '请选择供应商',
+          inputId: '请选择投入品',
+          inputName: '请输入投入品名称',
+          inputSku: '请输入投入品编码',
+          supplierProductCode: '请输入供应商商品编码（最多100字符）',
+          supplierProductName: '请输入供应商商品名称（最多200字符）',
+          qualityRating: '请选择质量评级',
+          notes: '请输入备注信息（最多500字符）',
+        },
+
+        // 表单验证
+        rules: {
+          supplierIdRequired: '请选择供应商',
+          inputIdRequired: '请选择投入品',
+          supplierProductCodeLength: '供应商商品编码不能超过100字符',
+          supplierProductNameLength: '供应商商品名称不能超过200字符',
+          notesLength: '备注信息不能超过500字符',
+        },
+
+        // 列表列
+        columns: {
+          inputName: '商品名称',
+          inputSpec: '商品规格',
+          inputType: '类型',
+          supplierName: '供应商名称',
+          supplierProductCode: '供应商商品编码',
+          currentPrice: '当前价格',
+          qualityRating: '质量评级',
+          certStatus: '认证状态',
+          createTime: '创建时间',
+          actions: '操作',
+        },
+
+        // 操作按钮
+        actions: {
+          view: '查看详情',
+          edit: '编辑',
+          delete: '删除',
+        },
+
+        // 提示信息
+        messages: {
+          selectItems: '请选择要删除的项目',
+          relationExists: '该供应商与投入品的关联已存在',
+          noData: '暂无数据',
+        },
+
+        // 详情弹窗区域
+        detailSections: {
+          basicInfo: '基础信息',
+          supplyInfo: '供应关系属性',
+          editSupplyInfo: '编辑供应信息',
+        },
       },
     },
   },

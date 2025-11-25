@@ -38,6 +38,12 @@ agricultureRequest.interceptors.response.use(
   response => {
     const res = response.data
 
+    // 处理 status: 401 的情况（token 无效）
+    if (res.status === 401) {
+      handleUnauthorized(res.message || '登录已过期，请重新登录')
+      return Promise.reject(new Error(res.message || '未授权'))
+    }
+
     // 成功响应
     if (res.code === 200) {
       return res
@@ -54,18 +60,18 @@ agricultureRequest.interceptors.response.use(
     const userStore = useUserStore()
 
     if (res.code === 401 && userStore.token) {
-      handleUnauthorized(res.msg || '登录已过期，请重新登录')
-      return Promise.reject(new Error(res.msg || '未授权'))
+      handleUnauthorized(res.msg || res.message || '登录已过期，请重新登录')
+      return Promise.reject(new Error(res.msg || res.message || '未授权'))
     }
 
     // 其他业务错误
     ElMessage({
-      message: res.msg || '操作失败',
+      message: res.msg || res.message || '操作失败',
       type: 'error',
       duration: 3000
     })
 
-    return Promise.reject(new Error(res.msg || '操作失败'))
+    return Promise.reject(new Error(res.msg || res.message || '操作失败'))
   },
   error => {
     console.error('响应错误:', error)

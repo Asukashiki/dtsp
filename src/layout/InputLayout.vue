@@ -158,7 +158,7 @@ const menuList = computed(() => [
     title: t('input.menu.inputManagement'),
     children: [
       { index: '/input/catalog', icon: 'ri-list-check', title: t('input.menu.inputCatalog') },
-      { index: '/input/supplier-input', icon: 'ri-store-line', title: t('input.menu.supplierInput') }
+      { index: '/input/supplier/product', icon: 'ri-store-line', title: t('input.menu.supplierInput') }
     ]
   },
   {

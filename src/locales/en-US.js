@@ -20,6 +20,9 @@ export default {
     upload: 'Upload File',
     uploadSuccess: 'Uploaded successfully',
     add: 'Add',
+    close: 'Close',
+    startDate: 'Start Date',
+    endDate: 'End Date'
   },
 
   header: {
@@ -1151,6 +1154,313 @@ export default {
       statusOptions: {
         active: 'Active',
         inactive: 'Inactive',
+      },
+    },
+
+    // Supplier Management
+    supplier: {
+      // Supplier Authentication
+      auth: {
+        title: 'Supplier Authentication Application',
+        subtitle: 'Submit detailed information for supplier identity verification',
+        applySuccess: 'Authentication application submitted successfully',
+        applyFailed: 'Failed to submit authentication application',
+
+        form: {
+          orgName: 'Enterprise/Organization Name',
+          creditCode: 'Unified Social Credit Code',
+          legalPerson: 'Legal Representative/Person in Charge',
+          legalId: 'Legal Representative ID Number',
+          adCode: 'Administrative Region',
+          businessScope: 'Business Scope/Main Products',
+          licensePath: 'Business License',
+          contactName: 'Contact Person Name',
+          contactPhone: 'Contact Phone',
+        },
+
+        placeholder: {
+          orgName: 'Please enter enterprise/organization name',
+          creditCode: 'Please enter unified social credit code (18 digits)',
+          legalPerson: 'Please enter legal representative/person in charge',
+          legalId: 'Please enter ID number',
+          adCode: 'Please select administrative region',
+          businessScope: 'Please enter business scope or main products',
+          contactName: 'Please enter contact person name',
+          contactPhone: 'Please enter contact phone',
+        },
+
+        rules: {
+          orgNameRequired: 'Please enter enterprise/organization name',
+          creditCodeRequired: 'Please enter unified social credit code',
+          creditCodeLength: 'Unified social credit code should be 18 digits',
+          legalPersonRequired: 'Please enter legal representative/person in charge',
+          legalIdRequired: 'Please enter legal representative ID number',
+          legalIdFormat: 'Please enter a valid ID number',
+          adCodeRequired: 'Please select administrative region',
+          businessScopeRequired: 'Please enter business scope or main products',
+          licensePathRequired: 'Please upload business license',
+          contactNameRequired: 'Please enter contact person name',
+          contactPhoneRequired: 'Please enter contact phone',
+          contactPhoneFormat: 'Please enter a valid phone number',
+        },
+
+        uploadTip: 'Supports jpg/png/pdf, single file size less than 2MB',
+      },
+
+      // Supplier Authentication Approval
+      approval: {
+        title: 'Supplier Authentication Approval',
+        subtitle: 'Review supplier identity authentication application materials',
+        list: 'Pending Approval List',
+        detail: 'Approval Details',
+        approveSuccess: 'Approved successfully',
+        rejectSuccess: 'Rejected',
+
+        searchPlaceholder: 'Search enterprise name, credit code, contact',
+        advancedSearch: 'Advanced Filters',
+        showAdvanced: 'Show Advanced Filters',
+        hideAdvanced: 'Hide Advanced Filters',
+        resetFilters: 'Reset Filters',
+        applyFilters: 'Apply Filters',
+
+        filter: {
+          keyword: 'Keyword',
+          status: 'Status',
+          allStatus: 'All Status',
+          adCode: 'Region',
+          allRegion: 'All Regions',
+          applyTime: 'Apply Time',
+          approveTime: 'Approve Time',
+          timeTo: 'to',
+        },
+
+        status: {
+          pending: 'Under Review',
+          approved: 'Approved',
+          rejected: 'Rejected',
+        },
+
+        columns: {
+          orgName: 'Enterprise/Organization Name',
+          creditCode: 'Unified Social Credit Code',
+          legalPerson: 'Legal Representative',
+          contactName: 'Contact Person',
+          contactPhone: 'Contact Phone',
+          applyTime: 'Application Time',
+          status: 'Authentication Status',
+          actions: 'Actions',
+        },
+
+        form: {
+          applicantInfo: 'Applicant Information',
+          certInfo: 'Authentication Information',
+          auditInfo: 'Audit Operation',
+          auditResult: 'Audit Result',
+          auditOpinion: 'Audit Opinion',
+          pass: 'Approve',
+          reject: 'Reject',
+        },
+
+        placeholder: {
+          auditOpinion: 'Please enter audit opinion',
+        },
+
+        rules: {
+          auditResultRequired: 'Please select audit result',
+          auditOpinionRequired: 'Please enter audit opinion',
+        },
+
+        actions: {
+          submit: 'Submit Audit',
+          audit: 'Audit',
+          view: 'View',
+        },
+
+        messages: {
+          submitSuccess: 'Audit submitted successfully',
+          confirmSubmit: 'Are you sure to submit the audit result?',
+        },
+      },
+
+      // Supplier Information Maintenance
+      info: {
+        title: 'Supplier Information Maintenance',
+        subtitle: 'View and manage all supplier certification information',
+        list: 'Supplier List',
+        detail: 'Supplier Details',
+
+        searchPlaceholder: 'Search enterprise name, credit code, contact',
+        showAdvanced: 'Show Advanced Filters',
+        hideAdvanced: 'Hide Advanced Filters',
+        resetFilters: 'Reset Filters',
+        applyFilters: 'Apply Filters',
+
+        filter: {
+          keyword: 'Keyword',
+          status: 'Status',
+          allStatus: 'All Status',
+          adCode: 'Region',
+          allRegion: 'All Regions',
+          applyTime: 'Apply Time',
+          approveTime: 'Approve Time',
+        },
+
+        columns: {
+          orgName: 'Enterprise/Organization Name',
+          creditCode: 'Unified Social Credit Code',
+          legalPerson: 'Legal Representative',
+          contactName: 'Contact Person',
+          contactPhone: 'Contact Phone',
+          adCode: 'Administrative Region',
+          applyTime: 'Application Time',
+          approveTime: 'Approval Time',
+          status: 'Authentication Status',
+          actions: 'Actions',
+        },
+
+        actions: {
+          view: 'View Details',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        status: {
+          pending: 'Under Review',
+          approved: 'Approved',
+          rejected: 'Rejected',
+        },
+      },
+
+      // Supplier Product Management
+      product: {
+        title: 'Supplier Product Management',
+        subtitle: 'Manage the relationship between suppliers and agricultural inputs',
+        list: 'Product Supply List',
+        detail: 'Supply Details',
+        add: 'Add Supply Relationship',
+        edit: 'Edit Supply Relationship',
+        delete: 'Delete Supply Relationship',
+        batchDelete: 'Batch Delete',
+        deleteConfirm: 'Are you sure to delete this supply relationship?',
+        batchDeleteConfirm: 'Are you sure to delete the selected supply relationships?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search product name, code, supplier',
+        filterBySupplier: 'Filter by Supplier',
+        filterByType: 'Filter by Input Type',
+        filterByQuality: 'Filter by Quality Rating',
+        allSuppliers: 'All Suppliers',
+        allTypes: 'All Types',
+        allQuality: 'All Ratings',
+        keyword: 'Keyword',
+
+        // Input Type
+        inputType: {
+          all: 'All',
+          pesticide: 'Pesticide',
+          fertilizer: 'Fertilizer',
+          seed: 'Seed',
+          other: 'Other',
+        },
+
+        // Quality Rating
+        qualityRating: {
+          all: 'All',
+          A: 'Grade A (Excellent)',
+          B: 'Grade B (Good)',
+          C: 'Grade C (Fair)',
+          D: 'Grade D (Poor)',
+        },
+
+        // Certification Status
+        certStatus: {
+          notPassed: 'Not Passed',
+          pending: 'Under Review',
+          passed: 'Passed',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          supplyInfo: 'Supply Information',
+          productInfo: 'Product Details',
+          qualityInfo: 'Quality Information',
+
+          supplierId: 'Supplier',
+          supplierName: 'Supplier Name',
+          inputId: 'Input',
+          inputName: 'Input Name',
+          inputType: 'Input Type',
+          inputSku: 'Input Code',
+          inputSpec: 'Product Specification',
+          supplierProductCode: 'Supplier Product Code',
+          supplierProductName: 'Supplier Product Name',
+          currentPrice: 'Current Price',
+          qualityRating: 'Quality Rating',
+          certStatus: 'Certification Status',
+          notes: 'Notes',
+          createTime: 'Create Time',
+          updateTime: 'Update Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          supplierId: 'Please select supplier',
+          inputId: 'Please select input',
+          inputName: 'Please enter input name',
+          inputSku: 'Please enter input code',
+          supplierProductCode: 'Please enter supplier product code (max 100 chars)',
+          supplierProductName: 'Please enter supplier product name (max 200 chars)',
+          qualityRating: 'Please select quality rating',
+          notes: 'Please enter notes (max 500 chars)',
+        },
+
+        // Form Validation
+        rules: {
+          supplierIdRequired: 'Please select supplier',
+          inputIdRequired: 'Please select input',
+          supplierProductCodeLength: 'Supplier product code cannot exceed 100 characters',
+          supplierProductNameLength: 'Supplier product name cannot exceed 200 characters',
+          notesLength: 'Notes cannot exceed 500 characters',
+        },
+
+        // Table Columns
+        columns: {
+          inputName: 'Product Name',
+          inputSpec: 'Specification',
+          inputType: 'Type',
+          supplierName: 'Supplier Name',
+          supplierProductCode: 'Supplier Product Code',
+          currentPrice: 'Current Price',
+          qualityRating: 'Quality Rating',
+          certStatus: 'Certification Status',
+          createTime: 'Create Time',
+          actions: 'Actions',
+        },
+
+        // Actions
+        actions: {
+          view: 'View Details',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        // Messages
+        messages: {
+          selectItems: 'Please select items to delete',
+          relationExists: 'The relationship between this supplier and input already exists',
+          noData: 'No data',
+        },
+
+        // Detail Dialog Sections
+        detailSections: {
+          basicInfo: 'Basic Information',
+          supplyInfo: 'Supply Relationship Attributes',
+          editSupplyInfo: 'Edit Supply Information',
+        },
       },
     },
   },
