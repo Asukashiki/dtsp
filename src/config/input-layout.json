@@ -1,0 +1,84 @@
+{
+  "systemName": "input.systemName",
+  "backToHome": "input.backToHome",
+  "icon": "ri-database-2-line",
+  "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
+  "menus": [
+    {
+      "index": "input-management",
+      "icon": "ri-box-3-line",
+      "titleKey": "input.menu.inputManagement",
+      "children": [
+        {
+          "index": "/input/catalog",
+          "icon": "ri-list-check",
+          "titleKey": "input.menu.inputCatalog"
+        },
+        {
+          "index": "/input/supplier/product",
+          "icon": "ri-store-line",
+          "titleKey": "input.menu.supplierInput"
+        }
+      ]
+    },
+    {
+      "index": "supplier-management",
+      "icon": "ri-building-line",
+      "titleKey": "input.menu.supplierManagement",
+      "children": [
+        {
+          "index": "/input/supplier/auth",
+          "icon": "ri-shield-check-line",
+          "titleKey": "input.menu.supplierAuth"
+        },
+        {
+          "index": "/input/supplier/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "input.menu.supplierAuthApproval"
+        },
+        {
+          "index": "/input/supplier/info",
+          "icon": "ri-information-line",
+          "titleKey": "input.menu.supplierInfo"
+        }
+      ]
+    },
+    {
+      "index": "inventory-management",
+      "icon": "ri-archive-line",
+      "titleKey": "input.menu.inventoryManagement",
+      "children": [
+        {
+          "index": "/input/warehouse",
+          "icon": "ri-home-gear-line",
+          "titleKey": "input.menu.warehouse"
+        },
+        {
+          "index": "/input/stock-in",
+          "icon": "ri-download-line",
+          "titleKey": "input.menu.stockIn"
+        },
+        {
+          "index": "/input/stock-out",
+          "icon": "ri-upload-line",
+          "titleKey": "input.menu.stockOut"
+        },
+        {
+          "index": "/input/storage",
+          "icon": "ri-stack-line",
+          "titleKey": "input.menu.storage"
+        }
+      ]
+    },
+    {
+      "index": "/input/dashboard",
+      "icon": "ri-dashboard-line",
+      "titleKey": "input.menu.dashboard"
+    },
+    {
+      "index": "/input/feedback",
+      "icon": "ri-feedback-line",
+      "titleKey": "input.menu.feedback"
+    }
+  ]
+}

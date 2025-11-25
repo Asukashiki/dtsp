@@ -2,6 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
 import { getTokenFromUrl, getToken } from '../utils/auth'
 import { ElMessage } from 'element-plus'
+import farmLayoutConfig from '@/config/farm-layout.json'
+import inputLayoutConfig from '@/config/input-layout.json'
+import researchLayoutConfig from '@/config/research-layout.json'
 
 // 外部登录系统URL - 在实际部署时配置正确的SSO地址
 const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
@@ -98,9 +101,9 @@ const routes = [
   {
     path: '/research',
     name: 'ResearchSystem',
-    component: () => import('../layout/ResearchLayout.vue'),
+    component: () => import('../layout/SystemLayout.vue'),
     redirect: '/research/enterprise/auth',
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, layoutConfig: researchLayoutConfig },
     children: [
       // 企业注册备案
       {
@@ -146,9 +149,9 @@ const routes = [
   {
     path: '/input',
     name: 'InputSystem',
-    component: () => import('../layout/InputLayout.vue'),
+    component: () => import('../layout/SystemLayout.vue'),
     redirect: '/input/catalog',
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, layoutConfig: inputLayoutConfig },
     children: [
       // 投入品目录管理
       {
@@ -251,9 +254,9 @@ const routes = [
   {
     path: '/farm',
     name: 'FarmSystem',
-    component: () => import('../layout/FarmLayout.vue'),
+    component: () => import('../layout/SystemLayout.vue'),
     redirect: '/farm/farmer/auth',
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, layoutConfig: farmLayoutConfig },
     children: [
       // 农民管理
       {

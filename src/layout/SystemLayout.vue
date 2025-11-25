@@ -1,20 +1,20 @@
 <template>
-  <div class="farm-layout">
+  <div class="system-layout">
     <!-- 顶部导航栏 -->
-    <div class="farm-header">
-      <div class="header-content">
+    <div class="system-header" :style="headerStyle">
+      <div class="header-content" :class="{ 'dark-text': isYellowTheme }">
         <div class="header-left">
           <!-- 移动端菜单按钮 -->
           <div class="mobile-menu-btn" @click="toggleMobileMenu">
             <i class="ri-menu-line"></i>
           </div>
-          <i class="ri-plant-line header-icon"></i>
-          <span class="system-name">{{ $t('farm.systemName') }}</span>
+          <i :class="config.icon + ' header-icon'"></i>
+          <span class="system-name">{{ $t(config.systemName) }}</span>
         </div>
         <div class="header-right">
           <el-button link class="header-btn" @click="goHome">
             <i class="ri-home-line"></i>
-            <span class="btn-text">{{ $t('farm.backToHome') }}</span>
+            <span class="btn-text">{{ $t(config.backToHome) }}</span>
           </el-button>
           <el-dropdown @command="handleLanguageChange">
             <el-button link class="header-btn">
@@ -45,9 +45,9 @@
     </div>
 
     <!-- 主体区域 -->
-    <div class="farm-main">
+    <div class="system-main">
       <!-- PC端左侧菜单 -->
-      <div class="farm-sidebar pc-only" :class="{ collapsed: isCollapsed }">
+      <div class="system-sidebar pc-only" :class="{ collapsed: isCollapsed }">
         <div class="collapse-btn" @click="toggleCollapse">
           <i :class="isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'"></i>
         </div>
@@ -88,9 +88,9 @@
         size="280px"
         class="mobile-drawer"
       >
-        <div class="mobile-menu-header">
-          <i class="ri-plant-line"></i>
-          <span>{{ $t('farm.systemName') }}</span>
+        <div class="mobile-menu-header" :style="headerStyle" :class="{ 'dark-text': isYellowTheme }">
+          <i :class="config.icon"></i>
+          <span>{{ $t(config.systemName) }}</span>
         </div>
         <el-menu
           :default-active="activeMenu"
@@ -121,7 +121,7 @@
       </el-drawer>
 
       <!-- 右侧内容区 -->
-      <div class="farm-content">
+      <div class="system-content">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -145,32 +145,29 @@ const userStore = useUserStore()
 const localeStore = useLocaleStore()
 const { t, locale } = useI18n()
 
+// Get config from route meta
+const config = computed(() => {
+  const matched = route.matched.find(r => r.meta.layoutConfig)
+  return matched?.meta.layoutConfig || {}
+})
+
 // 侧边栏折叠状态
 const isCollapsed = ref(false)
 // 移动端菜单可见状态
 const mobileMenuVisible = ref(false)
 
 // 菜单列表
-const menuList = computed(() => [
-  {
-    index: 'farmer-management',
-    icon: 'ri-user-3-line',
-    title: t('farm.menu.farmerManagement'),
-    children: [
-      { index: '/farm/farmer/auth', icon: 'ri-shield-user-line', title: t('farm.menu.farmerAuth') },
-      { index: '/farm/farmer/approval', icon: 'ri-checkbox-circle-line', title: t('farm.menu.farmerAuthApproval') },
-      { index: '/farm/farmer/info', icon: 'ri-user-settings-line', title: t('farm.menu.farmerInfo') }
-    ]
-  },
-  {
-    index: 'land-management',
-    icon: 'ri-map-pin-line',
-    title: t('farm.menu.landManagement'),
-    children: [
-      { index: '/farm/land/list', icon: 'ri-landscape-line', title: t('farm.menu.landList') }
-    ]
-  }
-])
+const menuList = computed(() => {
+  if (!config.value.menus) return []
+  return config.value.menus.map(menu => ({
+    ...menu,
+    title: t(menu.titleKey),
+    children: menu.children?.map(child => ({
+      ...child,
+      title: t(child.titleKey)
+    }))
+  }))
+})
 
 // 当前激活的菜单项
 const activeMenu = computed(() => route.path)
@@ -178,6 +175,16 @@ const activeMenu = computed(() => route.path)
 // 当前语言
 const currentLanguage = computed(() => {
   return localeStore.locale === 'zh-CN' ? '中文' : 'EN'
+})
+
+// 头部样式
+const headerStyle = computed(() => ({
+  background: config.value.headerGradient || 'linear-gradient(135deg, #009A44 0%, #00b350 100%)'
+}))
+
+// 是否是黄色主题（研究系统）
+const isYellowTheme = computed(() => {
+  return config.value.headerGradient?.includes('#FEDD00')
 })
 
 // 切换侧边栏折叠状态
@@ -218,21 +225,24 @@ const handleUserAction = (command) => {
 </script>
 
 <style scoped>
-.farm-layout {
-  min-height: 100vh;
+.system-layout {
+  height: 100vh;
   background-color: #f0f2f5;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* 顶部导航栏 */
-.farm-header {
+.system-header {
   height: 60px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .header-content {
@@ -251,6 +261,16 @@ const handleUserAction = (command) => {
   color: white;
 }
 
+.header-content.dark-text .header-left,
+.header-content.dark-text .header-btn,
+.header-content.dark-text .user-info {
+  color: #303133 !important;
+}
+
+.mobile-menu-header.dark-text {
+  color: #303133 !important;
+}
+
 .mobile-menu-btn {
   display: none;
   width: 40px;
@@ -264,6 +284,10 @@ const handleUserAction = (command) => {
 
 .mobile-menu-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.header-content.dark-text .mobile-menu-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .mobile-menu-btn i {
@@ -295,6 +319,10 @@ const handleUserAction = (command) => {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.header-content.dark-text .header-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .user-info {
   display: flex;
   align-items: center;
@@ -310,27 +338,38 @@ const handleUserAction = (command) => {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.header-content.dark-text .user-info:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .user-info i {
   font-size: 18px;
 }
 
 /* 主体区域 */
-.farm-main {
+.system-main {
   flex: 1;
   display: flex;
   overflow: hidden;
+  margin-top: 60px;
+  height: calc(100vh - 60px);
 }
 
 /* PC端左侧菜单 */
-.farm-sidebar {
+.system-sidebar {
   width: 280px;
   background-color: white;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   transition: width 0.3s;
-  position: relative;
+  position: fixed;
+  left: 0;
+  top: 60px;
+  bottom: 0;
+  flex-shrink: 0;
+  z-index: 50;
 }
 
-.farm-sidebar.collapsed {
+.system-sidebar.collapsed {
   width: 64px;
 }
 
@@ -399,7 +438,6 @@ const handleUserAction = (command) => {
   align-items: center;
   gap: 12px;
   padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -410,11 +448,18 @@ const handleUserAction = (command) => {
 }
 
 /* 右侧内容区 */
-.farm-content {
+.system-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
   background-color: #f0f2f5;
+  margin-left: 280px;
+  transition: margin-left 0.3s;
+}
+
+.system-sidebar.collapsed + .system-content {
+  margin-left: 64px;
 }
 
 /* 过渡动画 */
@@ -439,16 +484,21 @@ const handleUserAction = (command) => {
     font-size: 16px;
   }
 
-  .farm-sidebar {
+  .system-sidebar {
     width: 200px;
   }
 
-  .farm-sidebar.collapsed {
+  .system-sidebar.collapsed {
     width: 64px;
   }
 
-  .farm-content {
+  .system-content {
     padding: 16px;
+    margin-left: 200px;
+  }
+
+  .system-sidebar.collapsed + .system-content {
+    margin-left: 64px;
   }
 }
 
@@ -499,14 +549,15 @@ const handleUserAction = (command) => {
     display: none;
   }
 
-  .farm-content {
+  .system-content {
     padding: 12px;
+    margin-left: 0;
   }
 }
 
 /* 超小屏幕 */
 @media screen and (max-width: 480px) {
-  .farm-header {
+  .system-header {
     height: 56px;
   }
 
@@ -515,7 +566,7 @@ const handleUserAction = (command) => {
     max-width: 100px;
   }
 
-  .farm-content {
+  .system-content {
     padding: 8px;
   }
 }

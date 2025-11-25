@@ -1,0 +1,42 @@
+{
+  "systemName": "farm.systemName",
+  "backToHome": "farm.backToHome",
+  "icon": "ri-plant-line",
+  "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
+  "menus": [
+    {
+      "index": "farmer-management",
+      "icon": "ri-user-3-line",
+      "titleKey": "farm.menu.farmerManagement",
+      "children": [
+        {
+          "index": "/farm/farmer/auth",
+          "icon": "ri-shield-user-line",
+          "titleKey": "farm.menu.farmerAuth"
+        },
+        {
+          "index": "/farm/farmer/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "farm.menu.farmerAuthApproval"
+        },
+        {
+          "index": "/farm/farmer/info",
+          "icon": "ri-user-settings-line",
+          "titleKey": "farm.menu.farmerInfo"
+        }
+      ]
+    },
+    {
+      "index": "land-management",
+      "icon": "ri-map-pin-line",
+      "titleKey": "farm.menu.landManagement",
+      "children": [
+        {
+          "index": "/farm/land/list",
+          "icon": "ri-landscape-line",
+          "titleKey": "farm.menu.landList"
+        }
+      ]
+    }
+  ]
+}
