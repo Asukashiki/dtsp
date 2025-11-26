@@ -132,7 +132,7 @@
       </el-drawer>
 
       <!-- 右侧内容区 -->
-      <div class="system-content">
+      <div class="system-content" :class="{'system-content-full': isCollapsed}">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -681,5 +681,9 @@ const handleUserAction = (command) => {
 
 .el-dropdown-menu__item:hover i {
   color: #009A44;
+}
+
+.system-content-full{
+  margin-left: 64px !important;
 }
 </style>
