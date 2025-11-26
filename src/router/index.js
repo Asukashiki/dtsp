@@ -207,8 +207,26 @@ const routes = [
       {
         path: 'supplier/product',
         name: 'SupplierProduct',
-        component: () => import('../views/input/supplier/product.vue'),
+        component: () => import('../views/input/supplier/product/index.vue'),
         meta: { title: '供应商投入品管理', requiresAuth: true }
+      },
+      {
+        path: 'supplier/product/add',
+        name: 'SupplierProductAdd',
+        component: () => import('../views/input/supplier/product/form.vue'),
+        meta: { title: '新增供应商投入品', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'supplier/product/edit/:id',
+        name: 'SupplierProductEdit',
+        component: () => import('../views/input/supplier/product/form.vue'),
+        meta: { title: '编辑供应商投入品', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'supplier/product/detail/:id',
+        name: 'SupplierProductDetail',
+        component: () => import('../views/input/supplier/product/detail.vue'),
+        meta: { title: '供应商投入品详情', hideInMenu: true, requiresAuth: true }
       },
       // 库存管理 - 仓库管理
       {

@@ -7,9 +7,10 @@ import agricultureRequest, { toCamelCase, toSnakeCase } from '../utils/agricultu
  * @param {Object} params - 查询参数
  * @param {number} params.page - 页码
  * @param {number} params.pageSize - 每页数量
- * @param {string} params.warehouseName - 仓库名称（模糊查询）
- * @param {string} params.warehouseType - 仓库类型（normal/cold/dangerous）
- * @param {string} params.status - 状态（0-停用/1-启用）
+ * @param {string} params.warehouseName - 仓库名称(模糊查询)
+ * @param {string} params.warehouseType - 仓库类型(normal/cold/dangerous)
+ * @param {string} params.status - 状态(0-停用/1-启用)
+ * @param {number} params.supplierId - 供应商ID
  */
 export const getWarehouseList = (params = {}) => {
   const requestParams = {
@@ -22,6 +23,7 @@ export const getWarehouseList = (params = {}) => {
   if (params.status !== undefined && params.status !== null && params.status !== '') {
     requestParams.status = params.status
   }
+  if (params.supplierId) requestParams.supplierId = params.supplierId
 
   return agricultureRequest({
     url: '/inventory/warehouse/list',

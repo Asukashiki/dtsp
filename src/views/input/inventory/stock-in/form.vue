@@ -25,23 +25,6 @@
             <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockIn.form.warehouseId')" prop="warehouseId">
-              <el-select
-                v-model="formData.warehouseId"
-                :placeholder="$t('input.inventory.stockIn.placeholder.warehouseId')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="warehouseLoading"
-              >
-                <el-option
-                  v-for="warehouse in warehouseList"
-                  :key="warehouse.warehouse_id"
-                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code})`"
-                  :value="warehouse.warehouse_id"
-                />
-              </el-select>
-            </el-form-item>
             <el-form-item :label="$t('input.inventory.stockIn.form.supplierId')" prop="supplierId">
               <el-select
                 v-model="formData.supplierId"
@@ -50,12 +33,31 @@
                 clearable
                 class="full-width"
                 :loading="supplierLoading"
+                @change="handleSupplierChange"
               >
                 <el-option
                   v-for="supplier in supplierList"
                   :key="supplier.user_id"
                   :label="supplier.org_name"
                   :value="supplier.user_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.stockIn.form.warehouseId')" prop="warehouseId">
+              <el-select
+                v-model="formData.warehouseId"
+                :placeholder="$t('input.inventory.stockIn.placeholder.warehouseId')"
+                filterable
+                clearable
+                class="full-width"
+                :loading="warehouseLoading"
+                :disabled="!formData.supplierId"
+              >
+                <el-option
+                  v-for="warehouse in warehouseList"
+                  :key="warehouse.warehouse_id"
+                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code})`"
+                  :value="warehouse.warehouse_id"
                 />
               </el-select>
             </el-form-item>
@@ -92,11 +94,12 @@
                     clearable
                     class="full-width"
                     :loading="inputLoading"
+                    :disabled="!formData.supplierId"
                   >
                     <el-option
                       v-for="input in inputList"
                       :key="input.input_id"
-                      :label="`${input.input_name} (${input.input_sku})`"
+                      :label="`${input.input_name}${input.input_sku ? ' (' + input.input_sku + ')' : ''}`"
                       :value="input.input_id"
                     />
                   </el-select>
@@ -143,15 +146,15 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { createStockIn } from '@/api/inventory'
 import { getWarehouseList } from '@/api/inventory'
-import { getSupplierCertList } from '@/api/supplier'
-import { getInputList } from '@/api/input'
+import { getSupplierCertList, getSupplierProductList } from '@/api/supplier'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const formRef = ref(null)
 const submitLoading = ref(false)
-// 仓库列表
+
+// 仓库列表 - 存储当前供应商的仓库
 const warehouseList = ref([])
 const warehouseLoading = ref(false)
 
@@ -159,15 +162,21 @@ const warehouseLoading = ref(false)
 const supplierList = ref([])
 const supplierLoading = ref(false)
 
-// 投入品列表
+// 投入品列表 - 存储供应商的投入品
 const inputList = ref([])
 const inputLoading = ref(false)
 
-// 加载仓库列表
-const loadWarehouseList = async () => {
+// 加载供应商的仓库列表
+const loadWarehouseList = async (supplierId) => {
+  if (!supplierId) {
+    warehouseList.value = []
+    return
+  }
+
   warehouseLoading.value = true
   try {
     const res = await getWarehouseList({
+      supplierId: supplierId,
       page: 1,
       pageSize: 1000,
       status: '1' // 只获取启用的仓库
@@ -202,11 +211,17 @@ const loadSupplierList = async () => {
   }
 }
 
-// 加载投入品列表
-const loadInputList = async () => {
+// 加载供应商的投入品列表
+const loadSupplierInputList = async (supplierId) => {
+  if (!supplierId) {
+    inputList.value = []
+    return
+  }
+
   inputLoading.value = true
   try {
-    const res = await getInputList({
+    const res = await getSupplierProductList({
+      supplierId: supplierId,
       page: 1,
       pageSize: 1000
     })
@@ -214,9 +229,27 @@ const loadInputList = async () => {
       inputList.value = res.data.list || []
     }
   } catch (error) {
-    console.error('Failed to load input list:', error)
+    console.error('Failed to load supplier input list:', error)
   } finally {
     inputLoading.value = false
+  }
+}
+
+// 供应商改变时的处理
+const handleSupplierChange = (supplierId) => {
+  // 清空仓库和投入品选择
+  formData.warehouseId = ''
+  formData.items.forEach(item => {
+    item.inputId = ''
+  })
+
+  // 加载该供应商的仓库和投入品
+  if (supplierId) {
+    loadWarehouseList(supplierId)
+    loadSupplierInputList(supplierId)
+  } else {
+    warehouseList.value = []
+    inputList.value = []
   }
 }
 
@@ -317,9 +350,7 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
-  await loadWarehouseList()
   await loadSupplierList()
-  await loadInputList()
 })
 </script>
 
