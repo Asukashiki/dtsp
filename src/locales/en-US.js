@@ -11,6 +11,7 @@ export default {
     back: 'Back',
     loading: 'Loading...',
     more: 'View More',
+    view: 'View',
     viewDetails: 'View Details',
     pleaseSelect: 'Please Select',
     pleaseInput: 'Please Input',
@@ -19,10 +20,17 @@ export default {
     tips: 'Tips',
     upload: 'Upload File',
     uploadSuccess: 'Uploaded successfully',
+    uploadFailed: 'Upload failed',
     add: 'Add',
     close: 'Close',
     startDate: 'Start Date',
-    endDate: 'End Date'
+    endDate: 'End Date',
+    preview: 'Preview',
+    download: 'Download',
+    noFile: 'File not found',
+    loadFailed: 'Load failed',
+    saveFailed: 'Save failed',
+    submitFailed: 'Submit failed'
   },
 
   header: {
@@ -629,6 +637,7 @@ export default {
       // Messages
       messages: {
         submitSuccess: 'Audit submitted successfully',
+        submitFailed: 'Failed to submit audit',
         confirmSubmit: 'Are you sure to submit the audit result?',
       },
     },
@@ -737,6 +746,7 @@ export default {
           approvalDocumentNo: 'Please enter approval document number',
           approvalAgency: 'Please enter approval agency',
           approvalDate: 'Please select approval date',
+          days: 'days',
         },
 
         // Form Rules
@@ -819,6 +829,7 @@ export default {
           trialInfo: 'Trial and Performance Data',
           regulatoryInfo: 'Regulatory Data',
           auditOperation: 'Audit Operation',
+          auditResult: 'Audit Result',
         },
 
         // Form Fields
@@ -883,6 +894,13 @@ export default {
           offline: 'Offline',
         },
 
+        // Detail Page Section Titles
+        sections: {
+          basicInfo: 'Basic Information',
+          identificationInfo: 'Identification Information',
+          publishInfo: 'Publication Information',
+        },
+
         // List Columns
         columns: {
           publishNo: 'Publication No.',
@@ -899,6 +917,8 @@ export default {
         form: {
           publishNo: 'Publication No.',
           publishDate: 'Publication Date',
+          publisher: 'Publisher',
+          publishTime: 'Publish Time',
           publishDept: 'Publishing Department',
           decisionExplanation: 'Decision Explanation',
           publicDescription: 'Public Description',
@@ -909,10 +929,18 @@ export default {
 
         // Form Placeholders
         placeholder: {
+          publishDept: 'Enter publication department',
           decisionExplanation: 'Please enter decision explanation',
           publicDescription: 'Please enter public description',
           recommendedRegion: 'Please enter recommended region',
           sowingGuide: 'Please enter sowing guide',
+        },
+
+        // Form Rules
+        rules: {
+          publishDeptRequired: 'Please enter publication department',
+          publicDescriptionRequired: 'Please enter public description',
+          decisionExplanationRequired: 'Please enter decision explanation',
         },
 
         // Action Buttons
@@ -921,6 +949,7 @@ export default {
           publish: 'Publish Now',
           offline: 'Take Offline',
           view: 'View',
+          backToList: 'Back to List',
         },
 
         // Messages
@@ -972,6 +1001,313 @@ export default {
         actions: {
           viewDetail: 'View Details',
           back: 'Back',
+        },
+      },
+    },
+
+    // Breeding Management
+    breeding: {
+      // Breeding Plan Management
+      plan: {
+        title: 'Breeding Plan Management',
+        subtitle: 'Set up breeding plans, including breeding year, batch, planting base and other information',
+        list: 'Breeding Plan List',
+        add: 'Add Breeding Plan',
+        edit: 'Edit Breeding Plan',
+        detail: 'Breeding Plan Details',
+        delete: 'Delete Plan',
+        deleteConfirm: 'Are you sure to delete this breeding plan?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search plan name, batch ID',
+        filterByYear: 'Filter by breeding year',
+        filterByCrop: 'Filter by crop type',
+        filterByStatus: 'Filter by plan status',
+        allYears: 'All Years',
+        allCrops: 'All Crops',
+        allStatus: 'All Status',
+
+        // Plan Status
+        status: {
+          planning: 'Planning',
+          ongoing: 'Ongoing',
+          completed: 'Completed',
+          cancelled: 'Cancelled',
+        },
+
+        // Propagation Level
+        propagationLevel: {
+          breeder: 'Breeder Seed',
+          preBasic: 'Pre-basic Seed',
+          basic: 'Basic Seed',
+          certified: 'Certified Seed',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Plan Basic Information',
+          planName: 'Plan Name',
+          breedingYear: 'Breeding Year',
+          batchId: 'Breeding Batch ID',
+          plantingBase: 'Planting Base',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          propagationLevel: 'Propagation Level',
+          parentSeedSource: 'Parent Seed Source',
+          personInCharge: 'Person in Charge',
+          startDate: 'Plan Start Date',
+          endDate: 'Plan End Date',
+          breedingGoal: 'Breeding Goal',
+          remarks: 'Remarks',
+          createTime: 'Created Time',
+          updateTime: 'Updated Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          planName: 'Please enter plan name',
+          breedingYear: 'Please select breeding year',
+          batchId: 'Please enter breeding batch ID',
+          plantingBase: 'Please enter planting base',
+          cropType: 'Please select crop type',
+          varietyName: 'Please enter variety name',
+          propagationLevel: 'Please select propagation level',
+          parentSeedSource: 'Please enter parent seed source',
+          personInCharge: 'Please enter person in charge',
+          startDate: 'Please select plan start date',
+          endDate: 'Please select plan end date',
+          breedingGoal: 'Please enter breeding goal',
+          remarks: 'Remarks (optional)',
+        },
+
+        // Form Validation
+        rules: {
+          planNameRequired: 'Please enter plan name',
+          breedingYearRequired: 'Please select breeding year',
+          batchIdRequired: 'Please enter breeding batch ID',
+          plantingBaseRequired: 'Please enter planting base',
+          cropTypeRequired: 'Please select crop type',
+          varietyNameRequired: 'Please enter variety name',
+          propagationLevelRequired: 'Please select propagation level',
+          parentSeedSourceRequired: 'Please enter parent seed source',
+          personInChargeRequired: 'Please enter person in charge',
+          startDateRequired: 'Please select plan start date',
+          endDateRequired: 'Please select plan end date',
+          breedingGoalRequired: 'Please enter breeding goal',
+          endDateAfterStart: 'End date must be later than start date',
+        },
+
+        // Table Columns
+        columns: {
+          planName: 'Plan Name',
+          batchId: 'Batch ID',
+          breedingYear: 'Breeding Year',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          propagationLevel: 'Propagation Level',
+          personInCharge: 'Person in Charge',
+          startDate: 'Start Date',
+          endDate: 'End Date',
+          status: 'Plan Status',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          saveDraft: 'Save Draft',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+      },
+
+      // Breeding Material Registration
+      material: {
+        title: 'Breeding Material Registration',
+        subtitle: 'Record breeding resources during the breeding process to ensure materials are traceable and usable',
+        list: 'Breeding Material Registration List',
+        add: 'Add Material Registration',
+        edit: 'Edit Material Registration',
+        detail: 'Material Registration Details',
+        delete: 'Delete Registration',
+        deleteConfirm: 'Are you sure to delete this material registration?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search registration code, batch ID',
+        filterByBatch: 'Filter by breeding batch',
+        filterBySeedType: 'Filter by seed type',
+        allBatches: 'All Batches',
+        allSeedTypes: 'All Types',
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Association Information',
+          materialInfo: 'Material Information',
+          registrationCode: 'Registration Code',
+          batchId: 'Breeding Batch ID',
+          warehouseInId: 'Warehouse In ID',
+          seedType: 'Seed Type',
+          quantity: 'Quantity (kg)',
+          sourceEntity: 'Source Entity',
+          receiveDate: 'Receive Date',
+          labTestReport: 'Laboratory Test Report',
+          operator: 'Operator',
+          operationOrg: 'Operation Organization',
+          operationTime: 'Operation Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          registrationCode: 'Auto-generated by system',
+          batchId: 'Please select breeding batch ID',
+          warehouseInId: 'Please enter warehouse in ID',
+          seedType: 'Please enter seed type',
+          quantity: 'Please enter quantity',
+          sourceEntity: 'Please enter source entity',
+          receiveDate: 'Please select receive date',
+        },
+
+        // Form Validation
+        rules: {
+          batchIdRequired: 'Please select breeding batch ID',
+          warehouseInIdRequired: 'Please enter warehouse in ID',
+          seedTypeRequired: 'Please enter seed type',
+          quantityRequired: 'Please enter quantity',
+          quantityFormat: 'Please enter valid quantity',
+          sourceEntityRequired: 'Please enter source entity',
+          receiveDateRequired: 'Please select receive date',
+        },
+
+        // Table Columns
+        columns: {
+          registrationCode: 'Registration Code',
+          batchId: 'Batch ID',
+          warehouseInId: 'Warehouse In ID',
+          seedType: 'Seed Type',
+          quantity: 'Quantity (kg)',
+          sourceEntity: 'Source Entity',
+          receiveDate: 'Receive Date',
+          operationTime: 'Operation Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        // Messages
+        messages: {
+          uploadTip: 'Supports PDF, JPG format, single file size less than 2MB',
+        },
+      },
+
+      // Breeding Tracking Management
+      tracking: {
+        title: 'Breeding Tracking Management',
+        subtitle: 'Record breeding propagation tracking stages to ensure the breeding process is standardized and controllable',
+        list: 'Breeding Tracking Record List',
+        add: 'Add Tracking Record',
+        edit: 'Edit Tracking Record',
+        detail: 'Tracking Record Details',
+        delete: 'Delete Record',
+        deleteConfirm: 'Are you sure to delete this tracking record?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search tracking ID, batch ID',
+        filterByBatch: 'Filter by breeding batch',
+        filterByStage: 'Filter by stage name',
+        allBatches: 'All Batches',
+        allStages: 'All Stages',
+
+        // Stage Name
+        stageName: {
+          parentLinePreparation: 'Parent Line Preparation',
+          breederSeed: 'Breeder Seed',
+          preBasicSeedPropagation: 'Pre-basic Seed Propagation',
+          basicSeedPropagation: 'Basic Seed Propagation',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          trackingInfo: 'Tracking Information',
+          yieldInfo: 'Yield Information',
+          qualityInfo: 'Quality Information',
+          trackingId: 'Tracking ID',
+          batchId: 'Breeding Batch ID',
+          stageName: 'Stage Name',
+          location: 'Location',
+          coordinates: 'Coordinates (Latitude, Longitude)',
+          expectedYield: 'Expected Yield',
+          actualYield: 'Actual Yield',
+          fieldInspectionScore: 'Field Inspection Score',
+          diseaseObservation: 'Disease Observation',
+          stageCompletionDate: 'Stage Completion Date',
+          recorder: 'Recorder',
+          recordTime: 'Record Time',
+          updateTime: 'Update Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          trackingId: 'Auto-generated by system',
+          batchId: 'Please select breeding batch ID',
+          stageName: 'Please select stage name',
+          location: 'Please enter location',
+          coordinates: 'Format: Latitude, Longitude',
+          expectedYield: 'Please enter expected yield',
+          actualYield: 'Please enter actual yield',
+          fieldInspectionScore: '0-5 score scale',
+          diseaseObservation: 'Please enter disease observation',
+          stageCompletionDate: 'Please select stage completion date',
+        },
+
+        // Form Validation
+        rules: {
+          batchIdRequired: 'Please select breeding batch ID',
+          stageNameRequired: 'Please select stage name',
+          locationRequired: 'Please enter location',
+          expectedYieldRequired: 'Please enter expected yield',
+          expectedYieldFormat: 'Please enter valid yield',
+          actualYieldFormat: 'Please enter valid yield',
+          fieldInspectionScoreFormat: 'Score range is 0-5',
+        },
+
+        // Table Columns
+        columns: {
+          trackingId: 'Tracking ID',
+          batchId: 'Batch ID',
+          stageName: 'Stage Name',
+          location: 'Location',
+          expectedYield: 'Expected Yield',
+          actualYield: 'Actual Yield',
+          fieldInspectionScore: 'Field Score',
+          stageCompletionDate: 'Completion Date',
+          recordTime: 'Record Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
         },
       },
     },

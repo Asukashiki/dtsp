@@ -36,7 +36,8 @@ request.interceptors.response.use(
     const res = response.data
     // 根据实际情况调整
     if (res.code !== 200 && userStore.token) {
-      if (res.code === 401) {
+      
+      if (res.code === 401 || res.status === 401) {
         handleUnauthorized(res.message || '登录已过期，请重新登录')
       } else if (res.code === 500) {
           handleUnauthorized(res.message || '登录已过期，请重新登录')

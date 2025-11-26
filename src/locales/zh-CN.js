@@ -5,6 +5,7 @@ export default {
     save: '保存',
     delete: '删除',
     edit: '编辑',
+    view: '查看',
     search: '搜索',
     reset: '重置',
     submit: '提交',
@@ -19,10 +20,17 @@ export default {
     tips: '提示',
     upload: '上传文件',
     uploadSuccess: '上传成功',
+    uploadFailed: '上传失败',
     add: '新增',
     close: '关闭',
     startDate: '开始时间',
-    endDate: '结束时间'
+    endDate: '结束时间',
+    preview: '预览',
+    download: '下载',
+    noFile: '文件不存在',
+    loadFailed: '加载失败',
+    saveFailed: '保存失败',
+    submitFailed: '提交失败'
   },
 
   header: {
@@ -629,6 +637,7 @@ export default {
       // 提示信息
       messages: {
         submitSuccess: '审核提交成功',
+        submitFailed: '审核提交失败',
         confirmSubmit: '确定提交审核结果吗？',
       },
     },
@@ -737,6 +746,7 @@ export default {
           approvalDocumentNo: '请输入核准文件编号',
           approvalAgency: '请输入核准机构',
           approvalDate: '请选择核准日期',
+          days: '天',
         },
 
         // 表单验证
@@ -819,6 +829,7 @@ export default {
           trialInfo: '试验和性能数据',
           regulatoryInfo: '监管数据',
           auditOperation: '审核操作',
+          auditResult: '审核结果',
         },
 
         // 表单字段
@@ -895,11 +906,20 @@ export default {
           actions: '操作',
         },
 
+        // 详情页区域标题
+        sections: {
+          basicInfo: '品种基础信息',
+          identificationInfo: '品种标识信息',
+          publishInfo: '发布信息',
+        },
+
         // 表单字段
         form: {
           publishNo: '发布编号',
           publishDate: '发布日期',
           publishDept: '发布主管部门',
+          publisher: '发布人',
+          publishTime: '发布时间',
           decisionExplanation: '决策说明',
           publicDescription: '公开描述',
           recommendedRegion: '推荐地区',
@@ -909,10 +929,18 @@ export default {
 
         // 表单占位符
         placeholder: {
+          publishDept: '请输入发布主管部门',
           decisionExplanation: '请输入决策说明',
           publicDescription: '请输入公开描述',
           recommendedRegion: '请输入推荐地区',
           sowingGuide: '请输入播种指南',
+        },
+
+        // 表单验证
+        rules: {
+          publishDeptRequired: '请输入发布主管部门',
+          publicDescriptionRequired: '请输入公开描述',
+          decisionExplanationRequired: '请输入决策说明',
         },
 
         // 操作按钮
@@ -921,6 +949,7 @@ export default {
           publish: '立即发布',
           offline: '下架',
           view: '查看',
+          backToList: '返回列表',
         },
 
         // 提示信息
@@ -972,6 +1001,313 @@ export default {
         actions: {
           viewDetail: '查看详情',
           back: '返回',
+        },
+      },
+    },
+
+    // 育种管理
+    breeding: {
+      // 育种计划管理
+      plan: {
+        title: '育种计划管理',
+        subtitle: '设置育种计划,包括育种年度、育种批次、种植基地等信息',
+        list: '育种计划列表',
+        add: '新增育种计划',
+        edit: '编辑育种计划',
+        detail: '育种计划详情',
+        delete: '删除计划',
+        deleteConfirm: '确定删除该育种计划吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索计划名称、批次ID',
+        filterByYear: '按育种年度筛选',
+        filterByCrop: '按作物类型筛选',
+        filterByStatus: '按计划状态筛选',
+        allYears: '全部年度',
+        allCrops: '全部作物',
+        allStatus: '全部状态',
+
+        // 计划状态
+        status: {
+          planning: '计划中',
+          ongoing: '进行中',
+          completed: '已完成',
+          cancelled: '已取消',
+        },
+
+        // 繁殖级别
+        propagationLevel: {
+          breeder: '育种家种子',
+          preBasic: '原原种',
+          basic: '原种',
+          certified: '良种',
+        },
+
+        // 表单字段
+        form: {
+          basicInfo: '计划基本信息',
+          planName: '计划名称',
+          breedingYear: '育种年度',
+          batchId: '育种批次ID',
+          plantingBase: '种植基地',
+          cropType: '作物类型',
+          varietyName: '品种名称',
+          propagationLevel: '繁殖级别',
+          parentSeedSource: '亲本种子来源',
+          personInCharge: '负责人',
+          startDate: '计划起始时间',
+          endDate: '计划结束时间',
+          breedingGoal: '育种目标',
+          remarks: '备注',
+          createTime: '创建时间',
+          updateTime: '更新时间',
+        },
+
+        // 表单占位符
+        placeholder: {
+          planName: '请输入计划名称',
+          breedingYear: '请选择育种年度',
+          batchId: '请输入育种批次ID',
+          plantingBase: '请输入种植基地',
+          cropType: '请选择作物类型',
+          varietyName: '请输入品种名称',
+          propagationLevel: '请选择繁殖级别',
+          parentSeedSource: '请输入亲本种子来源',
+          personInCharge: '请输入负责人',
+          startDate: '请选择计划起始时间',
+          endDate: '请选择计划结束时间',
+          breedingGoal: '请输入育种目标',
+          remarks: '备注信息（选填）',
+        },
+
+        // 表单验证
+        rules: {
+          planNameRequired: '请输入计划名称',
+          breedingYearRequired: '请选择育种年度',
+          batchIdRequired: '请输入育种批次ID',
+          plantingBaseRequired: '请输入种植基地',
+          cropTypeRequired: '请选择作物类型',
+          varietyNameRequired: '请输入品种名称',
+          propagationLevelRequired: '请选择繁殖级别',
+          parentSeedSourceRequired: '请输入亲本种子来源',
+          personInChargeRequired: '请输入负责人',
+          startDateRequired: '请选择计划起始时间',
+          endDateRequired: '请选择计划结束时间',
+          breedingGoalRequired: '请输入育种目标',
+          endDateAfterStart: '结束时间必须晚于开始时间',
+        },
+
+        // 列表列
+        columns: {
+          planName: '计划名称',
+          batchId: '批次ID',
+          breedingYear: '育种年度',
+          cropType: '作物类型',
+          varietyName: '品种名称',
+          propagationLevel: '繁殖级别',
+          personInCharge: '负责人',
+          startDate: '开始时间',
+          endDate: '结束时间',
+          status: '计划状态',
+          createTime: '创建时间',
+          actions: '操作',
+        },
+
+        // 操作按钮
+        actions: {
+          submit: '提交',
+          saveDraft: '保存草稿',
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+        },
+      },
+
+      // 育种材料登记
+      material: {
+        title: '育种材料登记',
+        subtitle: '记录育种过程中的育种资源,确保材料可查、可用',
+        list: '育种材料登记列表',
+        add: '新增材料登记',
+        edit: '编辑材料登记',
+        detail: '材料登记详情',
+        delete: '删除登记',
+        deleteConfirm: '确定删除该材料登记吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索登记编码、批次ID',
+        filterByBatch: '按育种批次筛选',
+        filterBySeedType: '按种子类别筛选',
+        allBatches: '全部批次',
+        allSeedTypes: '全部类别',
+
+        // 表单字段
+        form: {
+          basicInfo: '基础关联信息',
+          materialInfo: '材料信息',
+          registrationCode: '登记编码',
+          batchId: '育种批次ID',
+          warehouseInId: '入库ID',
+          seedType: '种子类别',
+          quantity: '数量（千克）',
+          sourceEntity: '来源实体',
+          receiveDate: '接收日期',
+          labTestReport: '实验室检测报告',
+          operator: '操作人',
+          operationOrg: '操作机构',
+          operationTime: '操作时间',
+        },
+
+        // 表单占位符
+        placeholder: {
+          registrationCode: '系统自动生成',
+          batchId: '请选择育种批次ID',
+          warehouseInId: '请输入入库ID',
+          seedType: '请输入种子类别',
+          quantity: '请输入数量',
+          sourceEntity: '请输入来源实体',
+          receiveDate: '请选择接收日期',
+        },
+
+        // 表单验证
+        rules: {
+          batchIdRequired: '请选择育种批次ID',
+          warehouseInIdRequired: '请输入入库ID',
+          seedTypeRequired: '请输入种子类别',
+          quantityRequired: '请输入数量',
+          quantityFormat: '请输入正确的数量',
+          sourceEntityRequired: '请输入来源实体',
+          receiveDateRequired: '请选择接收日期',
+        },
+
+        // 列表列
+        columns: {
+          registrationCode: '登记编码',
+          batchId: '批次ID',
+          warehouseInId: '入库ID',
+          seedType: '种子类别',
+          quantity: '数量(kg)',
+          sourceEntity: '来源实体',
+          receiveDate: '接收日期',
+          operationTime: '操作时间',
+          actions: '操作',
+        },
+
+        // 操作按钮
+        actions: {
+          submit: '提交',
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+        },
+
+        // 提示信息
+        messages: {
+          uploadTip: '支持 PDF、JPG 格式，单个文件不超过2MB',
+        },
+      },
+
+      // 育种跟踪管理
+      tracking: {
+        title: '育种跟踪管理',
+        subtitle: '对育种繁殖跟踪阶段进行记录,确保育种过程规范可控',
+        list: '育种跟踪记录列表',
+        add: '新增跟踪记录',
+        edit: '编辑跟踪记录',
+        detail: '跟踪记录详情',
+        delete: '删除记录',
+        deleteConfirm: '确定删除该跟踪记录吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索跟踪ID、批次ID',
+        filterByBatch: '按育种批次筛选',
+        filterByStage: '按阶段名称筛选',
+        allBatches: '全部批次',
+        allStages: '全部阶段',
+
+        // 阶段名称
+        stageName: {
+          parentLinePreparation: '亲本系准备',
+          breederSeed: '育种家种子',
+          preBasicSeedPropagation: '原原种繁殖',
+          basicSeedPropagation: '原种繁殖',
+        },
+
+        // 表单字段
+        form: {
+          basicInfo: '基础信息',
+          trackingInfo: '跟踪信息',
+          yieldInfo: '产量信息',
+          qualityInfo: '质量信息',
+          trackingId: '跟踪ID',
+          batchId: '育种批次ID',
+          stageName: '阶段名称',
+          location: '位置',
+          coordinates: '坐标（经纬度）',
+          expectedYield: '预期产量',
+          actualYield: '实际产量',
+          fieldInspectionScore: '田间检查评分',
+          diseaseObservation: '病害观察',
+          stageCompletionDate: '阶段完成日期',
+          recorder: '记录人',
+          recordTime: '记录时间',
+          updateTime: '更新时间',
+        },
+
+        // 表单占位符
+        placeholder: {
+          trackingId: '系统自动生成',
+          batchId: '请选择育种批次ID',
+          stageName: '请选择阶段名称',
+          location: '请输入位置',
+          coordinates: '格式：纬度,经度',
+          expectedYield: '请输入预期产量',
+          actualYield: '请输入实际产量',
+          fieldInspectionScore: '0-5分制',
+          diseaseObservation: '请输入病害观察',
+          stageCompletionDate: '请选择阶段完成日期',
+        },
+
+        // 表单验证
+        rules: {
+          batchIdRequired: '请选择育种批次ID',
+          stageNameRequired: '请选择阶段名称',
+          locationRequired: '请输入位置',
+          expectedYieldRequired: '请输入预期产量',
+          expectedYieldFormat: '请输入正确的产量',
+          actualYieldFormat: '请输入正确的产量',
+          fieldInspectionScoreFormat: '评分范围为0-5',
+        },
+
+        // 列表列
+        columns: {
+          trackingId: '跟踪ID',
+          batchId: '批次ID',
+          stageName: '阶段名称',
+          location: '位置',
+          expectedYield: '预期产量',
+          actualYield: '实际产量',
+          fieldInspectionScore: '田间评分',
+          stageCompletionDate: '完成日期',
+          recordTime: '记录时间',
+          actions: '操作',
+        },
+
+        // 操作按钮
+        actions: {
+          submit: '提交',
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
         },
       },
     },

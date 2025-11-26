@@ -142,6 +142,25 @@ const routes = [
         name: 'VarietyQuery',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
+      },
+      // 育种管理
+      {
+        path: 'breeding/plan',
+        name: 'BreedingPlan',
+        component: () => import('../views/research/breeding/BreedingPlan.vue'),
+        meta: { title: '育种计划管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding/material',
+        name: 'BreedingMaterial',
+        component: () => import('../views/research/breeding/BreedingMaterial.vue'),
+        meta: { title: '育种材料登记', requiresAuth: true }
+      },
+      {
+        path: 'breeding/tracking',
+        name: 'BreedingTracking',
+        component: () => import('../views/research/breeding/BreedingTracking.vue'),
+        meta: { title: '育种跟踪管理', requiresAuth: true }
       }
     ]
   },

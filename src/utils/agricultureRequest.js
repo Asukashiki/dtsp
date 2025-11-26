@@ -59,9 +59,9 @@ agricultureRequest.interceptors.response.use(
     // 处理业务错误
     const userStore = useUserStore()
 
-    if (res.code === 401 && userStore.token) {
-      handleUnauthorized(res.msg || res.message || '登录已过期，请重新登录')
-      return Promise.reject(new Error(res.msg || res.message || '未授权'))
+    if ((res.code === 401 || res.status === 401) && userStore.token) {
+      handleUnauthorized(res.msg || '登录已过期，请重新登录')
+      return Promise.reject(new Error(res.msg || '未授权'))
     }
 
     // 其他业务错误

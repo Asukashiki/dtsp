@@ -1,431 +1,468 @@
 <template>
-  <div class="enterprise-audit-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon-wrapper">
-        <i class="ri-checkbox-circle-line"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ $t('research.audit.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.audit.subtitle') }}</p>
-      </div>
-    </div>
-
-    <!-- 列表视图 -->
-    <div v-if="!showAuditForm" class="list-section">
-      <!-- 搜索筛选区 - 与认证页面保持一致 -->
-     
-      <!-- PC端表格 -->
-      <div class="table-container pc-only"> 
-
-        <div class="search-section">
-        <el-input
-          v-model="searchQuery"
-          :placeholder="$t('research.enterprise.searchPlaceholder')"
-          clearable
-          class="search-input"
-        >
-          <template #prefix>
-            <i class="ri-search-line"></i>
-          </template>
-        </el-input>
-        <!-- <el-select
-          v-model="filterType"
-          :placeholder="$t('research.enterprise.filterByType')"
-          clearable
-          class="filter-select"
-        >
-          <el-option :label="$t('research.enterprise.allTypes')" value="" />
-          <el-option :label="$t('research.enterprise.type.production')" value="production" />
-          <el-option :label="$t('research.enterprise.type.trade')" value="trade" />
-          <el-option :label="$t('research.enterprise.type.integrated')" value="integrated" />
-        </el-select> -->
-        <el-select
-          v-model="filterStatus"
-          :placeholder="$t('research.enterprise.filterByStatus')"
-          clearable
-          class="filter-select"
-        >
-          <el-option :label="$t('research.enterprise.allStatus')" value="" />
-          <el-option :label="$t('research.audit.status.pending')" value="pending" />
-          <el-option :label="$t('research.audit.status.approved')" value="approved" />
-          <el-option :label="$t('research.audit.status.rejected')" value="rejected" />
-        </el-select>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-icon">
+          <i class="ri-checkbox-circle-line"></i>
+        </div>
+        <div class="header-content">
+          <h1 class="page-title">{{ $t('research.audit.title') }}</h1>
+          <p class="page-subtitle">{{ $t('research.audit.subtitle') }}</p>
+        </div>
       </div>
 
-        <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
-          <el-table-column prop="enterpriseName" :label="$t('research.audit.columns.enterpriseName')" min-width="150" />
-          <el-table-column prop="unifiedSocialCreditCode" :label="$t('research.audit.columns.unifiedSocialCreditCode')" min-width="150" />
-          <el-table-column prop="seedLicenseNo" :label="$t('research.audit.columns.seedLicenseNo')" min-width="150" />
-          <el-table-column prop="applicationDate" :label="$t('research.audit.columns.applicationDate')" width="120" />
-          <el-table-column prop="currentStage" :label="$t('research.audit.columns.currentStage')" width="150">
-            <template #default="{ row }">
-              <el-tag :type="getStageTagType(row.currentStage)" size="small">
-                {{ getStageLabel(row.currentStage) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="assignedAuditor" :label="$t('research.audit.columns.assignedAuditor')" width="120" />
-          <el-table-column prop="auditStatus" :label="$t('research.audit.columns.auditStatus')" width="120">
-            <template #default="{ row }">
-              <el-tag :type="getStatusTagType(row.auditStatus)">
-                {{ getStatusLabel(row.auditStatus) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('research.audit.columns.actions')" width="120" fixed="right">
-            <template #default="{ row }">
-              <el-button
-                v-if="row.auditStatus === 'pending'"
-                type="primary"
-                link
-                @click="handleAudit(row)"
-              >
-                <i class="ri-file-edit-line"></i>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 列表视图 -->
+        <div v-if="!showDetail" class="list-view">
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-list-3-line"></i>
+                <span>{{ $t('research.audit.taskList') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 搜索筛选区 -->
+              <div class="search-section">
+                <el-input
+                  v-model="searchQuery"
+                  :placeholder="$t('research.audit.search.placeholder')"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix>
+                    <i class="ri-search-line"></i>
+                  </template>
+                </el-input>
+                <el-select
+                  v-model="filterStatus"
+                  :placeholder="$t('research.enterprise.filterByStatus')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option :label="$t('research.enterprise.allStatus')" value="" />
+                  <el-option :label="$t('research.audit.status.pending')" value="pending" />
+                  <el-option :label="$t('research.audit.status.approved')" value="approved" />
+                  <el-option :label="$t('research.audit.status.rejected')" value="rejected" />
+                </el-select>
+              </div>
+
+              <!-- 表格 -->
+              <div class="table-wrapper">
+                <el-table
+                  :data="filteredList"
+                  style="width: 100%"
+                  v-loading="loading"
+                >
+                  <el-table-column
+                    prop="enterpriseName"
+                    :label="$t('research.audit.columns.enterpriseName')"
+                    min-width="200"
+                  />
+                  <el-table-column
+                    prop="unifiedSocialCreditCode"
+                    :label="$t('research.audit.columns.unifiedSocialCreditCode')"
+                    min-width="180"
+                  />
+                  <el-table-column
+                    prop="seedLicenseNo"
+                    :label="$t('research.audit.columns.seedLicenseNo')"
+                    min-width="160"
+                  />
+                  <el-table-column
+                    prop="applicationDate"
+                    :label="$t('research.audit.columns.applicationDate')"
+                    width="120"
+                  >
+                    <template #default="{ row }">
+                      {{ formatDate(row.applicationDate) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="currentStage"
+                    :label="$t('research.audit.columns.currentStage')"
+                    width="120"
+                  >
+                    <template #default="{ row }">
+                      <el-tag :type="getStageTagType(row.currentStage)" size="small">
+                        {{ getStageLabel(row.currentStage) }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="assignedAuditor"
+                    :label="$t('research.audit.columns.assignedAuditor')"
+                    width="120"
+                  />
+                  <el-table-column
+                    prop="auditStatus"
+                    :label="$t('research.audit.columns.auditStatus')"
+                    width="120"
+                  >
+                    <template #default="{ row }">
+                      <el-tag :type="getStatusTagType(row.auditResult)">
+                        {{ getStatusLabel(row.auditStatus) }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    :label="$t('research.audit.columns.actions')"
+                    width="150"
+                    fixed="right"
+                  >
+                    <template #default="{ row }">
+                      <el-button
+                        v-if="row.auditStatus === 'pending'"
+                        type="primary"
+                        link
+                        @click="handleAudit(row)"
+                      >
+                        <i class="ri-file-edit-line"></i>
+                        {{ $t('research.audit.actions.audit') }}
+                      </el-button>
+                      <el-button
+                        v-else
+                        type="primary"
+                        link
+                        @click="handleView(row)"
+                      >
+                        <i class="ri-eye-line"></i>
+                        {{ $t('common.viewDetails') }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+
+                <!-- 分页 -->
+                <div class="pagination-wrapper">
+                  <el-pagination
+                    v-model:current-page="currentPage"
+                    v-model:page-size="pageSize"
+                    :page-sizes="[10, 20, 50, 100]"
+                    :total="total"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleSizeChange"
+                    @current-change="handlePageChange"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 详情视图 -->
+        <div v-else class="detail-view">
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-text-line"></i>
+                <span>{{ $t('research.audit.detailTitle') }}</span>
+              </div>
+              <el-button @click="handleBack">
+                <i class="ri-arrow-left-line"></i>
+                {{ $t('research.audit.actions.backToList') }}
               </el-button>
-              <el-button
-                v-else
-                type="primary"
-                link
-                @click="handleView(row)"
-              >
-                <i class="ri-eye-line"></i>
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-
-      <!-- 移动端卡片 -->
-      <div class="card-container mobile-only">
-        <div v-if="filteredList.length === 0" class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('home.noData') }}</p>
-        </div>
-        <div v-for="item in filteredList" :key="item.enterpriseId" class="enterprise-card" @click="item.auditStatus === 'pending' ? handleAudit(item) : handleView(item)">
-          <div class="card-header">
-            <div class="enterprise-name">{{ item.enterpriseName }}</div>
-            <el-tag :type="getStatusTagType(item.auditStatus)" size="small">
-              {{ getStatusLabel(item.auditStatus) }}
-            </el-tag>
-          </div>
-          <div class="card-body">
-            <div class="card-row">
-              <span class="label">{{ $t('research.audit.columns.unifiedSocialCreditCode') }}:</span>
-              <span class="value">{{ item.unifiedSocialCreditCode }}</span>
             </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.audit.columns.currentStage') }}:</span>
-              <el-tag :type="getStageTagType(item.currentStage)" size="small">
-                {{ getStageLabel(item.currentStage) }}
-              </el-tag>
-            </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.audit.columns.assignedAuditor') }}:</span>
-              <span class="value">{{ item.assignedAuditor }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="card-body detail-body-scrollable">
+              <!-- 企业基础信息 -->
+              <div class="detail-section">
+                <div class="section-header">
+                  <i class="ri-building-2-line"></i>
+                  <h3>{{ $t('research.audit.sections.basicInfo') }}</h3>
+                </div>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.enterprise.form.enterpriseName') }}</span>
+                    <span class="item-value">{{ currentEnterprise.enterpriseName }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.enterprise.form.unifiedSocialCreditCode') }}</span>
+                    <span class="item-value">{{ currentEnterprise.unifiedSocialCreditCode }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.columns.seedLicenseNo') }}</span>
+                    <span class="item-value">{{ currentEnterprise.seedLicenseNo }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.enterprise.form.enterpriseType') }}</span>
+                    <span class="item-value">{{ getTypeLabel(currentEnterprise.enterpriseType) }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.enterprise.form.licenseStartDate') }}</span>
+                    <span class="item-value">{{ formatDate(currentEnterprise.licenseStartDate) }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.enterprise.form.licenseEndDate') }}</span>
+                    <span class="item-value">{{ formatDate(currentEnterprise.licenseEndDate) }}</span>
+                  </div>
+                  <div class="detail-item full-width">
+                    <span class="item-label">{{ $t('research.enterprise.form.detailedAddress') }}</span>
+                    <span class="item-value">{{ currentEnterprise.detailedAddress }}</span>
+                  </div>
+                  <div class="detail-item full-width">
+                    <span class="item-label">{{ $t('research.enterprise.form.businessScope') }}</span>
+                    <span class="item-value">{{ currentEnterprise.businessScope }}</span>
+                  </div>
+                </div>
+              </div>
 
-    <!-- 审核详情视图 -->
-    <div v-else class="audit-detail-section">
-      <!-- 返回按钮 -->
-      <div class="detail-header">
-        <el-button @click="handleBackToList">
-          <i class="ri-arrow-left-line"></i>
-          <span>{{ $t('research.audit.actions.backToList') }}</span>
-        </el-button>
-      </div>
+              <!-- 企业额外信息 -->
+              <div class="detail-section">
+                <div class="section-header">
+                  <i class="ri-information-line"></i>
+                  <h3>{{ $t('research.audit.sections.extraInfo') }}</h3>
+                </div>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.establishmentDate') }}</span>
+                    <span class="item-value">{{ formatDate(currentEnterprise.establishmentDate) }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.legalPersonName') }}</span>
+                    <span class="item-value">{{ currentEnterprise.legalPersonName }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.legalPersonId') }}</span>
+                    <span class="item-value">{{ currentEnterprise.legalPersonId }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.contactPersonName') }}</span>
+                    <span class="item-value">{{ currentEnterprise.contactPerson }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.contactPhone') }}</span>
+                    <span class="item-value">{{ currentEnterprise.contactPhone }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.extraInfo.email') }}</span>
+                    <span class="item-value">{{ currentEnterprise.email || '-' }}</span>
+                  </div>
+                </div>
+              </div>
 
-      <!-- 企业基础信息 -->
-      <div class="info-section">
-        <div class="section-header">
-          <i class="ri-information-line"></i>
-          <h2>{{ $t('research.audit.sections.basicInfo') }}</h2>
-        </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.enterprise.form.enterpriseName') }}</span>
-            <span class="value">{{ currentEnterprise.enterpriseName }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.enterprise.form.unifiedSocialCreditCode') }}</span>
-            <span class="value">{{ currentEnterprise.unifiedSocialCreditCode }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.columns.seedLicenseNo') }}</span>
-            <span class="value">{{ currentEnterprise.seedLicenseNo }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.enterprise.form.enterpriseType') }}</span>
-            <span class="value">{{ getTypeLabel(currentEnterprise.enterpriseType) }}</span>
-          </div>
-        </div>
-      </div>
+              <!-- 所需文件 -->
+              <div class="detail-section">
+                <div class="section-header">
+                  <i class="ri-folder-open-line"></i>
+                  <h3>{{ $t('research.audit.sections.documents') }}</h3>
+                </div>
+                <div class="documents-grid">
+                  <div class="document-item">
+                    <div class="document-icon">
+                      <i class="ri-file-text-line"></i>
+                    </div>
+                    <div class="document-info">
+                      <div class="document-name">{{ $t('research.audit.documents.businessLicense') }}</div>
+                      <div class="document-actions">
+                        <el-button link type="primary" size="small">
+                          <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
+                        </el-button>
+                        <el-button link type="primary" size="small">
+                          <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="document-item">
+                    <div class="document-icon">
+                      <i class="ri-file-text-line"></i>
+                    </div>
+                    <div class="document-info">
+                      <div class="document-name">{{ $t('research.audit.documents.seedLicense') }}</div>
+                      <div class="document-actions">
+                        <el-button link type="primary" size="small">
+                          <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
+                        </el-button>
+                        <el-button link type="primary" size="small">
+                          <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="document-item">
+                    <div class="document-icon">
+                      <i class="ri-file-text-line"></i>
+                    </div>
+                    <div class="document-info">
+                      <div class="document-name">{{ $t('research.audit.documents.taxRegistration') }}</div>
+                      <div class="document-actions">
+                        <el-button link type="primary" size="small">
+                          <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
+                        </el-button>
+                        <el-button link type="primary" size="small">
+                          <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="document-item">
+                    <div class="document-icon">
+                      <i class="ri-file-text-line"></i>
+                    </div>
+                    <div class="document-info">
+                      <div class="document-name">{{ $t('research.audit.documents.factoryPermit') }}</div>
+                      <div class="document-actions">
+                        <el-button link type="primary" size="small">
+                          <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
+                        </el-button>
+                        <el-button link type="primary" size="small">
+                          <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-      <!-- 企业额外信息 -->
-      <div class="info-section">
-        <div class="section-header">
-          <i class="ri-file-list-line"></i>
-          <h2>{{ $t('research.audit.sections.extraInfo') }}</h2>
-        </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.establishmentDate') }}</span>
-            <span class="value">{{ currentEnterprise.establishmentDate }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.legalPersonName') }}</span>
-            <span class="value">{{ currentEnterprise.legalPersonName }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.legalPersonId') }}</span>
-            <span class="value">{{ currentEnterprise.legalPersonId }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.contactPersonName') }}</span>
-            <span class="value">{{ currentEnterprise.contactPerson }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.contactPhone') }}</span>
-            <span class="value">{{ currentEnterprise.contactPhone }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.audit.extraInfo.email') }}</span>
-            <span class="value">{{ currentEnterprise.email }}</span>
-          </div>
-        </div>
-      </div>
+              <!-- 审核操作区 - 只在待审核状态显示 -->
+              <div v-if="currentEnterprise.auditStatus === 'pending'" class="audit-section">
+                <div class="section-header">
+                  <i class="ri-file-edit-line"></i>
+                  <h3>{{ $t('research.audit.sections.auditOperation') }}</h3>
+                </div>
+                <el-form
+                  ref="formRef"
+                  :model="formData"
+                  :rules="rules"
+                  label-position="top"
+                  class="audit-form"
+                >
+                  <el-row :gutter="24">
+                    <el-col :span="24">
+                      <el-form-item
+                        :label="$t('research.audit.form.auditResult')"
+                        prop="auditResult"
+                      >
+                        <el-radio-group v-model="formData.auditResult" size="large">
+                          <el-radio value="pass">
+                            <i class="ri-checkbox-circle-line"></i>
+                            {{ $t('research.audit.result.pass') }}
+                          </el-radio>
+                          <el-radio value="reject">
+                            <i class="ri-close-circle-line"></i>
+                            {{ $t('research.audit.result.reject') }}
+                          </el-radio>
+                        </el-radio-group>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                      <el-form-item
+                        :label="$t('research.audit.form.auditOpinion')"
+                        prop="auditOpinion"
+                      >
+                        <el-input
+                          v-model="formData.auditOpinion"
+                          type="textarea"
+                          :rows="4"
+                          :placeholder="$t('research.audit.placeholder.auditOpinion')"
+                          size="large"
+                        />
+                      </el-form-item>
+                    </el-col>
+                    <el-col v-if="formData.auditResult === 'reject'" :span="24">
+                      <el-form-item
+                        :label="$t('research.audit.form.rejectReason')"
+                        prop="rejectReason"
+                      >
+                        <el-input
+                          v-model="formData.rejectReason"
+                          type="textarea"
+                          :rows="3"
+                          :placeholder="$t('research.audit.placeholder.rejectReason')"
+                          size="large"
+                        />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
 
-      <!-- 所需文件 -->
-      <div class="info-section">
-        <div class="section-header">
-          <i class="ri-folder-open-line"></i>
-          <h2>{{ $t('research.audit.sections.documents') }}</h2>
-        </div>
-        <div class="documents-grid">
-          <div class="document-item">
-            <div class="document-icon">
-              <i class="ri-file-text-line"></i>
-            </div>
-            <div class="document-info">
-              <div class="document-name">{{ $t('research.audit.documents.businessLicense') }}</div>
-              <div class="document-actions">
-                <el-button link type="primary" size="small">
-                  <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
-                </el-button>
-                <el-button link type="primary" size="small">
-                  <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
-                </el-button>
+                  <div class="form-actions">
+                    <el-button @click="handleBack" size="large">
+                      {{ $t('common.cancel') }}
+                    </el-button>
+                    <el-button
+                      type="primary"
+                      @click="handleSubmit"
+                      :loading="submitLoading"
+                      class="submit-btn"
+                      size="large"
+                    >
+                      <i class="ri-send-plane-line"></i>
+                      {{ $t('research.audit.actions.submit') }}
+                    </el-button>
+                  </div>
+                </el-form>
+              </div>
+
+              <!-- 已审核的审核信息 -->
+              <div v-else class="audit-result-section">
+                <div class="section-header">
+                  <i class="ri-file-check-line"></i>
+                  <h3>{{ $t('research.audit.sections.auditOperation') }}</h3>
+                </div>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.form.auditResult') }}</span>
+                    <el-tag :type="currentEnterprise.auditStatus === 'approved' ? 'success' : 'danger'">
+                      {{ getStatusLabel(currentEnterprise.auditStatus) }}
+                    </el-tag>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.form.auditor') }}</span>
+                    <span class="item-value">{{ currentEnterprise.auditor || '-' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="item-label">{{ $t('research.audit.form.auditTime') }}</span>
+                    <span class="item-value">{{ formatDate(currentEnterprise.auditTime) }}</span>
+                  </div>
+                  <div class="detail-item full-width">
+                    <span class="item-label">{{ $t('research.audit.form.auditOpinion') }}</span>
+                    <span class="item-value">{{ currentEnterprise.auditOpinion || '-' }}</span>
+                  </div>
+                  <div v-if="currentEnterprise.rejectReason" class="detail-item full-width">
+                    <span class="item-label">{{ $t('research.audit.form.rejectReason') }}</span>
+                    <span class="item-value">{{ currentEnterprise.rejectReason }}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="document-item">
-            <div class="document-icon">
-              <i class="ri-file-text-line"></i>
-            </div>
-            <div class="document-info">
-              <div class="document-name">{{ $t('research.audit.documents.seedLicense') }}</div>
-              <div class="document-actions">
-                <el-button link type="primary" size="small">
-                  <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
-                </el-button>
-                <el-button link type="primary" size="small">
-                  <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
-                </el-button>
-              </div>
-            </div>
-          </div>
-          <div class="document-item">
-            <div class="document-icon">
-              <i class="ri-file-text-line"></i>
-            </div>
-            <div class="document-info">
-              <div class="document-name">{{ $t('research.audit.documents.taxRegistration') }}</div>
-              <div class="document-actions">
-                <el-button link type="primary" size="small">
-                  <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
-                </el-button>
-                <el-button link type="primary" size="small">
-                  <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
-                </el-button>
-              </div>
-            </div>
-          </div>
-          <div class="document-item">
-            <div class="document-icon">
-              <i class="ri-file-text-line"></i>
-            </div>
-            <div class="document-info">
-              <div class="document-name">{{ $t('research.audit.documents.factoryPermit') }}</div>
-              <div class="document-actions">
-                <el-button link type="primary" size="small">
-                  <i class="ri-eye-line"></i> {{ $t('research.audit.documents.viewDocument') }}
-                </el-button>
-                <el-button link type="primary" size="small">
-                  <i class="ri-download-line"></i> {{ $t('research.audit.documents.download') }}
-                </el-button>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-
-      <!-- 审核操作区 - 只在待审核状态显示 -->
-      <div v-if="currentEnterprise.auditStatus === 'pending'" class="audit-form-section">
-        <div class="section-header">
-          <i class="ri-file-edit-line"></i>
-          <h2>{{ $t('research.audit.sections.auditOperation') }}</h2>
-        </div>
-        <el-form
-          ref="formRef"
-          :model="formData"
-          :rules="rules"
-          label-position="top"
-        >
-          <el-form-item
-            :label="$t('research.audit.form.auditResult')"
-            prop="auditResult"
-          >
-            <el-radio-group v-model="formData.auditResult">
-              <el-radio value="pass">{{ $t('research.audit.result.pass') }}</el-radio>
-              <el-radio value="reject">{{ $t('research.audit.result.reject') }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
-          <el-form-item
-            :label="$t('research.audit.form.auditOpinion')"
-            prop="auditOpinion"
-          >
-            <el-input
-              v-model="formData.auditOpinion"
-              type="textarea"
-              :rows="4"
-              :placeholder="$t('research.audit.placeholder.auditOpinion')"
-            />
-          </el-form-item>
-
-          <el-form-item
-            v-if="formData.auditResult === 'reject'"
-            :label="$t('research.audit.form.rejectReason')"
-            prop="rejectReason"
-          >
-            <el-input
-              v-model="formData.rejectReason"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.audit.placeholder.rejectReason')"
-            />
-          </el-form-item>
-
-          <div class="form-actions">
-            <el-button @click="handleBackToList">
-              {{ $t('common.cancel') }}
-            </el-button>
-            <el-button type="primary" @click="handleSubmit">
-              {{ $t('research.audit.actions.submit') }}
-            </el-button>
-          </div>
-        </el-form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store'
+import { handleEnterpriseAudit, getEnterpriseAuditList } from '@/api/enterprise'
 
 const { t } = useI18n()
-const router = useRouter()
-const formRef = ref(null)
+const userStore = useUserStore()
 
-// 视图切换
-const showAuditForm = ref(false)
+// 页面状态
+const showDetail = ref(false)
+const loading = ref(false)
+const submitLoading = ref(false)
 const currentEnterprise = ref({})
 
-// 模拟审核数据
-const mockData = ref([
-  {
-    enterpriseId: 'ENT001',
-    enterpriseName: 'Oromia Seeds Production Enterprise',
-    unifiedSocialCreditCode: '123456789012345678',
-    enterpriseType: 'production',
-    seedLicenseNo: 'SL-2024-001',
-    applicationDate: '2024-01-15',
-    currentStage: 'initial',
-    assignedAuditor: 'John Doe',
-    auditStatus: 'pending',
-    contactPerson: 'Abebe Kebede',
-    contactPhone: '+251-911-123456',
-    email: 'abebe@example.com',
-    establishmentDate: '2020-03-15',
-    legalPersonName: 'Abebe Kebede',
-    legalPersonId: 'ID123456789'
-  },
-  {
-    enterpriseId: 'ENT002',
-    enterpriseName: 'Green Valley Agri Trade',
-    unifiedSocialCreditCode: '987654321098765432',
-    enterpriseType: 'trade',
-    seedLicenseNo: 'SL-2024-002',
-    applicationDate: '2024-01-16',
-    currentStage: 'final',
-    assignedAuditor: 'Jane Smith',
-    auditStatus: 'approved',
-    contactPerson: 'Tigist Ahmed',
-    contactPhone: '+251-922-234567',
-    email: 'tigist@example.com',
-    establishmentDate: '2019-06-20',
-    legalPersonName: 'Tigist Ahmed',
-    legalPersonId: 'ID987654321'
-  },
-  {
-    enterpriseId: 'ENT003',
-    enterpriseName: 'Ethiopian Hybrid Seeds Ltd',
-    unifiedSocialCreditCode: '456789012345678901',
-    enterpriseType: 'integrated',
-    seedLicenseNo: 'SL-2024-003',
-    applicationDate: '2024-01-17',
-    currentStage: 'recheck',
-    assignedAuditor: 'Mike Wilson',
-    auditStatus: 'pending',
-    contactPerson: 'Alemayehu Desta',
-    contactPhone: '+251-933-345678',
-    email: 'alemayehu@example.com',
-    establishmentDate: '2018-09-10',
-    legalPersonName: 'Alemayehu Desta',
-    legalPersonId: 'ID456789012'
-  },
-  {
-    enterpriseId: 'ENT004',
-    enterpriseName: 'Oromia Quality Seeds Processing',
-    unifiedSocialCreditCode: '234567890123456789',
-    enterpriseType: 'production',
-    seedLicenseNo: 'SL-2024-004',
-    applicationDate: '2024-01-18',
-    currentStage: 'initial',
-    assignedAuditor: 'Sarah Johnson',
-    auditStatus: 'rejected',
-    contactPerson: 'Mohammed Hassan',
-    contactPhone: '+251-944-456789',
-    email: 'mohammed@example.com',
-    establishmentDate: '2021-01-25',
-    legalPersonName: 'Mohammed Hassan',
-    legalPersonId: 'ID234567890'
-  }
-])
+// 表单引用
+const formRef = ref(null)
 
-// 搜索和筛选
+// 搜索筛选
 const searchQuery = ref('')
-const filterType = ref('')
 const filterStatus = ref('')
 
-// 审核表单数据
+// 分页
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
+// 表单数据
 const formData = reactive({
   auditResult: '',
   auditOpinion: '',
@@ -442,7 +479,7 @@ const rules = computed(() => ({
   ],
   rejectReason: [
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         if (formData.auditResult === 'reject' && !value) {
           callback(new Error(t('research.audit.rules.rejectReasonRequired')))
         } else {
@@ -454,32 +491,33 @@ const rules = computed(() => ({
   ]
 }))
 
-// 筛选后的列表
+// 审核列表数据
+const auditList = ref([])
+
+// 状态映射（API 返回的认证状态转换为前端使用的审核状态）
+const mapCertificationStatus = (certificationStatus) => {
+  // 1-已通过, 2-待审核, 3-已驳回
+  const statusMap = { 1: 'approved', 2: 'pending', 3: 'rejected' }
+  return statusMap[certificationStatus] || 'pending'
+}
+
+// 筛选后的列表（后端分页，直接返回列表）
 const filteredList = computed(() => {
-  let list = mockData.value
-
-  // 关键词搜索
-  if (searchQuery.value) {
-    const keyword = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.enterpriseName.toLowerCase().includes(keyword) ||
-      item.unifiedSocialCreditCode.includes(keyword) ||
-      item.seedLicenseNo.includes(keyword)
-    )
-  }
-
-  // 类型筛选
-  if (filterType.value) {
-    list = list.filter(item => item.enterpriseType === filterType.value)
-  }
-
-  // 状态筛选
-  if (filterStatus.value) {
-    list = list.filter(item => item.auditStatus === filterStatus.value)
-  }
-
-  return list
+  return auditList.value
 })
+
+// 处理页码变化
+const handlePageChange = (page) => {
+  currentPage.value = page
+  loadData()
+}
+
+// 处理每页条数变化
+const handleSizeChange = (size) => {
+  pageSize.value = size
+  currentPage.value = 1
+  loadData()
+}
 
 // 获取类型标签文本
 const getTypeLabel = (type) => {
@@ -516,16 +554,23 @@ const getStatusTagType = (status) => {
   return statusMap[status] || ''
 }
 
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  return date.toLocaleDateString()
+}
+
 // 查看（已审核的企业）
 const handleView = (row) => {
   currentEnterprise.value = { ...row }
-  showAuditForm.value = true
+  showDetail.value = true
 }
 
 // 审核
 const handleAudit = (row) => {
   currentEnterprise.value = { ...row }
-  showAuditForm.value = true
+  showDetail.value = true
   // 重置表单
   formData.auditResult = ''
   formData.auditOpinion = ''
@@ -534,8 +579,8 @@ const handleAudit = (row) => {
 }
 
 // 返回列表
-const handleBackToList = () => {
-  showAuditForm.value = false
+const handleBack = () => {
+  showDetail.value = false
   currentEnterprise.value = {}
   // 重置表单
   formData.auditResult = ''
@@ -559,38 +604,112 @@ const handleSubmit = async () => {
       }
     )
 
-    // TODO: 调用审核API
-    console.log('Submit audit:', {
-      enterpriseId: currentEnterprise.value.enterpriseId,
-      ...formData
-    })
+    submitLoading.value = true
 
-    ElMessage.success(t('research.audit.messages.submitSuccess'))
+    try {
+      // 构建请求参数，匹配API文档格式
+      const requestData = {
+        enterpriseId: currentEnterprise.value.enterpriseId,
+        auditResult: formData.auditResult === 'pass' ? 1 : 2, // 1-通过/2-驳回
+        auditOpinion: formData.auditOpinion,
+        auditor: userStore.userInfo?.userName || 'System Admin',
+        auditStage: currentEnterprise.value.currentStage === 'initial' ? 'Initial review' :
+                    currentEnterprise.value.currentStage === 'recheck' ? 're-review' : 'final review',
+         auditId:   currentEnterprise.value.auditId        
+      }
 
-    // 更新列表中的审核状态
-    const index = mockData.value.findIndex(
-      item => item.enterpriseId === currentEnterprise.value.enterpriseId
-    )
-    if (index !== -1) {
-      mockData.value[index].auditStatus = formData.auditResult === 'pass' ? 'approved' : 'rejected'
+      // 驳回时添加驳回原因
+      if (formData.auditResult === 'reject') {
+        requestData.rejectReason = formData.rejectReason
+      }
+
+      const res = await handleEnterpriseAudit(requestData)
+
+      if (res.code === 200) {
+        ElMessage.success(t('research.audit.messages.submitSuccess'))
+
+        // 重新加载列表数据
+        await loadData()
+
+        // 延迟返回列表
+        setTimeout(() => {
+          handleBack()
+        }, 1000)
+      }
+    } catch (error) {
+      console.error('Audit error:', error)
+      ElMessage.error(error.msg || t('research.audit.messages.submitFailed'))
+    } finally {
+      submitLoading.value = false
     }
-
-    // 返回列表
-    setTimeout(() => {
-      handleBackToList()
-    }, 1500)
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('Audit error:', error)
+      console.error('Validation failed:', error)
     }
   }
 }
+
+// 加载数据
+const loadData = async () => {
+  loading.value = true
+  try {
+    const params = {
+      PageNum: currentPage.value,
+      PageSize: pageSize.value
+    }
+
+    // 添加搜索条件
+    if (searchQuery.value) {
+      params.enterpriseName = searchQuery.value
+    }
+
+    // 添加状态筛选（需要转换为后端认证状态）
+    if (filterStatus.value) {
+      const statusMap = { pending: 2, approved: 1, rejected: 3 }
+      params.certificationStatus = statusMap[filterStatus.value]
+    }
+
+    const res = await getEnterpriseAuditList(params)
+    if (res.code === 200 && res.rows) {
+      // 转换数据格式，匹配前端展示需求
+      auditList.value = (res.rows || []).map(item => ({
+        ...item,
+        auditStatus: mapCertificationStatus(item.certificationStatus)
+      }))
+
+      // 设置总数（如果后端返回了total字段）
+      if (res.total !== undefined) {
+        total.value = res.total
+      }
+    }
+  } catch (error) {
+    console.error('Load data error:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+// 监听搜索和筛选条件变化
+watch([searchQuery, filterStatus], () => {
+  currentPage.value = 1
+  loadData()
+})
+
+onMounted(() => {
+  loadData()
+})
 </script>
 
 <style scoped>
-.enterprise-audit-page {
+.page-container {
   min-height: 100%;
-  padding: 24px;
+  background: linear-gradient(to bottom, #f8fafb 0%, #ffffff 100%);
+}
+
+.page-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* 页面头部 */
@@ -598,57 +717,112 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   gap: 24px;
+  margin-bottom: 40px;
   padding: 32px;
-  background: #fff;
+  background: white;
   border-radius: 16px;
-  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
 }
 
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #FEDD00 0%, #FFE94D 100%);
-  border-radius: 16px;
+.header-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(254, 221, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 154, 68, 0.25);
   flex-shrink: 0;
 }
 
-.header-icon-wrapper i {
+.header-icon i {
   font-size: 40px;
-  color: #303133;
-}
-
-.header-text {
-  flex: 1;
+  color: white;
 }
 
 .page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #303133;
+  font-size: 32px;
+  font-weight: 800;
+  color: #009A44;
   margin: 0 0 8px 0;
 }
 
 .page-subtitle {
-  font-size: 14px;
-  color: #606266;
+  font-size: 15px;
+  color: #909399;
   margin: 0;
 }
 
-/* 详情页返回按钮 */
-.detail-header {
-  margin-bottom: 24px;
+/* 内容区域 */
+.content-wrapper {
+  padding-bottom: 40px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #009A44;
+}
+
+.card-title i {
+  font-size: 22px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+.detail-body-scrollable {
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+.detail-body-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.detail-body-scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.detail-body-scrollable::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.detail-body-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* 搜索区域 */
 .search-section {
   display: flex;
   gap: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
   flex-wrap: wrap;
 }
 
@@ -661,149 +835,85 @@ const handleSubmit = async () => {
   width: 200px;
 }
 
-/* 表格区域 */
-.table-container {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+/* 表格 */
+.table-wrapper :deep(.el-table) {
+  border-radius: 8px;
 }
 
-/* 移动端卡片 */
-.card-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.empty-state {
-  background: white;
-  border-radius: 12px;
-  padding: 60px 20px;
-  text-align: center;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-.empty-state i {
-  font-size: 64px;
-  color: #dcdfe6;
-  margin-bottom: 16px;
-}
-
-.empty-state p {
-  font-size: 14px;
-  color: #909399;
-  margin: 0;
-}
-
-.enterprise-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.enterprise-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.enterprise-name {
-  font-size: 16px;
+.table-wrapper :deep(.el-table__header th) {
+  background-color: rgba(0, 154, 68, 0.05);
+  color: #009A44;
   font-weight: 600;
-  color: #303133;
-  flex: 1;
 }
 
-.card-body {
+/* 分页 */
+.pagination-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8f5e9;
 }
 
-.card-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.card-row .label {
-  font-size: 14px;
-  color: #909399;
-  flex-shrink: 0;
-}
-
-.card-row .value {
-  font-size: 14px;
-  color: #303133;
-  text-align: right;
-}
-
-/* 信息区域 */
-.info-section,
-.audit-form-section {
-  background: white;
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  margin-bottom: 24px;
+/* 详情区域 */
+.detail-section,
+.audit-section,
+.audit-result-section {
+  margin-bottom: 32px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #f0f2f5;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
 }
 
 .section-header i {
   font-size: 24px;
-  color: #FEDD00;
+  color: #009A44;
 }
 
-.section-header h2 {
+.section-header h3 {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #303133;
   margin: 0;
 }
 
-.info-grid {
+.detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: 16px;
 }
 
-.info-item {
+.detail-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.info-item .label {
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.item-label {
+  font-weight: 600;
+  color: #606266;
   font-size: 14px;
-  color: #909399;
 }
 
-.info-item .value {
-  font-size: 16px;
+.item-value {
   color: #303133;
-  font-weight: 500;
+  font-size: 15px;
 }
 
 /* 文件区域 */
@@ -856,42 +966,80 @@ const handleSubmit = async () => {
   gap: 12px;
 }
 
-/* 操作按钮 */
+/* 审核表单 */
+.audit-form :deep(.el-form-item__label) {
+  font-size: 15px;
+  font-weight: 600;
+  color: #606266;
+  padding-bottom: 10px;
+}
+
+.audit-form :deep(.el-radio) {
+  margin-right: 24px;
+  font-size: 15px;
+}
+
+.audit-form :deep(.el-radio i) {
+  margin-right: 4px;
+}
+
+.audit-form :deep(.el-textarea__inner) {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.audit-form :deep(.el-textarea__inner:hover) {
+  border-color: #009A44;
+}
+
+.audit-form :deep(.el-textarea__inner:focus) {
+  border-color: #009A44;
+}
+
+/* 表单操作 */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 16px;
+  margin-top: 32px;
+  margin-bottom: 24px;
   padding-top: 24px;
-  border-top: 1px solid #f0f2f5;
-  margin-top: 24px;
+  padding-bottom: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* 响应式控制 */
-.pc-only {
-  display: block;
+.form-actions :deep(.el-button) {
+  min-width: 140px;
+  border-radius: 8px;
+  font-weight: 600;
 }
 
-.mobile-only {
-  display: none !important;
+.submit-btn {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border: none;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #008038 0%, #009A44 100%);
+}
+
+.submit-btn i {
+  margin-right: 4px;
 }
 
 /* 响应式设计 */
 @media screen and (max-width: 768px) {
-  .enterprise-audit-page {
-    padding: 16px;
-  }
-
   .page-header {
-    flex-wrap: wrap;
-    padding: 24px;
+    padding: 24px 20px;
+    gap: 16px;
   }
 
-  .header-icon-wrapper {
+  .header-icon {
     width: 64px;
     height: 64px;
   }
 
-  .header-icon-wrapper i {
+  .header-icon i {
     font-size: 32px;
   }
 
@@ -899,12 +1047,22 @@ const handleSubmit = async () => {
     font-size: 24px;
   }
 
-  .page-subtitle {
-    font-size: 14px;
+  .card-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .card-header .el-button {
+    width: 100%;
+  }
+
+  .card-body {
+    padding: 16px;
   }
 
   .search-section {
-    padding: 16px;
+    flex-direction: column;
   }
 
   .search-input,
@@ -912,12 +1070,7 @@ const handleSubmit = async () => {
     width: 100%;
   }
 
-  .info-section,
-  .audit-form-section {
-    padding: 20px;
-  }
-
-  .info-grid {
+  .detail-grid {
     grid-template-columns: 1fr;
   }
 
@@ -929,36 +1082,8 @@ const handleSubmit = async () => {
     flex-direction: column;
   }
 
-  .form-actions .el-button {
+  .form-actions :deep(.el-button) {
     width: 100%;
-  }
-
-  /* 移动端显示卡片 */
-  .pc-only {
-    display: none !important;
-  }
-
-  .mobile-only {
-    display: flex !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .enterprise-audit-page {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 16px;
-  }
-
-  .search-section {
-    padding: 12px;
-  }
-
-  .info-section,
-  .audit-form-section {
-    padding: 16px;
   }
 }
 </style>
