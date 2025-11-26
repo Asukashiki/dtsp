@@ -999,7 +999,7 @@ export default {
       warehouse: 'Warehouse Management',
       stockIn: 'Stock In Management',
       stockOut: 'Stock Out Management',
-      storage: 'Storage Management',
+      stockQuery: 'Inventory Query',
       dashboard: 'Dashboard Management',
       feedback: 'Information Feedback',
     },
@@ -1443,7 +1443,7 @@ export default {
 
         // Actions
         actions: {
-          view: 'View Details',
+          view: 'Details',
           edit: 'Edit',
           delete: 'Delete',
         },
@@ -1460,6 +1460,417 @@ export default {
           basicInfo: 'Basic Information',
           supplyInfo: 'Supply Relationship Attributes',
           editSupplyInfo: 'Edit Supply Information',
+        },
+      },
+    },
+
+    // Inventory Management
+    inventory: {
+      // Warehouse Management
+      warehouse: {
+        title: 'Warehouse Management',
+        subtitle: 'Manage warehouse basic information, capacity and usage',
+        list: 'Warehouse List',
+        detail: 'Warehouse Details',
+        add: 'Add Warehouse',
+        edit: 'Edit Warehouse',
+        delete: 'Delete Warehouse',
+        deleteConfirm: 'Are you sure to delete this warehouse?',
+        deleteSuccess: 'Successfully deleted',
+        addSuccess: 'Successfully added',
+        editSuccess: 'Successfully updated',
+
+        searchPlaceholder: 'Search warehouse name',
+        filterByType: 'Filter by warehouse type',
+        filterByStatus: 'Filter by status',
+        allTypes: 'All Types',
+        allStatus: 'All Status',
+
+        // Warehouse Types
+        type: {
+          normal: 'Normal Warehouse',
+          cold: 'Cold Storage',
+          dangerous: 'Dangerous Goods Warehouse',
+        },
+
+        // Form Fields
+        form: {
+          warehouseName: 'Warehouse Name',
+          warehouseType: 'Warehouse Type',
+          location: 'Location',
+          capacity: 'Capacity',
+          usedCapacity: 'Used Capacity',
+          availableCapacity: 'Available Capacity',
+          belongs: 'Organization',
+          supplierId: 'Supplier',
+          contactPerson: 'Contact Person',
+          contactPhone: 'Contact Phone',
+          status: 'Status',
+          createTime: 'Create Time',
+        },
+
+        placeholder: {
+          warehouseName: 'Please enter warehouse name',
+          warehouseType: 'Please select warehouse type',
+          location: 'Please enter location',
+          capacity: 'Please enter capacity',
+          belongs: 'Please enter organization',
+          supplierId: 'Please select supplier',
+          contactPerson: 'Please enter contact person',
+          contactPhone: 'Please enter contact phone',
+        },
+
+        rules: {
+          warehouseNameRequired: 'Please enter warehouse name',
+          warehouseTypeRequired: 'Please select warehouse type',
+          locationRequired: 'Please enter location',
+          capacityRequired: 'Please enter capacity',
+          capacityPositive: 'Capacity must be greater than 0',
+          belongsRequired: 'Please enter organization',
+          contactPersonRequired: 'Please enter contact person',
+          contactPhoneRequired: 'Please enter contact phone',
+          contactPhoneFormat: 'Please enter valid phone number',
+        },
+
+        columns: {
+          warehouseCode: 'Warehouse Code',
+          warehouseName: 'Warehouse Name',
+          warehouseType: 'Warehouse Type',
+          location: 'Location',
+          capacity: 'Capacity',
+          usageRate: 'Usage Rate',
+          contactPerson: 'Contact Person',
+          contactPhone: 'Contact Phone',
+          status: 'Status',
+          actions: 'Actions',
+        },
+
+        status: {
+          enabled: 'Enabled',
+          disabled: 'Disabled',
+        },
+
+        actions: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        messages: {
+          noData: 'No data available',
+        },
+      },
+
+      // Stock In Management
+      stockIn: {
+        title: 'Stock In Management',
+        subtitle: 'Manage stock in registration and confirmation',
+        list: 'Stock In List',
+        detail: 'Stock In Details',
+        add: 'Add Stock In',
+        edit: 'Edit Stock In',
+        delete: 'Delete Stock In',
+        confirm: 'Confirm Stock In',
+        deleteConfirm: 'Are you sure to delete this stock in record?',
+        confirmConfirm: 'Confirming will update inventory. Continue?',
+        deleteSuccess: 'Successfully deleted',
+        addSuccess: 'Successfully added',
+        editSuccess: 'Successfully updated',
+        confirmSuccess: 'Stock in confirmed successfully',
+
+        searchPlaceholder: 'Search stock in ID, batch number',
+        filterByWarehouse: 'Filter by warehouse',
+        filterBySupplier: 'Filter by supplier',
+        filterByType: 'Filter by type',
+        filterByStatus: 'Filter by status',
+        allWarehouses: 'All Warehouses',
+        allSuppliers: 'All Suppliers',
+        allTypes: 'All Types',
+        allStatus: 'All Status',
+
+        // Stock In Types
+        type: {
+          purchase: 'Purchase',
+          return: 'Return',
+        },
+
+        // Status
+        status: {
+          pending: 'Pending',
+          confirmed: 'Confirmed',
+          cancelled: 'Cancelled',
+        },
+
+        // Form Fields
+        form: {
+          stockInId: 'Stock In ID',
+          warehouseId: 'Warehouse',
+          batchNo: 'Batch Number',
+          supplierId: 'Supplier',
+          type: 'Type',
+          operator: 'Operator',
+          expiredTime: 'Expiry Date',
+          totalQuantity: 'Total Quantity',
+          remarks: 'Remarks',
+          status: 'Status',
+          createTime: 'Create Time',
+          items: 'Items',
+          inputId: 'Input',
+          quantity: 'Quantity',
+          expiryDate: 'Expiry Date',
+          inputSku: 'SKU Code',
+          itemRemarks: 'Item Remarks',
+        },
+
+        placeholder: {
+          warehouseId: 'Please select warehouse',
+          supplierId: 'Please select supplier',
+          type: 'Please select type',
+          operator: 'Please enter operator',
+          expiredTime: 'Please select expiry date',
+          remarks: 'Please enter remarks',
+          inputId: 'Please select input',
+          quantity: 'Please enter quantity',
+          expiryDate: 'Please select item expiry date',
+          itemRemarks: 'Please enter item remarks',
+        },
+
+        rules: {
+          warehouseIdRequired: 'Please select warehouse',
+          supplierIdRequired: 'Please select supplier',
+          typeRequired: 'Please select type',
+          operatorRequired: 'Please enter operator',
+          expiredTimeRequired: 'Please select expiry date',
+          expiryDateRequired: 'Please select item expiry date',
+          inputIdRequired: 'Please select input',
+          quantityRequired: 'Please enter quantity',
+          quantityPositive: 'Quantity must be greater than 0',
+          itemsRequired: 'Please add at least one item',
+        },
+
+        columns: {
+          stockInId: 'Stock In ID',
+          warehouseName: 'Warehouse',
+          supplierName: 'Supplier',
+          type: 'Type',
+          batchNo: 'Batch Number',
+          totalQuantity: 'Total Quantity',
+          operator: 'Operator',
+          expiredTime: 'Expiry Date',
+          status: 'Status',
+          createTime: 'Create Time',
+          actions: 'Actions',
+        },
+
+        actions: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          confirm: 'Confirm',
+          addItem: 'Add Item',
+          removeItem: 'Remove',
+        },
+
+        messages: {
+          noData: 'No data available',
+          noItems: 'No items',
+        },
+      },
+
+      // Stock Out Management
+      stockOut: {
+        title: 'Stock Out Management',
+        subtitle: 'Manage stock out registration and confirmation',
+        list: 'Stock Out List',
+        detail: 'Stock Out Details',
+        add: 'Add Stock Out',
+        edit: 'Edit Stock Out',
+        delete: 'Delete Stock Out',
+        confirm: 'Confirm Stock Out',
+        deleteConfirm: 'Are you sure to delete this stock out record?',
+        confirmConfirm: 'Confirming will deduct inventory. Continue?',
+        deleteSuccess: 'Successfully deleted',
+        addSuccess: 'Successfully added',
+        editSuccess: 'Successfully updated',
+        confirmSuccess: 'Stock out confirmed successfully',
+
+        searchPlaceholder: 'Search stock out ID, batch number, customer',
+        filterByWarehouse: 'Filter by warehouse',
+        filterByType: 'Filter by type',
+        filterByStatus: 'Filter by status',
+        allWarehouses: 'All Warehouses',
+        allTypes: 'All Types',
+        allStatus: 'All Status',
+
+        // Stock Out Types
+        type: {
+          sale: 'Sale',
+        },
+
+        // Status
+        status: {
+          pending: 'Pending',
+          confirmed: 'Confirmed',
+          cancelled: 'Cancelled',
+        },
+
+        // Form Fields
+        form: {
+          stockOutId: 'Stock Out ID',
+          warehouseId: 'Warehouse',
+          batchNo: 'Batch Number',
+          customer: 'Customer',
+          type: 'Type',
+          operator: 'Operator',
+          totalQuantity: 'Total Quantity',
+          remark: 'Remark',
+          status: 'Status',
+          createTime: 'Create Time',
+          items: 'Items',
+          inputId: 'Input',
+          quantity: 'Quantity',
+          availableQuantity: 'Available Stock',
+          itemRemarks: 'Item Remarks',
+        },
+
+        placeholder: {
+          warehouseId: 'Please select warehouse',
+          customer: 'Please enter customer name',
+          type: 'Please select type',
+          operator: 'Please enter operator',
+          remark: 'Please enter remark',
+          inputId: 'Please select input',
+          batchNo: 'Please select batch number',
+          quantity: 'Please enter quantity',
+          itemRemarks: 'Please enter item remarks',
+        },
+
+        rules: {
+          warehouseIdRequired: 'Please select warehouse',
+          customerRequired: 'Please enter customer name',
+          typeRequired: 'Please select type',
+          operatorRequired: 'Please enter operator',
+          inputIdRequired: 'Please select input',
+          batchNoRequired: 'Please select batch number',
+          quantityRequired: 'Please enter quantity',
+          quantityPositive: 'Quantity must be greater than 0',
+          quantityExceeds: 'Quantity exceeds available stock',
+          itemsRequired: 'Please add at least one item',
+        },
+
+        columns: {
+          stockOutId: 'Stock Out ID',
+          warehouseName: 'Warehouse',
+          customer: 'Customer',
+          type: 'Type',
+          batchNo: 'Batch Number',
+          totalQuantity: 'Total Quantity',
+          operator: 'Operator',
+          status: 'Status',
+          createTime: 'Create Time',
+          actions: 'Actions',
+        },
+
+        actions: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          confirm: 'Confirm',
+          addItem: 'Add Item',
+          removeItem: 'Remove',
+        },
+
+        messages: {
+          noData: 'No data available',
+          noItems: 'No items',
+          insufficientStock: 'Insufficient stock',
+          noStockInWarehouse: 'No available stock in this warehouse',
+        },
+      },
+
+      // Inventory Query
+      stock: {
+        title: 'Inventory Query',
+        subtitle: 'Real-time inventory query, alerts and summary statistics',
+        list: 'Inventory List',
+        detail: 'Inventory Details',
+        warning: 'Stock Alerts',
+        summary: 'Summary Statistics',
+
+        searchPlaceholder: 'Search input name, batch number',
+        filterByWarehouse: 'Filter by warehouse',
+        filterByInput: 'Filter by input',
+        filterByStatus: 'Filter by status',
+        allWarehouses: 'All Warehouses',
+        allInputs: 'All Inputs',
+        allStatus: 'All Status',
+
+        // Stock Status
+        status: {
+          normal: 'Normal',
+          nearExpiry: 'Near Expiry',
+          expired: 'Expired',
+        },
+
+        // Warning Types
+        warningType: {
+          all: 'All Alerts',
+          nearExpiry: 'Near Expiry',
+          expired: 'Expired',
+        },
+
+        // Form Fields
+        form: {
+          inventoryId: 'Inventory ID',
+          inputId: 'Input',
+          inputName: 'Input Name',
+          batchNo: 'Batch Number',
+          warehouseId: 'Warehouse',
+          warehouseName: 'Warehouse Name',
+          currentQuantity: 'Current Quantity',
+          inDate: 'In Date',
+          expiredDate: 'Expiry Date',
+          stockStatus: 'Stock Status',
+          daysToExpire: 'Days to Expire',
+        },
+
+        columns: {
+          inputName: 'Input Name',
+          batchNo: 'Batch Number',
+          warehouseName: 'Warehouse',
+          currentQuantity: 'Current Quantity',
+          inDate: 'In Date',
+          expiredDate: 'Expiry Date',
+          stockStatus: 'Status',
+          actions: 'Actions',
+        },
+
+        summaryColumns: {
+          inputName: 'Input Name',
+          warehouseName: 'Warehouse Name',
+          totalQuantity: 'Total Stock',
+          normalQuantity: 'Normal Stock',
+          nearExpiryQuantity: 'Near Expiry Stock',
+          expiredQuantity: 'Expired Stock',
+        },
+
+        actions: {
+          view: 'View',
+          viewWarning: 'View Alerts',
+          viewSummary: 'View Summary',
+          exportData: 'Export Data',
+        },
+
+        messages: {
+          noData: 'No data available',
+          noWarning: 'No alerts',
+        },
+
+        tabs: {
+          list: 'Inventory List',
+          warning: 'Stock Alerts',
+          summaryByInput: 'Summary by Input',
+          summaryByWarehouse: 'Summary by Warehouse',
         },
       },
     },

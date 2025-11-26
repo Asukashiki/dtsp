@@ -999,7 +999,7 @@ export default {
       warehouse: '仓库管理',
       stockIn: '入库管理',
       stockOut: '出库管理',
-      storage: '存储管理',
+      stockQuery: '库存查询',
       dashboard: '大屏管理',
       feedback: '信息反馈',
     },
@@ -1443,7 +1443,7 @@ export default {
 
         // 操作按钮
         actions: {
-          view: '查看详情',
+          view: '详情',
           edit: '编辑',
           delete: '删除',
         },
@@ -1460,6 +1460,417 @@ export default {
           basicInfo: '基础信息',
           supplyInfo: '供应关系属性',
           editSupplyInfo: '编辑供应信息',
+        },
+      },
+    },
+
+    // 库存管理
+    inventory: {
+      // 仓库管理
+      warehouse: {
+        title: '仓库管理',
+        subtitle: '管理仓库基本信息、容量及使用情况',
+        list: '仓库列表',
+        detail: '仓库详情',
+        add: '新增仓库',
+        edit: '编辑仓库',
+        delete: '删除仓库',
+        deleteConfirm: '确定删除该仓库吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        searchPlaceholder: '搜索仓库名称',
+        filterByType: '按仓库类型筛选',
+        filterByStatus: '按状态筛选',
+        allTypes: '全部类型',
+        allStatus: '全部状态',
+
+        // 仓库类型
+        type: {
+          normal: '普通仓库',
+          cold: '冷藏仓库',
+          dangerous: '危险品仓库',
+        },
+
+        // 表单字段
+        form: {
+          warehouseName: '仓库名称',
+          warehouseType: '仓库类型',
+          location: '仓库位置',
+          capacity: '仓库容量',
+          usedCapacity: '已用容量',
+          availableCapacity: '可用容量',
+          belongs: '所属单位',
+          supplierId: '关联供应商',
+          contactPerson: '联系人',
+          contactPhone: '联系电话',
+          status: '状态',
+          createTime: '创建时间',
+        },
+
+        placeholder: {
+          warehouseName: '请输入仓库名称',
+          warehouseType: '请选择仓库类型',
+          location: '请输入仓库位置',
+          capacity: '请输入仓库容量',
+          belongs: '请输入所属单位',
+          supplierId: '请选择关联供应商',
+          contactPerson: '请输入联系人',
+          contactPhone: '请输入联系电话',
+        },
+
+        rules: {
+          warehouseNameRequired: '请输入仓库名称',
+          warehouseTypeRequired: '请选择仓库类型',
+          locationRequired: '请输入仓库位置',
+          capacityRequired: '请输入仓库容量',
+          capacityPositive: '仓库容量必须大于0',
+          belongsRequired: '请输入所属单位',
+          contactPersonRequired: '请输入联系人',
+          contactPhoneRequired: '请输入联系电话',
+          contactPhoneFormat: '请输入正确的电话号码',
+        },
+
+        columns: {
+          warehouseCode: '仓库编号',
+          warehouseName: '仓库名称',
+          warehouseType: '仓库类型',
+          location: '仓库位置',
+          capacity: '容量',
+          usageRate: '使用率',
+          contactPerson: '联系人',
+          contactPhone: '联系电话',
+          status: '状态',
+          actions: '操作',
+        },
+
+        status: {
+          enabled: '启用',
+          disabled: '停用',
+        },
+
+        actions: {
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+        },
+
+        messages: {
+          noData: '暂无数据',
+        },
+      },
+
+      // 入库管理
+      stockIn: {
+        title: '入库管理',
+        subtitle: '管理投入品入库登记及入库确认',
+        list: '入库单列表',
+        detail: '入库单详情',
+        add: '新增入库单',
+        edit: '编辑入库单',
+        delete: '删除入库单',
+        confirm: '确认入库',
+        deleteConfirm: '确定删除该入库单吗？',
+        confirmConfirm: '确认入库后将更新库存，确定要确认入库吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+        confirmSuccess: '入库确认成功',
+
+        searchPlaceholder: '搜索入库单号、批次号',
+        filterByWarehouse: '按仓库筛选',
+        filterBySupplier: '按供应商筛选',
+        filterByType: '按入库类型筛选',
+        filterByStatus: '按状态筛选',
+        allWarehouses: '全部仓库',
+        allSuppliers: '全部供应商',
+        allTypes: '全部类型',
+        allStatus: '全部状态',
+
+        // 入库类型
+        type: {
+          purchase: '采购入库',
+          return: '退货入库',
+        },
+
+        // 状态
+        status: {
+          pending: '未入库',
+          confirmed: '已入库',
+          cancelled: '作废',
+        },
+
+        // 表单字段
+        form: {
+          stockInId: '入库单号',
+          warehouseId: '入库仓库',
+          batchNo: '批次号',
+          supplierId: '供应商',
+          type: '入库类型',
+          operator: '操作员',
+          expiredTime: '过期日期',
+          totalQuantity: '总数量',
+          remarks: '备注',
+          status: '状态',
+          createTime: '创建时间',
+          items: '入库商品明细',
+          inputId: '投入品',
+          quantity: '入库数量',
+          expiryDate: '过期日期',
+          inputSku: 'SKU编码',
+          itemRemarks: '明细备注',
+        },
+
+        placeholder: {
+          warehouseId: '请选择入库仓库',
+          supplierId: '请选择供应商',
+          type: '请选择入库类型',
+          operator: '请输入操作员',
+          expiredTime: '请选择过期日期',
+          remarks: '请输入备注',
+          inputId: '请选择投入品',
+          quantity: '请输入入库数量',
+          expiryDate: '请选择商品过期日期',
+          itemRemarks: '请输入明细备注',
+        },
+
+        rules: {
+          warehouseIdRequired: '请选择入库仓库',
+          supplierIdRequired: '请选择供应商',
+          typeRequired: '请选择入库类型',
+          operatorRequired: '请输入操作员',
+          expiredTimeRequired: '请选择过期日期',
+          expiryDateRequired: '请选择商品过期日期',
+          inputIdRequired: '请选择投入品',
+          quantityRequired: '请输入入库数量',
+          quantityPositive: '入库数量必须大于0',
+          itemsRequired: '请至少添加一条入库商品明细',
+        },
+
+        columns: {
+          stockInId: '入库单号',
+          warehouseName: '仓库',
+          supplierName: '供应商',
+          type: '入库类型',
+          batchNo: '批次号',
+          totalQuantity: '总数量',
+          operator: '操作员',
+          expiredTime: '过期日期',
+          status: '状态',
+          createTime: '创建时间',
+          actions: '操作',
+        },
+
+        actions: {
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+          confirm: '确认入库',
+          addItem: '添加商品',
+          removeItem: '移除',
+        },
+
+        messages: {
+          noData: '暂无数据',
+          noItems: '暂无商品明细',
+        },
+      },
+
+      // 出库管理
+      stockOut: {
+        title: '出库管理',
+        subtitle: '管理投入品出库登记及出库确认',
+        list: '出库单列表',
+        detail: '出库单详情',
+        add: '新增出库单',
+        edit: '编辑出库单',
+        delete: '删除出库单',
+        confirm: '确认出库',
+        deleteConfirm: '确定删除该出库单吗？',
+        confirmConfirm: '确认出库后将扣减库存，确定要确认出库吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+        confirmSuccess: '出库确认成功',
+
+        searchPlaceholder: '搜索出库单号、批次号、客户',
+        filterByWarehouse: '按仓库筛选',
+        filterByType: '按出库类型筛选',
+        filterByStatus: '按状态筛选',
+        allWarehouses: '全部仓库',
+        allTypes: '全部类型',
+        allStatus: '全部状态',
+
+        // 出库类型
+        type: {
+          sale: '销售出库',
+        },
+
+        // 状态
+        status: {
+          pending: '未出库',
+          confirmed: '已出库',
+          cancelled: '作废',
+        },
+
+        // 表单字段
+        form: {
+          stockOutId: '出库单号',
+          warehouseId: '出库仓库',
+          batchNo: '批次号',
+          customer: '客户',
+          type: '出库类型',
+          operator: '操作员',
+          totalQuantity: '总数量',
+          remark: '备注',
+          status: '状态',
+          createTime: '创建时间',
+          items: '出库商品明细',
+          inputId: '投入品',
+          quantity: '出库数量',
+          availableQuantity: '可用库存',
+          itemRemarks: '明细备注',
+        },
+
+        placeholder: {
+          warehouseId: '请选择出库仓库',
+          customer: '请输入客户名称',
+          type: '请选择出库类型',
+          operator: '请输入操作员',
+          remark: '请输入备注',
+          inputId: '请选择投入品',
+          batchNo: '请选择批次号',
+          quantity: '请输入出库数量',
+          itemRemarks: '请输入明细备注',
+        },
+
+        rules: {
+          warehouseIdRequired: '请选择出库仓库',
+          customerRequired: '请输入客户名称',
+          typeRequired: '请选择出库类型',
+          operatorRequired: '请输入操作员',
+          inputIdRequired: '请选择投入品',
+          batchNoRequired: '请选择批次号',
+          quantityRequired: '请输入出库数量',
+          quantityPositive: '出库数量必须大于0',
+          quantityExceeds: '出库数量不能超过可用库存',
+          itemsRequired: '请至少添加一条出库商品明细',
+        },
+
+        columns: {
+          stockOutId: '出库单号',
+          warehouseName: '仓库',
+          customer: '客户',
+          type: '出库类型',
+          batchNo: '批次号',
+          totalQuantity: '总数量',
+          operator: '操作员',
+          status: '状态',
+          createTime: '创建时间',
+          actions: '操作',
+        },
+
+        actions: {
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+          confirm: '确认出库',
+          addItem: '添加商品',
+          removeItem: '移除',
+        },
+
+        messages: {
+          noData: '暂无数据',
+          noItems: '暂无商品明细',
+          insufficientStock: '库存不足，无法出库',
+          noStockInWarehouse: '该仓库暂无可用库存',
+        },
+      },
+
+      // 库存查询
+      stock: {
+        title: '库存查询',
+        subtitle: '实时查询库存信息、预警及汇总统计',
+        list: '库存列表',
+        detail: '库存详情',
+        warning: '库存预警',
+        summary: '汇总统计',
+
+        searchPlaceholder: '搜索投入品名称、批次号',
+        filterByWarehouse: '按仓库筛选',
+        filterByInput: '按投入品筛选',
+        filterByStatus: '按库存状态筛选',
+        allWarehouses: '全部仓库',
+        allInputs: '全部投入品',
+        allStatus: '全部状态',
+
+        // 库存状态
+        status: {
+          normal: '正常',
+          nearExpiry: '临期',
+          expired: '过期',
+        },
+
+        // 预警类型
+        warningType: {
+          all: '全部预警',
+          nearExpiry: '临期预警',
+          expired: '过期预警',
+        },
+
+        // 表单字段
+        form: {
+          inventoryId: '库存记录ID',
+          inputId: '投入品',
+          inputName: '投入品名称',
+          batchNo: '批次号',
+          warehouseId: '仓库',
+          warehouseName: '仓库名称',
+          currentQuantity: '当前库存数量',
+          inDate: '入库日期',
+          expiredDate: '过期日期',
+          stockStatus: '库存状态',
+          daysToExpire: '距过期天数',
+        },
+
+        columns: {
+          inputName: '投入品名称',
+          batchNo: '批次号',
+          warehouseName: '仓库',
+          currentQuantity: '当前数量',
+          inDate: '入库日期',
+          expiredDate: '过期日期',
+          stockStatus: '库存状态',
+          actions: '操作',
+        },
+
+        summaryColumns: {
+          inputName: '投入品名称',
+          warehouseName: '仓库名称',
+          totalQuantity: '总库存',
+          normalQuantity: '正常库存',
+          nearExpiryQuantity: '临期库存',
+          expiredQuantity: '过期库存',
+        },
+
+        actions: {
+          view: '查看',
+          viewWarning: '查看预警',
+          viewSummary: '查看汇总',
+          exportData: '导出数据',
+        },
+
+        messages: {
+          noData: '暂无数据',
+          noWarning: '暂无预警信息',
+        },
+
+        tabs: {
+          list: '库存列表',
+          warning: '库存预警',
+          summaryByInput: '按投入品汇总',
+          summaryByWarehouse: '按仓库汇总',
         },
       },
     },

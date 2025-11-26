@@ -30,13 +30,24 @@
           </el-dropdown>
           <el-dropdown @command="handleUserAction">
             <div class="user-info">
-              <i class="ri-user-line"></i>
-              <span class="user-name">{{ userStore.userInfo?.name || 'User' }}</span>
+              <el-avatar :size="38" :src="userAvatar" class="user-avatar">
+                {{ userName.substring(0, 1) }}
+              </el-avatar>
+              <div class="user-detail">
+                <span class="user-name">{{ userName }}</span>
+                <span class="user-role">{{ organName }}</span>
+              </div>
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="profile">{{ $t('header.userInfo') }}</el-dropdown-item>
-                <el-dropdown-item command="logout" divided>{{ $t('header.logout') }}</el-dropdown-item>
+                <el-dropdown-item command="profile">
+                  <i class="ri-user-line"></i>
+                  {{ $t('header.userInfo') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="logout" divided>
+                  <i class="ri-logout-box-line"></i>
+                  {{ $t('header.logout') }}
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -155,6 +166,11 @@ const config = computed(() => {
 const isCollapsed = ref(false)
 // 移动端菜单可见状态
 const mobileMenuVisible = ref(false)
+
+// 从store获取用户信息
+const userName = computed(() => userStore.userInfo?.user?.name || '用户')
+const organName = computed(() => userStore.userInfo?.user?.organName || '访客')
+const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 菜单列表
 const menuList = computed(() => {
@@ -326,24 +342,66 @@ const handleUserAction = (command) => {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: white;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .user-info:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.header-content.dark-text .user-info {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .header-content.dark-text .user-info:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.08);
 }
 
-.user-info i {
+.user-avatar {
+  background: linear-gradient(135deg, #FEDD00 0%, #FFE94D 100%);
+  color: #009A44;
   font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(254, 221, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: white;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.header-content.dark-text .user-name {
+  color: #303133;
+}
+
+.user-role {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.2;
+}
+
+.header-content.dark-text .user-role {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* 主体区域 */
@@ -536,12 +594,12 @@ const handleUserAction = (command) => {
     display: none;
   }
 
-  .user-name {
+  .user-detail {
     display: none;
   }
 
   .user-info {
-    padding: 8px;
+    padding: 6px;
   }
 
   /* 隐藏PC端侧边栏 */
@@ -599,5 +657,29 @@ const handleUserAction = (command) => {
   background: linear-gradient(135deg, rgba(0, 154, 68, 0.1) 0%, rgba(0, 179, 80, 0.1) 100%);
   color: #009A44;
   font-weight: 600;
+}
+
+/* Dropdown 样式优化 */
+.el-dropdown-menu__item {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.el-dropdown-menu__item i {
+  font-size: 18px;
+  color: #606266;
+}
+
+.el-dropdown-menu__item:hover {
+  background: rgba(0, 154, 68, 0.08);
+  color: #009A44;
+}
+
+.el-dropdown-menu__item:hover i {
+  color: #009A44;
 }
 </style>

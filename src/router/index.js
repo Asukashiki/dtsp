@@ -210,30 +210,87 @@ const routes = [
         component: () => import('../views/input/supplier/product.vue'),
         meta: { title: '供应商投入品管理', requiresAuth: true }
       },
-      // 库存管理
+      // 库存管理 - 仓库管理
       {
-        path: 'warehouse',
-        name: 'Warehouse',
-        component: () => import('../views/input/warehouse/index.vue'),
+        path: 'inventory/warehouse',
+        name: 'WarehouseList',
+        component: () => import('../views/input/inventory/warehouse/index.vue'),
         meta: { title: '仓库管理', requiresAuth: true }
       },
       {
-        path: 'stock-in',
-        name: 'StockIn',
-        component: () => import('../views/input/stock/in.vue'),
+        path: 'inventory/warehouse/add',
+        name: 'WarehouseAdd',
+        component: () => import('../views/input/inventory/warehouse/form.vue'),
+        meta: { title: '新增仓库', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/warehouse/edit/:id',
+        name: 'WarehouseEdit',
+        component: () => import('../views/input/inventory/warehouse/form.vue'),
+        meta: { title: '编辑仓库', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/warehouse/detail/:id',
+        name: 'WarehouseDetail',
+        component: () => import('../views/input/inventory/warehouse/detail.vue'),
+        meta: { title: '仓库详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 库存管理 - 入库管理
+      {
+        path: 'inventory/stock-in',
+        name: 'StockInList',
+        component: () => import('../views/input/inventory/stock-in/index.vue'),
         meta: { title: '入库管理', requiresAuth: true }
       },
       {
-        path: 'stock-out',
-        name: 'StockOut',
-        component: () => import('../views/input/stock/out.vue'),
+        path: 'inventory/stock-in/add',
+        name: 'StockInAdd',
+        component: () => import('../views/input/inventory/stock-in/form.vue'),
+        meta: { title: '新增入库单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/stock-in/edit/:id',
+        name: 'StockInEdit',
+        component: () => import('../views/input/inventory/stock-in/form.vue'),
+        meta: { title: '编辑入库单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/stock-in/detail/:id',
+        name: 'StockInDetail',
+        component: () => import('../views/input/inventory/stock-in/detail.vue'),
+        meta: { title: '入库单详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 库存管理 - 出库管理
+      {
+        path: 'inventory/stock-out',
+        name: 'StockOutList',
+        component: () => import('../views/input/inventory/stock-out/index.vue'),
         meta: { title: '出库管理', requiresAuth: true }
       },
       {
-        path: 'storage',
-        name: 'Storage',
-        component: () => import('../views/input/storage/index.vue'),
-        meta: { title: '存储管理', requiresAuth: true }
+        path: 'inventory/stock-out/add',
+        name: 'StockOutAdd',
+        component: () => import('../views/input/inventory/stock-out/form.vue'),
+        meta: { title: '新增出库单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/stock-out/detail/:id',
+        name: 'StockOutDetail',
+        component: () => import('../views/input/inventory/stock-out/detail.vue'),
+        meta: { title: '出库单详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 库存管理 - 库存查询
+      {
+        path: 'inventory/stock',
+        name: 'StockList',
+        component: () => import('../views/input/inventory/stock/index.vue'),
+        meta: { title: '库存查询', requiresAuth: true }
+      },
+      {
+        path: 'inventory/stock/detail/:id',
+        name: 'StockDetail',
+        component: () => import('../views/input/inventory/stock/detail.vue'),
+        meta: { title: '库存详情', hideInMenu: true, requiresAuth: true }
       },
       // 大屏和反馈
       {

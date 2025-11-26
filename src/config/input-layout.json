@@ -49,24 +49,24 @@
       "titleKey": "input.menu.inventoryManagement",
       "children": [
         {
-          "index": "/input/warehouse",
-          "icon": "ri-home-gear-line",
+          "index": "/input/inventory/warehouse",
+          "icon": "ri-home-3-line",
           "titleKey": "input.menu.warehouse"
         },
         {
-          "index": "/input/stock-in",
-          "icon": "ri-download-line",
+          "index": "/input/inventory/stock-in",
+          "icon": "ri-inbox-line",
           "titleKey": "input.menu.stockIn"
         },
         {
-          "index": "/input/stock-out",
-          "icon": "ri-upload-line",
+          "index": "/input/inventory/stock-out",
+          "icon": "ri-inbox-unarchive-line",
           "titleKey": "input.menu.stockOut"
         },
         {
-          "index": "/input/storage",
+          "index": "/input/inventory/stock",
           "icon": "ri-stack-line",
-          "titleKey": "input.menu.storage"
+          "titleKey": "input.menu.stockQuery"
         }
       ]
     },

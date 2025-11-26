@@ -186,12 +186,13 @@
     </div>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog
+    <ResponsiveDialog
       v-model="dialogVisible"
       :title="isEdit ? $t('farm.land.edit') : $t('farm.land.add')"
       width="800px"
-      class="custom-dialog"
-      :close-on-click-modal="false"
+      :confirm-loading="submitLoading"
+      @confirm="handleSubmit"
+      @cancel="dialogVisible = false"
     >
       <el-form
         ref="formRef"
@@ -284,24 +285,14 @@
           </el-col>
         </el-row>
       </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitLoading">
-            {{ $t('common.confirm') }}
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    </ResponsiveDialog>
 
     <!-- 详情对话框 -->
-    <el-dialog
+    <ResponsiveDialog
       v-model="detailDialogVisible"
       :title="$t('farm.land.detail')"
       width="600px"
-      class="custom-dialog"
+      :show-footer="false"
     >
       <div class="detail-content" v-if="currentItem">
         <div class="detail-item">
@@ -349,7 +340,7 @@
           <span class="item-value">{{ formatDate(currentItem.createTime) }}</span>
         </div>
       </div>
-    </el-dialog>
+    </ResponsiveDialog>
   </div>
 </template>
 
@@ -359,6 +350,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLandList, addLand, updateLand, deleteLand } from '@/api/farm'
 import { useUserStore } from '@/store'
+import ResponsiveDialog from '@/components/ResponsiveDialog.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
