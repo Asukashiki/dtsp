@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as echarts from 'echarts'
 import {
@@ -14,7 +14,7 @@ import {
   getStockStatusDistribution
 } from '@/api/dashboard'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 数据状态
 const overview = ref({})
@@ -622,11 +622,19 @@ const getWarningLevelColor = (level) => {
   }
 }
 
+// 监听语言切换，重新渲染图表
+watch(locale, () => {
+  // 当语言切换时，延迟更新图表以确保 DOM 已更新
+  setTimeout(() => {
+    updateCharts()
+  }, 100)
+})
+
 // 生命周期
 onMounted(() => {
   updateCurrentTime()
   timeInterval.value = setInterval(updateCurrentTime, 1000)
-  
+
   fetchAllData()
 
   setTimeout(() => {

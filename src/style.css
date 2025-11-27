@@ -1176,3 +1176,101 @@ body {
 .el-range-editor.el-input__wrapper{
   padding: 8px 10px !important;
 }
+
+
+/* ==================== Element Plus 表格样式覆盖 ==================== */
+.el-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --el-table-border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* 表格头部 */
+.el-table__header-wrapper {
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+}
+
+.el-table thead {
+  color: #009A44;
+  font-weight: 700;
+}
+
+.el-table th.el-table__cell {
+  background: transparent;
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+  padding: 16px 12px;
+  font-size: 14px;
+}
+
+/* 表格行 - 移除 transition: all，避免影响固定列 */
+.el-table__row {
+  transition: background-color 0.2s ease;
+}
+
+/* 普通单元格 hover 样式 */
+.el-table__row:hover > td.el-table__cell {
+  background-color: rgba(0, 154, 68, 0.04) !important;
+}
+
+/* ===== 固定列关键修复 ===== */
+/* 固定列默认需要实心背景，防止内容穿透 */
+.el-table__body .el-table__row td.el-table-fixed-column--left,
+.el-table__body .el-table__row td.el-table-fixed-column--right {
+  background-color: #ffffff !important;
+  z-index: 2;
+}
+
+/* 固定列 hover 时也使用实心背景色 */
+.el-table__body .el-table__row:hover td.el-table-fixed-column--left,
+.el-table__body .el-table__row:hover td.el-table-fixed-column--right {
+  background-color: #f2f9f5 !important; /* 用实心色代替 rgba(0, 154, 68, 0.04) */
+}
+
+/* 斑马纹下的固定列 */
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table-fixed-column--left,
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table-fixed-column--right {
+  background-color: #fafafa !important;
+}
+
+/* 斑马纹 + hover 下的固定列 */
+.el-table--striped .el-table__body tr.el-table__row--striped:hover td.el-table-fixed-column--left,
+.el-table--striped .el-table__body tr.el-table__row--striped:hover td.el-table-fixed-column--right {
+  background-color: #f2f9f5 !important;
+}
+
+/* 固定列表头也要实心背景 */
+.el-table__header th.el-table-fixed-column--left,
+.el-table__header th.el-table-fixed-column--right {
+  background-color: #f8faf9 !important;
+  z-index: 3;
+}
+
+/* 固定列阴影效果 */
+.el-table .el-table-fixed-column--left.is-last-column::before,
+.el-table .el-table-fixed-column--right.is-first-column::before {
+  box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, 0.08);
+}
+
+.el-table .el-table-fixed-column--right.is-first-column::before {
+  box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== 结束固定列修复 ===== */
+
+.el-table td.el-table__cell {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* 斑马纹 */
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* 表格空状态 */
+.el-table__empty-text {
+  color: #909399;
+  font-size: 14px;
+  padding: 40px 0;
+}

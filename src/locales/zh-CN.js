@@ -2995,6 +2995,197 @@ export default {
       refreshInterval: '刷新间隔',
       systemStatus: '系统正常',
     },
+
+    // 信息反馈
+    feedback: {
+      title: '信息反馈管理',
+      subtitle: '收集和处理投入品供应相关的反馈信息',
+      list: '反馈列表',
+      detail: '反馈详情',
+      add: '提交反馈',
+      edit: '编辑反馈',
+      delete: '删除反馈',
+      deleteConfirm: '确定删除该反馈吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '反馈提交成功',
+      editSuccess: '编辑成功',
+      batchDelete: '批量删除',
+      batchDeleteConfirm: '确定删除选中的 {count} 条反馈吗？',
+
+      // 搜索和筛选
+      searchPlaceholder: '搜索反馈标题、内容、反馈编号',
+      filterByType: '按反馈类型筛选',
+      filterByStatus: '按处理状态筛选',
+      filterByPriority: '按优先级筛选',
+      allTypes: '全部类型',
+      allStatus: '全部状态',
+      allPriority: '全部优先级',
+      filterByTime: '按时间筛选',
+
+      // 反馈类型
+      type: {
+        complaint: '投诉',
+        suggestion: '建议',
+        inquiry: '咨询',
+        fault: '故障报告',
+        other: '其他',
+      },
+
+      // 处理状态
+      status: {
+        pending: '待处理',
+        processing: '处理中',
+        completed: '已完成',
+        closed: '已关闭',
+      },
+
+      // 优先级
+      priority: {
+        low: '低',
+        medium: '中',
+        high: '高',
+        urgent: '紧急',
+      },
+
+      // 列表列
+      columns: {
+        feedbackNo: '反馈编号',
+        feedbackType: '反馈类型',
+        title: '标题',
+        inputName: '投入品名称',
+        supplierName: '供应商名称',
+        contactName: '联系人',
+        contactPhone: '联系电话',
+        priority: '优先级',
+        status: '状态',
+        createTime: '提交时间',
+        handlerName: '处理人',
+        handleTime: '处理时间',
+        processingHours: '处理耗时',
+        satisfaction: '满意度',
+        actions: '操作',
+      },
+
+      // 表单字段
+      form: {
+        basicInfo: '基本信息',
+        contactInfo: '联系方式',
+        processingInfo: '处理信息',
+        evaluationInfo: '评价信息',
+
+        feedbackType: '反馈类型',
+        title: '反馈标题',
+        content: '反馈内容',
+        inputName: '投入品名称',
+        supplierName: '供应商名称',
+        contactName: '联系人姓名',
+        contactPhone: '联系电话',
+        contactEmail: '联系邮箱',
+        priority: '优先级',
+        attachments: '附件',
+        remark: '备注',
+
+        handlerName: '处理人',
+        handleTime: '处理时间',
+        handleResult: '处理结果',
+        handleRemark: '处理备注',
+        processingHours: '处理耗时(小时)',
+
+        satisfaction: '满意度评分',
+        evaluation: '评价内容',
+        evaluationTime: '评价时间',
+
+        replyContent: '回复内容',
+        replyTime: '回复时间',
+        replyUser: '回复人',
+        noReplies: '暂无回复',
+      },
+
+      // 表单占位符
+      placeholder: {
+        feedbackType: '请选择反馈类型',
+        title: '请输入反馈标题(最多200字符)',
+        content: '请详细描述您的反馈内容...',
+        inputName: '请输入投入品名称',
+        supplierName: '请输入供应商名称',
+        contactName: '请输入联系人姓名',
+        contactPhone: '请输入联系电话',
+        contactEmail: '请输入联系邮箱',
+        priority: '请选择优先级',
+        remark: '请输入备注信息(最多500字符)',
+        handleResult: '请输入处理结果',
+        handleRemark: '请输入处理备注',
+        evaluation: '请输入您的评价...',
+        replyContent: '请输入回复内容...',
+      },
+
+      // 表单验证
+      rules: {
+        feedbackTypeRequired: '请选择反馈类型',
+        titleRequired: '请输入反馈标题',
+        titleLength: '反馈标题最多200字符',
+        contentRequired: '请输入反馈内容',
+        contactNameLength: '联系人姓名最多100字符',
+        contactPhoneLength: '联系电话最多20字符',
+        contactPhoneFormat: '请输入正确的电话号码',
+        contactEmailFormat: '请输入正确的邮箱地址',
+        contactEmailLength: '邮箱地址最多100字符',
+        remarkLength: '备注最多500字符',
+        handleResultRequired: '请输入处理结果',
+        replyContentRequired: '请输入回复内容',
+      },
+
+      // 操作按钮
+      actions: {
+        view: '查看',
+        edit: '编辑',
+        delete: '删除',
+        reply: '回复',
+        handle: '处理',
+        close: '关闭',
+        reopen: '重新打开',
+        evaluate: '评价',
+        submitEvaluation: '提交评价',
+      },
+
+      // 满意度评分
+      satisfactionLevel: {
+        1: '非常不满意',
+        2: '不满意',
+        3: '一般',
+        4: '满意',
+        5: '非常满意',
+      },
+
+      // 提示信息
+      messages: {
+        deleteConfirm: '确定删除该反馈吗？此操作不可恢复。',
+        closeConfirm: '确定关闭该反馈吗？',
+        handleSuccess: '处理成功',
+        replySuccess: '回复成功',
+        evaluationSuccess: '评价提交成功',
+        onlyPendingCanEdit: '只能编辑待处理状态的反馈',
+        onlyPendingCanDelete: '只能删除待处理状态的反馈',
+      },
+
+      // 统计
+      statistics: {
+        totalCount: '反馈总数',
+        pendingCount: '待处理',
+        processingCount: '处理中',
+        completedCount: '已完成',
+        closedCount: '已关闭',
+        avgProcessingHours: '平均处理时长(小时)',
+        avgSatisfaction: '平均满意度',
+        todayCount: '今日新增',
+      },
+
+      // 详情页专用
+      replies: '回复记录',
+      handler: '处理人员',
+      user: '用户',
+      hours: '小时',
+    },
   },
 
   // OAuth2回调页面

@@ -2957,6 +2957,197 @@ export default {
       refreshInterval: 'Refresh Interval',
       systemStatus: 'System Normal',
     },
+
+    // Feedback Management
+    feedback: {
+      title: 'Feedback Management',
+      subtitle: 'Collect and process feedback related to agricultural input supply',
+      list: 'Feedback List',
+      detail: 'Feedback Details',
+      add: 'Submit Feedback',
+      edit: 'Edit Feedback',
+      delete: 'Delete Feedback',
+      deleteConfirm: 'Are you sure to delete this feedback?',
+      deleteSuccess: 'Delete Successful',
+      addSuccess: 'Feedback Submitted Successfully',
+      editSuccess: 'Edit Successful',
+      batchDelete: 'Batch Delete',
+      batchDeleteConfirm: 'Are you sure to delete {count} selected feedback(s)?',
+
+      // Search and Filter
+      searchPlaceholder: 'Search by title, content, or feedback number',
+      filterByType: 'Filter by Type',
+      filterByStatus: 'Filter by Status',
+      filterByPriority: 'Filter by Priority',
+      allTypes: 'All Types',
+      allStatus: 'All Status',
+      allPriority: 'All Priority',
+      filterByTime: 'Filter by Time',
+
+      // Feedback Type
+      type: {
+        complaint: 'Complaint',
+        suggestion: 'Suggestion',
+        inquiry: 'Inquiry',
+        fault: 'Fault Report',
+        other: 'Other',
+      },
+
+      // Status
+      status: {
+        pending: 'Pending',
+        processing: 'Processing',
+        completed: 'Completed',
+        closed: 'Closed',
+      },
+
+      // Priority
+      priority: {
+        low: 'Low',
+        medium: 'Medium',
+        high: 'High',
+        urgent: 'Urgent',
+      },
+
+      // Table Columns
+      columns: {
+        feedbackNo: 'Feedback No.',
+        feedbackType: 'Type',
+        title: 'Title',
+        inputName: 'Input Name',
+        supplierName: 'Supplier',
+        contactName: 'Contact',
+        contactPhone: 'Phone',
+        priority: 'Priority',
+        status: 'Status',
+        createTime: 'Submit Time',
+        handlerName: 'Handler',
+        handleTime: 'Handle Time',
+        processingHours: 'Processing Hours',
+        satisfaction: 'Satisfaction',
+        actions: 'Actions',
+      },
+
+      // Form Fields
+      form: {
+        basicInfo: 'Basic Information',
+        contactInfo: 'Contact Information',
+        processingInfo: 'Processing Information',
+        evaluationInfo: 'Evaluation Information',
+
+        feedbackType: 'Feedback Type',
+        title: 'Title',
+        content: 'Content',
+        inputName: 'Input Name',
+        supplierName: 'Supplier Name',
+        contactName: 'Contact Name',
+        contactPhone: 'Contact Phone',
+        contactEmail: 'Contact Email',
+        priority: 'Priority',
+        attachments: 'Attachments',
+        remark: 'Remark',
+
+        handlerName: 'Handler',
+        handleTime: 'Handle Time',
+        handleResult: 'Handle Result',
+        handleRemark: 'Handle Remark',
+        processingHours: 'Processing Hours',
+
+        satisfaction: 'Satisfaction',
+        evaluation: 'Evaluation',
+        evaluationTime: 'Evaluation Time',
+
+        replyContent: 'Reply Content',
+        replyTime: 'Reply Time',
+        replyUser: 'Reply User',
+        noReplies: 'No replies yet',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        feedbackType: 'Please select feedback type',
+        title: 'Please enter title (max 200 characters)',
+        content: 'Please describe your feedback in detail...',
+        inputName: 'Please enter input name',
+        supplierName: 'Please enter supplier name',
+        contactName: 'Please enter contact name',
+        contactPhone: 'Please enter contact phone',
+        contactEmail: 'Please enter contact email',
+        priority: 'Please select priority',
+        remark: 'Please enter remark (max 500 characters)',
+        handleResult: 'Please enter handle result',
+        handleRemark: 'Please enter handle remark',
+        evaluation: 'Please enter your evaluation...',
+        replyContent: 'Please enter reply content...',
+      },
+
+      // Form Validation Rules
+      rules: {
+        feedbackTypeRequired: 'Please select feedback type',
+        titleRequired: 'Please enter title',
+        titleLength: 'Title max 200 characters',
+        contentRequired: 'Please enter content',
+        contactNameLength: 'Contact name max 100 characters',
+        contactPhoneLength: 'Contact phone max 20 characters',
+        contactPhoneFormat: 'Please enter valid phone number',
+        contactEmailFormat: 'Please enter valid email address',
+        contactEmailLength: 'Email address max 100 characters',
+        remarkLength: 'Remark max 500 characters',
+        handleResultRequired: 'Please enter handle result',
+        replyContentRequired: 'Please enter reply content',
+      },
+
+      // Action Buttons
+      actions: {
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete',
+        reply: 'Reply',
+        handle: 'Handle',
+        close: 'Close',
+        reopen: 'Reopen',
+        evaluate: 'Evaluate',
+        submitEvaluation: 'Submit Evaluation',
+      },
+
+      // Satisfaction Levels
+      satisfactionLevel: {
+        1: 'Very Dissatisfied',
+        2: 'Dissatisfied',
+        3: 'Neutral',
+        4: 'Satisfied',
+        5: 'Very Satisfied',
+      },
+
+      // Messages
+      messages: {
+        deleteConfirm: 'Are you sure to delete this feedback? This action cannot be undone.',
+        closeConfirm: 'Are you sure to close this feedback?',
+        handleSuccess: 'Handle Successful',
+        replySuccess: 'Reply Successful',
+        evaluationSuccess: 'Evaluation Submitted Successfully',
+        onlyPendingCanEdit: 'Only pending feedback can be edited',
+        onlyPendingCanDelete: 'Only pending feedback can be deleted',
+      },
+
+      // Statistics
+      statistics: {
+        totalCount: 'Total',
+        pendingCount: 'Pending',
+        processingCount: 'Processing',
+        completedCount: 'Completed',
+        closedCount: 'Closed',
+        avgProcessingHours: 'Avg Processing Hours',
+        avgSatisfaction: 'Avg Satisfaction',
+        todayCount: 'Today New',
+      },
+
+      // Detail page specific
+      replies: 'Replies',
+      handler: 'Handler',
+      user: 'User',
+      hours: 'hours',
+    },
   },
 
   // OAuth2 Callback Page

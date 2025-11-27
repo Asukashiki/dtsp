@@ -516,6 +516,24 @@ const routes = [
         name: 'InputFeedback',
         component: () => import('../views/input/feedback/index.vue'),
         meta: { title: '信息反馈', requiresAuth: true }
+      },
+      {
+        path: 'feedback/add',
+        name: 'InputFeedbackAdd',
+        component: () => import('../views/input/feedback/form.vue'),
+        meta: { title: '提交反馈', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'feedback/edit/:id',
+        name: 'InputFeedbackEdit',
+        component: () => import('../views/input/feedback/form.vue'),
+        meta: { title: '编辑反馈', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'feedback/detail/:id',
+        name: 'InputFeedbackDetail',
+        component: () => import('../views/input/feedback/detail.vue'),
+        meta: { title: '反馈详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
