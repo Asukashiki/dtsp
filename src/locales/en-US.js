@@ -1874,6 +1874,201 @@ export default {
         },
       },
     },
+
+    // Data Dashboard
+    dashboard: {
+      title: 'Agricultural Input Supply Management Dashboard',
+      subtitle: 'Real-time Data Monitoring & Visualization',
+      lastUpdate: 'Last Update',
+      autoRefresh: 'Auto Refresh',
+      fullscreen: 'Fullscreen',
+      exitFullscreen: 'Exit Fullscreen',
+
+      // Overview Cards
+      overview: {
+        totalSuppliers: 'Total Suppliers',
+        certifiedSuppliers: 'Certified Suppliers',
+        pendingSuppliers: 'Pending Suppliers',
+        rejectedSuppliers: 'Rejected Suppliers',
+        totalInputs: 'Total Inputs',
+        seedInputs: 'Seeds',
+        fertilizerInputs: 'Fertilizers',
+        pesticideInputs: 'Pesticides',
+        totalWarehouses: 'Total Warehouses',
+        totalCapacity: 'Total Capacity',
+        usedCapacity: 'Used Capacity',
+        capacityUsageRate: 'Capacity Usage Rate',
+        totalStockQuantity: 'Total Stock Quantity',
+        normalStock: 'Normal Stock',
+        nearExpiryStock: 'Near Expiry Stock',
+        expiredStock: 'Expired Stock',
+        todayStockIn: 'Today Stock In',
+        todayStockOut: 'Today Stock Out',
+        monthStockIn: 'Monthly Stock In',
+        monthStockOut: 'Monthly Stock Out',
+        pendingWarnings: 'Pending Warnings',
+        unit: '',
+        tons: 'tons',
+      },
+
+      // Top Suppliers
+      topSuppliers: {
+        title: 'TOP Suppliers Ranking',
+        subtitle: 'Best Performing Suppliers This Month',
+        rank: 'Rank',
+        supplierName: 'Supplier Name',
+        monthStockIn: 'Monthly Stock In',
+        productCount: 'Product Count',
+        cooperationDays: 'Cooperation Days',
+        qualityRating: 'Quality Rating',
+        contactPerson: 'Contact Person',
+        contactPhone: 'Contact Phone',
+        viewMore: 'View More',
+        days: 'days',
+        items: 'items',
+      },
+
+      // Warehouse Statistics
+      warehouse: {
+        title: 'Warehouse Statistics',
+        subtitle: 'Warehouse Capacity Utilization',
+        warehouseName: 'Warehouse Name',
+        location: 'Location',
+        capacity: 'Capacity',
+        currentStock: 'Current Stock',
+        usageRate: 'Usage Rate',
+        productTypes: 'Product Types',
+        monthIn: 'Monthly In',
+        monthOut: 'Monthly Out',
+        warning: 'Capacity Warning',
+        normal: 'Normal',
+        types: 'types',
+        times: 'times',
+      },
+
+      // Stock Trend
+      stockTrend: {
+        title: 'Stock In/Out Trend',
+        subtitle: 'Recent Inventory Changes Analysis',
+        stockIn: 'Stock In Quantity',
+        stockOut: 'Stock Out Quantity',
+        netChange: 'Net Stock Change',
+        last7Days: 'Last 7 Days',
+        last30Days: 'Last 30 Days',
+        date: 'Date',
+        quantity: 'Quantity',
+        count: 'Count',
+      },
+
+      // Input Distribution
+      inputDistribution: {
+        title: 'Input Type Distribution',
+        subtitle: 'Distribution by Input Type',
+        seed: 'Seed',
+        fertilizer: 'Fertilizer',
+        pesticide: 'Pesticide',
+        other: 'Other',
+        count: 'Count',
+        stockQuantity: 'Stock Quantity',
+        percentage: 'Percentage',
+      },
+
+      // Warnings
+      warnings: {
+        title: 'Warning Information',
+        subtitle: 'Pending Warnings List',
+        warningType: 'Warning Type',
+        warningLevel: 'Level',
+        objectName: 'Object',
+        content: 'Content',
+        warningTime: 'Warning Time',
+        warehouseName: 'Warehouse',
+        batchNo: 'Batch Number',
+        status: 'Status',
+        noWarnings: 'No warnings',
+
+        types: {
+          nearExpiry: 'Near Expiry Warning',
+          expired: 'Expired Warning',
+          lowStock: 'Low Stock',
+          overCapacity: 'Over Capacity',
+        },
+
+        levels: {
+          low: 'Low',
+          medium: 'Medium',
+          high: 'High',
+        },
+
+        statusOptions: {
+          pending: 'Pending',
+          processed: 'Processed',
+          ignored: 'Ignored',
+        },
+      },
+
+      // Real-time Activities
+      activities: {
+        title: 'Real-time Activities',
+        subtitle: 'Latest Business Activities',
+        stockInActivity: 'Stock In',
+        stockOutActivity: 'Stock Out',
+        supplierActivity: 'Supplier Authentication',
+        warehouseActivity: 'Warehouse',
+        justNow: 'Just now',
+        minutesAgo: 'minutes ago',
+        hoursAgo: 'hours ago',
+      },
+
+      // Today Stock
+      todayStock: {
+        title: 'Today Stock',
+        in: 'In',
+        out: 'Out',
+        warehouse: 'Warehouse',
+        operator: 'Operator',
+        supplier: 'Supplier',
+        customer: 'Customer',
+        quantity: 'Quantity',
+        time: 'Time',
+        status: 'Status',
+        noData: 'No data',
+        statusPending: 'Pending',
+        statusConfirmed: 'Confirmed',
+        statusCancelled: 'Cancelled',
+      },
+
+      // Expiring Soon
+      expiring: {
+        title: 'Expiring Soon',
+        daysLeft: 'Left',
+        days: 'days',
+        urgent: 'Urgent',
+        warehouse: 'Warehouse',
+        quantity: 'Stock',
+        batchNo: 'Batch',
+        noData: 'No expiring items',
+        expired: 'Expired',
+      },
+
+      // Stock Status Distribution
+      stockStatus: {
+        title: 'Stock Status Distribution',
+        normal: 'Normal',
+        nearExpiry: 'Near Expiry',
+        expired: 'Expired',
+        lowStock: 'Low Stock',
+        productCount: 'Product Count',
+        totalQuantity: 'Total Quantity',
+        percentage: 'Percentage',
+      },
+
+      // Refresh and System Status
+      autoRefreshOn: 'Auto Refresh',
+      autoRefreshOff: 'Paused',
+      refreshInterval: 'Refresh Interval',
+      systemStatus: 'System Normal',
+    },
   },
 
   // OAuth2 Callback Page

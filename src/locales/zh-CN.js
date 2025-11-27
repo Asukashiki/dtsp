@@ -1874,6 +1874,201 @@ export default {
         },
       },
     },
+
+    // 数据大屏
+    dashboard: {
+      title: '农业投入品供应管理大屏',
+      subtitle: '实时数据监控与可视化分析',
+      lastUpdate: '最后更新',
+      autoRefresh: '自动刷新',
+      fullscreen: '全屏',
+      exitFullscreen: '退出全屏',
+
+      // 总览卡片
+      overview: {
+        totalSuppliers: '供应商总数',
+        certifiedSuppliers: '已认证供应商',
+        pendingSuppliers: '待审核供应商',
+        rejectedSuppliers: '未通过供应商',
+        totalInputs: '投入品总数',
+        seedInputs: '种子类',
+        fertilizerInputs: '化肥类',
+        pesticideInputs: '农药类',
+        totalWarehouses: '仓库总数',
+        totalCapacity: '总库存容量',
+        usedCapacity: '已用容量',
+        capacityUsageRate: '库存使用率',
+        totalStockQuantity: '当前总库存',
+        normalStock: '正常库存',
+        nearExpiryStock: '临期库存',
+        expiredStock: '过期库存',
+        todayStockIn: '今日入库',
+        todayStockOut: '今日出库',
+        monthStockIn: '本月入库量',
+        monthStockOut: '本月出库量',
+        pendingWarnings: '待处理预警',
+        unit: '个',
+        tons: '吨',
+      },
+
+      // 供应商TOP榜单
+      topSuppliers: {
+        title: 'TOP供应商榜单',
+        subtitle: '本月表现最佳供应商',
+        rank: '排名',
+        supplierName: '供应商名称',
+        monthStockIn: '本月入库量',
+        productCount: '供应投入品数',
+        cooperationDays: '合作天数',
+        qualityRating: '质量评级',
+        contactPerson: '联系人',
+        contactPhone: '联系电话',
+        viewMore: '查看更多',
+        days: '天',
+        items: '件',
+      },
+
+      // 仓库统计
+      warehouse: {
+        title: '仓库统计',
+        subtitle: '仓库容量使用情况',
+        warehouseName: '仓库名称',
+        location: '位置',
+        capacity: '容量',
+        currentStock: '当前库存',
+        usageRate: '使用率',
+        productTypes: '商品种类',
+        monthIn: '本月入库',
+        monthOut: '本月出库',
+        warning: '容量预警',
+        normal: '正常',
+        types: '种',
+        times: '次',
+      },
+
+      // 入库出库趋势
+      stockTrend: {
+        title: '入库出库趋势',
+        subtitle: '近期库存变化分析',
+        stockIn: '入库数量',
+        stockOut: '出库数量',
+        netChange: '净增库存',
+        last7Days: '近7天',
+        last30Days: '近30天',
+        date: '日期',
+        quantity: '数量',
+        count: '单数',
+      },
+
+      // 投入品类型分布
+      inputDistribution: {
+        title: '投入品类型分布',
+        subtitle: '各类型投入品占比',
+        seed: '种子',
+        fertilizer: '化肥',
+        pesticide: '农药',
+        other: '其他',
+        count: '数量',
+        stockQuantity: '库存量',
+        percentage: '占比',
+      },
+
+      // 预警信息
+      warnings: {
+        title: '预警信息',
+        subtitle: '待处理预警列表',
+        warningType: '预警类型',
+        warningLevel: '级别',
+        objectName: '对象',
+        content: '内容',
+        warningTime: '预警时间',
+        warehouseName: '仓库',
+        batchNo: '批次号',
+        status: '状态',
+        noWarnings: '暂无预警信息',
+
+        types: {
+          nearExpiry: '临期预警',
+          expired: '过期预警',
+          lowStock: '库存不足',
+          overCapacity: '超容量',
+        },
+
+        levels: {
+          low: '低',
+          medium: '中',
+          high: '高',
+        },
+
+        statusOptions: {
+          pending: '未处理',
+          processed: '已处理',
+          ignored: '已忽略',
+        },
+      },
+
+      // 实时动态
+      activities: {
+        title: '实时动态',
+        subtitle: '最新业务活动',
+        stockInActivity: '入库',
+        stockOutActivity: '出库',
+        supplierActivity: '供应商认证',
+        warehouseActivity: '仓库',
+        justNow: '刚刚',
+        minutesAgo: '分钟前',
+        hoursAgo: '小时前',
+      },
+
+      // 今日出入库
+      todayStock: {
+        title: '今日出入库',
+        in: '入库',
+        out: '出库',
+        warehouse: '仓库',
+        operator: '经办人',
+        supplier: '供应商',
+        customer: '客户',
+        quantity: '数量',
+        time: '时间',
+        status: '状态',
+        noData: '暂无数据',
+        statusPending: '待处理',
+        statusConfirmed: '已确认',
+        statusCancelled: '已作废',
+      },
+
+      // 即将过期
+      expiring: {
+        title: '即将过期',
+        daysLeft: '剩余',
+        days: '天',
+        urgent: '紧急',
+        warehouse: '仓库',
+        quantity: '库存',
+        batchNo: '批次',
+        noData: '暂无即将过期商品',
+        expired: '已过期',
+      },
+
+      // 库存状态分布
+      stockStatus: {
+        title: '库存状态分布',
+        normal: '正常',
+        nearExpiry: '临期',
+        expired: '过期',
+        lowStock: '库存不足',
+        productCount: '商品种类',
+        totalQuantity: '库存总量',
+        percentage: '占比',
+      },
+
+      // 刷新和系统状态
+      autoRefreshOn: '自动刷新',
+      autoRefreshOff: '已暂停',
+      refreshInterval: '刷新间隔',
+      systemStatus: '系统正常',
+    },
   },
 
   // OAuth2回调页面
