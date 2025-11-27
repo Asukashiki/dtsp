@@ -27,4 +27,4 @@ yarn-error.log*
 /public/themes/index.css
 package-lock.json
 
-.calude
+.claude
