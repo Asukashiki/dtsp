@@ -97,29 +97,14 @@
           "titleKey": "research.menu.environmentData"
         },
         {
-          "index": "/research/data/lab",
-          "icon": "ri-microscope-line",
-          "titleKey": "research.menu.labData"
-        },
-        {
-          "index": "/research/data/yield",
-          "icon": "ri-bar-chart-box-line",
-          "titleKey": "research.menu.yieldData"
-        },
-        {
-          "index": "/research/data/iot",
-          "icon": "ri-sensor-line",
-          "titleKey": "research.menu.iotData"
-        },
-        {
           "index": "/research/data-collection/variety-evaluation",
           "icon": "ri-award-line",
-          "titleKey": "research.menu.varietyEvaluation"
+          "titleKey": "research.dataCollection.varietyEvaluation.title"
         },
         {
           "index": "/research/data-collection/laboratory-test",
           "icon": "ri-flask-line",
-          "titleKey": "research.menu.laboratoryTest"
+          "titleKey": "research.dataCollection.laboratoryTest.title"
         }
       ]
     },

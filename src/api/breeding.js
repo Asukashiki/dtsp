@@ -1,4 +1,4 @@
-import request, { dataCollectionRequest } from '../utils/request'
+import agricultureRequest from '../utils/agricultureRequest'
 
 /**
  * 育种管理 API
@@ -12,7 +12,7 @@ import request, { dataCollectionRequest } from '../utils/request'
  * Get breeding plan list
  */
 export const getBreedingPlanList = (params) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/plan/list',
     method: 'get',
     params
@@ -24,7 +24,7 @@ export const getBreedingPlanList = (params) => {
  * Get breeding plan detail
  */
 export const getBreedingPlanDetail = (planId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/plan/${planId}`,
     method: 'get'
   })
@@ -35,7 +35,7 @@ export const getBreedingPlanDetail = (planId) => {
  * Add breeding plan
  */
 export const addBreedingPlan = (data) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/plan',
     method: 'post',
     data
@@ -47,7 +47,7 @@ export const addBreedingPlan = (data) => {
  * Update breeding plan
  */
 export const updateBreedingPlan = (planId, data) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/plan/${planId}`,
     method: 'put',
     data
@@ -59,7 +59,7 @@ export const updateBreedingPlan = (planId, data) => {
  * Delete breeding plan
  */
 export const deleteBreedingPlan = (planId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/plan/${planId}`,
     method: 'delete'
   })
@@ -72,7 +72,7 @@ export const deleteBreedingPlan = (planId) => {
  * Get breeding material list
  */
 export const getBreedingMaterialList = (params) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/material/list',
     method: 'get',
     params
@@ -84,7 +84,7 @@ export const getBreedingMaterialList = (params) => {
  * Get breeding material detail
  */
 export const getBreedingMaterialDetail = (materialId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/material/${materialId}`,
     method: 'get'
   })
@@ -95,7 +95,7 @@ export const getBreedingMaterialDetail = (materialId) => {
  * Add breeding material registration
  */
 export const addBreedingMaterial = (data) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/material',
     method: 'post',
     data
@@ -107,7 +107,7 @@ export const addBreedingMaterial = (data) => {
  * Update breeding material registration
  */
 export const updateBreedingMaterial = (materialId, data) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/material/${materialId}`,
     method: 'put',
     data
@@ -119,7 +119,7 @@ export const updateBreedingMaterial = (materialId, data) => {
  * Delete breeding material registration
  */
 export const deleteBreedingMaterial = (materialId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/material/${materialId}`,
     method: 'delete'
   })
@@ -132,7 +132,7 @@ export const deleteBreedingMaterial = (materialId) => {
  * Get breeding tracking list
  */
 export const getBreedingTrackingList = (params) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/tracking/list',
     method: 'get',
     params
@@ -144,7 +144,7 @@ export const getBreedingTrackingList = (params) => {
  * Get breeding tracking detail
  */
 export const getBreedingTrackingDetail = (trackingId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/tracking/${trackingId}`,
     method: 'get'
   })
@@ -155,7 +155,7 @@ export const getBreedingTrackingDetail = (trackingId) => {
  * Add breeding tracking record
  */
 export const addBreedingTracking = (data) => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/tracking',
     method: 'post',
     data
@@ -167,7 +167,7 @@ export const addBreedingTracking = (data) => {
  * Update breeding tracking record
  */
 export const updateBreedingTracking = (trackingId, data) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/tracking/${trackingId}`,
     method: 'put',
     data
@@ -179,7 +179,7 @@ export const updateBreedingTracking = (trackingId, data) => {
  * Delete breeding tracking record
  */
 export const deleteBreedingTracking = (trackingId) => {
-  return request({
+  return agricultureRequest({
     url: `/breeding/tracking/${trackingId}`,
     method: 'delete'
   })
@@ -192,7 +192,7 @@ export const deleteBreedingTracking = (trackingId) => {
  * Get breeding batch list (for dropdown)
  */
 export const getBreedingBatchList = () => {
-  return request({
+  return agricultureRequest({
     url: '/breeding/batch/list',
     method: 'get'
   })
@@ -203,7 +203,7 @@ export const getBreedingBatchList = () => {
  * Get crop type list (for dropdown)
  */
 export const getCropTypeList = () => {
-  return request({
+  return agricultureRequest({
     url: '/common/cropTypes',
     method: 'get'
   })
@@ -218,7 +218,7 @@ export const getCropTypeList = () => {
  * Query trial base data list
  */
 export const getTrialBaseList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/trial/base/list',
     method: 'post',
     data
@@ -230,7 +230,7 @@ export const getTrialBaseList = (data) => {
  * Get trial base data detail
  */
 export const getTrialBaseDetail = (trialId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/trial/base/${trialId}`,
     method: 'get'
   })
@@ -241,7 +241,7 @@ export const getTrialBaseDetail = (trialId) => {
  * Add trial base data
  */
 export const addTrialBase = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/trial/base/add',
     method: 'post',
     data
@@ -253,7 +253,7 @@ export const addTrialBase = (data) => {
  * Edit trial base data
  */
 export const editTrialBase = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/trial/base/edit',
     method: 'post',
     data
@@ -265,7 +265,7 @@ export const editTrialBase = (data) => {
  * Delete trial base data
  */
 export const deleteTrialBase = (trialIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/trial/base/delete',
     method: 'post',
     data: trialIds
@@ -279,7 +279,7 @@ export const deleteTrialBase = (trialIds) => {
  * Query farmer plot data list
  */
 export const getFarmerPlotList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farmer/plot/list',
     method: 'post',
     data
@@ -291,7 +291,7 @@ export const getFarmerPlotList = (data) => {
  * Get farmer plot data detail
  */
 export const getFarmerPlotDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/farmer/plot/${dataId}`,
     method: 'get'
   })
@@ -302,7 +302,7 @@ export const getFarmerPlotDetail = (dataId) => {
  * Add farmer plot data
  */
 export const addFarmerPlot = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farmer/plot/add',
     method: 'post',
     data
@@ -314,7 +314,7 @@ export const addFarmerPlot = (data) => {
  * Edit farmer plot data
  */
 export const editFarmerPlot = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farmer/plot/edit',
     method: 'post',
     data
@@ -326,7 +326,7 @@ export const editFarmerPlot = (data) => {
  * Delete farmer plot data
  */
 export const deleteFarmerPlot = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farmer/plot/delete',
     method: 'post',
     data: dataIds
@@ -340,7 +340,7 @@ export const deleteFarmerPlot = (dataIds) => {
  * Query farming record list
  */
 export const getFarmingRecordList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farming/record/list',
     method: 'post',
     data
@@ -352,7 +352,7 @@ export const getFarmingRecordList = (data) => {
  * Get farming record detail
  */
 export const getFarmingRecordDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/farming/record/${dataId}`,
     method: 'get'
   })
@@ -363,7 +363,7 @@ export const getFarmingRecordDetail = (dataId) => {
  * Add farming record
  */
 export const addFarmingRecord = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farming/record/add',
     method: 'post',
     data
@@ -375,7 +375,7 @@ export const addFarmingRecord = (data) => {
  * Edit farming record
  */
 export const editFarmingRecord = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farming/record/edit',
     method: 'post',
     data
@@ -387,7 +387,7 @@ export const editFarmingRecord = (data) => {
  * Delete farming record
  */
 export const deleteFarmingRecord = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/farming/record/delete',
     method: 'post',
     data: dataIds
@@ -401,7 +401,7 @@ export const deleteFarmingRecord = (dataIds) => {
  * Query agronomic trait data list
  */
 export const getAgronomicTraitList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/agronomic/trait/list',
     method: 'post',
     data
@@ -413,7 +413,7 @@ export const getAgronomicTraitList = (data) => {
  * Get agronomic trait data detail
  */
 export const getAgronomicTraitDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/agronomic/trait/${dataId}`,
     method: 'get'
   })
@@ -424,7 +424,7 @@ export const getAgronomicTraitDetail = (dataId) => {
  * Add agronomic trait data
  */
 export const addAgronomicTrait = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/agronomic/trait/add',
     method: 'post',
     data
@@ -436,7 +436,7 @@ export const addAgronomicTrait = (data) => {
  * Edit agronomic trait data
  */
 export const editAgronomicTrait = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/agronomic/trait/edit',
     method: 'post',
     data
@@ -448,7 +448,7 @@ export const editAgronomicTrait = (data) => {
  * Delete agronomic trait data
  */
 export const deleteAgronomicTrait = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/agronomic/trait/delete',
     method: 'post',
     data: dataIds
@@ -462,7 +462,7 @@ export const deleteAgronomicTrait = (dataIds) => {
  * Query environment soil data list
  */
 export const getEnvironmentSoilList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/environment/soil/list',
     method: 'post',
     data
@@ -474,7 +474,7 @@ export const getEnvironmentSoilList = (data) => {
  * Get environment soil data detail
  */
 export const getEnvironmentSoilDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/environment/soil/${dataId}`,
     method: 'get'
   })
@@ -485,7 +485,7 @@ export const getEnvironmentSoilDetail = (dataId) => {
  * Add environment soil data
  */
 export const addEnvironmentSoil = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/environment/soil/add',
     method: 'post',
     data
@@ -497,7 +497,7 @@ export const addEnvironmentSoil = (data) => {
  * Edit environment soil data
  */
 export const editEnvironmentSoil = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/environment/soil/edit',
     method: 'post',
     data
@@ -509,7 +509,7 @@ export const editEnvironmentSoil = (data) => {
  * Delete environment soil data
  */
 export const deleteEnvironmentSoil = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/environment/soil/delete',
     method: 'post',
     data: dataIds
@@ -523,7 +523,7 @@ export const deleteEnvironmentSoil = (dataIds) => {
  * Query variety evaluation data list
  */
 export const getVarietyEvaluationList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/variety/evaluation/list',
     method: 'post',
     data
@@ -535,7 +535,7 @@ export const getVarietyEvaluationList = (data) => {
  * Get variety evaluation data detail
  */
 export const getVarietyEvaluationDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/variety/evaluation/${dataId}`,
     method: 'get'
   })
@@ -546,7 +546,7 @@ export const getVarietyEvaluationDetail = (dataId) => {
  * Add variety evaluation data
  */
 export const addVarietyEvaluation = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/variety/evaluation/add',
     method: 'post',
     data
@@ -558,7 +558,7 @@ export const addVarietyEvaluation = (data) => {
  * Edit variety evaluation data
  */
 export const editVarietyEvaluation = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/variety/evaluation/edit',
     method: 'post',
     data
@@ -570,7 +570,7 @@ export const editVarietyEvaluation = (data) => {
  * Delete variety evaluation data
  */
 export const deleteVarietyEvaluation = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/variety/evaluation/delete',
     method: 'post',
     data: dataIds
@@ -584,7 +584,7 @@ export const deleteVarietyEvaluation = (dataIds) => {
  * Query laboratory test data list
  */
 export const getLaboratoryTestList = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/laboratory/test/list',
     method: 'post',
     data
@@ -596,7 +596,7 @@ export const getLaboratoryTestList = (data) => {
  * Get laboratory test data detail
  */
 export const getLaboratoryTestDetail = (dataId) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: `/seed/laboratory/test/${dataId}`,
     method: 'get'
   })
@@ -607,7 +607,7 @@ export const getLaboratoryTestDetail = (dataId) => {
  * Add laboratory test data
  */
 export const addLaboratoryTest = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/laboratory/test/add',
     method: 'post',
     data
@@ -619,7 +619,7 @@ export const addLaboratoryTest = (data) => {
  * Edit laboratory test data
  */
 export const editLaboratoryTest = (data) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/laboratory/test/edit',
     method: 'post',
     data
@@ -631,7 +631,7 @@ export const editLaboratoryTest = (data) => {
  * Delete laboratory test data
  */
 export const deleteLaboratoryTest = (dataIds) => {
-  return dataCollectionRequest({
+  return agricultureRequest({
     url: '/seed/laboratory/test/delete',
     method: 'post',
     data: dataIds
