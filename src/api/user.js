@@ -1,5 +1,6 @@
 import request from '../utils/request'
-import authRequest from '../utils/authRequest'
+import agricultureRequest from '../utils/agricultureRequest'
+
 
 // 获取当前用户信息（OAuth2）
 export const getCurrentUserInfo = () => {
@@ -35,8 +36,6 @@ export const getLogout = () => {
   })
 }
 
-const AUTH_BASE_URL = import.meta.env.DEV ? import.meta.env.VITE_APP_AGRICULTURE_API_URL : ''
-
 // OAuth2授权码登录
 export const oauth2LoginWithCode = (code, redirectUri, grantType) => {
   const data = {
@@ -44,17 +43,7 @@ export const oauth2LoginWithCode = (code, redirectUri, grantType) => {
     redirectUri,
     grantType
   }
-  return (import.meta.env.DEV
-    ? request({
-    url: AUTH_BASE_URL + '/ucif/oauth/codeLogin',
-    headers: {
-      isToken: false,
-      repeatSubmit: false
-    },
-    method: 'post',
-    data: data
-  }) 
-  : authRequest({
+  return agricultureRequest({
     url: '/ucif/oauth/codeLogin',
     headers: {
       isToken: false,
@@ -62,5 +51,5 @@ export const oauth2LoginWithCode = (code, redirectUri, grantType) => {
     },
     method: 'post',
     data: data
-  }))
+  })
 } 
