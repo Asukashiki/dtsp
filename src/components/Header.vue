@@ -3,7 +3,7 @@
     <div class="header-content">
       <!-- Logo 区域 -->
       <div class="header-left">
-        <div class="logo">
+        <div class="logo" @click="toHome">
           <div class="logo-icon-wrapper">
             <i class="ri-plant-line logo-icon"></i>
           </div>
@@ -15,7 +15,7 @@
       </div>
 
       <!-- 导航菜单 -->
-      <div class="header-center">
+      <!-- <div class="header-center">
         <div
           v-for="(item, index) in translatedNavItems"
           :key="index"
@@ -26,7 +26,7 @@
           {{ item.title }}
           <div class="nav-indicator" v-if="activeIndex === index"></div>
         </div>
-      </div>
+      </div> -->
 
       <!-- 右侧功能区 -->
       <div class="header-right">
@@ -176,6 +176,10 @@ const updateUserDetails = () => {
     email: userInfo.email || '',
     lastPasswordChange: userInfo.lastPasswordChange || ''
   }
+}
+
+const toHome = () => {
+  router.push('/home')
 }
 
 const handleNavClick = (index, path) => {

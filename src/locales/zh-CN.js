@@ -30,7 +30,8 @@ export default {
     noFile: '文件不存在',
     loadFailed: '加载失败',
     saveFailed: '保存失败',
-    submitFailed: '提交失败'
+    submitFailed: '提交失败',
+    actions: '操作'
   },
 
   header: {

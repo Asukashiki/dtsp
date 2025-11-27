@@ -78,7 +78,7 @@
           <el-table-column
             prop="topography"
             :label="$t('research.dataCollection.environmentSoil.columns.topography')"
-            width="100"
+            min-width="180"
             align="center"
           >
             <template #default="{ row }">
@@ -90,19 +90,19 @@
           <el-table-column
             prop="waterSource"
             :label="$t('research.dataCollection.environmentSoil.columns.waterSource')"
-            width="120"
+            min-width="180"
             show-overflow-tooltip
           />
           <el-table-column
             prop="soilPh"
             :label="$t('research.dataCollection.environmentSoil.columns.soilPh')"
-            width="100"
+            min-width="180"
             align="right"
           />
           <el-table-column
             prop="soilTemperatureC"
-            :label="$t('research.dataCollection.environmentSoil.columns.soilTemperatureC')"
-            width="120"
+            :label="$t('research.dataCollection.environmentSoil.form.soilTemperatureC')"
+            min-width="180"
             align="right"
           >
             <template #default="{ row }">
@@ -112,7 +112,7 @@
           <el-table-column
             prop="airTemperatureC"
             :label="$t('research.dataCollection.environmentSoil.columns.airTemperatureC')"
-            width="120"
+            min-width="180"
             align="right"
           >
             <template #default="{ row }">
@@ -122,7 +122,7 @@
           <el-table-column
             prop="timestamp"
             :label="$t('research.dataCollection.environmentSoil.columns.timestamp')"
-            width="160"
+            min-width="160"
           />
           <el-table-column
             :label="$t('common.actions')"

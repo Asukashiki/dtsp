@@ -58,7 +58,7 @@
     <!-- 主体区域 -->
     <div class="system-main">
       <!-- PC端左侧菜单 -->
-      <div class="system-sidebar pc-only" :class="{ collapsed: isCollapsed }">
+      <div class="system-sidebar pc-only" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { width: menuWidth } : {}">
         <div class="collapse-btn" @click="toggleCollapse">
           <i :class="isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'"></i>
         </div>
@@ -132,7 +132,7 @@
       </el-drawer>
 
       <!-- 右侧内容区 -->
-      <div class="system-content" :class="{'system-content-full': isCollapsed}">
+      <div class="system-content" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { marginLeft: menuWidth } : {}">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -185,6 +185,10 @@ const menuList = computed(() => {
   }))
 })
 
+const menuWidth =  computed(() => {
+  if (!config.value.width) return '300px'
+  return config.value.width
+})
 // 当前激活的菜单项
 const activeMenu = computed(() => route.path)
 
@@ -516,7 +520,7 @@ const handleUserAction = (command) => {
   transition: margin-left 0.3s;
 }
 
-.system-sidebar.collapsed + .system-content {
+.system-content.collapsed {
   margin-left: 64px;
 }
 
@@ -555,7 +559,7 @@ const handleUserAction = (command) => {
     margin-left: 200px;
   }
 
-  .system-sidebar.collapsed + .system-content {
+  .system-content.collapsed {
     margin-left: 64px;
   }
 }
@@ -609,7 +613,7 @@ const handleUserAction = (command) => {
 
   .system-content {
     padding: 12px;
-    margin-left: 0;
+    margin-left: 0 !important;
   }
 }
 
@@ -681,9 +685,5 @@ const handleUserAction = (command) => {
 
 .el-dropdown-menu__item:hover i {
   color: #009A44;
-}
-
-.system-content-full{
-  margin-left: 64px !important;
 }
 </style>

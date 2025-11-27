@@ -30,7 +30,8 @@ export default {
     noFile: 'File not found',
     loadFailed: 'Load failed',
     saveFailed: 'Save failed',
-    submitFailed: 'Submit failed'
+    submitFailed: 'Submit failed',
+    actions: 'Actions'
   },
 
   header: {
