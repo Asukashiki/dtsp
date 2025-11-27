@@ -11,6 +11,7 @@ export default {
     back: 'Back',
     loading: 'Loading...',
     more: 'View More',
+    view: 'View',
     viewDetails: 'View Details',
     pleaseSelect: 'Please Select',
     pleaseInput: 'Please Input',
@@ -19,10 +20,17 @@ export default {
     tips: 'Tips',
     upload: 'Upload File',
     uploadSuccess: 'Uploaded successfully',
+    uploadFailed: 'Upload failed',
     add: 'Add',
     close: 'Close',
     startDate: 'Start Date',
-    endDate: 'End Date'
+    endDate: 'End Date',
+    preview: 'Preview',
+    download: 'Download',
+    noFile: 'File not found',
+    loadFailed: 'Load failed',
+    saveFailed: 'Save failed',
+    submitFailed: 'Submit failed'
   },
 
   header: {
@@ -629,6 +637,7 @@ export default {
       // Messages
       messages: {
         submitSuccess: 'Audit submitted successfully',
+        submitFailed: 'Failed to submit audit',
         confirmSubmit: 'Are you sure to submit the audit result?',
       },
     },
@@ -737,6 +746,7 @@ export default {
           approvalDocumentNo: 'Please enter approval document number',
           approvalAgency: 'Please enter approval agency',
           approvalDate: 'Please select approval date',
+          days: 'days',
         },
 
         // Form Rules
@@ -819,6 +829,7 @@ export default {
           trialInfo: 'Trial and Performance Data',
           regulatoryInfo: 'Regulatory Data',
           auditOperation: 'Audit Operation',
+          auditResult: 'Audit Result',
         },
 
         // Form Fields
@@ -883,6 +894,13 @@ export default {
           offline: 'Offline',
         },
 
+        // Detail Page Section Titles
+        sections: {
+          basicInfo: 'Basic Information',
+          identificationInfo: 'Identification Information',
+          publishInfo: 'Publication Information',
+        },
+
         // List Columns
         columns: {
           publishNo: 'Publication No.',
@@ -899,6 +917,8 @@ export default {
         form: {
           publishNo: 'Publication No.',
           publishDate: 'Publication Date',
+          publisher: 'Publisher',
+          publishTime: 'Publish Time',
           publishDept: 'Publishing Department',
           decisionExplanation: 'Decision Explanation',
           publicDescription: 'Public Description',
@@ -909,10 +929,18 @@ export default {
 
         // Form Placeholders
         placeholder: {
+          publishDept: 'Enter publication department',
           decisionExplanation: 'Please enter decision explanation',
           publicDescription: 'Please enter public description',
           recommendedRegion: 'Please enter recommended region',
           sowingGuide: 'Please enter sowing guide',
+        },
+
+        // Form Rules
+        rules: {
+          publishDeptRequired: 'Please enter publication department',
+          publicDescriptionRequired: 'Please enter public description',
+          decisionExplanationRequired: 'Please enter decision explanation',
         },
 
         // Action Buttons
@@ -921,6 +949,7 @@ export default {
           publish: 'Publish Now',
           offline: 'Take Offline',
           view: 'View',
+          backToList: 'Back to List',
         },
 
         // Messages
@@ -972,6 +1001,864 @@ export default {
         actions: {
           viewDetail: 'View Details',
           back: 'Back',
+        },
+      },
+    },
+
+    // Breeding Management
+    breeding: {
+      // Breeding Plan Management
+      plan: {
+        title: 'Breeding Plan Management',
+        subtitle: 'Set up breeding plans, including breeding year, batch, planting base and other information',
+        list: 'Breeding Plan List',
+        add: 'Add Breeding Plan',
+        edit: 'Edit Breeding Plan',
+        detail: 'Breeding Plan Details',
+        delete: 'Delete Plan',
+        deleteConfirm: 'Are you sure to delete this breeding plan?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search plan name, batch ID',
+        filterByYear: 'Filter by breeding year',
+        filterByCrop: 'Filter by crop type',
+        filterByStatus: 'Filter by plan status',
+        allYears: 'All Years',
+        allCrops: 'All Crops',
+        allStatus: 'All Status',
+
+        // Plan Status
+        status: {
+          planning: 'Planning',
+          ongoing: 'Ongoing',
+          completed: 'Completed',
+          cancelled: 'Cancelled',
+        },
+
+        // Propagation Level
+        propagationLevel: {
+          breeder: 'Breeder Seed',
+          preBasic: 'Pre-basic Seed',
+          basic: 'Basic Seed',
+          certified: 'Certified Seed',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Plan Basic Information',
+          planName: 'Plan Name',
+          breedingYear: 'Breeding Year',
+          batchId: 'Breeding Batch ID',
+          plantingBase: 'Planting Base',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          propagationLevel: 'Propagation Level',
+          parentSeedSource: 'Parent Seed Source',
+          personInCharge: 'Person in Charge',
+          startDate: 'Plan Start Date',
+          endDate: 'Plan End Date',
+          breedingGoal: 'Breeding Goal',
+          remarks: 'Remarks',
+          createTime: 'Created Time',
+          updateTime: 'Updated Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          planName: 'Please enter plan name',
+          breedingYear: 'Please select breeding year',
+          batchId: 'Please enter breeding batch ID',
+          plantingBase: 'Please enter planting base',
+          cropType: 'Please select crop type',
+          varietyName: 'Please enter variety name',
+          propagationLevel: 'Please select propagation level',
+          parentSeedSource: 'Please enter parent seed source',
+          personInCharge: 'Please enter person in charge',
+          startDate: 'Please select plan start date',
+          endDate: 'Please select plan end date',
+          breedingGoal: 'Please enter breeding goal',
+          remarks: 'Remarks (optional)',
+        },
+
+        // Form Validation
+        rules: {
+          planNameRequired: 'Please enter plan name',
+          breedingYearRequired: 'Please select breeding year',
+          batchIdRequired: 'Please enter breeding batch ID',
+          plantingBaseRequired: 'Please enter planting base',
+          cropTypeRequired: 'Please select crop type',
+          varietyNameRequired: 'Please enter variety name',
+          propagationLevelRequired: 'Please select propagation level',
+          parentSeedSourceRequired: 'Please enter parent seed source',
+          personInChargeRequired: 'Please enter person in charge',
+          startDateRequired: 'Please select plan start date',
+          endDateRequired: 'Please select plan end date',
+          breedingGoalRequired: 'Please enter breeding goal',
+          endDateAfterStart: 'End date must be later than start date',
+        },
+
+        // Table Columns
+        columns: {
+          planName: 'Plan Name',
+          batchId: 'Batch ID',
+          breedingYear: 'Breeding Year',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          propagationLevel: 'Propagation Level',
+          personInCharge: 'Person in Charge',
+          startDate: 'Start Date',
+          endDate: 'End Date',
+          status: 'Plan Status',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          saveDraft: 'Save Draft',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+      },
+
+      // Breeding Material Registration
+      material: {
+        title: 'Breeding Material Registration',
+        subtitle: 'Record breeding resources during the breeding process to ensure materials are traceable and usable',
+        list: 'Breeding Material Registration List',
+        add: 'Add Material Registration',
+        edit: 'Edit Material Registration',
+        detail: 'Material Registration Details',
+        delete: 'Delete Registration',
+        deleteConfirm: 'Are you sure to delete this material registration?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search registration code, batch ID',
+        filterByBatch: 'Filter by breeding batch',
+        filterBySeedType: 'Filter by seed type',
+        allBatches: 'All Batches',
+        allSeedTypes: 'All Types',
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Association Information',
+          materialInfo: 'Material Information',
+          registrationCode: 'Registration Code',
+          batchId: 'Breeding Batch ID',
+          warehouseInId: 'Warehouse In ID',
+          seedType: 'Seed Type',
+          quantity: 'Quantity (kg)',
+          sourceEntity: 'Source Entity',
+          receiveDate: 'Receive Date',
+          labTestReport: 'Laboratory Test Report',
+          operator: 'Operator',
+          operationOrg: 'Operation Organization',
+          operationTime: 'Operation Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          registrationCode: 'Auto-generated by system',
+          batchId: 'Please select breeding batch ID',
+          warehouseInId: 'Please enter warehouse in ID',
+          seedType: 'Please enter seed type',
+          quantity: 'Please enter quantity',
+          sourceEntity: 'Please enter source entity',
+          receiveDate: 'Please select receive date',
+        },
+
+        // Form Validation
+        rules: {
+          batchIdRequired: 'Please select breeding batch ID',
+          warehouseInIdRequired: 'Please enter warehouse in ID',
+          seedTypeRequired: 'Please enter seed type',
+          quantityRequired: 'Please enter quantity',
+          quantityFormat: 'Please enter valid quantity',
+          sourceEntityRequired: 'Please enter source entity',
+          receiveDateRequired: 'Please select receive date',
+        },
+
+        // Table Columns
+        columns: {
+          registrationCode: 'Registration Code',
+          batchId: 'Batch ID',
+          warehouseInId: 'Warehouse In ID',
+          seedType: 'Seed Type',
+          quantity: 'Quantity (kg)',
+          sourceEntity: 'Source Entity',
+          receiveDate: 'Receive Date',
+          operationTime: 'Operation Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+
+        // Messages
+        messages: {
+          uploadTip: 'Supports PDF, JPG format, single file size less than 2MB',
+        },
+      },
+
+      // Breeding Tracking Management
+      tracking: {
+        title: 'Breeding Tracking Management',
+        subtitle: 'Record breeding propagation tracking stages to ensure the breeding process is standardized and controllable',
+        list: 'Breeding Tracking Record List',
+        add: 'Add Tracking Record',
+        edit: 'Edit Tracking Record',
+        detail: 'Tracking Record Details',
+        delete: 'Delete Record',
+        deleteConfirm: 'Are you sure to delete this tracking record?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search tracking ID, batch ID',
+        filterByBatch: 'Filter by breeding batch',
+        filterByStage: 'Filter by stage name',
+        allBatches: 'All Batches',
+        allStages: 'All Stages',
+
+        // Stage Name
+        stageName: {
+          parentLinePreparation: 'Parent Line Preparation',
+          breederSeed: 'Breeder Seed',
+          preBasicSeedPropagation: 'Pre-basic Seed Propagation',
+          basicSeedPropagation: 'Basic Seed Propagation',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          trackingInfo: 'Tracking Information',
+          yieldInfo: 'Yield Information',
+          qualityInfo: 'Quality Information',
+          trackingId: 'Tracking ID',
+          batchId: 'Breeding Batch ID',
+          stageName: 'Stage Name',
+          location: 'Location',
+          coordinates: 'Coordinates (Latitude, Longitude)',
+          expectedYield: 'Expected Yield',
+          actualYield: 'Actual Yield',
+          fieldInspectionScore: 'Field Inspection Score',
+          diseaseObservation: 'Disease Observation',
+          stageCompletionDate: 'Stage Completion Date',
+          recorder: 'Recorder',
+          recordTime: 'Record Time',
+          updateTime: 'Update Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          trackingId: 'Auto-generated by system',
+          batchId: 'Please select breeding batch ID',
+          stageName: 'Please select stage name',
+          location: 'Please enter location',
+          coordinates: 'Format: Latitude, Longitude',
+          expectedYield: 'Please enter expected yield',
+          actualYield: 'Please enter actual yield',
+          fieldInspectionScore: '0-5 score scale',
+          diseaseObservation: 'Please enter disease observation',
+          stageCompletionDate: 'Please select stage completion date',
+        },
+
+        // Form Validation
+        rules: {
+          batchIdRequired: 'Please select breeding batch ID',
+          stageNameRequired: 'Please select stage name',
+          locationRequired: 'Please enter location',
+          expectedYieldRequired: 'Please enter expected yield',
+          expectedYieldFormat: 'Please enter valid yield',
+          actualYieldFormat: 'Please enter valid yield',
+          fieldInspectionScoreFormat: 'Score range is 0-5',
+        },
+
+        // Table Columns
+        columns: {
+          trackingId: 'Tracking ID',
+          batchId: 'Batch ID',
+          stageName: 'Stage Name',
+          location: 'Location',
+          expectedYield: 'Expected Yield',
+          actualYield: 'Actual Yield',
+          fieldInspectionScore: 'Field Score',
+          stageCompletionDate: 'Completion Date',
+          recordTime: 'Record Time',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Submit',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+      },
+    },
+
+    // Data Collection
+    dataCollection: {
+      // Trial Base Data Collection
+      trialBase: {
+        title: 'Trial Base Data Collection',
+        subtitle: 'Collect breeding trial basic information to ensure standardized breeding data',
+        list: 'Trial Base Data List',
+        add: 'Add Trial Data',
+        edit: 'Edit Trial Data',
+        detail: 'Trial Data Details',
+        delete: 'Delete Trial Data',
+        deleteConfirm: 'Are you sure to delete this trial data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search trial ID, crop type, variety name',
+        filterByCrop: 'Filter by crop type',
+        filterByDate: 'Filter by start date',
+        allCrops: 'All Crops',
+
+        form: {
+          basicInfo: 'Trial Basic Information',
+          locationInfo: 'Location Information',
+          trialId: 'Trial ID',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          researchCenterId: 'Research Center ID',
+          programId: 'Program ID',
+          subProgramId: 'Sub-program ID',
+          thematicResearchAreaId: 'Thematic Research Area ID',
+          region: 'Region',
+          zone: 'Zone',
+          woreda: 'Woreda',
+          kebele: 'Kebele',
+          agroEcologicalZone: 'Agro-ecological Zone',
+          gpsLocation: 'GPS Location',
+          startDate: 'Start Date',
+          activityCode: 'Activity Code',
+          kpiCode: 'KPI Code',
+          season: 'Season',
+          createTime: 'Created Time',
+          createBy: 'Created By',
+        },
+
+        placeholder: {
+          trialId: 'Auto-generated by system',
+          cropType: 'Please select crop type',
+          varietyName: 'Please enter variety name',
+          researchCenterId: 'Please enter research center ID',
+          programId: 'Please enter program ID',
+          subProgramId: 'Please enter sub-program ID',
+          thematicResearchAreaId: 'Please enter thematic research area ID',
+          region: 'Please select region',
+          zone: 'Please select zone',
+          woreda: 'Please select woreda',
+          kebele: 'Please select kebele',
+          agroEcologicalZone: 'Please enter agro-ecological zone (optional)',
+          gpsLocation: 'Format: longitude, latitude',
+          startDate: 'Please select start date',
+          activityCode: 'Please enter activity code (optional)',
+          kpiCode: 'Please enter KPI code (optional)',
+          season: 'Please select season',
+        },
+
+        rules: {
+          cropTypeRequired: 'Please select crop type',
+          varietyNameRequired: 'Please enter variety name',
+          researchCenterIdRequired: 'Please enter research center ID',
+          programIdRequired: 'Please enter program ID',
+          subProgramIdRequired: 'Please enter sub-program ID',
+          thematicResearchAreaIdRequired: 'Please enter thematic research area ID',
+          regionRequired: 'Please select region',
+          zoneRequired: 'Please select zone',
+          woredaRequired: 'Please select woreda',
+          kebeleRequired: 'Please select kebele',
+          gpsLocationRequired: 'Please enter GPS location',
+          gpsLocationFormat: 'Please enter valid GPS location format',
+          startDateRequired: 'Please select start date',
+          seasonRequired: 'Please select season',
+        },
+
+        columns: {
+          trialId: 'Trial ID',
+          cropType: 'Crop Type',
+          varietyName: 'Variety Name',
+          region: 'Region',
+          zone: 'Zone',
+          startDate: 'Start Date',
+          season: 'Season',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+      },
+
+      // Farmer & Plot Data Collection
+      farmerPlot: {
+        title: 'Farmer & Plot Data Collection',
+        subtitle: 'Collect farmer and plot information to ensure complete and accurate trial data',
+        list: 'Farmer Plot Data List',
+        add: 'Add Farmer Plot Data',
+        edit: 'Edit Farmer Plot Data',
+        detail: 'Farmer Plot Data Details',
+        delete: 'Delete Data',
+        deleteConfirm: 'Are you sure to delete this data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search farmer name, contact phone',
+        filterByGender: 'Filter by gender',
+        allGender: 'All Genders',
+
+        gender: {
+          male: 'Male',
+          female: 'Female',
+        },
+
+        youthCategory: {
+          youth: 'Youth',
+          adult: 'Adult',
+          elderly: 'Elderly',
+        },
+
+        form: {
+          farmerInfo: 'Farmer Basic Information',
+          plotInfo: 'Plot Information',
+          operatorInfo: 'Operator Information',
+          dataId: 'Data ID',
+          farmerName: 'Farmer Name',
+          gender: 'Gender',
+          youthCategory: 'Youth Category',
+          cooperativeMembership: 'Cooperative Membership',
+          plotSizeM2: 'Plot Size (m²)',
+          householdId: 'Household ID',
+          contactPhone: 'Contact Phone',
+          createTime: 'Created Time',
+          createBy: 'Created By',
+        },
+
+        placeholder: {
+          farmerName: 'Please enter farmer name',
+          gender: 'Please select gender',
+          youthCategory: 'Please select youth category',
+          cooperativeMembership: 'Please enter cooperative membership',
+          plotSizeM2: 'Please enter plot size',
+          householdId: 'Please enter household ID (optional)',
+          contactPhone: 'Please enter contact phone',
+        },
+
+        rules: {
+          farmerNameRequired: 'Please enter farmer name',
+          farmerNameLength: 'Farmer name length should be between 2-100 characters',
+          genderRequired: 'Please select gender',
+          youthCategoryRequired: 'Please select youth category',
+          cooperativeMembershipRequired: 'Please enter cooperative membership',
+          plotSizeM2Required: 'Please enter plot size',
+          plotSizeM2Min: 'Plot size must be greater than 0',
+          plotSizeM2Format: 'Please enter valid area value',
+          contactPhoneRequired: 'Please enter contact phone',
+          contactPhoneFormat: 'Please enter valid phone number',
+        },
+
+        columns: {
+          farmerName: 'Farmer Name',
+          gender: 'Gender',
+          youthCategory: 'Youth Category',
+          plotSizeM2: 'Plot Size (m²)',
+          contactPhone: 'Contact Phone',
+          createTime: 'Created Time',
+          createBy: 'Created By',
+          actions: 'Actions',
+        },
+      },
+
+      // Farming Record Data Collection
+      farmingRecord: {
+        title: 'Farming Record Data Collection',
+        subtitle: 'Record irrigation, fertilization, weeding and other farming management practices',
+        list: 'Farming Record List',
+        add: 'Add Farming Record',
+        edit: 'Edit Farming Record',
+        detail: 'Farming Record Details',
+        delete: 'Delete Record',
+        deleteConfirm: 'Are you sure to delete this record?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search management practice',
+        filterByPractice: 'Filter by management practice',
+        allPractices: 'All Practices',
+
+        managementPractice: {
+          irrigation: 'Irrigation',
+          fertilization: 'Fertilization',
+          weeding: 'Weeding',
+          pestControl: 'Pest Control',
+          other: 'Other',
+        },
+
+        form: {
+          basicInfo: 'Basic Information',
+          managementInfo: 'Management Information',
+          dataId: 'Data ID',
+          managementPractice: 'Management Practice',
+          fertilizerType: 'Fertilizer Type',
+          fertilizerRateKg: 'Fertilizer Rate (kg)',
+          ureaRateKg: 'Urea Rate (kg)',
+          pesticideType: 'Pesticide Type',
+          irrigationType: 'Irrigation Type',
+          irrigationFrequency: 'Irrigation Frequency',
+          weedingDate: 'Weeding Date',
+          herbicideUsed: 'Herbicide Used',
+          seedSource: 'Seed Source',
+          createTime: 'Created Time',
+          createBy: 'Created By',
+        },
+
+        placeholder: {
+          managementPractice: 'Please select management practice',
+          fertilizerType: 'Please enter fertilizer type (optional)',
+          fertilizerRateKg: 'Please enter fertilizer rate (optional)',
+          ureaRateKg: 'Please enter urea rate (optional)',
+          pesticideType: 'Please enter pesticide type (optional)',
+          irrigationType: 'Please enter irrigation type (optional)',
+          irrigationFrequency: 'Please enter irrigation frequency (optional)',
+          weedingDate: 'Please select weeding date (optional)',
+          herbicideUsed: 'Please enter herbicide used (optional)',
+          seedSource: 'Please enter seed source (optional)',
+        },
+
+        rules: {
+          managementPracticeRequired: 'Please select management practice',
+          fertilizerRateKgFormat: 'Please enter valid rate',
+          ureaRateKgFormat: 'Please enter valid rate',
+          irrigationFrequencyFormat: 'Please enter valid frequency',
+        },
+
+        columns: {
+          managementPractice: 'Management Practice',
+          fertilizerType: 'Fertilizer Type',
+          irrigationType: 'Irrigation Type',
+          weedingDate: 'Weeding Date',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+      },
+
+      // Agronomic Trait Data Collection
+      agronomicTrait: {
+        title: 'Agronomic Trait Data Collection',
+        subtitle: 'Record plant height, flowering period, yield and other agronomic traits',
+        list: 'Agronomic Trait Data List',
+        add: 'Add Agronomic Trait Data',
+        edit: 'Edit Agronomic Trait Data',
+        detail: 'Agronomic Trait Data Details',
+        delete: 'Delete Data',
+        deleteConfirm: 'Are you sure to delete this data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search data ID',
+
+        form: {
+          growthInfo: 'Growth Information',
+          phenologyInfo: 'Phenology Information',
+          yieldInfo: 'Yield Information',
+          healthInfo: 'Health Status',
+          dataId: 'Data ID',
+          plantHeightCm: 'Plant Height (cm)',
+          tillerCount: 'Tiller Count',
+          spikeLengthCm: 'Spike Length (cm)',
+          daysToEmergence: 'Days to Emergence',
+          daysToTillering: 'Days to Tillering',
+          daysToHeading: 'Days to Heading',
+          daysToFlowering: 'Days to Flowering',
+          daysToGrainFilling: 'Days to Grain Filling',
+          daysToMaturity: 'Days to Maturity',
+          lodgingScore: 'Lodging Score',
+          biomassWeightKg: 'Biomass Weight (kg)',
+          spikeDensity: 'Spike Density',
+          grainWeightPerSpike: 'Grain Weight per Spike',
+          diseaseScore: 'Disease Score',
+          stressIndicators: 'Stress Indicators',
+          pestObservation: 'Pest Observation',
+          photoEvidence: 'Photo Evidence',
+          createTime: 'Created Time',
+        },
+
+        placeholder: {
+          plantHeightCm: 'Please enter plant height',
+          tillerCount: 'Please enter tiller count',
+          spikeLengthCm: 'Please enter spike length',
+          daysToEmergence: 'Please enter days',
+          daysToTillering: 'Please enter days',
+          daysToHeading: 'Please enter days',
+          daysToFlowering: 'Please enter days',
+          daysToGrainFilling: 'Please enter days',
+          daysToMaturity: 'Please enter days',
+          lodgingScore: 'Please enter lodging score',
+          biomassWeightKg: 'Please enter biomass weight',
+          spikeDensity: 'Please enter spike density',
+          grainWeightPerSpike: 'Please enter grain weight per spike',
+          diseaseScore: 'Please enter disease score (JSON format)',
+          stressIndicators: 'Please enter stress indicators (JSON format)',
+          pestObservation: 'Please enter pest observation',
+        },
+
+        rules: {
+          plantHeightCmRequired: 'Please enter plant height',
+          tillerCountRequired: 'Please enter tiller count',
+          spikeLengthCmRequired: 'Please enter spike length',
+          daysToEmergenceRequired: 'Please enter days to emergence',
+          daysToTilleringRequired: 'Please enter days to tillering',
+          daysToHeadingRequired: 'Please enter days to heading',
+          daysToFloweringRequired: 'Please enter days to flowering',
+          daysToGrainFillingRequired: 'Please enter days to grain filling',
+          daysToMaturityRequired: 'Please enter days to maturity',
+          lodgingScoreRequired: 'Please enter lodging score',
+          biomassWeightKgRequired: 'Please enter biomass weight',
+          spikeDensityRequired: 'Please enter spike density',
+          grainWeightPerSpikeRequired: 'Please enter grain weight per spike',
+          diseaseScoreRequired: 'Please enter disease score',
+          stressIndicatorsRequired: 'Please enter stress indicators',
+          pestObservationRequired: 'Please enter pest observation',
+        },
+
+        columns: {
+          plantHeightCm: 'Plant Height (cm)',
+          tillerCount: 'Tiller Count',
+          daysToMaturity: 'Days to Maturity',
+          lodgingScore: 'Lodging Score',
+          biomassWeightKg: 'Biomass (kg)',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+      },
+
+      // Environment & Soil Data Collection
+      environmentSoil: {
+        title: 'Environment & Soil Data Collection',
+        subtitle: 'Collect soil properties and environmental monitoring data',
+        list: 'Environment Soil Data List',
+        add: 'Add Environment Soil Data',
+        edit: 'Edit Environment Soil Data',
+        detail: 'Environment Soil Data Details',
+        delete: 'Delete Data',
+        deleteConfirm: 'Are you sure to delete this data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search topography, water source',
+        filterByTopography: 'Filter by topography',
+        allTopography: 'All Topography',
+
+        form: {
+          soilInfo: 'Soil Properties',
+          environmentInfo: 'Environmental Monitoring',
+          dataId: 'Data ID',
+          soilPh: 'Soil pH',
+          soilEc: 'Soil EC',
+          soilNitrogenPercent: 'Soil Nitrogen (%)',
+          soilPhosphorusPpm: 'Soil Phosphorus (PPM)',
+          soilPotassiumPpm: 'Soil Potassium (PPM)',
+          previousCrop: 'Previous Crop',
+          waterSource: 'Water Source',
+          topography: 'Topography',
+          slopePercent: 'Slope (%)',
+          soilMoisturePercent: 'Soil Moisture (%)',
+          soilTemperatureC: 'Soil Temperature (°C)',
+          rainfallMm: 'Rainfall (mm)',
+          airTemperatureC: 'Air Temperature (°C)',
+          humidityPercent: 'Humidity (%)',
+          windSpeedMs: 'Wind Speed (m/s)',
+          solarRadiationWm2: 'Solar Radiation (W/m²)',
+          timestamp: 'Timestamp',
+          createTime: 'Created Time',
+        },
+
+        placeholder: {
+          soilPh: 'Please enter soil pH',
+          soilEc: 'Please enter soil EC',
+          soilNitrogenPercent: 'Please enter soil nitrogen',
+          soilPhosphorusPpm: 'Please enter soil phosphorus',
+          soilPotassiumPpm: 'Please enter soil potassium',
+          previousCrop: 'Please enter previous crop (optional)',
+          waterSource: 'Please enter water source',
+          topography: 'Please enter topography',
+          slopePercent: 'Please enter slope (optional)',
+          soilMoisturePercent: 'Please enter soil moisture',
+          soilTemperatureC: 'Please enter soil temperature',
+          rainfallMm: 'Please enter rainfall (optional)',
+          airTemperatureC: 'Please enter air temperature (optional)',
+          humidityPercent: 'Please enter humidity',
+          windSpeedMs: 'Please enter wind speed',
+          solarRadiationWm2: 'Please enter solar radiation',
+          timestamp: 'Please select timestamp',
+        },
+
+        rules: {
+          soilPhRequired: 'Please enter soil pH',
+          soilEcRequired: 'Please enter soil EC',
+          soilNitrogenPercentRequired: 'Please enter soil nitrogen',
+          soilPhosphorusPpmRequired: 'Please enter soil phosphorus',
+          soilPotassiumPpmRequired: 'Please enter soil potassium',
+          waterSourceRequired: 'Please enter water source',
+          topographyRequired: 'Please enter topography',
+          soilMoisturePercentRequired: 'Please enter soil moisture',
+          soilTemperatureCRequired: 'Please enter soil temperature',
+          humidityPercentRequired: 'Please enter humidity',
+          windSpeedMsRequired: 'Please enter wind speed',
+          solarRadiationWm2Required: 'Please enter solar radiation',
+        },
+
+        columns: {
+          soilPh: 'Soil pH',
+          waterSource: 'Water Source',
+          topography: 'Topography',
+          soilMoisturePercent: 'Soil Moisture (%)',
+          airTemperatureC: 'Air Temp (°C)',
+          timestamp: 'Timestamp',
+          actions: 'Actions',
+        },
+      },
+
+      // Variety Evaluation Data Collection
+      varietyEvaluation: {
+        title: 'Variety Evaluation Data Collection',
+        subtitle: 'Collect seed yield data and approval decision information',
+        list: 'Variety Evaluation Data List',
+        add: 'Add Variety Evaluation Data',
+        edit: 'Edit Variety Evaluation Data',
+        detail: 'Variety Evaluation Data Details',
+        delete: 'Delete Data',
+        deleteConfirm: 'Are you sure to delete this data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search plot ID',
+
+        form: {
+          basicInfo: 'Basic Information',
+          yieldInfo: 'Yield Information',
+          dataId: 'Data ID',
+          plotId: 'Plot ID',
+          plotAreaM2: 'Plot Area (m²)',
+          grainWeightKg: 'Grain Weight (kg)',
+          yieldQtPerHa: 'Yield (qt/ha)',
+          moistureContent: 'Moisture Content (%)',
+          createTime: 'Created Time',
+        },
+
+        placeholder: {
+          plotId: 'Please enter plot ID',
+          plotAreaM2: 'Please enter plot area',
+          grainWeightKg: 'Please enter grain weight',
+          yieldQtPerHa: 'Please enter yield',
+          moistureContent: 'Please enter moisture content',
+        },
+
+        rules: {
+          plotIdRequired: 'Please enter plot ID',
+          plotAreaM2Required: 'Please enter plot area',
+          grainWeightKgRequired: 'Please enter grain weight',
+          yieldQtPerHaRequired: 'Please enter yield',
+          moistureContentRequired: 'Please enter moisture content',
+        },
+
+        columns: {
+          plotId: 'Plot ID',
+          plotAreaM2: 'Plot Area (m²)',
+          grainWeightKg: 'Grain Weight (kg)',
+          yieldQtPerHa: 'Yield (qt/ha)',
+          moistureContent: 'Moisture (%)',
+          createTime: 'Created Time',
+          actions: 'Actions',
+        },
+      },
+
+      // Laboratory Test Data Collection
+      laboratoryTest: {
+        title: 'Laboratory Test Data Collection',
+        subtitle: 'Record sample data, germination rate and other laboratory test information',
+        list: 'Laboratory Test Data List',
+        add: 'Add Laboratory Test Data',
+        edit: 'Edit Laboratory Test Data',
+        detail: 'Laboratory Test Data Details',
+        delete: 'Delete Data',
+        deleteConfirm: 'Are you sure to delete this data?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        searchPlaceholder: 'Search sample ID',
+
+        form: {
+          sampleInfo: 'Sample Information',
+          testInfo: 'Test Information',
+          dataId: 'Data ID',
+          sampleId: 'Sample ID',
+          sampleCondition: 'Sample Condition',
+          germinationRate: 'Germination Rate (%)',
+          purityPercent: 'Purity (%)',
+          moistureContentPercent: 'Moisture Content (%)',
+          proteinPercent: 'Protein (%)',
+          toxinLevelPpm: 'Toxin Level (PPM)',
+          seedHealthFindings: 'Seed Health Findings',
+          traceabilityLink: 'Traceability Link',
+          labReportFile: 'Lab Report File',
+          createTime: 'Created Time',
+        },
+
+        placeholder: {
+          sampleId: 'Please enter sample ID',
+          sampleCondition: 'Please enter sample condition',
+          germinationRate: 'Please enter germination rate',
+          purityPercent: 'Please enter purity',
+          moistureContentPercent: 'Please enter moisture content',
+          proteinPercent: 'Please enter protein content',
+          toxinLevelPpm: 'Please enter toxin level (optional)',
+          seedHealthFindings: 'Please enter seed health findings',
+          traceabilityLink: 'Please enter traceability link',
+        },
+
+        rules: {
+          sampleIdRequired: 'Please enter sample ID',
+          sampleConditionRequired: 'Please enter sample condition',
+          germinationRateRequired: 'Please enter germination rate',
+          purityPercentRequired: 'Please enter purity',
+          moistureContentPercentRequired: 'Please enter moisture content',
+          proteinPercentRequired: 'Please enter protein content',
+          seedHealthFindingsRequired: 'Please enter seed health findings',
+          traceabilityLinkRequired: 'Please enter traceability link',
+        },
+
+        columns: {
+          sampleId: 'Sample ID',
+          sampleCondition: 'Sample Condition',
+          germinationRate: 'Germination Rate (%)',
+          purityPercent: 'Purity (%)',
+          proteinPercent: 'Protein (%)',
+          createTime: 'Created Time',
+          actions: 'Actions',
         },
       },
     },

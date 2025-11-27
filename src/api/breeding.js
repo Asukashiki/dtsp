@@ -1,0 +1,639 @@
+import request, { dataCollectionRequest } from '../utils/request'
+
+/**
+ * 育种管理 API
+ * Breeding Management API
+ */
+
+// ==================== 育种计划管理 ====================
+
+/**
+ * 获取育种计划列表
+ * Get breeding plan list
+ */
+export const getBreedingPlanList = (params) => {
+  return request({
+    url: '/breeding/plan/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取育种计划详情
+ * Get breeding plan detail
+ */
+export const getBreedingPlanDetail = (planId) => {
+  return request({
+    url: `/breeding/plan/${planId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增育种计划
+ * Add breeding plan
+ */
+export const addBreedingPlan = (data) => {
+  return request({
+    url: '/breeding/plan',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 更新育种计划
+ * Update breeding plan
+ */
+export const updateBreedingPlan = (planId, data) => {
+  return request({
+    url: `/breeding/plan/${planId}`,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 删除育种计划
+ * Delete breeding plan
+ */
+export const deleteBreedingPlan = (planId) => {
+  return request({
+    url: `/breeding/plan/${planId}`,
+    method: 'delete'
+  })
+}
+
+// ==================== 育种材料登记 ====================
+
+/**
+ * 获取育种材料登记列表
+ * Get breeding material list
+ */
+export const getBreedingMaterialList = (params) => {
+  return request({
+    url: '/breeding/material/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取育种材料详情
+ * Get breeding material detail
+ */
+export const getBreedingMaterialDetail = (materialId) => {
+  return request({
+    url: `/breeding/material/${materialId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增育种材料登记
+ * Add breeding material registration
+ */
+export const addBreedingMaterial = (data) => {
+  return request({
+    url: '/breeding/material',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 更新育种材料登记
+ * Update breeding material registration
+ */
+export const updateBreedingMaterial = (materialId, data) => {
+  return request({
+    url: `/breeding/material/${materialId}`,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 删除育种材料登记
+ * Delete breeding material registration
+ */
+export const deleteBreedingMaterial = (materialId) => {
+  return request({
+    url: `/breeding/material/${materialId}`,
+    method: 'delete'
+  })
+}
+
+// ==================== 育种跟踪管理 ====================
+
+/**
+ * 获取育种跟踪记录列表
+ * Get breeding tracking list
+ */
+export const getBreedingTrackingList = (params) => {
+  return request({
+    url: '/breeding/tracking/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取育种跟踪记录详情
+ * Get breeding tracking detail
+ */
+export const getBreedingTrackingDetail = (trackingId) => {
+  return request({
+    url: `/breeding/tracking/${trackingId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增育种跟踪记录
+ * Add breeding tracking record
+ */
+export const addBreedingTracking = (data) => {
+  return request({
+    url: '/breeding/tracking',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 更新育种跟踪记录
+ * Update breeding tracking record
+ */
+export const updateBreedingTracking = (trackingId, data) => {
+  return request({
+    url: `/breeding/tracking/${trackingId}`,
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 删除育种跟踪记录
+ * Delete breeding tracking record
+ */
+export const deleteBreedingTracking = (trackingId) => {
+  return request({
+    url: `/breeding/tracking/${trackingId}`,
+    method: 'delete'
+  })
+}
+
+// ==================== 通用接口 ====================
+
+/**
+ * 获取育种批次列表（用于下拉选择）
+ * Get breeding batch list (for dropdown)
+ */
+export const getBreedingBatchList = () => {
+  return request({
+    url: '/breeding/batch/list',
+    method: 'get'
+  })
+}
+
+/**
+ * 获取作物类型列表（用于下拉选择）
+ * Get crop type list (for dropdown)
+ */
+export const getCropTypeList = () => {
+  return request({
+    url: '/common/cropTypes',
+    method: 'get'
+  })
+}
+
+// ==================== 数据采集模块 Data Collection ====================
+
+// ==================== 1. 试验基础数据采集 ====================
+
+/**
+ * 查询试验基础数据列表
+ * Query trial base data list
+ */
+export const getTrialBaseList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/trial/base/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取试验基础数据详情
+ * Get trial base data detail
+ */
+export const getTrialBaseDetail = (trialId) => {
+  return dataCollectionRequest({
+    url: `/seed/trial/base/${trialId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增试验基础数据
+ * Add trial base data
+ */
+export const addTrialBase = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/trial/base',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改试验基础数据
+ * Edit trial base data
+ */
+export const editTrialBase = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/trial/base/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除试验基础数据
+ * Delete trial base data
+ */
+export const deleteTrialBase = (trialIds) => {
+  return dataCollectionRequest({
+    url: '/seed/trial/base/delete',
+    method: 'post',
+    data: trialIds
+  })
+}
+
+// ==================== 2. 农民与地块属性数据采集 ====================
+
+/**
+ * 查询农民与地块数据列表
+ * Query farmer plot data list
+ */
+export const getFarmerPlotList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farmer/plot/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取农民与地块数据详情
+ * Get farmer plot data detail
+ */
+export const getFarmerPlotDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/farmer/plot/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增农民与地块数据
+ * Add farmer plot data
+ */
+export const addFarmerPlot = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farmer/plot',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改农民与地块数据
+ * Edit farmer plot data
+ */
+export const editFarmerPlot = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farmer/plot/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除农民与地块数据
+ * Delete farmer plot data
+ */
+export const deleteFarmerPlot = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/farmer/plot/delete',
+    method: 'post',
+    data: dataIds
+  })
+}
+
+// ==================== 3. 农事记录数据采集 ====================
+
+/**
+ * 查询农事记录列表
+ * Query farming record list
+ */
+export const getFarmingRecordList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farming/record/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取农事记录详情
+ * Get farming record detail
+ */
+export const getFarmingRecordDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/farming/record/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增农事记录
+ * Add farming record
+ */
+export const addFarmingRecord = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farming/record',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改农事记录
+ * Edit farming record
+ */
+export const editFarmingRecord = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/farming/record/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除农事记录
+ * Delete farming record
+ */
+export const deleteFarmingRecord = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/farming/record/delete',
+    method: 'post',
+    data: dataIds
+  })
+}
+
+// ==================== 4. 农艺性状数据采集 ====================
+
+/**
+ * 查询农艺性状数据列表
+ * Query agronomic trait data list
+ */
+export const getAgronomicTraitList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/agronomic/trait/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取农艺性状数据详情
+ * Get agronomic trait data detail
+ */
+export const getAgronomicTraitDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/agronomic/trait/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增农艺性状数据
+ * Add agronomic trait data
+ */
+export const addAgronomicTrait = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/agronomic/trait',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改农艺性状数据
+ * Edit agronomic trait data
+ */
+export const editAgronomicTrait = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/agronomic/trait/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除农艺性状数据
+ * Delete agronomic trait data
+ */
+export const deleteAgronomicTrait = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/agronomic/trait/delete',
+    method: 'post',
+    data: dataIds
+  })
+}
+
+// ==================== 5. 环境与土壤属性数据采集 ====================
+
+/**
+ * 查询环境与土壤数据列表
+ * Query environment soil data list
+ */
+export const getEnvironmentSoilList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/environment/soil/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取环境与土壤数据详情
+ * Get environment soil data detail
+ */
+export const getEnvironmentSoilDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/environment/soil/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增环境与土壤数据
+ * Add environment soil data
+ */
+export const addEnvironmentSoil = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/environment/soil',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改环境与土壤数据
+ * Edit environment soil data
+ */
+export const editEnvironmentSoil = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/environment/soil/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除环境与土壤数据
+ * Delete environment soil data
+ */
+export const deleteEnvironmentSoil = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/environment/soil/delete',
+    method: 'post',
+    data: dataIds
+  })
+}
+
+// ==================== 6. 品种评估数据采集 ====================
+
+/**
+ * 查询品种评估数据列表
+ * Query variety evaluation data list
+ */
+export const getVarietyEvaluationList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/variety/evaluation/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取品种评估数据详情
+ * Get variety evaluation data detail
+ */
+export const getVarietyEvaluationDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/variety/evaluation/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增品种评估数据
+ * Add variety evaluation data
+ */
+export const addVarietyEvaluation = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/variety/evaluation',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改品种评估数据
+ * Edit variety evaluation data
+ */
+export const editVarietyEvaluation = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/variety/evaluation/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除品种评估数据
+ * Delete variety evaluation data
+ */
+export const deleteVarietyEvaluation = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/variety/evaluation/delete',
+    method: 'post',
+    data: dataIds
+  })
+}
+
+// ==================== 7. 实验室测试数据采集 ====================
+
+/**
+ * 查询实验室测试数据列表
+ * Query laboratory test data list
+ */
+export const getLaboratoryTestList = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/laboratory/test/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取实验室测试数据详情
+ * Get laboratory test data detail
+ */
+export const getLaboratoryTestDetail = (dataId) => {
+  return dataCollectionRequest({
+    url: `/seed/laboratory/test/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增实验室测试数据
+ * Add laboratory test data
+ */
+export const addLaboratoryTest = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/laboratory/test',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改实验室测试数据
+ * Edit laboratory test data
+ */
+export const editLaboratoryTest = (data) => {
+  return dataCollectionRequest({
+    url: '/seed/laboratory/test/edit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除实验室测试数据
+ * Delete laboratory test data
+ */
+export const deleteLaboratoryTest = (dataIds) => {
+  return dataCollectionRequest({
+    url: '/seed/laboratory/test/delete',
+    method: 'post',
+    data: dataIds
+  })
+}

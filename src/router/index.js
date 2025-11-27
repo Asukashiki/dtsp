@@ -142,6 +142,200 @@ const routes = [
         name: 'VarietyQuery',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
+      },
+      // 育种管理
+      {
+        path: 'breeding/plan',
+        name: 'BreedingPlan',
+        component: () => import('../views/research/breeding/BreedingPlan.vue'),
+        meta: { title: '育种计划管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding/material',
+        name: 'BreedingMaterial',
+        component: () => import('../views/research/breeding/BreedingMaterial.vue'),
+        meta: { title: '育种材料登记', requiresAuth: true }
+      },
+      {
+        path: 'breeding/tracking',
+        name: 'BreedingTracking',
+        component: () => import('../views/research/breeding/BreedingTracking.vue'),
+        meta: { title: '育种跟踪管理', requiresAuth: true }
+      },
+      // 数据采集 - 试验基础数据采集
+      {
+        path: 'data-collection/trial-base',
+        name: 'TrialBaseList',
+        component: () => import('../views/research/data-collection/trial-base/index.vue'),
+        meta: { title: '试验基础数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/trial-base/add',
+        name: 'TrialBaseAdd',
+        component: () => import('../views/research/data-collection/trial-base/form.vue'),
+        meta: { title: '新增试验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/trial-base/edit/:trialId',
+        name: 'TrialBaseEdit',
+        component: () => import('../views/research/data-collection/trial-base/form.vue'),
+        meta: { title: '编辑试验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/trial-base/detail/:trialId',
+        name: 'TrialBaseDetail',
+        component: () => import('../views/research/data-collection/trial-base/detail.vue'),
+        meta: { title: '试验数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 数据采集 - 农民与地块属性数据采集
+      {
+        path: 'data-collection/farmer-plot',
+        name: 'FarmerPlotList',
+        component: () => import('../views/research/data-collection/farmer-plot/index.vue'),
+        meta: { title: '农民与地块属性数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farmer-plot/add',
+        name: 'FarmerPlotAdd',
+        component: () => import('../views/research/data-collection/farmer-plot/form.vue'),
+        meta: { title: '新增农民地块数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farmer-plot/edit/:id',
+        name: 'FarmerPlotEdit',
+        component: () => import('../views/research/data-collection/farmer-plot/form.vue'),
+        meta: { title: '编辑农民地块数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farmer-plot/detail/:id',
+        name: 'FarmerPlotDetail',
+        component: () => import('../views/research/data-collection/farmer-plot/detail.vue'),
+        meta: { title: '农民地块数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 数据采集 - 农事记录数据采集
+      {
+        path: 'data-collection/farming-record',
+        name: 'FarmingRecordList',
+        component: () => import('../views/research/data-collection/farming-record/index.vue'),
+        meta: { title: '农事记录数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farming-record/add',
+        name: 'FarmingRecordAdd',
+        component: () => import('../views/research/data-collection/farming-record/form.vue'),
+        meta: { title: '新增农事记录', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farming-record/edit/:id',
+        name: 'FarmingRecordEdit',
+        component: () => import('../views/research/data-collection/farming-record/form.vue'),
+        meta: { title: '编辑农事记录', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/farming-record/detail/:id',
+        name: 'FarmingRecordDetail',
+        component: () => import('../views/research/data-collection/farming-record/detail.vue'),
+        meta: { title: '农事记录详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 数据采集 - 农艺性状数据采集
+      {
+        path: 'data-collection/agronomic-trait',
+        name: 'AgronomicTraitList',
+        component: () => import('../views/research/data-collection/agronomic-trait/index.vue'),
+        meta: { title: '农艺性状数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/agronomic-trait/add',
+        name: 'AgronomicTraitAdd',
+        component: () => import('../views/research/data-collection/agronomic-trait/form.vue'),
+        meta: { title: '新增农艺性状数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/agronomic-trait/edit/:id',
+        name: 'AgronomicTraitEdit',
+        component: () => import('../views/research/data-collection/agronomic-trait/form.vue'),
+        meta: { title: '编辑农艺性状数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/agronomic-trait/detail/:id',
+        name: 'AgronomicTraitDetail',
+        component: () => import('../views/research/data-collection/agronomic-trait/detail.vue'),
+        meta: { title: '农艺性状数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 数据采集 - 环境与土壤属性数据采集
+      {
+        path: 'data-collection/environment-soil',
+        name: 'EnvironmentSoilList',
+        component: () => import('../views/research/data-collection/environment-soil/index.vue'),
+        meta: { title: '环境与土壤属性数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/environment-soil/add',
+        name: 'EnvironmentSoilAdd',
+        component: () => import('../views/research/data-collection/environment-soil/form.vue'),
+        meta: { title: '新增环境土壤数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/environment-soil/edit/:id',
+        name: 'EnvironmentSoilEdit',
+        component: () => import('../views/research/data-collection/environment-soil/form.vue'),
+        meta: { title: '编辑环境土壤数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/environment-soil/detail/:id',
+        name: 'EnvironmentSoilDetail',
+        component: () => import('../views/research/data-collection/environment-soil/detail.vue'),
+        meta: { title: '环境土壤数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 品种评估数据采集
+      {
+        path: 'data-collection/variety-evaluation',
+        name: 'VarietyEvaluationList',
+        component: () => import('../views/research/data-collection/variety-evaluation/index.vue'),
+        meta: { title: '品种评估数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/variety-evaluation/add',
+        name: 'VarietyEvaluationAdd',
+        component: () => import('../views/research/data-collection/variety-evaluation/form.vue'),
+        meta: { title: '新增品种评估数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/variety-evaluation/edit/:id',
+        name: 'VarietyEvaluationEdit',
+        component: () => import('../views/research/data-collection/variety-evaluation/form.vue'),
+        meta: { title: '编辑品种评估数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/variety-evaluation/detail/:id',
+        name: 'VarietyEvaluationDetail',
+        component: () => import('../views/research/data-collection/variety-evaluation/detail.vue'),
+        meta: { title: '品种评估数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 实验室测试数据采集
+      {
+        path: 'data-collection/laboratory-test',
+        name: 'LaboratoryTestList',
+        component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
+        meta: { title: '实验室测试数据采集', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/laboratory-test/add',
+        name: 'LaboratoryTestAdd',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '新增实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/laboratory-test/edit/:id',
+        name: 'LaboratoryTestEdit',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '编辑实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/laboratory-test/detail/:id',
+        name: 'LaboratoryTestDetail',
+        component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
+        meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

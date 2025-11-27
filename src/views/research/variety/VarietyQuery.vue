@@ -65,6 +65,19 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 分页 -->
+        <div class="pagination-wrapper">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
       </div>
 
       <!-- 移动端卡片 -->
@@ -98,6 +111,20 @@
             </el-button>
           </div>
         </div>
+
+        <!-- 移动端分页 -->
+        <div class="pagination-wrapper mobile-pagination">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 50]"
+            :total="total"
+            layout="total, prev, pager, next"
+            small
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -113,6 +140,11 @@ const { t } = useI18n()
 const searchQuery = ref('')
 const filterYear = ref('')
 const filterCrop = ref('')
+
+// 分页
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 
 // 模拟数据
 const mockData = ref([
@@ -165,8 +197,24 @@ const filteredList = computed(() => {
     list = list.filter(item => item.cropType.toLowerCase() === filterCrop.value)
   }
 
-  return list
+  total.value = list.length
+
+  // 分页
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return list.slice(start, end)
 })
+
+// 处理页码变化
+const handlePageChange = (page) => {
+  currentPage.value = page
+}
+
+// 处理每页条数变化
+const handleSizeChange = (size) => {
+  pageSize.value = size
+  currentPage.value = 1
+}
 
 // 查看详情
 const handleView = (row) => {
@@ -252,6 +300,15 @@ const handleView = (row) => {
 
 .table-container {
   overflow: auto;
+}
+
+/* 分页 */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8f5e9;
 }
 
 /* 移动端卡片 */
