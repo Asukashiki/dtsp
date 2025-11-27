@@ -3,9 +3,7 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store'
 
 // 农业模块API基础URL配置
-const AGRICULTURE_API_URL = import.meta.env.DEV
-  ? import.meta.env.VITE_APP_AGRICULTURE_API_URL
-  : import.meta.env.VITE_APP_API_URL
+const AGRICULTURE_API_URL =  import.meta.env.VITE_APP_AGRICULTURE_API_URL
 
 // 用于防止重复提示
 let isRedirecting = false
