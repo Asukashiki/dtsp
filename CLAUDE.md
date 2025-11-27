@@ -80,9 +80,10 @@ src/
 │   └── index.js
 ├── layout/           # Layout components
 │   └── Layout.vue
-├── locales/          # Translation files
-│   ├── zh-CN.js      # Chinese translations
-│   └── en-US.js      # English translations
+├── locales/          # Translation files (modular structure)
+│   ├── index.js      # Auto-import all languages
+│   ├── zh-CN/        # Chinese translations (modular)
+│   └── en-US/        # English translations (same structure)
 ├── router/           # Vue Router configuration
 │   └── index.js
 ├── store/            # Pinia stores
@@ -127,11 +128,41 @@ src/
 
 **Pattern**: All user-facing text MUST be internationalized
 
+This project uses a **modular i18n structure** with automatic imports powered by Vite's `import.meta.glob`.
+
+#### File Structure
+
+```
+src/locales/
+├── index.js              # Auto-imports all languages
+├── zh-CN/
+│   ├── index.js          # Auto-imports all Chinese modules
+│   ├── common.js         # Common translations (buttons, messages, etc.)
+│   ├── header.js         # Header navigation
+│   ├── footer.js         # Footer content
+│   ├── home.js           # Home page
+│   ├── identity.js       # Identity verification
+│   ├── user.js           # User profile
+│   ├── dataList.js       # Data lists
+│   ├── userInfo.js       # User information
+│   ├── research.js       # Research & development
+│   ├── input.js          # Agricultural inputs
+│   ├── callback.js       # OAuth callbacks
+│   └── farm.js           # Farm management
+└── en-US/
+    └── (same structure)
+```
+
+#### Usage in Components
+
 **In Templates**:
 ```vue
 <template>
-  <h1>{{ $t('section.title') }}</h1>
-  <p>{{ $t('section.subtitle') }}</p>
+  <!-- Module.key pattern -->
+  <h1>{{ $t('common.title') }}</h1>
+  <button>{{ $t('common.confirm') }}</button>
+  <p>{{ $t('home.welcome') }}</p>
+  <span>{{ $t('farm.menu.dashboard') }}</span>
 </template>
 ```
 
@@ -142,23 +173,23 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 // Use in reactive contexts
-const errorMessage = computed(() => t('error.message'))
+const errorMessage = computed(() => t('common.failed'))
 
 // Use in functions
 const handleError = () => {
-  ElMessage.error(t('error.failed'))
+  ElMessage.error(t('common.submitFailed'))
 }
+
+// Use with interpolation
+const message = t('user.welcomeMessage', { name: userName })
+</script>
 ```
 
-**Adding New Translations**:
-1. Add keys to [src/locales/zh-CN.js](src/locales/zh-CN.js)
-2. Add corresponding keys to [src/locales/en-US.js](src/locales/en-US.js)
-3. Use `$t('key')` in templates or `t('key')` in scripts
 
-**Language Switching**:
+**Details**:
 - Language stored in Pinia store: `useLocaleStore()`
 - Persisted to localStorage
-- Element Plus locale synced with app locale
+- Element Plus locale synced with app locale automatically
 
 ### State Management (Pinia)
 
