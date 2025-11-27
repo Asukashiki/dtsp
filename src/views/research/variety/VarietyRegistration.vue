@@ -61,10 +61,10 @@
                   class="filter-select"
                 >
                   <el-option :label="$t('research.variety.registration.allStatus')" value="" />
-                  <el-option :label="$t('research.variety.registration.status.draft')" value="draft" />
-                  <el-option :label="$t('research.variety.registration.status.pending')" value="pending" />
-                  <el-option :label="$t('research.variety.registration.status.approved')" value="approved" />
-                  <el-option :label="$t('research.variety.registration.status.rejected')" value="rejected" />
+                  <el-option :label="$t('research.variety.registration.status.draft')" value="0" />
+                  <el-option :label="$t('research.variety.registration.status.pending')" value="1" />
+                  <el-option :label="$t('research.variety.registration.status.approved')" value="2" />
+                  <el-option :label="$t('research.variety.registration.status.rejected')" value="3" />
                 </el-select>
               </div>
 
@@ -75,10 +75,10 @@
                   <el-table-column prop="varietyName" :label="$t('research.variety.registration.columns.varietyName')" min-width="150" />
                   <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" width="120" />
                   <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" width="120" />
-                  <el-table-column prop="submittingUnit" :label="$t('research.variety.registration.columns.submittingUnit')" min-width="180" />
-                  <el-table-column prop="submitDate" :label="$t('research.variety.registration.columns.submitDate')" width="120">
+                  <el-table-column prop="enterpriseName" :label="$t('research.enterprise.form.enterpriseName')" min-width="180" />
+                  <el-table-column prop="createTime" :label="$t('research.variety.registration.columns.submitDate')" width="120">
                     <template #default="{ row }">
-                      {{ formatDate(row.submitDate) }}
+                      {{ formatDate(row.createTime) }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="recordStatus" :label="$t('research.variety.registration.columns.registrationStatus')" width="120">
@@ -146,7 +146,7 @@
                     </div>
                     <div class="card-row">
                       <span class="label">{{ $t('research.variety.registration.columns.submitDate') }}:</span>
-                      <span class="value">{{ formatDate(item.submitDate) }}</span>
+                      <span class="value">{{ formatDate(item.createTime) }}</span>
                     </div>
                   </div>
                   <div class="card-actions" @click.stop>
