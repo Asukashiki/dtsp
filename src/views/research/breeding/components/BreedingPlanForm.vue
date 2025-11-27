@@ -156,6 +156,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { addBreedingPlan, editBreedingPlan, getBreedingPlanDetail } from '@/api/enterprise'
 import { mockCropTypes, mockPropagationLevels } from '@/mock/breedingData'
 
 const { t } = useI18n()
@@ -269,21 +270,29 @@ const handleSubmit = async () => {
     await formRef.value.validate()
     submitting.value = true
 
-    // TODO: 调用API保存数据
-    // if (props.planData) {
-    //   await updateBreedingPlan(props.planData.planId, formData)
-    // } else {
-    //   await addBreedingPlan(formData)
-    // }
+    const submitData = { ...formData }
 
-    // 模拟API调用
-    setTimeout(() => {
+    // 调用API保存数据
+    let res
+    if (props.planData && props.planData.planId) {
+      // 编辑模式
+      submitData.planId = props.planData.planId
+      res = await editBreedingPlan(submitData)
+    } else {
+      // 新增模式
+      res = await addBreedingPlan(submitData)
+    }
+
+    if (res.code === 200) {
       ElMessage.success(props.planData ? t('research.breeding.plan.editSuccess') : t('research.breeding.plan.addSuccess'))
-      submitting.value = false
       emit('success')
-    }, 1000)
+    } else {
+      ElMessage.error(res.msg || t('common.failed'))
+    }
   } catch (error) {
-    console.error('Form validation failed:', error)
+    console.error('Form submission failed:', error)
+    ElMessage.error(t('common.failed'))
+  } finally {
     submitting.value = false
   }
 }

@@ -143,6 +143,19 @@ const routes = [
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
       },
+      // 种子信息服务
+      {
+        path: 'seed/promotion',
+        name: 'SeedPromotion',
+        component: () => import('../views/research/seed/SeedPromotion.vue'),
+        meta: { title: '种子推广信息管理', requiresAuth: true }
+      },
+      {
+        path: 'seed/info',
+        name: 'SeedInfo',
+        component: () => import('../views/research/variety/VarietyQuery.vue'),
+        meta: { title: '种子信息公示', requiresAuth: true }
+      },
       // 育种管理
       {
         path: 'breeding/plan',

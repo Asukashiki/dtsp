@@ -77,17 +77,17 @@
                     width="120"
                   >
                     <template #default="{ row }">
-                      {{ formatDate(row.applicationDate) }}
+                      {{ row.createTime }}
                     </template>
                   </el-table-column>
                   <el-table-column
-                    prop="currentStage"
+                    prop="auditStage"
                     :label="$t('research.audit.columns.currentStage')"
                     width="120"
                   >
                     <template #default="{ row }">
-                      <el-tag :type="getStageTagType(row.currentStage)" size="small">
-                        {{ getStageLabel(row.currentStage) }}
+                      <el-tag :type="getStageTagType(row.auditStage)" size="small">
+                        {{ getStageLabel(row.auditStage) }}
                       </el-tag>
                     </template>
                   </el-table-column>
@@ -97,12 +97,12 @@
                     width="120"
                   />
                   <el-table-column
-                    prop="auditStatus"
+                    prop="auditResult"
                     :label="$t('research.audit.columns.auditStatus')"
                     width="120"
                   >
                     <template #default="{ row }">
-                      <el-tag :type="getStatusTagType(row.auditResult)">
+                      <el-tag :type="getStatusTagType(row.auditStatus)">
                         {{ getStatusLabel(row.auditStatus) }}
                       </el-tag>
                     </template>
@@ -494,11 +494,11 @@ const rules = computed(() => ({
 // 审核列表数据
 const auditList = ref([])
 
-// 状态映射（API 返回的认证状态转换为前端使用的审核状态）
-const mapCertificationStatus = (certificationStatus) => {
-  // 1-已通过, 2-待审核, 3-已驳回
-  const statusMap = { 1: 'approved', 2: 'pending', 3: 'rejected' }
-  return statusMap[certificationStatus] || 'pending'
+// 状态映射（API 返回的审核状态转换为前端使用的审核状态）
+const mapAuditResult = (auditResult) => {
+  // 0-待审核, 1-通过, 2-驳回
+  const statusMap = { 0: 'pending', 1: 'approved', 2: 'rejected' }
+  return statusMap[auditResult] || 'pending'
 }
 
 // 筛选后的列表（后端分页，直接返回列表）
@@ -613,9 +613,8 @@ const handleSubmit = async () => {
         auditResult: formData.auditResult === 'pass' ? 1 : 2, // 1-通过/2-驳回
         auditOpinion: formData.auditOpinion,
         auditor: userStore.userInfo?.userName || 'System Admin',
-        auditStage: currentEnterprise.value.currentStage === 'initial' ? 'Initial review' :
-                    currentEnterprise.value.currentStage === 'recheck' ? 're-review' : 'final review',
-         auditId:   currentEnterprise.value.auditId        
+        auditStage: currentEnterprise.value.auditStage,
+        auditId: currentEnterprise.value.auditId
       }
 
       // 驳回时添加驳回原因
@@ -663,10 +662,10 @@ const loadData = async () => {
       params.enterpriseName = searchQuery.value
     }
 
-    // 添加状态筛选（需要转换为后端认证状态）
+    // 添加状态筛选（需要转换为后端审核状态）
     if (filterStatus.value) {
-      const statusMap = { pending: 2, approved: 1, rejected: 3 }
-      params.certificationStatus = statusMap[filterStatus.value]
+      const statusMap = { pending: 0, approved: 1, rejected: 2 }
+      params.auditResult = statusMap[filterStatus.value]
     }
 
     const res = await getEnterpriseAuditList(params)
@@ -674,7 +673,7 @@ const loadData = async () => {
       // 转换数据格式，匹配前端展示需求
       auditList.value = (res.rows || []).map(item => ({
         ...item,
-        auditStatus: mapCertificationStatus(item.certificationStatus)
+        auditStatus: mapAuditResult(item.auditResult)
       }))
 
       // 设置总数（如果后端返回了total字段）

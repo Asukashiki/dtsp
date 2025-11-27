@@ -374,17 +374,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store'
+import {
+  getPublishedVarietyList,
+  getVarietyPublishDetail,
+  publishVariety,
+  unpublishVariety
+} from '@/api/enterprise'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 const formRef = ref(null)
 
 // 视图控制
 const showDetail = ref(false)
 const currentVariety = ref({})
 const submitLoading = ref(false)
+const loading = ref(false)
 
 // 搜索和筛选
 const searchQuery = ref('')
@@ -395,6 +404,9 @@ const filterStatus = ref('')
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+
+// 列表数据
+const listData = ref([])
 
 // 发布表单数据
 const formData = reactive({
@@ -418,139 +430,101 @@ const rules = computed(() => ({
   ]
 }))
 
-// 模拟数据
-const mockData = ref([
-  {
-    publishNo: 'PUB-2024-001',
-    varietyName: 'Oromia Wheat-1',
-    varietyCode: 'OW-001',
-    cropType: 'Wheat',
-    species: 'Triticum aestivum',
-    genus: 'Triticum',
-    family: 'Poaceae',
-    breedingMethod: 'Crossbreeding',
-    minYieldPotential: 3500,
-    maxYieldPotential: 4500,
-    growthPeriod: 120,
-    approvalDate: '2024-01-20',
-    publishDate: '2024-01-25',
-    publishDept: 'Oromia Agricultural Bureau',
-    publishStatus: 'published',
-    publisher: 'Admin User',
-    publishTime: '2024-01-25 10:30',
-    publicDescription: 'High-yielding wheat variety suitable for highland regions with good drought tolerance.',
-    decisionExplanation: 'Approved based on successful field trials and demonstrated performance in target regions.',
-    recommendedRegion: 'Oromia Highland Zones, Arsi, Bale',
-    sowingGuide: 'Sow in June-July at 100-125 kg/ha seed rate. Apply 100 kg DAP and 50 kg Urea per hectare.'
-  },
-  {
-    publishNo: 'PUB-2024-002',
-    varietyName: 'High-Yield Maize-A',
-    varietyCode: 'HYM-A',
-    cropType: 'Maize',
-    species: 'Zea mays',
-    genus: 'Zea',
-    family: 'Poaceae',
-    breedingMethod: 'Hybridization',
-    minYieldPotential: 6000,
-    maxYieldPotential: 8000,
-    growthPeriod: 135,
-    approvalDate: '2024-01-22',
-    publishDate: '',
-    publishDept: 'Oromia Agricultural Bureau',
-    publishStatus: 'pending'
-  },
-  {
-    publishNo: 'PUB-2024-003',
-    varietyName: 'Golden Barley-B',
-    varietyCode: 'GBB-01',
-    cropType: 'Barley',
-    species: 'Hordeum vulgare',
-    genus: 'Hordeum',
-    family: 'Poaceae',
-    breedingMethod: 'Selection',
-    minYieldPotential: 2500,
-    maxYieldPotential: 3500,
-    growthPeriod: 95,
-    approvalDate: '2024-01-18',
-    publishDate: '2024-01-23',
-    publishDept: 'Oromia Agricultural Bureau',
-    publishStatus: 'offline',
-    publisher: 'Admin User',
-    publishTime: '2024-01-23 14:20',
-    publicDescription: 'Barley variety with excellent malting quality.',
-    decisionExplanation: 'Variety taken offline for quality reassessment.',
-    recommendedRegion: 'Oromia Midland Zones',
-    sowingGuide: 'Sow in July-August at 80-100 kg/ha seed rate.'
-  }
-])
-
 // 筛选后的列表
-const filteredList = computed(() => {
-  let list = mockData.value
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.varietyName.toLowerCase().includes(query) ||
-      item.cropType.toLowerCase().includes(query)
-    )
-  }
-
-  if (filterCrop.value) {
-    list = list.filter(item => item.cropType === filterCrop.value)
-  }
-
-  if (filterStatus.value) {
-    list = list.filter(item => item.publishStatus === filterStatus.value)
-  }
-
-  total.value = list.length
-
-  // 分页
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return list.slice(start, end)
-})
+const filteredList = computed(() => listData.value)
 
 // 处理页码变化
 const handlePageChange = (page) => {
   currentPage.value = page
+  loadData()
 }
 
 // 处理每页条数变化
 const handleSizeChange = (size) => {
   pageSize.value = size
   currentPage.value = 1
+  loadData()
 }
 
-// 获取状态标签样式
+// 获取状态标签样式 - 映射后端状态值
 const getStatusTagType = (status) => {
   const tagMap = {
+    0: 'warning',   // 待发布
+    1: 'success',   // 已发布
+    2: 'info',      // 已下架
     pending: 'warning',
     published: 'success',
     offline: 'info'
   }
-  return tagMap[status] || ''
+  return tagMap[status] || 'warning'
 }
 
 // 获取状态标签文本
 const getStatusLabel = (status) => {
-  return t(`research.variety.publish.status.${status}`)
+  // 映射后端状态到前端显示
+  const statusMap = {
+    0: 'pending',    // 待发布
+    1: 'published',  // 已发布
+    2: 'offline'     // 已下架
+  }
+  const mappedStatus = statusMap[status] || status
+  return t(`research.variety.publish.status.${mappedStatus}`)
 }
 
 // 查看详情
-const handleView = (row) => {
-  currentVariety.value = { ...row }
+const handleView = async (row) => {
+  await loadDetailData(row.publishId || row.registrationId)
   showDetail.value = true
 
   // 如果是待发布状态,初始化表单数据
-  if (row.publishStatus === 'pending') {
-    formData.publishDept = row.publishDept || 'Oromia Agricultural Bureau'
+  if (row.publishStatus === 'pending' || row.publishStatus === 0) {
+    formData.publishDept = row.publishDept || ''
     formData.publicDescription = ''
     formData.decisionExplanation = ''
     formData.recommendedRegion = ''
     formData.sowingGuide = ''
+  }
+}
+
+// 加载详情数据
+const loadDetailData = async (id) => {
+  try {
+    loading.value = true
+    // 如果有publishId则调用发布详情接口，否则调用登记详情接口
+    const res = await getVarietyPublishDetail(id)
+    if (res.code === 200 && res.data) {
+      const data = res.data
+      currentVariety.value = {
+        publishId: data.publishId || '',
+        publishNo: data.publishNo || '',
+        registrationId: data.registrationId || '',
+        varietyName: data.varietyName || '',
+        varietyCode: data.varietyCode || '',
+        cropType: data.cropType || '',
+        species: data.species || '',
+        genus: data.genus || '',
+        family: data.family || '',
+        breedingMethod: data.breedingMethod || '',
+        minYieldPotential: data.minYieldPotential || 0,
+        maxYieldPotential: data.maxYieldPotential || 0,
+        growthPeriod: data.growthPeriod || 0,
+        approvalDate: data.approvalDate || '',
+        publishDate: data.publishDate || '',
+        publishDept: data.publishDept || '',
+        publishStatus: data.publishStatus,
+        publisher: data.publisher || '',
+        publishTime: data.publishTime || '',
+        publicDescription: data.publicDescription || '',
+        decisionExplanation: data.decisionExplanation || '',
+        recommendedRegion: data.recommendedRegion || '',
+        sowingGuide: data.sowingGuide || ''
+      }
+    }
+  } catch (error) {
+    console.error('加载详情失败:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -564,7 +538,7 @@ const handleBackToList = () => {
 // 发布
 const handlePublish = async (row) => {
   // 直接跳转到详情页进行发布
-  handleView(row)
+  await handleView(row)
 }
 
 // 提交发布
@@ -584,33 +558,38 @@ const handleSubmitPublish = async () => {
 
     submitLoading.value = true
 
-    // TODO: 调用发布API
-    console.log('Publish:', {
-      publishNo: currentVariety.value.publishNo,
-      ...formData
-    })
+    try {
+      // 准备发布数据
+      const publishData = {
+        registrationId: currentVariety.value.registrationId,
+        varietyName: currentVariety.value.varietyName,
+        cropType: currentVariety.value.cropType,
+        publishDate: new Date().toISOString().split('T')[0],
+        publishDept: formData.publishDept,
+        decisionExplanation: formData.decisionExplanation,
+        publicDescription: formData.publicDescription,
+        recommendedRegion: formData.recommendedRegion,
+        sowingGuide: formData.sowingGuide,
+        publishStatus: 1, // 1-公示中
+        publisher: userStore.userInfo?.userName || userStore.userInfo?.nickName || ''
+      }
 
-    ElMessage.success(t('research.variety.publish.messages.publishSuccess'))
+      const res = await publishVariety(publishData)
+      if (res.code === 200) {
+        ElMessage.success(t('research.variety.publish.messages.publishSuccess'))
 
-    // 更新状态
-    const index = mockData.value.findIndex(item => item.publishNo === currentVariety.value.publishNo)
-    if (index !== -1) {
-      mockData.value[index].publishStatus = 'published'
-      mockData.value[index].publishDate = new Date().toISOString().split('T')[0]
-      mockData.value[index].publisher = 'Current User'
-      mockData.value[index].publishTime = new Date().toLocaleString('zh-CN')
-      mockData.value[index].publicDescription = formData.publicDescription
-      mockData.value[index].decisionExplanation = formData.decisionExplanation
-      mockData.value[index].recommendedRegion = formData.recommendedRegion
-      mockData.value[index].sowingGuide = formData.sowingGuide
-    }
-
-    setTimeout(() => {
+        setTimeout(() => {
+          handleBackToList()
+          loadData()
+        }, 1500)
+      }
+    } catch (error) {
+      console.error('发布失败:', error)
+      ElMessage.error(t('research.variety.publish.messages.publishFailed'))
+    } finally {
       submitLoading.value = false
-      handleBackToList()
-    }, 1500)
+    }
   } catch (error) {
-    submitLoading.value = false
     if (error !== 'cancel') {
       console.error('Publish error:', error)
     }
@@ -627,25 +606,72 @@ const handleOffline = (row) => {
       cancelButtonText: t('common.cancel'),
       type: 'warning'
     }
-  ).then(() => {
-    // TODO: 调用下架API
-    console.log('Offline:', row)
-    ElMessage.success(t('research.variety.publish.messages.offlineSuccess'))
+  ).then(async () => {
+    try {
+      const res = await unpublishVariety(row.publishId)
+      if (res.code === 200) {
+        ElMessage.success(t('research.variety.publish.messages.offlineSuccess'))
 
-    // 更新状态
-    const index = mockData.value.findIndex(item => item.publishNo === row.publishNo)
-    if (index !== -1) {
-      mockData.value[index].publishStatus = 'offline'
-    }
-
-    // 如果在详情页,返回列表
-    if (showDetail.value) {
-      setTimeout(() => {
-        handleBackToList()
-      }, 1500)
+        // 如果在详情页,返回列表
+        if (showDetail.value) {
+          setTimeout(() => {
+            handleBackToList()
+            loadData()
+          }, 1500)
+        } else {
+          loadData()
+        }
+      }
+    } catch (error) {
+      console.error('下架失败:', error)
+      ElMessage.error(t('research.variety.publish.messages.offlineFailed'))
     }
   }).catch(() => {})
 }
+
+// 加载列表数据
+const loadData = async () => {
+  loading.value = true
+  try {
+    // 构建查询参数
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
+
+    if (searchQuery.value) {
+      params.varietyName = searchQuery.value
+    }
+    if (filterCrop.value) {
+      params.cropType = filterCrop.value
+    }
+    if (filterStatus.value) {
+      // 映射前端状态到后端状态值
+      const statusMap = {
+        pending: 0,
+        published: 1,
+        offline: 2
+      }
+      params.publishStatus = statusMap[filterStatus.value]
+    }
+
+    const res = await getPublishedVarietyList(params)
+    if (res.code === 200) {
+      listData.value = res.rows || []
+      total.value = res.total || 0
+    }
+  } catch (error) {
+    console.error('加载数据失败:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadData()
+})
+
 </script>
 
 <style scoped>

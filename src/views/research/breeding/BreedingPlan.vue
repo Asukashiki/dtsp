@@ -214,7 +214,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import BreedingPlanForm from './components/BreedingPlanForm.vue'
-import { mockBreedingPlans, mockCropTypes, mockPlanStatus } from '@/mock/breedingData'
+import { getBreedingPlanList, removeBreedingPlan } from '@/api/enterprise'
+import { mockCropTypes, mockPlanStatus } from '@/mock/breedingData'
 
 const { t } = useI18n()
 
@@ -251,7 +252,7 @@ const filteredList = computed(() => {
     const matchSearch = !searchQuery.value ||
       item.planName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       item.batchId.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchYear = !filterYear.value || item.breedingYear === filterYear.value
+    const matchYear = !filterYear.value || String(item.breedingYear) === filterYear.value
     const matchCrop = !filterCrop.value || item.cropType === filterCrop.value
     const matchStatus = !filterStatus.value || item.status === filterStatus.value
 
@@ -294,19 +295,36 @@ const getStatusLabel = (status) => {
 }
 
 // 加载数据
-const loadData = () => {
+const loadData = async () => {
   loading.value = true
-  // 使用Mock数据
-  setTimeout(() => {
-    planList.value = mockBreedingPlans
-    loading.value = false
-  }, 500)
+  try {
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
 
-  // TODO: 替换为真实API调用
-  // getBreedingPlanList().then(res => {
-  //   planList.value = res.data
-  //   loading.value = false
-  // })
+    // 添加筛选条件
+    if (filterYear.value) params.breedingYear = filterYear.value
+    if (filterCrop.value) params.cropType = filterCrop.value
+
+    const res = await getBreedingPlanList(params)
+
+    if (res.code === 0) {
+      planList.value = res.rows || []
+      total.value = res.total || 0
+    } else {
+      ElMessage.error(res.msg || t('common.loadFailed'))
+      planList.value = []
+      total.value = 0
+    }
+  } catch (error) {
+    console.error('Failed to load breeding plans:', error)
+    ElMessage.error(t('common.loadFailed'))
+    planList.value = []
+    total.value = 0
+  } finally {
+    loading.value = false
+  }
 }
 
 // 新增
@@ -331,24 +349,35 @@ const handleEdit = (row) => {
 }
 
 // 删除
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    t('research.breeding.plan.deleteConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.breeding.plan.deleteConfirm'),
+      t('common.tips'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    loading.value = true
+    const res = await removeBreedingPlan(row.planId)
+
+    if (res.code === 200) {
+      ElMessage.success(t('research.breeding.plan.deleteSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.failed'))
     }
-  ).then(() => {
-    // TODO: 调用删除API
-    // deleteBreedingPlan(row.planId).then(() => {
-    planList.value = planList.value.filter(item => item.planId !== row.planId)
-    ElMessage.success(t('research.breeding.plan.deleteSuccess'))
-    // })
-  }).catch(() => {
-    // 取消删除
-  })
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to delete breeding plan:', error)
+      ElMessage.error(t('common.failed'))
+    }
+  } finally {
+    loading.value = false
+  }
 }
 
 // 取消表单

@@ -402,11 +402,18 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store'
+import {
+  getPendingVarietyAuditList,
+  getVarietyRegistrationDetail,
+  handleVarietyAudit
+} from '@/api/enterprise'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 const formRef = ref(null)
 
 // 视图切换
@@ -422,112 +429,12 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-// 模拟数据
-const mockData = ref([
-  {
-    applicationNo: 'VR-2024-001',
-    varietyName: 'Oromia Wheat-1',
-    varietyCode: 'OW-001',
-    cropType: 'Wheat',
-    submittingUnit: 'Oromia Seeds Production Enterprise',
-    submitDate: '2024-01-15',
-    auditStatus: 'pending',
-    auditor: '',
-    species: 'Triticum aestivum',
-    genus: 'Triticum',
-    family: 'Poaceae',
-    breedingMethod: 'Crossbreeding',
-    cultivationYear: '2023',
-    methodPedigree: 'Cross between variety A and variety B, selected for drought tolerance',
-    minYieldPotential: 3500,
-    maxYieldPotential: 4500,
-    diseaseResistance: 'Resistant to rust diseases',
-    stressResistance: 'High drought tolerance',
-    growthPeriod: 120,
-    plantHeight: 90,
-    grainQuality: 'High protein content, suitable for bread making',
-    trialLocation: 'Oromia Agricultural Research Center',
-    trialYear: '2022-2023',
-    averageYield: 4200,
-    stabilityScore: 8.5,
-    trialReport: [{ name: 'Trial_Report_2023.pdf' }],
-    photos: [{ name: 'wheat_field.jpg' }, { name: 'grain_quality.jpg' }],
-    approvalDocumentNo: 'MoA-2024-001',
-    approvalAgency: 'Ministry of Agriculture',
-    approvalDate: '2024-01-10',
-    certificationDocument: [{ name: 'Certification_2024.pdf' }]
-  },
-  {
-    applicationNo: 'VR-2024-002',
-    varietyName: 'High-Yield Maize-A',
-    varietyCode: 'HYM-A',
-    cropType: 'Maize',
-    submittingUnit: 'Green Valley Agri Trade',
-    submitDate: '2024-01-16',
-    auditStatus: 'approved',
-    auditor: 'John Doe',
-    auditTime: '2024-01-20 14:30',
-    auditOpinion: 'All documentation is complete and meets the requirements. Approved for release.',
-    species: 'Zea mays',
-    genus: 'Zea',
-    family: 'Poaceae',
-    breedingMethod: 'Hybridization',
-    cultivationYear: '2022',
-    methodPedigree: 'Hybrid of inbred lines X123 and Y456',
-    minYieldPotential: 6000,
-    maxYieldPotential: 8000,
-    diseaseResistance: 'Resistant to common leaf blight',
-    stressResistance: 'Moderate drought tolerance',
-    growthPeriod: 135,
-    plantHeight: 220,
-    grainQuality: 'Yellow dent corn, high starch content',
-    trialLocation: 'Multiple locations across Oromia',
-    trialYear: '2022-2023',
-    averageYield: 7200,
-    stabilityScore: 9.0,
-    trialReport: [{ name: 'Maize_Trial_2023.pdf' }],
-    photos: [{ name: 'maize_plant.jpg' }],
-    approvalDocumentNo: 'MoA-2024-002',
-    approvalAgency: 'Ministry of Agriculture',
-    approvalDate: '2024-01-12',
-    certificationDocument: [{ name: 'Maize_Cert.pdf' }]
-  },
-  {
-    applicationNo: 'VR-2024-003',
-    varietyName: 'Drought-Resistant Barley',
-    varietyCode: 'DRB-01',
-    cropType: 'Barley',
-    submittingUnit: 'Ethiopian Hybrid Seeds Ltd',
-    submitDate: '2024-01-17',
-    auditStatus: 'rejected',
-    auditor: 'Jane Smith',
-    auditTime: '2024-01-22 10:15',
-    auditOpinion: 'Trial data is insufficient. Please conduct additional trials in more diverse locations.',
-    species: 'Hordeum vulgare',
-    genus: 'Hordeum',
-    family: 'Poaceae',
-    breedingMethod: 'Selection',
-    cultivationYear: '2023',
-    methodPedigree: 'Selected from local landrace populations',
-    minYieldPotential: 2000,
-    maxYieldPotential: 3000,
-    diseaseResistance: 'Moderate resistance to powdery mildew',
-    stressResistance: 'Excellent drought tolerance',
-    growthPeriod: 90,
-    plantHeight: 70,
-    grainQuality: 'Suitable for malt production',
-    trialLocation: 'Single site trial',
-    trialYear: '2023',
-    averageYield: 2500,
-    stabilityScore: 6.5,
-    trialReport: [{ name: 'Barley_Trial_2023.pdf' }],
-    photos: [{ name: 'barley_field.jpg' }],
-    approvalDocumentNo: '',
-    approvalAgency: 'Ministry of Agriculture',
-    approvalDate: '',
-    certificationDocument: []
-  }
-])
+// 加载状态
+const loading = ref(false)
+const submitLoading = ref(false)
+
+// 列表数据
+const listData = ref([])
 
 // 审核表单数据
 const formData = reactive({
@@ -546,53 +453,44 @@ const rules = computed(() => ({
 }))
 
 // 筛选后的列表
-const filteredList = computed(() => {
-  let list = mockData.value
-
-  if (searchQuery.value) {
-    const keyword = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.varietyName.toLowerCase().includes(keyword) ||
-      item.submittingUnit.toLowerCase().includes(keyword)
-    )
-  }
-
-  if (filterStatus.value) {
-    list = list.filter(item => item.auditStatus === filterStatus.value)
-  }
-
-  total.value = list.length
-
-  // 分页
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return list.slice(start, end)
-})
+const filteredList = computed(() => listData.value)
 
 // 处理页码变化
 const handlePageChange = (page) => {
   currentPage.value = page
+  loadData()
 }
 
 // 处理每页条数变化
 const handleSizeChange = (size) => {
   pageSize.value = size
   currentPage.value = 1
+  loadData()
 }
 
-// 获取状态标签样式
+// 获取状态标签样式 - 映射后端状态值
 const getStatusTagType = (status) => {
   const statusMap = {
+    0: 'warning',  // 审核中
+    1: 'success',  // 待发布/审核通过
+    2: 'danger',   // 已驳回
     pending: 'warning',
     approved: 'success',
     rejected: 'danger'
   }
-  return statusMap[status] || ''
+  return statusMap[status] || 'warning'
 }
 
 // 获取状态标签文本
 const getStatusLabel = (status) => {
-  return t(`research.variety.audit.status.${status}`)
+  // 映射后端状态到前端显示
+  const statusMap = {
+    0: 'pending',  // 审核中
+    1: 'approved', // 审核通过
+    2: 'rejected'  // 已驳回
+  }
+  const mappedStatus = statusMap[status] || status
+  return t(`research.variety.audit.status.${mappedStatus}`)
 }
 
 // 格式化年份
@@ -602,19 +500,73 @@ const formatYear = (year) => {
 }
 
 // 查看（已审核的品种）
-const handleView = (row) => {
-  currentVariety.value = { ...row }
+const handleView = async (row) => {
+  await loadDetailData(row.registrationId)
   showDetail.value = true
 }
 
 // 审核
-const handleAudit = (row) => {
-  currentVariety.value = { ...row }
+const handleAudit = async (row) => {
+  await loadDetailData(row.registrationId)
   showDetail.value = true
   // 重置表单
   formData.auditResult = ''
   formData.auditOpinion = ''
   formRef.value?.clearValidate()
+}
+
+// 加载详情数据
+const loadDetailData = async (registrationId) => {
+  try {
+    loading.value = true
+    const res = await getVarietyRegistrationDetail(registrationId)
+    if (res.code === 200 && res.data) {
+      const data = res.data
+
+      // 映射后端数据到视图
+      currentVariety.value = {
+        applicationNo: data.registrationNo || '',
+        registrationId: data.registrationId || '',
+        varietyName: data.varietyName || '',
+        varietyCode: data.varietyCode || '',
+        cropType: data.cropType || '',
+        submittingUnit: data.enterpriseName || '',
+        submitDate: data.recordDate || '',
+        auditStatus: data.recordStatus,
+        auditor: data.operator || '',
+        auditTime: data.operationTime || '',
+        auditOpinion: '',
+        species: data.species || '',
+        genus: data.genus || '',
+        family: data.family || '',
+        breedingMethod: data.breedingMethod || '',
+        cultivationYear: data.breedingYear || '',
+        methodPedigree: data.methodPedigree || '',
+        minYieldPotential: data.minYieldPotential || 0,
+        maxYieldPotential: data.maxYieldPotential || 0,
+        diseaseResistance: data.diseaseResistance || '',
+        stressResistance: data.stressResistance || '',
+        growthPeriod: data.growthPeriod || 0,
+        plantHeight: data.plantHeight || 0,
+        grainQuality: data.grainQualityTraits || '',
+        trialLocation: data.testLocation || '',
+        trialYear: data.testYear || '',
+        averageYield: data.averageYield || 0,
+        stabilityScore: data.stabilityScore || 0,
+        trialReport: data.testReportUrl ? [{ name: t('research.variety.registration.form.trialReport'), url: data.testReportUrl }] : [],
+        photos: data.photoUrl ? [{ name: t('research.variety.registration.form.photos'), url: data.photoUrl }] : [],
+        approvalDocumentNo: data.approvalDocNo || '',
+        approvalAgency: data.approvalOrg || '',
+        approvalDate: data.approvalDate || '',
+        certificationDocument: data.certificationDocUrl ? [{ name: t('research.variety.registration.form.certificationDocument'), url: data.certificationDocUrl }] : []
+      }
+    }
+  } catch (error) {
+    console.error('加载详情失败:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 // 返回列表
@@ -642,35 +594,84 @@ const handleSubmit = async () => {
       }
     )
 
-    // TODO: 调用审核API
-    console.log('Submit audit:', {
-      applicationNo: currentVariety.value.applicationNo,
-      ...formData
-    })
+    submitLoading.value = true
 
-    ElMessage.success(t('research.variety.audit.messages.submitSuccess'))
+    try {
+      // 准备审核数据
+      const auditData = {
+        registrationId: currentVariety.value.registrationId,
+        enterpriseId: currentVariety.value.enterpriseId || '',
+        varietyName: currentVariety.value.varietyName,
+        auditResult: formData.auditResult === 'pass' ? 1 : 2, // 1-通过, 2-驳回
+        auditOpinion: formData.auditOpinion,
+        rejectReason: formData.auditResult === 'reject' ? formData.auditOpinion : '',
+        auditor: userStore.userInfo?.userName || userStore.userInfo?.nickName || '',
+        auditStage: '初审'
+      }
 
-    // 更新列表中的审核状态
-    const index = mockData.value.findIndex(
-      item => item.applicationNo === currentVariety.value.applicationNo
-    )
-    if (index !== -1) {
-      mockData.value[index].auditStatus = formData.auditResult === 'pass' ? 'approved' : 'rejected'
-      mockData.value[index].auditor = 'Current User' // TODO: 从用户store获取
-      mockData.value[index].auditTime = new Date().toLocaleString('zh-CN')
-      mockData.value[index].auditOpinion = formData.auditOpinion
+      const res = await handleVarietyAudit(auditData)
+      if (res.code === 200) {
+        ElMessage.success(t('research.variety.audit.messages.submitSuccess'))
+
+        // 返回列表并刷新
+        setTimeout(() => {
+          handleBackToList()
+          loadData()
+        }, 1500)
+      }
+    } catch (error) {
+      console.error('审核提交失败:', error)
+      ElMessage.error(t('research.variety.audit.messages.submitFailed'))
+    } finally {
+      submitLoading.value = false
     }
-
-    // 返回列表
-    setTimeout(() => {
-      handleBackToList()
-    }, 1500)
   } catch (error) {
     if (error !== 'cancel') {
       console.error('Audit error:', error)
     }
   }
 }
+
+// 加载待审核列表数据
+const loadData = async () => {
+  loading.value = true
+  try {
+    // 构建查询参数
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
+
+    if (searchQuery.value) {
+      params.varietyName = searchQuery.value
+    }
+    if (filterStatus.value) {
+      // 映射前端状态到后端状态值
+      const statusMap = {
+        pending: 0,
+        approved: 1,
+        rejected: 2
+      }
+      params.recordStatus = statusMap[filterStatus.value]
+    }
+
+    const res = await getPendingVarietyAuditList(params)
+    if (res.code === 200) {
+      listData.value = res.rows || []
+      total.value = res.total || 0
+    }
+  } catch (error) {
+    console.error('加载数据失败:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadData()
+})
+
 </script>
 
 <style scoped>

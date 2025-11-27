@@ -81,10 +81,10 @@
                       {{ formatDate(row.submitDate) }}
                     </template>
                   </el-table-column>
-                  <el-table-column prop="registrationStatus" :label="$t('research.variety.registration.columns.registrationStatus')" width="120">
+                  <el-table-column prop="recordStatus" :label="$t('research.variety.registration.columns.registrationStatus')" width="120">
                     <template #default="{ row }">
-                      <el-tag :type="getStatusTagType(row.registrationStatus)">
-                        {{ getStatusLabel(row.registrationStatus) }}
+                      <el-tag :type="getStatusTagType(row.recordStatus)">
+                        {{ getStatusLabel(row.recordStatus) }}
                       </el-tag>
                     </template>
                   </el-table-column>
@@ -95,11 +95,11 @@
                           <i class="ri-eye-line"></i>
                           {{ $t('common.view') }}
                         </el-button>
-                        <el-button v-if="row.registrationStatus === 'draft' || row.registrationStatus === 'rejected'" link type="primary" @click="handleEdit(row)">
+                        <el-button v-if="row.recordStatus === 2" link type="primary" @click="handleEdit(row)">
                           <i class="ri-edit-line"></i>
                           {{ $t('common.edit') }}
                         </el-button>
-                        <el-button v-if="row.registrationStatus === 'draft'" link type="danger" @click="handleDelete(row)">
+                        <el-button v-if="row.recordStatus === 2" link type="danger" @click="handleDelete(row)">
                           <i class="ri-delete-bin-line"></i>
                           {{ $t('common.delete') }}
                         </el-button>
@@ -131,8 +131,8 @@
                 <div v-for="item in filteredList" :key="item.registrationNo" class="variety-card" @click="handleView(item)">
                   <div class="card-header-mobile">
                     <div class="variety-name">{{ item.varietyName }}</div>
-                    <el-tag :type="getStatusTagType(item.registrationStatus)" size="small">
-                      {{ getStatusLabel(item.registrationStatus) }}
+                    <el-tag :type="getStatusTagType(item.recordStatus)" size="small">
+                      {{ getStatusLabel(item.recordStatus) }}
                     </el-tag>
                   </div>
                   <div class="card-body-mobile">
@@ -150,10 +150,10 @@
                     </div>
                   </div>
                   <div class="card-actions" @click.stop>
-                    <el-button v-if="item.registrationStatus === 'draft' || item.registrationStatus === 'rejected'" link type="primary" size="small" @click="handleEdit(item)">
+                    <el-button v-if="item.recordStatus === 2" link type="primary" size="small" @click="handleEdit(item)">
                       <i class="ri-edit-line"></i> {{ $t('common.edit') }}
                     </el-button>
-                    <el-button v-if="item.registrationStatus === 'draft'" link type="danger" size="small" @click="handleDelete(item)">
+                    <el-button v-if="item.recordStatus === 2" link type="danger" size="small" @click="handleDelete(item)">
                       <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
                     </el-button>
                   </div>
@@ -604,6 +604,14 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
+import {
+  submitVarietyRegistration,
+  getVarietyRegistrationList,
+  getVarietyRegistrationDetail,
+  uploadFile,
+  uploadFiles,
+  getEnterpriseCertifyDetail
+} from '@/api/enterprise'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -629,12 +637,13 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-// 模拟企业信息（实际应从后端获取当前登录企业的信息）
+// 企业信息
 const enterpriseInfo = reactive({
-  enterpriseName: 'Oromia Seeds Production Enterprise',
-  enterpriseId: 'ENT001',
-  unifiedSocialCreditCode: '123456789012345678',
-  seedLicenseNo: 'SL-2024-001'
+  enterpriseName: '',
+  enterpriseId: '',
+  unifiedSocialCreditCode: '',
+  seedLicenseNo: '',
+  enterpriseType: ''
 })
 
 // 表单数据
@@ -677,92 +686,47 @@ const rules = computed(() => ({
   cultivationYear: [{ required: true, message: t('research.variety.registration.rules.cultivationYearRequired'), trigger: 'change' }]
 }))
 
-// 模拟数据
-const mockData = ref([
-  {
-    registrationNo: 'VR-2024-001',
-    varietyName: 'Oromia Wheat-1',
-    varietyCode: 'OW-001',
-    cropType: 'Wheat',
-    submittingUnit: 'Oromia Seeds Production Enterprise',
-    submitDate: '2024-01-15',
-    registrationStatus: 'approved'
-  },
-  {
-    registrationNo: 'VR-2024-002',
-    varietyName: 'High-Yield Maize-A',
-    varietyCode: 'HYM-A',
-    cropType: 'Maize',
-    submittingUnit: 'Green Valley Agri Trade',
-    submitDate: '2024-01-16',
-    registrationStatus: 'pending'
-  },
-  {
-    registrationNo: 'VR-2024-003',
-    varietyName: 'Drought-Resistant Barley',
-    varietyCode: 'DRB-01',
-    cropType: 'Barley',
-    submittingUnit: 'Ethiopian Hybrid Seeds Ltd',
-    submitDate: '2024-01-17',
-    registrationStatus: 'draft'
-  }
-])
+// 列表数据
+const listData = ref([])
 
 // 筛选后的列表
-const filteredList = computed(() => {
-  let list = mockData.value
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.varietyName.toLowerCase().includes(query) ||
-      item.varietyCode.toLowerCase().includes(query) ||
-      item.cropType.toLowerCase().includes(query)
-    )
-  }
-
-  if (filterCrop.value) {
-    list = list.filter(item => item.cropType === filterCrop.value)
-  }
-
-  if (filterStatus.value) {
-    list = list.filter(item => item.registrationStatus === filterStatus.value)
-  }
-
-  total.value = list.length
-
-  // 分页
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return list.slice(start, end)
-})
+const filteredList = computed(() => listData.value)
 
 // 处理页码变化
 const handlePageChange = (page) => {
   currentPage.value = page
+  loadData()
 }
 
 // 处理每页条数变化
 const handleSizeChange = (size) => {
   pageSize.value = size
   currentPage.value = 1
+  loadData()
 }
 
-// 获取状态标签样式
+// 获取状态标签样式 - 映射后端状态值
 const getStatusTagType = (status) => {
   const tagMap = {
-    draft: 'info',
-    pending: 'warning',
-    approved: 'success',
-    published: '',
-    rejected: 'danger'
+    0: 'warning', // 审核中
+    1: 'success', // 待发布
+    2: 'danger',  // 已驳回
+    3: ''         // 已发布
   }
   return tagMap[status] || 'info'
 }
 
 // 获取状态标签文本
 const getStatusLabel = (status) => {
-  return t(`research.variety.registration.status.${status}`)
+  // 映射后端状态到前端显示
+  const statusMap = {
+    0: 'pending',   // 审核中
+    1: 'approved',  // 待发布
+    2: 'rejected',  // 已驳回
+    3: 'published'  // 已发布
+  }
+  const mappedStatus = statusMap[status] || status
+  return t(`research.variety.registration.status.${mappedStatus}`)
 }
 
 // 格式化日期
@@ -781,21 +745,65 @@ const handleAdd = () => {
 }
 
 // 查看
-const handleView = (row) => {
+const handleView = async (row) => {
   isEdit.value = false
   isView.value = true
   showForm.value = true
-  // TODO: 加载数据到表单
-  console.log('View:', row)
+  await loadDetailData(row.registrationId)
 }
 
 // 编辑
-const handleEdit = (row) => {
+const handleEdit = async (row) => {
   isEdit.value = true
   isView.value = false
   showForm.value = true
-  // TODO: 加载数据到表单
-  console.log('Edit:', row)
+  await loadDetailData(row.registrationId)
+}
+
+// 加载详情数据
+const loadDetailData = async (registrationId) => {
+  try {
+    loading.value = true
+    const res = await getVarietyRegistrationDetail(registrationId)
+    if (res.code === 200 && res.data) {
+      const data = res.data
+
+      // 映射后端数据到表单
+      Object.assign(formData, {
+        varietyName: data.varietyName || '',
+        varietyCode: data.varietyCode || '',
+        cropType: data.cropType || '',
+        species: data.species || '',
+        genus: data.genus || '',
+        family: data.family || '',
+        breedingMethod: data.breedingMethod || '',
+        methodPedigree: data.methodPedigree || '',
+        cultivationYear: data.breedingYear ? new Date(data.breedingYear, 0) : '',
+        minYieldPotential: data.minYieldPotential || null,
+        maxYieldPotential: data.maxYieldPotential || null,
+        diseaseResistance: data.diseaseResistance || '',
+        stressResistance: data.stressResistance || '',
+        growthPeriod: data.growthPeriod || null,
+        plantHeight: data.plantHeight || null,
+        grainQuality: data.grainQualityTraits || '',
+        trialLocation: data.testLocation || '',
+        trialYear: data.testYear ? new Date(data.testYear, 0) : '',
+        averageYield: data.averageYield || null,
+        stabilityScore: data.stabilityScore || null,
+        trialReport: data.testReportUrl ? [{ name: '试验报告', url: data.testReportUrl }] : [],
+        photos: data.photoUrl ? [{ name: '品种照片', url: data.photoUrl }] : [],
+        approvalDocumentNo: data.approvalDocNo || '',
+        approvalAgency: data.approvalOrg || '',
+        approvalDate: data.approvalDate || '',
+        certificationDocument: data.certificationDocUrl ? [{ name: '认证文件', url: data.certificationDocUrl }] : []
+      })
+    }
+  } catch (error) {
+    console.error('加载详情失败:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 // 删除
@@ -874,6 +882,30 @@ const handleSaveDraft = async () => {
   }
 }
 
+// 上传文件辅助函数
+const uploadFileHelper = async (files) => {
+  if (!files || files.length === 0) return []
+
+  const uploadedUrls = []
+  for (const file of files) {
+    if (file.raw) {
+      const formData = new FormData()
+      formData.append('file', file.raw)
+      try {
+        const res = await uploadFile(formData)
+        if (res.code === 200 && res.data) {
+          uploadedUrls.push(res.data.filePath)
+        }
+      } catch (error) {
+        console.error('文件上传失败:', error)
+      }
+    } else if (file.url) {
+      uploadedUrls.push(file.url)
+    }
+  }
+  return uploadedUrls
+}
+
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -881,21 +913,62 @@ const handleSubmit = async () => {
     submitLoading.value = true
 
     try {
-      // TODO: 调用提交API
-      const data = {
-        ...formData,
-        enterpriseId: enterpriseInfo.enterpriseId,
-        userId: userStore.userInfo?.userId
-      }
-      console.log('Submit form:', data)
-      ElMessage.success(t('research.variety.registration.messages.submitSuccess'))
+      // 上传文件
+      const testReportUrls = await uploadFileHelper(formData.trialReport)
+      const photoUrls = await uploadFileHelper(formData.photos)
+      const certDocUrls = await uploadFileHelper(formData.certificationDocument)
 
-      setTimeout(() => {
-        showForm.value = false
-        resetForm()
-      }, 1500)
+      // 准备提交数据
+      const submitData = {
+        enterpriseId: enterpriseInfo.enterpriseId,
+        enterpriseName: enterpriseInfo.enterpriseName,
+        unifiedSocialCreditCode: enterpriseInfo.unifiedSocialCreditCode,
+        enterpriseType: enterpriseInfo.enterpriseType,
+        seedLicenseNo: enterpriseInfo.seedLicenseNo,
+        recordType: '新品种登记',
+        recordDate: new Date().toISOString().split('T')[0],
+        varietyName: formData.varietyName,
+        varietyCode: formData.varietyCode,
+        cropType: formData.cropType,
+        species: formData.species,
+        genus: formData.genus,
+        family: formData.family,
+        breedingMethod: formData.breedingMethod,
+        methodPedigree: formData.methodPedigree,
+        breedingYear: formData.cultivationYear ? new Date(formData.cultivationYear).getFullYear() : null,
+        minYieldPotential: formData.minYieldPotential,
+        maxYieldPotential: formData.maxYieldPotential,
+        diseaseResistance: formData.diseaseResistance,
+        stressResistance: formData.stressResistance,
+        growthPeriod: formData.growthPeriod,
+        plantHeight: formData.plantHeight,
+        grainQualityTraits: formData.grainQuality,
+        testLocation: formData.trialLocation,
+        testYear: formData.trialYear ? new Date(formData.trialYear).getFullYear() : null,
+        averageYield: formData.averageYield,
+        stabilityScore: formData.stabilityScore,
+        testReportUrl: testReportUrls[0] || '',
+        photoUrl: photoUrls[0] || '',
+        approvalDocNo: formData.approvalDocumentNo,
+        approvalOrg: formData.approvalAgency,
+        approvalDate: formData.approvalDate ? new Date(formData.approvalDate).toISOString().split('T')[0] : '',
+        certificationDocUrl: certDocUrls[0] || '',
+        operator: userStore.userInfo?.userName || userStore.userInfo?.nickName || '',
+        operationOrg: enterpriseInfo.enterpriseName
+      }
+
+      const res = await submitVarietyRegistration(submitData)
+      if (res.code === 200) {
+        ElMessage.success(t('research.variety.registration.messages.submitSuccess'))
+        setTimeout(() => {
+          showForm.value = false
+          resetForm()
+          loadData()
+        }, 1500)
+      }
     } catch (error) {
-      console.error(error)
+      console.error('提交失败:', error)
+      ElMessage.error(t('research.variety.registration.messages.submitFailed'))
     } finally {
       submitLoading.value = false
     }
@@ -908,16 +981,55 @@ const handleSubmit = async () => {
 const loadData = async () => {
   loading.value = true
   try {
-    // TODO: 调用API获取数据
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 构建查询参数
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
+
+    if (searchQuery.value) {
+      params.varietyName = searchQuery.value
+    }
+    if (filterCrop.value) {
+      params.cropType = filterCrop.value
+    }
+    if (filterStatus.value) {
+      params.recordStatus = filterStatus.value
+    }
+
+    const res = await getVarietyRegistrationList(params)
+    if (res.code === 200) {
+      listData.value = res.rows || []
+      total.value = res.total || 0
+    }
   } catch (error) {
-    console.error(error)
+    console.error('加载数据失败:', error)
+    ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
   }
 }
 
+// 加载企业信息
+const loadEnterpriseInfo = async () => {
+  try {
+    const res = await getEnterpriseCertifyDetail()
+    if (res.code === 200 && res.data) {
+      Object.assign(enterpriseInfo, {
+        enterpriseName: res.data.enterpriseName || '',
+        enterpriseId: res.data.enterpriseId || '',
+        unifiedSocialCreditCode: res.data.unifiedSocialCreditCode || '',
+        seedLicenseNo: res.data.seedLicenseNo || '',
+        enterpriseType: res.data.enterpriseType || ''
+      })
+    }
+  } catch (error) {
+    console.error('加载企业信息失败:', error)
+  }
+}
+
 onMounted(() => {
+  loadEnterpriseInfo()
   loadData()
 })
 </script>

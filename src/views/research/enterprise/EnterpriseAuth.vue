@@ -771,7 +771,8 @@ const prepareSubmitData = () => {
     factoryLicenseUrl: formData.factoryLicense[0]?.fileId || '',
     factoryLicenseName: formData.factoryLicense[0]?.name || '',
     operator: userStore.userInfo?.userName || formData.contactPerson,
-    operationOrg: formData.enterpriseName
+    operationOrg: formData.enterpriseName,
+    enterpriseId: formData.enterpriseId
   }
 }
 
