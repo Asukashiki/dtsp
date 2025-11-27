@@ -7,6 +7,12 @@ const API_BASE_URL = import.meta.env.DEV ? '' : import.meta.env.VITE_APP_API_URL
 // API认证上下文路径
 const AUTH_CONTEXT = '/auth'
 
+
+// 数据采集API基础URL配置
+const AGRICULTURE_API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_APP_LOCAL_TEST_API_URL
+  : import.meta.env.VITE_APP_API_URL
+
 // 用于防止重复提示
 let isRedirecting = false
 
@@ -101,4 +107,71 @@ function handleUnauthorized(message) {
     isRedirecting = false
   }, 3000)
 }
+
+// Create a separate request instance for data collection APIs (without /auth prefix)
+const dataCollectionRequest = axios.create({
+  baseURL: AGRICULTURE_API_URL,
+  timeout: 10000
+})
+
+// Request interceptor for data collection
+dataCollectionRequest.interceptors.request.use(
+  config => {
+    const userStore = useUserStore()
+    if (userStore.token) {
+      config.headers['Authorization'] = `Bearer ${userStore.token}`
+    }
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+
+// Response interceptor for data collection
+dataCollectionRequest.interceptors.response.use(
+  response => {
+    const userStore = useUserStore()
+    const res = response.data
+    if (res.code !== 200 && userStore.token) {
+      if (res.code === 401 || res.status === 401) {
+        handleUnauthorized(res.message || '登录已过期，请重新登录')
+      } else if (res.code === 500) {
+        handleUnauthorized(res.message || '登录已过期，请重新登录')
+      } else {
+        ElMessage({
+          message: res.msg || '请求错误',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
+      return Promise.reject(new Error(res.msg || '请求错误'))
+    } else {
+      return res
+    }
+  },
+  error => {
+    if (error.response) {
+      const { status } = error.response
+      if (status === 401) {
+        handleUnauthorized('登录已过期，请重新登录')
+      } else {
+        ElMessage({
+          message: error.message || '请求失败',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
+    } else {
+      ElMessage({
+        message: '网络错误，请检查您的网络连接',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+    return Promise.reject(error)
+  }
+)
+
+export { dataCollectionRequest }
 export default request 

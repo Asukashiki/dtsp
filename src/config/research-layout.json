@@ -71,29 +71,29 @@
       "titleKey": "research.menu.dataCollection",
       "children": [
         {
-          "index": "/research/data/trial",
+          "index": "/research/data-collection/trial-base",
           "icon": "ri-test-tube-line",
           "titleKey": "research.menu.trialData"
         },
         {
-          "index": "/research/data/agronomic",
+          "index": "/research/data-collection/farmer-plot",
+          "icon": "ri-user-line",
+          "titleKey": "research.menu.farmerData"
+        },
+        {
+          "index": "/research/data-collection/farming-record",
+          "icon": "ri-plant-line",
+          "titleKey": "research.menu.farmingRecord"
+        },
+        {
+          "index": "/research/data-collection/agronomic-trait",
           "icon": "ri-leaf-line",
           "titleKey": "research.menu.agronomicData"
         },
         {
-          "index": "/research/data/farming",
-          "icon": "ri-tools-line",
-          "titleKey": "research.menu.farmingRecord"
-        },
-        {
-          "index": "/research/data/environment",
+          "index": "/research/data-collection/environment-soil",
           "icon": "ri-global-line",
           "titleKey": "research.menu.environmentData"
-        },
-        {
-          "index": "/research/data/farmer",
-          "icon": "ri-user-line",
-          "titleKey": "research.menu.farmerData"
         },
         {
           "index": "/research/data/lab",
@@ -109,6 +109,16 @@
           "index": "/research/data/iot",
           "icon": "ri-sensor-line",
           "titleKey": "research.menu.iotData"
+        },
+        {
+          "index": "/research/data-collection/variety-evaluation",
+          "icon": "ri-award-line",
+          "titleKey": "research.menu.varietyEvaluation"
+        },
+        {
+          "index": "/research/data-collection/laboratory-test",
+          "icon": "ri-flask-line",
+          "titleKey": "research.menu.laboratoryTest"
         }
       ]
     },
