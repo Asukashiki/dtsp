@@ -251,7 +251,7 @@ const loadData = async () => {
     }
     const res = await getFarmerPlotList(params)
     if (res.code === 200) {
-      tableData.value = res.rows || []
+      tableData.value = res.data || []
       pagination.total = res.total || 0
     }
   } catch (error) {
