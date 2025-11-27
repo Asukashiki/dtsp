@@ -208,7 +208,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import BreedingTrackingForm from './components/BreedingTrackingForm.vue'
-import { mockBreedingTrackings, mockBatchList, mockStageNames } from '@/mock/breedingData'
+import { getBreedingTrackingList, removeBreedingTracking } from '@/api/enterprise'
+import { mockBatchList, mockStageNames } from '@/mock/breedingData'
 
 const { t } = useI18n()
 
@@ -265,19 +266,36 @@ const handleSizeChange = (size) => {
 }
 
 // 加载数据
-const loadData = () => {
+const loadData = async () => {
   loading.value = true
-  // 使用Mock数据
-  setTimeout(() => {
-    trackingList.value = mockBreedingTrackings
-    loading.value = false
-  }, 500)
+  try {
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
 
-  // TODO: 替换为真实API调用
-  // getBreedingTrackingList().then(res => {
-  //   trackingList.value = res.data
-  //   loading.value = false
-  // })
+    // 添加筛选条件
+    if (filterBatch.value) params.batchId = filterBatch.value
+    if (filterStage.value) params.stageName = filterStage.value
+
+    const res = await getBreedingTrackingList(params)
+
+    if (res.code === 0) {
+      trackingList.value = res.rows || []
+      total.value = res.total || 0
+    } else {
+      ElMessage.error(res.msg || t('common.loadFailed'))
+      trackingList.value = []
+      total.value = 0
+    }
+  } catch (error) {
+    console.error('Failed to load breeding trackings:', error)
+    ElMessage.error(t('common.loadFailed'))
+    trackingList.value = []
+    total.value = 0
+  } finally {
+    loading.value = false
+  }
 }
 
 // 新增
@@ -302,24 +320,35 @@ const handleEdit = (row) => {
 }
 
 // 删除
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    t('research.breeding.tracking.deleteConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.breeding.tracking.deleteConfirm'),
+      t('common.tips'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    loading.value = true
+    const res = await removeBreedingTracking(row.trackingId)
+
+    if (res.code === 200) {
+      ElMessage.success(t('research.breeding.tracking.deleteSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.failed'))
     }
-  ).then(() => {
-    // TODO: 调用删除API
-    // deleteBreedingTracking(row.trackingId).then(() => {
-    trackingList.value = trackingList.value.filter(item => item.trackingId !== row.trackingId)
-    ElMessage.success(t('research.breeding.tracking.deleteSuccess'))
-    // })
-  }).catch(() => {
-    // 取消删除
-  })
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to delete breeding tracking:', error)
+      ElMessage.error(t('common.failed'))
+    }
+  } finally {
+    loading.value = false
+  }
 }
 
 // 取消表单

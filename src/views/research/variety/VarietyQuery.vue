@@ -20,6 +20,7 @@
           :placeholder="$t('research.variety.query.searchPlaceholder')"
           clearable
           class="search-input"
+          @input="handleSearch"
         >
           <template #prefix>
             <i class="ri-search-line"></i>
@@ -30,8 +31,10 @@
           :placeholder="$t('research.variety.query.filterByYear')"
           clearable
           class="filter-select"
+          @change="handleSearch"
         >
           <el-option :label="$t('research.variety.query.allYears')" value="" />
+          <el-option label="2025" value="2025" />
           <el-option label="2024" value="2024" />
           <el-option label="2023" value="2023" />
           <el-option label="2022" value="2022" />
@@ -41,26 +44,55 @@
           :placeholder="$t('research.variety.query.filterByCrop')"
           clearable
           class="filter-select"
+          @change="handleSearch"
         >
           <el-option :label="$t('research.variety.query.allCrops')" value="" />
-          <el-option label="Wheat" value="wheat" />
-          <el-option label="Maize" value="maize" />
-          <el-option label="Barley" value="barley" />
+          <el-option label="Wheat" value="Wheat" />
+          <el-option label="Maize" value="Maize" />
+          <el-option label="Barley" value="Barley" />
+          <el-option label="Teff" value="Teff" />
+          <el-option label="Sorghum" value="Sorghum" />
         </el-select>
       </div>
 
       <!-- PC端表格 -->
       <div class="table-container pc-only">
-        <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
-          <el-table-column prop="publishNo" :label="$t('research.variety.query.columns.publishNo')" min-width="150" />
-          <el-table-column prop="varietyName" :label="$t('research.variety.query.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropType" :label="$t('research.variety.query.columns.cropType')" width="120" />
-          <el-table-column prop="publishDate" :label="$t('research.variety.query.columns.publishDate')" width="120" />
-          <el-table-column prop="publishDept" :label="$t('research.variety.query.columns.publishDept')" min-width="180" />
-          <el-table-column :label="$t('research.variety.query.columns.actions')" width="120" fixed="right">
+        <el-table
+          v-loading="loading"
+          :data="varietyList"
+          stripe
+          style="width: 100%"
+          :empty-text="$t('home.noData')"
+        >
+          <el-table-column
+            prop="registerNo"
+            :label="$t('research.variety.query.columns.registerNo')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="varietyName"
+            :label="$t('research.variety.query.columns.varietyName')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="varietyType"
+            :label="$t('research.variety.query.columns.cropType')"
+            width="120"
+          />
+          <el-table-column
+            prop="enterpriseName"
+            :label="$t('research.variety.query.columns.enterprise')"
+            min-width="180"
+          />
+          <el-table-column
+            :label="$t('research.variety.query.columns.actions')"
+            width="120"
+            fixed="right"
+          >
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>
+                {{ $t('common.view') }}
               </el-button>
             </template>
           </el-table-column>
@@ -82,27 +114,28 @@
 
       <!-- 移动端卡片 -->
       <div class="card-container mobile-only">
-        <div v-if="filteredList.length === 0" class="empty-state">
+        <div v-if="varietyList.length === 0 && !loading" class="empty-state">
           <i class="ri-inbox-line"></i>
           <p>{{ $t('home.noData') }}</p>
         </div>
-        <div v-for="item in filteredList" :key="item.publishNo" class="variety-card" @click="handleView(item)">
+        <div
+          v-for="item in varietyList"
+          :key="item.publishId"
+          class="variety-card"
+          @click="handleView(item)"
+        >
           <div class="card-header">
             <div class="variety-name">{{ item.varietyName }}</div>
-            <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+            <el-tag type="success" size="small">{{ item.varietyType }}</el-tag>
           </div>
           <div class="card-body">
             <div class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.publishNo') }}:</span>
-              <span class="value">{{ item.publishNo }}</span>
+              <span class="label">{{ $t('research.variety.query.columns.registerNo') }}:</span>
+              <span class="value">{{ item.registerNo }}</span>
             </div>
             <div class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.publishDate') }}:</span>
-              <span class="value">{{ item.publishDate }}</span>
-            </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.publishDept') }}:</span>
-              <span class="value">{{ item.publishDept }}</span>
+              <span class="label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
+              <span class="value">{{ item.enterpriseName }}</span>
             </div>
           </div>
           <div class="card-footer">
@@ -113,7 +146,7 @@
         </div>
 
         <!-- 移动端分页 -->
-        <div class="pagination-wrapper mobile-pagination">
+        <div v-if="total > 0" class="pagination-wrapper mobile-pagination">
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -127,159 +160,247 @@
         </div>
       </div>
     </div>
+
+    <!-- 详情对话框 -->
+    <el-dialog
+      v-model="showDetailDialog"
+      :title="currentVariety.varietyName"
+      width="800px"
+      class="variety-detail-dialog"
+    >
+      <div v-loading="detailLoading" class="detail-content">
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="ri-information-line"></i>
+            {{ $t('research.variety.query.detail.basicInfo') }}
+          </h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">{{ $t('research.variety.query.columns.registerNo') }}:</span>
+              <span class="detail-value">{{ currentVariety.registerNo }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ $t('research.variety.query.columns.varietyName') }}:</span>
+              <span class="detail-value">{{ currentVariety.varietyName }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ $t('research.variety.query.columns.cropType') }}:</span>
+              <span class="detail-value">{{ currentVariety.varietyType }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
+              <span class="detail-value">{{ currentVariety.enterpriseName }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="currentVariety.baseInfo" class="detail-section">
+          <h3 class="section-title">
+            <i class="ri-file-text-line"></i>
+            {{ $t('research.variety.query.detail.description') }}
+          </h3>
+          <div class="detail-description">
+            {{ currentVariety.baseInfo }}
+          </div>
+        </div>
+
+        <div v-if="currentVariety.photoUrl" class="detail-section">
+          <h3 class="section-title">
+            <i class="ri-image-line"></i>
+            {{ $t('research.variety.query.detail.photo') }}
+          </h3>
+          <div class="detail-photo">
+            <el-image
+              :src="currentVariety.photoUrl"
+              :preview-src-list="[currentVariety.photoUrl]"
+              fit="cover"
+              class="variety-image"
+            />
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
+import { getVarietyPublicList, getVarietyPublicDetail, recordQueryBehavior } from '@/api/seedPromotion'
 
 const { t } = useI18n()
+
+// 列表数据
+const loading = ref(false)
+const varietyList = ref([])
+const total = ref(0)
+const currentPage = ref(1)
+const pageSize = ref(10)
 
 // 搜索和筛选
 const searchQuery = ref('')
 const filterYear = ref('')
 const filterCrop = ref('')
 
-// 分页
-const currentPage = ref(1)
-const pageSize = ref(10)
-const total = ref(0)
+// 详情对话框
+const showDetailDialog = ref(false)
+const detailLoading = ref(false)
+const currentVariety = ref({})
 
-// 模拟数据
-const mockData = ref([
-  {
-    publishNo: 'PUB-2024-001',
-    varietyName: 'Oromia Wheat-1',
-    cropType: 'Wheat',
-    publishDate: '2024-01-25',
-    publishDept: 'Oromia Agricultural Bureau'
-  },
-  {
-    publishNo: 'PUB-2024-002',
-    varietyName: 'Golden Maize-Supreme',
-    cropType: 'Maize',
-    publishDate: '2024-01-20',
-    publishDept: 'Oromia Agricultural Bureau'
-  },
-  {
-    publishNo: 'PUB-2023-015',
-    varietyName: 'Highland Barley-Pro',
-    cropType: 'Barley',
-    publishDate: '2023-12-15',
-    publishDept: 'Oromia Agricultural Bureau'
-  },
-  {
-    publishNo: 'PUB-2023-012',
-    varietyName: 'Drought-Resistant Wheat-3',
-    cropType: 'Wheat',
-    publishDate: '2023-11-20',
-    publishDept: 'Oromia Agricultural Bureau'
+// 加载品种列表
+const loadVarietyList = async () => {
+  loading.value = true
+  try {
+    const params = {
+      varietyName: searchQuery.value,
+      year: filterYear.value,
+      cropType: filterCrop.value,
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
+
+    const response = await getVarietyPublicList(params)
+    if (response.code === 0) {
+      varietyList.value = response.rows || []
+      total.value = response.total || 0
+
+      // 记录查询行为
+      recordQuery()
+    } else {
+      ElMessage.error(response.msg || t('research.variety.query.messages.loadFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to load variety list:', error)
+    ElMessage.error(t('research.variety.query.messages.loadFailed'))
+  } finally {
+    loading.value = false
   }
-])
-
-// 筛选后的列表
-const filteredList = computed(() => {
-  let list = mockData.value
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.varietyName.toLowerCase().includes(query)
-    )
-  }
-
-  if (filterYear.value) {
-    list = list.filter(item => item.publishDate.startsWith(filterYear.value))
-  }
-
-  if (filterCrop.value) {
-    list = list.filter(item => item.cropType.toLowerCase() === filterCrop.value)
-  }
-
-  total.value = list.length
-
-  // 分页
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return list.slice(start, end)
-})
-
-// 处理页码变化
-const handlePageChange = (page) => {
-  currentPage.value = page
 }
 
-// 处理每页条数变化
-const handleSizeChange = (size) => {
-  pageSize.value = size
+// 记录查询行为
+const recordQuery = async () => {
+  try {
+    await recordQueryBehavior({
+      queryKeyword: searchQuery.value || filterYear.value || filterCrop.value || 'all',
+      ipAddress: '', // 后端可以从请求中获取
+      queryResultCount: varietyList.value.length,
+      viewedPublishId: null
+    })
+  } catch (error) {
+    console.error('Failed to record query behavior:', error)
+  }
+}
+
+// 搜索处理
+const handleSearch = () => {
   currentPage.value = 1
+  loadVarietyList()
+}
+
+// 分页处理
+const handleSizeChange = (newSize) => {
+  pageSize.value = newSize
+  currentPage.value = 1
+  loadVarietyList()
+}
+
+const handlePageChange = (newPage) => {
+  currentPage.value = newPage
+  loadVarietyList()
 }
 
 // 查看详情
-const handleView = (row) => {
-  console.log('View detail:', row)
-  // TODO: 实现查看详情逻辑（可以跳转到详情页或弹出对话框）
+const handleView = async (row) => {
+  showDetailDialog.value = true
+  detailLoading.value = true
+  currentVariety.value = { ...row }
+
+  try {
+    const response = await getVarietyPublicDetail(row.publishId)
+    if (response.code === 200 && response.data) {
+      currentVariety.value = response.data
+
+      // 记录查看行为
+      await recordQueryBehavior({
+        queryKeyword: row.varietyName,
+        ipAddress: '',
+        queryResultCount: 1,
+        viewedPublishId: row.publishId
+      })
+    }
+  } catch (error) {
+    console.error('Failed to load variety detail:', error)
+    ElMessage.error(t('research.variety.query.messages.loadDetailFailed'))
+  } finally {
+    detailLoading.value = false
+  }
 }
+
+// 页面加载时获取数据
+onMounted(() => {
+  loadVarietyList()
+})
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .variety-query-page {
-  min-height: 100%;
   padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  min-height: calc(100vh - 60px);
 }
 
 /* 页面头部 */
 .page-header {
   display: flex;
   align-items: center;
-  gap: 24px;
+  margin-bottom: 32px;
   padding: 32px;
-  background: #fff;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   border-radius: 16px;
-  margin-bottom: 24px;
-}
+  box-shadow: 0 4px 16px rgba(254, 221, 0, 0.3);
 
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #FEDD00 0%, #FFE94D 100%);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 154, 68, 0.2);
-  flex-shrink: 0;
-}
+  .header-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
 
-.header-icon-wrapper i {
-  font-size: 40px;
-  color: #fff;
-}
+    i {
+      font-size: 40px;
+      color: white;
+    }
+  }
 
-.header-text {
-  flex: 1;
-}
+  .header-text {
+    flex: 1;
+    color: white;
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #303133;
-  margin: 0 0 8px 0;
-}
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.page-subtitle {
-  font-size: 14px;
-  color: #606266;
-  margin: 0;
+    .page-subtitle {
+      font-size: 16px;
+      opacity: 0.95;
+      margin: 0;
+    }
+  }
 }
 
 /* 列表区域 */
 .list-section {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .search-section {
@@ -287,15 +408,15 @@ const handleView = (row) => {
   gap: 16px;
   margin-bottom: 24px;
   flex-wrap: wrap;
-}
 
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
+  .search-input {
+    flex: 1;
+    min-width: 250px;
+  }
 
-.filter-select {
-  width: 200px;
+  .filter-select {
+    width: 200px;
+  }
 }
 
 .table-container {
@@ -304,11 +425,13 @@ const handleView = (row) => {
 
 /* 分页 */
 .pagination-wrapper {
-  display: flex;
-  justify-content: center;
   margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
+  display: flex;
+  justify-content: flex-end;
+
+  &.mobile-pagination {
+    justify-content: center;
+  }
 }
 
 /* 移动端卡片 */
@@ -316,89 +439,160 @@ const handleView = (row) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #909399;
+
+    i {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+
+  .variety-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #e4e7ed;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(254, 221, 0, 0.2);
+      transform: translateY(-2px);
+      border-color: #FEDD00;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e4e7ed;
+
+      .variety-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #303133;
+        flex: 1;
+      }
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+
+        .label {
+          color: #909399;
+          flex-shrink: 0;
+        }
+
+        .value {
+          color: #303133;
+          text-align: right;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .card-footer {
+      padding-top: 12px;
+      border-top: 1px solid #e4e7ed;
+      text-align: right;
+    }
+  }
 }
 
-.empty-state {
-  background: white;
-  border-radius: 12px;
-  padding: 60px 20px;
-  text-align: center;
-}
+/* 详情对话框 */
+.variety-detail-dialog {
+  .detail-content {
+    min-height: 200px;
+  }
 
-.empty-state i {
-  font-size: 64px;
-  color: #dcdfe6;
-  margin-bottom: 16px;
-}
+  .detail-section {
+    margin-bottom: 24px;
 
-.empty-state p {
-  font-size: 14px;
-  color: #909399;
-  margin: 0;
-}
+    &:last-child {
+      margin-bottom: 0;
+    }
 
-.variety-card {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: 1px solid #e4e7ed;
-}
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #303133;
+      margin: 0 0 16px 0;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e8f5e9;
 
-.variety-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.15);
-  transform: translateY(-2px);
-  border-color: #009A44;
-}
+      i {
+        font-size: 20px;
+        color: #FEDD00;
+      }
+    }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e4e7ed;
-}
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
 
-.variety-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-  flex: 1;
-}
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
 
-.card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
+        .detail-label {
+          font-size: 12px;
+          color: #909399;
+        }
 
-.card-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-}
+        .detail-value {
+          font-size: 14px;
+          color: #303133;
+          font-weight: 500;
+        }
+      }
+    }
 
-.card-row .label {
-  color: #909399;
-  flex-shrink: 0;
-}
+    .detail-description {
+      font-size: 14px;
+      color: #606266;
+      line-height: 1.8;
+      background: #F5F7FA;
+      padding: 16px;
+      border-radius: 8px;
+    }
 
-.card-row .value {
-  color: #303133;
-  text-align: right;
-  font-weight: 500;
-}
-
-.card-footer {
-  padding-top: 12px;
-  border-top: 1px solid #e4e7ed;
-  text-align: right;
+    .detail-photo {
+      .variety-image {
+        width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+    }
+  }
 }
 
 /* 响应式控制 */
@@ -417,25 +611,24 @@ const handleView = (row) => {
   }
 
   .page-header {
-    flex-wrap: wrap;
-    padding: 24px;
-  }
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
 
-  .header-icon-wrapper {
-    width: 64px;
-    height: 64px;
-  }
+    .header-icon-wrapper {
+      margin-right: 0;
+      margin-bottom: 16px;
+    }
 
-  .header-icon-wrapper i {
-    font-size: 32px;
-  }
+    .header-text {
+      .page-title {
+        font-size: 22px;
+      }
 
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
+      .page-subtitle {
+        font-size: 14px;
+      }
+    }
   }
 
   .list-section {
@@ -444,11 +637,11 @@ const handleView = (row) => {
 
   .search-section {
     flex-direction: column;
-  }
 
-  .search-input,
-  .filter-select {
-    width: 100%;
+    .search-input,
+    .filter-select {
+      width: 100%;
+    }
   }
 
   /* 移动端显示卡片 */
@@ -458,6 +651,17 @@ const handleView = (row) => {
 
   .mobile-only {
     display: flex !important;
+  }
+
+  .variety-detail-dialog {
+    :deep(.el-dialog) {
+      width: 95% !important;
+      margin: 0 auto;
+    }
+
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

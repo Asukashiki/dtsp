@@ -236,7 +236,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getTrialBaseList({
-      keyword: searchKeyword.value,
+      varietyName: searchKeyword.value,
       cropType: selectedCrop.value,
       page: pagination.page,
       pageSize: pagination.pageSize

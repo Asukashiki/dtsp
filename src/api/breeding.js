@@ -242,7 +242,7 @@ export const getTrialBaseDetail = (trialId) => {
  */
 export const addTrialBase = (data) => {
   return dataCollectionRequest({
-    url: '/seed/trial/base',
+    url: '/seed/trial/base/add',
     method: 'post',
     data
   })
@@ -303,7 +303,7 @@ export const getFarmerPlotDetail = (dataId) => {
  */
 export const addFarmerPlot = (data) => {
   return dataCollectionRequest({
-    url: '/seed/farmer/plot',
+    url: '/seed/farmer/plot/add',
     method: 'post',
     data
   })
@@ -364,7 +364,7 @@ export const getFarmingRecordDetail = (dataId) => {
  */
 export const addFarmingRecord = (data) => {
   return dataCollectionRequest({
-    url: '/seed/farming/record',
+    url: '/seed/farming/record/add',
     method: 'post',
     data
   })
@@ -425,7 +425,7 @@ export const getAgronomicTraitDetail = (dataId) => {
  */
 export const addAgronomicTrait = (data) => {
   return dataCollectionRequest({
-    url: '/seed/agronomic/trait',
+    url: '/seed/agronomic/trait/add',
     method: 'post',
     data
   })
@@ -486,7 +486,7 @@ export const getEnvironmentSoilDetail = (dataId) => {
  */
 export const addEnvironmentSoil = (data) => {
   return dataCollectionRequest({
-    url: '/seed/environment/soil',
+    url: '/seed/environment/soil/add',
     method: 'post',
     data
   })
@@ -547,7 +547,7 @@ export const getVarietyEvaluationDetail = (dataId) => {
  */
 export const addVarietyEvaluation = (data) => {
   return dataCollectionRequest({
-    url: '/seed/variety/evaluation',
+    url: '/seed/variety/evaluation/add',
     method: 'post',
     data
   })
@@ -608,7 +608,7 @@ export const getLaboratoryTestDetail = (dataId) => {
  */
 export const addLaboratoryTest = (data) => {
   return dataCollectionRequest({
-    url: '/seed/laboratory/test',
+    url: '/seed/laboratory/test/add',
     method: 'post',
     data
   })

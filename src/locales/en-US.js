@@ -977,16 +977,20 @@ export default {
         // List Columns
         columns: {
           publishNo: 'Publication No.',
+          registerNo: 'Registration No.',
           varietyName: 'Variety Name',
           cropType: 'Crop Type',
           publishDate: 'Publication Date',
           publishDept: 'Publishing Department',
+          enterprise: 'Enterprise',
           actions: 'Actions',
         },
 
         // Detail Page
         detail: {
           basicInfo: 'Variety Basic Information',
+          description: 'Variety Description',
+          photo: 'Variety Photo',
           technicalInfo: 'Technical Characteristics Information',
           trialInfo: 'Trial Information',
           publishInfo: 'Publication Information',
@@ -1001,6 +1005,12 @@ export default {
         actions: {
           viewDetail: 'View Details',
           back: 'Back',
+        },
+
+        // Messages
+        messages: {
+          loadFailed: 'Failed to load variety list',
+          loadDetailFailed: 'Failed to load variety details',
         },
       },
     },
@@ -1309,6 +1319,197 @@ export default {
           edit: 'Edit',
           delete: 'Delete',
         },
+      },
+    },
+
+    // Seed Information Service
+    seedService: {
+      // Seed Promotion Information Management
+      promotion: {
+        title: 'Seed Promotion Information Management',
+        subtitle: 'Manage seed promotion content to provide localized research results and agricultural advice to farmers and cooperatives',
+        list: 'Promotion Content List',
+        add: 'Add Promotion Content',
+        edit: 'Edit Promotion Content',
+        detail: 'Promotion Content Detail',
+        delete: 'Delete Promotion Content',
+        deleteConfirm: 'Are you sure to delete this promotion content?',
+        deleteSuccess: 'Deleted Successfully',
+        addSuccess: 'Added Successfully',
+        editSuccess: 'Edited Successfully',
+
+        // Search Filter
+        searchPlaceholder: 'Search title, recommended varieties',
+        filterByStatus: 'Filter by Publication Status',
+        allStatus: 'All Status',
+
+        // Publication Status
+        status: {
+          draft: 'Draft',
+          published: 'Published',
+          expired: 'Expired',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          promotionId: 'Promotion Content ID',
+          title: 'Promotion Title',
+          video: 'Promotional Video',
+          promotionSummary: 'Promotion Summary',
+          recommendedVarieties: 'Recommended Varieties',
+          publishTime: 'Publish Time',
+          validPeriod: 'Valid Period (Days)',
+          shareLink: 'Share Link',
+          visitCount: 'Visit Count',
+          createTime: 'Create Time',
+          updateTime: 'Update Time',
+        },
+
+        // Form Placeholders
+        placeholder: {
+          title: 'Please enter promotion title (2-100 characters)',
+          promotionSummary: 'Please enter promotion summary (200-1000 characters)',
+          recommendedVarieties: 'Please enter recommended varieties, separated by commas',
+          validPeriod: 'Please enter valid period',
+        },
+
+        // Form Validation
+        rules: {
+          titleRequired: 'Please enter promotion title',
+          titleLength: 'Promotion title should be 2-100 characters',
+          videoRequired: 'Please upload promotional video',
+          promotionSummaryLength: 'Promotion summary should be 200-1000 characters',
+          recommendedVarietiesRequired: 'Please enter recommended varieties',
+          validPeriodRequired: 'Please enter valid period',
+          validPeriodFormat: 'Valid period must be a positive integer',
+        },
+
+        // List Columns
+        columns: {
+          promotionId: 'Content ID',
+          title: 'Promotion Title',
+          recommendedVarieties: 'Recommended Varieties',
+          publishTime: 'Publish Time',
+          validPeriod: 'Valid Period',
+          visitCount: 'Visit Count',
+          status: 'Publication Status',
+          actions: 'Actions',
+        },
+
+        // Action Buttons
+        actions: {
+          submit: 'Publish',
+          saveDraft: 'Save Draft',
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          share: 'Generate Share Link',
+          copyLink: 'Copy Link',
+          preview: 'Preview Video',
+        },
+
+        // Prompt Messages
+        messages: {
+          uploadTip: 'Support MP4 format, single file no more than 50MB',
+          shareSuccess: 'Share link generated successfully',
+          copySuccess: 'Link copied to clipboard',
+          publishConfirm: 'Are you sure to publish this promotion content?',
+          expiryWarning: 'This promotion content is about to expire',
+          expired: 'This promotion content has expired',
+        },
+      },
+    },
+
+    // Seed Promotion Information Management
+    seedPromotion: {
+      title: 'Seed Promotion Management',
+      subtitle: 'Manage seed variety promotion content, upload promotional videos, generate sharing links',
+
+      // Buttons and Actions
+      uploadContent: 'Upload Promotion Content',
+      generateLink: 'Generate Share Link',
+      copyLink: 'Copy Link',
+      shareLink: 'Share Link',
+      linkCopied: 'Link copied to clipboard',
+
+      // Search and Filter
+      searchPlaceholder: 'Search promotion title',
+      filterByStatus: 'Filter by status',
+      allStatus: 'All Status',
+
+      // Status
+      status: {
+        active: 'Active',
+        expired: 'Expired',
+      },
+
+      // List Columns
+      columns: {
+        promotionId: 'Promotion ID',
+        title: 'Title',
+        recommendedVarieties: 'Recommended Varieties',
+        publishTime: 'Publish Time',
+        validPeriod: 'Valid Period (Days)',
+        visitCount: 'Visits',
+        shareLink: 'Share Link',
+        actions: 'Actions',
+      },
+
+      // Form Fields
+      form: {
+        enterpriseId: 'Enterprise ID',
+        title: 'Title',
+        videoFile: 'Promotional Video',
+        promotionSummary: 'Promotion Summary',
+        recommendedVarieties: 'Recommended Varieties',
+        validPeriod: 'Valid Period (Days)',
+        selectVideo: 'Select Video File',
+        videoTips: 'Only MP4 format supported, file size ≤ 100MB',
+        varietiesTips: 'Separate multiple varieties with commas',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        title: 'Please enter promotion title',
+        promotionSummary: 'Please enter promotion summary (optional)',
+        recommendedVarieties: 'Please enter recommended varieties, separated by commas',
+        validPeriod: 'Please enter valid period in days',
+      },
+
+      // Form Validation
+      rules: {
+        titleRequired: 'Please enter promotion title',
+        videoRequired: 'Please upload promotional video',
+        varietiesRequired: 'Please enter recommended varieties',
+        validPeriodRequired: 'Please enter valid period',
+        validPeriodFormat: 'Valid period must be a positive integer',
+      },
+
+      // Messages
+      messages: {
+        uploadSuccess: 'Promotion content uploaded successfully',
+        uploadFailed: 'Failed to upload promotion content',
+        deleteConfirm: 'Are you sure to delete this promotion content?',
+        deleteSuccess: 'Deleted successfully',
+        deleteFailed: 'Failed to delete',
+        loadFailed: 'Failed to load promotion content',
+        videoSizeExceeded: 'Video file size cannot exceed 100MB',
+        videoFormatError: 'Only MP4 format video files are allowed',
+      },
+
+      // Detail Page
+      detail: {
+        basicInfo: 'Basic Information',
+        videoPreview: 'Video Preview',
+        statistics: 'Statistics',
+      },
+
+      // Card Display (Mobile)
+      card: {
+        validUntil: 'Valid Until',
+        views: 'Views',
+        times: 'Times',
       },
     },
 

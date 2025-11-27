@@ -190,7 +190,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import BreedingMaterialForm from './components/BreedingMaterialForm.vue'
-import { mockBreedingMaterials, mockBatchList } from '@/mock/breedingData'
+import { getBreedingMaterialList, removeBreedingMaterial } from '@/api/enterprise'
+import { mockBatchList } from '@/mock/breedingData'
 
 const { t } = useI18n()
 
@@ -246,19 +247,36 @@ const handleSizeChange = (size) => {
 }
 
 // 加载数据
-const loadData = () => {
+const loadData = async () => {
   loading.value = true
-  // 使用Mock数据
-  setTimeout(() => {
-    materialList.value = mockBreedingMaterials
-    loading.value = false
-  }, 500)
+  try {
+    const params = {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value
+    }
 
-  // TODO: 替换为真实API调用
-  // getBreedingMaterialList().then(res => {
-  //   materialList.value = res.data
-  //   loading.value = false
-  // })
+    // 添加筛选条件
+    if (filterBatch.value) params.batchId = filterBatch.value
+    if (filterSeedType.value) params.seedType = filterSeedType.value
+
+    const res = await getBreedingMaterialList(params)
+
+    if (res.code === 0) {
+      materialList.value = res.rows || []
+      total.value = res.total || 0
+    } else {
+      ElMessage.error(res.msg || t('common.loadFailed'))
+      materialList.value = []
+      total.value = 0
+    }
+  } catch (error) {
+    console.error('Failed to load breeding materials:', error)
+    ElMessage.error(t('common.loadFailed'))
+    materialList.value = []
+    total.value = 0
+  } finally {
+    loading.value = false
+  }
 }
 
 // 新增
@@ -283,24 +301,35 @@ const handleEdit = (row) => {
 }
 
 // 删除
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    t('research.breeding.material.deleteConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.breeding.material.deleteConfirm'),
+      t('common.tips'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    loading.value = true
+    const res = await removeBreedingMaterial(row.materialId)
+
+    if (res.code === 200) {
+      ElMessage.success(t('research.breeding.material.deleteSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.failed'))
     }
-  ).then(() => {
-    // TODO: 调用删除API
-    // deleteBreedingMaterial(row.materialId).then(() => {
-    materialList.value = materialList.value.filter(item => item.materialId !== row.materialId)
-    ElMessage.success(t('research.breeding.material.deleteSuccess'))
-    // })
-  }).catch(() => {
-    // 取消删除
-  })
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to delete breeding material:', error)
+      ElMessage.error(t('common.failed'))
+    }
+  } finally {
+    loading.value = false
+  }
 }
 
 // 取消表单

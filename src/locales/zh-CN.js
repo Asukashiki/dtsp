@@ -977,16 +977,20 @@ export default {
         // 列表列
         columns: {
           publishNo: '发布编号',
+          registerNo: '登记号',
           varietyName: '品种名称',
           cropType: '作物类型',
           publishDate: '发布日期',
           publishDept: '发布主管部门',
+          enterprise: '企业',
           actions: '操作',
         },
 
         // 详情页
         detail: {
           basicInfo: '品种基本信息',
+          description: '品种描述',
+          photo: '品种照片',
           technicalInfo: '技术性状信息',
           trialInfo: '试验信息',
           publishInfo: '发布信息',
@@ -1001,6 +1005,12 @@ export default {
         actions: {
           viewDetail: '查看详情',
           back: '返回',
+        },
+
+        // 消息提示
+        messages: {
+          loadFailed: '加载品种列表失败',
+          loadDetailFailed: '加载品种详情失败',
         },
       },
     },
@@ -1309,6 +1319,197 @@ export default {
           edit: '编辑',
           delete: '删除',
         },
+      },
+    },
+
+    // 种子信息服务
+    seedService: {
+      // 种子推广信息管理
+      promotion: {
+        title: '种子推广信息管理',
+        subtitle: '管理种子推广内容,向农户、合作社提供本地化研究成果和农业建议',
+        list: '推广内容列表',
+        add: '新增推广内容',
+        edit: '编辑推广内容',
+        detail: '推广内容详情',
+        delete: '删除推广内容',
+        deleteConfirm: '确定删除该推广内容吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索标题、推荐品种',
+        filterByStatus: '按发布状态筛选',
+        allStatus: '全部状态',
+
+        // 发布状态
+        status: {
+          draft: '草稿',
+          published: '已发布',
+          expired: '已过期',
+        },
+
+        // 表单字段
+        form: {
+          basicInfo: '基础信息',
+          promotionId: '推广内容ID',
+          title: '推广标题',
+          video: '宣传视频',
+          promotionSummary: '推广摘要',
+          recommendedVarieties: '推荐品种',
+          publishTime: '发布时间',
+          validPeriod: '有效期（天）',
+          shareLink: '分享链接',
+          visitCount: '访问次数',
+          createTime: '创建时间',
+          updateTime: '更新时间',
+        },
+
+        // 表单占位符
+        placeholder: {
+          title: '请输入推广标题（2-100个字符）',
+          promotionSummary: '请输入推广摘要（200-1000个字符）',
+          recommendedVarieties: '请输入推荐品种,多个品种用逗号分隔',
+          validPeriod: '请输入有效期',
+        },
+
+        // 表单验证
+        rules: {
+          titleRequired: '请输入推广标题',
+          titleLength: '推广标题应为2-100个字符',
+          videoRequired: '请上传宣传视频',
+          promotionSummaryLength: '推广摘要应为200-1000个字符',
+          recommendedVarietiesRequired: '请输入推荐品种',
+          validPeriodRequired: '请输入有效期',
+          validPeriodFormat: '有效期必须为正整数',
+        },
+
+        // 列表列
+        columns: {
+          promotionId: '内容ID',
+          title: '推广标题',
+          recommendedVarieties: '推荐品种',
+          publishTime: '发布时间',
+          validPeriod: '有效期',
+          visitCount: '访问次数',
+          status: '发布状态',
+          actions: '操作',
+        },
+
+        // 操作按钮
+        actions: {
+          submit: '发布',
+          saveDraft: '保存草稿',
+          view: '查看',
+          edit: '编辑',
+          delete: '删除',
+          share: '生成分享链接',
+          copyLink: '复制链接',
+          preview: '预览视频',
+        },
+
+        // 提示信息
+        messages: {
+          uploadTip: '支持 MP4 格式，单个文件不超过50MB',
+          shareSuccess: '分享链接已生成',
+          copySuccess: '链接已复制到剪贴板',
+          publishConfirm: '确定发布该推广内容吗？',
+          expiryWarning: '该推广内容即将过期',
+          expired: '该推广内容已过期',
+        },
+      },
+    },
+
+    // 种子推广信息管理
+    seedPromotion: {
+      title: '种子推广信息管理',
+      subtitle: '管理种子品种推广内容、上传宣传视频、生成分享链接',
+
+      // 按钮和操作
+      uploadContent: '上传推广内容',
+      generateLink: '生成分享链接',
+      copyLink: '复制链接',
+      shareLink: '分享链接',
+      linkCopied: '链接已复制到剪贴板',
+
+      // 搜索和筛选
+      searchPlaceholder: '搜索推广标题',
+      filterByStatus: '按状态筛选',
+      allStatus: '全部状态',
+
+      // 状态
+      status: {
+        active: '公示中',
+        expired: '已过期',
+      },
+
+      // 列表列
+      columns: {
+        promotionId: '推广ID',
+        title: '推广标题',
+        recommendedVarieties: '推荐品种',
+        publishTime: '发布时间',
+        validPeriod: '有效期（天）',
+        visitCount: '访问次数',
+        shareLink: '分享链接',
+        actions: '操作',
+      },
+
+      // 表单字段
+      form: {
+        enterpriseId: '企业ID',
+        title: '推广标题',
+        videoFile: '宣传视频',
+        promotionSummary: '推广摘要',
+        recommendedVarieties: '推荐品种',
+        validPeriod: '有效期（天）',
+        selectVideo: '选择视频文件',
+        videoTips: '仅支持MP4格式，文件大小不超过100MB',
+        varietiesTips: '多个品种用英文逗号分隔',
+      },
+
+      // 表单占位符
+      placeholder: {
+        title: '请输入推广标题',
+        promotionSummary: '请输入推广摘要（选填）',
+        recommendedVarieties: '请输入推荐品种，多个品种用英文逗号分隔',
+        validPeriod: '请输入有效期天数',
+      },
+
+      // 表单验证
+      rules: {
+        titleRequired: '请输入推广标题',
+        videoRequired: '请上传宣传视频',
+        varietiesRequired: '请输入推荐品种',
+        validPeriodRequired: '请输入有效期',
+        validPeriodFormat: '有效期必须为正整数',
+      },
+
+      // 消息提示
+      messages: {
+        uploadSuccess: '推广内容上传成功',
+        uploadFailed: '推广内容上传失败',
+        deleteConfirm: '确认删除该推广内容吗？',
+        deleteSuccess: '删除成功',
+        deleteFailed: '删除失败',
+        loadFailed: '加载推广内容失败',
+        videoSizeExceeded: '视频文件大小不能超过100MB',
+        videoFormatError: '只能上传MP4格式的视频文件',
+      },
+
+      // 详情页
+      detail: {
+        basicInfo: '基础信息',
+        videoPreview: '视频预览',
+        statistics: '统计信息',
+      },
+
+      // 卡片展示（移动端）
+      card: {
+        validUntil: '有效期至',
+        views: '访问',
+        times: '次',
       },
     },
 
