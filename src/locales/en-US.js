@@ -2796,6 +2796,7 @@ export default {
         pendingWarnings: 'Pending Warnings',
         unit: '',
         tons: 'tons',
+        todayBusiness: 'Today Business',
       },
 
       // Top Suppliers

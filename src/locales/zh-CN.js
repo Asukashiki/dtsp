@@ -2834,6 +2834,7 @@ export default {
         pendingWarnings: '待处理预警',
         unit: '个',
         tons: '吨',
+        todayBusiness: '今日业务',
       },
 
       // 供应商TOP榜单
