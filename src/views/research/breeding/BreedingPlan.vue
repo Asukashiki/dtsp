@@ -76,21 +76,21 @@
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
                 <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
-                  <el-table-column prop="planName" :label="$t('research.breeding.plan.columns.planName')" min-width="200" />
-                  <el-table-column prop="batchId" :label="$t('research.breeding.plan.columns.batchId')" width="150" />
-                  <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" width="100" />
-                  <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" width="100" />
+                  <el-table-column prop="planName" :label="$t('research.breeding.plan.columns.planName')" min-width="150" />
+                  <el-table-column prop="batchId" :label="$t('research.breeding.plan.columns.batchId')" min-width="150" />
+                  <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" min-width="100" />
+                  <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" min-width="100" />
                   <el-table-column prop="varietyName" :label="$t('research.breeding.plan.columns.varietyName')" min-width="150" />
-                  <el-table-column prop="propagationLevel" :label="$t('research.breeding.plan.columns.propagationLevel')" width="130" />
-                  <el-table-column prop="personInCharge" :label="$t('research.breeding.plan.columns.personInCharge')" width="120" />
-                  <el-table-column prop="status" :label="$t('research.breeding.plan.columns.status')" width="100">
+                  <el-table-column prop="propagationLevel" :label="$t('research.breeding.plan.columns.propagationLevel')" min-width="130" />
+                  <el-table-column prop="personInCharge" :label="$t('research.breeding.plan.columns.personInCharge')" min-width="120" />
+                  <el-table-column prop="status" :label="$t('research.breeding.plan.columns.status')" min-width="100">
                     <template #default="{ row }">
                       <el-tag :type="getStatusTagType(row.status)">
                         {{ getStatusLabel(row.status) }}
                       </el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('research.breeding.plan.columns.actions')" width="200" fixed="right">
+                  <el-table-column :label="$t('research.breeding.plan.columns.actions')" width="265" fixed="right" >
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">
@@ -408,7 +408,7 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
 }
 

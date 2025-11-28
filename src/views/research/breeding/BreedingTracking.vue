@@ -66,28 +66,28 @@
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
                 <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
-                  <el-table-column prop="trackingId" :label="$t('research.breeding.tracking.columns.trackingId')" width="130" />
-                  <el-table-column prop="batchId" :label="$t('research.breeding.tracking.columns.batchId')" width="150" />
-                  <el-table-column prop="stageName" :label="$t('research.breeding.tracking.columns.stageName')" width="150" />
-                  <el-table-column prop="location" :label="$t('research.breeding.tracking.columns.location')" min-width="200" />
-                  <el-table-column prop="expectedYield" :label="$t('research.breeding.tracking.columns.expectedYield')" width="120" />
-                  <el-table-column prop="actualYield" :label="$t('research.breeding.tracking.columns.actualYield')" width="120">
+                  <el-table-column prop="trackingId" :label="$t('research.breeding.tracking.columns.trackingId')" min-width="130" />
+                  <el-table-column prop="batchId" :label="$t('research.breeding.tracking.columns.batchId')" min-width="150" />
+                  <el-table-column prop="stageName" :label="$t('research.breeding.tracking.columns.stageName')" min-width="150" />
+                  <el-table-column prop="location" :label="$t('research.breeding.tracking.columns.location')" min-min-width="200" />
+                  <el-table-column prop="expectedYield" :label="$t('research.breeding.tracking.columns.expectedYield')" min-width="120" />
+                  <el-table-column prop="actualYield" :label="$t('research.breeding.tracking.columns.actualYield')" min-width="120">
                     <template #default="{ row }">
                       <span>{{ row.actualYield || '-' }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="fieldInspectionScore" :label="$t('research.breeding.tracking.columns.fieldInspectionScore')" width="120">
+                  <el-table-column prop="fieldInspectionScore" :label="$t('research.breeding.tracking.columns.fieldInspectionScore')" min-width="120">
                     <template #default="{ row }">
                       <span>{{ row.fieldInspectionScore || '-' }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="stageCompletionDate" :label="$t('research.breeding.tracking.columns.stageCompletionDate')" width="120">
+                  <el-table-column prop="stageCompletionDate" :label="$t('research.breeding.tracking.columns.stageCompletionDate')" min-width="120">
                     <template #default="{ row }">
                       <span>{{ row.stageCompletionDate || '-' }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="recordTime" :label="$t('research.breeding.tracking.columns.recordTime')" width="170" />
-                  <el-table-column :label="$t('research.breeding.tracking.columns.actions')" width="200" fixed="right">
+                  <el-table-column prop="recordTime" :label="$t('research.breeding.tracking.columns.recordTime')" min-width="120" />
+                  <el-table-column :label="$t('research.breeding.tracking.columns.actions')" min-width="200" fixed="right">
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">
@@ -379,7 +379,7 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
 }
 
