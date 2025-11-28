@@ -1,4 +1,5 @@
 import agricultureRequest, { toCamelCase, toSnakeCase } from '../utils/agricultureRequest'
+import request from '../utils/request'
 
 // ==================== 供应商认证管理 API ====================
 
@@ -176,15 +177,45 @@ export const getSupplierCertList = (params = {}) => {
 }
 
 /**
+ * 转换组织树数据格式为 Cascader 所需格式
+ * @param {Array} treeData - 树形数据
+ * @returns {Array} 转换后的数组
+ */
+function transformOrgTree(treeData) {
+  if (!treeData || !Array.isArray(treeData)) return []
+
+  return treeData.map(node => {
+    const transformed = {
+      value: node.regionCode || node.orgCode,
+      label: node.regionName || node.orgName,
+      orgId: node.orgId,
+      orgType: node.orgType
+    }
+
+    // 递归处理子节点
+    if (node.children && node.children.length > 0) {
+      transformed.children = transformOrgTree(node.children)
+    }
+
+    return transformed
+  })
+}
+
+/**
  * 获取行政区划列表（用于下拉选择）
+ * 使用组织机构树接口，返回层级结构数据
  */
 export const getAdCodeList = () => {
-  return agricultureRequest({
-    url: '/system/adcode/list',
-    method: 'get'
+  return request({
+    url: '/rbac/organ/allTree',
+    method: 'get',
+    params: {
+      rootId: '778899'
+    }
   }).then(res => {
     if (res.data) {
-      res.data = res.data.map(item => toSnakeCase(item))
+      // 将数据转换为 Cascader 格式
+      res.data = transformOrgTree(res.data)
     }
     return res
   })

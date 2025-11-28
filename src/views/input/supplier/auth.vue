@@ -42,7 +42,6 @@
             <el-input
               v-model="formData.creditCode"
               :placeholder="$t('input.supplier.auth.placeholder.creditCode')"
-              maxlength="18"
               show-word-limit
               clearable
             />
@@ -60,27 +59,22 @@
             <el-input
               v-model="formData.legalId"
               :placeholder="$t('input.supplier.auth.placeholder.legalId')"
-              maxlength="18"
               show-word-limit
               clearable
             />
           </el-form-item>
 
           <el-form-item :label="$t('input.supplier.auth.form.adCode')" prop="adCode">
-            <el-select
-              v-model="formData.adCode"
+            <el-cascader
+              v-model="formData.adCodePath"
+              :options="adCodeOptions"
               :placeholder="$t('input.supplier.auth.placeholder.adCode')"
+              :props="{ checkStrictly: true, emitPath: false }"
               filterable
               clearable
               style="width: 100%"
-            >
-              <el-option
-                v-for="item in adCodeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
+              @change="handleAdCodeChange"
+            />
           </el-form-item>
 
           <el-form-item :label="$t('input.supplier.auth.form.businessScope')" prop="businessScope">
@@ -141,7 +135,6 @@
             <el-input
               v-model="formData.contactPhone"
               :placeholder="$t('input.supplier.auth.placeholder.contactPhone')"
-              maxlength="11"
               clearable
             />
           </el-form-item>
@@ -185,6 +178,7 @@ const formData = reactive({
   legalPerson: '',
   legalId: '',
   adCode: '',
+  adCodePath: null,
   businessScope: '',
   licensePath: '',
   contactName: '',
@@ -209,19 +203,13 @@ const rules = computed(() => ({
     { required: true, message: t('input.supplier.auth.rules.orgNameRequired'), trigger: 'blur' }
   ],
   creditCode: [
-    { required: true, message: t('input.supplier.auth.rules.creditCodeRequired'), trigger: 'blur' },
-    { len: 18, message: t('input.supplier.auth.rules.creditCodeLength'), trigger: 'blur' }
+    { required: true, message: t('input.supplier.auth.rules.creditCodeRequired'), trigger: 'blur' }
   ],
   legalPerson: [
     { required: true, message: t('input.supplier.auth.rules.legalPersonRequired'), trigger: 'blur' }
   ],
   legalId: [
-    { required: true, message: t('input.supplier.auth.rules.legalIdRequired'), trigger: 'blur' },
-    {
-      pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-      message: t('input.supplier.auth.rules.legalIdFormat'),
-      trigger: 'blur'
-    }
+    { required: true, message: t('input.supplier.auth.rules.legalIdRequired'), trigger: 'blur' }
   ],
   adCode: [
     { required: true, message: t('input.supplier.auth.rules.adCodeRequired'), trigger: 'change' }
@@ -236,8 +224,7 @@ const rules = computed(() => ({
     { required: true, message: t('input.supplier.auth.rules.contactNameRequired'), trigger: 'blur' }
   ],
   contactPhone: [
-    { required: true, message: t('input.supplier.auth.rules.contactPhoneRequired'), trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: t('input.supplier.auth.rules.contactPhoneFormat'), trigger: 'blur' }
+    { required: true, message: t('input.supplier.auth.rules.contactPhoneRequired'), trigger: 'blur' }
   ]
 }))
 
@@ -246,14 +233,16 @@ const loadAdCodeList = async () => {
   try {
     const res = await getAdCodeList()
     if (res.code === 200 && res.data) {
-      adCodeOptions.value = res.data.map(item => ({
-        value: item.code,
-        label: `${item.name} (${item.code})`
-      }))
+      adCodeOptions.value = res.data
     }
   } catch (error) {
     console.error('Failed to load ad code list:', error)
   }
+}
+
+// 处理行政区划选择变化
+const handleAdCodeChange = (value) => {
+  formData.adCode = value || ''
 }
 
 // 上传前验证

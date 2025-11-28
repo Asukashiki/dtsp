@@ -200,7 +200,7 @@ export default {
 
         placeholder: {
           orgName: 'Please enter enterprise/organization name',
-          creditCode: 'Please enter unified social credit code (18 digits)',
+          creditCode: 'Please enter unified social credit code',
           legalPerson: 'Please enter legal representative/person in charge',
           legalId: 'Please enter ID number',
           adCode: 'Please select administrative region',
@@ -212,7 +212,7 @@ export default {
         rules: {
           orgNameRequired: 'Please enter enterprise/organization name',
           creditCodeRequired: 'Please enter unified social credit code',
-          creditCodeLength: 'Unified social credit code should be 18 digits',
+          creditCodeLength: 'Unified social credit code',
           legalPersonRequired: 'Please enter legal representative/person in charge',
           legalIdRequired: 'Please enter legal representative ID number',
           legalIdFormat: 'Please enter a valid ID number',

@@ -72,20 +72,16 @@
               <el-col :xs="24" :sm="12" :md="8" :lg="6">
                 <div class="filter-item">
                   <label class="filter-label">{{ $t('input.supplier.info.filter.adCode') }}</label>
-                  <el-select
-                    v-model="searchFilters.adCode"
+                  <el-cascader
+                    v-model="searchFilters.adCodePath"
+                    :options="adCodeOptions"
                     :placeholder="$t('input.supplier.info.filter.allRegion')"
+                    :props="{ checkStrictly: true, emitPath: false }"
                     filterable
                     clearable
                     style="width: 100%"
-                  >
-                    <el-option
-                      v-for="item in adCodeOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                    @change="handleAdCodeChange"
+                  />
                 </div>
               </el-col>
 
@@ -324,7 +320,8 @@ const adCodeOptions = ref([])
 const searchFilters = reactive({
   keyword: '',
   status: '',
-  adCode: ''
+  adCode: '',
+  adCodePath: null
 })
 
 // 时间范围
@@ -354,14 +351,16 @@ const loadAdCodeList = async () => {
   try {
     const res = await getAdCodeList()
     if (res.code === 200 && res.data) {
-      adCodeOptions.value = res.data.map(item => ({
-        value: item.code,
-        label: `${item.name} (${item.code})`
-      }))
+      adCodeOptions.value = res.data
     }
   } catch (error) {
     console.error('Failed to load ad code list:', error)
   }
+}
+
+// 处理行政区划选择变化
+const handleAdCodeChange = (value) => {
+  searchFilters.adCode = value || ''
 }
 
 // 加载数据
@@ -413,6 +412,7 @@ const handleReset = () => {
   searchFilters.keyword = ''
   searchFilters.status = ''
   searchFilters.adCode = ''
+  searchFilters.adCodePath = null
   applyTimeRange.value = []
   approveTimeRange.value = []
   pagination.page = 1
@@ -423,6 +423,7 @@ const handleReset = () => {
 const handleResetFilters = () => {
   searchFilters.status = ''
   searchFilters.adCode = ''
+  searchFilters.adCodePath = null
   applyTimeRange.value = []
   approveTimeRange.value = []
 }
