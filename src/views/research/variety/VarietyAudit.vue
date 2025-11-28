@@ -38,6 +38,7 @@
           <el-option :label="$t('research.variety.audit.status.pending')" value="pending" />
           <el-option :label="$t('research.variety.audit.status.approved')" value="approved" />
           <el-option :label="$t('research.variety.audit.status.rejected')" value="rejected" />
+          <el-option :label="$t('research.variety.audit.status.published')" value="published" />
         </el-select>
       </div>
         <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
@@ -53,8 +54,8 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="auditor" :label="$t('research.variety.audit.columns.auditor')" width="120" />
-          <el-table-column :label="$t('research.variety.audit.columns.actions')" width="200" fixed="right" align="center">
+          <el-table-column prop="auditor" :label="$t('research.variety.audit.columns.auditor')" min-width="120" />
+          <el-table-column :label="$t('research.variety.audit.columns.actions')" width="300" fixed="right" align="center">
             <template #default="{ row }">
               <div class="action-buttons">
                 <el-button
@@ -478,7 +479,8 @@ const getStatusTagType = (status) => {
   const statusMap = {
     0: 'warning',  // 审核中
     1: 'success',  // 待发布/审核通过
-    2: 'danger'    // 审核未通过
+    2: 'danger',   // 审核未通过
+    3: 'success'      // 已发布
   }
   return statusMap[status] || 'warning'
 }
@@ -487,9 +489,10 @@ const getStatusTagType = (status) => {
 const getStatusLabel = (status) => {
   // 映射后端状态到前端显示
   const statusMap = {
-    0: 'pending',  // 审核中
-    1: 'approved', // 待发布
-    2: 'rejected'  // 审核未通过
+    0: 'pending',   // 审核中
+    1: 'approved',  // 待发布
+    2: 'rejected',  // 审核未通过
+    3: 'published'  // 已发布
   }
   const mappedStatus = statusMap[status]
   return t(`research.variety.audit.status.${mappedStatus}`)
@@ -659,7 +662,8 @@ const loadData = async () => {
       const statusMap = {
         pending: 0,
         approved: 1,
-        rejected: 2
+        rejected: 2,
+        published: 3
       }
       params.auditResult = statusMap[filterStatus.value]
     }

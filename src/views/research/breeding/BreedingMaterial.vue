@@ -70,10 +70,10 @@
                   <el-table-column prop="warehouseInId" :label="$t('research.breeding.material.columns.warehouseInId')" min-width="150" />
                   <el-table-column prop="seedType" :label="$t('research.breeding.material.columns.seedType')" min-width="150" />
                   <el-table-column prop="quantity" :label="$t('research.breeding.material.columns.quantity')" min-width="120" />
-                  <el-table-column prop="sourceEntity" :label="$t('research.breeding.material.columns.sourceEntity')" min-width="180" />
+                  <el-table-column prop="sourceEntity" :label="$t('research.breeding.material.columns.sourceEntity')" min-width="180" show-overflow-tooltip />
                   <el-table-column prop="receiveDate" :label="$t('research.breeding.material.columns.receiveDate')" min-width="120" />
                   <el-table-column prop="operationTime" :label="$t('research.breeding.material.columns.operationTime')" min-width="170" />
-                  <el-table-column :label="$t('research.breeding.material.columns.actions')" min-width="200" fixed="right">
+                  <el-table-column :label="$t('research.breeding.material.columns.actions')" width="300" fixed="right">
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">

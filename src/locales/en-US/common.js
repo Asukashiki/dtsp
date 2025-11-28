@@ -32,5 +32,15 @@ export default {
   submitFailed: 'Submit failed',
   actions: 'Actions',
   audit: 'Audit',
-  update: 'Update'
+  update: 'Update',
+
+  // Crop Types (Common)
+  cropTypes: {
+    wheat: 'Wheat',
+    maize: 'Maize',
+    sorghum: 'Sorghum',
+    teff: 'Teff',
+    barley: 'Barley',
+    pulses: 'Pulses',
+  }
 }

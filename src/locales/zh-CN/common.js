@@ -32,5 +32,15 @@ export default {
     submitFailed: '提交失败',
     actions: '操作',
     audit: '审核',
-    update: '更新'
+    update: '更新',
+
+    // 作物类型(通用)
+    cropTypes: {
+      wheat: '小麦',
+      maize: '玉米',
+      sorghum: '高粱',
+      teff: '苔麸',
+      barley: '大麦',
+      pulses: '豆类',
+    }
   }

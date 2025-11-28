@@ -193,6 +193,9 @@ export default {
         deleteConfirm: 'Are you sure to delete this enterprise authentication application?',
         deleteSuccess: 'Deleted successfully',
         uploadTip: 'Supports PDF, JPG formats, single file size less than 2MB',
+        rejectedTitle: 'Audit Failed',
+        notApplied: 'Not Applied',
+        tonsPerYear: 'tons/year',
       },
     },
 
@@ -246,6 +249,7 @@ export default {
         pending: 'In Review',
         approved: 'Approved',
         rejected: 'Rejected',
+        published: 'Published',
       },
 
       // Audit Stage
@@ -495,6 +499,7 @@ export default {
           pending: 'In Review',
           approved: 'Approved',
           rejected: 'Rejected',
+          published: 'Published',
         },
 
         // List Columns
@@ -742,6 +747,16 @@ export default {
           preBasic: 'Pre-basic Seed',
           basic: 'Basic Seed',
           certified: 'Certified Seed',
+        },
+
+        // Crop Types (common, better in common.js, but keep here as well)
+        cropTypes: {
+          wheat: 'Wheat',
+          maize: 'Maize',
+          sorghum: 'Sorghum',
+          teff: 'Teff',
+          barley: 'Barley',
+          pulses: 'Pulses',
         },
 
         // Form Fields

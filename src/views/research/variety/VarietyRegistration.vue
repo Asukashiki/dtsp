@@ -79,7 +79,7 @@
                       </el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('research.variety.registration.columns.actions')" width="240" fixed="right">
+                  <el-table-column :label="$t('research.variety.registration.columns.actions')" width="300" fixed="right">
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">

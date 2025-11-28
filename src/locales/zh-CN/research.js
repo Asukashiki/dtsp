@@ -193,6 +193,9 @@ export default {
         deleteConfirm: '确定删除该企业认证申请吗？',
         deleteSuccess: '删除成功',
         uploadTip: '支持 PDF、JPG 格式，单个文件不超过2MB',
+        rejectedTitle: '审核未通过',
+        notApplied: '未申请',
+        tonsPerYear: '吨/年',
       },
     },
 
@@ -246,6 +249,7 @@ export default {
         pending: '审核中',
         approved: '已通过',
         rejected: '已驳回',
+        published: '已发布',
       },
 
       // 审核阶段
@@ -495,6 +499,7 @@ export default {
           pending: '审核中',
           approved: '已通过',
           rejected: '已驳回',
+          published: '已发布',
         },
 
         // 列表列
@@ -742,6 +747,16 @@ export default {
           preBasic: '原原种',
           basic: '原种',
           certified: '良种',
+        },
+
+        // 作物类型(通用,移到common.js更好,但这里也保留一份)
+        cropTypes: {
+          wheat: '小麦',
+          maize: '玉米',
+          sorghum: '高粱',
+          teff: '苔麸',
+          barley: '大麦',
+          pulses: '豆类',
         },
 
         // 表单字段
