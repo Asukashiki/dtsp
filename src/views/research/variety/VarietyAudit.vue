@@ -63,7 +63,11 @@
                   link
                   @click="handleAudit(row)"
                 >
+                  <i class="ri-file-edit-line"></i>
+                  {{ $t('research.variety.audit.actions.audit') }}
+                </el-button>
                 <el-button
+                  v-else
                   type="primary"
                   link
                   @click="handleView(row)"
