@@ -31,6 +31,7 @@
                   :placeholder="$t('research.audit.search.placeholder')"
                   clearable
                   class="search-input"
+                  @clear="handleSearch"
                 >
                   <template #prefix>
                     <i class="ri-search-line"></i>
@@ -41,6 +42,7 @@
                   :placeholder="$t('research.enterprise.filterByStatus')"
                   clearable
                   class="filter-select"
+                  @clear="handleSearch"
                 >
                   <el-option :label="$t('research.enterprise.allStatus')" value="" />
                   <el-option :label="$t('research.audit.status.pending')" value="pending" />
@@ -494,6 +496,9 @@ const rules = computed(() => ({
 // 审核列表数据
 const auditList = ref([])
 
+// 防抖定时器
+let searchDebounceTimer = null
+
 // 状态映射（API 返回的审核状态转换为前端使用的审核状态）
 const mapAuditResult = (auditResult) => {
   // 0-待审核, 1-通过, 2-驳回
@@ -648,6 +653,12 @@ const handleSubmit = async () => {
   }
 }
 
+// 搜索处理（带防抖）
+const handleSearch = () => {
+  currentPage.value = 1
+  loadData()
+}
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -689,10 +700,14 @@ const loadData = async () => {
   }
 }
 
-// 监听搜索和筛选条件变化
+// 监听搜索和筛选条件变化（带防抖）
 watch([searchQuery, filterStatus], () => {
-  currentPage.value = 1
-  loadData()
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+  searchDebounceTimer = setTimeout(() => {
+    handleSearch()
+  }, 500)
 })
 
 onMounted(() => {

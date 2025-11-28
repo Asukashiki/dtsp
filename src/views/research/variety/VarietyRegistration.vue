@@ -38,33 +38,24 @@
                   :placeholder="$t('research.variety.registration.searchPlaceholder')"
                   clearable
                   class="search-input"
+                  @clear="handleSearch"
                 >
                   <template #prefix>
                     <i class="ri-search-line"></i>
                   </template>
                 </el-input>
                 <el-select
-                  v-model="filterCrop"
-                  :placeholder="$t('research.variety.registration.filterByCrop')"
-                  clearable
-                  class="filter-select"
-                >
-                  <el-option :label="$t('research.variety.registration.allCrops')" value="" />
-                  <el-option label="Wheat" value="Wheat" />
-                  <el-option label="Maize" value="Maize" />
-                  <el-option label="Barley" value="Barley" />
-                </el-select>
-                <el-select
                   v-model="filterStatus"
                   :placeholder="$t('research.variety.registration.filterByStatus')"
                   clearable
                   class="filter-select"
+                  @clear="handleSearch"
                 >
                   <el-option :label="$t('research.variety.registration.allStatus')" value="" />
-                  <el-option :label="$t('research.variety.registration.status.draft')" value="draft" />
-                  <el-option :label="$t('research.variety.registration.status.pending')" value="pending" />
-                  <el-option :label="$t('research.variety.registration.status.approved')" value="approved" />
-                  <el-option :label="$t('research.variety.registration.status.rejected')" value="rejected" />
+                  <el-option :label="$t('research.variety.registration.status.draft')" value="2" />
+                  <el-option :label="$t('research.variety.registration.status.pending')" value="0" />
+                  <el-option :label="$t('research.variety.registration.status.approved')" value="1" />
+                  <el-option :label="$t('research.variety.registration.status.rejected')" value="2" />
                 </el-select>
               </div>
 
@@ -75,10 +66,10 @@
                   <el-table-column prop="varietyName" :label="$t('research.variety.registration.columns.varietyName')" min-width="150" />
                   <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" width="120" />
                   <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" width="120" />
-                  <el-table-column prop="submittingUnit" :label="$t('research.variety.registration.columns.submittingUnit')" min-width="180" />
-                  <el-table-column prop="submitDate" :label="$t('research.variety.registration.columns.submitDate')" width="120">
+                  <el-table-column prop="enterpriseName" :label="$t('research.enterprise.form.enterpriseName')" min-width="180" />
+                  <el-table-column prop="createTime" :label="$t('research.variety.registration.columns.submitDate')" width="120">
                     <template #default="{ row }">
-                      {{ formatDate(row.submitDate) }}
+                      {{ formatDate(row.createTime) }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="recordStatus" :label="$t('research.variety.registration.columns.registrationStatus')" width="120">
@@ -146,7 +137,7 @@
                     </div>
                     <div class="card-row">
                       <span class="label">{{ $t('research.variety.registration.columns.submitDate') }}:</span>
-                      <span class="value">{{ formatDate(item.submitDate) }}</span>
+                      <span class="value">{{ formatDate(item.createTime) }}</span>
                     </div>
                   </div>
                   <div class="card-actions" @click.stop>
@@ -600,7 +591,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
@@ -685,6 +676,9 @@ const rules = computed(() => ({
   breedingMethod: [{ required: true, message: t('research.variety.registration.rules.breedingMethodRequired'), trigger: 'change' }],
   cultivationYear: [{ required: true, message: t('research.variety.registration.rules.cultivationYearRequired'), trigger: 'change' }]
 }))
+
+// 防抖定时器
+let searchDebounceTimer = null
 
 // 列表数据
 const listData = ref([])
@@ -977,6 +971,12 @@ const handleSubmit = async () => {
   }
 }
 
+// 搜索处理（带防抖）
+const handleSearch = () => {
+  currentPage.value = 1
+  loadData()
+}
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -989,9 +989,6 @@ const loadData = async () => {
 
     if (searchQuery.value) {
       params.varietyName = searchQuery.value
-    }
-    if (filterCrop.value) {
-      params.cropType = filterCrop.value
     }
     if (filterStatus.value) {
       params.recordStatus = filterStatus.value
@@ -1009,6 +1006,16 @@ const loadData = async () => {
     loading.value = false
   }
 }
+
+// 监听搜索条件变化（带防抖）
+watch([searchQuery, filterStatus], () => {
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+  searchDebounceTimer = setTimeout(() => {
+    handleSearch()
+  }, 500)
+})
 
 // 加载企业信息
 const loadEnterpriseInfo = async () => {
