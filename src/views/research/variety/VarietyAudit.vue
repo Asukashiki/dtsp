@@ -44,8 +44,8 @@
           <el-table-column prop="registrationNo" :label="$t('research.variety.audit.columns.applicationNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.audit.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" min-width="120" />
-          <el-table-column prop="submittingUnit" :label="$t('research.variety.audit.columns.submittingUnit')" min-width="180" />
-          <el-table-column prop="submitDate" :label="$t('research.variety.audit.columns.submitDate')" min-width="160" />
+          <el-table-column prop="enterpriseName" :label="$t('research.variety.audit.columns.submittingUnit')" min-width="180" />
+          <el-table-column prop="recordDate" :label="$t('research.variety.audit.columns.submitDate')" min-width="160" />
           <el-table-column prop="recordStatus" :label="$t('research.variety.audit.columns.auditStatus')" min-width="160">
             <template #default="{ row }">
               <el-tag :type="getStatusTagType(row.recordStatus)">
@@ -63,9 +63,11 @@
                   link
                   @click="handleAudit(row)"
                 >
-                 {{$t('common.audit') }}
-              </el-button>
+                  <i class="ri-file-edit-line"></i>
+                  {{ $t('research.variety.audit.actions.audit') }}
+                </el-button>
                 <el-button
+                  v-else
                   type="primary"
                   link
                   @click="handleView(row)"

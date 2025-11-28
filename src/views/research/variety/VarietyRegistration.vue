@@ -789,7 +789,8 @@ const loadDetailData = async (registrationId) => {
         approvalDocumentNo: data.approvalDocNo || '',
         approvalAgency: data.approvalOrg || '',
         approvalDate: data.approvalDate || '',
-        certificationDocument: data.certificationDocUrl ? [{ name: '认证文件', url: data.certificationDocUrl }] : []
+        certificationDocument: data.certificationDocUrl ? [{ name: '认证文件', url: data.certificationDocUrl }] : [],
+        registrationId: data.registrationId || ''
       })
     }
   } catch (error) {
@@ -948,7 +949,8 @@ const handleSubmit = async () => {
         approvalDate: formData.approvalDate ? new Date(formData.approvalDate).toISOString().split('T')[0] : '',
         certificationDocUrl: certDocUrls[0] || '',
         operator: userStore.userInfo?.userName || userStore.userInfo?.nickName || '',
-        operationOrg: enterpriseInfo.enterpriseName
+        operationOrg: enterpriseInfo.enterpriseName,
+        registrationId: formData.registrationId || ''
       }
 
       const res = await submitVarietyRegistration(submitData)

@@ -77,7 +77,7 @@
           <el-table-column
             prop="varietyType"
             :label="$t('research.variety.query.columns.cropType')"
-            width="120"
+            min-width="120"
           />
           <el-table-column
             prop="enterpriseName"
@@ -224,12 +224,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getVarietyPublicList, getVarietyPublicDetail, recordQueryBehavior } from '@/api/seedPromotion'
 
 const { t } = useI18n()
+
+// 防抖定时器
+let searchDebounceTimer = null
 
 // 列表数据
 const loading = ref(false)
@@ -261,12 +264,13 @@ const loadVarietyList = async () => {
     }
 
     const response = await getVarietyPublicList(params)
-    if (response.code === 0) {
+    // 处理新的响应格式 { code: 0, msg: "", rows: [], total: 10 }
+    if (response.code === 200) {
       varietyList.value = response.rows || []
       total.value = response.total || 0
 
       // 记录查询行为
-      recordQuery()
+      // recordQuery()
     } else {
       ElMessage.error(response.msg || t('research.variety.query.messages.loadFailed'))
     }
@@ -281,21 +285,29 @@ const loadVarietyList = async () => {
 // 记录查询行为
 const recordQuery = async () => {
   try {
-    await recordQueryBehavior({
-      queryKeyword: searchQuery.value || filterYear.value || filterCrop.value || 'all',
-      ipAddress: '', // 后端可以从请求中获取
-      queryResultCount: varietyList.value.length,
-      viewedPublishId: null
-    })
+    // await recordQueryBehavior({
+    //   queryKeyword: searchQuery.value || filterYear.value || filterCrop.value || 'all',
+    //   ipAddress: '', // 后端可以从请求中获取
+    //   queryResultCount: varietyList.value.length,
+    //   viewedPublishId: null
+    // })
   } catch (error) {
     console.error('Failed to record query behavior:', error)
   }
 }
 
-// 搜索处理
+// 搜索处理（带防抖）
 const handleSearch = () => {
-  currentPage.value = 1
-  loadVarietyList()
+  // 清除之前的定时器
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+
+  // 设置新的定时器（500ms 防抖）
+  searchDebounceTimer = setTimeout(() => {
+    currentPage.value = 1
+    loadVarietyList()
+  }, 500)
 }
 
 // 分页处理
@@ -318,16 +330,12 @@ const handleView = async (row) => {
 
   try {
     const response = await getVarietyPublicDetail(row.publishId)
+    // 统一使用 code: 0 表示成功
     if (response.code === 200 && response.data) {
       currentVariety.value = response.data
 
-      // 记录查看行为
-      await recordQueryBehavior({
-        queryKeyword: row.varietyName,
-        ipAddress: '',
-        queryResultCount: 1,
-        viewedPublishId: row.publishId
-      })
+    } else if (response.code !== 200) {
+      ElMessage.error(response.msg || t('research.variety.query.messages.loadDetailFailed'))
     }
   } catch (error) {
     console.error('Failed to load variety detail:', error)
@@ -340,6 +348,13 @@ const handleView = async (row) => {
 // 页面加载时获取数据
 onMounted(() => {
   loadVarietyList()
+})
+
+// 组件卸载时清除定时器
+onUnmounted(() => {
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
 })
 </script>
 

@@ -46,33 +46,33 @@
         <el-table-column
           prop="promotionId"
           :label="$t('research.seedPromotion.columns.promotionId')"
-          width="180"
+          min-width="180"
         />
         <el-table-column
           prop="title"
           :label="$t('research.seedPromotion.columns.title')"
-          min-width="200"
+          min-width="120"
         />
         <el-table-column
           prop="recommendedVarieties"
           :label="$t('research.seedPromotion.columns.recommendedVarieties')"
-          min-width="180"
+          min-width="120"
         />
         <el-table-column
           prop="publishTime"
           :label="$t('research.seedPromotion.columns.publishTime')"
-          width="160"
+           min-width="120"
         />
         <el-table-column
           prop="validPeriod"
           :label="$t('research.seedPromotion.columns.validPeriod')"
-          width="120"
+          width="130"
           align="center"
         />
         <el-table-column
           prop="visitCount"
           :label="$t('research.seedPromotion.columns.visitCount')"
-          width="100"
+          width="130"
           align="center"
         >
           <template #default="{ row }">
@@ -104,7 +104,7 @@
         </el-table-column>
         <el-table-column
           :label="$t('research.seedPromotion.columns.actions')"
-          width="180"
+          width="240"
           fixed="right"
         >
           <template #default="{ row }">
@@ -272,7 +272,7 @@ const loadPromotionList = async () => {
     }
 
     const response = await getPromotionList(params)
-    if (response.code === 0) {
+    if (response.code === 200) {
       promotionList.value = response.rows || []
       total.value = response.total || 0
     } else {

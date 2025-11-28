@@ -280,7 +280,7 @@ const loadData = async () => {
 
     const res = await getBreedingTrackingList(params)
 
-    if (res.code === 0) {
+    if (res.code === 200) {
       trackingList.value = res.rows || []
       total.value = res.total || 0
     } else {
