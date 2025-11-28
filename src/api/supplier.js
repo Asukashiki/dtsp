@@ -87,6 +87,62 @@ export const getSupplierCertStatus = (userId) => {
 }
 
 /**
+ * 根据用户ID查询认证信息
+ * @param {number} userId - 用户ID
+ */
+export const getSupplierCertByUser = (userId) => {
+  return agricultureRequest({
+    url: `/supplier/cert/user/${userId}`,
+    method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 更新供应商认证信息
+ * @param {Object} data - 更新数据
+ * @param {number} data.certId - 认证ID
+ * @param {string} data.orgName - 企业/组织名称
+ * @param {string} data.creditCode - 统一社会信用代码
+ * @param {string} data.legalPerson - 法定代表人/负责人
+ * @param {string} data.legalId - 法定代表人身份证号
+ * @param {string} data.adCode - 行政区划代码
+ * @param {string} data.businessScope - 经营范围/主要产品
+ * @param {string} data.licensePath - 营业执照存储路径
+ * @param {string} data.contactName - 联系人姓名
+ * @param {string} data.contactPhone - 联系人手机
+ */
+export const updateSupplierCert = (data) => {
+  const requestData = toCamelCase({
+    cert_id: data.certId,
+    org_name: data.orgName,
+    credit_code: data.creditCode,
+    legal_person: data.legalPerson,
+    legal_id: data.legalId,
+    ad_code: data.adCode,
+    business_scope: data.businessScope,
+    license_path: data.licensePath,
+    contact_name: data.contactName,
+    contact_phone: data.contactPhone
+  })
+
+  return agricultureRequest({
+    url: '/supplier/cert/update',
+    method: 'post',
+    data: requestData
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
  * 查询待审核列表（分页）
  * @param {Object} params - 查询参数
  * @param {number} params.page - 页码

@@ -272,9 +272,10 @@
             <el-descriptions-item :label="$t('input.supplier.info.columns.applyTime')">{{ currentRow.apply_time }}</el-descriptions-item>
             <el-descriptions-item :label="$t('input.supplier.info.columns.approveTime')">{{ currentRow.approve_time || '-' }}</el-descriptions-item>
             <el-descriptions-item :label="$t('input.supplier.auth.form.licensePath')" :span="isMobile ? 1 : 2">
-              <el-link v-if="currentRow.license_path" :href="currentRow.license_path" target="_blank" type="primary">
+              <el-link v-if="licensePreviewUrl" :href="licensePreviewUrl" target="_blank" type="primary">
                 <i class="ri-file-line"></i> {{ $t('common.viewDetails') }}
               </el-link>
+              <span v-else-if="currentRow.license_path">{{ currentRow.license_path }}</span>
               <span v-else>-</span>
             </el-descriptions-item>
             <el-descriptions-item v-if="currentRow.audit_opinion" :label="$t('input.supplier.approval.form.auditOpinion')" :span="isMobile ? 1 : 2">
@@ -297,6 +298,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getSupplierCertList, getAdCodeList } from '@/api/supplier'
+import { getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -306,6 +308,7 @@ const loading = ref(false)
 const tableData = ref([])
 const dialogVisible = ref(false)
 const currentRow = ref(null)
+const licensePreviewUrl = ref('')
 
 // 检测是否为移动端
 const isMobile = ref(window.innerWidth <= 768)
@@ -428,10 +431,29 @@ const handleResetFilters = () => {
   approveTimeRange.value = []
 }
 
+// 获取文件预览URL
+const loadLicensePreview = async (licensePath) => {
+  if (!licensePath) {
+    licensePreviewUrl.value = ''
+    return
+  }
+
+  try {
+    const res = await getFilePreviewUrl(licensePath)
+    licensePreviewUrl.value = res.code === 200 ? res.msg : ''
+  } catch (error) {
+    console.error('Failed to load license preview:', error)
+    licensePreviewUrl.value = ''
+  }
+}
+
 // 查看详情
-const handleView = (row) => {
+const handleView = async (row) => {
   currentRow.value = { ...row }
   dialogVisible.value = true
+
+  // 加载文件预览
+  await loadLicensePreview(row.license_path)
 }
 
 const handleSizeChange = () => {
