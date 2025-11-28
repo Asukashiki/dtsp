@@ -64,15 +64,15 @@
                 <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
                   <el-table-column prop="registrationNo" :label="$t('research.variety.registration.columns.registrationNo')" min-width="150" />
                   <el-table-column prop="varietyName" :label="$t('research.variety.registration.columns.varietyName')" min-width="150" />
-                  <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" width="120" />
-                  <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" width="120" />
+                  <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" min-width="150" />
+                  <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" min-width="120" />
                   <el-table-column prop="enterpriseName" :label="$t('research.enterprise.form.enterpriseName')" min-width="180" />
-                  <el-table-column prop="createTime" :label="$t('research.variety.registration.columns.submitDate')" width="120">
+                  <el-table-column prop="createTime" :label="$t('research.variety.registration.columns.submitDate')" min-width="120">
                     <template #default="{ row }">
                       {{ formatDate(row.createTime) }}
                     </template>
                   </el-table-column>
-                  <el-table-column prop="recordStatus" :label="$t('research.variety.registration.columns.registrationStatus')" width="120">
+                  <el-table-column prop="recordStatus" :label="$t('research.variety.registration.columns.registrationStatus')" min-width="120">
                     <template #default="{ row }">
                       <el-tag :type="getStatusTagType(row.recordStatus)">
                         {{ getStatusLabel(row.recordStatus) }}
@@ -1048,7 +1048,6 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
   margin: 0 auto;
 }
 

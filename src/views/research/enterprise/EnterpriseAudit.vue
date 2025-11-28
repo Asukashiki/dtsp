@@ -76,7 +76,7 @@
                   <el-table-column
                     prop="applicationDate"
                     :label="$t('research.audit.columns.applicationDate')"
-                    width="120"
+                    min-width="160"
                   >
                     <template #default="{ row }">
                       {{ row.createTime }}
@@ -85,7 +85,7 @@
                   <el-table-column
                     prop="auditStage"
                     :label="$t('research.audit.columns.currentStage')"
-                    width="120"
+                    min-width="160"
                   >
                     <template #default="{ row }">
                       <el-tag :type="getStageTagType(row.auditStage)" size="small">
@@ -96,12 +96,12 @@
                   <el-table-column
                     prop="assignedAuditor"
                     :label="$t('research.audit.columns.assignedAuditor')"
-                    width="120"
+                    min-width="120"
                   />
                   <el-table-column
                     prop="auditResult"
                     :label="$t('research.audit.columns.auditStatus')"
-                    width="120"
+                    min-width="120"
                   >
                     <template #default="{ row }">
                       <el-tag :type="getStatusTagType(row.auditStatus)">
@@ -722,7 +722,6 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
   margin: 0 auto;
 }
 
