@@ -164,10 +164,6 @@
 
         <!-- 操作按钮 -->
         <div class="form-actions">
-          <el-button @click="handleBack">
-            <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
           <el-button
             v-if="!isFormDisabled"
             type="primary"
