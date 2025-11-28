@@ -21,6 +21,7 @@
           :placeholder="$t('research.variety.audit.searchPlaceholder')"
           clearable
           class="search-input"
+          @clear="handleSearch"
         >
           <template #prefix>
             <i class="ri-search-line"></i>
@@ -31,6 +32,7 @@
           :placeholder="$t('research.variety.audit.filterByStatus')"
           clearable
           class="filter-select"
+          @clear="handleSearch"
         >
           <el-option :label="$t('research.variety.audit.allStatus')" value="" />
           <el-option :label="$t('research.variety.audit.status.pending')" value="pending" />
@@ -42,12 +44,12 @@
           <el-table-column prop="registrationNo" :label="$t('research.variety.audit.columns.applicationNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.audit.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" width="120" />
-          <el-table-column prop="enterpriseName" :label="$t('research.enterprise.form.enterpriseName')" min-width="180" />
-          <el-table-column prop="createTime" :label="$t('research.variety.audit.columns.submitDate')" width="120" />
-          <el-table-column prop="auditResult" :label="$t('research.variety.audit.columns.auditStatus')" width="120">
+          <el-table-column prop="submittingUnit" :label="$t('research.variety.audit.columns.submittingUnit')" min-width="180" />
+          <el-table-column prop="submitDate" :label="$t('research.variety.audit.columns.submitDate')" width="120" />
+          <el-table-column prop="recordStatus" :label="$t('research.variety.audit.columns.auditStatus')" width="120">
             <template #default="{ row }">
-              <el-tag :type="getStatusTagType(row.auditResult)">
-                {{ getStatusLabel(row.auditResult) }}
+              <el-tag :type="getStatusTagType(row.recordStatus)">
+                {{ getStatusLabel(row.recordStatus) }}
               </el-tag>
             </template>
           </el-table-column>
@@ -56,16 +58,12 @@
             <template #default="{ row }">
               <div class="action-buttons">
                 <el-button
-                  v-if="row.auditResult === 'pending'"
+                  v-if="row.recordStatus === 0"
                   type="primary"
                   link
                   @click="handleAudit(row)"
                 >
-                  <i class="ri-file-edit-line"></i>
-                  {{ $t('research.variety.audit.actions.audit') }}
-                </el-button>
                 <el-button
-                  v-else
                   type="primary"
                   link
                   @click="handleView(row)"
@@ -98,11 +96,11 @@
           <i class="ri-inbox-line"></i>
           <p>{{ $t('home.noData') }}</p>
         </div>
-        <div v-for="item in filteredList" :key="item.applicationNo" class="variety-card" @click="item.auditResult === 'pending' ? handleAudit(item) : handleView(item)">
+        <div v-for="item in filteredList" :key="item.applicationNo" class="variety-card" @click="item.recordStatus === 0 ? handleAudit(item) : handleView(item)">
           <div class="card-header">
             <div class="variety-name">{{ item.varietyName }}</div>
-            <el-tag :type="getStatusTagType(item.auditResult)" size="small">
-              {{ getStatusLabel(item.auditResult) }}
+            <el-tag :type="getStatusTagType(item.recordStatus)" size="small">
+              {{ getStatusLabel(item.recordStatus) }}
             </el-tag>
           </div>
           <div class="card-body">
@@ -323,7 +321,7 @@
         </div>
 
         <!-- 审核操作区 - 只在待审核状态显示 -->
-        <div v-if="currentVariety.auditResult === 'pending'" class="audit-form-section">
+        <div v-if="currentVariety.recordStatus === 0" class="audit-form-section">
           <div class="section-header">
             <i class="ri-file-edit-line"></i>
             <h2>{{ $t('research.variety.audit.sections.auditOperation') }}</h2>
@@ -377,8 +375,8 @@
             <div class="info-item">
               <span class="label">{{ $t('research.variety.audit.form.auditResult') }}</span>
               <span class="value">
-                <el-tag :type="getStatusTagType(currentVariety.auditResult)">
-                  {{ getStatusLabel(currentVariety.auditResult) }}
+                <el-tag :type="getStatusTagType(currentVariety.recordStatus)">
+                  {{ getStatusLabel(currentVariety.recordStatus) }}
                 </el-tag>
               </span>
             </div>
@@ -402,7 +400,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
@@ -423,6 +421,9 @@ const currentVariety = ref({})
 // 搜索和筛选
 const searchQuery = ref('')
 const filterStatus = ref('')
+
+// 防抖定时器
+let searchDebounceTimer = null
 
 // 分页
 const currentPage = ref(1)
@@ -473,24 +474,21 @@ const getStatusTagType = (status) => {
   const statusMap = {
     0: 'warning',  // 审核中
     1: 'success',  // 待发布/审核通过
-    2: 'danger',   // 已驳回
-    pending: 'warning',
-    approved: 'success',
-    rejected: 'danger'
+    2: 'danger'    // 审核未通过
   }
   return statusMap[status] || 'warning'
 }
 
 // 获取状态标签文本
 const getStatusLabel = (status) => {
-    // 映射后端状态到前端显示
-    const statusMap = {
-      0: 'pending',  // 审核中
-      1: 'approved', // 审核通过
-      2: 'rejected'  // 已驳回
-    }
-    const mappedStatus = statusMap[status] || status
-    return t(`research.variety.audit.status.${mappedStatus}`)
+  // 映射后端状态到前端显示
+  const statusMap = {
+    0: 'pending',  // 审核中
+    1: 'approved', // 待发布
+    2: 'rejected'  // 审核未通过
+  }
+  const mappedStatus = statusMap[status]
+  return t(`research.variety.audit.status.${mappedStatus}`)
 }
 
 // 格式化年份
@@ -527,12 +525,13 @@ const loadDetailData = async (registrationId) => {
       currentVariety.value = {
         registrationNo: data.registrationNo || '',
         registrationId: data.registrationId || '',
+        enterpriseId: data.enterpriseId || '',
         varietyName: data.varietyName || '',
         varietyCode: data.varietyCode || '',
         cropType: data.cropType || '',
-        enterpriseName: data.enterpriseName || '',
-        createTime: data.recordDate || '',
-        auditResult: data.recordStatus,
+        submittingUnit: data.enterpriseName || '',
+        submitDate: data.recordDate || '',
+        recordStatus: data.recordStatus, // 使用 recordStatus: 0-审核中/1-待发布/2-审核未通过
         auditor: data.operator || '',
         auditTime: data.operationTime || '',
         auditOpinion: '',
@@ -632,6 +631,12 @@ const handleSubmit = async () => {
   }
 }
 
+// 搜索处理（带防抖）
+const handleSearch = () => {
+  currentPage.value = 1
+  loadData()
+}
+
 // 加载待审核列表数据
 const loadData = async () => {
   loading.value = true
@@ -667,6 +672,16 @@ const loadData = async () => {
     loading.value = false
   }
 }
+
+// 监听搜索条件变化（带防抖）
+watch([searchQuery, filterStatus], () => {
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+  searchDebounceTimer = setTimeout(() => {
+    handleSearch()
+  }, 500)
+})
 
 onMounted(() => {
   loadData()
