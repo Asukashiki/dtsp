@@ -43,10 +43,10 @@
         <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="registrationNo" :label="$t('research.variety.audit.columns.applicationNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.audit.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" width="120" />
+          <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" min-width="120" />
           <el-table-column prop="submittingUnit" :label="$t('research.variety.audit.columns.submittingUnit')" min-width="180" />
-          <el-table-column prop="submitDate" :label="$t('research.variety.audit.columns.submitDate')" width="120" />
-          <el-table-column prop="recordStatus" :label="$t('research.variety.audit.columns.auditStatus')" width="120">
+          <el-table-column prop="submitDate" :label="$t('research.variety.audit.columns.submitDate')" min-width="160" />
+          <el-table-column prop="recordStatus" :label="$t('research.variety.audit.columns.auditStatus')" min-width="160">
             <template #default="{ row }">
               <el-tag :type="getStatusTagType(row.recordStatus)">
                 {{ getStatusLabel(row.recordStatus) }}
@@ -54,7 +54,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="auditor" :label="$t('research.variety.audit.columns.auditor')" width="120" />
-          <el-table-column :label="$t('research.variety.audit.columns.actions')" width="160" fixed="right" align="center">
+          <el-table-column :label="$t('research.variety.audit.columns.actions')" width="200" fixed="right" align="center">
             <template #default="{ row }">
               <div class="action-buttons">
                 <el-button
@@ -818,7 +818,6 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
 }
 
