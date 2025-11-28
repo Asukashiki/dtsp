@@ -261,7 +261,7 @@ const loadData = async () => {
 
     const res = await getBreedingMaterialList(params)
 
-    if (res.code === 0) {
+    if (res.code === 200) {
       materialList.value = res.rows || []
       total.value = res.total || 0
     } else {

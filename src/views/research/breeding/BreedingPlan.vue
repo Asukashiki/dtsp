@@ -309,7 +309,7 @@ const loadData = async () => {
 
     const res = await getBreedingPlanList(params)
 
-    if (res.code === 0) {
+    if (res.code === 200) {
       planList.value = res.rows || []
       total.value = res.total || 0
     } else {

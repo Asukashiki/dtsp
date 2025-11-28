@@ -55,7 +55,7 @@
           <el-table-column prop="publishNo" :label="$t('research.variety.publish.columns.publishNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.publish.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" width="120" />
-          <el-table-column prop="approvalDate" :label="$t('research.variety.publish.columns.approvalDate')" width="120" />
+          <el-table-column prop="createTime" :label="$t('research.variety.publish.columns.approvalDate')" width="120" />
           <el-table-column prop="publishDate" :label="$t('research.variety.publish.columns.publishDate')" width="120">
             <template #default="{ row }">
               {{ row.publishDate || '-' }}
@@ -192,7 +192,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.approvalDate') }}</span>
-              <span class="value">{{ currentVariety.approvalDate || '-' }}</span>
+              <span class="value">{{ currentVariety.createTime || '-' }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.publishStatus') }}</span>
@@ -508,7 +508,7 @@ const loadDetailData = async (id) => {
         minYieldPotential: data.minYieldPotential || 0,
         maxYieldPotential: data.maxYieldPotential || 0,
         growthPeriod: data.growthPeriod || 0,
-        approvalDate: data.approvalDate || '',
+        createTime: data.createTime || '',
         publishDate: data.publishDate || '',
         publishDept: data.publishDept || '',
         publishStatus: data.publishStatus,
