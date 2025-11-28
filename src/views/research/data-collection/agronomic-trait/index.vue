@@ -65,7 +65,7 @@
           <el-table-column
             prop="plantHeightCm"
             :label="$t('research.dataCollection.agronomicTrait.columns.plantHeightCm')"
-            width="120"
+            width="180"
             align="right"
           >
             <template #default="{ row }">
@@ -75,13 +75,13 @@
           <el-table-column
             prop="tillerCount"
             :label="$t('research.dataCollection.agronomicTrait.columns.tillerCount')"
-            width="100"
+            min-width="120"
             align="center"
           />
           <el-table-column
             prop="daysToMaturity"
             :label="$t('research.dataCollection.agronomicTrait.columns.daysToMaturity')"
-            width="120"
+            min-width="140"
             align="center"
           >
             <template #default="{ row }">
@@ -91,13 +91,13 @@
           <el-table-column
             prop="lodgingScore"
             :label="$t('research.dataCollection.agronomicTrait.columns.lodgingScore')"
-            width="100"
+            min-width="140"
             align="center"
           />
           <el-table-column
             prop="biomassWeightKg"
             :label="$t('research.dataCollection.agronomicTrait.columns.biomassWeightKg')"
-            width="140"
+            min-width="140"
             align="right"
           >
             <template #default="{ row }">
@@ -107,7 +107,7 @@
           <el-table-column
             prop="createTime"
             :label="$t('research.dataCollection.agronomicTrait.columns.createTime')"
-            width="160"
+            min-width="180"
           />
           <el-table-column
             :label="$t('common.actions')"

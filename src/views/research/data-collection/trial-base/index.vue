@@ -79,7 +79,7 @@
           <el-table-column
             prop="cropType"
             :label="$t('research.dataCollection.trialBase.columns.cropType')"
-            width="120"
+            min-width="120"
             align="center"
           />
           <el-table-column
@@ -91,28 +91,28 @@
           <el-table-column
             prop="region"
             :label="$t('research.dataCollection.trialBase.columns.region')"
-            width="120"
+            min-width="120"
           />
           <el-table-column
             prop="zone"
             :label="$t('research.dataCollection.trialBase.columns.zone')"
-            width="120"
+            min-width="120"
           />
           <el-table-column
             prop="startDate"
             :label="$t('research.dataCollection.trialBase.columns.startDate')"
-            width="120"
+            min-width="120"
           />
           <el-table-column
             prop="season"
             :label="$t('research.dataCollection.trialBase.columns.season')"
-            width="100"
+            min-width="100"
             align="center"
           />
           <el-table-column
             prop="createTime"
             :label="$t('research.dataCollection.trialBase.columns.createTime')"
-            width="160"
+            min-width="180"
           />
           <el-table-column
             :label="$t('research.dataCollection.trialBase.columns.actions')"
