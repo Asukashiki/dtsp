@@ -68,7 +68,7 @@
         <div class="form-block">
           <div class="block-header">
             <i class="ri-contacts-line"></i>
-            <h3>{{ $t('input.inventory.warehouse.contactInfo') }}</h3>
+            <h3>{{ $t('userInfo.contactInfo') }}</h3>
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('input.inventory.warehouse.form.contactPerson')" prop="contactPerson">

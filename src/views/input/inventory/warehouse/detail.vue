@@ -78,7 +78,7 @@
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-contacts-line"></i>
-            {{ $t('input.inventory.warehouse.contactInfo') }}
+            {{ $t('userInfo.contactInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">

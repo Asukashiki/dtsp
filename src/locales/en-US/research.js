@@ -110,7 +110,7 @@ export default {
       // Form Placeholders
       placeholder: {
         enterpriseName: 'Please enter enterprise name',
-        unifiedSocialCreditCode: 'Please enter unified social credit code (18 digits)',
+        unifiedSocialCreditCode: 'Please enter unified social credit code',
         enterpriseType: 'Please select enterprise type',
         seedLicenseNo: 'Please enter seed business license number',
         licenseStartDate: 'Please select license start date',
@@ -134,7 +134,7 @@ export default {
       rules: {
         enterpriseNameRequired: 'Please enter enterprise name',
         unifiedSocialCreditCodeRequired: 'Please enter unified social credit code',
-        unifiedSocialCreditCodeLength: 'Unified social credit code should be 18 digits',
+        unifiedSocialCreditCodeLength: 'Unified social credit code',
         enterpriseTypeRequired: 'Please select enterprise type',
         seedLicenseNoRequired: 'Please enter seed business license number',
         licenseStartDateRequired: 'Please select license start date',

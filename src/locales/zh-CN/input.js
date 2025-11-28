@@ -200,7 +200,7 @@ export default {
 
         placeholder: {
           orgName: '请输入企业/组织名称',
-          creditCode: '请输入统一社会信用代码（18位）',
+          creditCode: '请输入统一社会信用代码',
           legalPerson: '请输入法定代表人/负责人',
           legalId: '请输入身份证号',
           adCode: '请选择行政区划',

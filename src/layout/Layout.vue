@@ -62,7 +62,8 @@ onMounted(async () => {
 
 /* 只在home路径下显示背景图 */
 .home-page {
-  background-image: url('../assets/background.png');
+  background-color: rgba(0, 154, 68, 0.08);
+  /* background-image: url('../assets/background.png'); */
   background-size: 100% 600px; /* 限制背景图高度为600px */
   background-position: top center;
   background-repeat: no-repeat;

@@ -101,7 +101,7 @@
           <el-table-column
             prop="irrigationType"
             :label="$t('research.dataCollection.farmingRecord.columns.irrigationType')"
-            width="120"
+            min-width="140"
             show-overflow-tooltip
           >
             <template #default="{ row }">
@@ -111,7 +111,7 @@
           <el-table-column
             prop="weedingDate"
             :label="$t('research.dataCollection.farmingRecord.columns.weedingDate')"
-            width="140"
+            min-width="160"
           >
             <template #default="{ row }">
               {{ row.weedingDate || '-' }}
@@ -120,7 +120,7 @@
           <el-table-column
             prop="createTime"
             :label="$t('research.dataCollection.farmingRecord.columns.createTime')"
-            width="160"
+            min-width="180"
           />
           <el-table-column
             :label="$t('common.actions')"

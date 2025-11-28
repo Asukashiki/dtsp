@@ -31,5 +31,6 @@ export default {
     saveFailed: '保存失败',
     submitFailed: '提交失败',
     actions: '操作',
-    audit: '审核'
+    audit: '审核',
+    update: '更新'
   }

@@ -31,5 +31,6 @@ export default {
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
   actions: 'Actions',
-  audit: 'Audit'
+  audit: 'Audit',
+  update: 'Update'
 }
