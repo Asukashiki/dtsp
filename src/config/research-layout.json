@@ -19,6 +19,11 @@
           "index": "/research/enterprise/audit",
           "icon": "ri-checkbox-circle-line",
           "titleKey": "research.menu.enterpriseAudit"
+        },
+        {
+          "index": "/research/union/list",
+          "icon": "ri-community-line",
+          "titleKey": "union.list"
         }
       ]
     },
