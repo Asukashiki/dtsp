@@ -67,6 +67,18 @@
       ]
     },
     {
+      "index": "breeding-seed",
+      "icon": "ri-plant-fill",
+      "titleKey": "research.menu.breedingSeed",
+      "children": [
+        {
+          "index": "/research/seed/breeding-certification",
+          "icon": "ri-certificate-line",
+          "titleKey": "research.menu.breedingCertification"
+        }
+      ]
+    },
+    {
       "index": "data-collection",
       "icon": "ri-file-chart-line",
       "titleKey": "research.menu.dataCollection",

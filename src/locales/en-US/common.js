@@ -30,5 +30,6 @@ export default {
   loadFailed: 'Load failed',
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
-  actions: 'Actions'
+  actions: 'Actions',
+  days: 'days'
 }
