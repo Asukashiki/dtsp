@@ -583,7 +583,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -591,9 +591,9 @@ import {
   getBreedingCertificationDetail,
   addBreedingCertification,
   updateBreedingCertification,
-  uploadFile,
-  getFileDownloadUrl
+  uploadFile
 } from '@/api/seed'
+import { getFilePreviewUrl } from '@/api/file'
 
 const route = useRoute()
 const router = useRouter()
@@ -791,26 +791,46 @@ const handleUploadFile = async (options, fieldName) => {
 
   try {
     const res = await uploadFile(uploadFormData)
-    if (res.code === 200) {
+    if (res.code === 200 && res.data) {
+      // 获取后端返回的文件信息
+      const fileData = res.data
+      // 使用 dataId 作为文件路径（与 auth.vue 保持一致）
+      const dataId = fileData.id || fileData.dataId
+
+      console.log('Upload response:', fileData) // 调试用，查看后端返回的数据结构
+
+      // 创建文件对象，保存所有必要信息
       const fileObj = {
         name: file.name,
-        url: res.data.url,
         uid: file.uid,
-        fileId: res.data.fileId || res.data.id // 保存文件ID用于下载
+        dataId: dataId, // 保存 dataId，用于提交到后端
+        fileId: dataId  // 保持兼容性
+      }
+
+      // 如果是照片，使用本地临时URL作为缩略图（避免立即请求预览接口导致失败）
+      if (fieldName === 'photo') {
+        // 使用 createObjectURL 创建本地预览URL（更高效）
+        fileObj.url = URL.createObjectURL(file)
+      } else {
+        // 非图片文件使用 dataId 作为 url，用于列表显示
+        fileObj.url = dataId
       }
 
       // 根据字段名更新对应的文件列表
       if (fieldName === 'trialReport') {
         formData.trialPerformance.trialReport = [fileObj]
+        console.log('Trial report uploaded:', fileObj)
       } else if (fieldName === 'photo') {
         formData.trialPerformance.photo = [fileObj]
+        console.log('Photo uploaded:', fileObj)
       } else if (fieldName === 'certificationDocument') {
         formData.supervision.certificationDocument = [fileObj]
+        console.log('Certification document uploaded:', fileObj)
       }
 
       ElMessage.success(t('common.uploadSuccess'))
     } else {
-      ElMessage.error(t('common.uploadFailed'))
+      ElMessage.error(res.msg || t('common.uploadFailed'))
     }
   } catch (error) {
     console.error('Upload error:', error)
@@ -830,25 +850,69 @@ const handleRemove = (fieldName) => {
 }
 
 // 文件预览/下载处理
-const handlePreviewFile = (file) => {
-  // 如果有fileId，使用下载接口
-  if (file.fileId) {
-    const downloadUrl = getFileDownloadUrl(file.fileId)
-    window.open(downloadUrl, '_blank')
-  } else if (file.url) {
-    // 否则使用url直接下载
-    window.open(file.url, '_blank')
+const handlePreviewFile = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+
+    // 优先使用 dataId（与 auth.vue 保持一致）
+    const pathToPreview = file.dataId || file.fileId || file.url
+
+    // 如果 url 已经是完整的 HTTP URL，直接使用
+    if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    } else if (pathToPreview) {
+      // 否则通过接口获取预览 URL
+      const res = await getFilePreviewUrl(pathToPreview)
+      previewUrl = res.code === 200 ? res.msg : ''
+    }
+
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
   }
 }
 
 // 图片预览处理
-const handlePreviewImage = (file) => {
-  if (file.fileId) {
-    previewImageUrl.value = getFileDownloadUrl(file.fileId)
-  } else if (file.url) {
-    previewImageUrl.value = file.url
+const handlePreviewImage = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+
+    // 如果 url 是 blob URL（本地临时文件），直接使用
+    if (file.url && file.url.startsWith('blob:')) {
+      previewUrl = file.url
+    }
+    // 如果 url 已经是完整的 HTTP URL，直接使用
+    else if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    }
+    // 否则需要通过接口获取预览 URL
+    else {
+      const pathToPreview = file.dataId || file.fileId || file.url
+      if (pathToPreview) {
+        const res = await getFilePreviewUrl(pathToPreview)
+        previewUrl = res.code === 200 ? res.msg : ''
+      }
+    }
+
+    if (previewUrl) {
+      previewImageUrl.value = previewUrl
+      imagePreviewVisible.value = true
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview image:', error)
+    ElMessage.error(t('common.failed'))
   }
-  imagePreviewVisible.value = true
 }
 
 // 加载详情数据
@@ -856,55 +920,102 @@ const loadDetail = async () => {
   try {
     const res = await getBreedingCertificationDetail(route.params.id)
     if (res.code === 200) {
-      Object.assign(formData, res.data)
+      const data = res.data
 
-      // 确保嵌套对象存在
-      if (!formData.varietyInfo) formData.varietyInfo = {}
-      if (!formData.technicalTrait) formData.technicalTrait = {}
-      if (!formData.trialPerformance) formData.trialPerformance = {}
-      if (!formData.supervision) formData.supervision = {}
+      // 先赋值基础字段
+      formData.breedingBatchId = data.breedingBatchId || ''
+      formData.authId = data.authId || ''
+      formData.applyOrgName = data.applyOrgName || ''
+      formData.applyOrgId = data.applyOrgId || ''
+      formData.recordDate = data.recordDate || ''
+      formData.cropType = data.cropType || ''
+      formData.varietyName = data.varietyName || ''
+      formData.recordStatus = data.recordStatus || 'draft'
 
-      // 将文件URL字符串或对象转换为文件数组格式
-      if (formData.trialPerformance.trialReport) {
-        if (typeof formData.trialPerformance.trialReport === 'string') {
+      // 处理嵌套对象 - 品种信息
+      if (data.varietyInfo) {
+        Object.assign(formData.varietyInfo, data.varietyInfo)
+      }
+
+      // 处理嵌套对象 - 技术性状
+      if (data.technicalTrait) {
+        Object.assign(formData.technicalTrait, data.technicalTrait)
+      }
+
+      // 处理嵌套对象 - 试验性能（不包括文件字段）
+      if (data.trialPerformance) {
+        formData.trialPerformance.trialLocation = data.trialPerformance.trialLocation || ''
+        formData.trialPerformance.trialYear = data.trialPerformance.trialYear || new Date().getFullYear()
+        formData.trialPerformance.averageYield = data.trialPerformance.averageYield || 0
+        formData.trialPerformance.stabilityScore = data.trialPerformance.stabilityScore || 0
+      }
+
+      // 处理嵌套对象 - 监管信息（不包括文件字段）
+      if (data.supervision) {
+        formData.supervision.approvalNumber = data.supervision.approvalNumber || ''
+        formData.supervision.approvalOrganization = data.supervision.approvalOrganization || ''
+        formData.supervision.approvalDate = data.supervision.approvalDate || ''
+      }
+
+      // 将文件 dataId 字符串转换为文件数组格式
+      // 处理试验报告
+      if (data.trialPerformance && data.trialPerformance.trialReport) {
+        const trialReportId = data.trialPerformance.trialReport
+        if (typeof trialReportId === 'string' && trialReportId) {
           formData.trialPerformance.trialReport = [{
-            name: formData.trialPerformance.trialReport.split('/').pop(),
-            url: formData.trialPerformance.trialReport,
-            uid: Date.now() + '-trialReport',
-            fileId: res.data.trialPerformance?.trialReportId || ''
+            name: 'trial_report',
+            url: trialReportId,
+            dataId: trialReportId,
+            fileId: trialReportId,
+            uid: Date.now() + '-trialReport'
           }]
-        } else if (!Array.isArray(formData.trialPerformance.trialReport)) {
-          formData.trialPerformance.trialReport = []
         }
       } else {
         formData.trialPerformance.trialReport = []
       }
 
-      if (formData.trialPerformance.photo) {
-        if (typeof formData.trialPerformance.photo === 'string') {
-          formData.trialPerformance.photo = [{
-            name: formData.trialPerformance.photo.split('/').pop(),
-            url: formData.trialPerformance.photo,
-            uid: Date.now() + '-photo',
-            fileId: res.data.trialPerformance?.photoId || ''
-          }]
-        } else if (!Array.isArray(formData.trialPerformance.photo)) {
-          formData.trialPerformance.photo = []
+      // 处理照片（参考 auth.vue 的处理方式）
+      if (data.trialPerformance && data.trialPerformance.photo) {
+        const photoId = data.trialPerformance.photo
+        if (typeof photoId === 'string' && photoId) {
+          // 获取照片预览URL用于缩略图显示
+          try {
+            const previewRes = await getFilePreviewUrl(photoId)
+            const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+            formData.trialPerformance.photo = [{
+              name: 'photo',
+              url: previewUrl, // 使用预览URL
+              dataId: photoId, // 保存原始文件ID用于提交
+              fileId: photoId,
+              uid: photoId // 使用文件ID作为uid（参考 auth.vue）
+            }]
+          } catch (error) {
+            console.error('Failed to load photo preview:', error)
+            // 如果获取预览失败，url 留空，只保存 dataId
+            formData.trialPerformance.photo = [{
+              name: 'photo',
+              url: '',
+              dataId: photoId,
+              fileId: photoId,
+              uid: photoId
+            }]
+          }
         }
       } else {
         formData.trialPerformance.photo = []
       }
 
-      if (formData.supervision.certificationDocument) {
-        if (typeof formData.supervision.certificationDocument === 'string') {
+      // 处理认证文件
+      if (data.supervision && data.supervision.certificationDocument) {
+        const certDocId = data.supervision.certificationDocument
+        if (typeof certDocId === 'string' && certDocId) {
           formData.supervision.certificationDocument = [{
-            name: formData.supervision.certificationDocument.split('/').pop(),
-            url: formData.supervision.certificationDocument,
-            uid: Date.now() + '-certificationDocument',
-            fileId: res.data.supervision?.certificationDocumentId || ''
+            name: 'certification_document',
+            url: certDocId,
+            dataId: certDocId,
+            fileId: certDocId,
+            uid: Date.now() + '-certificationDocument'
           }]
-        } else if (!Array.isArray(formData.supervision.certificationDocument)) {
-          formData.supervision.certificationDocument = []
         }
       } else {
         formData.supervision.certificationDocument = []
@@ -923,19 +1034,41 @@ const handleSubmit = async () => {
 
     submitting.value = true
 
-    // 准备提交数据，将文件数组转换为URL字符串
+    // 准备提交数据，将文件数组转换为 dataId
     const submitData = {
       ...formData,
       trialPerformance: {
         ...formData.trialPerformance,
-        trialReport: formData.trialPerformance.trialReport.length > 0 ? formData.trialPerformance.trialReport[0].url : '',
-        photo: formData.trialPerformance.photo.length > 0 ? formData.trialPerformance.photo[0].url : ''
+        // 试验报告使用 dataId（与 auth.vue 保持一致）
+        trialReport: formData.trialPerformance.trialReport.length > 0
+          ? (formData.trialPerformance.trialReport[0].dataId || formData.trialPerformance.trialReport[0].fileId || '')
+          : '',
+        // 照片使用 dataId
+        photo: formData.trialPerformance.photo.length > 0
+          ? (formData.trialPerformance.photo[0].dataId || formData.trialPerformance.photo[0].fileId || '')
+          : ''
       },
       supervision: {
         ...formData.supervision,
-        certificationDocument: formData.supervision.certificationDocument.length > 0 ? formData.supervision.certificationDocument[0].url : ''
+        // 认证文件使用 dataId
+        certificationDocument: formData.supervision.certificationDocument.length > 0
+          ? (formData.supervision.certificationDocument[0].dataId || formData.supervision.certificationDocument[0].fileId || '')
+          : ''
       }
     }
+
+    // 详细调试日志
+    console.log('=== 提交数据调试 ===')
+    console.log('原始文件数组 - trialReport:', formData.trialPerformance.trialReport)
+    console.log('原始文件数组 - photo:', formData.trialPerformance.photo)
+    console.log('原始文件数组 - certificationDocument:', formData.supervision.certificationDocument)
+    console.log('---')
+    console.log('提交数据 - trialReport:', submitData.trialPerformance.trialReport)
+    console.log('提交数据 - photo:', submitData.trialPerformance.photo)
+    console.log('提交数据 - certificationDocument:', submitData.supervision.certificationDocument)
+    console.log('---')
+    console.log('完整提交对象:', JSON.stringify(submitData, null, 2))
+    console.log('===================')
 
     let res
     if (isEdit.value) {
@@ -967,6 +1100,17 @@ const goBack = () => {
 onMounted(() => {
   if (isEdit.value) {
     loadDetail()
+  }
+})
+
+// 组件卸载前清理 ObjectURL
+onBeforeUnmount(() => {
+  // 清理照片的 ObjectURL
+  if (formData.trialPerformance.photo.length > 0) {
+    const photo = formData.trialPerformance.photo[0]
+    if (photo.url && photo.url.startsWith('blob:')) {
+      URL.revokeObjectURL(photo.url)
+    }
   }
 })
 </script>
