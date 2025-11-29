@@ -31,7 +31,7 @@
         </div>
         <div class="announcements-list">
           <div
-            v-for="(item, index) in announcementList"
+            v-for="(item, index) in announcementList.splice(0,2)"
             :key="index"
             class="announcement-item"
             @click="handleAnnouncementClick(item)"
@@ -278,7 +278,7 @@ const handleGuideClick = (guide) => {
 .content-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 32px 40px;
+  padding: 20px 32px 40px;
 }
 
 /* Hero Section */
@@ -289,6 +289,7 @@ const handleGuideClick = (guide) => {
   margin-bottom: 40px;
   position: relative;
   overflow: hidden;
+  padding: 20px;
 }
 
 .hero-content {

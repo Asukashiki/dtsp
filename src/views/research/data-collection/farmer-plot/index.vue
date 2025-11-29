@@ -82,7 +82,7 @@
           <el-table-column
             prop="gender"
             :label="$t('research.dataCollection.farmerPlot.columns.gender')"
-            width="100"
+            min-width="120"
             align="center"
           >
             <template #default="{ row }">
@@ -94,7 +94,7 @@
           <el-table-column
             prop="youthCategory"
             :label="$t('research.dataCollection.farmerPlot.columns.youthCategory')"
-            width="120"
+            min-width="140"
             align="center"
           >
             <template #default="{ row }">
@@ -106,18 +106,17 @@
           <el-table-column
             prop="plotSizeM2"
             :label="$t('research.dataCollection.farmerPlot.columns.plotSizeM2')"
-            width="150"
-            align="right"
+            min-width="150"
           />
           <el-table-column
             prop="contactPhone"
             :label="$t('research.dataCollection.farmerPlot.columns.contactPhone')"
-            width="140"
+            min-width="160"
           />
           <el-table-column
             prop="createTime"
             :label="$t('research.dataCollection.farmerPlot.columns.createTime')"
-            width="160"
+            min-width="180"
           />
           <el-table-column
             :label="$t('common.actions')"

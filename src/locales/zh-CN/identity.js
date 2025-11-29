@@ -73,7 +73,7 @@ export default {
       remark: '备注信息（选填）',
       cropTypes: '请选择种植类型',
       entityName: '请输入主体名称',
-      uscc: '请输入统一社会信用代码（18位）',
+      uscc: '请输入统一社会信用代码',
       legalPerson: '请输入法定代表人/负责人',
       legalIdNo: '请输入身份证号',
       scope: '请输入经营范围或主要产品',

@@ -72,20 +72,16 @@
               <el-col :xs="24" :sm="12" :md="8" :lg="6">
                 <div class="filter-item">
                   <label class="filter-label">{{ $t('input.supplier.approval.filter.adCode') }}</label>
-                  <el-select
-                    v-model="searchFilters.adCode"
+                  <el-cascader
+                    v-model="searchFilters.adCodePath"
+                    :options="adCodeOptions"
                     :placeholder="$t('input.supplier.approval.filter.allRegion')"
+                    :props="{ checkStrictly: true, emitPath: false }"
                     filterable
                     clearable
                     style="width: 100%"
-                  >
-                    <el-option
-                      v-for="item in adCodeOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                    @change="handleAdCodeChange"
+                  />
                 </div>
               </el-col>
 
@@ -256,9 +252,11 @@
             <el-descriptions-item :label="$t('input.supplier.auth.form.contactName')">{{ currentRow.contact_name }}</el-descriptions-item>
             <el-descriptions-item :label="$t('input.supplier.auth.form.contactPhone')">{{ currentRow.contact_phone }}</el-descriptions-item>
             <el-descriptions-item :label="$t('input.supplier.auth.form.licensePath')" :span="isMobile ? 1 : 2">
-              <el-link v-if="currentRow.license_path" :href="currentRow.license_path" target="_blank" type="primary">
+              <el-link v-if="licensePreviewUrl" :href="licensePreviewUrl" target="_blank" type="primary">
                 <i class="ri-file-line"></i> {{ $t('common.viewDetails') }}
               </el-link>
+              <span v-else-if="currentRow.license_path">{{ currentRow.license_path }}</span>
+              <span v-else>-</span>
             </el-descriptions-item>
           </el-descriptions>
         </div>
@@ -328,6 +326,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getSupplierCertList, approveSupplierCert, getAdCodeList } from '@/api/supplier'
+import { getFilePreviewUrl } from '@/api/file'
 import { useUserStore } from '@/store'
 
 const router = useRouter()
@@ -341,6 +340,7 @@ const dialogVisible = ref(false)
 const currentRow = ref(null)
 const auditFormRef = ref(null)
 const submitting = ref(false)
+const licensePreviewUrl = ref('')
 
 // 检测是否为移动端
 const isMobile = ref(window.innerWidth <= 768)
@@ -355,7 +355,8 @@ const adCodeOptions = ref([])
 const searchFilters = reactive({
   keyword: '',
   status: '',
-  adCode: ''
+  adCode: '',
+  adCodePath: null
 })
 
 // 时间范围
@@ -399,14 +400,16 @@ const loadAdCodeList = async () => {
   try {
     const res = await getAdCodeList()
     if (res.code === 200 && res.data) {
-      adCodeOptions.value = res.data.map(item => ({
-        value: item.code,
-        label: `${item.name} (${item.code})`
-      }))
+      adCodeOptions.value = res.data
     }
   } catch (error) {
     console.error('Failed to load ad code list:', error)
   }
+}
+
+// 处理行政区划选择变化
+const handleAdCodeChange = (value) => {
+  searchFilters.adCode = value || ''
 }
 
 // 加载数据
@@ -458,6 +461,7 @@ const handleReset = () => {
   searchFilters.keyword = ''
   searchFilters.status = ''
   searchFilters.adCode = ''
+  searchFilters.adCodePath = null
   applyTimeRange.value = []
   approveTimeRange.value = []
   pagination.page = 1
@@ -468,22 +472,45 @@ const handleReset = () => {
 const handleResetFilters = () => {
   searchFilters.status = ''
   searchFilters.adCode = ''
+  searchFilters.adCodePath = null
   applyTimeRange.value = []
   approveTimeRange.value = []
 }
 
+// 获取文件预览URL
+const loadLicensePreview = async (licensePath) => {
+  if (!licensePath) {
+    licensePreviewUrl.value = ''
+    return
+  }
+
+  try {
+    const res = await getFilePreviewUrl(licensePath)
+    licensePreviewUrl.value = res.code === 200 ? res.msg : ''
+  } catch (error) {
+    console.error('Failed to load license preview:', error)
+    licensePreviewUrl.value = ''
+  }
+}
+
 // 审核
-const handleAudit = (row) => {
+const handleAudit = async (row) => {
   currentRow.value = { ...row }
   auditForm.auditResult = 1
   auditForm.auditOpinion = ''
   dialogVisible.value = true
+
+  // 加载文件预览
+  await loadLicensePreview(row.license_path)
 }
 
 // 查看
-const handleView = (row) => {
+const handleView = async (row) => {
   currentRow.value = { ...row }
   dialogVisible.value = true
+
+  // 加载文件预览
+  await loadLicensePreview(row.license_path)
 }
 
 // 提交审核

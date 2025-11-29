@@ -112,7 +112,7 @@ export default {
       // 表单占位符
       placeholder: {
         enterpriseName: '请输入企业名称',
-        unifiedSocialCreditCode: '请输入统一社会信用代码（18位）',
+        unifiedSocialCreditCode: '请输入统一社会信用代码',
         enterpriseType: '请选择企业类型',
         seedLicenseNo: '请输入种子企业许可证编号',
         licenseStartDate: '请选择许可证有效期起始日',

@@ -1,4 +1,5 @@
 import agricultureRequest, { toCamelCase, toSnakeCase } from '../utils/agricultureRequest'
+import request from '../utils/request'
 
 // ==================== 供应商认证管理 API ====================
 
@@ -77,6 +78,62 @@ export const getSupplierCertStatus = (userId) => {
   return agricultureRequest({
     url: `/supplier/cert/status/${userId}`,
     method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 根据用户ID查询认证信息
+ * @param {number} userId - 用户ID
+ */
+export const getSupplierCertByUser = (userId) => {
+  return agricultureRequest({
+    url: `/supplier/cert/user/${userId}`,
+    method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 更新供应商认证信息
+ * @param {Object} data - 更新数据
+ * @param {number} data.certId - 认证ID
+ * @param {string} data.orgName - 企业/组织名称
+ * @param {string} data.creditCode - 统一社会信用代码
+ * @param {string} data.legalPerson - 法定代表人/负责人
+ * @param {string} data.legalId - 法定代表人身份证号
+ * @param {string} data.adCode - 行政区划代码
+ * @param {string} data.businessScope - 经营范围/主要产品
+ * @param {string} data.licensePath - 营业执照存储路径
+ * @param {string} data.contactName - 联系人姓名
+ * @param {string} data.contactPhone - 联系人手机
+ */
+export const updateSupplierCert = (data) => {
+  const requestData = toCamelCase({
+    cert_id: data.certId,
+    org_name: data.orgName,
+    credit_code: data.creditCode,
+    legal_person: data.legalPerson,
+    legal_id: data.legalId,
+    ad_code: data.adCode,
+    business_scope: data.businessScope,
+    license_path: data.licensePath,
+    contact_name: data.contactName,
+    contact_phone: data.contactPhone
+  })
+
+  return agricultureRequest({
+    url: '/supplier/cert/update',
+    method: 'post',
+    data: requestData
   }).then(res => {
     if (res.data) {
       res.data = toSnakeCase(res.data)
@@ -176,15 +233,45 @@ export const getSupplierCertList = (params = {}) => {
 }
 
 /**
+ * 转换组织树数据格式为 Cascader 所需格式
+ * @param {Array} treeData - 树形数据
+ * @returns {Array} 转换后的数组
+ */
+function transformOrgTree(treeData) {
+  if (!treeData || !Array.isArray(treeData)) return []
+
+  return treeData.map(node => {
+    const transformed = {
+      value: node.regionCode || node.orgCode,
+      label: node.regionName || node.orgName,
+      orgId: node.orgId,
+      orgType: node.orgType
+    }
+
+    // 递归处理子节点
+    if (node.children && node.children.length > 0) {
+      transformed.children = transformOrgTree(node.children)
+    }
+
+    return transformed
+  })
+}
+
+/**
  * 获取行政区划列表（用于下拉选择）
+ * 使用组织机构树接口，返回层级结构数据
  */
 export const getAdCodeList = () => {
-  return agricultureRequest({
-    url: '/system/adcode/list',
-    method: 'get'
+  return request({
+    url: '/rbac/organ/allTree',
+    method: 'get',
+    params: {
+      rootId: '778899'
+    }
   }).then(res => {
     if (res.data) {
-      res.data = res.data.map(item => toSnakeCase(item))
+      // 将数据转换为 Cascader 格式
+      res.data = transformOrgTree(res.data)
     }
     return res
   })

@@ -20,27 +20,19 @@
           :placeholder="$t('research.variety.publish.searchPlaceholder')"
           clearable
           class="search-input"
+          @input="handleSearch"
+          @clear="handleSearch"
         >
           <template #prefix>
             <i class="ri-search-line"></i>
           </template>
         </el-input>
         <el-select
-          v-model="filterCrop"
-          :placeholder="$t('research.variety.publish.filterByCrop')"
-          clearable
-          class="filter-select"
-        >
-          <el-option :label="$t('research.variety.publish.allCrops')" value="" />
-          <el-option label="Wheat" value="Wheat" />
-          <el-option label="Maize" value="Maize" />
-          <el-option label="Barley" value="Barley" />
-        </el-select>
-        <el-select
           v-model="filterStatus"
           :placeholder="$t('research.variety.publish.filterByStatus')"
           clearable
           class="filter-select"
+          @change="handleFilterChange"
         >
           <el-option :label="$t('research.variety.publish.allStatus')" value="" />
           <el-option :label="$t('research.variety.publish.status.pending')" value="pending" />
@@ -54,15 +46,15 @@
         <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="publishNo" :label="$t('research.variety.publish.columns.publishNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.publish.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" width="120" />
-          <el-table-column prop="approvalDate" :label="$t('research.variety.publish.columns.approvalDate')" width="120" />
-          <el-table-column prop="publishDate" :label="$t('research.variety.publish.columns.publishDate')" width="120">
+          <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" min-width="120" />
+          <el-table-column prop="publishTime" :label="$t('research.variety.publish.columns.approvalDate')" min-width="120" />
+          <el-table-column prop="publishDate" :label="$t('research.variety.publish.columns.publishDate')" min-width="120">
             <template #default="{ row }">
               {{ row.publishDate || '-' }}
             </template>
           </el-table-column>
-          <el-table-column prop="publishDept" :label="$t('research.variety.publish.columns.publishDept')" min-width="180" />
-          <el-table-column prop="publishStatus" :label="$t('research.variety.publish.columns.publishStatus')" width="120">
+          <el-table-column prop="publishDept" :label="$t('research.variety.publish.columns.publishDept')" min-width="120" />
+          <el-table-column prop="publishStatus" :label="$t('research.variety.publish.columns.publishStatus')" min-width="120">
             <template #default="{ row }">
               <el-tag :type="getStatusTagType(row.publishStatus)">
                 {{ getStatusLabel(row.publishStatus) }}
@@ -76,11 +68,11 @@
                   <i class="ri-eye-line"></i>
                   {{ $t('common.view') }}
                 </el-button>
-                <el-button v-if="row.publishStatus === 'pending'" link type="primary" @click="handlePublish(row)">
+                <el-button v-if="row.publishStatus === 1" link type="primary" @click="handlePublish(row)">
                   <i class="ri-send-plane-line"></i>
                   {{ $t('research.variety.publish.actions.publish') }}
                 </el-button>
-                <el-button v-if="row.publishStatus === 'published'" link type="danger" @click="handleOffline(row)">
+                <el-button v-if="row.publishStatus === 3" link type="danger" @click="handleOffline(row)">
                   <i class="ri-close-circle-line"></i>
                   {{ $t('research.variety.publish.actions.offline') }}
                 </el-button>
@@ -131,10 +123,10 @@
             </div>
           </div>
           <div class="card-actions" @click.stop>
-            <el-button v-if="item.publishStatus === 'pending'" link type="primary" size="small" @click="handlePublish(item)">
+            <el-button v-if="item.publishStatus === 1" link type="primary" size="small" @click="handlePublish(item)">
               <i class="ri-send-plane-line"></i> {{ $t('research.variety.publish.actions.publish') }}
             </el-button>
-            <el-button v-if="item.publishStatus === 'published'" link type="danger" size="small" @click="handleOffline(item)">
+            <el-button v-if="item.publishStatus === 3" link type="danger" size="small" @click="handleOffline(item)">
               <i class="ri-close-circle-line"></i> {{ $t('research.variety.publish.actions.offline') }}
             </el-button>
           </div>
@@ -192,7 +184,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.approvalDate') }}</span>
-              <span class="value">{{ currentVariety.approvalDate || '-' }}</span>
+              <span class="value">{{ currentVariety.createTime || '-' }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.publishStatus') }}</span>
@@ -242,7 +234,7 @@
         </div>
 
         <!-- 发布信息 - 待发布状态显示表单,已发布显示信息 -->
-        <div v-if="currentVariety.publishStatus === 'pending'" class="publish-form-section">
+        <div v-if="currentVariety.publishStatus === 1" class="publish-form-section">
           <div class="section-header">
             <i class="ri-file-edit-line"></i>
             <h2>{{ $t('research.variety.publish.sections.publishInfo') }}</h2>
@@ -361,7 +353,7 @@
           </div>
 
           <!-- 下架操作 -->
-          <div v-if="currentVariety.publishStatus === 'published'" class="offline-actions">
+          <div v-if="currentVariety.publishStatus === 3" class="offline-actions">
             <el-button type="danger" @click="handleOffline(currentVariety)" size="large">
               <i class="ri-close-circle-line"></i>
               {{ $t('research.variety.publish.actions.offline') }}
@@ -433,6 +425,18 @@ const rules = computed(() => ({
 // 筛选后的列表
 const filteredList = computed(() => listData.value)
 
+// 处理搜索
+const handleSearch = () => {
+  currentPage.value = 1
+  loadData()
+}
+
+// 处理筛选变化
+const handleFilterChange = () => {
+  currentPage.value = 1
+  loadData()
+}
+
 // 处理页码变化
 const handlePageChange = (page) => {
   currentPage.value = page
@@ -449,8 +453,8 @@ const handleSizeChange = (size) => {
 // 获取状态标签样式 - 映射后端状态值
 const getStatusTagType = (status) => {
   const tagMap = {
-    0: 'warning',   // 待发布
-    1: 'success',   // 已发布
+    1: 'warning',   // 待发布
+    3: 'success',   // 公示中
     2: 'info',      // 已下架
     pending: 'warning',
     published: 'success',
@@ -463,8 +467,8 @@ const getStatusTagType = (status) => {
 const getStatusLabel = (status) => {
   // 映射后端状态到前端显示
   const statusMap = {
-    0: 'pending',    // 待发布
-    1: 'published',  // 已发布
+    1: 'pending',    // 待发布
+    3: 'published',  // 公示中
     2: 'offline'     // 已下架
   }
   const mappedStatus = statusMap[status] || status
@@ -477,7 +481,7 @@ const handleView = async (row) => {
   showDetail.value = true
 
   // 如果是待发布状态,初始化表单数据
-  if (row.publishStatus === 'pending' || row.publishStatus === 0) {
+  if (row.publishStatus === 'pending' || row.publishStatus === 1) {
     formData.publishDept = row.publishDept || ''
     formData.publicDescription = ''
     formData.decisionExplanation = ''
@@ -508,7 +512,7 @@ const loadDetailData = async (id) => {
         minYieldPotential: data.minYieldPotential || 0,
         maxYieldPotential: data.maxYieldPotential || 0,
         growthPeriod: data.growthPeriod || 0,
-        approvalDate: data.approvalDate || '',
+        createTime: data.createTime || '',
         publishDate: data.publishDate || '',
         publishDept: data.publishDept || '',
         publishStatus: data.publishStatus,
@@ -570,7 +574,7 @@ const handleSubmitPublish = async () => {
         publicDescription: formData.publicDescription,
         recommendedRegion: formData.recommendedRegion,
         sowingGuide: formData.sowingGuide,
-        publishStatus: 1, // 1-公示中
+        publishStatus: 3, // 3-公示中
         publisher: userStore.userInfo?.userName || userStore.userInfo?.nickName || ''
       }
 
@@ -648,8 +652,8 @@ const loadData = async () => {
     if (filterStatus.value) {
       // 映射前端状态到后端状态值
       const statusMap = {
-        pending: 0,
-        published: 1,
+        pending: 1,
+        published: 3,
         offline: 2
       }
       params.publishStatus = statusMap[filterStatus.value]

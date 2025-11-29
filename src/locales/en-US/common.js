@@ -31,5 +31,7 @@ export default {
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
   actions: 'Actions',
-  days: 'days'
+  days: 'days',
+  audit: 'Audit',
+  update: 'Update'
 }
