@@ -1,5 +1,5 @@
 import agricultureRequest from '../utils/agricultureRequest'
-import request from '../utils/request'
+
 
 // ==================== 繁殖种子认证申请 API ====================
 
@@ -99,7 +99,7 @@ export const deleteBreedingCertification = (dataIds) => {
  * @param {FormData} formData - 包含文件的 FormData
  */
 export const uploadFile = (formData) => {
-  return request({
+  return agricultureRequest({
     url: '/doc/upload',
     method: 'post',
     headers: {

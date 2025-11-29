@@ -444,6 +444,7 @@
                   :http-request="(options) => handleUploadFile(options, 'trialReport')"
                   :file-list="formData.trialPerformance.trialReport"
                   :on-remove="() => handleRemove('trialReport')"
+                  :on-preview="handlePreviewFile"
                   :limit="1"
                   accept=".pdf,.doc,.docx"
                 >
@@ -465,6 +466,7 @@
                   :http-request="(options) => handleUploadFile(options, 'photo')"
                   :file-list="formData.trialPerformance.photo"
                   :on-remove="() => handleRemove('photo')"
+                  :on-preview="handlePreviewImage"
                   :limit="1"
                   accept=".jpg,.jpeg,.png,.gif"
                   list-type="picture"
@@ -536,6 +538,7 @@
                   :http-request="(options) => handleUploadFile(options, 'certificationDocument')"
                   :file-list="formData.supervision.certificationDocument"
                   :on-remove="() => handleRemove('certificationDocument')"
+                  :on-preview="handlePreviewFile"
                   :limit="1"
                   accept=".pdf,.doc,.docx"
                 >
@@ -564,6 +567,18 @@
         </div>
       </el-form>
     </div>
+
+    <!-- 图片预览对话框 -->
+    <el-dialog
+      v-model="imagePreviewVisible"
+      :title="$t('common.preview')"
+      width="80%"
+      append-to-body
+    >
+      <div class="image-preview-container">
+        <img :src="previewImageUrl" alt="Preview" class="preview-image" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -572,7 +587,13 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getBreedingCertificationDetail, addBreedingCertification, updateBreedingCertification, uploadFile } from '@/api/seed'
+import {
+  getBreedingCertificationDetail,
+  addBreedingCertification,
+  updateBreedingCertification,
+  uploadFile,
+  getFileDownloadUrl
+} from '@/api/seed'
 
 const route = useRoute()
 const router = useRouter()
@@ -590,6 +611,10 @@ window.addEventListener('resize', () => {
 
 const formRef = ref()
 const submitting = ref(false)
+
+// 图片预览
+const imagePreviewVisible = ref(false)
+const previewImageUrl = ref('')
 
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
@@ -770,7 +795,8 @@ const handleUploadFile = async (options, fieldName) => {
       const fileObj = {
         name: file.name,
         url: res.data.url,
-        uid: file.uid
+        uid: file.uid,
+        fileId: res.data.fileId || res.data.id // 保存文件ID用于下载
       }
 
       // 根据字段名更新对应的文件列表
@@ -803,6 +829,28 @@ const handleRemove = (fieldName) => {
   }
 }
 
+// 文件预览/下载处理
+const handlePreviewFile = (file) => {
+  // 如果有fileId，使用下载接口
+  if (file.fileId) {
+    const downloadUrl = getFileDownloadUrl(file.fileId)
+    window.open(downloadUrl, '_blank')
+  } else if (file.url) {
+    // 否则使用url直接下载
+    window.open(file.url, '_blank')
+  }
+}
+
+// 图片预览处理
+const handlePreviewImage = (file) => {
+  if (file.fileId) {
+    previewImageUrl.value = getFileDownloadUrl(file.fileId)
+  } else if (file.url) {
+    previewImageUrl.value = file.url
+  }
+  imagePreviewVisible.value = true
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   try {
@@ -816,33 +864,48 @@ const loadDetail = async () => {
       if (!formData.trialPerformance) formData.trialPerformance = {}
       if (!formData.supervision) formData.supervision = {}
 
-      // 将文件URL字符串转换为文件数组格式
-      if (formData.trialPerformance.trialReport && typeof formData.trialPerformance.trialReport === 'string') {
-        formData.trialPerformance.trialReport = [{
-          name: formData.trialPerformance.trialReport.split('/').pop(),
-          url: formData.trialPerformance.trialReport,
-          uid: Date.now() + '-trialReport'
-        }]
+      // 将文件URL字符串或对象转换为文件数组格式
+      if (formData.trialPerformance.trialReport) {
+        if (typeof formData.trialPerformance.trialReport === 'string') {
+          formData.trialPerformance.trialReport = [{
+            name: formData.trialPerformance.trialReport.split('/').pop(),
+            url: formData.trialPerformance.trialReport,
+            uid: Date.now() + '-trialReport',
+            fileId: res.data.trialPerformance?.trialReportId || ''
+          }]
+        } else if (!Array.isArray(formData.trialPerformance.trialReport)) {
+          formData.trialPerformance.trialReport = []
+        }
       } else {
         formData.trialPerformance.trialReport = []
       }
 
-      if (formData.trialPerformance.photo && typeof formData.trialPerformance.photo === 'string') {
-        formData.trialPerformance.photo = [{
-          name: formData.trialPerformance.photo.split('/').pop(),
-          url: formData.trialPerformance.photo,
-          uid: Date.now() + '-photo'
-        }]
+      if (formData.trialPerformance.photo) {
+        if (typeof formData.trialPerformance.photo === 'string') {
+          formData.trialPerformance.photo = [{
+            name: formData.trialPerformance.photo.split('/').pop(),
+            url: formData.trialPerformance.photo,
+            uid: Date.now() + '-photo',
+            fileId: res.data.trialPerformance?.photoId || ''
+          }]
+        } else if (!Array.isArray(formData.trialPerformance.photo)) {
+          formData.trialPerformance.photo = []
+        }
       } else {
         formData.trialPerformance.photo = []
       }
 
-      if (formData.supervision.certificationDocument && typeof formData.supervision.certificationDocument === 'string') {
-        formData.supervision.certificationDocument = [{
-          name: formData.supervision.certificationDocument.split('/').pop(),
-          url: formData.supervision.certificationDocument,
-          uid: Date.now() + '-certificationDocument'
-        }]
+      if (formData.supervision.certificationDocument) {
+        if (typeof formData.supervision.certificationDocument === 'string') {
+          formData.supervision.certificationDocument = [{
+            name: formData.supervision.certificationDocument.split('/').pop(),
+            url: formData.supervision.certificationDocument,
+            uid: Date.now() + '-certificationDocument',
+            fileId: res.data.supervision?.certificationDocumentId || ''
+          }]
+        } else if (!Array.isArray(formData.supervision.certificationDocument)) {
+          formData.supervision.certificationDocument = []
+        }
       } else {
         formData.supervision.certificationDocument = []
       }
@@ -1144,5 +1207,50 @@ onMounted(() => {
 
 :deep(.el-upload-list__item) {
   transition: all 0.3s;
+  cursor: pointer;
+}
+
+:deep(.el-upload-list__item:hover) {
+  background-color: #f5f7fa;
+}
+
+:deep(.el-upload-list__item-name) {
+  color: #009A44;
+  text-decoration: none;
+}
+
+:deep(.el-upload-list__item-name:hover) {
+  color: #007a36;
+  text-decoration: underline;
+}
+
+/* 图片预览对话框样式 */
+.image-preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media screen and (max-width: 768px) {
+  .image-preview-container {
+    min-height: 300px;
+    padding: 10px;
+  }
+
+  .preview-image {
+    max-height: 50vh;
+  }
 }
 </style>
