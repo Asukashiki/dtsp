@@ -184,5 +184,51 @@ export default {
       biotechnology: '生物技术育种',
       other: '其他',
     },
+
+    // 审核相关
+    submit: '提交审核',
+    submitForAudit: '提交审核',
+    submitSuccess: '提交成功',
+    auditResult: '审核结果',
+    auditComment: '审核意见',
+    auditTime: '审核时间',
+    auditor: '审核人',
+    auditorOrg: '审核机构',
+    approve: '通过',
+    reject: '驳回',
+    auditSuccess: '审核成功',
+    auditDialog: '审核',
+    auditCommentPlaceholder: '请输入审核意见',
+    auditCommentRequired: '请输入审核意见',
+
+    // 打印相关
+    print: '打印',
+    printCount: '打印次数',
+    lastPrintTime: '最后打印时间',
+    certificateLabel: '种子认证标签',
+    printSuccess: '打印记录成功',
+    printInfo: '打印信息',
+  },
+
+  // 繁殖种子认证审核
+  breedingAudit: {
+    title: '繁殖种子认证审核',
+    subtitle: '审核待审核状态的繁殖种子认证申请',
+    list: '审核列表',
+    pendingOnly: '仅显示待审核数据',
+    auditInfo: '审核信息',
+    audit: '审核',
+    noData: '暂无待审核数据',
+  },
+
+  // 繁殖种子证书颁发
+  breedingCertificate: {
+    title: '繁殖种子证书颁发',
+    subtitle: '管理已通过审核的种子认证证书',
+    list: '证书列表',
+    approvedOnly: '仅显示已通过认证',
+    viewCertificate: '查看证书',
+    printCertificate: '打印证书',
+    certificateInfo: '证书信息',
   },
 }

@@ -214,29 +214,29 @@
         <div v-if="detailData.auditResult" class="detail-section">
           <div class="section-title">
             <i class="ri-file-list-3-line"></i>
-            {{ $t('seed.breedingCertification.audit.auditInfo') }}
+            {{ $t('seed.breedingAudit.auditInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.audit.result') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.auditResult') }}:</span>
               <el-tag :type="getStatusTag(detailData.auditResult)">
                 {{ $t(`seed.breedingCertification.recordStatus.${detailData.auditResult}`) }}
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.audit.auditor') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.auditor') }}:</span>
               <span class="value">{{ detailData.auditor || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.audit.auditTime') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.auditTime') }}:</span>
               <span class="value">{{ detailData.auditTime || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.audit.auditOrg') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.auditorOrg') }}:</span>
               <span class="value">{{ detailData.auditorOrgName || '-' }}</span>
             </div>
             <div class="detail-item full-width">
-              <span class="label">{{ $t('seed.breedingCertification.audit.comment') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.auditComment') }}:</span>
               <span class="value text-block">{{ detailData.auditComment || '-' }}</span>
             </div>
           </div>
@@ -246,15 +246,15 @@
         <div v-if="detailData.printCount" class="detail-section">
           <div class="section-title">
             <i class="ri-printer-line"></i>
-            {{ $t('seed.breedingCertification.print.printInfo') }}
+            {{ $t('seed.breedingCertification.printInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.print.printCount') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.printCount') }}:</span>
               <span class="value">{{ detailData.printCount }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('seed.breedingCertification.print.lastPrintTime') }}:</span>
+              <span class="label">{{ $t('seed.breedingCertification.lastPrintTime') }}:</span>
               <span class="value">{{ detailData.lastPrintTime || '-' }}</span>
             </div>
           </div>

@@ -20,6 +20,8 @@ export default {
       breedingTracking: '育种跟踪管理',
       breedingSeed: '繁殖种子管理',
       breedingCertification: '繁殖种子认证申请',
+      breedingAudit: '繁殖种子认证审核',
+      breedingCertificate: '繁殖种子证书颁发',
       dataCollection: '数据采集',
       trialData: '试验基础数据采集',
       agronomicData: '农艺性状数据采集',

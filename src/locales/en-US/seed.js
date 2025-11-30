@@ -184,5 +184,51 @@ export default {
       biotechnology: 'Biotechnology Breeding',
       other: 'Other',
     },
+
+    // Audit Related
+    submit: 'Submit for Audit',
+    submitForAudit: 'Submit for Audit',
+    submitSuccess: 'Submitted successfully',
+    auditResult: 'Audit Result',
+    auditComment: 'Audit Comment',
+    auditTime: 'Audit Time',
+    auditor: 'Auditor',
+    auditorOrg: 'Audit Organization',
+    approve: 'Approve',
+    reject: 'Reject',
+    auditSuccess: 'Audit completed successfully',
+    auditDialog: 'Audit',
+    auditCommentPlaceholder: 'Please enter audit comment',
+    auditCommentRequired: 'Audit comment is required',
+
+    // Print Related
+    print: 'Print',
+    printCount: 'Print Count',
+    lastPrintTime: 'Last Print Time',
+    certificateLabel: 'Seed Certification Label',
+    printSuccess: 'Print logged successfully',
+    printInfo: 'Print Information',
+  },
+
+  // Breeding Seed Audit
+  breedingAudit: {
+    title: 'Breeding Seed Audit',
+    subtitle: 'Review pending breeding seed certification applications',
+    list: 'Audit List',
+    pendingOnly: 'Show pending applications only',
+    auditInfo: 'Audit Information',
+    audit: 'Audit',
+    noData: 'No pending applications',
+  },
+
+  // Breeding Seed Certificate
+  breedingCertificate: {
+    title: 'Seed Certificate Issuance',
+    subtitle: 'Manage approved seed certification certificates',
+    list: 'Certificate List',
+    approvedOnly: 'Show approved certifications only',
+    viewCertificate: 'View Certificate',
+    printCertificate: 'Print Certificate',
+    certificateInfo: 'Certificate Information',
   },
 }

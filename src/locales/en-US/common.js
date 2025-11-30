@@ -31,7 +31,14 @@ export default {
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
   actions: 'Actions',
+  action: 'Action',
   days: 'days',
   audit: 'Audit',
-  update: 'Update'
+  update: 'Update',
+  index: 'No.',
+  total: 'Total',
+  to: 'to',
+  noData: 'No Data',
+  filter: 'Filter',
+  loadMore: 'Load More'
 }

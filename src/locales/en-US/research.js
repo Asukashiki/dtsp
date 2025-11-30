@@ -20,6 +20,8 @@ export default {
       breedingTracking: 'Breeding Tracking Management',
       breedingSeed: 'Breeding Seed Management',
       breedingCertification: 'Breeding Seed Certification Application',
+      breedingAudit: 'Breeding Seed Audit',
+      breedingCertificate: 'Seed Certificate Issuance',
       dataCollection: 'Data Collection',
       trialData: 'Trial Basic Data Collection',
       agronomicData: 'Agronomic Data Collection',
