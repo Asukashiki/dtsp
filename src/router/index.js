@@ -118,6 +118,18 @@ const routes = [
         component: () => import('../views/research/enterprise/EnterpriseAudit.vue'),
         meta: { title: '种子企业审核', requiresAuth: true }
       },
+      {
+        path: 'union/list',
+        name: 'UnionList',
+        component: () => import('../views/research/union/UnionList.vue'),
+        meta: { title: '繁殖机构列表', requiresAuth: true }
+      },
+      {
+        path: 'union/registration',
+        name: 'UnionRegistration',
+        component: () => import('../views/research/union/UnionRegistration.vue'),
+        meta: { title: '繁殖机构注册', requiresAuth: true }
+      },
       // 品种管理
       {
         path: 'variety/registration',
