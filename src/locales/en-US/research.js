@@ -6,35 +6,108 @@ export default {
 
     // Menu Navigation
     menu: {
-       // ========== First Level Menu ==========
-      breedingDataManagement: 'Breeding Data Management',
-      propagationDataManagement: 'Propagation Data Management',
-      seedService: 'Seed Information Service',
+       "breedingDataManagement": "Breeding Data Management",
+      "propagationDataManagement": "Propagation Data Management",
+      "seedService": "Seed Information Service",
       
-      // ========== Breeding Data Management - Second Level ==========
-      breedingBatchManagement: 'Breeding Batch Management',
-      trialBaseDataCollection: 'Trial Base Information Collection',
-      fieldDataCollection: 'Field Data Collection',
-      environmentDataCollection: 'Environment Data Collection',
-      fieldInspection: 'Field Inspection Data Collection',
-      laboratoryTest: 'Laboratory Test Data Collection',
-      breederSeedProduction: 'Breeder Seed Production Data Collection',
-      breederSeedDistribution: 'Breeder Seed Distribution Data',
-      oseManagement: 'OSE Maintenance',
-      iotSensorMaintenance: 'IoT Sensor Maintenance',
+      "breedingBatchManagement": "Breeding Batch Management",
+      "breedingBatchAdd": "Add Breeding Batch",
+      "breedingBatchEdit": "Edit Breeding Batch",
+      "breedingBatchDetail": "Breeding Batch Detail",
       
-      // ========== Propagation Data Management - Second Level ==========
-      oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
-      propagationBatchCollection: 'Breeding batch tracking info',
-      propagationTrackingCollection: 'Propagation Tracking Information Collection',
-      seedCertificationApplication: 'Seed Certification Application',
-      seedCertificationAudit: 'Seed Certification Audit',
-      seedCertificationIssuance: 'Seed Certification Issuance',
-      propagationOrgRegistration: 'Propagation Organization Registration',
+      "plotInfoManagement": "Plot and Sowing Information Management",
+      "plotInfoAdd": "Add Plot Information",
+      "plotInfoEdit": "Edit Plot Information",
+      "plotInfoDetail": "Plot Information Detail",
       
-      // ========== Seed Information Service - Second Level ==========
-      seedPromotionManagement: 'Seed Promotion Management',
-      seedInfoPublicity: 'Seed Information Publicity',
+      "trialBasicManagement": "Trial Basic Information Management",
+      "trialBasicAdd": "Add Trial Information",
+      "trialBasicEdit": "Edit Trial Information",
+      "trialBasicDetail": "Trial Information Detail",
+      
+      "agronomicTraitDataCollection": "Agronomic Trait Data Collection",
+      "agronomicTraitDataAdd": "Add Agronomic Trait Data",
+      "agronomicTraitDataEdit": "Edit Agronomic Trait Data",
+      "agronomicTraitDataDetail": "Agronomic Trait Data Detail",
+      
+      "farmingRecordDataCollection": "Farming Record Data Collection",
+      "farmingRecordDataAdd": "Add Farming Record",
+      "farmingRecordDataEdit": "Edit Farming Record",
+      "farmingRecordDataDetail": "Farming Record Detail",
+      
+      "environmentDataCollection": "Environment Data Collection",
+      "environmentDataAdd": "Add Environment Data",
+      "environmentDataEdit": "Edit Environment Data",
+      "environmentDataDetail": "Environment Data Detail",
+      
+      "fieldInspection": "Field Inspection Data Collection",
+      "fieldInspectionAdd": "Add Field Inspection",
+      "fieldInspectionEdit": "Edit Field Inspection",
+      "fieldInspectionDetail": "Field Inspection Detail",
+      
+      "laboratoryTest": "Laboratory Test Data Collection",
+      "laboratoryTestAdd": "Add Laboratory Test",
+      "laboratoryTestEdit": "Edit Laboratory Test",
+      "laboratoryTestDetail": "Laboratory Test Detail",
+      
+      "breederSeedProduction": "Breeder Seed Production Data Collection",
+      "breederSeedProductionAdd": "Add Breeder Seed Production",
+      "breederSeedProductionEdit": "Edit Breeder Seed Production",
+      "breederSeedProductionDetail": "Breeder Seed Production Detail",
+      
+      "breederSeedDistribution": "Breeder Seed Distribution Data",
+      "breederSeedDistributionAdd": "Add Seed Distribution",
+      "breederSeedDistributionEdit": "Edit Seed Distribution",
+      "breederSeedDistributionDetail": "Seed Distribution Detail",
+      
+      "oseManagement": "OSE Maintenance",
+      "oseManagementAdd": "Add OSE",
+      "oseManagementEdit": "Edit OSE",
+      "oseManagementDetail": "OSE Detail",
+      
+      "iotSensorMaintenance": "IoT Sensor Maintenance",
+      "iotSensorMaintenanceAdd": "Add Sensor",
+      "iotSensorMaintenanceEdit": "Edit Sensor",
+      "iotSensorMaintenanceDetail": "Sensor Detail",
+      
+      "oseReceiveConfirm": "OSE Confirm Receipt of Breeder Seeds",
+      "oseReceiveConfirmAdd": "Add Receipt Confirmation",
+      "oseReceiveConfirmEdit": "Edit Receipt Confirmation",
+      "oseReceiveConfirmDetail": "Receipt Confirmation Detail",
+      
+      "propagationBatchCollection": "Propagation Batch Information Collection",
+      "propagationBatchAdd": "Add Propagation Batch",
+      "propagationBatchEdit": "Edit Propagation Batch",
+      "propagationBatchDetail": "Propagation Batch Detail",
+      
+      "propagationTrackingCollection": "Propagation Tracking Information Collection",
+      "propagationTrackingAdd": "Add Tracking Information",
+      "propagationTrackingEdit": "Edit Tracking Information",
+      "propagationTrackingDetail": "Tracking Information Detail",
+      
+      "seedCertificationApplication": "Seed Certification Application",
+      "seedCertificationApplicationAdd": "Add Certification Application",
+      "seedCertificationApplicationEdit": "Edit Certification Application",
+      "seedCertificationApplicationDetail": "Certification Application Detail",
+      
+      "seedCertificationAudit": "Seed Certification Audit",
+      "seedCertificationAuditDetail": "Certification Audit Detail",
+      
+      "seedCertificationIssuance": "Seed Certification Issuance",
+      "seedCertificationIssuanceDetail": "Certification Issuance Detail",
+      
+      "propagationOrgRegistration": "Propagation Organization Registration",
+      "propagationOrgRegistrationAdd": "Add Organization Registration",
+      "propagationOrgRegistrationEdit": "Edit Organization Registration",
+      "propagationOrgRegistrationDetail": "Organization Registration Detail",
+      
+      "seedPromotionManagement": "Seed Promotion Management",
+      "seedPromotionManagementAdd": "Add Promotion Information",
+      "seedPromotionManagementEdit": "Edit Promotion Information",
+      "seedPromotionManagementDetail": "Promotion Information Detail",
+      
+      "seedInfoPublicity": "Seed Information Publicity",
+      "seedInfoPublicityDetail": "Publicity Information Detail",
       enterpriseRegistration: 'Enterprise Registration',
       enterpriseAuth: 'Seed Enterprise Authentication',
       enterpriseAudit: 'Seed Enterprise Audit',

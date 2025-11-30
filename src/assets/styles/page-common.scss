@@ -1,0 +1,453 @@
+// ==================== 页面通用样式 ====================
+// 适用于所有列表页、表单页、详情页的共同样式
+
+// Ethiopian 国旗主题色
+$primary-green: #009A44;
+$accent-yellow: #FEDD00;
+$accent-red: #DA121A;
+
+// 常用颜色变量
+$color-text-primary: #303133;
+$color-text-regular: #606266;
+$color-text-secondary: #909399;
+$color-border-light: #e4e7ed;
+$color-border-lighter: #f0f2f5;
+$color-bg-light: #f5f7fa;
+
+// ==================== 页面容器 ====================
+.page-container {
+  min-height: calc(100vh - 120px);
+  position: relative;
+}
+
+.page-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+// ==================== 页面头部 ====================
+.page-header {
+  background: linear-gradient(135deg, $primary-green 0%, #00b350 100%);
+  padding: 32px;
+  margin: -24px 0 24px 0;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+
+  i {
+    font-size: 32px;
+    color: white;
+  }
+}
+
+.header-content {
+  flex: 1;
+  color: white;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: white;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+  color: white;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+}
+
+// ==================== 内容区域 ====================
+.content-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+// ==================== 信息卡片 ====================
+.info-card {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid $color-border-lighter;
+  overflow: hidden;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(to right, rgba($primary-green, 0.03), rgba($primary-green, 0));
+  border-bottom: 1px solid $color-border-lighter;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text-primary;
+
+  i {
+    font-size: 20px;
+    color: $primary-green;
+  }
+}
+
+.card-body {
+  padding: 24px;
+}
+
+// ==================== 搜索筛选区 ====================
+.search-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-select {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+// ==================== 表格区域 ====================
+.table-wrapper {
+  width: 100%;
+
+  &.pc-only {
+    display: block;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// ==================== 分页 ====================
+.pagination-wrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0;
+}
+
+// ==================== 移动端卡片列表 ====================
+.mobile-card-list {
+  display: none;
+
+  &.mobile-only {
+    display: none;
+  }
+}
+
+.mobile-card {
+  background: white;
+  border: 1px solid $color-border-light;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.mobile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid $color-border-lighter;
+}
+
+.mobile-card-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text-primary;
+
+  i {
+    font-size: 18px;
+    color: $primary-green;
+  }
+}
+
+.mobile-card-body {
+  margin-bottom: 12px;
+}
+
+.mobile-card-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .label {
+    color: $color-text-secondary;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .value {
+    color: $color-text-primary;
+    font-weight: 500;
+    flex: 1;
+  }
+}
+
+.mobile-card-footer {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid $color-border-lighter;
+}
+
+// ==================== 表单操作按钮 ====================
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 0;
+  margin-top: 24px;
+  border-top: 1px solid $color-border-lighter;
+}
+
+// ==================== 响应式设计 ====================
+@media screen and (max-width: 1200px) {
+  .page-header {
+    padding: 28px 24px;
+  }
+
+  .card-header,
+  .card-body {
+    padding: 16px 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .page-header {
+    margin: -16px -16px 16px -16px;
+    padding: 20px 16px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+
+    i {
+      font-size: 24px;
+    }
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  .content-wrapper {
+    padding: 16px;
+  }
+
+  .card-header {
+    padding: 16px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .search-section {
+    flex-direction: column;
+
+    .search-input,
+    .filter-select {
+      width: 100%;
+    }
+  }
+
+  .table-wrapper.pc-only {
+    display: none;
+  }
+
+  .mobile-card-list.mobile-only {
+    display: block;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    .el-button {
+      width: 100%;
+    }
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+
+    .el-button {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page-header {
+    margin: -12px -12px 12px -12px;
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .header-left {
+    gap: 12px;
+  }
+
+  .header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+
+    i {
+      font-size: 20px;
+    }
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .page-subtitle {
+    font-size: 12px;
+  }
+
+  .content-wrapper {
+    padding: 12px;
+  }
+
+  .card-header,
+  .card-body {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 14px;
+
+    i {
+      font-size: 18px;
+    }
+  }
+
+  .mobile-card {
+    padding: 12px;
+  }
+
+  .mobile-card-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    .label {
+      min-width: auto;
+    }
+  }
+}
+
+// ==================== 辅助类 ====================
+.pc-only {
+  @media screen and (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  display: none !important;
+
+  @media screen and (max-width: 768px) {
+    display: block !important;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}

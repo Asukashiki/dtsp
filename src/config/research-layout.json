@@ -11,22 +11,32 @@
       "titleKey": "research.menu.breedingDataManagement",
       "children": [
         {
-          "index": "/research/breeding/plan",
+          "index": "/research/breeding-data/batch",
           "icon": "ri-calendar-line",
           "titleKey": "research.menu.breedingBatchManagement"
         },
         {
-          "index": "/research/data-collection/trial-base",
+          "index": "/research/breeding-data/plot",
+          "icon": "ri-map-pin-line",
+          "titleKey": "research.menu.plotInfoManagement"
+        },
+        {
+          "index": "/research/breeding-data/trial",
           "icon": "ri-test-tube-line",
-          "titleKey": "research.menu.trialBaseDataCollection"
+          "titleKey": "research.menu.trialBasicManagement"
         },
         {
-          "index": "/research/data-collection/agronomic-trait",
+          "index": "/research/breeding-data/trait",
           "icon": "ri-leaf-line",
-          "titleKey": "research.menu.fieldDataCollection"
+          "titleKey": "research.menu.agronomicTraitDataCollection"
         },
         {
-          "index": "/research/data-collection/environment-soil",
+          "index": "/research/breeding-data/farming",
+          "icon": "ri-plant-line",
+          "titleKey": "research.menu.farmingRecordDataCollection"
+        },
+        {
+          "index": "/research/breeding-data/environment",
           "icon": "ri-global-line",
           "titleKey": "research.menu.environmentDataCollection"
         },
@@ -78,13 +88,18 @@
           "titleKey": "research.menu.propagationBatchCollection"
         },
         {
+          "index": "/research/breeding/tracking",
+          "icon": "ri-route-line",
+          "titleKey": "research.menu.propagationTrackingCollection"
+        },
+        {
           "index": "/research/seed/breeding-certification",
-          "icon": "ri-git-pull-request-line",
+          "icon": "ri-certificate-line",
           "titleKey": "research.menu.seedCertificationApplication"
         },
         {
           "index": "/research/seed/breeding-audit",
-          "icon": "ri-pass-pending-line",
+          "icon": "ri-audit-line",
           "titleKey": "research.menu.seedCertificationAudit"
         },
         {
@@ -96,43 +111,6 @@
           "index": "/research/union/list",
           "icon": "ri-community-line",
           "titleKey": "research.menu.propagationOrgRegistration"
-        }
-      ]
-    },
-    {
-      "index": "breeding-data-management",
-      "icon": "ri-database-2-line",
-      "titleKey": "research.menu.breedingDataManagement",
-      "children": [
-        {
-          "index": "/research/breeding-data/batch",
-          "icon": "ri-list-check-2",
-          "titleKey": "research.menu.breedingBatch"
-        },
-        {
-          "index": "/research/breeding-data/plot",
-          "icon": "ri-map-2-line",
-          "titleKey": "research.menu.plotInfo"
-        },
-        {
-          "index": "/research/breeding-data/trial",
-          "icon": "ri-test-tube-line",
-          "titleKey": "research.menu.trialBasic"
-        },
-        {
-          "index": "/research/breeding-data/trait",
-          "icon": "ri-leaf-line",
-          "titleKey": "research.menu.agronomicTraitData"
-        },
-        {
-          "index": "/research/breeding-data/farming",
-          "icon": "ri-plant-line",
-          "titleKey": "research.menu.farmingRecordData"
-        },
-        {
-          "index": "/research/breeding-data/environment",
-          "icon": "ri-cloud-line",
-          "titleKey": "research.menu.environmentDataCollection"
         }
       ]
     },
