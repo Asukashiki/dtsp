@@ -29,6 +29,30 @@
         label-width="200px"
         class="lab-form"
       >
+        <!-- 基础信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-information-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
+          </div>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
+            <el-input
+              v-model="formData.batchId"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchId')"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')" prop="trialId">
+            <el-input
+              v-model="formData.trialId"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.trialId')"
+              clearable
+            />
+          </el-form-item>
+        </div>
+
         <!-- 样本信息 -->
         <div class="form-section">
           <div class="section-title">
@@ -39,15 +63,15 @@
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')" prop="sampleId">
             <el-input
               v-model="formData.sampleId"
-              :placeholder="$t('common.pleaseEnter')"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleId')"
               clearable
             />
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')" prop="sampleCondition">
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleStatus')" prop="sampleCondition">
             <el-input
               v-model="formData.sampleCondition"
-              :placeholder="$t('common.pleaseEnter')"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleStatus')"
               clearable
             />
           </el-form-item>
@@ -57,71 +81,81 @@
         <div class="form-section">
           <div class="section-title">
             <i class="ri-bar-chart-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testData') }}
+            {{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}
           </div>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')" prop="germinationRate">
-            <el-input-number
-              v-model="formData.germinationRate"
-              :placeholder="$t('common.pleaseEnter')"
-              :min="0"
-              :max="100"
-              :precision="2"
-              :controls="false"
-              style="width: 100%"
-            />
-            <span class="unit-hint">%</span>
+            <div class="input-with-unit">
+              <el-input-number
+                v-model="formData.germinationRate"
+                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.germinationRate')"
+                :min="0"
+                :max="100"
+                :precision="2"
+                :controls="false"
+                style="width: 100%"
+              />
+              <span class="unit-hint">%</span>
+            </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')" prop="purityPercent">
-            <el-input-number
-              v-model="formData.purityPercent"
-              :placeholder="$t('common.pleaseEnter')"
-              :min="0"
-              :max="100"
-              :precision="2"
-              :controls="false"
-              style="width: 100%"
-            />
-            <span class="unit-hint">%</span>
+            <div class="input-with-unit">
+              <el-input-number
+                v-model="formData.purityPercent"
+                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.purityPercent')"
+                :min="0"
+                :max="100"
+                :precision="2"
+                :controls="false"
+                style="width: 100%"
+              />
+              <span class="unit-hint">%</span>
+            </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')" prop="moistureContentPercent">
-            <el-input-number
-              v-model="formData.moistureContentPercent"
-              :placeholder="$t('common.pleaseEnter')"
-              :min="0"
-              :max="100"
-              :precision="2"
-              :controls="false"
-              style="width: 100%"
-            />
-            <span class="unit-hint">%</span>
+            <div class="input-with-unit">
+              <el-input-number
+                v-model="formData.moistureContentPercent"
+                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.moistureContentPercent')"
+                :min="0"
+                :max="100"
+                :precision="2"
+                :controls="false"
+                style="width: 100%"
+              />
+              <span class="unit-hint">%</span>
+            </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')" prop="proteinPercent">
-            <el-input-number
-              v-model="formData.proteinPercent"
-              :placeholder="$t('common.pleaseEnter')"
-              :min="0"
-              :max="100"
-              :precision="2"
-              :controls="false"
-              style="width: 100%"
-            />
-            <span class="unit-hint">%</span>
+            <div class="input-with-unit">
+              <el-input-number
+                v-model="formData.proteinPercent"
+                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.proteinPercent')"
+                :min="0"
+                :max="100"
+                :precision="2"
+                :controls="false"
+                style="width: 100%"
+              />
+              <span class="unit-hint">%</span>
+            </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.toxinLevelPpm')" prop="toxinLevelPpm">
-            <el-input-number
-              v-model="formData.toxinLevelPpm"
-              :placeholder="$t('common.pleaseEnter')"
-              :min="0"
-              :precision="2"
-              :controls="false"
-              style="width: 100%"
-            />
-            <span class="unit-hint">PPM</span>
+            <div class="input-with-unit">
+              <el-input-number
+                v-model="formData.toxinLevelPpm"
+                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.toxinLevelPpm')"
+                :min="0"
+                :precision="2"
+                :controls="false"
+                style="width: 100%"
+              />
+              <span class="unit-hint">PPM</span>
+            </div>
           </el-form-item>
         </div>
 
@@ -129,7 +163,7 @@
         <div class="form-section">
           <div class="section-title">
             <i class="ri-heart-pulse-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.healthTraceability') }}
+            {{ $t('research.dataCollection.laboratoryTest.form.qualityInfo') }}
           </div>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.seedHealthFindings')" prop="seedHealthFindings">
@@ -137,14 +171,14 @@
               v-model="formData.seedHealthFindings"
               type="textarea"
               :rows="3"
-              :placeholder="$t('common.pleaseEnter')"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.seedHealthFindings')"
             />
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.traceabilityLink')" prop="traceabilityLink">
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.chainResponsibility')" prop="traceabilityLink">
             <el-input
               v-model="formData.traceabilityLink"
-              :placeholder="$t('common.pleaseEnter')"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.chainResponsibility')"
               clearable
             />
           </el-form-item>
@@ -162,6 +196,41 @@
           </el-form-item>
         </div>
 
+        <!-- 检测信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-calendar-check-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
+          </div>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testDate')" prop="testDate">
+            <el-date-picker
+              v-model="formData.testDate"
+              type="date"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testDate')"
+              style="width: 100%"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testOrganization')" prop="testOrganization">
+            <el-input
+              v-model="formData.testOrganization"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testOrganization')"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testerName')" prop="testerName">
+            <el-input
+              v-model="formData.testerName"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testerName')"
+              clearable
+            />
+          </el-form-item>
+        </div>
+
         <!-- 操作按钮 -->
         <div class="form-actions">
           <el-button @click="goBack">
@@ -169,7 +238,7 @@
           </el-button>
           <el-button type="primary" @click="handleSubmit">
             <i class="ri-save-line"></i>
-            {{ $t('common.save') }}
+            {{ isEdit ? $t('common.save') : $t('common.add') }}
           </el-button>
         </div>
       </el-form>
@@ -182,7 +251,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getLaboratoryTestDetail, addLaboratoryTest, editLaboratoryTest } from '@/api/breeding'
+import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 
 const route = useRoute()
 const router = useRouter()
@@ -193,6 +262,8 @@ const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
 const formData = reactive({
+  batchId: '',
+  trialId: '',
   sampleId: '',
   sampleCondition: '',
   germinationRate: null,
@@ -202,10 +273,19 @@ const formData = reactive({
   toxinLevelPpm: null,
   seedHealthFindings: '',
   traceabilityLink: '',
-  labReportFile: ''
+  labReportFile: '',
+  testDate: '',
+  testOrganization: '',
+  testerName: ''
 })
 
 const rules = computed(() => ({
+  batchId: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.batchIdRequired'), trigger: 'blur' }
+  ],
+  trialId: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.trialIdRequired'), trigger: 'blur' }
+  ],
   sampleId: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleIdRequired'), trigger: 'blur' }
   ],
@@ -229,6 +309,15 @@ const rules = computed(() => ({
   ],
   traceabilityLink: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.traceabilityLinkRequired'), trigger: 'blur' }
+  ],
+  testDate: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.testDateRequired'), trigger: 'change' }
+  ],
+  testOrganization: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.testOrganizationRequired'), trigger: 'blur' }
+  ],
+  testerName: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.testerNameRequired'), trigger: 'blur' }
   ]
 }))
 
@@ -236,7 +325,7 @@ const rules = computed(() => ({
 const loadDetail = async () => {
   loading.value = true
   try {
-    const res = await getLaboratoryTestDetail(route.params.id)
+    const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
     } else {
@@ -259,7 +348,7 @@ const handleSubmit = () => {
 
     loading.value = true
     try {
-      const apiFunc = isEdit.value ? editLaboratoryTest : addLaboratoryTest
+      const apiFunc = isEdit.value ? updateLabTest : addLabTest
       const res = await apiFunc(formData)
       if (res.code === 200) {
         ElMessage.success(t(isEdit.value ? 'common.updateSuccess' : 'common.addSuccess'))
@@ -361,11 +450,24 @@ onMounted(() => {
   font-size: 20px;
 }
 
+/* 带单位的输入框容器 */
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.input-with-unit .el-input-number {
+  flex: 1;
+}
+
 /* 单位提示 */
 .unit-hint {
-  margin-left: 8px;
   color: #6b7280;
   font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 操作按钮 */

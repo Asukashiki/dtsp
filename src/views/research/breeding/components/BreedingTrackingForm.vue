@@ -206,9 +206,14 @@ const props = defineProps({
 const formRef = ref(null)
 const submitting = ref(false)
 
-// 辅助数据
+// 辅助数据 - 动态国际化labels
 const batchList = ref(mockBatchList)
-const stageNames = ref(mockStageNames)
+const stageNames = computed(() => {
+  return mockStageNames.map(item => ({
+    value: item.value,
+    label: t(item.labelKey)
+  }))
+})
 
 // 表单数据
 const formData = reactive({

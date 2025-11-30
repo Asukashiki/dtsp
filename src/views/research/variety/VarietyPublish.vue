@@ -53,7 +53,7 @@
               {{ row.publishDate || '-' }}
             </template>
           </el-table-column>
-          <el-table-column prop="publishDept" :label="$t('research.variety.publish.columns.publishDept')" min-width="120" />
+          <el-table-column prop="publishDept" show-overflow-tooltip :label="$t('research.variety.publish.columns.publishDept')" min-width="120" />
           <el-table-column prop="publishStatus" :label="$t('research.variety.publish.columns.publishStatus')" min-width="120">
             <template #default="{ row }">
               <el-tag :type="getStatusTagType(row.publishStatus)">

@@ -38,7 +38,7 @@
               <template #title>
                 <div class="alert-title">
                   <i class="ri-error-warning-line"></i>
-                  <span>{{ $t('research.enterprise.messages.rejectedTitle') || '审核未通过' }}</span>
+                  <span>{{ $t('research.enterprise.messages.rejectedTitle') }}</span>
                 </div>
               </template>
               <div class="alert-content">
@@ -227,7 +227,7 @@
                         type="number"
                         size="large"
                       >
-                        <template #append>{{ $t('research.enterprise.form.annualProductionCapacity').includes('吨') ? '吨/年' : 'tons/year' }}</template>
+                        <template #append>{{ $t('research.enterprise.messages.tonsPerYear') }}</template>
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -565,10 +565,10 @@ const rules = computed(() => ({
   enterpriseName: [
     { required: true, message: t('research.enterprise.rules.enterpriseNameRequired'), trigger: 'blur' }
   ],
-  unifiedSocialCreditCode: [
-    { required: true, message: t('research.enterprise.rules.unifiedSocialCreditCodeRequired'), trigger: 'blur' },
-    { len: 18, message: t('research.enterprise.rules.unifiedSocialCreditCodeLength'), trigger: 'blur' }
-  ],
+  // unifiedSocialCreditCode: [
+  //   { required: true, message: t('research.enterprise.rules.unifiedSocialCreditCodeRequired'), trigger: 'blur' },
+  //   { len: 18, message: t('research.enterprise.rules.unifiedSocialCreditCodeLength'), trigger: 'blur' }
+  // ],
   enterpriseType: [
     { required: true, message: t('research.enterprise.rules.enterpriseTypeRequired'), trigger: 'change' }
   ],
@@ -614,10 +614,10 @@ const rules = computed(() => ({
   contactPerson: [
     { required: true, message: t('research.enterprise.rules.contactPersonRequired'), trigger: 'blur' }
   ],
-  contactPhone: [
-    { required: true, message: t('research.enterprise.rules.contactPhoneRequired'), trigger: 'blur' },
-    { pattern: /^[0-9+\-\s()]+$/, message: t('research.enterprise.rules.contactPhoneFormat'), trigger: 'blur' }
-  ],
+  // contactPhone: [
+  //   { required: true, message: t('research.enterprise.rules.contactPhoneRequired'), trigger: 'blur' },
+  //   { pattern: /^[0-9+\-\s()]+$/, message: t('research.enterprise.rules.contactPhoneFormat'), trigger: 'blur' }
+  // ],
   contactEmail: [
     { pattern: /^\S+@\S+\.\S+$/, message: t('research.enterprise.rules.contactEmailFormat'), trigger: 'blur' }
   ]
@@ -638,7 +638,7 @@ const getStatusLabel = (status) => {
     1: t('research.enterprise.status.approved'),
     2: t('research.enterprise.status.rejected')
   }
-  return labelMap[status] || '未申请'
+  return labelMap[status] || t('research.enterprise.messages.notApplied')
 }
 
 // 重置表单

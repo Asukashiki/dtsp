@@ -45,5 +45,14 @@ export default {
     to: '至',
     noData: '暂无数据',
     filter: '筛选',
-    loadMore: '加载更多'
+    loadMore: '加载更多',
+    // 作物类型(通用)
+    cropTypes: {
+      wheat: '小麦',
+      maize: '玉米',
+      sorghum: '高粱',
+      teff: '苔麸',
+      barley: '大麦',
+      pulses: '豆类',
+    }
   }

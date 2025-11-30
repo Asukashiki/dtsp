@@ -45,5 +45,14 @@ export default {
   to: 'to',
   noData: 'No Data',
   filter: 'Filter',
-  loadMore: 'Load More'
+  loadMore: 'Load More',
+  // Crop Types (Common)
+  cropTypes: {
+    wheat: 'Wheat',
+    maize: 'Maize',
+    sorghum: 'Sorghum',
+    teff: 'Teff',
+    barley: 'Barley',
+    pulses: 'Pulses',
+  }
 }

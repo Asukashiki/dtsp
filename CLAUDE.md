@@ -69,39 +69,193 @@ pnpm dev
 ### Directory Structure
 ```
 src/
-├── api/              # API layer - all HTTP requests
-│   ├── user.js       # User-related APIs (getCurrentUserInfo, postUserUpdate, etc.)
-│   ├── home.js       # Home page APIs
-│   └── application.js
-├── assets/           # Static assets
-├── components/       # Shared components
-│   └── userDetails.vue
-├── i18n/             # i18n configuration
-│   └── index.js
-├── layout/           # Layout components
-│   └── Layout.vue
-├── locales/          # Translation files (modular structure)
-│   ├── index.js      # Auto-import all languages
-│   ├── zh-CN/        # Chinese translations (modular)
-│   └── en-US/        # English translations (same structure)
-├── router/           # Vue Router configuration
-│   └── index.js
-├── store/            # Pinia stores
-│   ├── index.js      # Store exports
-│   ├── user.js       # User state management
-│   └── locale.js     # Locale/language state
-├── utils/            # Utility functions
-│   ├── auth.js       # Authentication utilities
-│   ├── request.js    # Axios instance with interceptors
-│   └── system-data-config.js
-├── views/            # Page components
-│   ├── home/         # Home page
-│   ├── identity/     # Identity verification (farmer, supplier, buyer)
-│   ├── knowledge/    # Knowledge center (currently disabled)
-│   └── application/  # Application registration (currently disabled)
-├── App.vue
-├── main.js
-└── style.css
+├── api/                      # API layer - all HTTP requests
+│   ├── application.js        # Application registration APIs
+│   ├── breeding.js           # Breeding management APIs
+│   ├── dashboard.js          # Dashboard data APIs
+│   ├── enterprise.js         # Enterprise management APIs
+│   ├── farm.js               # Farm management APIs
+│   ├── feedback.js           # User feedback APIs
+│   ├── file.js               # File upload/download APIs
+│   ├── home.js               # Home page APIs
+│   ├── input.js              # Agricultural input management APIs
+│   ├── inventory.js          # Inventory management APIs
+│   ├── seedPromotion.js      # Seed promotion APIs
+│   ├── supplier.js           # Supplier management APIs
+│   └── user.js               # User-related APIs (getCurrentUserInfo, etc.)
+├── assets/                   # Static assets (images, fonts, etc.)
+├── components/               # Shared components
+│   ├── variety/              # Variety-related components
+│   │   └── VarietyInfoCard.vue  # Variety information card component
+│   ├── CommonTable.vue       # Reusable table component
+│   ├── Footer.vue            # Global footer component
+│   ├── Header.vue            # Global header component
+│   ├── ModifyContact.vue     # Contact modification dialog
+│   ├── ModifyPassword.vue    # Password modification dialog
+│   ├── ResponsiveDialog.vue  # Responsive dialog wrapper
+│   └── userDetails.vue       # User details component
+├── config/                   # Layout configuration files
+│   ├── farm-layout.json      # Farm module menu configuration
+│   ├── input-layout.json     # Input module menu configuration
+│   └── research-layout.json  # Research module menu configuration
+├── i18n/                     # i18n configuration
+│   └── index.js              # i18n setup and configuration
+├── layout/                   # Layout components
+│   ├── Layout.vue            # Main layout wrapper
+│   └── SystemLayout.vue      # System module layout (dynamic menu)
+├── locales/                  # Translation files (modular structure)
+│   ├── index.js              # Auto-import all languages
+│   ├── zh-CN/                # Chinese translations (modular)
+│   │   ├── index.js          # Auto-imports all Chinese modules
+│   │   ├── callback.js       # OAuth callback translations
+│   │   ├── common.js         # Common translations
+│   │   ├── dataList.js       # Data list translations
+│   │   ├── farm.js           # Farm module translations
+│   │   ├── footer.js         # Footer translations
+│   │   ├── header.js         # Header translations
+│   │   ├── home.js           # Home page translations
+│   │   ├── identity.js       # Identity verification translations
+│   │   ├── input.js          # Input module translations
+│   │   ├── research.js       # Research module translations
+│   │   ├── user.js           # User profile translations
+│   │   └── userInfo.js       # User information translations
+│   └── en-US/                # English translations (same structure)
+│       └── (same files)
+├── mock/                     # Mock data for development
+│   └── breedingData.js       # Breeding module mock data
+├── router/                   # Vue Router configuration
+│   └── index.js              # Route definitions and guards
+├── store/                    # Pinia stores
+│   ├── index.js              # Store exports
+│   ├── locale.js             # Locale/language state
+│   └── user.js               # User state management
+├── utils/                    # Utility functions
+│   ├── agricultureRequest.js # Agriculture API request instance
+│   ├── auth.js               # Authentication utilities
+│   ├── request.js            # Axios instance with interceptors
+│   └── system-data-config.js # System data configuration
+├── views/                    # Page components
+│   ├── application/          # Application registration module
+│   │   ├── index.vue         # Application form page
+│   │   └── recordList.vue    # Application record list
+│   ├── callback/             # OAuth callback handling
+│   │   └── index.vue         # Callback processing page
+│   ├── farm/                 # Farm management module
+│   │   ├── farmer/           # Farmer certification
+│   │   │   ├── approval.vue  # Farmer approval page
+│   │   │   └── auth.vue      # Farmer authentication page
+│   │   └── land/             # Land management
+│   │       └── list.vue      # Land list page
+│   ├── home/                 # Home page
+│   │   ├── components/       # Home page components
+│   │   │   ├── AnnouncementDetail.vue  # Announcement detail
+│   │   │   └── dataList.vue  # Data list component
+│   │   └── Home.vue          # Home page main component
+│   ├── identity/             # Identity verification module
+│   │   ├── buyer.vue         # Buyer identity form
+│   │   ├── farmer.vue        # Farmer identity form
+│   │   ├── index.vue         # Identity selection page
+│   │   └── supplier.vue      # Supplier identity form
+│   ├── input/                # Agricultural input management module
+│   │   ├── catalog/          # Product catalog
+│   │   │   ├── detail.vue    # Catalog detail page
+│   │   │   ├── form.vue      # Catalog form page
+│   │   │   └── index.vue     # Catalog list page
+│   │   ├── dashboard/        # Input dashboard
+│   │   │   └── index.vue     # Dashboard main page
+│   │   ├── feedback/         # User feedback
+│   │   │   ├── detail.vue    # Feedback detail page
+│   │   │   ├── form.vue      # Feedback form page
+│   │   │   └── index.vue     # Feedback list page
+│   │   ├── inventory/        # Inventory management
+│   │   │   ├── stock/        # Stock management
+│   │   │   │   ├── detail.vue
+│   │   │   │   └── index.vue
+│   │   │   ├── stock-in/     # Stock in management
+│   │   │   │   ├── detail.vue
+│   │   │   │   ├── form.vue
+│   │   │   │   └── index.vue
+│   │   │   ├── stock-out/    # Stock out management
+│   │   │   │   ├── detail.vue
+│   │   │   │   ├── form.vue
+│   │   │   │   └── index.vue
+│   │   │   └── warehouse/    # Warehouse management
+│   │   │       ├── detail.vue
+│   │   │       ├── form.vue
+│   │   │       └── index.vue
+│   │   ├── stock/            # Legacy stock pages
+│   │   │   ├── in.vue
+│   │   │   └── out.vue
+│   │   ├── storage/          # Storage management
+│   │   │   └── index.vue
+│   │   ├── supplier/         # Supplier management
+│   │   │   ├── product/      # Supplier products
+│   │   │   │   ├── detail.vue
+│   │   │   │   ├── form.vue
+│   │   │   │   └── index.vue
+│   │   │   ├── approval.vue  # Supplier approval
+│   │   │   ├── auth.vue      # Supplier authentication
+│   │   │   └── info.vue      # Supplier information
+│   │   ├── supplier-input/   # Legacy supplier input
+│   │   │   └── index.vue
+│   │   ├── warehouse/        # Legacy warehouse
+│   │   │   └── index.vue
+│   │   └── Placeholder.vue   # Placeholder component
+│   ├── knowledge/            # Knowledge center (currently disabled)
+│   │   └── index.vue
+│   └── research/             # Research & Development module
+│       ├── breeding/         # Breeding management
+│       │   ├── components/   # Breeding components
+│       │   │   ├── BreedingMaterialForm.vue
+│       │   │   ├── BreedingPlanForm.vue
+│       │   │   └── BreedingTrackingForm.vue
+│       │   ├── BreedingMaterial.vue  # Breeding material management
+│       │   ├── BreedingPlan.vue      # Breeding plan management
+│       │   └── BreedingTracking.vue  # Breeding tracking
+│       ├── data-collection/  # Data collection module
+│       │   ├── agronomic-trait/      # Agronomic trait data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   ├── environment-soil/     # Environment & soil data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   ├── farmer-plot/          # Farmer plot data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   ├── farming-record/       # Farming record data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   ├── laboratory-test/      # Laboratory test data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   ├── trial-base/           # Trial base data
+│       │   │   ├── detail.vue
+│       │   │   ├── form.vue
+│       │   │   └── index.vue
+│       │   └── variety-evaluation/   # Variety evaluation data
+│       │       ├── detail.vue
+│       │       ├── form.vue
+│       │       └── index.vue
+│       ├── enterprise/       # Enterprise management
+│       │   ├── EnterpriseAudit.vue   # Enterprise audit
+│       │   └── EnterpriseAuth.vue    # Enterprise authentication
+│       ├── seed/             # Seed management
+│       │   ├── components/
+│       │   │   └── UploadDialog.vue  # Upload dialog component
+│       │   └── SeedPromotion.vue     # Seed promotion page
+│       └── variety/          # Variety management
+│           ├── VarietyAudit.vue          # Variety audit
+│           ├── VarietyPublish.vue        # Variety publication
+│           ├── VarietyQuery.vue          # Variety query
+│           └── VarietyRegistration.vue   # Variety registration
+├── App.vue               # Root component
+├── main.js               # Application entry point
+└── style.css             # Global styles
 ```
 
 ### Authentication Flow (OAuth2 SSO)

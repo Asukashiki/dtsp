@@ -177,12 +177,18 @@ const props = defineProps({
 const formRef = ref(null)
 const submitting = ref(false)
 
-// 辅助数据
-const cropTypes = ref(mockCropTypes)
+// 辅助数据 - 动态国际化labels
+const cropTypes = computed(() => {
+  return mockCropTypes.map(item => ({
+    value: item.value,
+    label: t(item.labelKey)
+  }))
+})
+
 const propagationLevels = computed(() => {
   return mockPropagationLevels.map(item => ({
     value: item.value,
-    label: item.label
+    label: t(item.labelKey)
   }))
 })
 

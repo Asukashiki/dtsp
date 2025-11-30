@@ -680,9 +680,9 @@ const loadData = async () => {
     }
 
     const res = await getEnterpriseAuditList(params)
-    if (res.code === 200 && res.data) {
+    if (res.code === 200 && res.rows) {
       // 转换数据格式，匹配前端展示需求
-      auditList.value = (res.data || []).map(item => ({
+      auditList.value = (res.rows || []).map(item => ({
         ...item,
         auditStatus: mapAuditResult(item.auditResult)
       }))
