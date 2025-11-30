@@ -30,93 +30,100 @@
             <div class="cert-logo">
               <i class="ri-seedling-line"></i>
             </div>
-            <h2 class="cert-title">官方种子认证标签</h2>
-            <p class="cert-subtitle">Official Seed Certification Label</p>
+            <h2 class="cert-title">Official Seed Certification Label</h2>
+            <p class="cert-subtitle">Breeding Seed Certificate</p>
           </div>
 
           <div class="cert-body">
-            <!-- 基本信息 -->
+            <!-- Basic Information -->
             <div class="cert-section">
               <div class="cert-row">
-                <span class="cert-label">认证编号:</span>
+                <span class="cert-label">Certification ID:</span>
                 <span class="cert-value cert-number">{{ certData.authId }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">批准编号:</span>
+                <span class="cert-label">Approval Number:</span>
                 <span class="cert-value">{{ certData.supervision?.approvalNumber }}</span>
               </div>
             </div>
 
-            <!-- 品种信息 -->
+            <!-- Variety Information -->
             <div class="cert-section">
-              <div class="section-title">品种信息 Variety Information</div>
+              <div class="section-title">Variety Information</div>
               <div class="cert-row">
-                <span class="cert-label">品种名称:</span>
+                <span class="cert-label">Variety Name:</span>
                 <span class="cert-value">{{ certData.varietyName }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">品种代码:</span>
+                <span class="cert-label">Variety Code:</span>
                 <span class="cert-value">{{ certData.varietyInfo?.varietyCode }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">作物类型:</span>
+                <span class="cert-label">Crop Type:</span>
                 <span class="cert-value">{{ $t(`seed.breedingCertification.cropTypes.${certData.cropType}`) }}</span>
               </div>
             </div>
 
-            <!-- 质量信息 -->
+            <!-- Quality Traits -->
             <div class="cert-section">
-              <div class="section-title">质量特性 Quality Traits</div>
+              <div class="section-title">Quality Traits</div>
               <div class="cert-row">
-                <span class="cert-label">产量潜力:</span>
+                <span class="cert-label">Yield Potential:</span>
                 <span class="cert-value">
                   {{ certData.technicalTrait?.minYieldPotential }} - {{ certData.technicalTrait?.maxYieldPotential }}
                 </span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">成熟期:</span>
-                <span class="cert-value">{{ certData.technicalTrait?.maturityPeriod }} {{ $t('common.days') }}</span>
+                <span class="cert-label">Maturity Period:</span>
+                <span class="cert-value">{{ certData.technicalTrait?.maturityPeriod }} days</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">抗病性:</span>
+                <span class="cert-label">Disease Resistance:</span>
                 <span class="cert-value">{{ certData.technicalTrait?.diseaseResistance }}</span>
               </div>
             </div>
 
-            <!-- 监管信息 -->
+            <!-- Regulatory Information -->
             <div class="cert-section">
-              <div class="section-title">监管信息 Regulatory Information</div>
+              <div class="section-title">Regulatory Information</div>
               <div class="cert-row">
-                <span class="cert-label">批准机构:</span>
+                <span class="cert-label">Approval Organization:</span>
                 <span class="cert-value">{{ certData.supervision?.approvalOrganization }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">批准日期:</span>
+                <span class="cert-label">Approval Date:</span>
                 <span class="cert-value">{{ certData.supervision?.approvalDate }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">申请机构:</span>
+                <span class="cert-label">Applicant Organization:</span>
                 <span class="cert-value">{{ certData.applyOrgName }}</span>
               </div>
             </div>
 
-            <!-- 二维码和打印信息 -->
+            <!-- QR Code and Print Information -->
             <div class="cert-footer">
               <div class="qr-code">
-                <div id="qrcode"></div>
-                <p class="qr-tip">扫码查看详情</p>
+                <vue-qr
+                  v-if="qrContent"
+                  :text="qrContent"
+                  :size="120"
+                  :margin="0"
+                  colorDark="#000000"
+                  colorLight="#ffffff"
+                />
+                <p class="qr-tip">Scan for details</p>
               </div>
               <div class="print-info">
-                <p>打印次数: {{ certData.printCount || 0 }}</p>
-                <p v-if="certData.lastPrintTime">最后打印: {{ certData.lastPrintTime }}</p>
+                <p>Print Count: {{ certData.printCount || 0 }}</p>
+                <p v-if="certData.lastPrintTime">Last Print: {{ certData.lastPrintTime }}</p>
               </div>
             </div>
           </div>
 
           <div class="cert-stamp">
             <div class="stamp-inner">
-              <div class="stamp-text">官方认证</div>
-              <div class="stamp-text-en">CERTIFIED</div>
+              <div class="stamp-text">CERTIFIED</div>
+              <div class="stamp-text-en">OFFICIAL</div>
             </div>
           </div>
         </div>
@@ -131,7 +138,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getCertificateLabel, recordPrintLog } from '@/api/seed'
-import QRCode from 'qrcodejs2'
+import VueQr from 'vue-qr/src/packages/vue-qr.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -139,6 +146,7 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const certData = ref(null)
+const qrContent = ref('')
 
 // 加载认证标签数据
 const loadCertData = async () => {
@@ -147,10 +155,8 @@ const loadCertData = async () => {
     const res = await getCertificateLabel(route.params.id)
     if (res.code === 200) {
       certData.value = res.data
-      // 生成二维码
-      setTimeout(() => {
-        generateQRCode()
-      }, 100)
+      // 生成二维码内容
+      qrContent.value = `${window.location.origin}/research/seed/breeding-certification/detail/${res.data.dataId}`
     }
   } catch (error) {
     console.error('Failed to load certificate data:', error)
@@ -158,24 +164,6 @@ const loadCertData = async () => {
     goBack()
   } finally {
     loading.value = false
-  }
-}
-
-// 生成二维码
-const generateQRCode = () => {
-  const qrcodeEl = document.getElementById('qrcode')
-  if (qrcodeEl && certData.value) {
-    qrcodeEl.innerHTML = ''
-    // 生成包含认证编号的URL或文本
-    const qrContent = `${window.location.origin}/research/seed/breeding-certification/detail/${certData.value.dataId}`
-    new QRCode(qrcodeEl, {
-      text: qrContent,
-      width: 120,
-      height: 120,
-      colorDark: '#000000',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    })
   }
 }
 
@@ -371,12 +359,13 @@ onMounted(() => {
   text-align: center;
 }
 
-#qrcode {
-  display: inline-block;
+.qr-code :deep(canvas),
+.qr-code :deep(img) {
   padding: 8px;
   background: white;
   border: 2px solid #009A44;
   border-radius: 8px;
+  display: inline-block;
 }
 
 .qr-tip {

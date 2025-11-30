@@ -416,9 +416,9 @@ const handleView = (row) => {
 
 // 打印证书
 const handlePrint = (row) => {
-  router.push({
-    path: `/research/seed/breeding-certification/print/${row.dataId}`
-  })
+  // 在新窗口打开打印页面（独立布局，不包含侧边栏和导航）
+  const printUrl = `${window.location.origin}/#/print/seed/breeding-certification/${row.dataId}`
+  window.open(printUrl, '_blank', 'width=900,height=800')
 }
 
 // 初始化

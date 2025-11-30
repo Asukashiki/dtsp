@@ -94,15 +94,32 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="applyOrgName" :label="$t('seed.breedingCertification.columns.applyOrgName')" min-width="200" show-overflow-tooltip />
+          <el-table-column prop="authId" :label="$t('seed.breedingCertification.form.authId')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="breedingBatchId" :label="$t('seed.breedingCertification.form.breedingBatchId')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="applyOrgName" :label="$t('seed.breedingCertification.columns.applyOrgName')" min-width="180" show-overflow-tooltip />
+          <el-table-column prop="recordDate" :label="$t('seed.breedingCertification.columns.recordDate')" width="120" />
           <el-table-column prop="cropType" :label="$t('seed.breedingCertification.columns.cropType')" width="120" align="center">
             <template #default="{ row }">
               <el-tag type="success" size="small">{{ $t(`seed.breedingCertification.cropTypes.${row.cropType}`) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="varietyName" :label="$t('seed.breedingCertification.columns.varietyName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="recordDate" :label="$t('seed.breedingCertification.columns.recordDate')" width="120" />
-          <el-table-column prop="createTime" :label="$t('seed.breedingCertification.columns.createTime')" width="160" />
+          <el-table-column prop="varietyName" :label="$t('seed.breedingCertification.columns.varietyName')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="recordStatus" :label="$t('seed.breedingCertification.columns.recordStatus')" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="row.recordStatus === 'pending' ? 'warning' : row.recordStatus === 'approved' ? 'success' : 'danger'" size="small">
+                {{ $t(`seed.breedingCertification.recordStatus.${row.recordStatus}`) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="recordStatus" :label="$t('seed.breedingCertification.auditResult')" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag v-if="row.recordStatus === 'approved'" type="success" size="small">{{ $t('seed.breedingCertification.approve') }}</el-tag>
+              <el-tag v-else-if="row.recordStatus === 'rejected'" type="danger" size="small">{{ $t('seed.breedingCertification.reject') }}</el-tag>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="auditor" :label="$t('seed.breedingCertification.auditor')" width="120" show-overflow-tooltip />
+          <el-table-column prop="auditTime" :label="$t('seed.breedingCertification.auditTime')" width="160" />
           <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="200" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
@@ -139,10 +156,20 @@
           <div v-for="item in tableData" :key="item.dataId" class="audit-card" @click="handleView(item)">
             <div class="card-header">
               <el-tag type="success" size="small">{{ $t(`seed.breedingCertification.cropTypes.${item.cropType}`) }}</el-tag>
-              <el-tag type="warning" size="small">{{ $t('seed.breedingCertification.recordStatus.pending') }}</el-tag>
+              <el-tag :type="item.recordStatus === 'pending' ? 'warning' : item.recordStatus === 'approved' ? 'success' : 'danger'" size="small">
+                {{ $t(`seed.breedingCertification.recordStatus.${item.recordStatus}`) }}
+              </el-tag>
             </div>
             <h3 class="card-title">{{ item.varietyName }}</h3>
             <div class="card-info">
+              <div class="info-item">
+                <span class="info-label">{{ $t('seed.breedingCertification.form.authId') }}</span>
+                <span class="info-value">{{ item.authId }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ $t('seed.breedingCertification.form.breedingBatchId') }}</span>
+                <span class="info-value">{{ item.breedingBatchId }}</span>
+              </div>
               <div class="info-item full">
                 <span class="info-label">{{ $t('seed.breedingCertification.columns.applyOrgName') }}</span>
                 <span class="info-value">{{ item.applyOrgName }}</span>
@@ -150,6 +177,14 @@
               <div class="info-item">
                 <span class="info-label">{{ $t('seed.breedingCertification.columns.recordDate') }}</span>
                 <span class="info-value">{{ item.recordDate }}</span>
+              </div>
+              <div class="info-item" v-if="item.auditor">
+                <span class="info-label">{{ $t('seed.breedingCertification.auditor') }}</span>
+                <span class="info-value">{{ item.auditor }}</span>
+              </div>
+              <div class="info-item" v-if="item.auditTime">
+                <span class="info-label">{{ $t('seed.breedingCertification.auditTime') }}</span>
+                <span class="info-value">{{ item.auditTime }}</span>
               </div>
             </div>
             <div class="card-footer">

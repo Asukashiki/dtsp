@@ -19,6 +19,13 @@ const routes = [
     component: () => import('../views/callback/index.vue'),
     meta: { requiresAuth: false }
   },
+  // 打印页面（独立布局，不带侧边栏和导航）
+  {
+    path: '/print/seed/breeding-certification/:id',
+    name: 'BreedingCertificationPrint',
+    component: () => import('../views/seed/breeding-certification/print.vue'),
+    meta: { title: '打印认证标签', hideInMenu: true, requiresAuth: true }
+  },
   {
     path: '/',
     name: 'Layout',
@@ -199,12 +206,6 @@ const routes = [
         name: 'BreedingCertificationDetail',
         component: () => import('../views/seed/breeding-certification/detail.vue'),
         meta: { title: '认证申请详情', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'seed/breeding-certification/print/:id',
-        name: 'BreedingCertificationPrint',
-        component: () => import('../views/seed/breeding-certification/print.vue'),
-        meta: { title: '打印认证标签', hideInMenu: true, requiresAuth: true }
       },
       // 繁殖种子审核
       {
