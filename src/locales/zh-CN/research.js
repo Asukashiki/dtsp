@@ -17,11 +17,23 @@ export default {
       breedingManagement: '育种管理',
       breedingPlan: '育种计划管理',
       breedingMaterial: '育种材料登记',
+      breedingModule: '繁殖信息管理',
+      breedingBatch: '繁殖批次信息采集',
+      breedingTracking: '繁殖跟踪信息采集',
+      breedingTest: '繁殖检测信息采集',
       breedingTracking: '育种跟踪管理',
       breedingSeed: '繁殖种子管理',
       breedingCertification: '繁殖种子认证申请',
       breedingAudit: '繁殖种子认证审核',
       breedingCertificate: '繁殖种子证书颁发',
+      breedingDataManagement: '育种数据管理',
+      fieldInspection: '田间检验数据采集',
+      laboratoryTest: '实验室测试数据采集',
+      breederSeed: '育种家种子管理',
+      seedProduction: 'Breeder Seed生产数据采集',
+      seedDistribution: 'Breeder Seed分发数据管理',
+      oseManagement: 'OSE维护管理',
+      oseReceiveConfirm: 'OSE接收确认',
       dataCollection: '数据采集',
       trialData: '试验基础数据采集',
       agronomicData: '农艺性状数据采集',
@@ -197,6 +209,9 @@ export default {
         deleteConfirm: '确定删除该企业认证申请吗？',
         deleteSuccess: '删除成功',
         uploadTip: '支持 PDF、JPG 格式，单个文件不超过2MB',
+        rejectedTitle: '审核未通过',
+        notApplied: '未申请',
+        tonsPerYear: '吨/年',
       },
     },
 
@@ -250,6 +265,7 @@ export default {
         pending: '审核中',
         approved: '已通过',
         rejected: '已驳回',
+        published: '已发布',
       },
 
       // 审核阶段
@@ -499,6 +515,7 @@ export default {
           pending: '审核中',
           approved: '已通过',
           rejected: '已驳回',
+          published: '已发布',
         },
 
         // 列表列
@@ -709,6 +726,379 @@ export default {
 
     // 育种管理
     breeding: {
+      // 育种家种子模块 Breeder Seed Module
+      seed: {
+        // 生产数据采集
+        production: {
+          title: '育种家种子生产数据采集',
+          subtitle: '记录Breeder Seed生产数据,确保种子繁育过程可追溯',
+          list: '生产数据列表',
+          add: '新增生产数据',
+          detail: '生产数据详情',
+          delete: '删除生产数据',
+          deleteConfirm: '确定删除该生产数据吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索品种名称',
+          filterByVariety: '按品种筛选',
+          filterByDate: '按生产时间筛选',
+          allVarieties: '全部品种',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            productionInfo: '生产信息',
+            breedSeedProduceBatchId: '种子生产批次ID',
+            breedBatchId: '育种批次ID',
+            varietyId: '品种ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            time: '生产时间',
+            landId: '地块ID',
+            landName: '地块名称',
+            inputSeedQuantity: '投入种子数量',
+            produceSeedQuantrity: '产出种子数量',
+            operatorId: '操作人ID',
+            operatorName: '操作人姓名',
+            produceStatus: '生产状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+          },
+
+          // 表单占位符
+          placeholder: {
+            breedBatchId: '请选择育种批次ID',
+            varietyName: '请选择品种名称',
+            time: '请选择生产时间',
+            landName: '请选择地块名称',
+            inputSeedQuantity: '请输入投入种子数量(kg)',
+            produceSeedQuantrity: '请输入产出种子数量(kg)',
+          },
+
+          // 表单验证
+          rules: {
+            breedBatchIdRequired: '请选择育种批次ID',
+            varietyNameRequired: '请选择品种名称',
+            timeRequired: '请选择生产时间',
+            landNameRequired: '请选择地块名称',
+            inputSeedQuantityRequired: '请输入投入种子数量',
+            inputSeedQuantityMin: '投入种子数量必须大于0',
+            produceSeedQuantrityRequired: '请输入产出种子数量',
+            produceSeedQuantrityMin: '产出种子数量必须大于等于投入种子数量',
+          },
+
+          // 列表列
+          columns: {
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            time: '生产时间',
+            landName: '地块名称',
+            inputSeedQuantity: '投入数量(kg)',
+            produceSeedQuantrity: '产出数量(kg)',
+            operatorName: '操作人',
+            produceStatus: '生产状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 生产状态
+          status: {
+            FINISHED: '已完成',
+          },
+        },
+
+        // 分发数据管理
+        distribution: {
+          title: '育种家种子分发数据管理',
+          subtitle: '管理Breeder Seed分发记录,追踪种子流向OSE',
+          list: '分发数据列表',
+          add: '新增分发数据',
+          detail: '分发数据详情',
+          delete: '删除分发数据',
+          deleteConfirm: '确定删除该分发数据吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称',
+          filterByCrop: '按作物类型筛选',
+          filterByVariety: '按品种筛选',
+          filterByDate: '按分发时间筛选',
+          allCrops: '全部作物',
+          allVarieties: '全部品种',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            distributionInfo: '分发信息',
+            detailList: '分发明细',
+            distributeId: '分发ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE名称',
+            time: '分发时间',
+            people: '分发操作人',
+            organ: '种子机构名称',
+            remark: '备注',
+            totalDistributeQuantity: '分发总数量',
+            distributeStatus: '分发状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+
+            // 分发明细
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            distributeQuantity: '分发数量',
+            produceBatchRemaining: '生产批次剩余可分发量',
+          },
+
+          // 表单占位符
+          placeholder: {
+            oseId: '请选择OSE',
+            time: '请选择分发时间',
+            people: '请输入分发操作人姓名',
+            organ: '请输入种子机构名称',
+            remark: '备注信息(选填)',
+            breedSeedProduceBatchId: '请选择生产批次',
+            distributeQuantity: '请输入分发数量(kg)',
+          },
+
+          // 表单验证
+          rules: {
+            oseId: '请选择OSE',
+            time: '请选择分发时间',
+            people: '请输入分发操作人姓名',
+            organ: '请输入种子机构名称',
+            detailListRequired: '请至少添加一条分发明细',
+            breedSeedProduceBatchId: '请选择生产批次',
+            distributeQuantity: '请输入分发数量',
+            distributeQuantityMin: '分发数量必须大于0',
+            distributeQuantityMax: '分发数量不能超过生产批次剩余可分发量',
+          },
+
+          // 明细相关
+          addDetail: '添加明细',
+          detailIndex: '明细 {index}',
+          remaining: '剩余',
+          maxQuantity: '最大可分发量',
+          noDetail: '暂无分发明细',
+
+          // 明细表格列
+          detailColumns: {
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            breedSeedProduceBatchId: '生产批次ID',
+            distributeQuantity: '分发数量(kg)',
+            produceBatchRemaining: '批次剩余量(kg)',
+            createTime: '创建时间',
+          },
+
+          // 列表列
+          columns: {
+            distributeId: '分发ID',
+            oseName: 'OSE名称',
+            time: '分发时间',
+            people: '分发操作人',
+            organ: '种子机构',
+            totalDistributeQuantity: '分发总数量(kg)',
+            distributeStatus: '分发状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 分发状态
+          status: {
+            distributed: '已分发',
+          },
+
+          // 操作
+          actions: {
+            addDetail: '添加分发明细',
+            removeDetail: '移除',
+          },
+        },
+
+        // OSE维护
+        ose: {
+          title: 'OSE维护管理',
+          subtitle: '管理OSE基础信息,确保种子接收方信息准确',
+          list: 'OSE列表',
+          add: '新增OSE',
+          edit: '编辑OSE',
+          detail: 'OSE详情',
+          delete: '删除OSE',
+          deleteConfirm: '确定删除该OSE吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+          updateSuccess: '更新成功',
+          editSuccess: '编辑成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称',
+          filterByStatus: '按状态筛选',
+          filterByDate: '按创建时间筛选',
+          allStatus: '全部状态',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            contactInfo: '联系信息',
+            oseId: 'OSE ID',
+            oseCode: 'OSE行政编码',
+            oseName: 'OSE名称',
+            location: '详细地址',
+            regionCode: '行政区划编码',
+            regionName: '行政区划名称',
+            contactName: '联系人姓名',
+            contactNumber: '联系人电话',
+            oseStatus: '状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+          },
+
+          // 表单占位符
+          placeholder: {
+            oseCode: '请输入OSE行政编码',
+            oseName: '请输入OSE名称',
+            location: '请输入详细地址',
+            regionCode: '请选择行政区划',
+            contactName: '请输入联系人姓名',
+            contactNumber: '请输入联系人电话(251开头12位)',
+          },
+
+          // 表单验证
+          rules: {
+            oseCode: '请输入OSE行政编码',
+            oseCodeUnique: 'OSE行政编码已存在',
+            oseName: '请输入OSE名称',
+            oseNameUnique: 'OSE名称已存在',
+            location: '请输入详细地址',
+            regionCode: '请选择行政区划',
+            contactName: '请输入联系人姓名',
+            contactNumber: '请输入联系人电话',
+            contactNumberFormat: '请输入正确的联系人电话格式(251开头12位)',
+            contactNumberUnique: '联系人电话已存在',
+          },
+
+          // 帮助文本
+          help: {
+            oseCode: '行政编码应与行政区划表的regionCode相匹配',
+            regionCode: '请选择OSE所在的行政区划',
+            contactNumber: '格式: 251XXXXXXXXX (251开头,共12位数字)',
+          },
+
+          // 列表列
+          columns: {
+            oseCode: 'OSE行政编码',
+            oseName: 'OSE名称',
+            location: '详细地址',
+            regionName: '行政区划',
+            contactName: '联系人',
+            contactNumber: '联系电话',
+            oseStatus: '状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // OSE状态
+          status: {
+            ENABLED: '启用',
+            DISABLED: '禁用',
+          },
+        },
+
+        // OSE接收确认
+        receiveConfirm: {
+          title: 'OSE接收确认',
+          subtitle: 'OSE确认接收育种家种子',
+          list: '接收确认列表',
+          confirm: '确认接收',
+          detail: '接收确认详情',
+          confirmSuccess: '确认成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称、品种名称',
+          filterByStatus: '按接收状态筛选',
+          filterByCrop: '按作物类型筛选',
+          filterByDate: '按时间筛选',
+          allStatus: '全部状态',
+          allCrops: '全部作物',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            distributionDetail: '分发明细',
+            breedSeedDetail: '育种家种子信息',
+            confirmInfo: '确认信息',
+            systemInfo: '系统信息',
+            receiveConfirmId: '接收确认ID',
+            distributeId: '分发ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE名称',
+            confirmTime: '确认时间',
+            confirmPeople: '确认操作人',
+            receiveStatus: '接收状态',
+            remark: '补充说明',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+
+            // 分发明细
+            totalDistributeQuantity: '分发总数量',
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            distributeQuantity: '分发数量',
+          },
+
+          // 表单占位符
+          placeholder: {
+            confirmTime: '请选择确认时间',
+            confirmPeople: '请输入确认操作人姓名',
+            remark: '补充说明(选填)',
+          },
+
+          // 表单验证
+          rules: {
+            confirmTime: '请选择确认时间',
+            confirmPeople: '请输入确认操作人姓名',
+          },
+
+          // 列表列
+          columns: {
+            receiveConfirmId: '接收确认ID',
+            oseName: 'OSE名称',
+            totalDistributeQuantity: '分发总数量(kg)',
+            confirmTime: '确认时间',
+            confirmPeople: '确认操作人',
+            receiveStatus: '接收状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 接收状态
+          status: {
+            PENDING: '待确认',
+            CONFIRMED: '已确认',
+          },
+
+          // 统计标签
+          stats: {
+            totalRecords: '总接收记录',
+            pendingCount: '待确认',
+            confirmedCount: '已确认',
+            totalQuantity: '总接收数量',
+          },
+
+          // 提示信息
+          messages: {
+            noSeedData: '暂无育种家种子分发数据',
+          },
+        },
+      },
+
       // 育种计划管理
       plan: {
         title: '育种计划管理',
@@ -746,6 +1136,16 @@ export default {
           preBasic: '原原种',
           basic: '原种',
           certified: '良种',
+        },
+
+        // 作物类型(通用,移到common.js更好,但这里也保留一份)
+        cropTypes: {
+          wheat: '小麦',
+          maize: '玉米',
+          sorghum: '高粱',
+          teff: '苔麸',
+          barley: '大麦',
+          pulses: '豆类',
         },
 
         // 表单字段
@@ -915,101 +1315,447 @@ export default {
         },
       },
 
-      // 育种跟踪管理
-      tracking: {
-        title: '育种跟踪管理',
-        subtitle: '对育种繁殖跟踪阶段进行记录,确保育种过程规范可控',
-        list: '育种跟踪记录列表',
-        add: '新增跟踪记录',
-        edit: '编辑跟踪记录',
-        detail: '跟踪记录详情',
-        delete: '删除记录',
-        deleteConfirm: '确定删除该跟踪记录吗？',
+      // 繁殖信息管理（统一模块）
+      title: '繁殖信息管理',
+        subtitle: '繁殖批次、跟踪记录、检测信息一体化管理',
+
+        // 共用作物类型
+        cropType: {
+          wheat: '小麦',
+          corn: '玉米',
+          rice: '水稻',
+          soybean: '大豆',
+          cotton: '棉花',
+        },
+
+        // 共用繁殖级别
+        breedingLevel: {
+          parentPrep: '亲本准备',
+          original: '原始种',
+          foundation: '基础种',
+          certified: '认证种',
+        },
+
+        // 共用状态
+        status: {
+          ongoing: '进行中',
+          completed: '已完成',
+          terminated: '已中止',
+        },
+
+        // 批次相关
+        batch: {
+          title: '繁殖批次信息',
+          add: '新增批次',
+          edit: '编辑批次',
+          delete: '删除批次',
+          searchPlaceholder: '搜索批次编号、品种名称',
+          filterByCrop: '按作物类型筛选',
+          filterByStatus: '按状态筛选',
+          allCrops: '全部作物',
+          allStatus: '全部状态',
+          deleteConfirm: '确定删除该繁殖批次吗？',
+          columns: {
+            batchId: '批次编号',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            breedingLevel: '繁殖级别',
+            startDate: '开始日期',
+            status: '状态',
+            trackingCount: '跟踪记录数',
+            testCount: '检测记录数',
+          },
+          form: {
+            batchId: '批次编号',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            breedingLevel: '繁殖级别',
+            parentSeedSource: '亲本种子来源',
+            status: '状态',
+            startDate: '开始日期',
+            endDate: '完成日期',
+            expectedYield: '预期产量',
+            actualYield: '实际产量',
+            orgId: '机构ID',
+            orgName: '机构名称',
+          },
+        },
+
+        // 跟踪相关
+        tracking: {
+          title: '繁殖跟踪信息',
+          add: '新增跟踪',
+          edit: '编辑跟踪',
+          delete: '删除跟踪',
+          detail: '跟踪详情',
+          deleteConfirm: '确定删除该跟踪记录吗？',
+          stage: {
+            parentPrep: '亲本准备',
+            original: '原始种',
+            foundation: '基础种',
+            certified: '认证种',
+          },
+          result: {
+            normal: '正常',
+            abnormal: '异常',
+            observing: '观察中',
+          },
+          form: {
+            trackingId: '跟踪编号',
+            batchId: '批次编号',
+            cropType: '作物类型',
+            stageName: '阶段名称',
+            trackingResult: '跟踪结论',
+            location: '位置描述',
+            startDate: '开始日期',
+            completeDate: '完成日期',
+            expectedYield: '预期产量',
+            actualYield: '实际产量',
+            fieldInspectionScore: '田间检验得分',
+            gpsLongitude: 'GPS经度',
+            gpsLatitude: 'GPS纬度',
+            diseaseObservation: '病害观察',
+            orgId: '机构ID',
+            orgName: '机构名称',
+            cropTypePlaceholder: '请选择作物类型',
+            stageNamePlaceholder: '请选择阶段名称',
+            trackingResultPlaceholder: '请选择跟踪结论',
+            locationPlaceholder: '请输入位置描述',
+            startDatePlaceholder: '请选择开始日期',
+          },
+          validation: {
+            cropTypeRequired: '请选择作物类型',
+            stageNameRequired: '请选择阶段名称',
+            locationRequired: '请输入位置描述',
+            startDateRequired: '请选择开始日期',
+          },
+        },
+
+        // 检测相关
+        test: {
+          title: '繁殖检测信息',
+          add: '新增检测',
+          edit: '编辑检测',
+          delete: '删除检测',
+          detail: '检测详情',
+          deleteConfirm: '确定删除该检测记录吗？',
+          result: {
+            qualified: '合格',
+            unqualified: '不合格',
+            toBeRetested: '待复检',
+          },
+          form: {
+            testId: '检测编号',
+            trackingId: '跟踪编号',
+            batchId: '批次编号',
+            cropType: '作物类型',
+            testDate: '检测日期',
+            testResult: '检测结论',
+            sampleLocation: '取样位置',
+            sampleWeight: '样品重量',
+            germinationRate: '发芽率',
+            purity: '纯度',
+            moistureContent: '水分含量',
+            pestDetection: '病虫害检测',
+            cropTypePlaceholder: '请选择作物类型',
+            testResultPlaceholder: '请选择检测结论',
+          },
+          validation: {
+            cropTypeRequired: '请选择作物类型',
+            testDateRequired: '请选择检测日期',
+            testResultRequired: '请选择检测结论',
+          },
+        },
+
+        // 详情页
+        detail: {
+          title: '繁殖批次详情',
+          tabs: {
+            basicInfo: '基本信息',
+            trackingRecords: '跟踪记录',
+            testRecords: '检测记录',
+          },
+          trackingCount: '跟踪记录数',
+          testCount: '检测记录数',
+          relatedTests: '关联的检测记录',
+          basicInfo: '基本信息',
+          testData: '检测数据',
+          timeline: '时间节点',
+          yieldData: '产量数据',
+          gpsLocation: 'GPS位置',
+          orgInfo: '机构信息',
+        },
+
+        // 通用消息
+        messages: {
+          queryError: '查询失败',
+          loadError: '加载数据失败',
+          addSuccess: '新增成功',
+          editSuccess: '更新成功',
+          deleteSuccess: '删除成功',
+          deleteError: '删除失败',
+          operationError: '操作失败',
+        },
+
+      // 繁殖批次信息采集
+      breedingBatch: {
+        title: '繁殖批次信息采集',
+        subtitle: '记录繁殖批次基本信息和产量数据',
+        list: '繁殖批次列表',
+        add: '新增繁殖批次',
+        edit: '编辑繁殖批次',
+        detail: '繁殖批次详情',
+        delete: '删除批次',
+        deleteConfirm: '确定删除该繁殖批次吗？',
         deleteSuccess: '删除成功',
         addSuccess: '新增成功',
         editSuccess: '编辑成功',
 
         // 搜索筛选
-        searchPlaceholder: '搜索跟踪ID、批次ID',
-        filterByBatch: '按育种批次筛选',
-        filterByStage: '按阶段名称筛选',
-        allBatches: '全部批次',
-        allStages: '全部阶段',
+        searchPlaceholder: '搜索批次编号',
+        filterByCropType: '按作物类型筛选',
+        filterByStatus: '按状态筛选',
+        allTypes: '全部类型',
+        allStatus: '全部状态',
 
-        // 阶段名称
-        stageName: {
-          parentLinePreparation: '亲本系准备',
-          breederSeed: '育种家种子',
-          preBasicSeedPropagation: '原原种繁殖',
-          basicSeedPropagation: '原种繁殖',
+        // 作物类型
+        cropType: {
+          wheat: '小麦',
+          corn: '玉米',
+          rice: '水稻',
+          soybean: '大豆',
+          cotton: '棉花',
+        },
+
+        // 繁殖级别
+        breedingLevel: {
+          parentPrep: '亲本准备',
+          original: '原始种',
+          foundation: '基础种',
+          certified: '认证种',
+        },
+
+        // 批次状态
+        status: {
+          ongoing: '进行中',
+          completed: '已完成',
+          terminated: '已中止',
         },
 
         // 表单字段
         form: {
-          basicInfo: '基础信息',
-          trackingInfo: '跟踪信息',
+          basicInfo: '基本信息',
           yieldInfo: '产量信息',
-          qualityInfo: '质量信息',
-          trackingId: '跟踪ID',
-          batchId: '育种批次ID',
-          stageName: '阶段名称',
-          location: '位置',
-          coordinates: '坐标（经纬度）',
+          orgInfo: '机构信息',
+          remarks: '备注',
+          batchId: '批次编号',
+          varietyName: '品种名称',
+          cropType: '作物类型',
+          breedingLevel: '繁殖级别',
+          parentSeedSource: '亲本种子来源',
+          startDate: '开始日期',
+          endDate: '完成日期',
           expectedYield: '预期产量',
           actualYield: '实际产量',
-          fieldInspectionScore: '田间检查评分',
-          diseaseObservation: '病害观察',
-          stageCompletionDate: '阶段完成日期',
-          recorder: '记录人',
-          recordTime: '记录时间',
-          updateTime: '更新时间',
+          orgId: '机构ID',
+          orgName: '机构名称',
+          remark: '备注',
+          status: '状态',
+            batchIdPlaceholder: '请输入批次编号',
+          varietyNamePlaceholder: '请输入品种名称',
+          cropTypePlaceholder: '请选择作物类型',
+          breedingLevelPlaceholder: '请选择繁殖级别',
+          parentSeedSourcePlaceholder: '请输入亲本种子来源',
+          startDatePlaceholder: '请选择开始日期',
+          endDatePlaceholder: '请选择完成日期',
+          expectedYieldPlaceholder: '请输入预期产量',
+          actualYieldPlaceholder: '请输入实际产量',
+          orgIdPlaceholder: '请输入机构ID',
+          orgNamePlaceholder: '请输入机构名称',
+          remarkPlaceholder: '请输入备注信息',
+        },
+      },
+
+      // 繁殖跟踪信息采集
+      breedingTracking: {
+        title: '繁殖跟踪信息采集',
+        subtitle: '跟踪记录繁殖过程各阶段的生长情况和产量数据',
+        list: '繁殖跟踪列表',
+        add: '新增繁殖跟踪',
+        edit: '编辑繁殖跟踪',
+        detail: '繁殖跟踪详情',
+        delete: '删除跟踪',
+        deleteConfirm: '确定删除该跟踪记录吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '更新成功',
+        loadError: '加载数据失败',
+        operationError: '操作失败',
+        queryError: '查询失败',
+        deleteError: '删除失败',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索跟踪编号',
+        filterByStage: '按阶段筛选',
+        filterByResult: '按跟踪结论筛选',
+        allStages: '全部阶段',
+        allResults: '全部结论',
+
+        // 阶段名称
+        stage: {
+          parentPrep: '亲本准备',
+          original: '原始种',
+          foundation: '基础种',
+          certified: '认证种',
         },
 
-        // 表单占位符
-        placeholder: {
-          trackingId: '系统自动生成',
-          batchId: '请选择育种批次ID',
-          stageName: '请选择阶段名称',
-          location: '请输入位置',
-          coordinates: '格式：纬度,经度',
-          expectedYield: '请输入预期产量',
-          actualYield: '请输入实际产量',
-          fieldInspectionScore: '0-5分制',
-          diseaseObservation: '请输入病害观察',
-          stageCompletionDate: '请选择阶段完成日期',
+        // 跟踪结论
+        result: {
+          normal: '正常',
+          abnormal: '异常',
+          observing: '观察中',
         },
 
-        // 表单验证
-        rules: {
-          batchIdRequired: '请选择育种批次ID',
-          stageNameRequired: '请选择阶段名称',
-          locationRequired: '请输入位置',
-          expectedYieldRequired: '请输入预期产量',
-          expectedYieldFormat: '请输入正确的产量',
-          actualYieldFormat: '请输入正确的产量',
-          fieldInspectionScoreFormat: '评分范围为0-5',
+        // 作物类型
+        cropType: {
+          wheat: '小麦',
+          corn: '玉米',
+          rice: '水稻',
+          soybean: '大豆',
+          cotton: '棉花',
         },
 
         // 列表列
         columns: {
-          trackingId: '跟踪ID',
-          batchId: '批次ID',
+          trackingId: '跟踪编号',
+          batchId: '批次编号',
           stageName: '阶段名称',
-          location: '位置',
-          expectedYield: '预期产量',
-          actualYield: '实际产量',
-          fieldInspectionScore: '田间评分',
-          stageCompletionDate: '完成日期',
-          recordTime: '记录时间',
-          actions: '操作',
+          location: '位置描述',
+          result: '跟踪结论',
+          startDate: '开始日期',
         },
 
-        // 操作按钮
-        actions: {
-          submit: '提交',
-          view: '查看',
-          edit: '编辑',
-          delete: '删除',
+        // 表单字段
+        form: {
+          basicInfo: '基本信息',
+          yieldInfo: '产量信息',
+          gpsInfo: 'GPS坐标',
+          diseaseInfo: '病害观察',
+          orgInfo: '机构信息',
+          trackingId: '跟踪编号',
+          batchId: '繁殖批次编号',
+          cropType: '作物类型',
+          stageName: '阶段名称',
+          trackingResult: '跟踪结论',
+          location: '位置描述',
+          startDate: '开始日期',
+          completeDate: '完成日期',
+          expectedYield: '预期产量(kg)',
+          actualYield: '实际产量(kg)',
+          fieldInspectionScore: '田间检验得分',
+          gpsLongitude: 'GPS经度',
+          gpsLatitude: 'GPS纬度',
+          diseaseObservation: '病害观察记录',
+          orgId: '机构ID',
+          orgName: '机构名称',
+          remark: '备注',
+          batchIdPlaceholder: '请输入繁殖批次编号',
+          cropTypePlaceholder: '请选择作物类型',
+          stageNamePlaceholder: '请选择阶段名称',
+          trackingResultPlaceholder: '请选择跟踪结论',
+          locationPlaceholder: '请输入位置描述',
+          startDatePlaceholder: '请选择开始日期',
+          completeDatePlaceholder: '请选择完成日期',
+          expectedYieldPlaceholder: '请输入预期产量',
+          actualYieldPlaceholder: '请输入实际产量',
+          fieldInspectionScorePlaceholder: '请输入田间检验得分',
+          gpsLongitudePlaceholder: '请输入GPS经度',
+          gpsLatitudePlaceholder: '请输入GPS纬度',
+          diseaseObservationPlaceholder: '请输入病害观察记录',
+          orgIdPlaceholder: '请输入机构ID',
+          orgNamePlaceholder: '请输入机构名称',
+          remarkPlaceholder: '请输入备注信息',
+        },
+
+        // 表单验证消息
+        validation: {
+          batchIdRequired: '请输入繁殖批次编号',
+          cropTypeRequired: '请选择作物类型',
+          stageNameRequired: '请选择阶段名称',
+          locationRequired: '请输入位置描述',
+          startDateRequired: '请选择开始日期',
+        },
+      },
+
+      // 繁殖检测信息采集
+      breedingTest: {
+        title: '繁殖检测信息采集',
+        subtitle: '记录繁殖检测数据，包括发芽率、纯度等检测指标',
+        list: '繁殖检测列表',
+        add: '新增繁殖检测',
+        edit: '编辑繁殖检测',
+        detail: '繁殖检测详情',
+        delete: '删除检测',
+        deleteConfirm: '确定删除该繁殖检测吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索检测编号',
+        filterByCropType: '按作物类型筛选',
+        filterByResult: '按检测结论筛选',
+        allTypes: '全部类型',
+        allResults: '全部结论',
+
+        // 作物类型
+        cropType: {
+          wheat: '小麦',
+          corn: '玉米',
+          rice: '水稻',
+          soybean: '大豆',
+          cotton: '棉花',
+        },
+
+        // 检测结论
+        result: {
+          qualified: '合格',
+          unqualified: '不合格',
+          recheck: '待复检',
+        },
+
+        // 表单字段
+        form: {
+          basicInfo: '基本信息',
+          testIndicators: '检测指标',
+          trackingId: '跟踪编号',
+          batchId: '批次编号',
+          testId: '检测编号',
+          cropType: '作物类型',
+          testDate: '检测日期',
+          testOrg: '检测机构',
+          testPerson: '检测人员',
+          testResult: '检测结论',
+          testReportUrl: '检测报告地址',
+          germinationRate: '发芽率(%)',
+          purity: '纯度(%)',
+          moistureContent: '含水量(%)',
+          pestDetection: '病虫害检测',
+          remark: '备注',
+          testIdPlaceholder: '系统自动生成',
+          trackingIdPlaceholder: '请输入跟踪编号',
+          batchIdPlaceholder: '请输入批次编号',
+          cropTypePlaceholder: '请选择作物类型',
+          testDatePlaceholder: '请选择检测日期',
+          testOrgPlaceholder: '请输入检测机构',
+          testPersonPlaceholder: '请输入检测人员',
+          testResultPlaceholder: '请选择检测结论',
+          testReportUrlPlaceholder: '请输入检测报告地址',
+          germinationRatePlaceholder: '请输入发芽率',
+          purityPlaceholder: '请输入纯度',
+          moistureContentPlaceholder: '请输入含水量',
+          pestDetectionPlaceholder: '请输入病虫害检测结果',
+          remarkPlaceholder: '请输入备注信息',
         },
       },
     },
@@ -1736,61 +2482,270 @@ export default {
         editSuccess: '编辑成功',
 
         // 搜索筛选
-        searchPlaceholder: '搜索样本ID',
+        searchPlaceholder: '搜索育种批次ID、样本编号',
+        filterByBatch: '按育种批次筛选',
+        allBatches: '全部批次',
 
         // 表单字段
         form: {
+          basicInfo: '基础信息',
           sampleInfo: '样本信息',
           testInfo: '测试信息',
-          dataId: '数据ID',
-          sampleId: '样本ID',
+          testData: '测试数据',
+          qualityInfo: '质量信息',
+          healthTraceability: '健康与追溯',
+          testingInfo: '检测信息',
+          operatorInfo: '操作信息',
+
+          batchId: '育种批次ID',
+          trialId: '试验ID',
+          testDate: '检测日期',
+          sampleId: '样本编号',
           sampleCondition: '样本状态',
-          germinationRate: '发芽率(百分比)',
-          purityPercent: '纯度(百分比)',
-          moistureContentPercent: '含水量(百分比)',
-          proteinPercent: '蛋白质(百分比)',
-          toxinLevelPpm: '毒素水平(PPM)',
+          sampleStatus: '样本状态',
+          germinationRate: '发芽率',
+          purityPercent: '纯度',
+          moistureContentPercent: '水分含量',
+          proteinPercent: '蛋白质含量',
+          toxinLevelPpm: '毒素水平',
           seedHealthFindings: '种子健康发现',
-          traceabilityLink: '链路责任',
+          chainResponsibility: '链路责任',
+          traceabilityLink: '溯源链接',
           labReportFile: '实验室报告文件',
+          testOrganization: '检测机构',
+          testerName: '检测人员',
+          remark: '备注',
           createTime: '创建时间',
+          createBy: '创建人',
         },
 
         // 表单占位符
         placeholder: {
-          sampleId: '请输入样本ID',
-          sampleCondition: '请输入样本状态',
-          germinationRate: '请输入发芽率',
-          purityPercent: '请输入纯度',
-          moistureContentPercent: '请输入含水量',
-          proteinPercent: '请输入蛋白质含量',
+          batchId: '请选择育种批次',
+          trialId: '请选择试验',
+          testDate: '请选择检测日期',
+          sampleId: '请输入样本编号',
+          sampleStatus: '请输入样本状态',
+          germinationRate: '请输入发芽率(0-100)',
+          purityPercent: '请输入纯度(0-100)',
+          moistureContentPercent: '请输入水分含量(0-100)',
+          proteinPercent: '请输入蛋白质含量(0-100)',
           toxinLevelPpm: '请输入毒素水平(选填)',
           seedHealthFindings: '请输入种子健康发现',
-          traceabilityLink: '请输入链路责任',
+          chainResponsibility: '请输入溯源链接',
+          testOrganization: '请输入检测机构(选填)',
+          testerName: '请输入检测人员(选填)',
+          remark: '请输入备注(选填)',
         },
 
         // 表单验证
         rules: {
-          sampleIdRequired: '请输入样本ID',
+          batchIdRequired: '请选择育种批次',
+          trialIdRequired: '请选择试验',
+          testDateRequired: '请选择检测日期',
+          testOrganizationRequired: '请输入检测机构',
+          testerNameRequired: '请输入检测人员',
+          sampleIdRequired: '请输入样本编号',
           sampleConditionRequired: '请输入样本状态',
+          sampleStatusRequired: '请输入样本状态',
           germinationRateRequired: '请输入发芽率',
+          germinationRateRange: '发芽率范围为0-100',
           purityPercentRequired: '请输入纯度',
-          moistureContentPercentRequired: '请输入含水量',
+          purityPercentRange: '纯度范围为0-100',
+          moistureContentPercentRequired: '请输入水分含量',
+          moistureContentPercentRange: '水分含量范围为0-100',
           proteinPercentRequired: '请输入蛋白质含量',
+          proteinPercentRange: '蛋白质含量范围为0-100',
           seedHealthFindingsRequired: '请输入种子健康发现',
-          traceabilityLinkRequired: '请输入链路责任',
+          traceabilityLinkRequired: '请输入溯源链接',
+          chainResponsibilityRequired: '请输入溯源链接',
         },
 
         // 列表列
         columns: {
-          sampleId: '样本ID',
-          sampleCondition: '样本状态',
+          batchId: '育种批次ID',
+          trialId: '试验ID',
+          sampleId: '样本编号',
+          sampleStatus: '样本状态',
           germinationRate: '发芽率(%)',
           purityPercent: '纯度(%)',
+          moistureContentPercent: '水分含量(%)',
           proteinPercent: '蛋白质(%)',
+          testDate: '检测日期',
           createTime: '创建时间',
           actions: '操作',
         },
+      },
+
+      // 产量数据采集
+      yieldData: {
+        title: '产量数据采集',
+        subtitle: '记录田间产量验证数据',
+        list: '产量数据列表',
+        add: '新增产量数据',
+        edit: '编辑产量数据',
+        detail: '产量数据详情',
+        delete: '删除数据',
+        deleteConfirm: '确定删除该数据吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        editSuccess: '编辑成功',
+
+        // 搜索筛选
+        searchPlaceholder: '搜索育种批次ID、地块编号',
+        filterByBatch: '按育种批次筛选',
+        allBatches: '全部批次',
+
+        // 表单字段
+        form: {
+          basicInfo: '基础信息',
+          plotInfo: '地块信息',
+          yieldInfo: '产量信息',
+          operatorInfo: '操作信息',
+
+          batchId: '育种批次ID',
+          trialId: '试验ID',
+          harvestDate: '收获日期',
+          plotId: '地块编号',
+          plotAreaM2: '地块面积(m²)',
+          grainWeightKg: '谷物重量(kg)',
+          yieldQtPerHa: '产量(公担/公顷)',
+          moistureContent: '含水量(%)',
+          recorderName: '记录人员',
+          remark: '备注',
+          createTime: '创建时间',
+          createBy: '创建人',
+        },
+
+        // 表单占位符
+        placeholder: {
+          batchId: '请选择育种批次',
+          trialId: '请选择试验',
+          harvestDate: '请选择收获日期',
+          plotId: '请输入地块编号',
+          plotAreaM2: '请输入地块面积',
+          grainWeightKg: '请输入谷物重量',
+          yieldQtPerHa: '请输入产量',
+          moistureContent: '请输入含水量(选填)',
+          recorderName: '请输入记录人员(选填)',
+          remark: '请输入备注(选填)',
+        },
+
+        // 表单验证
+        rules: {
+          batchIdRequired: '请选择育种批次',
+          trialIdRequired: '请选择试验',
+          harvestDateRequired: '请选择收获日期',
+          plotIdRequired: '请输入地块编号',
+          plotAreaM2Required: '请输入地块面积',
+          plotAreaM2Min: '地块面积必须大于0',
+          grainWeightKgRequired: '请输入谷物重量',
+          grainWeightKgMin: '谷物重量必须大于0',
+          yieldQtPerHaRequired: '请输入产量',
+          yieldQtPerHaMin: '产量必须大于0',
+          moistureContentRange: '含水量范围为0-100',
+        },
+
+        // 列表列
+        columns: {
+          batchId: '育种批次ID',
+          trialId: '试验ID',
+          plotId: '地块编号',
+          plotAreaM2: '地块面积(m²)',
+          grainWeightKg: '谷物重量(kg)',
+          yieldQtPerHa: '产量(公担/公顷)',
+          moistureContent: '含水量(%)',
+          harvestDate: '收获日期',
+          createTime: '创建时间',
+          actions: '操作',
+        },
+      },
+    },
+
+    // 物联网传感器维护
+    iotSensor: {
+      title: '物联网传感器维护',
+      subtitle: '管理物联网传感器设备，跟踪传感器状态和校准信息',
+      list: '传感器列表',
+      add: '新增传感器',
+      edit: '编辑传感器',
+      detail: '传感器详情',
+      delete: '删除传感器',
+      deleteConfirm: '确定删除该传感器吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+      registrationInfo: '登记信息',
+
+      // 搜索筛选
+      searchPlaceholder: '搜索传感器名称、编号',
+      filterByType: '按传感器类型筛选',
+      allTypes: '全部类型',
+
+      // 传感器类型
+      type: {
+        temperature: '温度传感器',
+        humidity: '湿度传感器',
+        light: '光照传感器',
+        soil: '土壤传感器',
+        gas: '气体传感器',
+        other: '其他',
+      },
+
+      // 表单字段
+      form: {
+        iotId: '传感器编号',
+        iotName: '传感器名称',
+        iotType: '传感器类型',
+        manufacturer: '制造商',
+        firmwareVersion: '固件版本',
+        calibrationDate: '校准日期',
+        batteryStatus: '电池状态',
+        remark: '备注',
+      },
+
+      // 表单占位符
+      placeholder: {
+        iotId: '请输入传感器编号',
+        iotName: '请输入传感器名称',
+        iotType: '请选择传感器类型',
+        manufacturer: '请输入制造商',
+        firmwareVersion: '请输入固件版本',
+        calibrationDate: '请选择校准日期',
+        batteryStatus: '请输入电池状态，如：80%',
+        remark: '请输入备注信息',
+      },
+
+      // 表单验证
+      rules: {
+        iotIdRequired: '请输入传感器编号',
+        iotIdLength: '传感器编号长度不能超过32位',
+        iotNameRequired: '请输入传感器名称',
+        iotNameLength: '传感器名称长度不能超过100位',
+        iotTypeRequired: '请选择传感器类型',
+        manufacturerRequired: '请输入制造商',
+        manufacturerLength: '制造商长度不能超过32位',
+        firmwareVersionRequired: '请输入固件版本',
+        firmwareVersionLength: '固件版本长度不能超过32位',
+        calibrationDateRequired: '请选择校准日期',
+        batteryStatusLength: '电池状态长度不能超过64位',
+        remarkLength: '备注长度不能超过500位',
+      },
+
+      // 列表列
+      columns: {
+        iotId: '传感器编号',
+        iotName: '传感器名称',
+        iotType: '传感器类型',
+        manufacturer: '制造商',
+        firmwareVersion: '固件版本',
+        calibrationDate: '校准日期',
+        batteryStatus: '电池状态',
+        createBy: '登记人',
+        orgName: '登记机构',
+        createTime: '登记时间',
+        updateTime: '更新时间',
+        actions: '操作',
       },
     },
   }

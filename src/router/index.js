@@ -125,6 +125,18 @@ const routes = [
         component: () => import('../views/research/enterprise/EnterpriseAudit.vue'),
         meta: { title: '种子企业审核', requiresAuth: true }
       },
+      {
+        path: 'union/list',
+        name: 'UnionList',
+        component: () => import('../views/research/union/UnionList.vue'),
+        meta: { title: '繁殖机构列表', requiresAuth: true }
+      },
+      {
+        path: 'union/registration',
+        name: 'UnionRegistration',
+        component: () => import('../views/research/union/UnionRegistration.vue'),
+        meta: { title: '繁殖机构注册', requiresAuth: true }
+      },
       // 品种管理
       {
         path: 'variety/registration',
@@ -179,8 +191,33 @@ const routes = [
       {
         path: 'breeding/tracking',
         name: 'BreedingTracking',
-        component: () => import('../views/research/breeding/BreedingTracking.vue'),
+        component: () => import('../views/research/breeding-tracking/index.vue'),
         meta: { title: '育种跟踪管理', requiresAuth: true }
+      },
+      // 繁殖信息管理（统一模块）
+      {
+        path: 'breeding',
+        name: 'BreedingModule',
+        component: () => import('../views/research/breeding/index.vue'),
+        meta: { title: '繁殖信息管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding/batch/add',
+        name: 'BreedingBatchAdd',
+        component: () => import('../views/research/breeding/batch-form.vue'),
+        meta: { title: '新增繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/batch/edit/:id',
+        name: 'BreedingBatchEdit',
+        component: () => import('../views/research/breeding/batch-form.vue'),
+        meta: { title: '编辑繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/detail/:id',
+        name: 'BreedingDetail',
+        component: () => import('../views/research/breeding/detail.vue'),
+        meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
       // 繁殖种子认证申请
       {
@@ -220,6 +257,84 @@ const routes = [
         name: 'BreedingCertificate',
         component: () => import('../views/seed/breeding-certificate/index.vue'),
         meta: { title: '繁殖种子证书颁发', requiresAuth: true }
+      },
+      // 育种数据管理 - 田间检验数据采集
+      {
+        path: 'breeding-data/field-inspection',
+        name: 'FieldInspection',
+        component: () => import('../views/research/data-collection/yield-data/index.vue'),
+        meta: { title: '田间检验数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/add',
+        name: 'FieldInspectionAdd',
+        component: () => import('../views/research/data-collection/yield-data/form.vue'),
+        meta: { title: '新增田间检验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/edit/:id',
+        name: 'FieldInspectionEdit',
+        component: () => import('../views/research/data-collection/yield-data/form.vue'),
+        meta: { title: '编辑田间检验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/detail/:id',
+        name: 'FieldInspectionDetail',
+        component: () => import('../views/research/data-collection/yield-data/detail.vue'),
+        meta: { title: '田间检验数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 育种数据管理 - 实验室测试数据采集
+      {
+        path: 'breeding-data/laboratory-test',
+        name: 'BreedingLabTest',
+        component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
+        meta: { title: '实验室测试数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/add',
+        name: 'BreedingLabTestAdd',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '新增实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/edit/:id',
+        name: 'BreedingLabTestEdit',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '编辑实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/detail/:id',
+        name: 'BreedingLabTestDetail',
+        component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
+        meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 育种家种子管理 - Breeder Seed Production
+      {
+        path: 'breeding/seed-production',
+        name: 'SeedProduction',
+        component: () => import('../views/research/breeding/seed-production/index.vue'),
+        meta: { title: 'Breeder Seed生产数据采集', requiresAuth: true }
+      },
+      // 育种家种子管理 - Breeder Seed Distribution
+      {
+        path: 'breeding/seed-distribution',
+        name: 'SeedDistribution',
+        component: () => import('../views/research/breeding/seed-distribution/index.vue'),
+        meta: { title: 'Breeder Seed分发数据管理', requiresAuth: true }
+      },
+      // 育种家种子管理 - OSE Management
+      {
+        path: 'breeding/ose-management',
+        name: 'OseManagement',
+        component: () => import('../views/research/breeding/ose-management/index.vue'),
+        meta: { title: 'OSE维护管理', requiresAuth: true }
+      },
+      // 育种家种子管理 - OSE Receive Confirmation
+      {
+        path: 'breeding/ose-receive-confirm',
+        name: 'OseReceiveConfirm',
+        component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
+        meta: { title: 'OSE接收确认', requiresAuth: true }
       },
       // 数据采集 - 试验基础数据采集
       {
@@ -395,6 +510,31 @@ const routes = [
         name: 'LaboratoryTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 物联网传感器维护
+      {
+        path: 'data-collection/iot-sensor',
+        name: 'IotSensorList',
+        component: () => import('../views/research/data-collection/iot-sensor/index.vue'),
+        meta: { title: '物联网传感器维护', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/add',
+        name: 'IotSensorAdd',
+        component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
+        meta: { title: '新增传感器', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/edit/:id',
+        name: 'IotSensorEdit',
+        component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
+        meta: { title: '编辑传感器', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/detail/:id',
+        name: 'IotSensorDetail',
+        component: () => import('../views/research/data-collection/iot-sensor/detail.vue'),
+        meta: { title: '传感器详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

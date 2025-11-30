@@ -35,10 +35,24 @@ export default {
     days: '天',
     audit: '审核',
     update: '更新',
+    remarks: '备注',
+    refresh: '刷新',
+    createBy: '登记人ID',
+    createTime: '登记时间',
+    registrationInfo: '登记信息',
     index: '序号',
     total: '共计',
     to: '至',
     noData: '暂无数据',
     filter: '筛选',
-    loadMore: '加载更多'
+    loadMore: '加载更多',
+    // 作物类型(通用)
+    cropTypes: {
+      wheat: '小麦',
+      maize: '玉米',
+      sorghum: '高粱',
+      teff: '苔麸',
+      barley: '大麦',
+      pulses: '豆类',
+    }
   }

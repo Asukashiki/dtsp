@@ -266,42 +266,46 @@ export const mockBatchList = [
 
 /**
  * 作物类型列表（用于下拉选择）
+ * 注意: label需要在使用时通过i18n动态获取
  */
 export const mockCropTypes = [
-  { value: '小麦', label: '小麦 (Wheat)' },
-  { value: '玉米', label: '玉米 (Maize)' },
-  { value: '高粱', label: '高粱 (Sorghum)' },
-  { value: '苔麸', label: '苔麸 (Teff)' },
-  { value: '大麦', label: '大麦 (Barley)' },
-  { value: '豆类', label: '豆类 (Pulses)' }
+  { value: 'wheat', labelKey: 'common.cropTypes.wheat' },
+  { value: 'maize', labelKey: 'common.cropTypes.maize' },
+  { value: 'sorghum', labelKey: 'common.cropTypes.sorghum' },
+  { value: 'teff', labelKey: 'common.cropTypes.teff' },
+  { value: 'barley', labelKey: 'common.cropTypes.barley' },
+  { value: 'pulses', labelKey: 'common.cropTypes.pulses' }
 ]
 
 /**
  * 繁殖级别列表
+ * 注意: label需要在使用时通过i18n动态获取
  */
 export const mockPropagationLevels = [
-  { value: '育种家种子', label: '育种家种子 (Breeder Seed)' },
-  { value: '原原种', label: '原原种 (Pre-basic Seed)' },
-  { value: '原种', label: '原种 (Basic Seed)' },
-  { value: '良种', label: '良种 (Certified Seed)' }
+  { value: 'breeder', labelKey: 'research.breeding.plan.propagationLevel.breeder' },
+  { value: 'preBasic', labelKey: 'research.breeding.plan.propagationLevel.preBasic' },
+  { value: 'basic', labelKey: 'research.breeding.plan.propagationLevel.basic' },
+  { value: 'certified', labelKey: 'research.breeding.plan.propagationLevel.certified' }
 ]
 
 /**
  * 阶段名称列表
+ * 注意: label需要在使用时通过i18n动态获取
  */
 export const mockStageNames = [
-  { value: '亲本系准备', label: '亲本系准备 (Parent Line Preparation)' },
-  { value: '育种家种子', label: '育种家种子 (Breeder Seed)' },
-  { value: '原原种繁殖', label: '原原种繁殖 (Pre-basic Seed Propagation)' },
-  { value: '原种繁殖', label: '原种繁殖 (Basic Seed Propagation)' }
+  { value: 'parentLinePreparation', labelKey: 'research.breeding.tracking.stageName.parentLinePreparation' },
+  { value: 'breederSeed', labelKey: 'research.breeding.tracking.stageName.breederSeed' },
+  { value: 'preBasicSeedPropagation', labelKey: 'research.breeding.tracking.stageName.preBasicSeedPropagation' },
+  { value: 'basicSeedPropagation', labelKey: 'research.breeding.tracking.stageName.basicSeedPropagation' }
 ]
 
 /**
  * 计划状态列表
+ * 注意: label需要在使用时通过i18n动态获取
  */
 export const mockPlanStatus = [
-  { value: 'planning', label: '计划中 (Planning)' },
-  { value: 'ongoing', label: '进行中 (Ongoing)' },
-  { value: 'completed', label: '已完成 (Completed)' },
-  { value: 'cancelled', label: '已取消 (Cancelled)' }
+  { value: 'planning', labelKey: 'research.breeding.plan.status.planning' },
+  { value: 'ongoing', labelKey: 'research.breeding.plan.status.ongoing' },
+  { value: 'completed', labelKey: 'research.breeding.plan.status.completed' },
+  { value: 'cancelled', labelKey: 'research.breeding.plan.status.cancelled' }
 ]

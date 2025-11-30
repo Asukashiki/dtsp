@@ -63,11 +63,11 @@ agricultureRequest.interceptors.response.use(
     }
 
     // 其他业务错误
-    ElMessage({
-      message: res.msg || res.message || '操作失败',
-      type: 'error',
-      duration: 3000
-    })
+    // ElMessage({
+    //   message: res.msg || res.message || '操作失败',
+    //   type: 'error',
+    //   duration: 3000
+    // })
 
     return Promise.reject(new Error(res.msg || res.message || '操作失败'))
   },

@@ -24,6 +24,24 @@
     <!-- 详情区域 -->
     <div v-loading="loading" class="detail-wrapper">
       <template v-if="detailData">
+        <!-- 基础信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-information-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.batchId') }}:</span>
+              <span class="value">{{ detailData.batchId }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
+              <span class="value">{{ detailData.trialId }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 样本信息 -->
         <div class="detail-section">
           <div class="section-title">
@@ -93,6 +111,28 @@
             </div>
           </div>
         </div>
+
+        <!-- 检测信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-calendar-check-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
+              <span class="value">{{ detailData.testDate || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testOrganization') }}:</span>
+              <span class="value">{{ detailData.testOrganization || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testerName') }}:</span>
+              <span class="value">{{ detailData.testerName || '-' }}</span>
+            </div>
+          </div>
+        </div>
       </template>
     </div>
   </div>
@@ -103,7 +143,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getLaboratoryTestDetail } from '@/api/breeding'
+import { getLabTestDetail } from '@/api/labTest'
 
 const route = useRoute()
 const router = useRouter()
@@ -116,7 +156,7 @@ const detailData = ref(null)
 const loadDetail = async () => {
   loading.value = true
   try {
-    const res = await getLaboratoryTestDetail(route.params.id)
+    const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
     } else {
@@ -134,7 +174,7 @@ const loadDetail = async () => {
 
 // 编辑
 const handleEdit = () => {
-  router.push(`/research/data-collection/laboratory-test/edit/${route.params.id}`)
+  router.push({ name: 'BreedingLabTestEdit', params: { id: route.params.id } })
 }
 
 // 返回

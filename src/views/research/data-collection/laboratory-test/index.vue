@@ -1,207 +1,225 @@
 <template>
-  <div class="laboratory-test-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon">
-        <i class="ri-microscope-line"></i>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.dataCollection.laboratoryTest.subtitle') }}</p>
-      </div>
-    </div>
-
-    <!-- PC端视图 -->
-    <div class="table-card pc-view">
-      <!-- 搜索区域 -->
-      <div class="search-section">
-        <el-form :inline="true" :model="searchForm" class="search-form">
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')">
-            <el-input
-              v-model="searchForm.sampleId"
-              :placeholder="$t('common.pleaseEnter')"
-              clearable
-              @clear="handleSearch"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="handleSearch">
-              <i class="ri-search-line"></i>
-              {{ $t('common.search') }}
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-refresh-line"></i>
-              {{ $t('common.reset') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
-        <div class="action-buttons">
-          <el-button type="primary" @click="handleAdd">
-            <i class="ri-add-line"></i>
-            {{ $t('common.add') }}
-          </el-button>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <div class="header-icon">
+            <i class="ri-microscope-line"></i>
+          </div>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.dataCollection.laboratoryTest.subtitle') }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- 表格 -->
-      <el-table v-loading="loading" :data="tableData" stripe>
-        <el-table-column
-          prop="sampleId"
-          :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
-          min-width="120"
-        />
-        <el-table-column
-          prop="sampleCondition"
-          :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
-          min-width="120"
-        />
-        <el-table-column
-          prop="germinationRate"
-          :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')"
-          min-width="120"
-        >
-          <template #default="{ row }">
-            {{ row.germinationRate }}%
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="purityPercent"
-          :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')"
-          min-width="110"
-        >
-          <template #default="{ row }">
-            {{ row.purityPercent }}%
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="moistureContentPercent"
-          :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')"
-          min-width="120"
-        >
-          <template #default="{ row }">
-            {{ row.moistureContentPercent }}%
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="proteinPercent"
-          :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')"
-          min-width="120"
-        >
-          <template #default="{ row }">
-            {{ row.proteinPercent }}%
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('common.actions')" fixed="right" width="200">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="handleView(row)">
-              <i class="ri-eye-line"></i>
-              {{ $t('common.view') }}
-            </el-button>
-            <el-button link type="primary" @click="handleEdit(row)">
-              <i class="ri-edit-line"></i>
-              {{ $t('common.edit') }}
-            </el-button>
-            <el-button link type="danger" @click="handleDelete(row)">
-              <i class="ri-delete-bin-line"></i>
-              {{ $t('common.delete') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- 分页 -->
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.currentPage"
-          v-model:page-size="pagination.pageSize"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-    </div>
-
-    <!-- 移动端视图 -->
-    <div class="mobile-view">
-      <!-- 搜索区域 -->
-      <div class="mobile-search">
-        <el-input
-          v-model="searchForm.sampleId"
-          :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
-          clearable
-          @clear="handleSearch"
-        >
-          <template #suffix>
-            <i class="ri-search-line" @click="handleSearch"></i>
-          </template>
-        </el-input>
-      </div>
-
-      <!-- 卡片列表 -->
-      <div v-loading="loading" class="card-list">
-        <div v-for="item in tableData" :key="item.dataId" class="lab-card">
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <div class="info-card">
           <div class="card-header">
-            <div class="sample-id">
-              <i class="ri-test-tube-line"></i>
-              {{ item.sampleId }}
+            <div class="card-title">
+              <i class="ri-file-list-3-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.list') }}</span>
             </div>
-            <div class="card-actions">
-              <el-button link type="primary" @click="handleView(item)">
-                <i class="ri-eye-line"></i>
-              </el-button>
-              <el-button link type="primary" @click="handleEdit(item)">
-                <i class="ri-edit-line"></i>
-              </el-button>
-              <el-button link type="danger" @click="handleDelete(item)">
-                <i class="ri-delete-bin-line"></i>
-              </el-button>
-            </div>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('common.add') }}
+            </el-button>
           </div>
 
           <div class="card-body">
-            <div class="condition-tag">
-              <el-tag>{{ item.sampleCondition }}</el-tag>
+            <!-- 搜索区域 -->
+            <div class="search-section">
+              <el-input
+                v-model="searchForm.sampleId"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
+                clearable
+                class="search-input"
+              >
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+              <el-button type="primary" @click="handleSearch">
+                <i class="ri-search-line"></i>
+                {{ $t('common.search') }}
+              </el-button>
+              <el-button @click="handleReset">
+                <i class="ri-refresh-line"></i>
+                {{ $t('common.reset') }}
+              </el-button>
             </div>
 
-            <div class="metrics-grid">
-              <div class="metric-item">
-                <div class="metric-label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}</div>
-                <div class="metric-value highlight">{{ item.germinationRate }}%</div>
-              </div>
-              <div class="metric-item">
-                <div class="metric-label">{{ $t('research.dataCollection.laboratoryTest.form.purityPercent') }}</div>
-                <div class="metric-value">{{ item.purityPercent }}%</div>
-              </div>
-              <div class="metric-item">
-                <div class="metric-label">{{ $t('research.dataCollection.laboratoryTest.form.moistureContentPercent') }}</div>
-                <div class="metric-value">{{ item.moistureContentPercent }}%</div>
-              </div>
-              <div class="metric-item">
-                <div class="metric-label">{{ $t('research.dataCollection.laboratoryTest.form.proteinPercent') }}</div>
-                <div class="metric-value">{{ item.proteinPercent }}%</div>
+            <!-- PC端表格 -->
+            <div class="table-wrapper pc-only">
+              <el-table v-loading="loading" :data="tableData" stripe>
+                <el-table-column
+                  prop="batchId"
+                  :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="trialId"
+                  :label="$t('research.dataCollection.laboratoryTest.form.trialId')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="sampleId"
+                  :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="sampleCondition"
+                  :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="germinationRate"
+                  :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    {{ row.germinationRate }}%
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="purityPercent"
+                  :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')"
+                  min-width="110"
+                >
+                  <template #default="{ row }">
+                    {{ row.purityPercent }}%
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="moistureContentPercent"
+                  :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    {{ row.moistureContentPercent }}%
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="proteinPercent"
+                  :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    {{ row.proteinPercent }}%
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="testDate"
+                  :label="$t('research.dataCollection.laboratoryTest.form.testDate')"
+                  min-width="120"
+                />
+                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
+                  <template #default="{ row }">
+                    <div class="action-buttons">
+                      <el-button link type="primary" @click="handleView(row)">
+                        <i class="ri-eye-line"></i>
+                        {{ $t('common.view') }}
+                      </el-button>
+                      <el-button link type="primary" @click="handleEdit(row)">
+                        <i class="ri-edit-line"></i>
+                        {{ $t('common.edit') }}
+                      </el-button>
+                      <el-button link type="danger" @click="handleDelete(row)">
+                        <i class="ri-delete-bin-line"></i>
+                        {{ $t('common.delete') }}
+                      </el-button>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+              <!-- 分页 -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :total="pagination.total"
+                  :page-sizes="[10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
+
+            <!-- 移动端卡片 -->
+            <div class="mobile-card-list mobile-only">
+              <div v-for="item in tableData" :key="item.dataId" class="mobile-card">
+                <div class="mobile-card-header">
+                  <div class="mobile-card-title">
+                    <i class="ri-microscope-line"></i>
+                    <span>{{ item.sampleId }}</span>
+                  </div>
+                </div>
+                <div class="mobile-card-body">
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.batchId') }}:</span>
+                    <span class="value">{{ item.batchId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
+                    <span class="value">{{ item.trialId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleCondition') }}:</span>
+                    <span class="value">{{ item.sampleCondition }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
+                    <span class="value">{{ item.germinationRate }}%</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.purityPercent') }}:</span>
+                    <span class="value">{{ item.purityPercent }}%</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.moistureContentPercent') }}:</span>
+                    <span class="value">{{ item.moistureContentPercent }}%</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
+                    <span class="value">{{ item.testDate || '-' }}</span>
+                  </div>
+                </div>
+                <div class="mobile-card-actions">
+                  <el-button type="primary" size="small" @click="handleView(item)">
+                    {{ $t('common.view') }}
+                  </el-button>
+                  <el-button size="small" @click="handleEdit(item)">
+                    {{ $t('common.edit') }}
+                  </el-button>
+                  <el-button type="danger" size="small" @click="handleDelete(item)">
+                    {{ $t('common.delete') }}
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- 移动端分页 -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50]"
+                  :total="pagination.total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
+            </div>
+
+            <!-- 空状态 -->
+            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('home.noData')" />
           </div>
         </div>
-      </div>
-
-      <!-- 分页 -->
-      <div class="mobile-pagination">
-        <el-pagination
-          v-model:current-page="pagination.currentPage"
-          v-model:page-size="pagination.pageSize"
-          :total="pagination.total"
-          layout="prev, pager, next"
-          small
-          @current-change="handleCurrentChange"
-        />
-      </div>
-
-      <!-- 悬浮按钮 -->
-      <div class="mobile-fab" @click="handleAdd">
-        <i class="ri-add-line"></i>
       </div>
     </div>
   </div>
@@ -212,7 +230,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLaboratoryTestList, deleteLaboratoryTest } from '@/api/breeding'
+import { getLabTestList, deleteLabTest } from '@/api/labTest'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -234,14 +252,14 @@ const pagination = reactive({
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getLaboratoryTestList({
+    const res = await getLabTestList({
       sampleId: searchForm.sampleId,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
     })
     if (res.code === 200) {
-      tableData.value = res.data || []
-      pagination.total = res.total || 0
+      tableData.value = res.data?.list || res.data || []
+      pagination.total = res.data?.total || res.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -265,43 +283,44 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/research/data-collection/laboratory-test/add')
+  router.push({ name: 'BreedingLabTestAdd' })
 }
 
 // 查看
 const handleView = (row) => {
-  router.push(`/research/data-collection/laboratory-test/detail/${row.dataId}`)
+  router.push({ name: 'BreedingLabTestDetail', params: { id: row.dataId } })
 }
 
 // 编辑
 const handleEdit = (row) => {
-  router.push(`/research/data-collection/laboratory-test/edit/${row.dataId}`)
+  router.push({ name: 'BreedingLabTestEdit', params: { id: row.dataId } })
 }
 
 // 删除
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    t('common.deleteConfirm'),
-    t('common.warning'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
-  ).then(async () => {
-    try {
-      const res = await deleteLaboratoryTest(row.dataId)
-      if (res.code === 200) {
-        ElMessage.success(t('common.deleteSuccess'))
-        loadData()
-      } else {
-        ElMessage.error(res.msg || t('common.deleteFailed'))
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('common.deleteConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
       }
-    } catch (error) {
+    )
+    const res = await deleteLabTest([row.dataId])
+    if (res.code === 200) {
+      ElMessage.success(t('common.deleteSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.deleteFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
       console.error('Failed to delete:', error)
       ElMessage.error(t('common.deleteFailed'))
     }
-  }).catch(() => {})
+  }
 }
 
 // 分页
@@ -321,232 +340,236 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.laboratory-test-container {
+/* 页面容器 */
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
   padding: 24px;
-  min-height: calc(100vh - 120px);
 }
 
-/* ==================== 页面头部 ==================== */
+.page-wrapper {
+  margin: 0 auto;
+}
+
+/* 页面头部 */
 .page-header {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+}
+
+.header-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .header-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 40px;
   color: white;
   flex-shrink: 0;
-  box-shadow: 0 8px 16px rgba(0, 154, 68, 0.2);
 }
 
 .header-content {
-  flex: 1;
+  color: white;
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
-  color: #1f2937;
   margin: 0 0 8px 0;
 }
 
 .page-subtitle {
   font-size: 16px;
-  color: #6b7280;
+  opacity: 0.9;
   margin: 0;
 }
 
-/* ==================== PC端表格卡片 ==================== */
-.table-card {
+/* 内容区域 */
+.content-wrapper {
   background: white;
   border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
-.search-section {
+/* 卡片 */
+.info-card {
+  background: white;
+}
+
+.card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  gap: 16px;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8f5e9;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
 }
 
-.search-form {
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #009A44;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title i {
+  font-size: 22px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+/* 搜索区域 */
+.search-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-input {
   flex: 1;
+  min-width: 200px;
+}
+
+/* 表格 */
+.table-wrapper {
+  margin-top: 16px;
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
+/* 分页 */
 .pagination-wrapper {
-  margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8f5e9;
 }
 
-/* ==================== 移动端视图 ==================== */
-.mobile-view {
-  display: none;
-}
-
-.mobile-search {
-  margin-bottom: 16px;
-}
-
-.mobile-search :deep(.el-input__suffix) {
-  cursor: pointer;
-}
-
-.card-list {
+/* 移动端卡片列表 */
+.mobile-card-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 80px;
+  gap: 16px;
 }
 
-.lab-card {
-  background: white;
+.mobile-card {
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
-.lab-card:active {
+.mobile-card:active {
   transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.card-header {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.08) 0%, rgba(254, 221, 0, 0.08) 100%);
-  padding: 12px 16px;
+.mobile-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 154, 68, 0.1);
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.sample-id {
+.mobile-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 600;
   color: #009A44;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  flex: 1;
 }
 
-.sample-id i {
-  font-size: 18px;
+.mobile-card-title i {
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
-.card-actions {
+.mobile-card-body {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.card-actions .el-button {
-  font-size: 18px;
-  padding: 4px;
-}
-
-.card-body {
-  padding: 16px;
-}
-
-.condition-tag {
-  margin-bottom: 12px;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.metric-item {
-  background: rgba(0, 154, 68, 0.02);
-  border-radius: 8px;
-  padding: 12px;
-  border-left: 3px solid #009A44;
-}
-
-.metric-label {
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.metric-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.metric-value.highlight {
-  color: #009A44;
-  font-size: 18px;
-}
-
-.mobile-pagination {
+.mobile-card-row {
   display: flex;
-  justify-content: center;
-  margin-bottom: 80px;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
-.mobile-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 50%;
+.mobile-card-row .label {
+  color: #666;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.mobile-card-row .value {
+  color: #333;
+  font-weight: 500;
+}
+
+.mobile-card-actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 100;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
 }
 
-.mobile-fab i {
-  font-size: 28px;
-  color: white;
+.mobile-card-actions .el-button {
+  flex: 1;
 }
 
-.mobile-fab:active {
-  transform: scale(0.95);
+/* 响应式 */
+.pc-only {
+  display: block;
 }
 
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .laboratory-test-container {
-    padding: 16px;
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .page-container {
+    padding: 12px;
   }
 
   .page-header {
-    padding: 24px;
+    padding: 20px;
+    border-radius: 12px;
   }
 
   .header-icon {
     width: 60px;
     height: 60px;
-    font-size: 32px;
+    font-size: 30px;
   }
 
   .page-title {
@@ -556,97 +579,36 @@ onMounted(() => {
   .page-subtitle {
     font-size: 14px;
   }
-}
 
-@media screen and (max-width: 768px) {
-  .laboratory-test-container {
-    padding: 12px;
+  .content-wrapper {
+    border-radius: 12px;
   }
 
-  .pc-view {
+  .card-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .pc-only {
     display: none;
   }
 
-  .mobile-view {
+  .mobile-only {
     display: block;
-  }
-
-  .page-header {
-    padding: 20px 16px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-  }
-
-  .header-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 24px;
-    border-radius: 12px;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .page-subtitle {
-    font-size: 13px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .laboratory-test-container {
-    padding: 8px;
-  }
-
-  .page-header {
-    padding: 16px 12px;
-    gap: 16px;
-  }
-
-  .header-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    border-radius: 10px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .page-subtitle {
-    font-size: 12px;
-  }
-
-  .mobile-fab {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .mobile-fab i {
-    font-size: 24px;
-  }
-
-  .metrics-grid {
-    gap: 10px;
-  }
-
-  .metric-item {
-    padding: 10px;
-  }
-
-  .metric-label {
-    font-size: 11px;
-  }
-
-  .metric-value {
-    font-size: 14px;
-  }
-
-  .metric-value.highlight {
-    font-size: 16px;
   }
 }
 </style>

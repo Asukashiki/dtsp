@@ -35,10 +35,24 @@ export default {
   days: 'days',
   audit: 'Audit',
   update: 'Update',
+  remarks: 'Remarks',
+  refresh: 'Refresh',
+  createBy: 'Registrant ID',
+  createTime: 'Registration Time',
+  registrationInfo: 'Registration Information',
   index: 'No.',
   total: 'Total',
   to: 'to',
   noData: 'No Data',
   filter: 'Filter',
-  loadMore: 'Load More'
+  loadMore: 'Load More',
+  // Crop Types (Common)
+  cropTypes: {
+    wheat: 'Wheat',
+    maize: 'Maize',
+    sorghum: 'Sorghum',
+    teff: 'Teff',
+    barley: 'Barley',
+    pulses: 'Pulses',
+  }
 }
