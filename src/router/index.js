@@ -200,6 +200,51 @@ const routes = [
         component: () => import('../views/research/breeding/detail.vue'),
         meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
+      // 繁殖种子认证申请
+      {
+        path: 'seed/breeding-certification',
+        name: 'BreedingCertificationList',
+        component: () => import('../views/seed/breeding-certification/index.vue'),
+        meta: { title: '繁殖种子认证申请', requiresAuth: true }
+      },
+      {
+        path: 'seed/breeding-certification/add',
+        name: 'BreedingCertificationAdd',
+        component: () => import('../views/seed/breeding-certification/form.vue'),
+        meta: { title: '新增认证申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'seed/breeding-certification/edit/:id',
+        name: 'BreedingCertificationEdit',
+        component: () => import('../views/seed/breeding-certification/form.vue'),
+        meta: { title: '编辑认证申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'seed/breeding-certification/detail/:id',
+        name: 'BreedingCertificationDetail',
+        component: () => import('../views/seed/breeding-certification/detail.vue'),
+        meta: { title: '认证申请详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'seed/breeding-certification/print/:id',
+        name: 'BreedingCertificationPrint',
+        component: () => import('../views/seed/breeding-certification/print.vue'),
+        meta: { title: '打印认证标签', hideInMenu: true, requiresAuth: true }
+      },
+      // 繁殖种子审核
+      {
+        path: 'seed/breeding-audit',
+        name: 'BreedingAudit',
+        component: () => import('../views/seed/breeding-audit/index.vue'),
+        meta: { title: '繁殖种子认证审核', requiresAuth: true }
+      },
+      // 种子证书颁发
+      {
+        path: 'seed/breeding-certificate',
+        name: 'BreedingCertificate',
+        component: () => import('../views/seed/breeding-certificate/index.vue'),
+        meta: { title: '繁殖种子证书颁发', requiresAuth: true }
+      },
       // 数据采集 - 试验基础数据采集
       {
         path: 'data-collection/trial-base',

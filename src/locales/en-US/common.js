@@ -31,6 +31,8 @@ export default {
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
   actions: 'Actions',
+  action: 'Action',
+  days: 'days',
   audit: 'Audit',
   update: 'Update',
   remarks: 'Remarks',
@@ -38,4 +40,10 @@ export default {
   createBy: 'Registrant ID',
   createTime: 'Registration Time',
   registrationInfo: 'Registration Information',
+  index: 'No.',
+  total: 'Total',
+  to: 'to',
+  noData: 'No Data',
+  filter: 'Filter',
+  loadMore: 'Load More'
 }

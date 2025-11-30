@@ -31,11 +31,19 @@ export default {
     saveFailed: '保存失败',
     submitFailed: '提交失败',
     actions: '操作',
+    action: '操作',
+    days: '天',
     audit: '审核',
     update: '更新',
     remarks: '备注',
     refresh: '刷新',
     createBy: '登记人ID',
     createTime: '登记时间',
-    registrationInfo: '登记信息'
+    registrationInfo: '登记信息',
+    index: '序号',
+    total: '共计',
+    to: '至',
+    noData: '暂无数据',
+    filter: '筛选',
+    loadMore: '加载更多'
   }
