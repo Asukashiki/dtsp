@@ -225,6 +225,69 @@ const routes = [
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
+      // 育种数据管理 - 育种数据集编制
+      {
+        path: 'breeding-data/dataset-compilation',
+        name: 'DatasetCompilation',
+        component: () => import('../views/research/breeding-data/dataset-compilation/index.vue'),
+        meta: { title: '育种数据集编制', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/dataset-compilation/add',
+        name: 'DatasetCompilationAdd',
+        component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
+        meta: { title: '新增数据集', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/dataset-compilation/edit/:id',
+        name: 'DatasetCompilationEdit',
+        component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
+        meta: { title: '编辑数据集', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/dataset-compilation/detail/:id',
+        name: 'DatasetCompilationDetail',
+        component: () => import('../views/research/breeding-data/dataset-compilation/detail.vue'),
+        meta: { title: '数据集详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 育种数据管理 - 育种数据集审核
+      {
+        path: 'breeding-data/dataset-audit',
+        name: 'DatasetAudit',
+        component: () => import('../views/research/breeding-data/dataset-audit/index.vue'),
+        meta: { title: '育种数据集审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/dataset-audit/review/:id',
+        name: 'DatasetAuditReview',
+        component: () => import('../views/research/breeding-data/dataset-audit/review.vue'),
+        meta: { title: '审核数据集', hideInMenu: true, requiresAuth: true }
+      },
+      // 育种数据管理 - 育种许可数据录入
+      {
+        path: 'breeding-data/breeding-license',
+        name: 'BreedingLicense',
+        component: () => import('../views/research/breeding-data/breeding-license/index.vue'),
+        meta: { title: '育种许可数据录入', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/breeding-license/add',
+        name: 'BreedingLicenseAdd',
+        component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
+        meta: { title: '新增许可', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/breeding-license/edit/:id',
+        name: 'BreedingLicenseEdit',
+        component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
+        meta: { title: '编辑许可', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/breeding-license/detail/:id',
+        name: 'BreedingLicenseDetail',
+        component: () => import('../views/research/breeding-data/breeding-license/detail.vue'),
+        meta: { title: '许可详情', hideInMenu: true, requiresAuth: true }
+      },
       // 数据采集 - 试验基础数据采集
       {
         path: 'data-collection/trial-base',

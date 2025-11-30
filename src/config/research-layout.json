@@ -80,6 +80,21 @@
           "index": "/research/breeding-data/laboratory-test",
           "icon": "ri-flask-line",
           "titleKey": "research.menu.laboratoryTest"
+        },
+        {
+          "index": "/research/breeding-data/dataset-compilation",
+          "icon": "ri-file-list-line",
+          "titleKey": "research.menu.datasetCompilation"
+        },
+        {
+          "index": "/research/breeding-data/dataset-audit",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.datasetAudit"
+        },
+        {
+          "index": "/research/breeding-data/breeding-license",
+          "icon": "ri-file-shield-2-line",
+          "titleKey": "research.menu.breedingLicense"
         }
       ]
     },
