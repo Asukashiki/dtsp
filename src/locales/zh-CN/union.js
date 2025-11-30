@@ -3,7 +3,7 @@ export default {
   title: '繁殖机构注册',
   subtitle: '填写繁殖机构信息，提交注册申请',
   list: '繁殖机构列表',
-  add: '新增繁殖机构注册',
+  add: '繁殖机构注册',
   edit: '编辑繁殖机构信息',
   detail: '繁殖机构详情',
   apply: '申请注册',

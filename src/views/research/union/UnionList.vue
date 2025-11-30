@@ -94,12 +94,12 @@
                   {{ $t('union.batchDelete') }}
                 </el-button>
               </div>
-              <div class="toolbar-right">
+              <!-- <div class="toolbar-right">
                 <el-button @click="handleExport">
                   <i class="ri-download-line"></i>
                   {{ $t('union.export') }}
                 </el-button>
-              </div>
+              </div> -->
             </div>
 
             <!-- 数据列表区 -->
