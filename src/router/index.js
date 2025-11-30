@@ -175,6 +175,34 @@ const routes = [
         component: () => import('../views/research/breeding/BreedingTracking.vue'),
         meta: { title: '育种跟踪管理', requiresAuth: true }
       },
+      // 育种家种子管理 - Breeder Seed Production
+      {
+        path: 'breeding/seed-production',
+        name: 'SeedProduction',
+        component: () => import('../views/research/breeding/seed-production/index.vue'),
+        meta: { title: 'Breeder Seed生产数据采集', requiresAuth: true }
+      },
+      // 育种家种子管理 - Breeder Seed Distribution
+      {
+        path: 'breeding/seed-distribution',
+        name: 'SeedDistribution',
+        component: () => import('../views/research/breeding/seed-distribution/index.vue'),
+        meta: { title: 'Breeder Seed分发数据管理', requiresAuth: true }
+      },
+      // 育种家种子管理 - OSE Management
+      {
+        path: 'breeding/ose-management',
+        name: 'OseManagement',
+        component: () => import('../views/research/breeding/ose-management/index.vue'),
+        meta: { title: 'OSE维护管理', requiresAuth: true }
+      },
+      // 育种家种子管理 - OSE Receive Confirmation
+      {
+        path: 'breeding/ose-receive-confirm',
+        name: 'OseReceiveConfirm',
+        component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
+        meta: { title: 'OSE接收确认', requiresAuth: true }
+      },
       // 数据采集 - 试验基础数据采集
       {
         path: 'data-collection/trial-base',

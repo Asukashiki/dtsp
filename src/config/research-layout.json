@@ -67,6 +67,33 @@
       ]
     },
     {
+      "index": "breeder-seed",
+      "icon": "ri-plant-line",
+      "titleKey": "research.menu.breederSeed",
+      "children": [
+        {
+          "index": "/research/breeding/seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.seedProduction"
+        },
+        {
+          "index": "/research/breeding/seed-distribution",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.seedDistribution"
+        },
+        {
+          "index": "/research/breeding/ose-management",
+          "icon": "ri-building-4-line",
+          "titleKey": "research.menu.oseManagement"
+        },
+        {
+          "index": "/research/breeding/ose-receive-confirm",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.oseReceiveConfirm"
+        }
+      ]
+    },
+    {
       "index": "data-collection",
       "icon": "ri-file-chart-line",
       "titleKey": "research.menu.dataCollection",
