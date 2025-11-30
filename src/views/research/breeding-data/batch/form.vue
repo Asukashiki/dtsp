@@ -1,0 +1,279 @@
+<template>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('research.breedingData.batch.edit') : $t('research.breedingData.batch.add') }}</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 批次基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.breedingData.batch.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
+                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.batchId')">
+                    <el-input v-model="formData.batchId" disabled :placeholder="$t('common.autoGenerate')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.batchTime')" prop="batchTime">
+                    <el-date-picker v-model="formData.batchTime" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.cropType')" prop="cropType">
+                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%">
+                      <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.breedingMethod')" prop="breedingMethod">
+                    <el-select v-model="formData.breedingMethod" :placeholder="$t('research.breedingData.batch.placeholder.breedingMethod')" style="width: 100%">
+                      <el-option v-for="item in breedingMethodOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 品种标识信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ $t('research.breedingData.batch.form.identityInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.species')" prop="species">
+                    <el-input v-model="formData.species" :placeholder="$t('research.breedingData.batch.placeholder.species')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.genus')" prop="genus">
+                    <el-input v-model="formData.genus" :placeholder="$t('research.breedingData.batch.placeholder.genus')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.family')" prop="family">
+                    <el-input v-model="formData.family" :placeholder="$t('research.breedingData.batch.placeholder.family')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.pedigree')" prop="pedigree">
+                    <el-input v-model="formData.pedigree" :placeholder="$t('research.breedingData.batch.placeholder.pedigree')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.yearOfDevelopment')" prop="yearOfDevelopment">
+                    <el-date-picker v-model="formData.yearOfDevelopment" type="year" value-format="YYYY" style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.productPlace')" prop="productPlace">
+                    <el-input v-model="formData.productPlace" :placeholder="$t('research.breedingData.batch.placeholder.productPlace')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.yield')" prop="yield">
+                    <el-input v-model="formData.yield" :placeholder="$t('research.breedingData.batch.placeholder.yield')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.personInCharge')" prop="personInCharge">
+                    <el-input v-model="formData.personInCharge" :placeholder="$t('research.breedingData.batch.placeholder.personInCharge')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.startDate')" prop="startDate">
+                    <el-date-picker v-model="formData.startDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.endDate')" prop="endDate">
+                    <el-date-picker v-model="formData.endDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('research.breedingData.batch.form.remarks')">
+                    <el-input v-model="formData.remarks" type="textarea" :rows="3" :placeholder="$t('research.breedingData.batch.placeholder.remarks')" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+          </div>
+        </el-form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
+import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch } from '@/api/breedingData'
+
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
+
+const formRef = ref(null)
+const loading = ref(false)
+const submitLoading = ref(false)
+
+const isEdit = computed(() => !!route.params.dataId)
+
+const formData = reactive({
+  dataId: '',
+  batchName: '',
+  batchId: '',
+  batchTime: '',
+  cropType: '',
+  varietyName: '',
+  species: '',
+  genus: '',
+  family: '',
+  breedingMethod: '',
+  pedigree: '',
+  yearOfDevelopment: '',
+  productPlace: '',
+  yield: '',
+  personInCharge: '',
+  startDate: '',
+  endDate: '',
+  remarks: ''
+})
+
+const rules = {
+  batchName: [{ required: true, message: t('research.breedingData.batch.placeholder.batchName'), trigger: 'blur' }],
+  batchTime: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
+  cropType: [{ required: true, message: t('research.breedingData.batch.placeholder.cropType'), trigger: 'change' }],
+  varietyName: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyName'), trigger: 'blur' }],
+  species: [{ required: true, message: t('research.breedingData.batch.placeholder.species'), trigger: 'blur' }],
+  genus: [{ required: true, message: t('research.breedingData.batch.placeholder.genus'), trigger: 'blur' }],
+  family: [{ required: true, message: t('research.breedingData.batch.placeholder.family'), trigger: 'blur' }],
+  breedingMethod: [{ required: true, message: t('research.breedingData.batch.placeholder.breedingMethod'), trigger: 'change' }],
+  pedigree: [{ required: true, message: t('research.breedingData.batch.placeholder.pedigree'), trigger: 'blur' }],
+  yearOfDevelopment: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
+  productPlace: [{ required: true, message: t('research.breedingData.batch.placeholder.productPlace'), trigger: 'blur' }],
+  yield: [{ required: true, message: t('research.breedingData.batch.placeholder.yield'), trigger: 'blur' }],
+  personInCharge: [{ required: true, message: t('research.breedingData.batch.placeholder.personInCharge'), trigger: 'blur' }],
+  startDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
+  endDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }]
+}
+
+const cropTypeOptions = [
+  { label: '水稻', value: 'rice' },
+  { label: '小麦', value: 'wheat' },
+  { label: '玉米', value: 'corn' },
+  { label: '大豆', value: 'soybean' },
+  { label: '棉花', value: 'cotton' }
+]
+
+const breedingMethodOptions = [
+  { label: '杂交育种', value: 'hybridization' },
+  { label: '诱变育种', value: 'mutagenesis' },
+  { label: '分子育种', value: 'molecular' },
+  { label: '选择育种', value: 'selection' },
+  { label: '远缘杂交', value: 'wide_cross' }
+]
+
+const getInfo = async () => {
+  if (!isEdit.value) return
+  loading.value = true
+  try {
+    const res = await getBreedingBatchInfo(route.params.dataId)
+    Object.assign(formData, res.data)
+    if (formData.yearOfDevelopment) {
+      formData.yearOfDevelopment = String(formData.yearOfDevelopment)
+    }
+  } catch (error) {
+    console.error('获取详情失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleSubmit = async () => {
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
+
+  submitLoading.value = true
+  try {
+    const submitData = { ...formData }
+    if (submitData.yearOfDevelopment) {
+      submitData.yearOfDevelopment = parseInt(submitData.yearOfDevelopment)
+    }
+
+    if (isEdit.value) {
+      await editBreedingBatch(submitData)
+      ElMessage.success(t('research.breedingData.batch.editSuccess'))
+    } else {
+      await addBreedingBatch(submitData)
+      ElMessage.success(t('research.breedingData.batch.addSuccess'))
+    }
+    goBack()
+  } catch (error) {
+    console.error('提交失败:', error)
+  } finally {
+    submitLoading.value = false
+  }
+}
+
+const goBack = () => {
+  router.push('/research/breeding-data/batch')
+}
+
+onMounted(() => {
+  getInfo()
+})
+</script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/page-common.scss';
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 0;
+}
+</style>
