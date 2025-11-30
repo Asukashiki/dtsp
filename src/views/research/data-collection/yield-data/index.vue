@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-microscope-line"></i>
+            <i class="ri-bar-chart-box-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.dataCollection.laboratoryTest.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('research.dataCollection.yieldData.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.dataCollection.yieldData.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,11 +20,11 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.dataCollection.laboratoryTest.list') }}</span>
+              <span>{{ $t('research.dataCollection.yieldData.list') }}</span>
             </div>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              {{ $t('common.add') }}
+              {{ $t('research.dataCollection.yieldData.add') }}
             </el-button>
           </div>
 
@@ -32,8 +32,18 @@
             <!-- 搜索区域 -->
             <div class="search-section">
               <el-input
-                v-model="searchForm.sampleId"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
+                v-model="searchForm.batchId"
+                :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
+                clearable
+                class="search-input"
+              >
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+              <el-input
+                v-model="searchForm.plotId"
+                :placeholder="$t('research.dataCollection.yieldData.placeholder.plotId')"
                 clearable
                 class="search-input"
               >
@@ -56,66 +66,44 @@
               <el-table v-loading="loading" :data="tableData" stripe>
                 <el-table-column
                   prop="batchId"
-                  :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
+                  :label="$t('research.dataCollection.yieldData.columns.batchId')"
                   min-width="150"
                 />
                 <el-table-column
                   prop="trialId"
-                  :label="$t('research.dataCollection.laboratoryTest.form.trialId')"
+                  :label="$t('research.dataCollection.yieldData.columns.trialId')"
                   min-width="150"
                 />
                 <el-table-column
-                  prop="sampleId"
-                  :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
+                  prop="plotId"
+                  :label="$t('research.dataCollection.yieldData.columns.plotId')"
                   min-width="120"
                 />
                 <el-table-column
-                  prop="sampleCondition"
-                  :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
+                  prop="plotAreaM2"
+                  :label="$t('research.dataCollection.yieldData.columns.plotAreaM2')"
+                  min-width="130"
+                />
+                <el-table-column
+                  prop="grainWeightKg"
+                  :label="$t('research.dataCollection.yieldData.columns.grainWeightKg')"
+                  min-width="140"
+                />
+                <el-table-column
+                  prop="yieldQtPerHa"
+                  :label="$t('research.dataCollection.yieldData.columns.yieldQtPerHa')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="harvestDate"
+                  :label="$t('research.dataCollection.yieldData.columns.harvestDate')"
                   min-width="120"
                 />
                 <el-table-column
-                  prop="germinationRate"
-                  :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')"
-                  min-width="120"
+                  :label="$t('common.actions')"
+                  fixed="right"
+                  width="300"
                 >
-                  <template #default="{ row }">
-                    {{ row.germinationRate }}%
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="purityPercent"
-                  :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')"
-                  min-width="110"
-                >
-                  <template #default="{ row }">
-                    {{ row.purityPercent }}%
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="moistureContentPercent"
-                  :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')"
-                  min-width="120"
-                >
-                  <template #default="{ row }">
-                    {{ row.moistureContentPercent }}%
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="proteinPercent"
-                  :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')"
-                  min-width="120"
-                >
-                  <template #default="{ row }">
-                    {{ row.proteinPercent }}%
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="testDate"
-                  :label="$t('research.dataCollection.laboratoryTest.form.testDate')"
-                  min-width="120"
-                />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -140,8 +128,8 @@
                 <el-pagination
                   v-model:current-page="pagination.currentPage"
                   v-model:page-size="pagination.pageSize"
-                  :total="pagination.total"
                   :page-sizes="[10, 20, 50, 100]"
+                  :total="pagination.total"
                   layout="total, sizes, prev, pager, next, jumper"
                   @size-change="handleSizeChange"
                   @current-change="handleCurrentChange"
@@ -151,41 +139,29 @@
 
             <!-- 移动端卡片 -->
             <div class="mobile-card-list mobile-only">
-              <div v-for="item in tableData" :key="item.dataId" class="mobile-card">
+              <div v-for="item in tableData" :key="item.id" class="mobile-card">
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
-                    <i class="ri-microscope-line"></i>
-                    <span>{{ item.sampleId }}</span>
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span>{{ item.plotId }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.batchId') }}:</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.batchId') }}:</span>
                     <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
-                    <span class="value">{{ item.trialId }}</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.plotAreaM2') }}:</span>
+                    <span class="value">{{ item.plotAreaM2 }} m²</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleCondition') }}:</span>
-                    <span class="value">{{ item.sampleCondition }}</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.yieldQtPerHa') }}:</span>
+                    <span class="value">{{ item.yieldQtPerHa }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
-                    <span class="value">{{ item.germinationRate }}%</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.purityPercent') }}:</span>
-                    <span class="value">{{ item.purityPercent }}%</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.moistureContentPercent') }}:</span>
-                    <span class="value">{{ item.moistureContentPercent }}%</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
-                    <span class="value">{{ item.testDate || '-' }}</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.harvestDate') }}:</span>
+                    <span class="value">{{ item.harvestDate }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">
@@ -230,7 +206,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLabTestList, deleteLabTest } from '@/api/labTest'
+import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -239,7 +215,8 @@ const loading = ref(false)
 const tableData = ref([])
 
 const searchForm = reactive({
-  sampleId: ''
+  batchId: '',
+  plotId: ''
 })
 
 const pagination = reactive({
@@ -248,12 +225,12 @@ const pagination = reactive({
   total: 0
 })
 
-// 加载数据
-const loadData = async () => {
+// 查询列表
+const handleSearch = async () => {
   loading.value = true
   try {
-    const res = await getLabTestList({
-      sampleId: searchForm.sampleId,
+    const res = await getYieldDataList({
+      ...searchForm,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
     })
@@ -269,38 +246,44 @@ const loadData = async () => {
   }
 }
 
-// 搜索
-const handleSearch = () => {
-  pagination.currentPage = 1
-  loadData()
-}
-
 // 重置
 const handleReset = () => {
-  searchForm.sampleId = ''
+  searchForm.batchId = ''
+  searchForm.plotId = ''
+  pagination.currentPage = 1
+  handleSearch()
+}
+
+// 分页处理
+const handleSizeChange = () => {
+  pagination.currentPage = 1
+  handleSearch()
+}
+
+const handleCurrentChange = () => {
   handleSearch()
 }
 
 // 新增
 const handleAdd = () => {
-  router.push({ name: 'BreedingLabTestAdd' })
+  router.push({ name: 'FieldInspectionAdd' })
 }
 
 // 查看
 const handleView = (row) => {
-  router.push({ name: 'BreedingLabTestDetail', params: { id: row.dataId } })
+  router.push({ name: 'FieldInspectionDetail', params: { id: row.id } })
 }
 
 // 编辑
 const handleEdit = (row) => {
-  router.push({ name: 'BreedingLabTestEdit', params: { id: row.dataId } })
+  router.push({ name: 'FieldInspectionEdit', params: { id: row.id } })
 }
 
 // 删除
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm(
-      t('common.deleteConfirm'),
+      t('research.dataCollection.yieldData.deleteConfirm'),
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
@@ -308,12 +291,10 @@ const handleDelete = async (row) => {
         type: 'warning'
       }
     )
-    const res = await deleteLabTest([row.dataId])
+    const res = await deleteYieldData([row.id])
     if (res.code === 200) {
-      ElMessage.success(t('common.deleteSuccess'))
-      loadData()
-    } else {
-      ElMessage.error(res.msg || t('common.deleteFailed'))
+      ElMessage.success(t('research.dataCollection.yieldData.deleteSuccess'))
+      handleSearch()
     }
   } catch (error) {
     if (error !== 'cancel') {
@@ -323,19 +304,8 @@ const handleDelete = async (row) => {
   }
 }
 
-// 分页
-const handleSizeChange = () => {
-  pagination.currentPage = 1
-  loadData()
-}
-
-const handleCurrentChange = () => {
-  loadData()
-}
-
-// 初始化
 onMounted(() => {
-  loadData()
+  handleSearch()
 })
 </script>
 

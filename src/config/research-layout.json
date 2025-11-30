@@ -67,6 +67,23 @@
       ]
     },
     {
+      "index": "breeding-data-management",
+      "icon": "ri-database-2-line",
+      "titleKey": "research.menu.breedingDataManagement",
+      "children": [
+        {
+          "index": "/research/breeding-data/field-inspection",
+          "icon": "ri-bar-chart-box-line",
+          "titleKey": "research.menu.fieldInspection"
+        },
+        {
+          "index": "/research/breeding-data/laboratory-test",
+          "icon": "ri-flask-line",
+          "titleKey": "research.menu.laboratoryTest"
+        }
+      ]
+    },
+    {
       "index": "data-collection",
       "icon": "ri-file-chart-line",
       "titleKey": "research.menu.dataCollection",
@@ -100,11 +117,6 @@
           "index": "/research/data-collection/variety-evaluation",
           "icon": "ri-award-line",
           "titleKey": "research.dataCollection.varietyEvaluation.title"
-        },
-        {
-          "index": "/research/data-collection/laboratory-test",
-          "icon": "ri-flask-line",
-          "titleKey": "research.dataCollection.laboratoryTest.title"
         }
       ]
     },

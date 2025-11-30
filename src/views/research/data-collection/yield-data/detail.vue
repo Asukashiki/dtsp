@@ -1,16 +1,16 @@
 <template>
-  <div class="laboratory-test-detail-container">
+  <div class="yield-data-detail-container">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button link @click="handleBack">
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.detail') }}</h1>
+          <h1 class="page-title">{{ $t('research.dataCollection.yieldData.detail') }}</h1>
         </div>
         <div class="header-right">
           <el-button type="primary" @click="handleEdit">
@@ -28,108 +28,86 @@
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
+            {{ $t('research.dataCollection.yieldData.form.basicInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.batchId') }}:</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.batchId') }}:</span>
               <span class="value">{{ detailData.batchId }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.trialId') }}:</span>
               <span class="value">{{ detailData.trialId }}</span>
             </div>
-          </div>
-        </div>
-
-        <!-- 样本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-test-tube-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}
-          </div>
-          <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleId') }}:</span>
-              <span class="value">{{ detailData.sampleId }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleCondition') }}:</span>
-              <el-tag>{{ detailData.sampleCondition }}</el-tag>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.harvestDate') }}:</span>
+              <span class="value">{{ detailData.harvestDate }}</span>
             </div>
           </div>
         </div>
 
-        <!-- 测试数据 -->
+        <!-- 地块信息 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testData') }}
+            <i class="ri-map-pin-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.plotInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
-              <span class="value highlight">{{ detailData.germinationRate }}%</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.plotId') }}:</span>
+              <span class="value">{{ detailData.plotId }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.purityPercent') }}:</span>
-              <span class="value">{{ detailData.purityPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.moistureContentPercent') }}:</span>
-              <span class="value">{{ detailData.moistureContentPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.proteinPercent') }}:</span>
-              <span class="value">{{ detailData.proteinPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.toxinLevelPpm') }}:</span>
-              <span class="value">{{ detailData.toxinLevelPpm || '-' }} PPM</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.plotAreaM2') }}:</span>
+              <span class="value">{{ detailData.plotAreaM2 }} m²</span>
             </div>
           </div>
         </div>
 
-        <!-- 健康与追溯 -->
+        <!-- 产量信息 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-heart-pulse-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.healthTraceability') }}
+            <i class="ri-bar-chart-box-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.yieldInfo') }}
           </div>
           <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.grainWeightKg') }}:</span>
+              <span class="value">{{ detailData.grainWeightKg }} kg</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.yieldQtPerHa') }}:</span>
+              <span class="value highlight">{{ detailData.yieldQtPerHa }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.moistureContent') }}:</span>
+              <span class="value">{{ detailData.moistureContent }}%</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.recorderName') }}:</span>
+              <span class="value">{{ detailData.recorderName || '-' }}</span>
+            </div>
             <div class="detail-item full-width">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.seedHealthFindings') }}:</span>
-              <span class="value">{{ detailData.seedHealthFindings }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.traceabilityLink') }}:</span>
-              <span class="value">{{ detailData.traceabilityLink }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labReportFile') }}:</span>
-              <span class="value">{{ detailData.labReportFile || '-' }}</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.remark') }}:</span>
+              <span class="value">{{ detailData.remark || '-' }}</span>
             </div>
           </div>
         </div>
 
-        <!-- 检测信息 -->
+        <!-- 操作信息 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-calendar-check-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
+            <i class="ri-user-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.operatorInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
-              <span class="value">{{ detailData.testDate || '-' }}</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.createBy') }}:</span>
+              <span class="value">{{ detailData.createdByName || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testOrganization') }}:</span>
-              <span class="value">{{ detailData.testOrganization || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testerName') }}:</span>
-              <span class="value">{{ detailData.testerName || '-' }}</span>
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.createTime') }}:</span>
+              <span class="value">{{ detailData.createdTime }}</span>
             </div>
           </div>
         </div>
@@ -140,56 +118,53 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getLabTestDetail } from '@/api/labTest'
+import { getYieldDataDetail } from '@/api/yieldData'
 
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
 
-// 加载详情数据
+// 加载详情
 const loadDetail = async () => {
   loading.value = true
   try {
-    const res = await getLabTestDetail(route.params.id)
+    const res = await getYieldDataDetail(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
     } else {
       ElMessage.error(t('common.loadFailed'))
-      goBack()
+      handleBack()
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
     ElMessage.error(t('common.loadFailed'))
-    goBack()
+    handleBack()
   } finally {
     loading.value = false
   }
 }
 
-// 编辑
-const handleEdit = () => {
-  router.push({ name: 'BreedingLabTestEdit', params: { id: route.params.id } })
-}
-
-// 返回
-const goBack = () => {
+const handleBack = () => {
   router.back()
 }
 
-// 初始化
+const handleEdit = () => {
+  router.push({ name: 'FieldInspectionEdit', params: { id: route.params.id } })
+}
+
 onMounted(() => {
   loadDetail()
 })
 </script>
 
 <style scoped>
-.laboratory-test-detail-container {
+.yield-data-detail-container {
   min-height: calc(100vh - 120px);
 }
 

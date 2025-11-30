@@ -175,6 +175,56 @@ const routes = [
         component: () => import('../views/research/breeding/BreedingTracking.vue'),
         meta: { title: '育种跟踪管理', requiresAuth: true }
       },
+      // 育种数据管理 - 田间检验数据采集
+      {
+        path: 'breeding-data/field-inspection',
+        name: 'FieldInspection',
+        component: () => import('../views/research/data-collection/yield-data/index.vue'),
+        meta: { title: '田间检验数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/add',
+        name: 'FieldInspectionAdd',
+        component: () => import('../views/research/data-collection/yield-data/form.vue'),
+        meta: { title: '新增田间检验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/edit/:id',
+        name: 'FieldInspectionEdit',
+        component: () => import('../views/research/data-collection/yield-data/form.vue'),
+        meta: { title: '编辑田间检验数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/detail/:id',
+        name: 'FieldInspectionDetail',
+        component: () => import('../views/research/data-collection/yield-data/detail.vue'),
+        meta: { title: '田间检验数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 育种数据管理 - 实验室测试数据采集
+      {
+        path: 'breeding-data/laboratory-test',
+        name: 'BreedingLabTest',
+        component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
+        meta: { title: '实验室测试数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/add',
+        name: 'BreedingLabTestAdd',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '新增实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/edit/:id',
+        name: 'BreedingLabTestEdit',
+        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
+        meta: { title: '编辑实验室测试数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test/detail/:id',
+        name: 'BreedingLabTestDetail',
+        component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
+        meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
       // 数据采集 - 试验基础数据采集
       {
         path: 'data-collection/trial-base',
@@ -324,31 +374,6 @@ const routes = [
         name: 'VarietyEvaluationDetail',
         component: () => import('../views/research/data-collection/variety-evaluation/detail.vue'),
         meta: { title: '品种评估数据详情', hideInMenu: true, requiresAuth: true }
-      },
-      // 实验室测试数据采集
-      {
-        path: 'data-collection/laboratory-test',
-        name: 'LaboratoryTestList',
-        component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
-        meta: { title: '实验室测试数据采集', requiresAuth: true }
-      },
-      {
-        path: 'data-collection/laboratory-test/add',
-        name: 'LaboratoryTestAdd',
-        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: '新增实验室测试数据', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'data-collection/laboratory-test/edit/:id',
-        name: 'LaboratoryTestEdit',
-        component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: '编辑实验室测试数据', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'data-collection/laboratory-test/detail/:id',
-        name: 'LaboratoryTestDetail',
-        component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
-        meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
