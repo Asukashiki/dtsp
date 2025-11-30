@@ -6,98 +6,30 @@
   "width": "320px",
   "menus": [
     {
-      "index": "enterprise-registration",
-      "icon": "ri-building-line",
-      "titleKey": "research.menu.enterpriseRegistration",
-      "children": [
-        {
-          "index": "/research/enterprise/auth",
-          "icon": "ri-shield-check-line",
-          "titleKey": "research.menu.enterpriseAuth"
-        },
-        {
-          "index": "/research/enterprise/audit",
-          "icon": "ri-checkbox-circle-line",
-          "titleKey": "research.menu.enterpriseAudit"
-        },
-        {
-          "index": "/research/union/list",
-          "icon": "ri-community-line",
-          "titleKey": "union.list"
-        }
-      ]
-    },
-    {
-      "index": "variety-management",
-      "icon": "ri-plant-line",
-      "titleKey": "research.menu.varietyManagement",
-      "children": [
-        {
-          "index": "/research/variety/registration",
-          "icon": "ri-file-add-line",
-          "titleKey": "research.menu.varietyRegistration"
-        },
-        {
-          "index": "/research/variety/audit",
-          "icon": "ri-file-check-line",
-          "titleKey": "research.menu.varietyAudit"
-        },
-        {
-          "index": "/research/variety/publish",
-          "icon": "ri-send-plane-line",
-          "titleKey": "research.menu.varietyPublish"
-        }
-      ]
-    },
-    {
-      "index": "breeding-management",
-      "icon": "ri-seedling-line",
-      "titleKey": "research.menu.breedingManagement",
-      "children": [
-        {
-          "index": "/research/breeding/plan",
-          "icon": "ri-calendar-line",
-          "titleKey": "research.menu.breedingPlan"
-        },
-        {
-          "index": "/research/breeding/material",
-          "icon": "ri-archive-line",
-          "titleKey": "research.menu.breedingMaterial"
-        },
-        {
-          "index": "/research/breeding",
-          "icon": "ri-folders-line",
-          "titleKey": "research.menu.breedingModule"
-        }
-      ]
-    },
-    {
-      "index": "breeding-seed",
-      "icon": "ri-plant-fill",
-      "titleKey": "research.menu.breedingSeed",
-      "children": [
-        {
-          "index": "/research/seed/breeding-certification",
-          "icon": "ri-certificate-line",
-          "titleKey": "research.menu.breedingCertification"
-        },
-        {
-          "index": "/research/seed/breeding-audit",
-          "icon": "ri-audit-line",
-          "titleKey": "research.menu.breedingAudit"
-        },
-        {
-          "index": "/research/seed/breeding-certificate",
-          "icon": "ri-award-line",
-          "titleKey": "research.menu.breedingCertificate"
-        }
-      ]
-    },
-    {
       "index": "breeding-data-management",
       "icon": "ri-database-2-line",
       "titleKey": "research.menu.breedingDataManagement",
       "children": [
+        {
+          "index": "/research/breeding/plan",
+          "icon": "ri-calendar-line",
+          "titleKey": "research.menu.breedingBatchManagement"
+        },
+        {
+          "index": "/research/data-collection/trial-base",
+          "icon": "ri-test-tube-line",
+          "titleKey": "research.menu.trialBaseDataCollection"
+        },
+        {
+          "index": "/research/data-collection/agronomic-trait",
+          "icon": "ri-leaf-line",
+          "titleKey": "research.menu.fieldDataCollection"
+        },
+        {
+          "index": "/research/data-collection/environment-soil",
+          "icon": "ri-global-line",
+          "titleKey": "research.menu.environmentDataCollection"
+        },
         {
           "index": "/research/breeding-data/field-inspection",
           "icon": "ri-bar-chart-box-line",
@@ -107,23 +39,16 @@
           "index": "/research/breeding-data/laboratory-test",
           "icon": "ri-flask-line",
           "titleKey": "research.menu.laboratoryTest"
-        }
-      ]
-    },
-    {
-      "index": "breeder-seed",
-      "icon": "ri-plant-line",
-      "titleKey": "research.menu.breederSeed",
-      "children": [
+        },
         {
           "index": "/research/breeding/seed-production",
           "icon": "ri-seedling-line",
-          "titleKey": "research.menu.seedProduction"
+          "titleKey": "research.menu.breederSeedProduction"
         },
         {
           "index": "/research/breeding/seed-distribution",
           "icon": "ri-share-forward-line",
-          "titleKey": "research.menu.seedDistribution"
+          "titleKey": "research.menu.breederSeedDistribution"
         },
         {
           "index": "/research/breeding/ose-management",
@@ -131,56 +56,46 @@
           "titleKey": "research.menu.oseManagement"
         },
         {
-          "index": "/research/breeding/ose-receive-confirm",
-          "icon": "ri-checkbox-circle-line",
-          "titleKey": "research.menu.oseReceiveConfirm"
+          "index": "/research/data-collection/iot-sensor",
+          "icon": "ri-sensor-line",
+          "titleKey": "research.menu.iotSensorMaintenance"
         }
       ]
     },
     {
-      "index": "data-collection",
-      "icon": "ri-file-chart-line",
-      "titleKey": "research.menu.dataCollection",
+      "index": "propagation-data-management",
+      "icon": "ri-plant-line",
+      "titleKey": "research.menu.propagationDataManagement",
       "children": [
         {
-          "index": "/research/data-collection/trial-base",
-          "icon": "ri-test-tube-line",
-          "titleKey": "research.menu.trialData"
+          "index": "/research/breeding/ose-receive-confirm",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.oseReceiveConfirm"
         },
         {
-          "index": "/research/data-collection/farmer-plot",
-          "icon": "ri-user-line",
-          "titleKey": "research.menu.farmerData"
+          "index": "/research/breeding",
+          "icon": "ri-folders-line",
+          "titleKey": "research.menu.propagationBatchCollection"
         },
         {
-          "index": "/research/data-collection/farming-record",
-          "icon": "ri-plant-line",
-          "titleKey": "research.menu.farmingRecord"
+          "index": "/research/seed/breeding-certification",
+          "icon": "ri-git-pull-request-line",
+          "titleKey": "research.menu.seedCertificationApplication"
         },
         {
-          "index": "/research/data-collection/agronomic-trait",
-          "icon": "ri-leaf-line",
-          "titleKey": "research.menu.agronomicData"
+          "index": "/research/seed/breeding-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.seedCertificationAudit"
         },
         {
-          "index": "/research/data-collection/environment-soil",
-          "icon": "ri-global-line",
-          "titleKey": "research.menu.environmentData"
-        },
-        {
-          "index": "/research/data-collection/variety-evaluation",
+          "index": "/research/seed/breeding-certificate",
           "icon": "ri-award-line",
-          "titleKey": "research.dataCollection.varietyEvaluation.title"
+          "titleKey": "research.menu.seedCertificationIssuance"
         },
         {
-          "index": "/research/data-collection/laboratory-test",
-          "icon": "ri-flask-line",
-          "titleKey": "research.dataCollection.laboratoryTest.title"
-        },
-        {
-          "index": "/research/data-collection/iot-sensor",
-          "icon": "ri-sensor-line",
-          "titleKey": "research.iotSensor.title"
+          "index": "/research/union/list",
+          "icon": "ri-community-line",
+          "titleKey": "research.menu.propagationOrgRegistration"
         }
       ]
     },
@@ -192,12 +107,12 @@
         {
           "index": "/research/seed/promotion",
           "icon": "ri-megaphone-line",
-          "titleKey": "research.menu.promotionManagement"
+          "titleKey": "research.menu.seedPromotionManagement"
         },
         {
           "index": "/research/seed/info",
           "icon": "ri-file-list-3-line",
-          "titleKey": "research.menu.seedInfo"
+          "titleKey": "research.menu.seedInfoPublicity"
         }
       ]
     }

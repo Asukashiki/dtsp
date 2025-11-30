@@ -6,6 +6,34 @@ export default {
 
     // 菜单导航
     menu: {
+      breedingDataManagement: '育种数据管理',
+      propagationDataManagement: '繁殖数据管理',
+      seedService: '种子信息服务',
+      
+      // ========== 育种数据管理 - 二级菜单 ==========
+      breedingBatchManagement: '育种批次管理',
+      trialBaseDataCollection: '试验基础信息数据采集',
+      fieldDataCollection: '田间数据采集',
+      environmentDataCollection: '环境属性数据采集',
+      fieldInspection: '田间检验数据采集',
+      laboratoryTest: '实验室测试数据采集',
+      breederSeedProduction: 'Breeder able seed生产数据采集',
+      breederSeedDistribution: 'Breeder able seed分发数据',
+      oseManagement: 'OSE维护',
+      iotSensorMaintenance: '物联网传感器维护',
+      
+      // ========== 繁殖数据管理 - 二级菜单 ==========
+      oseReceiveConfirm: 'OSE确认接收育种家种子',
+      propagationBatchCollection: '繁殖批次跟踪信息采集',
+      propagationTrackingCollection: '繁殖跟踪信息采集',
+      seedCertificationApplication: '繁殖种子认证申请',
+      seedCertificationAudit: '繁殖种子认证审核',
+      seedCertificationIssuance: '繁殖种子认证颁发',
+      propagationOrgRegistration: '繁殖机构注册',
+      
+      // ========== 种子信息服务 - 二级菜单 ==========
+      seedPromotionManagement: '种子推广信息管理',
+      seedInfoPublicity: '种子信息公示',
       enterpriseRegistration: '企业注册备案',
       enterpriseAuth: '种子企业认证',
       enterpriseAudit: '种子企业审核',

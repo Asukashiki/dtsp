@@ -6,6 +6,35 @@ export default {
 
     // Menu Navigation
     menu: {
+       // ========== First Level Menu ==========
+      breedingDataManagement: 'Breeding Data Management',
+      propagationDataManagement: 'Propagation Data Management',
+      seedService: 'Seed Information Service',
+      
+      // ========== Breeding Data Management - Second Level ==========
+      breedingBatchManagement: 'Breeding Batch Management',
+      trialBaseDataCollection: 'Trial Base Information Collection',
+      fieldDataCollection: 'Field Data Collection',
+      environmentDataCollection: 'Environment Data Collection',
+      fieldInspection: 'Field Inspection Data Collection',
+      laboratoryTest: 'Laboratory Test Data Collection',
+      breederSeedProduction: 'Breeder Seed Production Data Collection',
+      breederSeedDistribution: 'Breeder Seed Distribution Data',
+      oseManagement: 'OSE Maintenance',
+      iotSensorMaintenance: 'IoT Sensor Maintenance',
+      
+      // ========== Propagation Data Management - Second Level ==========
+      oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
+      propagationBatchCollection: 'Breeding batch tracking info',
+      propagationTrackingCollection: 'Propagation Tracking Information Collection',
+      seedCertificationApplication: 'Seed Certification Application',
+      seedCertificationAudit: 'Seed Certification Audit',
+      seedCertificationIssuance: 'Seed Certification Issuance',
+      propagationOrgRegistration: 'Propagation Organization Registration',
+      
+      // ========== Seed Information Service - Second Level ==========
+      seedPromotionManagement: 'Seed Promotion Management',
+      seedInfoPublicity: 'Seed Information Publicity',
       enterpriseRegistration: 'Enterprise Registration',
       enterpriseAuth: 'Seed Enterprise Authentication',
       enterpriseAudit: 'Seed Enterprise Audit',
