@@ -25,6 +25,11 @@ export function getBreedingBatchOptions() {
   return request({ url: '/breeding/batch/options', method: 'get' })
 }
 
+// 批次下拉选项别名
+export function getBatchOptions() {
+  return getBreedingBatchOptions()
+}
+
 // ============ 地块及播种信息管理 ============
 export function getPlotInfoList(params) {
   return request({ url: '/breeding/plot/list', method: 'get', params })
@@ -48,6 +53,13 @@ export function deletePlotInfo(groundIds) {
 
 export function getPlotsByBatch(batchId) {
   return request({ url: '/breeding/plot/listByBatch', method: 'get', params: { batchId } })
+}
+
+export function getPlotOptions(batchId, trialId) {
+  const params = {}
+  if (batchId) params.batchId = batchId
+  if (trialId) params.trialId = trialId
+  return request({ url: '/breeding/plot/options', method: 'get', params })
 }
 
 // ============ 试验基础信息管理 ============

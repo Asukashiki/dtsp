@@ -44,14 +44,14 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.environment.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('research.breedingData.environment.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="groundId" :label="$t('research.breedingData.environment.columns.groundId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="dataType" :label="$t('research.breedingData.environment.columns.dataType')" min-width="100" />
-                <el-table-column prop="collectTime" :label="$t('research.breedingData.environment.columns.collectTime')" min-width="120" />
-                <el-table-column prop="dataSource" :label="$t('research.breedingData.environment.columns.dataSource')" min-width="120" />
+                <el-table-column prop="batchId" :label="$t('research.breedingData.environment.form.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('research.breedingData.environment.form.trialId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="groundId" :label="$t('research.breedingData.environment.form.groundId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="dataType" :label="$t('research.breedingData.environment.form.dataType')" min-width="100" />
+                <el-table-column prop="collectTime" :label="$t('research.breedingData.environment.form.collectTime')" min-width="120" />
+                <el-table-column prop="dataSource" :label="$t('research.breedingData.environment.form.dataSource')" min-width="120" />
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
-                <el-table-column :label="$t('research.breedingData.environment.columns.actions')" width="200" fixed="right">
+                <el-table-column :label="$t('common.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
@@ -74,10 +74,10 @@
                   <div class="mobile-card-title"><i class="ri-temp-hot-line"></i><span>{{ item.dataType }} - {{ item.collectTime }}</span></div>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.columns.batchId') }}:</span><span class="value">{{ item.batchId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.columns.trialId') }}:</span><span class="value">{{ item.trialId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.columns.groundId') }}:</span><span class="value">{{ item.groundId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.columns.dataSource') }}:</span><span class="value">{{ item.dataSource }}</span></div>
+                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.form.batchId') }}:</span><span class="value">{{ item.batchId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.form.trialId') }}:</span><span class="value">{{ item.trialId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.form.groundId') }}:</span><span class="value">{{ item.groundId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.environment.form.dataSource') }}:</span><span class="value">{{ item.dataSource }}</span></div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
