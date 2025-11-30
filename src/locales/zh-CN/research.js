@@ -29,6 +29,11 @@ export default {
       breedingDataManagement: '育种数据管理',
       fieldInspection: '田间检验数据采集',
       laboratoryTest: '实验室测试数据采集',
+      breederSeed: '育种家种子管理',
+      seedProduction: 'Breeder Seed生产数据采集',
+      seedDistribution: 'Breeder Seed分发数据管理',
+      oseManagement: 'OSE维护管理',
+      oseReceiveConfirm: 'OSE接收确认',
       dataCollection: '数据采集',
       trialData: '试验基础数据采集',
       agronomicData: '农艺性状数据采集',
@@ -721,6 +726,379 @@ export default {
 
     // 育种管理
     breeding: {
+      // 育种家种子模块 Breeder Seed Module
+      seed: {
+        // 生产数据采集
+        production: {
+          title: '育种家种子生产数据采集',
+          subtitle: '记录Breeder Seed生产数据,确保种子繁育过程可追溯',
+          list: '生产数据列表',
+          add: '新增生产数据',
+          detail: '生产数据详情',
+          delete: '删除生产数据',
+          deleteConfirm: '确定删除该生产数据吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索品种名称',
+          filterByVariety: '按品种筛选',
+          filterByDate: '按生产时间筛选',
+          allVarieties: '全部品种',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            productionInfo: '生产信息',
+            breedSeedProduceBatchId: '种子生产批次ID',
+            breedBatchId: '育种批次ID',
+            varietyId: '品种ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            time: '生产时间',
+            landId: '地块ID',
+            landName: '地块名称',
+            inputSeedQuantity: '投入种子数量',
+            produceSeedQuantrity: '产出种子数量',
+            operatorId: '操作人ID',
+            operatorName: '操作人姓名',
+            produceStatus: '生产状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+          },
+
+          // 表单占位符
+          placeholder: {
+            breedBatchId: '请选择育种批次ID',
+            varietyName: '请选择品种名称',
+            time: '请选择生产时间',
+            landName: '请选择地块名称',
+            inputSeedQuantity: '请输入投入种子数量(kg)',
+            produceSeedQuantrity: '请输入产出种子数量(kg)',
+          },
+
+          // 表单验证
+          rules: {
+            breedBatchIdRequired: '请选择育种批次ID',
+            varietyNameRequired: '请选择品种名称',
+            timeRequired: '请选择生产时间',
+            landNameRequired: '请选择地块名称',
+            inputSeedQuantityRequired: '请输入投入种子数量',
+            inputSeedQuantityMin: '投入种子数量必须大于0',
+            produceSeedQuantrityRequired: '请输入产出种子数量',
+            produceSeedQuantrityMin: '产出种子数量必须大于等于投入种子数量',
+          },
+
+          // 列表列
+          columns: {
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            time: '生产时间',
+            landName: '地块名称',
+            inputSeedQuantity: '投入数量(kg)',
+            produceSeedQuantrity: '产出数量(kg)',
+            operatorName: '操作人',
+            produceStatus: '生产状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 生产状态
+          status: {
+            FINISHED: '已完成',
+          },
+        },
+
+        // 分发数据管理
+        distribution: {
+          title: '育种家种子分发数据管理',
+          subtitle: '管理Breeder Seed分发记录,追踪种子流向OSE',
+          list: '分发数据列表',
+          add: '新增分发数据',
+          detail: '分发数据详情',
+          delete: '删除分发数据',
+          deleteConfirm: '确定删除该分发数据吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称',
+          filterByCrop: '按作物类型筛选',
+          filterByVariety: '按品种筛选',
+          filterByDate: '按分发时间筛选',
+          allCrops: '全部作物',
+          allVarieties: '全部品种',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            distributionInfo: '分发信息',
+            detailList: '分发明细',
+            distributeId: '分发ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE名称',
+            time: '分发时间',
+            people: '分发操作人',
+            organ: '种子机构名称',
+            remark: '备注',
+            totalDistributeQuantity: '分发总数量',
+            distributeStatus: '分发状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+
+            // 分发明细
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            distributeQuantity: '分发数量',
+            produceBatchRemaining: '生产批次剩余可分发量',
+          },
+
+          // 表单占位符
+          placeholder: {
+            oseId: '请选择OSE',
+            time: '请选择分发时间',
+            people: '请输入分发操作人姓名',
+            organ: '请输入种子机构名称',
+            remark: '备注信息(选填)',
+            breedSeedProduceBatchId: '请选择生产批次',
+            distributeQuantity: '请输入分发数量(kg)',
+          },
+
+          // 表单验证
+          rules: {
+            oseId: '请选择OSE',
+            time: '请选择分发时间',
+            people: '请输入分发操作人姓名',
+            organ: '请输入种子机构名称',
+            detailListRequired: '请至少添加一条分发明细',
+            breedSeedProduceBatchId: '请选择生产批次',
+            distributeQuantity: '请输入分发数量',
+            distributeQuantityMin: '分发数量必须大于0',
+            distributeQuantityMax: '分发数量不能超过生产批次剩余可分发量',
+          },
+
+          // 明细相关
+          addDetail: '添加明细',
+          detailIndex: '明细 {index}',
+          remaining: '剩余',
+          maxQuantity: '最大可分发量',
+          noDetail: '暂无分发明细',
+
+          // 明细表格列
+          detailColumns: {
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            breedSeedProduceBatchId: '生产批次ID',
+            distributeQuantity: '分发数量(kg)',
+            produceBatchRemaining: '批次剩余量(kg)',
+            createTime: '创建时间',
+          },
+
+          // 列表列
+          columns: {
+            distributeId: '分发ID',
+            oseName: 'OSE名称',
+            time: '分发时间',
+            people: '分发操作人',
+            organ: '种子机构',
+            totalDistributeQuantity: '分发总数量(kg)',
+            distributeStatus: '分发状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 分发状态
+          status: {
+            distributed: '已分发',
+          },
+
+          // 操作
+          actions: {
+            addDetail: '添加分发明细',
+            removeDetail: '移除',
+          },
+        },
+
+        // OSE维护
+        ose: {
+          title: 'OSE维护管理',
+          subtitle: '管理OSE基础信息,确保种子接收方信息准确',
+          list: 'OSE列表',
+          add: '新增OSE',
+          edit: '编辑OSE',
+          detail: 'OSE详情',
+          delete: '删除OSE',
+          deleteConfirm: '确定删除该OSE吗?',
+          deleteSuccess: '删除成功',
+          addSuccess: '新增成功',
+          updateSuccess: '更新成功',
+          editSuccess: '编辑成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称',
+          filterByStatus: '按状态筛选',
+          filterByDate: '按创建时间筛选',
+          allStatus: '全部状态',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            contactInfo: '联系信息',
+            oseId: 'OSE ID',
+            oseCode: 'OSE行政编码',
+            oseName: 'OSE名称',
+            location: '详细地址',
+            regionCode: '行政区划编码',
+            regionName: '行政区划名称',
+            contactName: '联系人姓名',
+            contactNumber: '联系人电话',
+            oseStatus: '状态',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+          },
+
+          // 表单占位符
+          placeholder: {
+            oseCode: '请输入OSE行政编码',
+            oseName: '请输入OSE名称',
+            location: '请输入详细地址',
+            regionCode: '请选择行政区划',
+            contactName: '请输入联系人姓名',
+            contactNumber: '请输入联系人电话(251开头12位)',
+          },
+
+          // 表单验证
+          rules: {
+            oseCode: '请输入OSE行政编码',
+            oseCodeUnique: 'OSE行政编码已存在',
+            oseName: '请输入OSE名称',
+            oseNameUnique: 'OSE名称已存在',
+            location: '请输入详细地址',
+            regionCode: '请选择行政区划',
+            contactName: '请输入联系人姓名',
+            contactNumber: '请输入联系人电话',
+            contactNumberFormat: '请输入正确的联系人电话格式(251开头12位)',
+            contactNumberUnique: '联系人电话已存在',
+          },
+
+          // 帮助文本
+          help: {
+            oseCode: '行政编码应与行政区划表的regionCode相匹配',
+            regionCode: '请选择OSE所在的行政区划',
+            contactNumber: '格式: 251XXXXXXXXX (251开头,共12位数字)',
+          },
+
+          // 列表列
+          columns: {
+            oseCode: 'OSE行政编码',
+            oseName: 'OSE名称',
+            location: '详细地址',
+            regionName: '行政区划',
+            contactName: '联系人',
+            contactNumber: '联系电话',
+            oseStatus: '状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // OSE状态
+          status: {
+            ENABLED: '启用',
+            DISABLED: '禁用',
+          },
+        },
+
+        // OSE接收确认
+        receiveConfirm: {
+          title: 'OSE接收确认',
+          subtitle: 'OSE确认接收育种家种子',
+          list: '接收确认列表',
+          confirm: '确认接收',
+          detail: '接收确认详情',
+          confirmSuccess: '确认成功',
+
+          // 搜索筛选
+          searchPlaceholder: '搜索OSE名称、品种名称',
+          filterByStatus: '按接收状态筛选',
+          filterByCrop: '按作物类型筛选',
+          filterByDate: '按时间筛选',
+          allStatus: '全部状态',
+          allCrops: '全部作物',
+
+          // 表单字段
+          form: {
+            basicInfo: '基础信息',
+            distributionDetail: '分发明细',
+            breedSeedDetail: '育种家种子信息',
+            confirmInfo: '确认信息',
+            systemInfo: '系统信息',
+            receiveConfirmId: '接收确认ID',
+            distributeId: '分发ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE名称',
+            confirmTime: '确认时间',
+            confirmPeople: '确认操作人',
+            receiveStatus: '接收状态',
+            remark: '补充说明',
+            createTime: '创建时间',
+            updateTime: '更新时间',
+
+            // 分发明细
+            totalDistributeQuantity: '分发总数量',
+            breedSeedProduceBatchId: '生产批次ID',
+            varietyName: '品种名称',
+            cropType: '作物类型',
+            distributeQuantity: '分发数量',
+          },
+
+          // 表单占位符
+          placeholder: {
+            confirmTime: '请选择确认时间',
+            confirmPeople: '请输入确认操作人姓名',
+            remark: '补充说明(选填)',
+          },
+
+          // 表单验证
+          rules: {
+            confirmTime: '请选择确认时间',
+            confirmPeople: '请输入确认操作人姓名',
+          },
+
+          // 列表列
+          columns: {
+            receiveConfirmId: '接收确认ID',
+            oseName: 'OSE名称',
+            totalDistributeQuantity: '分发总数量(kg)',
+            confirmTime: '确认时间',
+            confirmPeople: '确认操作人',
+            receiveStatus: '接收状态',
+            createTime: '创建时间',
+            actions: '操作',
+          },
+
+          // 接收状态
+          status: {
+            PENDING: '待确认',
+            CONFIRMED: '已确认',
+          },
+
+          // 统计标签
+          stats: {
+            totalRecords: '总接收记录',
+            pendingCount: '待确认',
+            confirmedCount: '已确认',
+            totalQuantity: '总接收数量',
+          },
+
+          // 提示信息
+          messages: {
+            noSeedData: '暂无育种家种子分发数据',
+          },
+        },
+      },
+
       // 育种计划管理
       plan: {
         title: '育种计划管理',

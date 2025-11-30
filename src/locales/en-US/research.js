@@ -29,6 +29,11 @@ export default {
       breedingDataManagement: 'Breeding Data Management',
       fieldInspection: 'Field Inspection Data Collection',
       laboratoryTest: 'Laboratory Test Data Collection',
+      breederSeed: 'Breeder Seed Management',
+      seedProduction: 'Breeder Seed Production Data Collection',
+      seedDistribution: 'Breeder Seed Distribution Management',
+      oseManagement: 'OSE Maintenance Management',
+      oseReceiveConfirm: 'OSE Receive Confirmation',
       dataCollection: 'Data Collection',
       trialData: 'Trial Basic Data Collection',
       agronomicData: 'Agronomic Data Collection',
@@ -901,6 +906,326 @@ export default {
           deleteError: 'Delete failed',
           operationError: 'Operation failed',
         },
+      // Breeder Seed Module
+      seed: {
+        // Production Data Collection
+        production: {
+          title: 'Breeder Seed Production Data Collection',
+          subtitle: 'Record Breeder Seed production data to ensure seed propagation process is traceable',
+          list: 'Production Data List',
+          add: 'Add Production Data',
+          detail: 'Production Data Details',
+          delete: 'Delete Production Data',
+          deleteConfirm: 'Are you sure to delete this production data?',
+          deleteSuccess: 'Deleted Successfully',
+          addSuccess: 'Added Successfully',
+
+          searchPlaceholder: 'Search variety name',
+          filterByVariety: 'Filter by Variety',
+          filterByDate: 'Filter by Production Time',
+          allVarieties: 'All Varieties',
+
+          form: {
+            basicInfo: 'Basic Information',
+            productionInfo: 'Production Information',
+            breedSeedProduceBatchId: 'Seed Production Batch ID',
+            breedBatchId: 'Breeding Batch ID',
+            varietyId: 'Variety ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            time: 'Production Time',
+            landId: 'Land ID',
+            landName: 'Land Name',
+            inputSeedQuantity: 'Input Seed Quantity',
+            produceSeedQuantrity: 'Output Seed Quantity',
+            operatorId: 'Operator ID',
+            operatorName: 'Operator Name',
+            produceStatus: 'Production Status',
+            createTime: 'Created Time',
+            updateTime: 'Updated Time',
+          },
+
+          placeholder: {
+            breedBatchId: 'Please select breeding batch ID',
+            varietyName: 'Please select variety name',
+            time: 'Please select production time',
+            landName: 'Please select land name',
+            inputSeedQuantity: 'Please enter input seed quantity (kg)',
+            produceSeedQuantrity: 'Please enter output seed quantity (kg)',
+          },
+
+          rules: {
+            breedBatchIdRequired: 'Please select breeding batch ID',
+            varietyNameRequired: 'Please select variety name',
+            timeRequired: 'Please select production time',
+            landNameRequired: 'Please select land name',
+            inputSeedQuantityRequired: 'Please enter input seed quantity',
+            inputSeedQuantityMin: 'Input seed quantity must be greater than 0',
+            produceSeedQuantrityRequired: 'Please enter output seed quantity',
+            produceSeedQuantrityMin: 'Output seed quantity must be greater than or equal to input seed quantity',
+          },
+
+          columns: {
+            breedSeedProduceBatchId: 'Production Batch ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            time: 'Production Time',
+            landName: 'Land Name',
+            inputSeedQuantity: 'Input Quantity (kg)',
+            produceSeedQuantrity: 'Output Quantity (kg)',
+            operatorName: 'Operator',
+            produceStatus: 'Production Status',
+            createTime: 'Created Time',
+            actions: 'Actions',
+          },
+
+          status: {
+            FINISHED: 'Finished',
+          },
+        },
+
+        // Distribution Management
+        distribution: {
+          title: 'Breeder Seed Distribution Data Management',
+          subtitle: 'Manage Breeder Seed distribution records, track seed flow to OSE',
+          list: 'Distribution Data List',
+          add: 'Add Distribution Data',
+          detail: 'Distribution Data Details',
+          delete: 'Delete Distribution Data',
+          deleteConfirm: 'Are you sure to delete this distribution data?',
+          deleteSuccess: 'Deleted Successfully',
+          addSuccess: 'Added Successfully',
+
+          searchPlaceholder: 'Search OSE name',
+          filterByCrop: 'Filter by Crop Type',
+          filterByVariety: 'Filter by Variety',
+          filterByDate: 'Filter by Distribution Time',
+          allCrops: 'All Crops',
+          allVarieties: 'All Varieties',
+
+          form: {
+            basicInfo: 'Basic Information',
+            distributionInfo: 'Distribution Information',
+            detailList: 'Distribution Details',
+            distributeId: 'Distribution ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE Name',
+            time: 'Distribution Time',
+            people: 'Distribution Operator',
+            organ: 'Seed Organization Name',
+            remark: 'Remark',
+            totalDistributeQuantity: 'Total Distribution Quantity',
+            distributeStatus: 'Distribution Status',
+            createTime: 'Created Time',
+            updateTime: 'Updated Time',
+
+            breedSeedProduceBatchId: 'Production Batch ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            distributeQuantity: 'Distribution Quantity',
+            produceBatchRemaining: 'Production Batch Remaining Quantity',
+          },
+
+          placeholder: {
+            oseId: 'Please select OSE',
+            time: 'Please select distribution time',
+            people: 'Please enter distribution operator name',
+            organ: 'Please enter seed organization name',
+            remark: 'Remark (optional)',
+            breedSeedProduceBatchId: 'Please select production batch',
+            distributeQuantity: 'Please enter distribution quantity (kg)',
+          },
+
+          rules: {
+            oseIdRequired: 'Please select OSE',
+            timeRequired: 'Please select distribution time',
+            peopleRequired: 'Please enter distribution operator name',
+            organRequired: 'Please enter seed organization name',
+            detailListRequired: 'Please add at least one distribution detail',
+            breedSeedProduceBatchIdRequired: 'Please select production batch',
+            distributeQuantityRequired: 'Please enter distribution quantity',
+            distributeQuantityMin: 'Distribution quantity must be greater than 0',
+            distributeQuantityMax: 'Distribution quantity cannot exceed production batch remaining quantity',
+          },
+
+          columns: {
+            distributeId: 'Distribution ID',
+            oseName: 'OSE Name',
+            time: 'Distribution Time',
+            people: 'Distribution Operator',
+            organ: 'Seed Organization',
+            totalDistributeQuantity: 'Total Distribution Quantity (kg)',
+            distributeStatus: 'Distribution Status',
+            createTime: 'Created Time',
+            actions: 'Actions',
+          },
+
+          status: {
+            distributed: 'Distributed',
+          },
+
+          actions: {
+            addDetail: 'Add Distribution Detail',
+            removeDetail: 'Remove',
+          },
+        },
+
+        // OSE Maintenance
+        ose: {
+          title: 'OSE Maintenance Management',
+          subtitle: 'Manage OSE basic information to ensure accurate seed recipient information',
+          list: 'OSE List',
+          add: 'Add OSE',
+          edit: 'Edit OSE',
+          detail: 'OSE Details',
+          delete: 'Delete OSE',
+          deleteConfirm: 'Are you sure to delete this OSE?',
+          deleteSuccess: 'Deleted Successfully',
+          addSuccess: 'Added Successfully',
+          updateSuccess: 'Updated Successfully',
+          editSuccess: 'Edited Successfully',
+
+          searchPlaceholder: 'Search OSE name',
+          filterByStatus: 'Filter by Status',
+          filterByDate: 'Filter by Created Time',
+          allStatus: 'All Status',
+
+          form: {
+            basicInfo: 'Basic Information',
+            contactInfo: 'Contact Information',
+            oseId: 'OSE ID',
+            oseCode: 'OSE Administrative Code',
+            oseName: 'OSE Name',
+            location: 'Detailed Address',
+            regionCode: 'Region Code',
+            regionName: 'Region Name',
+            contactName: 'Contact Person Name',
+            contactNumber: 'Contact Phone',
+            oseStatus: 'Status',
+            createTime: 'Created Time',
+            updateTime: 'Updated Time',
+          },
+
+          placeholder: {
+            oseCode: 'Please enter OSE administrative code',
+            oseName: 'Please enter OSE name',
+            location: 'Please enter detailed address',
+            regionCode: 'Please select region',
+            contactName: 'Please enter contact person name',
+            contactNumber: 'Please enter contact phone (12 digits starting with 251)',
+          },
+
+          rules: {
+            oseCodeRequired: 'Please enter OSE administrative code',
+            oseCodeUnique: 'OSE administrative code already exists',
+            oseNameRequired: 'Please enter OSE name',
+            oseNameUnique: 'OSE name already exists',
+            locationRequired: 'Please enter detailed address',
+            regionCodeRequired: 'Please select region',
+            contactNameRequired: 'Please enter contact person name',
+            contactNumberRequired: 'Please enter contact phone',
+            contactNumberFormat: 'Please enter correct contact phone format (12 digits starting with 251)',
+            contactNumberUnique: 'Contact phone already exists',
+          },
+
+          columns: {
+            oseCode: 'OSE Administrative Code',
+            oseName: 'OSE Name',
+            location: 'Detailed Address',
+            regionName: 'Region',
+            contactName: 'Contact Person',
+            contactNumber: 'Contact Phone',
+            oseStatus: 'Status',
+            createTime: 'Created Time',
+            actions: 'Actions',
+          },
+
+          status: {
+            ENABLED: 'Enabled',
+            DISABLED: 'Disabled',
+          },
+        },
+
+        // OSE Receive Confirmation
+        receiveConfirm: {
+          title: 'OSE Receive Confirmation',
+          subtitle: 'OSE confirms receipt of breeder seed',
+          list: 'Receive Confirmation List',
+          confirm: 'Confirm Receipt',
+          detail: 'Receive Confirmation Details',
+          confirmSuccess: 'Confirmed Successfully',
+
+          searchPlaceholder: 'Search OSE name, variety name',
+          filterByStatus: 'Filter by Receive Status',
+          filterByCrop: 'Filter by Crop Type',
+          filterByDate: 'Filter by Time',
+          allStatus: 'All Status',
+          allCrops: 'All Crops',
+
+          form: {
+            basicInfo: 'Basic Information',
+            distributionDetail: 'Distribution Details',
+            breedSeedDetail: 'Breeder Seed Information',
+            confirmInfo: 'Confirmation Information',
+            systemInfo: 'System Information',
+            receiveConfirmId: 'Receive Confirmation ID',
+            distributeId: 'Distribution ID',
+            oseId: 'OSE ID',
+            oseName: 'OSE Name',
+            confirmTime: 'Confirmation Time',
+            confirmPeople: 'Confirmation Operator',
+            receiveStatus: 'Receive Status',
+            remark: 'Additional Notes',
+            createTime: 'Created Time',
+            updateTime: 'Updated Time',
+
+            totalDistributeQuantity: 'Total Distribution Quantity',
+            breedSeedProduceBatchId: 'Production Batch ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            distributeQuantity: 'Distribution Quantity',
+          },
+
+          placeholder: {
+            confirmTime: 'Please select confirmation time',
+            confirmPeople: 'Please enter confirmation operator name',
+            remark: 'Additional notes (optional)',
+          },
+
+          rules: {
+            confirmTime: 'Please select confirmation time',
+            confirmPeople: 'Please enter confirmation operator name',
+          },
+
+          columns: {
+            receiveConfirmId: 'Receive Confirmation ID',
+            oseName: 'OSE Name',
+            totalDistributeQuantity: 'Total Distribution Quantity (kg)',
+            confirmTime: 'Confirmation Time',
+            confirmPeople: 'Confirmation Operator',
+            receiveStatus: 'Receive Status',
+            createTime: 'Created Time',
+            actions: 'Actions',
+          },
+
+          status: {
+            PENDING: 'Pending',
+            CONFIRMED: 'Confirmed',
+          },
+
+          stats: {
+            totalRecords: 'Total Records',
+            pendingCount: 'Pending',
+            confirmedCount: 'Confirmed',
+            totalQuantity: 'Total Quantity',
+          },
+
+          messages: {
+            noSeedData: 'No breeder seed distribution data available',
+          },
+        },
+      },
+
       // Breeding Plan Management
       plan: {
         title: 'Breeding Plan Management',
