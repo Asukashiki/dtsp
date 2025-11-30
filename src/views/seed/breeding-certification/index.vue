@@ -31,6 +31,19 @@
             </template>
           </el-input>
 
+          <el-input
+            v-model="searchParams.varietyName"
+            :placeholder="$t('seed.breedingCertification.searchVarietyName')"
+            class="search-input"
+            clearable
+            @clear="handleSearch"
+            @keyup.enter="handleSearch"
+          >
+            <template #prefix>
+              <i class="ri-plant-line"></i>
+            </template>
+          </el-input>
+
           <el-select
             v-model="searchParams.cropType"
             :placeholder="$t('seed.breedingCertification.filterByCrop')"
@@ -58,6 +71,18 @@
             <el-option :label="$t('seed.breedingCertification.recordStatus.rejected')" value="rejected" />
             <el-option :label="$t('seed.breedingCertification.recordStatus.draft')" value="draft" />
           </el-select>
+
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            :range-separator="$t('common.to')"
+            :start-placeholder="$t('common.startDate')"
+            :end-placeholder="$t('common.endDate')"
+            class="date-range-picker"
+            clearable
+            value-format="YYYY-MM-DD"
+            @change="handleDateChange"
+          />
         </div>
 
         <div class="action-row">
@@ -104,11 +129,14 @@
             </template>
           </el-table-column>
           <el-table-column prop="createTime" :label="$t('seed.breedingCertification.columns.createTime')" width="160" />
-          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="220" fixed="right">
+          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="280" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i></el-button>
-              <el-button link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i></el-button>
-              <el-button link type="danger" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i></el-button>
+              <el-button link type="primary" @click="handleEdit(row)" v-if="row.recordStatus === 'draft'"><i class="ri-edit-line"></i></el-button>
+              <el-button link type="success" @click="handleSubmit(row)" v-if="row.recordStatus === 'draft'"><i class="ri-send-plane-line"></i></el-button>
+              <el-button link type="warning" @click="handleAudit(row)" v-if="row.recordStatus === 'pending'"><i class="ri-audit-line"></i></el-button>
+              <el-button link type="info" @click="handlePrint(row)" v-if="row.recordStatus === 'approved'"><i class="ri-printer-line"></i></el-button>
+              <el-button link type="danger" @click="handleDelete(row)" v-if="row.recordStatus === 'draft'"><i class="ri-delete-bin-line"></i></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -185,15 +213,54 @@
     <div class="mobile-fab" @click="handleAdd">
       <i class="ri-add-line"></i>
     </div>
+
+    <!-- 审核弹窗 -->
+    <el-dialog
+      v-model="auditDialogVisible"
+      :title="$t('seed.breedingCertification.audit.title')"
+      width="600px"
+      :close-on-click-modal="false"
+    >
+      <el-form ref="auditFormRef" :model="auditForm" :rules="auditRules" label-width="100px">
+        <el-form-item :label="$t('seed.breedingCertification.audit.result')" prop="result">
+          <el-radio-group v-model="auditForm.result">
+            <el-radio value="approved">{{ $t('seed.breedingCertification.audit.approve') }}</el-radio>
+            <el-radio value="rejected">{{ $t('seed.breedingCertification.audit.reject') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="$t('seed.breedingCertification.audit.comment')" prop="comment">
+          <el-input
+            v-model="auditForm.comment"
+            type="textarea"
+            :rows="4"
+            :placeholder="$t('seed.breedingCertification.audit.commentPlaceholder')"
+            maxlength="500"
+            show-word-limit
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="auditSubmitting" @click="handleAuditSubmit">
+          {{ $t('common.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getBreedingCertificationPage, deleteBreedingCertification } from '@/api/seed'
+import {
+  getBreedingCertificationPage,
+  deleteBreedingCertification,
+  submitForAudit,
+  approveApplication,
+  rejectApplication
+} from '@/api/seed'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -203,14 +270,37 @@ const searchParams = reactive({
   cropType: '',
   varietyName: '',
   recordDate: '',
-  recordStatus: ''
+  recordStatus: '',
+  startDate: '',
+  endDate: ''
 })
+
+const dateRange = ref([])
 
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 
 const pagination = reactive({ pageNum: 1, pageSize: 10, total: 0 })
+
+// 审核弹窗相关
+const auditDialogVisible = ref(false)
+const auditFormRef = ref()
+const auditSubmitting = ref(false)
+const currentAuditRow = ref(null)
+const auditForm = reactive({
+  result: 'approved',
+  comment: ''
+})
+
+const auditRules = computed(() => ({
+  result: [
+    { required: true, message: t('seed.breedingCertification.audit.resultRequired'), trigger: 'change' }
+  ],
+  comment: [
+    { required: true, message: t('seed.breedingCertification.audit.commentRequired'), trigger: 'blur' }
+  ]
+}))
 
 const getStatusTag = (status) => {
   const statusMap = {
@@ -241,6 +331,17 @@ const loadData = async () => {
   }
 }
 
+const handleDateChange = (dates) => {
+  if (dates && dates.length === 2) {
+    searchParams.startDate = dates[0]
+    searchParams.endDate = dates[1]
+  } else {
+    searchParams.startDate = ''
+    searchParams.endDate = ''
+  }
+  handleSearch()
+}
+
 const handleSearch = () => { pagination.pageNum = 1; loadData() }
 const handleReset = () => {
   Object.assign(searchParams, {
@@ -248,8 +349,11 @@ const handleReset = () => {
     cropType: '',
     varietyName: '',
     recordDate: '',
-    recordStatus: ''
+    recordStatus: '',
+    startDate: '',
+    endDate: ''
   })
+  dateRange.value = []
   pagination.pageNum = 1
   loadData()
 }
@@ -280,6 +384,69 @@ const handleSelectionChange = (selection) => { selectedRows.value = selection }
 const handleSizeChange = () => { pagination.pageNum = 1; loadData() }
 const handlePageChange = () => { loadData() }
 
+// 提交审核
+const handleSubmit = (row) => {
+  ElMessageBox.confirm(
+    t('seed.breedingCertification.submitConfirm'),
+    t('common.tips'),
+    {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    }
+  ).then(async () => {
+    const res = await submitForAudit(row.dataId)
+    if (res.code === 200) {
+      ElMessage.success(t('seed.breedingCertification.submitSuccess'))
+      loadData()
+    }
+  }).catch(() => {})
+}
+
+// 打开审核弹窗
+const handleAudit = (row) => {
+  currentAuditRow.value = row
+  auditForm.result = 'approved'
+  auditForm.comment = ''
+  auditDialogVisible.value = true
+}
+
+// 提交审核结果
+const handleAuditSubmit = async () => {
+  try {
+    await auditFormRef.value.validate()
+
+    auditSubmitting.value = true
+
+    const data = {
+      dataId: currentAuditRow.value.dataId,
+      auditComment: auditForm.comment
+    }
+
+    let res
+    if (auditForm.result === 'approved') {
+      res = await approveApplication(data)
+    } else {
+      res = await rejectApplication(data)
+    }
+
+    if (res.code === 200) {
+      ElMessage.success(t('seed.breedingCertification.auditSuccess'))
+      auditDialogVisible.value = false
+      loadData()
+    }
+  } catch (error) {
+    console.error('Audit validation failed:', error)
+  } finally {
+    auditSubmitting.value = false
+  }
+}
+
+// 打印标签
+const handlePrint = (row) => {
+  router.push(`/research/seed/breeding-certification/print/${row.dataId}`)
+}
+
 onMounted(() => loadData())
 </script>
 
@@ -297,9 +464,10 @@ onMounted(() => loadData())
 
 /* 搜索栏 */
 .search-bar { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
-.search-row { display: flex; gap: 12px; margin-bottom: 12px; }
-.search-input { flex: 1; min-width: 0; }
+.search-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 200px; }
 .type-filter { width: 180px; flex-shrink: 0; }
+.date-range-picker { width: 300px; flex-shrink: 0; }
 .action-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .action-left, .action-right { display: flex; gap: 8px; }
 

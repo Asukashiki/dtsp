@@ -95,6 +95,67 @@ export const deleteBreedingCertification = (dataIds) => {
 }
 
 /**
+ * 提交审核
+ * @param {string} dataId - 数据ID
+ */
+export const submitForAudit = (dataId) => {
+  return agricultureRequest({
+    url: `/seed/breeding/certification/submit/${dataId}`,
+    method: 'post'
+  })
+}
+
+/**
+ * 审核通过
+ * @param {Object} data - 审核数据
+ * @param {string} data.dataId - 数据ID
+ * @param {string} data.auditComment - 审核意见
+ */
+export const approveApplication = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/certification/approve',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 审核驳回
+ * @param {Object} data - 审核数据
+ * @param {string} data.dataId - 数据ID
+ * @param {string} data.auditComment - 审核意见
+ */
+export const rejectApplication = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/certification/reject',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 获取认证标签数据
+ * @param {string} dataId - 数据ID
+ */
+export const getCertificateLabel = (dataId) => {
+  return agricultureRequest({
+    url: `/seed/breeding/certification/certificate-label/${dataId}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 记录打印日志
+ * @param {string} dataId - 数据ID
+ */
+export const recordPrintLog = (dataId) => {
+  return agricultureRequest({
+    url: `/seed/breeding/certification/record-print/${dataId}`,
+    method: 'post'
+  })
+}
+
+/**
  * 文件上传
  * @param {FormData} formData - 包含文件的 FormData
  */
