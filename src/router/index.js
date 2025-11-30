@@ -349,6 +349,157 @@ const routes = [
         name: 'LaboratoryTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // ============ 育种数据管理 ============
+      // 育种批次管理
+      {
+        path: 'breeding-data/batch',
+        name: 'BreedingBatchList',
+        component: () => import('../views/research/breeding-data/batch/index.vue'),
+        meta: { title: '育种批次管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/batch/add',
+        name: 'BreedingBatchAdd',
+        component: () => import('../views/research/breeding-data/batch/form.vue'),
+        meta: { title: '新增育种批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/batch/edit/:dataId',
+        name: 'BreedingBatchEdit',
+        component: () => import('../views/research/breeding-data/batch/form.vue'),
+        meta: { title: '编辑育种批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/batch/detail/:dataId',
+        name: 'BreedingBatchDetail',
+        component: () => import('../views/research/breeding-data/batch/detail.vue'),
+        meta: { title: '育种批次详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 地块及播种信息管理
+      {
+        path: 'breeding-data/plot',
+        name: 'PlotInfoList',
+        component: () => import('../views/research/breeding-data/plot/index.vue'),
+        meta: { title: '地块及播种信息管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/plot/add',
+        name: 'PlotInfoAdd',
+        component: () => import('../views/research/breeding-data/plot/form.vue'),
+        meta: { title: '新增地块信息', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/plot/edit/:groundId',
+        name: 'PlotInfoEdit',
+        component: () => import('../views/research/breeding-data/plot/form.vue'),
+        meta: { title: '编辑地块信息', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/plot/detail/:groundId',
+        name: 'PlotInfoDetail',
+        component: () => import('../views/research/breeding-data/plot/detail.vue'),
+        meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 试验基础信息管理
+      {
+        path: 'breeding-data/trial',
+        name: 'TrialBasicList',
+        component: () => import('../views/research/breeding-data/trial/index.vue'),
+        meta: { title: '试验基础信息管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trial/add',
+        name: 'TrialBasicAdd',
+        component: () => import('../views/research/breeding-data/trial/form.vue'),
+        meta: { title: '新增试验信息', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trial/edit/:trialId',
+        name: 'TrialBasicEdit',
+        component: () => import('../views/research/breeding-data/trial/form.vue'),
+        meta: { title: '编辑试验信息', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trial/detail/:trialId',
+        name: 'TrialBasicDetail',
+        component: () => import('../views/research/breeding-data/trial/detail.vue'),
+        meta: { title: '试验信息详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 农艺性状数据采集
+      {
+        path: 'breeding-data/trait',
+        name: 'AgronomicTraitDataList',
+        component: () => import('../views/research/breeding-data/trait/index.vue'),
+        meta: { title: '农艺性状数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trait/add',
+        name: 'AgronomicTraitDataAdd',
+        component: () => import('../views/research/breeding-data/trait/form.vue'),
+        meta: { title: '新增农艺性状数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trait/edit/:traitId',
+        name: 'AgronomicTraitDataEdit',
+        component: () => import('../views/research/breeding-data/trait/form.vue'),
+        meta: { title: '编辑农艺性状数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trait/detail/:traitId',
+        name: 'AgronomicTraitDataDetail',
+        component: () => import('../views/research/breeding-data/trait/detail.vue'),
+        meta: { title: '农艺性状数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 农事记录数据采集
+      {
+        path: 'breeding-data/farming',
+        name: 'FarmingRecordDataList',
+        component: () => import('../views/research/breeding-data/farming/index.vue'),
+        meta: { title: '农事记录数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/farming/add',
+        name: 'FarmingRecordDataAdd',
+        component: () => import('../views/research/breeding-data/farming/form.vue'),
+        meta: { title: '新增农事记录', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/farming/edit/:farmingId',
+        name: 'FarmingRecordDataEdit',
+        component: () => import('../views/research/breeding-data/farming/form.vue'),
+        meta: { title: '编辑农事记录', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/farming/detail/:farmingId',
+        name: 'FarmingRecordDataDetail',
+        component: () => import('../views/research/breeding-data/farming/detail.vue'),
+        meta: { title: '农事记录详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 环境属性数据采集
+      {
+        path: 'breeding-data/environment',
+        name: 'EnvironmentDataList',
+        component: () => import('../views/research/breeding-data/environment/index.vue'),
+        meta: { title: '环境属性数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/environment/add',
+        name: 'EnvironmentDataAdd',
+        component: () => import('../views/research/breeding-data/environment/form.vue'),
+        meta: { title: '新增环境数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/environment/edit/:envId',
+        name: 'EnvironmentDataEdit',
+        component: () => import('../views/research/breeding-data/environment/form.vue'),
+        meta: { title: '编辑环境数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/environment/detail/:envId',
+        name: 'EnvironmentDataDetail',
+        component: () => import('../views/research/breeding-data/environment/detail.vue'),
+        meta: { title: '环境数据详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

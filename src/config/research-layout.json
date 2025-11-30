@@ -109,6 +109,43 @@
       ]
     },
     {
+      "index": "breeding-data-management",
+      "icon": "ri-database-2-line",
+      "titleKey": "research.menu.breedingDataManagement",
+      "children": [
+        {
+          "index": "/research/breeding-data/batch",
+          "icon": "ri-list-check-2",
+          "titleKey": "research.menu.breedingBatch"
+        },
+        {
+          "index": "/research/breeding-data/plot",
+          "icon": "ri-map-2-line",
+          "titleKey": "research.menu.plotInfo"
+        },
+        {
+          "index": "/research/breeding-data/trial",
+          "icon": "ri-test-tube-line",
+          "titleKey": "research.menu.trialBasic"
+        },
+        {
+          "index": "/research/breeding-data/trait",
+          "icon": "ri-leaf-line",
+          "titleKey": "research.menu.agronomicTraitData"
+        },
+        {
+          "index": "/research/breeding-data/farming",
+          "icon": "ri-plant-line",
+          "titleKey": "research.menu.farmingRecordData"
+        },
+        {
+          "index": "/research/breeding-data/environment",
+          "icon": "ri-cloud-line",
+          "titleKey": "research.menu.environmentDataCollection"
+        }
+      ]
+    },
+    {
       "index": "seed-service",
       "icon": "ri-information-line",
       "titleKey": "research.menu.seedService",
