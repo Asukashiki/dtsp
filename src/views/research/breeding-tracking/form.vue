@@ -1,0 +1,384 @@
+<template>
+  <div class="breeding-tracking-form-page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <el-button link @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+            {{ $t('common.back') }}
+          </el-button>
+        </div>
+        <div class="header-center">
+          <h1 class="page-title">{{ isEdit ? $t('research.breeding.breedingTracking.edit') : $t('research.breeding.breedingTracking.add') }}</h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- 表单区域 -->
+    <div class="form-wrapper">
+      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="breeding-tracking-form">
+        <!-- 基本信息 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-information-line"></i>
+            <h3>{{ $t('research.breeding.breedingTracking.form.basicInfo') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.batchId')" prop="batchId">
+              <el-input v-model="formData.batchId" :placeholder="$t('research.breeding.breedingTracking.form.batchIdPlaceholder')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.cropType')" prop="cropType">
+              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingTracking.form.cropTypePlaceholder')" class="full-width">
+                <el-option :label="$t('research.breeding.breedingTracking.cropType.wheat')" value="WHEAT" />
+                <el-option :label="$t('research.breeding.breedingTracking.cropType.corn')" value="CORN" />
+                <el-option :label="$t('research.breeding.breedingTracking.cropType.rice')" value="RICE" />
+                <el-option :label="$t('research.breeding.breedingTracking.cropType.soybean')" value="SOYBEAN" />
+                <el-option :label="$t('research.breeding.breedingTracking.cropType.cotton')" value="COTTON" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.stageName')" prop="stageName">
+              <el-select v-model="formData.stageName" :placeholder="$t('research.breeding.breedingTracking.form.stageNamePlaceholder')" class="full-width">
+                <el-option :label="$t('research.breeding.breedingTracking.stage.parentPrep')" value="01" />
+                <el-option :label="$t('research.breeding.breedingTracking.stage.original')" value="02" />
+                <el-option :label="$t('research.breeding.breedingTracking.stage.foundation')" value="03" />
+                <el-option :label="$t('research.breeding.breedingTracking.stage.certified')" value="04" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.trackingResult')" prop="trackingResult">
+              <el-select v-model="formData.trackingResult" :placeholder="$t('research.breeding.breedingTracking.form.trackingResultPlaceholder')" class="full-width">
+                <el-option :label="$t('research.breeding.breedingTracking.result.normal')" value="01" />
+                <el-option :label="$t('research.breeding.breedingTracking.result.abnormal')" value="02" />
+                <el-option :label="$t('research.breeding.breedingTracking.result.observing')" value="03" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.location')" prop="location" class="full-width-item">
+              <el-input v-model="formData.location" :placeholder="$t('research.breeding.breedingTracking.form.locationPlaceholder')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.startDate')" prop="startDate">
+              <el-date-picker
+                v-model="formData.startDate"
+                type="date"
+                :placeholder="$t('research.breeding.breedingTracking.form.startDatePlaceholder')"
+                style="width: 100%"
+              />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.completeDate')" prop="completeDate">
+              <el-date-picker
+                v-model="formData.completeDate"
+                type="date"
+                :placeholder="$t('research.breeding.breedingTracking.form.completeDatePlaceholder')"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 产量信息 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-bar-chart-line"></i>
+            <h3>{{ $t('research.breeding.breedingTracking.form.yieldInfo') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.expectedYield')" prop="expectedYield">
+              <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.breeding.breedingTracking.form.expectedYieldPlaceholder')" type="number" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.actualYield')" prop="actualYield">
+              <el-input v-model.number="formData.actualYield" :placeholder="$t('research.breeding.breedingTracking.form.actualYieldPlaceholder')" type="number" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.fieldInspectionScore')" prop="fieldInspectionScore">
+              <el-input v-model.number="formData.fieldInspectionScore" :placeholder="$t('research.breeding.breedingTracking.form.fieldInspectionScorePlaceholder')" type="number" clearable />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- GPS坐标 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-map-pin-line"></i>
+            <h3>{{ $t('research.breeding.breedingTracking.form.gpsInfo') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.gpsLongitude')" prop="gpsLongitude">
+              <el-input v-model="formData.gpsLongitude" :placeholder="$t('research.breeding.breedingTracking.form.gpsLongitudePlaceholder')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.gpsLatitude')" prop="gpsLatitude">
+              <el-input v-model="formData.gpsLatitude" :placeholder="$t('research.breeding.breedingTracking.form.gpsLatitudePlaceholder')" clearable />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 病害观察 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-file-text-line"></i>
+            <h3>{{ $t('research.breeding.breedingTracking.form.diseaseInfo') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.diseaseObservation')" prop="diseaseObservation" class="full-width-item">
+              <el-input v-model="formData.diseaseObservation" type="textarea" :rows="3" :placeholder="$t('research.breeding.breedingTracking.form.diseaseObservationPlaceholder')" clearable />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 机构信息 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-building-line"></i>
+            <h3>{{ $t('research.breeding.breedingTracking.form.orgInfo') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.orgId')" prop="orgId">
+              <el-input v-model="formData.orgId" :placeholder="$t('research.breeding.breedingTracking.form.orgIdPlaceholder')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingTracking.form.orgName')" prop="orgName">
+              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingTracking.form.orgNamePlaceholder')" clearable />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 备注 -->
+        <div class="form-block">
+          <div class="block-header">
+            <i class="ri-file-text-line"></i>
+            <h3>{{ $t('common.remarks') }}</h3>
+          </div>
+          <div class="form-grid">
+            <el-form-item :label="$t('common.remarks')" prop="remark" class="full-width-item">
+              <el-input v-model="formData.remark" type="textarea" :rows="4" :placeholder="$t('research.breeding.breedingTracking.form.remarkPlaceholder')" clearable />
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="form-actions">
+          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+          <el-button type="primary" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
+        </div>
+      </el-form>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
+import { getBreedingTrackingPageDetail, addBreedingTrackingPage, updateBreedingTrackingPage } from '@/api/breeding'
+
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
+
+const formRef = ref(null)
+const loading = ref(false)
+
+const isEdit = computed(() => !!route.params.id)
+
+const formData = ref({
+  batchId: '',
+  cropType: '',
+  stageName: '',
+  trackingResult: '',
+  location: '',
+  startDate: '',
+  completeDate: '',
+  expectedYield: '',
+  actualYield: '',
+  fieldInspectionScore: '',
+  diseaseObservation: '',
+  gpsLongitude: '',
+  gpsLatitude: '',
+  orgId: '',
+  orgName: '',
+  remark: ''
+})
+
+const rules = computed(() => ({
+  batchId: [{ required: true, message: t('research.breeding.breedingTracking.validation.batchIdRequired'), trigger: 'blur' }],
+  cropType: [{ required: true, message: t('research.breeding.breedingTracking.validation.cropTypeRequired'), trigger: 'change' }],
+  stageName: [{ required: true, message: t('research.breeding.breedingTracking.validation.stageNameRequired'), trigger: 'change' }],
+  location: [{ required: true, message: t('research.breeding.breedingTracking.validation.locationRequired'), trigger: 'blur' }],
+  startDate: [{ required: true, message: t('research.breeding.breedingTracking.validation.startDateRequired'), trigger: 'change' }]
+}))
+
+// 初始化
+onMounted(async () => {
+  if (isEdit.value) {
+    await loadDetail()
+  }
+})
+
+// 加载详情
+const loadDetail = async () => {
+  try {
+    const response = await getBreedingTrackingPageDetail(route.params.id)
+    if (response.code === 200 && response.data) {
+      formData.value = {
+        ...formData.value,
+        ...response.data
+      }
+    } else {
+      ElMessage.error(t('research.breeding.breedingTracking.loadError'))
+    }
+  } catch (error) {
+    ElMessage.error(t('research.breeding.breedingTracking.loadError'))
+    console.error(error)
+  }
+}
+
+// 提交表单
+const handleSubmit = async () => {
+  if (!formRef.value) return
+
+  await formRef.value.validate(async (valid) => {
+    if (valid) {
+      loading.value = true
+      try {
+        const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
+        const response = isEdit.value ? await updateBreedingTrackingPage(data) : await addBreedingTrackingPage(data)
+
+        if (response.code === 200) {
+          ElMessage.success(isEdit.value ? t('research.breeding.breedingTracking.editSuccess') : t('research.breeding.breedingTracking.addSuccess'))
+          router.push('/research/breeding/tracking')
+        } else {
+          ElMessage.error(response.msg || t('research.breeding.breedingTracking.operationError'))
+        }
+      } catch (error) {
+        ElMessage.error(t('research.breeding.breedingTracking.operationError'))
+        console.error(error)
+      } finally {
+        loading.value = false
+      }
+    }
+  })
+}
+
+// 返回
+const goBack = () => {
+  router.back()
+}
+</script>
+
+<style scoped lang="scss">
+.breeding-tracking-form-page {
+  padding: 20px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 8px;
+  color: white;
+
+  .header-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .header-left {
+      margin-right: auto;
+    }
+
+    .header-center {
+      flex: 1;
+      text-align: center;
+
+      .page-title {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.form-wrapper {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .breeding-tracking-form {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .form-block {
+    margin-bottom: 30px;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #009A44;
+
+      i {
+        font-size: 20px;
+        color: #009A44;
+        margin-right: 10px;
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width-item {
+        grid-column: 1 / -1;
+      }
+
+      :deep(.el-form-item) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+
+    button {
+      min-width: 120px;
+    }
+  }
+}
+</style>

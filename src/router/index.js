@@ -172,8 +172,33 @@ const routes = [
       {
         path: 'breeding/tracking',
         name: 'BreedingTracking',
-        component: () => import('../views/research/breeding/BreedingTracking.vue'),
+        component: () => import('../views/research/breeding-tracking/index.vue'),
         meta: { title: '育种跟踪管理', requiresAuth: true }
+      },
+      // 繁殖信息管理（统一模块）
+      {
+        path: 'breeding',
+        name: 'BreedingModule',
+        component: () => import('../views/research/breeding/index.vue'),
+        meta: { title: '繁殖信息管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding/batch/add',
+        name: 'BreedingBatchAdd',
+        component: () => import('../views/research/breeding/batch-form.vue'),
+        meta: { title: '新增繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/batch/edit/:id',
+        name: 'BreedingBatchEdit',
+        component: () => import('../views/research/breeding/batch-form.vue'),
+        meta: { title: '编辑繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/detail/:id',
+        name: 'BreedingDetail',
+        component: () => import('../views/research/breeding/detail.vue'),
+        meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
       // 数据采集 - 试验基础数据采集
       {
@@ -349,6 +374,31 @@ const routes = [
         name: 'LaboratoryTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 物联网传感器维护
+      {
+        path: 'data-collection/iot-sensor',
+        name: 'IotSensorList',
+        component: () => import('../views/research/data-collection/iot-sensor/index.vue'),
+        meta: { title: '物联网传感器维护', requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/add',
+        name: 'IotSensorAdd',
+        component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
+        meta: { title: '新增传感器', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/edit/:id',
+        name: 'IotSensorEdit',
+        component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
+        meta: { title: '编辑传感器', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/iot-sensor/detail/:id',
+        name: 'IotSensorDetail',
+        component: () => import('../views/research/data-collection/iot-sensor/detail.vue'),
+        meta: { title: '传感器详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

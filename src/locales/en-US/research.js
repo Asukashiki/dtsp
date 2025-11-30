@@ -17,7 +17,10 @@ export default {
       breedingManagement: 'Breeding Management',
       breedingPlan: 'Breeding Plan Management',
       breedingMaterial: 'Breeding Material Registration',
-      breedingTracking: 'Breeding Tracking Management',
+      breedingModule: 'Breeding Information Management',
+      breedingBatch: 'Breeding Batch Information Collection',
+      breedingTracking: 'Breeding Tracking Information Collection',
+      breedingTest: 'Breeding Test Information Collection',
       dataCollection: 'Data Collection',
       trialData: 'Trial Basic Data Collection',
       agronomicData: 'Agronomic Data Collection',
@@ -705,6 +708,186 @@ export default {
 
     // Breeding Management
     breeding: {
+        title: 'Breeding Information Management',
+        subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
+
+        // Shared crop types
+        cropType: {
+          wheat: 'Wheat',
+          corn: 'Corn',
+          rice: 'Rice',
+          soybean: 'Soybean',
+          cotton: 'Cotton',
+        },
+
+        // Shared breeding levels
+        breedingLevel: {
+          parentPrep: 'Parent Preparation',
+          original: 'Breeder Seed',
+          foundation: 'Foundation Seed',
+          certified: 'Certified Seed',
+        },
+
+        // Shared status
+        status: {
+          ongoing: 'Ongoing',
+          completed: 'Completed',
+          terminated: 'Terminated',
+        },
+
+        // Batch related
+        batch: {
+          title: 'Breeding Batch Information',
+          add: 'Add Batch',
+          edit: 'Edit Batch',
+          delete: 'Delete Batch',
+          searchPlaceholder: 'Search batch ID, variety name',
+          filterByCrop: 'Filter by crop type',
+          filterByStatus: 'Filter by status',
+          allCrops: 'All Crops',
+          allStatus: 'All Status',
+          deleteConfirm: 'Are you sure you want to delete this breeding batch?',
+          columns: {
+            batchId: 'Batch ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            breedingLevel: 'Breeding Level',
+            startDate: 'Start Date',
+            status: 'Status',
+            trackingCount: 'Tracking Records',
+            testCount: 'Test Records',
+          },
+          form: {
+            batchId: 'Batch ID',
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            breedingLevel: 'Breeding Level',
+            parentSeedSource: 'Parent Seed Source',
+            status: 'Status',
+            startDate: 'Start Date',
+            endDate: 'End Date',
+            expectedYield: 'Expected Yield',
+            actualYield: 'Actual Yield',
+            orgId: 'Organization ID',
+            orgName: 'Organization Name',
+          },
+        },
+
+        // Tracking related
+        tracking: {
+          title: 'Breeding Tracking Information',
+          add: 'Add Tracking',
+          edit: 'Edit Tracking',
+          delete: 'Delete Tracking',
+          detail: 'Tracking Details',
+          deleteConfirm: 'Are you sure you want to delete this tracking record?',
+          stage: {
+            parentPrep: 'Parent Preparation',
+            original: 'Breeder Seed',
+            foundation: 'Foundation Seed',
+            certified: 'Certified Seed',
+          },
+          result: {
+            normal: 'Normal',
+            abnormal: 'Abnormal',
+            observing: 'Under Observation',
+          },
+          form: {
+            trackingId: 'Tracking ID',
+            batchId: 'Batch ID',
+            cropType: 'Crop Type',
+            stageName: 'Stage Name',
+            trackingResult: 'Tracking Result',
+            location: 'Location',
+            startDate: 'Start Date',
+            completeDate: 'Completion Date',
+            expectedYield: 'Expected Yield',
+            actualYield: 'Actual Yield',
+            fieldInspectionScore: 'Field Inspection Score',
+            gpsLongitude: 'GPS Longitude',
+            gpsLatitude: 'GPS Latitude',
+            diseaseObservation: 'Disease Observation',
+            orgId: 'Organization ID',
+            orgName: 'Organization Name',
+            cropTypePlaceholder: 'Please select crop type',
+            stageNamePlaceholder: 'Please select stage name',
+            trackingResultPlaceholder: 'Please select tracking result',
+            locationPlaceholder: 'Please enter location',
+            startDatePlaceholder: 'Please select start date',
+          },
+          validation: {
+            cropTypeRequired: 'Please select crop type',
+            stageNameRequired: 'Please select stage name',
+            locationRequired: 'Please enter location',
+            startDateRequired: 'Please select start date',
+          },
+        },
+
+        // Test related
+        test: {
+          title: 'Breeding Test Information',
+          add: 'Add Test',
+          edit: 'Edit Test',
+          delete: 'Delete Test',
+          detail: 'Test Details',
+          deleteConfirm: 'Are you sure you want to delete this test record?',
+          result: {
+            qualified: 'Qualified',
+            unqualified: 'Unqualified',
+            toBeRetested: 'Pending Retest',
+          },
+          form: {
+            testId: 'Test ID',
+            trackingId: 'Tracking ID',
+            batchId: 'Batch ID',
+            cropType: 'Crop Type',
+            testDate: 'Test Date',
+            testResult: 'Test Result',
+            sampleLocation: 'Sample Location',
+            sampleWeight: 'Sample Weight',
+            germinationRate: 'Germination Rate',
+            purity: 'Purity',
+            moistureContent: 'Moisture Content',
+            pestDetection: 'Pest Detection',
+            cropTypePlaceholder: 'Please select crop type',
+            testResultPlaceholder: 'Please select test result',
+          },
+          validation: {
+            cropTypeRequired: 'Please select crop type',
+            testDateRequired: 'Please select test date',
+            testResultRequired: 'Please select test result',
+          },
+        },
+
+        // Detail page
+        detail: {
+          title: 'Breeding Batch Details',
+          tabs: {
+            basicInfo: 'Basic Information',
+            trackingRecords: 'Tracking Records',
+            testRecords: 'Test Records',
+          },
+          trackingCount: 'Tracking Records',
+          testCount: 'Test Records',
+          relatedTests: 'Related Test Records',
+          basicInfo: 'Basic Information',
+          testData: 'Test Data',
+          timeline: 'Timeline',
+          yieldData: 'Yield Data',
+          gpsLocation: 'GPS Location',
+          orgInfo: 'Organization Info',
+        },
+
+        // Common messages
+        messages: {
+          queryError: 'Query failed',
+          loadError: 'Failed to load data',
+          addSuccess: 'Added successfully',
+          editSuccess: 'Updated successfully',
+          deleteSuccess: 'Deleted successfully',
+          deleteError: 'Delete failed',
+          operationError: 'Operation failed',
+        },
       // Breeding Plan Management
       plan: {
         title: 'Breeding Plan Management',
@@ -911,79 +1094,132 @@ export default {
         },
       },
 
-      // Breeding Tracking Management
-      tracking: {
-        title: 'Breeding Tracking Management',
-        subtitle: 'Record breeding propagation tracking stages to ensure the breeding process is standardized and controllable',
-        list: 'Breeding Tracking Record List',
-        add: 'Add Tracking Record',
-        edit: 'Edit Tracking Record',
-        detail: 'Tracking Record Details',
-        delete: 'Delete Record',
-        deleteConfirm: 'Are you sure to delete this tracking record?',
+      // Breeding Batch Information Collection
+      breedingBatch: {
+        title: 'Breeding Batch Information Collection',
+        subtitle: 'Record breeding batch basic information and yield data',
+        list: 'Breeding Batch List',
+        add: 'Add Breeding Batch',
+        edit: 'Edit Breeding Batch',
+        detail: 'Breeding Batch Details',
+        delete: 'Delete Batch',
+        deleteConfirm: 'Are you sure to delete this breeding batch?',
         deleteSuccess: 'Deleted successfully',
         addSuccess: 'Added successfully',
         editSuccess: 'Updated successfully',
 
         // Search and Filter
-        searchPlaceholder: 'Search tracking ID, batch ID',
-        filterByBatch: 'Filter by breeding batch',
-        filterByStage: 'Filter by stage name',
-        allBatches: 'All Batches',
-        allStages: 'All Stages',
+        searchPlaceholder: 'Search batch ID',
+        filterByCropType: 'Filter by crop type',
+        filterByStatus: 'Filter by status',
+        allTypes: 'All Types',
+        allStatus: 'All Status',
 
-        // Stage Name
-        stageName: {
-          parentLinePreparation: 'Parent Line Preparation',
-          breederSeed: 'Breeder Seed',
-          preBasicSeedPropagation: 'Pre-basic Seed Propagation',
-          basicSeedPropagation: 'Basic Seed Propagation',
+        // Crop Type
+        cropType: {
+          wheat: 'Wheat',
+          corn: 'Corn',
+          rice: 'Rice',
+          soybean: 'Soybean',
+          cotton: 'Cotton',
+        },
+
+        // Breeding Level
+        breedingLevel: {
+          parentPrep: 'Parent Preparation',
+          original: 'Original Seed',
+          foundation: 'Foundation Seed',
+          certified: 'Certified Seed',
+        },
+
+        // Batch Status
+        status: {
+          ongoing: 'Ongoing',
+          completed: 'Completed',
+          terminated: 'Terminated',
         },
 
         // Form Fields
         form: {
           basicInfo: 'Basic Information',
-          trackingInfo: 'Tracking Information',
           yieldInfo: 'Yield Information',
-          qualityInfo: 'Quality Information',
-          trackingId: 'Tracking ID',
-          batchId: 'Breeding Batch ID',
-          stageName: 'Stage Name',
-          location: 'Location',
-          coordinates: 'Coordinates (Latitude, Longitude)',
+          orgInfo: 'Organization Information',
+          remarks: 'Remarks',
+          batchId: 'Batch ID',
+          varietyName: 'Variety Name',
+          cropType: 'Crop Type',
+          breedingLevel: 'Breeding Level',
+          parentSeedSource: 'Parent Seed Source',
+          startDate: 'Start Date',
+          endDate: 'Completion Date',
           expectedYield: 'Expected Yield',
           actualYield: 'Actual Yield',
-          fieldInspectionScore: 'Field Inspection Score',
-          diseaseObservation: 'Disease Observation',
-          stageCompletionDate: 'Stage Completion Date',
-          recorder: 'Recorder',
-          recordTime: 'Record Time',
-          updateTime: 'Update Time',
+          orgId: 'Organization ID',
+          orgName: 'Organization Name',
+          remark: 'Remark',
+          status: 'Status',
+          batchIdPlaceholder: 'Please enter batch ID',
+          varietyNamePlaceholder: 'Please enter variety name',
+          cropTypePlaceholder: 'Please select crop type',
+          breedingLevelPlaceholder: 'Please select breeding level',
+          parentSeedSourcePlaceholder: 'Please enter parent seed source',
+          startDatePlaceholder: 'Please select start date',
+          endDatePlaceholder: 'Please select completion date',
+          expectedYieldPlaceholder: 'Please enter expected yield',
+          actualYieldPlaceholder: 'Please enter actual yield',
+          orgIdPlaceholder: 'Please enter organization ID',
+          orgNamePlaceholder: 'Please enter organization name',
+          remarkPlaceholder: 'Please enter remark information',
+        },
+      },
+
+      // Breeding Tracking Information Collection
+      breedingTracking: {
+        title: 'Breeding Tracking Information Collection',
+        subtitle: 'Track and record growth status and yield data at each stage of the breeding process',
+        list: 'Breeding Tracking List',
+        add: 'Add Breeding Tracking',
+        edit: 'Edit Breeding Tracking',
+        detail: 'Breeding Tracking Details',
+        delete: 'Delete Tracking',
+        deleteConfirm: 'Are you sure to delete this tracking record?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+        loadError: 'Failed to load data',
+        operationError: 'Operation failed',
+        queryError: 'Query failed',
+        deleteError: 'Delete failed',
+
+        // Search and Filter
+        searchPlaceholder: 'Search tracking ID',
+        filterByStage: 'Filter by stage',
+        filterByResult: 'Filter by tracking result',
+        allStages: 'All Stages',
+        allResults: 'All Results',
+
+        // Stage Names
+        stage: {
+          parentPrep: 'Parent Preparation',
+          original: 'Original Seed',
+          foundation: 'Foundation Seed',
+          certified: 'Certified Seed',
         },
 
-        // Form Placeholders
-        placeholder: {
-          trackingId: 'Auto-generated by system',
-          batchId: 'Please select breeding batch ID',
-          stageName: 'Please select stage name',
-          location: 'Please enter location',
-          coordinates: 'Format: Latitude, Longitude',
-          expectedYield: 'Please enter expected yield',
-          actualYield: 'Please enter actual yield',
-          fieldInspectionScore: '0-5 score scale',
-          diseaseObservation: 'Please enter disease observation',
-          stageCompletionDate: 'Please select stage completion date',
+        // Tracking Results
+        result: {
+          normal: 'Normal',
+          abnormal: 'Abnormal',
+          observing: 'Observing',
         },
 
-        // Form Validation
-        rules: {
-          batchIdRequired: 'Please select breeding batch ID',
-          stageNameRequired: 'Please select stage name',
-          locationRequired: 'Please enter location',
-          expectedYieldRequired: 'Please enter expected yield',
-          expectedYieldFormat: 'Please enter valid yield',
-          actualYieldFormat: 'Please enter valid yield',
-          fieldInspectionScoreFormat: 'Score range is 0-5',
+        // Crop Types
+        cropType: {
+          wheat: 'Wheat',
+          corn: 'Corn',
+          rice: 'Rice',
+          soybean: 'Soybean',
+          cotton: 'Cotton',
         },
 
         // Table Columns
@@ -992,21 +1228,133 @@ export default {
           batchId: 'Batch ID',
           stageName: 'Stage Name',
           location: 'Location',
-          expectedYield: 'Expected Yield',
-          actualYield: 'Actual Yield',
-          fieldInspectionScore: 'Field Score',
-          stageCompletionDate: 'Completion Date',
-          recordTime: 'Record Time',
-          actions: 'Actions',
+          result: 'Tracking Result',
+          startDate: 'Start Date',
         },
 
-        // Action Buttons
-        actions: {
-          submit: 'Submit',
-          view: 'View',
-          edit: 'Edit',
-          delete: 'Delete',
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          yieldInfo: 'Yield Information',
+          gpsInfo: 'GPS Coordinates',
+          diseaseInfo: 'Disease Observation',
+          orgInfo: 'Organization Information',
+          trackingId: 'Tracking ID',
+          batchId: 'Breeding Batch ID',
+          cropType: 'Crop Type',
+          stageName: 'Stage Name',
+          trackingResult: 'Tracking Result',
+          location: 'Location Description',
+          startDate: 'Start Date',
+          completeDate: 'Complete Date',
+          expectedYield: 'Expected Yield (kg)',
+          actualYield: 'Actual Yield (kg)',
+          fieldInspectionScore: 'Field Inspection Score',
+          gpsLongitude: 'GPS Longitude',
+          gpsLatitude: 'GPS Latitude',
+          diseaseObservation: 'Disease Observation Record',
+          orgId: 'Organization ID',
+          orgName: 'Organization Name',
+          remark: 'Remark',
+          batchIdPlaceholder: 'Please enter breeding batch ID',
+          cropTypePlaceholder: 'Please select crop type',
+          stageNamePlaceholder: 'Please select stage name',
+          trackingResultPlaceholder: 'Please select tracking result',
+          locationPlaceholder: 'Please enter location description',
+          startDatePlaceholder: 'Please select start date',
+          completeDatePlaceholder: 'Please select complete date',
+          expectedYieldPlaceholder: 'Please enter expected yield',
+          actualYieldPlaceholder: 'Please enter actual yield',
+          fieldInspectionScorePlaceholder: 'Please enter field inspection score',
+          gpsLongitudePlaceholder: 'Please enter GPS longitude',
+          gpsLatitudePlaceholder: 'Please enter GPS latitude',
+          diseaseObservationPlaceholder: 'Please enter disease observation record',
+          orgIdPlaceholder: 'Please enter organization ID',
+          orgNamePlaceholder: 'Please enter organization name',
+          remarkPlaceholder: 'Please enter remark information',
         },
+
+        // Form Validation Messages
+        validation: {
+          batchIdRequired: 'Please enter breeding batch ID',
+          cropTypeRequired: 'Please select crop type',
+          stageNameRequired: 'Please select stage name',
+          locationRequired: 'Please enter location description',
+          startDateRequired: 'Please select start date',
+        },
+      },
+
+      // Breeding Test Information Collection
+      breedingTest: {
+        title: 'Breeding Test Information Collection',
+        subtitle: 'Record breeding test data including germination rate, purity and other test indicators',
+        list: 'Breeding Test List',
+        add: 'Add Breeding Test',
+        edit: 'Edit Breeding Test',
+        detail: 'Breeding Test Details',
+        delete: 'Delete Test',
+        deleteConfirm: 'Are you sure to delete this breeding test?',
+        deleteSuccess: 'Deleted successfully',
+        addSuccess: 'Added successfully',
+        editSuccess: 'Updated successfully',
+
+        // Search and Filter
+        searchPlaceholder: 'Search test ID',
+        filterByCropType: 'Filter by crop type',
+        filterByResult: 'Filter by test result',
+        allTypes: 'All Types',
+        allResults: 'All Results',
+
+        // Crop Type
+        cropType: {
+          wheat: 'Wheat',
+          corn: 'Corn',
+          rice: 'Rice',
+          soybean: 'Soybean',
+          cotton: 'Cotton',
+        },
+
+        // Test Result
+        result: {
+          qualified: 'Qualified',
+          unqualified: 'Unqualified',
+          recheck: 'Requires Recheck',
+        },
+
+        // Form Fields
+        form: {
+          basicInfo: 'Basic Information',
+          testIndicators: 'Test Indicators',
+          trackingId: 'Tracking ID',
+          batchId: 'Batch ID',
+          cropType: 'Crop Type',
+          testDate: 'Test Date',
+          testOrg: 'Test Organization',
+          testId: 'Test ID',
+          testPerson: 'Test Person',
+          testResult: 'Test Result',
+          testReportUrl: 'Test Report URL',
+          germinationRate: 'Germination Rate (%)',
+          purity: 'Purity (%)',
+          moistureContent: 'Moisture Content (%)',
+          pestDetection: 'Pest Detection',
+          remark: 'Remark',
+          testIdPlaceholder: 'Auto-generated by system',
+          trackingIdPlaceholder: 'Please enter tracking ID',
+          batchIdPlaceholder: 'Please enter batch ID',
+          cropTypePlaceholder: 'Please select crop type',
+          testDatePlaceholder: 'Please select test date',
+          testOrgPlaceholder: 'Please enter test organization',
+          testPersonPlaceholder: 'Please enter test person',
+          testResultPlaceholder: 'Please select test result',
+          testReportUrlPlaceholder: 'Please enter test report URL',
+          germinationRatePlaceholder: 'Please enter germination rate',
+          purityPlaceholder: 'Please enter purity',
+          moistureContentPlaceholder: 'Please enter moisture content',
+          pestDetectionPlaceholder: 'Please enter pest detection result',
+          remarkPlaceholder: 'Please enter remark information',
+        },
+
       },
     },
 
@@ -1751,4 +2099,92 @@ export default {
         },
       },
     },
-  }
+
+  // IoT Sensor Maintenance Module
+  iotSensor: {
+    title: 'IoT Sensor Maintenance',
+    subtitle: 'Manage IoT sensor devices, track sensor status and calibration information',
+    list: 'Sensor List',
+    add: 'Add Sensor',
+    edit: 'Edit Sensor',
+    detail: 'Sensor Details',
+    delete: 'Delete Sensor',
+    deleteConfirm: 'Are you sure you want to delete this sensor?',
+    deleteSuccess: 'Deleted successfully',
+    addSuccess: 'Added successfully',
+    editSuccess: 'Updated successfully',
+    registrationInfo: 'Registration Information',
+
+    // Search & Filter
+    searchPlaceholder: 'Search sensor name, ID',
+    filterByType: 'Filter by sensor type',
+    allTypes: 'All Types',
+
+    // Sensor Types
+    type: {
+      temperature: 'Temperature Sensor',
+      humidity: 'Humidity Sensor',
+      light: 'Light Sensor',
+      soil: 'Soil Sensor',
+      gas: 'Gas Sensor',
+      other: 'Other',
+    },
+
+    // Form Fields
+    form: {
+      iotId: 'Sensor ID',
+      iotName: 'Sensor Name',
+      iotType: 'Sensor Type',
+      manufacturer: 'Manufacturer',
+      firmwareVersion: 'Firmware Version',
+      calibrationDate: 'Calibration Date',
+      batteryStatus: 'Battery Status',
+      remark: 'Remarks',
+    },
+
+    // Form Placeholders
+    placeholder: {
+      iotId: 'Please enter sensor ID',
+      iotName: 'Please enter sensor name',
+      iotType: 'Please select sensor type',
+      manufacturer: 'Please enter manufacturer',
+      firmwareVersion: 'Please enter firmware version',
+      calibrationDate: 'Please select calibration date',
+      batteryStatus: 'Please enter battery status, e.g., 80%',
+      remark: 'Please enter remarks',
+    },
+
+    // Form Validation Rules
+    rules: {
+      iotIdRequired: 'Sensor ID is required',
+      iotIdLength: 'Sensor ID cannot exceed 32 characters',
+      iotNameRequired: 'Sensor name is required',
+      iotNameLength: 'Sensor name cannot exceed 100 characters',
+      iotTypeRequired: 'Please select sensor type',
+      manufacturerRequired: 'Manufacturer is required',
+      manufacturerLength: 'Manufacturer cannot exceed 32 characters',
+      firmwareVersionRequired: 'Firmware version is required',
+      firmwareVersionLength: 'Firmware version cannot exceed 32 characters',
+      calibrationDateRequired: 'Please select calibration date',
+      batteryStatusLength: 'Battery status cannot exceed 64 characters',
+      remarkLength: 'Remarks cannot exceed 500 characters',
+    },
+
+    // Table Columns
+    columns: {
+      iotId: 'Sensor ID',
+      iotName: 'Sensor Name',
+      iotType: 'Sensor Type',
+      manufacturer: 'Manufacturer',
+      firmwareVersion: 'Firmware Version',
+      calibrationDate: 'Calibration Date',
+      batteryStatus: 'Battery Status',
+      createBy: 'Registered By',
+      orgName: 'Registration Organization',
+      createTime: 'Registration Time',
+      updateTime: 'Update Time',
+      actions: 'Actions',
+    },
+  },
+}
+  

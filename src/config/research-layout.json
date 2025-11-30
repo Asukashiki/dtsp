@@ -60,9 +60,9 @@
           "titleKey": "research.menu.breedingMaterial"
         },
         {
-          "index": "/research/breeding/tracking",
-          "icon": "ri-map-pin-line",
-          "titleKey": "research.menu.breedingTracking"
+          "index": "/research/breeding",
+          "icon": "ri-folders-line",
+          "titleKey": "research.menu.breedingModule"
         }
       ]
     },
@@ -105,6 +105,11 @@
           "index": "/research/data-collection/laboratory-test",
           "icon": "ri-flask-line",
           "titleKey": "research.dataCollection.laboratoryTest.title"
+        },
+        {
+          "index": "/research/data-collection/iot-sensor",
+          "icon": "ri-sensor-line",
+          "titleKey": "research.iotSensor.title"
         }
       ]
     },

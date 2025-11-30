@@ -32,5 +32,10 @@ export default {
     submitFailed: '提交失败',
     actions: '操作',
     audit: '审核',
-    update: '更新'
+    update: '更新',
+    remarks: '备注',
+    refresh: '刷新',
+    createBy: '登记人ID',
+    createTime: '登记时间',
+    registrationInfo: '登记信息'
   }

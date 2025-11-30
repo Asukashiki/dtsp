@@ -1,4 +1,4 @@
-import agricultureRequest from '../utils/agricultureRequest'
+ import agricultureRequest from '../utils/agricultureRequest'
 
 /**
  * 育种管理 API
@@ -635,5 +635,227 @@ export const deleteLaboratoryTest = (dataIds) => {
     url: '/seed/laboratory/test/delete',
     method: 'post',
     data: dataIds
+  })
+}
+
+// ==================== 8. 繁殖批次信息采集 ====================
+
+/**
+ * 查询繁殖批次列表
+ * Query breeding batch list
+ */
+export const getBreedingBatchPageList = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/page',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询繁殖批次列表（不分页）
+ * Query breeding batch list without pagination
+ */
+export const getBreedingBatchPageListAll = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取繁殖批次详情
+ * Get breeding batch detail
+ */
+export const getBreedingBatchPageDetail = (id) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/detail',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/**
+ * 新增繁殖批次
+ * Add breeding batch
+ */
+export const addBreedingBatchPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改繁殖批次
+ * Update breeding batch
+ */
+export const updateBreedingBatchPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除繁殖批次
+ * Delete breeding batch
+ */
+export const deleteBreedingBatchPage = (ids) => {
+  return agricultureRequest({
+    url: '/seed/breeding/batch/delete',
+    method: 'post',
+    data: ids
+  })
+}
+
+// ==================== 9. 繁殖跟踪信息采集 ====================
+
+/**
+ * 查询繁殖跟踪列表
+ * Query breeding tracking list
+ */
+export const getBreedingTrackingPageList = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/page',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询繁殖跟踪列表（不分页）
+ * Query breeding tracking list without pagination
+ */
+export const getBreedingTrackingPageListAll = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取繁殖跟踪详情
+ * Get breeding tracking detail
+ */
+export const getBreedingTrackingPageDetail = (id) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/detail',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/**
+ * 新增繁殖跟踪
+ * Add breeding tracking
+ */
+export const addBreedingTrackingPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改繁殖跟踪
+ * Update breeding tracking
+ */
+export const updateBreedingTrackingPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除繁殖跟踪
+ * Delete breeding tracking
+ */
+export const deleteBreedingTrackingPage = (ids) => {
+  return agricultureRequest({
+    url: '/seed/breeding/tracking/delete',
+    method: 'post',
+    data: ids
+  })
+}
+
+// ==================== 10. 繁殖检测信息采集 ====================
+
+/**
+ * 查询繁殖检测列表
+ * Query breeding test list
+ */
+export const getBreedingTestPageList = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/page',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询繁殖检测列表（不分页）
+ * Query breeding test list without pagination
+ */
+export const getBreedingTestPageListAll = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取繁殖检测详情
+ * Get breeding test detail
+ */
+export const getBreedingTestPageDetail = (id) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/detail',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/**
+ * 新增繁殖检测
+ * Add breeding test
+ */
+export const addBreedingTestPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改繁殖检测
+ * Update breeding test
+ */
+export const updateBreedingTestPage = (data) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除繁殖检测
+ * Delete breeding test
+ */
+export const deleteBreedingTestPage = (ids) => {
+  return agricultureRequest({
+    url: '/seed/breeding/test/delete',
+    method: 'post',
+    data: ids
   })
 }

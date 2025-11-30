@@ -32,5 +32,10 @@ export default {
   submitFailed: 'Submit failed',
   actions: 'Actions',
   audit: 'Audit',
-  update: 'Update'
+  update: 'Update',
+  remarks: 'Remarks',
+  refresh: 'Refresh',
+  createBy: 'Registrant ID',
+  createTime: 'Registration Time',
+  registrationInfo: 'Registration Information',
 }
