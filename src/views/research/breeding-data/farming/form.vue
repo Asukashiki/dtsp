@@ -35,12 +35,12 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.farming.form.operationType')" prop="operationType">
                     <el-select v-model="formData.operationType" :placeholder="$t('research.breedingData.farming.placeholder.operationType')" style="width: 100%">
-                      <el-option label="施肥" value="fertilizer" />
-                      <el-option label="灌溉" value="irrigation" />
-                      <el-option label="病虫害防治" value="pest_control" />
-                      <el-option label="除草" value="weeding" />
-                      <el-option label="整地" value="tillage" />
-                      <el-option label="收获" value="harvest" />
+                      <el-option label="fertilizer" value="fertilizer" />
+                      <el-option label="irrigation" value="irrigation" />
+                      <el-option label="pest_control" value="pest_control" />
+                      <el-option label="weeding" value="weeding" />
+                      <el-option label="tillage" value="tillage" />
+                      <el-option label="harvest" value="harvest" />
                     </el-select>
                   </el-form-item>
                 </el-col>

@@ -34,9 +34,9 @@
                 <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
               </el-select>
               <el-select v-model="queryParams.dataType" :placeholder="$t('research.breedingData.environment.placeholder.dataType')" clearable class="filter-select" @change="handleQuery">
-                <el-option label="土壤数据" value="soil" />
-                <el-option label="气候数据" value="climate" />
-                <el-option label="水文数据" value="water" />
+                <el-option label="soil" value="soil" />
+                <el-option label="climate" value="climate" />
+                <el-option label="water" value="water" />
               </el-select>
               <el-date-picker v-model="queryParams.collectTime" type="date" :placeholder="$t('research.breedingData.environment.placeholder.collectTime')" clearable value-format="YYYY-MM-DD" class="filter-select" @change="handleQuery" />
             </div>

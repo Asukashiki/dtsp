@@ -267,18 +267,18 @@ const rules = {
 }
 
 const cropTypeOptions = [
-  { label: '水稻', value: 'rice' },
-  { label: '小麦', value: 'wheat' },
-  { label: '玉米', value: 'corn' },
-  { label: '大豆', value: 'soybean' },
-  { label: '棉花', value: 'cotton' }
+  { label: 'rice', value: 'rice' },
+  { label: 'wheat', value: 'wheat' },
+  { label: 'corn', value: 'corn' },
+  { label: 'soybean', value: 'soybean' },
+  { label: 'cotton', value: 'cotton' }
 ]
 
 const seasonOptions = [
-  { label: '春季', value: 'spring' },
-  { label: '夏季', value: 'summer' },
-  { label: '秋季', value: 'autumn' },
-  { label: '冬季', value: 'winter' }
+  { label: 'spring', value: 'spring' },
+  { label: 'summer', value: 'summer' },
+  { label: 'autumn', value: 'autumn' },
+  { label: 'winter', value: 'winter' }
 ]
 
 const loadBatchOptions = async () => {

@@ -145,11 +145,11 @@ const resultTypeMap = {
 }
 
 const cropTypeMap = {
-  'WHEAT': '小麦',
-  'CORN': '玉米',
-  'RICE': '水稻',
-  'SOYBEAN': '大豆',
-  'COTTON': '棉花'
+  'WHEAT': 'wheat',
+  'CORN': 'corn',
+  'RICE': 'rice',
+  'SOYBEAN': 'soybean',
+  'COTTON': 'cotton'
 }
 
 onMounted(async () => {

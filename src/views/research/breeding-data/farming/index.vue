@@ -119,12 +119,12 @@ const queryParams = reactive({
 })
 
 const operationTypeOptions = [
-  { label: '施肥', value: 'fertilizer' },
-  { label: '灌溉', value: 'irrigation' },
-  { label: '病虫害防治', value: 'pest_control' },
-  { label: '除草', value: 'weeding' },
-  { label: '整地', value: 'tillage' },
-  { label: '收获', value: 'harvest' }
+  { label: 'fertilizer', value: 'fertilizer' },
+  { label: 'irrigation', value: 'irrigation' },
+  { label: 'pest_control', value: 'pest_control' },
+  { label: 'weeding', value: 'weeding' },
+  { label: 'tillage', value: 'tillage' },
+  { label: 'harvest', value: 'harvest' }
 ]
 
 const getList = async () => {

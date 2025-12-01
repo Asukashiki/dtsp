@@ -201,19 +201,19 @@ const rules = {
 }
 
 const cropTypeOptions = [
-  { label: '水稻', value: 'rice' },
-  { label: '小麦', value: 'wheat' },
-  { label: '玉米', value: 'corn' },
-  { label: '大豆', value: 'soybean' },
-  { label: '棉花', value: 'cotton' }
+  { label: 'rice', value: 'rice' },
+  { label: 'wheat', value: 'wheat' },
+  { label: 'corn', value: 'corn' },
+  { label: 'soybean', value: 'soybean' },
+  { label: 'cotton', value: 'cotton' }
 ]
 
 const breedingMethodOptions = [
-  { label: '杂交育种', value: 'hybridization' },
-  { label: '诱变育种', value: 'mutagenesis' },
-  { label: '分子育种', value: 'molecular' },
-  { label: '选择育种', value: 'selection' },
-  { label: '远缘杂交', value: 'wide_cross' }
+  { label: 'hybridization', value: 'hybridization' },
+  { label: 'mutagenesis', value: 'mutagenesis' },
+  { label: 'molecular', value: 'molecular' },
+  { label: 'selection', value: 'selection' },
+  { label: 'wide_cross', value: 'wide_cross' }
 ]
 
 const getInfo = async () => {

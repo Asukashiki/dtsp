@@ -42,9 +42,9 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.environment.form.dataType')" prop="dataType">
                     <el-select v-model="formData.dataType" :placeholder="$t('research.breedingData.environment.placeholder.dataType')" style="width: 100%">
-                      <el-option label="土壤数据" value="soil" />
-                      <el-option label="气候数据" value="climate" />
-                      <el-option label="水文数据" value="water" />
+                      <el-option label="soil" value="soil" />
+                      <el-option label="climate" value="climate" />
+                      <el-option label="water" value="water" />
                     </el-select>
                   </el-form-item>
                 </el-col>
