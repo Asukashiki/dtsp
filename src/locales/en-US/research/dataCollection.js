@@ -544,6 +544,7 @@ export default {
       toxinLevelPpm: 'Please enter toxin level (optional)',
       seedHealthFindings: 'Please enter seed health findings',
       chainResponsibility: 'Please enter traceability link',
+      labReportFile: 'Click to upload lab report file',
       testOrganization: 'Please enter test organization (optional)',
       testerName: 'Please enter tester name (optional)',
       remark: 'Please enter remark (optional)',

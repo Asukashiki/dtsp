@@ -1,262 +1,250 @@
 <template>
-  <div class="dataset-audit-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon">
-        <i class="ri-shield-check-line"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ $t('research.datasetAudit.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.datasetAudit.subtitle') }}</p>
-      </div>
-    </div>
-
-    <!-- 搜索和筛选 -->
-    <div class="search-filter-bar">
-      <div class="search-box">
-        <el-input
-          v-model="searchParams.keyword"
-          :placeholder="$t('research.datasetAudit.searchPlaceholder')"
-          clearable
-          @clear="handleSearch"
-          @keyup.enter="handleSearch"
-        >
-          <template #prefix>
-            <i class="ri-search-line"></i>
-          </template>
-        </el-input>
-        <el-button type="primary" @click="handleSearch">
-          <i class="ri-search-line"></i>
-          {{ $t('common.search') }}
-        </el-button>
-      </div>
-
-      <div class="filter-box">
-        <el-select
-          v-model="searchParams.auditStatus"
-          :placeholder="$t('research.datasetAudit.filterByAuditStatus')"
-          clearable
-          @change="handleSearch"
-        >
-          <el-option :label="$t('research.datasetAudit.allAuditStatus')" value="" />
-          <el-option
-            v-for="(label, key) in $t('research.datasetAudit.auditStatus')"
-            :key="key"
-            :label="label"
-            :value="key"
-          />
-        </el-select>
-
-        <el-select
-          v-model="searchParams.datasetStatus"
-          :placeholder="$t('research.datasetAudit.filterByDatasetStatus')"
-          clearable
-          @change="handleSearch"
-        >
-          <el-option :label="$t('research.datasetAudit.allDatasetStatus')" value="" />
-          <el-option
-            v-for="(label, key) in $t('research.datasetAudit.datasetStatus')"
-            :key="key"
-            :label="label"
-            :value="key"
-          />
-        </el-select>
-      </div>
-    </div>
-
-    <!-- PC端表格视图 -->
-    <div class="table-container pc-only">
-      <el-table
-        v-loading="loading"
-        :data="dataList"
-        stripe
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="datasetCode"
-          :label="$t('research.datasetAudit.columns.datasetCode')"
-          min-width="140"
-        />
-        <el-table-column
-          prop="batchName"
-          :label="$t('research.datasetAudit.columns.batchName')"
-          min-width="150"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="varietyName"
-          :label="$t('research.datasetAudit.columns.varietyName')"
-          min-width="120"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="labTestCount"
-          :label="$t('research.datasetAudit.columns.labTestCount')"
-          min-width="100"
-          align="center"
-        />
-        <el-table-column
-          prop="yieldDataCount"
-          :label="$t('research.datasetAudit.columns.yieldDataCount')"
-          min-width="100"
-          align="center"
-        />
-        <el-table-column
-          prop="datasetStatus"
-          :label="$t('research.datasetAudit.columns.datasetStatus')"
-          min-width="110"
-          align="center"
-        >
-          <template #default="{ row }">
-            <el-tag :type="getDatasetStatusType(row.datasetStatus)">
-              {{ $t(`research.datasetCompilation.status.${row.datasetStatus}`) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="auditStatus"
-          :label="$t('research.datasetAudit.columns.auditStatus')"
-          min-width="110"
-          align="center"
-        >
-          <template #default="{ row }">
-            <el-tag :type="getAuditStatusType(row.auditStatus)">
-              {{ $t(`research.datasetAudit.auditStatus.${row.auditStatus}`) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="submitTime"
-          :label="$t('research.datasetAudit.columns.submitTime')"
-          min-width="160"
-        />
-        <el-table-column
-          :label="$t('research.datasetAudit.columns.actions')"
-          width="200"
-          fixed="right"
-          align="center"
-        >
-          <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="handleView(row)"
-            >
-              <i class="ri-eye-line"></i>
-              {{ $t('research.datasetAudit.actions.view') }}
-            </el-button>
-            <el-button
-              v-if="row.auditStatus === 'pending'"
-              link
-              type="success"
-              @click="handleAudit(row)"
-            >
-              <i class="ri-check-line"></i>
-              {{ $t('research.datasetAudit.actions.audit') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination
-          v-model:current-page="searchParams.pageNum"
-          v-model:page-size="searchParams.pageSize"
-          :total="total"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSearch"
-          @current-change="handleSearch"
-        />
-      </div>
-    </div>
-
-    <!-- 移动端卡片视图 -->
-    <div class="mobile-only">
-      <div v-loading="loading" class="card-list">
-        <div
-          v-for="item in dataList"
-          :key="item.id"
-          class="data-card"
-          @click="handleView(item)"
-        >
-          <!-- 卡片头部 -->
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-database-2-line"></i>
-              {{ item.datasetCode || '-' }}
-            </div>
-            <div class="card-status">
-              <el-tag :type="getDatasetStatusType(item.datasetStatus)" size="small">
-                {{ $t(`research.datasetCompilation.status.${item.datasetStatus}`) }}
-              </el-tag>
-              <el-tag :type="getAuditStatusType(item.auditStatus)" size="small">
-                {{ $t(`research.datasetAudit.auditStatus.${item.auditStatus}`) }}
-              </el-tag>
-            </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <div class="header-icon">
+            <i class="ri-shield-check-line"></i>
           </div>
-
-          <!-- 卡片内容 -->
-          <div class="card-content">
-            <div class="card-row">
-              <span class="label">{{ $t('research.datasetAudit.columns.batchName') }}:</span>
-              <span class="value">{{ item.batchName }}</span>
-            </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.datasetAudit.columns.varietyName') }}:</span>
-              <span class="value">{{ item.varietyName }}</span>
-            </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.datasetAudit.columns.submitTime') }}:</span>
-              <span class="value">{{ item.submitTime }}</span>
-            </div>
-
-            <!-- 数据统计 -->
-            <div class="card-stats">
-              <div class="stat-item">
-                <span class="stat-label">{{ $t('research.datasetAudit.columns.labTestCount') }}</span>
-                <span class="stat-value">{{ item.labTestCount || 0 }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">{{ $t('research.datasetAudit.columns.yieldDataCount') }}</span>
-                <span class="stat-value">{{ item.yieldDataCount || 0 }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 卡片操作按钮 -->
-          <div class="card-actions">
-            <el-button size="small" @click.stop="handleView(item)">
-              <i class="ri-eye-line"></i>
-              {{ $t('research.datasetAudit.actions.view') }}
-            </el-button>
-            <el-button
-              v-if="item.auditStatus === 'pending'"
-              type="success"
-              size="small"
-              @click.stop="handleAudit(item)"
-            >
-              <i class="ri-check-line"></i>
-              {{ $t('research.datasetAudit.actions.audit') }}
-            </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.datasetAudit.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.datasetAudit.subtitle') }}</p>
           </div>
         </div>
-
-        <!-- 空状态 -->
-        <el-empty v-if="!loading && dataList.length === 0" :description="$t('common.noData')" />
       </div>
 
-      <!-- 移动端分页 -->
-      <div v-if="total > 0" class="mobile-pagination">
-        <el-pagination
-          v-model:current-page="searchParams.pageNum"
-          :total="total"
-          :page-size="searchParams.pageSize"
-          layout="prev, pager, next"
-          small
-          @current-change="handleSearch"
-        />
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-file-list-3-line"></i>
+              <span>{{ $t('research.datasetAudit.list') }}</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- 搜索区域 -->
+            <div class="search-section">
+              <el-input
+                v-model="searchParams.keyword"
+                :placeholder="$t('research.datasetAudit.searchPlaceholder')"
+                clearable
+                class="search-input"
+              >
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+              <el-select
+                v-model="searchParams.auditStatus"
+                :placeholder="$t('research.datasetAudit.filterByAuditStatus')"
+                clearable
+                class="search-select"
+              >
+                <el-option :label="$t('research.datasetAudit.allAuditStatus')" value="" />
+                <el-option
+                  v-for="(label, key) in $t('research.datasetAudit.auditStatus')"
+                  :key="key"
+                  :label="label"
+                  :value="key"
+                />
+              </el-select>
+              <el-select
+                v-model="searchParams.datasetStatus"
+                :placeholder="$t('research.datasetAudit.filterByDatasetStatus')"
+                clearable
+                class="search-select"
+              >
+                <el-option :label="$t('research.datasetAudit.allDatasetStatus')" value="" />
+                <el-option
+                  v-for="(label, key) in $t('research.datasetAudit.datasetStatus')"
+                  :key="key"
+                  :label="label"
+                  :value="key"
+                />
+              </el-select>
+              <el-button type="primary" @click="handleSearch">
+                <i class="ri-search-line"></i>
+                {{ $t('common.search') }}
+              </el-button>
+              <el-button @click="handleReset">
+                <i class="ri-refresh-line"></i>
+                {{ $t('common.reset') }}
+              </el-button>
+            </div>
+
+            <!-- PC端表格 -->
+            <div class="table-wrapper pc-only">
+              <el-table v-loading="loading" :data="dataList" stripe>
+                <el-table-column
+                  prop="datasetCode"
+                  :label="$t('research.datasetAudit.columns.datasetCode')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="batchName"
+                  :label="$t('research.datasetAudit.columns.batchName')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="varietyName"
+                  :label="$t('research.datasetAudit.columns.varietyName')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="labTestCount"
+                  :label="$t('research.datasetAudit.columns.labTestCount')"
+                  min-width="100"
+                  align="center"
+                />
+                <el-table-column
+                  prop="yieldDataCount"
+                  :label="$t('research.datasetAudit.columns.yieldDataCount')"
+                  min-width="100"
+                  align="center"
+                />
+                <el-table-column
+                  prop="datasetStatus"
+                  :label="$t('research.datasetAudit.columns.datasetStatus')"
+                  min-width="110"
+                  align="center"
+                >
+                  <template #default="{ row }">
+                    <el-tag :type="getDatasetStatusType(row.datasetStatus)">
+                      {{ $t(`research.datasetCompilation.status.${row.datasetStatus}`) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="auditStatus"
+                  :label="$t('research.datasetAudit.columns.auditStatus')"
+                  min-width="110"
+                  align="center"
+                >
+                  <template #default="{ row }">
+                    <el-tag :type="getAuditStatusType(row.auditStatus)">
+                      {{ $t(`research.datasetAudit.auditStatus.${row.auditStatus}`) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="submitTime"
+                  :label="$t('research.datasetAudit.columns.submitTime')"
+                  min-width="160"
+                />
+                <el-table-column :label="$t('common.actions')" fixed="right" width="250">
+                  <template #default="{ row }">
+                    <div class="action-buttons">
+                      <el-button link type="primary" @click="handleView(row)">
+                        <i class="ri-eye-line"></i>
+                        {{ $t('common.view') }}
+                      </el-button>
+                      <el-button
+                        v-if="row.auditStatus === 'pending'"
+                        link
+                        type="success"
+                        @click="handleAudit(row)"
+                      >
+                        <i class="ri-check-line"></i>
+                        {{ $t('research.datasetAudit.actions.audit') }}
+                      </el-button>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+              <!-- 分页 -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="searchParams.pageNum"
+                  v-model:page-size="searchParams.pageSize"
+                  :total="total"
+                  :page-sizes="[10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSearch"
+                  @current-change="handleSearch"
+                />
+              </div>
+            </div>
+
+            <!-- 移动端卡片 -->
+            <div class="mobile-card-list mobile-only">
+              <div v-for="item in dataList" :key="item.id" class="mobile-card">
+                <div class="mobile-card-header">
+                  <div class="mobile-card-title">
+                    <i class="ri-database-2-line"></i>
+                    <span>{{ item.datasetCode || '-' }}</span>
+                  </div>
+                  <el-tag :type="getAuditStatusType(item.auditStatus)" size="small">
+                    {{ $t(`research.datasetAudit.auditStatus.${item.auditStatus}`) }}
+                  </el-tag>
+                </div>
+                <div class="mobile-card-body">
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.batchName') }}:</span>
+                    <span class="value">{{ item.batchName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.varietyName') }}:</span>
+                    <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.datasetStatus') }}:</span>
+                    <span class="value">
+                      <el-tag :type="getDatasetStatusType(item.datasetStatus)" size="small">
+                        {{ $t(`research.datasetCompilation.status.${item.datasetStatus}`) }}
+                      </el-tag>
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.labTestCount') }}:</span>
+                    <span class="value">{{ item.labTestCount || 0 }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.yieldDataCount') }}:</span>
+                    <span class="value">{{ item.yieldDataCount || 0 }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.submitTime') }}:</span>
+                    <span class="value">{{ item.submitTime || '-' }}</span>
+                  </div>
+                </div>
+                <div class="mobile-card-actions">
+                  <el-button type="primary" size="small" @click="handleView(item)">
+                    {{ $t('common.view') }}
+                  </el-button>
+                  <el-button
+                    v-if="item.auditStatus === 'pending'"
+                    type="success"
+                    size="small"
+                    @click="handleAudit(item)"
+                  >
+                    {{ $t('research.datasetAudit.actions.audit') }}
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- 移动端分页 -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="searchParams.pageNum"
+                  v-model:page-size="searchParams.pageSize"
+                  :page-sizes="[10, 20, 50]"
+                  :total="total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSearch"
+                  @current-change="handleSearch"
+                />
+              </div>
+            </div>
+
+            <!-- 空状态 -->
+            <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -331,6 +319,14 @@ const handleSearch = () => {
   loadDataList()
 }
 
+// 重置
+const handleReset = () => {
+  searchParams.keyword = ''
+  searchParams.auditStatus = ''
+  searchParams.datasetStatus = ''
+  handleSearch()
+}
+
 // 查看详情
 const handleView = (row) => {
   router.push({
@@ -354,135 +350,85 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.dataset-audit-container {
+/* 页面容器 */
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
   padding: 24px;
-  min-height: calc(100vh - 120px);
+}
+
+.page-wrapper {
+  margin: 0 auto;
 }
 
 /* 页面头部 */
 .page-header {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+}
+
+.header-left {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 32px;
-  padding: 24px;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border-radius: 16px;
-  border: 1px solid #86efac;
 }
 
 .header-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 40px;
+  color: white;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.3);
 }
 
-.header-icon i {
-  font-size: 40px;
+.header-content {
   color: white;
 }
 
-.header-text {
-  flex: 1;
-}
-
 .page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #009A44;
+  font-size: 32px;
+  font-weight: 600;
   margin: 0 0 8px 0;
 }
 
 .page-subtitle {
   font-size: 16px;
-  color: #6b7280;
+  opacity: 0.9;
   margin: 0;
 }
 
-/* 搜索筛选栏 */
-.search-filter-bar {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 300px;
-  display: flex;
-  gap: 12px;
-}
-
-.search-box .el-input {
-  flex: 1;
-}
-
-.filter-box {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.filter-box .el-select {
-  width: 200px;
-}
-
-/* 表格容器 */
-.table-container {
+/* 内容区域 */
+.content-wrapper {
   background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
-/* 分页 */
-.pagination-container {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-/* 移动端卡片列表 */
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.data-card {
+/* 卡片 */
+.info-card {
   background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: 1px solid #e5e7eb;
-}
-
-.data-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.15);
-  border-color: #009A44;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f3f4f6;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8f5e9;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: #009A44;
   display: flex;
@@ -491,88 +437,134 @@ onMounted(() => {
 }
 
 .card-title i {
-  font-size: 20px;
+  font-size: 22px;
 }
 
-.card-status {
+.card-body {
+  padding: 24px;
+}
+
+/* 搜索区域 */
+.search-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-select {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.search-section .el-button {
+  flex-shrink: 0;
+}
+
+/* 表格 */
+.table-wrapper {
+  margin-top: 16px;
+}
+
+.action-buttons {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.card-content {
-  margin-bottom: 12px;
-}
-
-.card-row {
+/* 分页 */
+.pagination-wrapper {
   display: flex;
-  padding: 8px 0;
-  border-bottom: 1px solid #f3f4f6;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8f5e9;
 }
 
-.card-row:last-child {
-  border-bottom: none;
+/* 移动端卡片列表 */
+.mobile-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.card-row .label {
-  font-weight: 500;
-  color: #6b7280;
+.mobile-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.mobile-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #009A44;
+  flex: 1;
+}
+
+.mobile-card-title i {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mobile-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-card-row {
+  display: flex;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mobile-card-row .label {
+  color: #666;
   min-width: 100px;
   flex-shrink: 0;
 }
 
-.card-row .value {
-  color: #1f2937;
-  flex: 1;
-  word-break: break-all;
+.mobile-card-row .value {
+  color: #333;
+  font-weight: 500;
 }
 
-.card-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 2px solid #f3f4f6;
-}
-
-.stat-item {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
-  border: 1px solid #86efac;
-}
-
-.stat-label {
-  display: block;
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  display: block;
-  font-size: 20px;
-  font-weight: 700;
-  color: #009A44;
-}
-
-.card-actions {
+.mobile-card-actions {
   display: flex;
   gap: 8px;
+  margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #f0f0f0;
 }
 
-.card-actions .el-button {
+.mobile-card-actions .el-button {
   flex: 1;
-}
-
-.mobile-pagination {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
 }
 
 /* 响应式 */
@@ -584,102 +576,60 @@ onMounted(() => {
   display: none;
 }
 
-@media screen and (max-width: 1024px) {
-  .dataset-audit-container {
-    padding: 16px;
-  }
-
-  .filter-box .el-select {
-    width: 160px;
-  }
-}
-
 @media screen and (max-width: 768px) {
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-
-  .dataset-audit-container {
+  .page-container {
     padding: 12px;
   }
 
   .page-header {
-    flex-direction: column;
-    text-align: center;
     padding: 20px;
-    margin-bottom: 24px;
+    border-radius: 12px;
   }
 
   .header-icon {
-    width: 64px;
-    height: 64px;
-  }
-
-  .header-icon i {
-    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
   }
 
   .page-title {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .page-subtitle {
     font-size: 14px;
   }
 
-  .search-filter-bar {
+  .content-wrapper {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    padding: 16px;
     flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
   }
 
-  .search-box {
-    min-width: auto;
-    width: 100%;
-  }
-
-  .filter-box {
-    width: 100%;
-  }
-
-  .filter-box .el-select {
-    flex: 1;
-    width: auto;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .dataset-audit-container {
-    padding: 8px;
-  }
-
-  .page-header {
+  .card-body {
     padding: 16px;
-    margin-bottom: 16px;
   }
 
-  .header-icon {
-    width: 56px;
-    height: 56px;
+  .search-section {
+    flex-direction: column;
   }
 
-  .header-icon i {
-    font-size: 28px;
+  .search-input,
+  .search-select {
+    width: 100%;
   }
 
-  .page-title {
-    font-size: 20px;
+  .pc-only {
+    display: none;
   }
 
-  .page-subtitle {
-    font-size: 13px;
-  }
-
-  .card-stats {
-    grid-template-columns: 1fr;
+  .mobile-only {
+    display: block;
   }
 }
 </style>

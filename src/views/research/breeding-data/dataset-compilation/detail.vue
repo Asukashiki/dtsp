@@ -10,7 +10,7 @@
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('research.datasetCompilation.actions.view') }}</h1>
+                    <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
         </div>
         <div class="header-right">
           <el-button
@@ -72,7 +72,7 @@
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetCompilation.form.dataStatistics') }}
+            {{ $t('research.datasetCompilation.form.statisticsInfo') }}
           </div>
           <div class="statistics-grid">
             <div class="stat-card">
@@ -80,7 +80,7 @@
                 <i class="ri-flask-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.trialCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.trialCount') }}</div>
                 <div class="stat-value">{{ detailData.trialCount || 0 }}</div>
               </div>
             </div>
@@ -90,7 +90,7 @@
                 <i class="ri-plant-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.fieldDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.fieldDataCount') }}</div>
                 <div class="stat-value">{{ detailData.fieldDataCount || 0 }}</div>
               </div>
             </div>
@@ -100,7 +100,7 @@
                 <i class="ri-temp-hot-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.envDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.envDataCount') }}</div>
                 <div class="stat-value">{{ detailData.envDataCount || 0 }}</div>
               </div>
             </div>
@@ -110,7 +110,7 @@
                 <i class="ri-test-tube-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.labTestCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.labTestCount') }}</div>
                 <div class="stat-value">{{ detailData.labTestCount || 0 }}</div>
               </div>
             </div>
@@ -120,7 +120,7 @@
                 <i class="ri-bar-chart-box-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.yieldDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.yieldDataCount') }}</div>
                 <div class="stat-value">{{ detailData.yieldDataCount || 0 }}</div>
               </div>
             </div>
@@ -135,7 +135,7 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.submitTime') }}:</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.submitTime') }}:</span>
               <span class="value">{{ detailData.submitTime }}</span>
             </div>
             <div class="detail-item">
@@ -143,7 +143,7 @@
               <span class="value">{{ detailData.submitByName || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.submitOrg') }}:</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.submitOrgName') }}:</span>
               <span class="value">{{ detailData.submitOrgName || '-' }}</span>
             </div>
           </div>
@@ -157,7 +157,7 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.auditTime') }}:</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.auditTime') }}:</span>
               <span class="value">{{ detailData.auditTime }}</span>
             </div>
             <div class="detail-item">
@@ -179,7 +179,7 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.createdTime') }}:</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.createdTime') }}:</span>
               <span class="value">{{ detailData.createdTime }}</span>
             </div>
             <div class="detail-item">
@@ -187,7 +187,7 @@
               <span class="value">{{ detailData.createdByName || '-' }}</span>
             </div>
             <div v-if="detailData.updatedTime" class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.updatedTime') }}:</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.updatedTime') }}:</span>
               <span class="value">{{ detailData.updatedTime }}</span>
             </div>
           </div>

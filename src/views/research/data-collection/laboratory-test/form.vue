@@ -184,15 +184,20 @@
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labReportFile')" prop="labReportFile">
-            <el-input
-              v-model="formData.labReportFile"
-              :placeholder="$t('common.pleaseEnter')"
-              clearable
+            <el-upload
+              class="doc-upload"
+              :http-request="handleUploadFile"
+              :file-list="labReportFileList"
+              :on-remove="handleRemoveFile"
+              :on-preview="handlePreviewFile"
+              :limit="1"
+              accept=".pdf"
             >
-              <template #append>
-                <el-button icon="ri-folder-line">{{ $t('common.browse') }}</el-button>
-              </template>
-            </el-input>
+              <el-button type="primary" link>
+                <i class="ri-upload-2-line"></i>
+                {{ $t('research.dataCollection.laboratoryTest.placeholder.labReportFile') }}
+              </el-button>
+            </el-upload>
           </el-form-item>
         </div>
 
@@ -252,6 +257,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
+import { uploadFile } from '@/api/seed'
+import { getFilePreviewUrl } from '@/api/file'
 
 const route = useRoute()
 const router = useRouter()
@@ -274,10 +281,14 @@ const formData = reactive({
   seedHealthFindings: '',
   traceabilityLink: '',
   labReportFile: '',
+  labReportFileName: '',  // 新增:保存原始文件名
   testDate: '',
   testOrganization: '',
   testerName: ''
 })
+
+// 实验室报告文件列表
+const labReportFileList = ref([])
 
 const rules = computed(() => ({
   batchId: [
@@ -328,6 +339,18 @@ const loadDetail = async () => {
     const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      // 处理实验室报告文件
+      if (res.data.labReportFile) {
+        const fileId = res.data.labReportFile
+        const fileName = res.data.labReportFileName || (t('research.dataCollection.laboratoryTest.form.labReportFile') + '.pdf')
+        labReportFileList.value = [{
+          name: fileName,
+          url: fileId,
+          dataId: fileId,
+          fileId: fileId,
+          uid: Date.now() + '-labReportFile'
+        }]
+      }
     } else {
       ElMessage.error(t('common.loadFailed'))
       goBack()
@@ -341,6 +364,75 @@ const loadDetail = async () => {
   }
 }
 
+// 文件上传处理
+const handleUploadFile = async (options) => {
+  const { file } = options
+  const uploadFormData = new FormData()
+  uploadFormData.append('file', file)
+
+  try {
+    const res = await uploadFile(uploadFormData)
+    if (res.code === 200 && res.data) {
+      const fileData = res.data
+      const dataId = fileData.id || fileData.dataId
+
+      console.log('Upload response:', fileData)
+
+      const fileObj = {
+        name: file.name,
+        uid: file.uid,
+        dataId: dataId,
+        fileId: dataId,
+        url: dataId
+      }
+
+      labReportFileList.value = [fileObj]
+      formData.labReportFile = dataId
+      formData.labReportFileName = file.name  // 保存原始文件名
+
+      ElMessage.success(t('common.uploadSuccess'))
+    } else {
+      ElMessage.error(res.msg || t('common.uploadFailed'))
+    }
+  } catch (error) {
+    console.error('Upload error:', error)
+    ElMessage.error(t('common.uploadFailed'))
+  }
+}
+
+// 文件移除处理
+const handleRemoveFile = () => {
+  labReportFileList.value = []
+  formData.labReportFile = ''
+  formData.labReportFileName = ''
+}
+
+// 文件预览处理
+const handlePreviewFile = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+    const pathToPreview = file.dataId || file.fileId || file.url
+
+    if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    } else if (pathToPreview) {
+      const res = await getFilePreviewUrl(pathToPreview)
+      previewUrl = res.code === 200 ? res.msg : ''
+    }
+
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
+  }
+}
+
 // 提交表单
 const handleSubmit = () => {
   formRef.value.validate(async (valid) => {
@@ -348,8 +440,19 @@ const handleSubmit = () => {
 
     loading.value = true
     try {
+      // 准备提交数据
+      const submitData = {
+        ...formData,
+        labReportFile: labReportFileList.value.length > 0
+          ? (labReportFileList.value[0].dataId || labReportFileList.value[0].fileId || '')
+          : '',
+        labReportFileName: labReportFileList.value.length > 0
+          ? labReportFileList.value[0].name
+          : ''
+      }
+
       const apiFunc = isEdit.value ? updateLabTest : addLabTest
-      const res = await apiFunc(formData)
+      const res = await apiFunc(submitData)
       if (res.code === 200) {
         ElMessage.success(t(isEdit.value ? 'common.updateSuccess' : 'common.addSuccess'))
         goBack()
@@ -603,5 +706,37 @@ onMounted(() => {
   .unit-hint {
     font-size: 12px;
   }
+}
+
+/* 文件上传组件样式 */
+.doc-upload {
+  width: 100%;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload-list) {
+  margin-top: 8px;
+}
+
+:deep(.el-upload-list__item) {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+:deep(.el-upload-list__item:hover) {
+  background-color: #f5f7fa;
+}
+
+:deep(.el-upload-list__item-name) {
+  color: #009A44;
+  text-decoration: none;
+}
+
+:deep(.el-upload-list__item-name:hover) {
+  color: #007a36;
+  text-decoration: underline;
 }
 </style>

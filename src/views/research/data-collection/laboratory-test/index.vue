@@ -440,11 +440,16 @@ onMounted(() => {
   gap: 12px;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .search-input {
   flex: 1;
   min-width: 200px;
+}
+
+.search-section .el-button {
+  flex-shrink: 0;
 }
 
 /* 表格 */
