@@ -54,5 +54,6 @@ export default {
     teff: 'Teff',
     barley: 'Barley',
     pulses: 'Pulses',
-  }
+  },
+  batchDelete: 'Batch Delete'
 }

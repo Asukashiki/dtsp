@@ -54,5 +54,6 @@ export default {
       teff: '苔麸',
       barley: '大麦',
       pulses: '豆类',
-    }
+    },
+    batchDelete: '批量删除'
   }
