@@ -33,6 +33,9 @@ app.use(i18n)
 
 // 获取当前语言设置并应用到 Element Plus
 const localeStore = useLocaleStore()
+if(!localeStore.defaultLocale){
+  localeStore.setLocale('en-US')
+}
 const elementLocale = localeStore.currentLocale === 'zh-CN' ? zhCn : enUs
 app.use(ElementPlus, { locale: elementLocale })
 

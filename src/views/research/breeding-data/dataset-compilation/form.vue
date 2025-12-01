@@ -11,7 +11,7 @@
         </div>
         <div class="header-center">
           <h1 class="page-title">
-            {{ isEdit ? $t('research.datasetCompilation.actions.edit') : $t('research.datasetCompilation.actions.add') }}
+                        {{ isEdit ? $t('research.datasetCompilation.edit') : $t('research.datasetCompilation.add') }}
           </h1>
         </div>
         <div class="header-right"></div>
@@ -87,7 +87,7 @@
         <div v-if="isEdit" class="form-section">
           <div class="section-title">
             <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetCompilation.form.dataStatistics') }}
+                        {{ $t('research.datasetCompilation.form.statisticsInfo') }}
           </div>
 
           <div class="statistics-grid">
@@ -96,7 +96,7 @@
                 <i class="ri-flask-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.trialCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.trialCount') }}</div>
                 <div class="stat-value">{{ formData.trialCount || 0 }}</div>
               </div>
             </div>
@@ -106,7 +106,7 @@
                 <i class="ri-plant-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.fieldDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.fieldDataCount') }}</div>
                 <div class="stat-value">{{ formData.fieldDataCount || 0 }}</div>
               </div>
             </div>
@@ -116,7 +116,7 @@
                 <i class="ri-temp-hot-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.envDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.envDataCount') }}</div>
                 <div class="stat-value">{{ formData.envDataCount || 0 }}</div>
               </div>
             </div>
@@ -126,7 +126,7 @@
                 <i class="ri-test-tube-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.labTestCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.labTestCount') }}</div>
                 <div class="stat-value">{{ formData.labTestCount || 0 }}</div>
               </div>
             </div>
@@ -136,7 +136,7 @@
                 <i class="ri-bar-chart-box-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.columns.yieldDataCount') }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.yieldDataCount') }}</div>
                 <div class="stat-value">{{ formData.yieldDataCount || 0 }}</div>
               </div>
             </div>

@@ -88,7 +88,11 @@
           </div>
           <div class="info-item full-width">
             <span class="label">{{ $t('research.breedingLicense.form.certificateFile') }}</span>
-            <span class="value">{{ licenseDetail.certificateFile || '-' }}</span>
+            <span v-if="licenseDetail.certificateFile" class="value file-link" @click="handlePreviewFile(licenseDetail.certificateFile)">
+              <i class="ri-file-pdf-line"></i>
+              {{ licenseDetail.certificateFileName || $t('research.breedingLicense.form.certificateFile') }}
+            </span>
+            <span v-else class="value">-</span>
           </div>
           <div class="info-item full-width" v-if="licenseDetail.remark">
             <span class="label">{{ $t('research.breedingLicense.form.remark') }}</span>
@@ -180,6 +184,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLicenseById } from '@/api/breedingLicense'
+import { getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
@@ -235,6 +240,23 @@ const fetchLicenseDetail = async () => {
 // Handle Back
 const handleBack = () => {
   router.back()
+}
+
+// Handle Preview File
+const handlePreviewFile = async (fileId) => {
+  if (!fileId) return
+
+  try {
+    const res = await getFilePreviewUrl(fileId)
+    if (res.code === 200 && res.msg) {
+      window.open(res.msg, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
+  }
 }
 
 // Handle Edit
@@ -383,6 +405,25 @@ onMounted(() => {
   line-height: 1.6;
   color: #606266;
   overflow-x: auto;
+}
+
+/* 文件链接样式 */
+.file-link {
+  color: #009A44 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+}
+
+.file-link:hover {
+  color: #007a36 !important;
+  text-decoration: underline;
+}
+
+.file-link i {
+  font-size: 16px;
 }
 
 /* Responsive */

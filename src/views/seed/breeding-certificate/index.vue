@@ -417,8 +417,10 @@ const handleView = (row) => {
 // 打印证书
 const handlePrint = (row) => {
   // 在新窗口打开打印页面（独立布局，不包含侧边栏和导航）
-  const printUrl = `${window.location.origin}/#/print/seed/breeding-certification/${row.dataId}`
-  window.open(printUrl, '_blank', 'width=900,height=800')
+  const isDev = import.meta.env.DEV
+  const printUrlDev = `${window.location.origin}/#/print/seed/breeding-certification/${row.dataId}`
+  const printUrl = `${window.location.origin}${import.meta.env.VITE_APP_AGRICULTURE_BASE_URL}/#/print/seed/breeding-certification/${row.dataId}`
+  window.open(isDev?printUrlDev:printUrl, '_blank', 'width=900,height=800')
 }
 
 // 初始化
