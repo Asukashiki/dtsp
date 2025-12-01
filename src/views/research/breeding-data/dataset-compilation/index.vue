@@ -126,7 +126,7 @@
                         {{ $t('common.view') }}
                       </el-button>
                       <el-button
-                        v-if="row.datasetStatus === 'draft'"
+                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
                         link
                         type="primary"
                         @click="handleEdit(row)"
@@ -135,7 +135,7 @@
                         {{ $t('common.edit') }}
                       </el-button>
                       <el-button
-                        v-if="row.datasetStatus === 'draft'"
+                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
                         link
                         type="success"
                         @click="handleSubmit(row)"
@@ -144,7 +144,7 @@
                         {{ $t('research.datasetCompilation.actions.submit') }}
                       </el-button>
                       <el-button
-                        v-if="row.datasetStatus === 'draft'"
+                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
                         link
                         type="danger"
                         @click="handleDelete(row)"
@@ -217,11 +217,11 @@
                   <el-button type="primary" size="small" @click="handleView(item)">
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button v-if="item.datasetStatus === 'draft'" size="small" @click="handleEdit(item)">
+                  <el-button v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'" size="small" @click="handleEdit(item)">
                     {{ $t('common.edit') }}
                   </el-button>
                   <el-button
-                    v-if="item.datasetStatus === 'draft'"
+                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
                     type="success"
                     size="small"
                     @click="handleSubmit(item)"
@@ -229,7 +229,7 @@
                     {{ $t('research.datasetCompilation.actions.submit') }}
                   </el-button>
                   <el-button
-                    v-if="item.datasetStatus === 'draft'"
+                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
                     type="danger"
                     size="small"
                     @click="handleDelete(item)"

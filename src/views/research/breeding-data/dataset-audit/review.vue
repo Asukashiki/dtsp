@@ -133,7 +133,7 @@
         </div>
 
         <!-- 审核信息 (已审核时显示) -->
-        <div v-if="detailData.auditTime" class="detail-section">
+        <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="detail-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('research.datasetAudit.form.auditInfo') }}
@@ -147,7 +147,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.auditTime }}</span>
+              <span class="value">{{ detailData.auditTime || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.auditorName') }}:</span>
@@ -161,7 +161,7 @@
         </div>
 
         <!-- 审核表单 (待审核时显示) -->
-        <div v-if="!detailData.auditTime" class="detail-section audit-form-section">
+        <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="detail-section audit-form-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('research.datasetAudit.form.auditInfo') }}

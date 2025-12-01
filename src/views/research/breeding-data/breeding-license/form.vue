@@ -284,8 +284,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLicenseById, addLicense, updateLicense } from '@/api/breedingLicense'
-import { getBatchList } from '@/api/breeding'
-import { getDatasetList } from '@/api/datasetCompilation'
+import { getDatasetList } from '@/api/dataset'
 
 const router = useRouter()
 const route = useRoute()
@@ -394,12 +393,29 @@ const formRules = computed(() => ({
   ]
 }))
 
-// Fetch Batch List
+// Fetch Batch List (从已审核通过的数据集中获取批次信息)
 const fetchBatchList = async () => {
   try {
-    const res = await getBatchList({ pageNum: 1, pageSize: 1000 })
+    const res = await getDatasetList({
+      pageNum: 1,
+      pageSize: 1000,
+      datasetStatus: 'approved' // 只获取审核通过的数据集
+    })
     if (res.code === 200) {
-      batchList.value = res.data.list || []
+      const datasets = res.data?.list || res.data || []
+      // 从已审核通过的数据集中提取唯一的批次信息
+      const batchMap = new Map()
+      datasets.forEach(dataset => {
+        if (dataset.batchId && !batchMap.has(dataset.batchId)) {
+          batchMap.set(dataset.batchId, {
+            id: dataset.batchId,
+            batchName: dataset.batchName || dataset.batchId,
+            cropType: dataset.cropType,
+            varietyName: dataset.varietyName
+          })
+        }
+      })
+      batchList.value = Array.from(batchMap.values())
     }
   } catch (error) {
     console.error('Failed to fetch batch list:', error)
@@ -437,6 +453,10 @@ const handleDatasetChange = (datasetId) => {
   const dataset = datasetList.value.find(d => d.id === datasetId)
   if (dataset) {
     formData.datasetCode = dataset.datasetCode
+    formData.batchId = dataset.batchId
+    formData.batchName = dataset.batchName
+    formData.cropType = dataset.cropType
+    formData.varietyName = dataset.varietyName
   }
 }
 
@@ -482,13 +502,12 @@ const handleSubmit = async () => {
       )
       router.back()
     } else {
+      console.log('res',res)
       ElMessage.error(res.msg || t('common.submitFailed'))
     }
   } catch (error) {
-    if (error !== false) {
-      console.error('Failed to submit:', error)
+    console.log('error',error)
       ElMessage.error(t('common.submitFailed'))
-    }
   } finally {
     submitting.value = false
   }

@@ -58,7 +58,7 @@ export const addLicense = (data) => {
 export const updateLicense = (data) => {
   return request({
     url: '/seed/license/update',
-    method: 'put',
+    method: 'post',
     data
   })
 }
@@ -71,7 +71,7 @@ export const updateLicense = (data) => {
 export const deleteLicense = (ids) => {
   return request({
     url: '/seed/license/delete',
-    method: 'delete',
+    method: 'post',
     data: ids
   })
 }
