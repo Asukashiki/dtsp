@@ -1143,15 +1143,32 @@ export default {
           },
 
           rules: {
-            oseIdRequired: 'Please select OSE',
-            timeRequired: 'Please select distribution time',
-            peopleRequired: 'Please enter distribution operator name',
-            organRequired: 'Please enter seed organization name',
+            oseId: 'Please select OSE',
+            time: 'Please select distribution time',
+            people: 'Please enter distribution operator name',
+            organ: 'Please enter seed organization name',
             detailListRequired: 'Please add at least one distribution detail',
-            breedSeedProduceBatchIdRequired: 'Please select production batch',
-            distributeQuantityRequired: 'Please enter distribution quantity',
+            breedSeedProduceBatchId: 'Please select production batch',
+            distributeQuantity: 'Please enter distribution quantity',
             distributeQuantityMin: 'Distribution quantity must be greater than 0',
             distributeQuantityMax: 'Distribution quantity cannot exceed production batch remaining quantity',
+          },
+
+          // Detail related
+          addDetail: 'Add Detail',
+          detailIndex: 'Detail {index}',
+          remaining: 'Remaining',
+          maxQuantity: 'Maximum Distributable Quantity',
+          noDetail: 'No distribution details available',
+
+          // Detail table columns
+          detailColumns: {
+            varietyName: 'Variety Name',
+            cropType: 'Crop Type',
+            breedSeedProduceBatchId: 'Production Batch ID',
+            distributeQuantity: 'Distribution Quantity (kg)',
+            produceBatchRemaining: 'Batch Remaining Quantity (kg)',
+            createTime: 'Created Time',
           },
 
           columns: {
@@ -1168,6 +1185,8 @@ export default {
 
           status: {
             distributed: 'Distributed',
+            已分发: 'Distributed',
+            DISTRIBUTED: 'Distributed',
           },
 
           actions: {

@@ -109,7 +109,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <el-tag type="success" size="small">{{ row.distributeStatus }}</el-tag>
+                <el-tag type="success" size="small">{{ $t(`research.breeding.seed.distribution.status.${row.distributeStatus}`) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column
@@ -152,7 +152,7 @@
             >
               <div class="card-header">
                 <el-tag type="success" size="small">{{ item.oseName }}</el-tag>
-                <el-tag type="warning" size="small">{{ item.distributeStatus }}</el-tag>
+                <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.distribution.status.${item.distributeStatus}`) }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.organ }}</h3>
               <div class="card-info">

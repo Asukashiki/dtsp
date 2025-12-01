@@ -257,11 +257,16 @@ const totalReceiveQuantity = computed(() => {
 
 const loadData = async () => {
   loading.value = true
+  console.log(111+localStorage);
+  console.log(111+localStorage.get(user));
+  console.log(111+localStorage.get(user).ORGANCODE);
+
   try {
     const params = {
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      receiveStatus: filterStatus.value || undefined
+      receiveStatus: filterStatus.value || undefined,
+      oseId: localStorage.get(user).ORGANCODE
     }
     const res = await getOseReceiveConfirmList(params)
     if (res.code === 200) {

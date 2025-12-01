@@ -1025,6 +1025,8 @@ export default {
         // 分发状态
         status: {
           distributed: '已分发',
+          已分发: '已分发',
+          DISTRIBUTED: '已分发',
         },
 
         // 操作
