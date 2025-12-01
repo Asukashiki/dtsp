@@ -257,16 +257,23 @@ const totalReceiveQuantity = computed(() => {
 
 const loadData = async () => {
   loading.value = true
-  console.log(111+localStorage);
-  console.log(111+localStorage.get(user));
-  console.log(111+localStorage.get(user).ORGANCODE);
+  // 1. 从缓存获取 userInfo 字符串（根据实际存储位置选 localStorage/sessionStorage）
+  const userInfoStr = localStorage.getItem('userInfo')
+  // 若存储在 sessionStorage，替换为：
+  // const userInfoStr = sessionStorage.getItem('userInfo')
+
+  // 2. 解析 JSON（若缓存不存在，给默认空对象避免报错）
+  const userInfo = userInfoStr ? JSON.parse(userInfoStr) : {}
+
+  // 3. 按层级提取 ORGAN_CODE（用可选链 ?. 防止属性缺失报错）
+  const targetCode = userInfo?.user?.ORGAN_CODE || ''
 
   try {
     const params = {
       pageNum: currentPage.value,
       pageSize: pageSize.value,
       receiveStatus: filterStatus.value || undefined,
-      oseId: localStorage.get(user).ORGANCODE
+      oseId: targetCode
     }
     const res = await getOseReceiveConfirmList(params)
     if (res.code === 200) {
