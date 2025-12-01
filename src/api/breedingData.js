@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '../utils/agricultureRequest'
 
 // ============ 育种批次管理 ============
 export function getBreedingBatchList(params) {
