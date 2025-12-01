@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 export const useLocaleStore = defineStore('locale', {
   state: () => ({
     currentLocale: localStorage.getItem('locale') || 'zh-CN',
+    defaultLocale: localStorage.getItem('locale') || null
   }),
 
   getters: {
@@ -22,6 +23,7 @@ export const useLocaleStore = defineStore('locale', {
     setLocale(locale) {
       this.currentLocale = locale
       localStorage.setItem('locale', locale)
+      localStorage.setItem('app_lang', locale === 'zh-CN'?'zh':'en')
     },
 
     toggleLocale() {
