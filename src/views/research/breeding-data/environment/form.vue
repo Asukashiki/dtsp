@@ -144,7 +144,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentDataInfo, addEnvironmentData, editEnvironmentData, getBatchOptions, getTrialOptions, getPlotOptions } from '@/api/breedingData'
 
-const route = useRouter()
+const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 

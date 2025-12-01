@@ -256,12 +256,13 @@ const batchInfo = ref(null)
 
 // 作物类型映射
 const cropTypeMap = computed(() => ({
-  'WHEAT': t('research.breeding.cropType.wheat'),
-  'CORN': t('research.breeding.cropType.corn'),
-  'RICE': t('research.breeding.cropType.rice'),
-  'SOYBEAN': t('research.breeding.cropType.soybean'),
-  'COTTON': t('research.breeding.cropType.cotton')
+  'wheat': t('research.breeding.cropType.wheat'),
+  'corn': t('research.breeding.cropType.corn'),
+  'rice': t('research.breeding.cropType.rice'),
+  'soybean': t('research.breeding.cropType.soybean'),
+  'cotton': t('research.breeding.cropType.cotton')
 }))
+
 
 // 繁殖级别映射
 const breedingLevelMap = computed(() => ({
