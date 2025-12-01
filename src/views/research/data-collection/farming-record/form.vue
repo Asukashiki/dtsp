@@ -37,34 +37,52 @@
           <el-row :gutter="24">
             <el-col :span="12">
               <el-form-item
-                :label="$t('research.dataCollection.farmingRecord.form.managementPractice')"
+                label="育种批次"
+                prop="batchId"
+              >
+                <el-select
+                  v-model="formData.batchId"
+                  placeholder="请选择育种批次"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="batch in batchOptions"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                label="试验"
+                prop="trialId"
+              >
+                <el-input
+                  v-model="formData.trialId"
+                  placeholder="请输入试验ID"
+                />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                label="操作类型"
                 prop="managementPractice"
               >
                 <el-select
                   v-model="formData.managementPractice"
-                  :placeholder="$t('research.dataCollection.farmingRecord.placeholder.managementPractice')"
+                  placeholder="请选择操作类型"
                   style="width: 100%"
                 >
-                  <el-option
-                    :label="$t('research.dataCollection.farmingRecord.managementPractice.irrigation')"
-                    value="irrigation"
-                  />
-                  <el-option
-                    :label="$t('research.dataCollection.farmingRecord.managementPractice.fertilization')"
-                    value="fertilization"
-                  />
-                  <el-option
-                    :label="$t('research.dataCollection.farmingRecord.managementPractice.weeding')"
-                    value="weeding"
-                  />
-                  <el-option
-                    :label="$t('research.dataCollection.farmingRecord.managementPractice.pestControl')"
-                    value="pestControl"
-                  />
-                  <el-option
-                    :label="$t('research.dataCollection.farmingRecord.managementPractice.other')"
-                    value="other"
-                  />
+                  <el-option label="Planting" value="planting" />
+                  <el-option label="Fertilization" value="fertilization" />
+                  <el-option label="Irrigation" value="irrigation" />
+                  <el-option label="Weeding" value="weeding" />
+                  <el-option label="Pest Control" value="pest.control" />
+                  <el-option label="Harvesting" value="harvesting" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -234,6 +252,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmingRecordDetail, addFarmingRecord, editFarmingRecord } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -251,12 +270,15 @@ window.addEventListener('resize', () => {
 
 const formRef = ref()
 const submitting = ref(false)
+const batchOptions = ref([])
 
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
 
 // 表单数据
 const formData = reactive({
+  batchId: '',
+  trialId: '',
   managementPractice: '',
   fertilizerType: '',
   fertilizerRateKg: null,
@@ -271,6 +293,12 @@ const formData = reactive({
 
 // 表单验证规则
 const rules = computed(() => ({
+  batchId: [
+    { required: true, message: '请选择育种批次', trigger: 'change' }
+  ],
+  trialId: [
+    { required: true, message: '请输入试验ID', trigger: 'blur' }
+  ],
   managementPractice: [
     { required: true, message: t('research.dataCollection.farmingRecord.rules.managementPracticeRequired'), trigger: 'change' }
   ],
@@ -284,6 +312,18 @@ const rules = computed(() => ({
     { type: 'number', message: t('research.dataCollection.farmingRecord.rules.irrigationFrequencyFormat'), trigger: 'blur' }
   ]
 }))
+
+// 加载育种批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
 
 // 加载详情数据
 const loadDetail = async () => {
@@ -336,6 +376,7 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
+  loadBatchOptions()
   if (isEdit.value) {
     loadDetail()
   }

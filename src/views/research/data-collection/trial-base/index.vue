@@ -29,6 +29,22 @@
           </el-input>
 
           <el-select
+            v-model="selectedBatch"
+            :placeholder="$t('research.dataCollection.trialBase.filterByBatch')"
+            class="batch-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('research.dataCollection.trialBase.allBatch')" value="" />
+            <el-option
+              v-for="batch in batchOptions"
+              :key="batch.batchId"
+              :label="batch.batchName"
+              :value="batch.batchId"
+            />
+          </el-select>
+
+          <el-select
             v-model="selectedCrop"
             :placeholder="$t('research.dataCollection.trialBase.filterByCrop')"
             class="type-filter"
@@ -36,10 +52,11 @@
             @change="handleSearch"
           >
             <el-option :label="$t('research.dataCollection.trialBase.allCrops')" value="" />
-            <el-option label="Wheat" value="wheat" />
-            <el-option label="Maize" value="maize" />
-            <el-option label="Barley" value="barley" />
-            <el-option label="Teff" value="teff" />
+            <el-option label="Wheat" value="WHEAT" />
+            <el-option label="Corn" value="CORN" />
+            <el-option label="Rice" value="RICE" />
+            <el-option label="Soybean" value="SOYBEAN" />
+            <el-option label="Cotton" value="COTTON" />
           </el-select>
         </div>
 
@@ -221,14 +238,17 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBaseList, deleteTrialBase } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const searchKeyword = ref('')
+const selectedBatch = ref('')
 const selectedCrop = ref('')
 const loading = ref(false)
 const tableData = ref([])
+const batchOptions = ref([])
 
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
@@ -260,9 +280,21 @@ const handleSearch = () => {
 
 const handleReset = () => {
   searchKeyword.value = ''
+  selectedBatch.value = ''
   selectedCrop.value = ''
   pagination.page = 1
   loadData()
+}
+
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200 || res.data) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
 }
 
 const handleAdd = () => {
@@ -307,6 +339,7 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  loadBatchOptions()
   loadData()
 })
 </script>
@@ -377,19 +410,19 @@ onMounted(() => {
 }
 
 .search-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
   margin-bottom: 12px;
 }
 
 .search-input {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
+.batch-filter,
 .type-filter {
-  width: 200px;
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .action-row {
@@ -555,10 +588,7 @@ onMounted(() => {
   }
 
   .search-row {
-    flex-direction: column;
-  }
-  .type-filter {
-    width: 100%;
+    grid-template-columns: 1fr;
   }
   .action-row {
     flex-direction: column;

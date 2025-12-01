@@ -28,10 +28,10 @@
           <div class="card-body">
             <div class="search-section">
               <el-select v-model="queryParams.batchId" :placeholder="$t('research.breedingData.environment.placeholder.batchId')" clearable class="filter-select" @change="handleBatchChange">
-                <el-option v-for="item in batchOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
               </el-select>
               <el-select v-model="queryParams.trialId" :placeholder="$t('research.breedingData.environment.placeholder.trialId')" clearable class="filter-select" @change="handleQuery">
-                <el-option v-for="item in trialOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
               </el-select>
               <el-select v-model="queryParams.dataType" :placeholder="$t('research.breedingData.environment.placeholder.dataType')" clearable class="filter-select" @change="handleQuery">
                 <el-option label="土壤数据" value="soil" />
@@ -210,5 +210,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 </style>

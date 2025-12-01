@@ -39,7 +39,7 @@
             <div class="search-section">
               <el-input
                 v-model="queryParams.batchId"
-                :placeholder="$t('research.breedingData.batch.placeholder.batchId')"
+                :placeholder="$t('research.breedingData.batch.columns.batchId')"
                 clearable
                 class="search-input"
                 @change="handleQuery"
@@ -279,5 +279,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 </style>

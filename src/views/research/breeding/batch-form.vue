@@ -27,11 +27,11 @@
           <div class="form-grid">
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
               <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
-                <el-option :label="$t('research.breeding.breedingBatch.cropType.wheat')" value="WHEAT" />
-                <el-option :label="$t('research.breeding.breedingBatch.cropType.corn')" value="CORN" />
-                <el-option :label="$t('research.breeding.breedingBatch.cropType.rice')" value="RICE" />
-                <el-option :label="$t('research.breeding.breedingBatch.cropType.soybean')" value="SOYBEAN" />
-                <el-option :label="$t('research.breeding.breedingBatch.cropType.cotton')" value="COTTON" />
+                <el-option label="Wheat" value="WHEAT" />
+                <el-option label="Corn" value="CORN" />
+                <el-option label="Rice" value="RICE" />
+                <el-option label="Soybean" value="SOYBEAN" />
+                <el-option label="Cotton" value="COTTON" />
               </el-select>
             </el-form-item>
 

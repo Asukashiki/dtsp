@@ -105,5 +105,5 @@ onMounted(() => getInfo())
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 </style>

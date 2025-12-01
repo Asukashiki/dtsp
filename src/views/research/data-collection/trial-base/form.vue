@@ -47,6 +47,26 @@
 
             <el-col :span="12" :xs="24">
               <el-form-item
+                :label="$t('research.dataCollection.trialBase.form.breedingBatch')"
+                prop="breedingBatchId"
+              >
+                <el-select
+                  v-model="formData.breedingBatchId"
+                  :placeholder="$t('research.dataCollection.trialBase.placeholder.breedingBatch')"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="batch in batchOptions"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12" :xs="24">
+              <el-form-item
                 :label="$t('research.dataCollection.trialBase.form.cropType')"
                 prop="cropType"
               >
@@ -55,11 +75,11 @@
                   :placeholder="$t('research.dataCollection.trialBase.placeholder.cropType')"
                   style="width: 100%"
                 >
-                  <el-option label="Wheat" value="wheat" />
-                  <el-option label="Maize" value="maize" />
-                  <el-option label="Barley" value="barley" />
-                  <el-option label="Teff" value="teff" />
-                  <el-option label="Sorghum" value="sorghum" />
+                  <el-option label="Wheat" value="WHEAT" />
+                  <el-option label="Corn" value="CORN" />
+                  <el-option label="Rice" value="RICE" />
+                  <el-option label="Soybean" value="SOYBEAN" />
+                  <el-option label="Cotton" value="COTTON" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -139,8 +159,6 @@
                   <el-option label="Summer" value="summer" />
                   <el-option label="Autumn" value="autumn" />
                   <el-option label="Winter" value="winter" />
-                  <el-option label="Rainy Season" value="rainy" />
-                  <el-option label="Dry Season" value="dry" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -264,6 +282,26 @@
                 />
               </el-form-item>
             </el-col>
+
+            <el-col :span="12" :xs="24">
+              <el-form-item
+                :label="$t('research.dataCollection.trialBase.form.relatedPlot')"
+                prop="groundId"
+              >
+                <el-select
+                  v-model="formData.groundId"
+                  :placeholder="$t('research.dataCollection.trialBase.placeholder.relatedPlot')"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="plot in plotOptions"
+                    :key="plot.groundId"
+                    :label="plot.trialFieldName"
+                    :value="plot.groundId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </div>
 
@@ -290,6 +328,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getTrialBaseDetail, addTrialBase, editTrialBase } from '@/api/breeding'
+import { getBreedingBatchOptions, getPlotOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -305,11 +344,14 @@ window.addEventListener('resize', () => {
 
 const formRef = ref()
 const submitting = ref(false)
+const batchOptions = ref([])
+const plotOptions = ref([])
 
 const isEdit = computed(() => !!route.params.trialId)
 
 const formData = reactive({
   trialId: '',
+  breedingBatchId: '',
   cropType: '',
   varietyName: '',
   researchCenterId: '',
@@ -325,7 +367,8 @@ const formData = reactive({
   startDate: '',
   activityCode: '',
   kpiCode: '',
-  season: ''
+  season: '',
+  groundId: ''
 })
 
 const rules = computed(() => ({
@@ -414,7 +457,31 @@ const goBack = () => {
   router.back()
 }
 
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200 || res.data) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
+const loadPlotOptions = async () => {
+  try {
+    const res = await getPlotOptions()
+    if (res.code === 200 || res.data) {
+      plotOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load plot options:', error)
+  }
+}
+
 onMounted(() => {
+  loadBatchOptions()
+  loadPlotOptions()
   if (isEdit.value) {
     loadDetail()
   } else {

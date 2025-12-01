@@ -18,6 +18,21 @@
       <!-- 搜索和筛选栏 -->
       <div class="search-bar">
         <div class="search-row">
+          <el-select
+            v-model="selectedBatchId"
+            placeholder="请选择育种批次"
+            class="batch-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option
+              v-for="batch in batchOptions"
+              :key="batch.batchId"
+              :label="batch.batchName"
+              :value="batch.batchId"
+            />
+          </el-select>
+
           <el-input
             v-model="searchKeyword"
             :placeholder="$t('research.dataCollection.farmingRecord.searchPlaceholder')"
@@ -33,16 +48,17 @@
 
           <el-select
             v-model="selectedPractice"
-            :placeholder="$t('research.dataCollection.farmingRecord.filterByPractice')"
+            placeholder="请选择操作类型"
             class="practice-filter"
+            clearable
             @change="handleSearch"
           >
-            <el-option :label="$t('research.dataCollection.farmingRecord.allPractices')" value="" />
-            <el-option :label="$t('research.dataCollection.farmingRecord.managementPractice.irrigation')" value="irrigation" />
-            <el-option :label="$t('research.dataCollection.farmingRecord.managementPractice.fertilization')" value="fertilization" />
-            <el-option :label="$t('research.dataCollection.farmingRecord.managementPractice.weeding')" value="weeding" />
-            <el-option :label="$t('research.dataCollection.farmingRecord.managementPractice.pestControl')" value="pestControl" />
-            <el-option :label="$t('research.dataCollection.farmingRecord.managementPractice.other')" value="other" />
+            <el-option label="Planting" value="planting" />
+            <el-option label="Fertilization" value="fertilization" />
+            <el-option label="Irrigation" value="irrigation" />
+            <el-option label="Weeding" value="weeding" />
+            <el-option label="Pest Control" value="pest.control" />
+            <el-option label="Harvesting" value="harvesting" />
           </el-select>
         </div>
 
@@ -239,22 +255,37 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmingRecordList, deleteFarmingRecord } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const searchKeyword = ref('')
+const selectedBatchId = ref('')
 const selectedPractice = ref('')
+const batchOptions = ref([])
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
     const params = {
+      batchId: selectedBatchId.value,
       managementPractice: selectedPractice.value,
       pageNum: pagination.page,
       pageSize: pagination.pageSize
@@ -278,6 +309,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   searchKeyword.value = ''
+  selectedBatchId.value = ''
   selectedPractice.value = ''
   pagination.page = 1
   loadData()
@@ -326,7 +358,10 @@ const handlePageChange = () => {
   loadData()
 }
 
-onMounted(() => loadData())
+onMounted(() => {
+  loadBatchOptions()
+  loadData()
+})
 </script>
 
 <style scoped>
@@ -405,6 +440,11 @@ onMounted(() => loadData())
 .search-input {
   flex: 1;
   min-width: 0;
+}
+
+.batch-filter {
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .practice-filter {
@@ -579,6 +619,7 @@ onMounted(() => loadData())
     flex-direction: column;
   }
 
+  .batch-filter,
   .practice-filter {
     width: 100%;
   }

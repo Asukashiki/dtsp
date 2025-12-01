@@ -36,11 +36,11 @@
               @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allCrops')" value="" />
-            <el-option :label="$t('research.breeding.cropType.wheat')" value="WHEAT" />
-            <el-option :label="$t('research.breeding.cropType.corn')" value="CORN" />
-            <el-option :label="$t('research.breeding.cropType.rice')" value="RICE" />
-            <el-option :label="$t('research.breeding.cropType.soybean')" value="SOYBEAN" />
-            <el-option :label="$t('research.breeding.cropType.cotton')" value="COTTON" />
+            <el-option label="Wheat" value="WHEAT" />
+            <el-option label="Corn" value="CORN" />
+            <el-option label="Rice" value="RICE" />
+            <el-option label="Soybean" value="SOYBEAN" />
+            <el-option label="Cotton" value="COTTON" />
           </el-select>
 
           <el-select
