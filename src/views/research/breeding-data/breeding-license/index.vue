@@ -76,7 +76,6 @@
         :data="licenseList"
         v-loading="loading"
         stripe
-        border
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
@@ -137,7 +136,7 @@
         <el-table-column
           :label="$t('research.breedingLicense.columns.actions')"
           fixed="right"
-          width="200"
+          width="300"
           align="center"
         >
           <template #default="{ row }">

@@ -176,7 +176,7 @@
         </div>
 
         <!-- Variety Traits Section -->
-        <div class="form-section">
+        <!-- <div class="form-section">
           <h2 class="section-title">
             <i class="ri-plant-line"></i>
             {{ $t('research.breedingLicense.form.varietyTraits') }}
@@ -260,7 +260,7 @@
               :placeholder="$t('research.breedingLicense.placeholder.otherTraits')"
             />
           </el-form-item>
-        </div>
+        </div> -->
 
         <!-- Form Actions -->
         <div class="form-actions">

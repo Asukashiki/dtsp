@@ -92,19 +92,19 @@
         <el-table-column
           prop="labTestCount"
           :label="$t('research.datasetAudit.columns.labTestCount')"
-          width="100"
+          min-width="100"
           align="center"
         />
         <el-table-column
           prop="yieldDataCount"
           :label="$t('research.datasetAudit.columns.yieldDataCount')"
-          width="100"
+          min-width="100"
           align="center"
         />
         <el-table-column
           prop="datasetStatus"
           :label="$t('research.datasetAudit.columns.datasetStatus')"
-          width="110"
+          min-width="110"
           align="center"
         >
           <template #default="{ row }">
@@ -116,7 +116,7 @@
         <el-table-column
           prop="auditStatus"
           :label="$t('research.datasetAudit.columns.auditStatus')"
-          width="110"
+          min-width="110"
           align="center"
         >
           <template #default="{ row }">
@@ -128,11 +128,11 @@
         <el-table-column
           prop="submitTime"
           :label="$t('research.datasetAudit.columns.submitTime')"
-          width="160"
+          min-width="160"
         />
         <el-table-column
           :label="$t('research.datasetAudit.columns.actions')"
-          width="160"
+          width="200"
           fixed="right"
           align="center"
         >
