@@ -1,5 +1,9 @@
 // 菜单导航国际化文件
 export default {
+  systemName: '研究与开发管理系统',
+  systemDesc: '品种管理、育种管理及种子信息服务',
+  backToHome: '返回首页',
+  
   breedingDataManagement: '育种数据管理',
   propagationDataManagement: '繁殖数据管理',
   seedService: '种子信息服务',

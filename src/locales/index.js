@@ -43,5 +43,5 @@ Object.keys(languageFolders).forEach((key) => {
     }
   }
 })
-
+console.log('111111111111111', messages)
 export default messages
