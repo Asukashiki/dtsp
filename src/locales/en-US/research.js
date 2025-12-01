@@ -136,6 +136,10 @@ export default {
       seedDistribution: 'Breeder Seed Distribution Management',
       oseManagement: 'OSE Maintenance Management',
       oseReceiveConfirm: 'OSE Receive Confirmation',
+      datasetCompilation: 'Breeding Dataset Compilation',
+      datasetAudit: 'Breeding Dataset Audit',
+      breedingLicense: 'Breeding Licensing Data Entry',
+      licensingDataEntry: 'Breeding Licensing Data Entry',
       dataCollection: 'Data Collection',
       trialData: 'Trial Basic Data Collection',
       agronomicData: 'Agronomic Data Collection',
@@ -1907,6 +1911,235 @@ export default {
       },
     },
 
+    // Breeding Dataset Compilation
+    datasetCompilation: {
+      title: 'Breeding Dataset Compilation',
+      subtitle: 'Aggregate breeding batch data and submit for review',
+      list: 'Dataset List',
+      add: 'Add Dataset',
+      edit: 'Edit Dataset',
+      detail: 'Dataset Details',
+      delete: 'Delete Dataset',
+      deleteConfirm: 'Are you sure to delete this dataset?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      submitSuccess: 'Submitted successfully',
+      submitConfirm: 'Are you sure to submit this dataset?',
+
+      // Search and Filter
+      searchPlaceholder: 'Search batch ID, batch name, variety name',
+      filterByCrop: 'Filter by crop type',
+      filterByStatus: 'Filter by dataset status',
+      allCrops: 'All Crops',
+      allStatus: 'All Status',
+
+      // Dataset Status
+      status: {
+        draft: 'Draft',
+        submitted: 'Submitted',
+        reviewing: 'Reviewing',
+        approved: 'Approved',
+        rejected: 'Rejected',
+      },
+
+      // Form Fields
+      form: {
+        basicInfo: 'Basic Information',
+        datasetCode: 'Dataset Code',
+        batchId: 'Breeding Batch ID',
+        batchName: 'Breeding Batch Name',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        statisticsInfo: 'Data Statistics',
+        trialCount: 'Trial Records',
+        fieldDataCount: 'Field Data Records',
+        envDataCount: 'Environment Data Records',
+        labTestCount: 'Lab Test Records',
+        yieldDataCount: 'Yield Data Records',
+        datasetStatus: 'Dataset Status',
+        submitInfo: 'Submission Information',
+        submitTime: 'Submit Time',
+        submitBy: 'Submitted By',
+        submitByName: 'Submitter Name',
+        submitOrgName: 'Submit Organization',
+        operatorInfo: 'Operator Information',
+        createTime: 'Create Time',
+        createBy: 'Created By',
+        remark: 'Remark',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        batchId: 'Please enter breeding batch ID',
+        batchName: 'Please enter breeding batch name',
+        cropType: 'Please select crop type',
+        varietyName: 'Please enter variety name',
+        remark: 'Please enter remark (optional)',
+      },
+
+      // Form Validation
+      rules: {
+        batchIdRequired: 'Breeding batch ID is required',
+        batchNameRequired: 'Breeding batch name is required',
+        cropTypeRequired: 'Crop type is required',
+        varietyNameRequired: 'Variety name is required',
+      },
+
+      // List Columns
+      columns: {
+        datasetCode: 'Dataset Code',
+        batchId: 'Batch ID',
+        batchName: 'Batch Name',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        trialCount: 'Trials',
+        labTestCount: 'Tests',
+        yieldDataCount: 'Yields',
+        datasetStatus: 'Status',
+        submitTime: 'Submit Time',
+        createTime: 'Create Time',
+        actions: 'Actions',
+      },
+
+      // Action Buttons
+      actions: {
+        submit: 'Submit for Review',
+        statistics: 'Data Statistics',
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete',
+      },
+
+      // Messages
+      message: {
+        noLabTest: 'At least one lab test record is required to submit',
+        noYieldData: 'At least one yield data record is required to submit',
+        onlyDraftCanEdit: 'Only draft datasets can be edited',
+        onlyDraftCanDelete: 'Only draft datasets can be deleted',
+        onlyDraftCanSubmit: 'Only draft datasets can be submitted',
+        submitRequirement: 'Note: At least 1 lab test record and 1 yield data record are required to submit',
+        cannotEditApproved: 'This dataset has been approved and cannot be modified',
+      },
+    },
+
+    // Breeding Dataset Audit
+    datasetAudit: {
+      title: 'Breeding Dataset Audit',
+      subtitle: 'Review submitted datasets',
+      list: 'Audit List',
+      detail: 'Audit Details',
+      history: 'Audit History',
+      auditSuccess: 'Audit successful',
+      approveConfirm: 'Are you sure to approve this dataset?',
+      rejectConfirm: 'Are you sure to reject this dataset? Please provide rejection reason',
+
+      // Search and Filter
+      searchPlaceholder: 'Search dataset code, batch name, variety name',
+      filterByAuditStatus: 'Filter by audit status',
+      filterByDatasetStatus: 'Filter by dataset status',
+      allAuditStatus: 'All Audit Status',
+      allDatasetStatus: 'All Dataset Status',
+
+      // Audit Status
+      auditStatus: {
+        pending: 'Pending',
+        approved: 'Approved',
+        rejected: 'Rejected',
+      },
+
+      // Dataset Status
+      datasetStatus: {
+        submitted: 'Submitted',
+        reviewing: 'Reviewing',
+        approved: 'Approved',
+        rejected: 'Rejected',
+      },
+
+      // Form Fields
+      form: {
+        basicInfo: 'Dataset Basic Information',
+        dataStatistics: 'Data Statistics',
+        auditInfo: 'Audit Information',
+        submitInfo: 'Submit Information',
+        auditOpinion: 'Audit Opinion',
+        auditTime: 'Audit Time',
+        auditorName: 'Auditor',
+        auditorOrgName: 'Audit Organization',
+        submitTime: 'Submit Time',
+        submitterName: 'Submitter',
+        submitterOrgName: 'Submit Organization',
+        datasetCode: 'Dataset Code',
+        batchId: 'Breeding Batch ID',
+        batchName: 'Breeding Batch Name',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        datasetStatus: 'Dataset Status',
+        auditStatus: 'Audit Status',
+        createdTime: 'Created Time',
+        updatedTime: 'Updated Time',
+        createdBy: 'Created By',
+        submitBy: 'Submitted By',
+        submitOrg: 'Submit Organization',
+        auditBy: 'Audited By',
+        creationInfo: 'Creation Information',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        auditOpinion: 'Please enter audit opinion (required for rejection)',
+        selectAuditStatus: 'Please select audit status',
+        selectDatasetStatus: 'Please select dataset status',
+      },
+
+      // Form Validation
+      rules: {
+        auditOpinionRequired: 'Audit opinion is required for rejection',
+        auditStatusRequired: 'Please select audit status',
+      },
+
+      // List Columns
+      columns: {
+        datasetCode: 'Dataset Code',
+        batchName: 'Batch Name',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        trialCount: 'Trials',
+        fieldDataCount: 'Field Data',
+        envDataCount: 'Env Data',
+        labTestCount: 'Tests',
+        yieldDataCount: 'Yields',
+        datasetStatus: 'Dataset Status',
+        auditStatus: 'Audit Status',
+        submitTime: 'Submit Time',
+        submitterName: 'Submitter',
+        auditTime: 'Audit Time',
+        auditorName: 'Auditor',
+        createdTime: 'Created Time',
+        updatedTime: 'Updated Time',
+        actions: 'Actions',
+      },
+
+      // Action Buttons
+      actions: {
+        view: 'View',
+        approve: 'Approve',
+        reject: 'Reject',
+        audit: 'Audit',
+        viewHistory: 'View History',
+      },
+
+      // Messages
+      message: {
+        approveSuccess: 'Approved successfully',
+        rejectSuccess: 'Rejected successfully',
+        datasetCodeGenerated: 'Dataset code generated',
+        onlySubmittedCanAudit: 'Only submitted or reviewing datasets can be audited',
+        rejectOpinionRequired: 'Rejection reason is required when rejecting',
+        auditOpinionLabel: 'Audit Opinion',
+      },
+    },
+
     // Seed Promotion Information Management
     seedPromotion: {
       title: 'Seed Promotion Management',
@@ -3176,4 +3409,173 @@ export default {
       deleteSuccess: 'Deleted successfully',
     },
   },
-}
+      breedingLicense: {
+      title: 'Breeding License Data Entry',
+      subtitle: 'Enter breeding license information and variety traits data',
+      list: 'License List',
+      add: 'Add License',
+      edit: 'Edit License',
+      detail: 'License Detail',
+      viewDetail: 'View Detail',
+
+      // Search and Filter
+      searchPlaceholder: 'Search license number, batch name',
+      filterByStatus: 'Filter by License Status',
+      filterByApprovalDate: 'Filter by Approval Date',
+      allStatus: 'All Status',
+
+      // License Status
+      status: {
+        valid: 'Valid',
+        expired: 'Expired',
+        revoked: 'Revoked',
+      },
+
+      // Table Columns
+      columns: {
+        licenseNo: 'License No.',
+        batchName: 'Batch Name',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        approvalOrg: 'Approval Organization',
+        approvalDate: 'Approval Date',
+        validStartDate: 'Valid Start Date',
+        validEndDate: 'Valid End Date',
+        licenseStatus: 'License Status',
+        createTime: 'Created Time',
+        actions: 'Actions',
+      },
+
+      // Detail Page Section Titles
+      sections: {
+        basicInfo: 'Basic Information',
+        licenseInfo: 'License Information',
+        varietyTraits: 'Variety Traits',
+        yieldInfo: 'Yield Potential',
+        resistanceInfo: 'Resistance Information',
+        otherInfo: 'Other Information',
+        statistics: 'Data Statistics',
+      },
+
+      // Form Fields
+      form: {
+        // Basic Information
+        basicInfo: 'Basic Information',
+        batchId: 'Breeding Batch',
+        batchName: 'Batch Name',
+        datasetId: 'Dataset',
+        datasetCode: 'Dataset Code',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+
+        // License Information
+        licenseInfo: 'License Information',
+        licenseNo: 'License Number',
+        approvalOrg: 'Approval Organization',
+        approvalDate: 'Approval Date',
+        validStartDate: 'Valid Start Date',
+        validEndDate: 'Valid End Date',
+        certificateFile: 'Certificate File',
+        licenseStatus: 'License Status',
+        remark: 'Remark',
+
+        // Variety Traits
+        varietyTraits: 'Variety Traits',
+        minYieldPotential: 'Min Yield Potential (t/ha)',
+        maxYieldPotential: 'Max Yield Potential (t/ha)',
+        diseaseResistance: 'Disease Resistance (JSON)',
+        stressTolerance: 'Stress Tolerance (JSON)',
+        maturityDays: 'Maturity Days',
+        plantHeight: 'Plant Height (cm)',
+        grainQualityTraits: 'Grain Quality Traits',
+        otherTraits: 'Other Traits (JSON)',
+
+        // Operation Information
+        operationInfo: 'Operation Information',
+        createTime: 'Created Time',
+        createBy: 'Created By',
+        updateTime: 'Updated Time',
+        updateBy: 'Updated By',
+      },
+
+      // Form Placeholders
+      placeholder: {
+        batchId: 'Please select breeding batch',
+        datasetId: 'Please select dataset (optional)',
+        cropType: 'Please enter crop type',
+        varietyName: 'Please enter variety name',
+        licenseNo: 'Please enter license number',
+        approvalOrg: 'Please enter approval organization',
+        approvalDate: 'Please select approval date',
+        validStartDate: 'Please select valid start date',
+        validEndDate: 'Please select valid end date',
+        certificateFile: 'Please upload certificate file',
+        licenseStatus: 'Please select license status',
+        remark: 'Please enter remark (optional)',
+        minYieldPotential: 'Please enter minimum yield potential',
+        maxYieldPotential: 'Please enter maximum yield potential',
+        diseaseResistance: 'e.g.: {"rust":"high","blight":"medium"}',
+        stressTolerance: 'e.g.: {"drought":"high","heat":"medium"}',
+        maturityDays: 'Please enter maturity days',
+        plantHeight: 'Please enter plant height',
+        grainQualityTraits: 'Please enter grain quality traits',
+        otherTraits: 'e.g.: {"lodging_resistance":"good"}',
+      },
+
+      // Form Validation Rules
+      rules: {
+        batchIdRequired: 'Please select breeding batch',
+        cropTypeRequired: 'Please enter crop type',
+        varietyNameRequired: 'Please enter variety name',
+        licenseNoRequired: 'Please enter license number',
+        approvalOrgRequired: 'Please enter approval organization',
+        approvalDateRequired: 'Please select approval date',
+        validStartDateRequired: 'Please select valid start date',
+        validEndDateRequired: 'Please select valid end date',
+        licenseStatusRequired: 'Please select license status',
+        minYieldPotentialMin: 'Minimum yield potential must be greater than 0',
+        maxYieldPotentialMin: 'Maximum yield potential must be greater than 0',
+        maturityDaysMin: 'Maturity days must be greater than 0',
+        plantHeightMin: 'Plant height must be greater than 0',
+        jsonFormat: 'Please enter valid JSON format',
+      },
+
+      // Action Buttons
+      actions: {
+        add: 'Add License',
+        edit: 'Edit',
+        delete: 'Delete',
+        detail: 'View Detail',
+        backToList: 'Back to List',
+        submit: 'Submit',
+        cancel: 'Cancel',
+        search: 'Search',
+        reset: 'Reset',
+        upload: 'Upload File',
+      },
+
+      // Messages
+      message: {
+        addSuccess: 'License added successfully',
+        updateSuccess: 'License updated successfully',
+        deleteSuccess: 'License deleted successfully',
+        submitSuccess: 'Submitted successfully',
+        confirmDelete: 'Are you sure you want to delete the selected license(s)?',
+        selectAtLeastOne: 'Please select at least one record',
+        batchAlreadyHasLicense: 'This batch already has a license',
+        datasetNotApproved: 'Dataset has not been approved yet',
+        licenseNoExists: 'License number already exists',
+        loading: 'Loading...',
+        noData: 'No data',
+      },
+
+      // Statistics
+      statistics: {
+        totalLicenses: 'Total Licenses',
+        validLicenses: 'Valid Licenses',
+        expiredLicenses: 'Expired Licenses',
+        revokedLicenses: 'Revoked Licenses',
+      },
+    },
+  }
+
