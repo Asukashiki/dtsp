@@ -580,6 +580,7 @@ export default {
       toxinLevelPpm: '请输入毒素水平(选填)',
       seedHealthFindings: '请输入种子健康发现',
       chainResponsibility: '请输入溯源链接',
+      labReportFile: '点击上传实验室报告文件',
       testOrganization: '请输入检测机构(选填)',
       testerName: '请输入检测人员(选填)',
       remark: '请输入备注(选填)',

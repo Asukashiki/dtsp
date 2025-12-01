@@ -19,16 +19,32 @@
       <div class="search-bar">
         <div class="search-row">
           <el-select
-            v-model="selectedTopography"
-            :placeholder="$t('research.dataCollection.environmentSoil.filterByTopography')"
-            class="topography-filter"
+            v-model="selectedBatchId"
+            placeholder="请选择育种批次"
+            class="batch-filter"
+            clearable
             @change="handleSearch"
           >
-            <el-option :label="$t('research.dataCollection.environmentSoil.allTopography')" value="" />
-            <el-option :label="$t('research.dataCollection.environmentSoil.topography.plain')" value="plain" />
-            <el-option :label="$t('research.dataCollection.environmentSoil.topography.hill')" value="hill" />
-            <el-option :label="$t('research.dataCollection.environmentSoil.topography.mountain')" value="mountain" />
-            <el-option :label="$t('research.dataCollection.environmentSoil.topography.valley')" value="valley" />
+            <el-option
+              v-for="batch in batchOptions"
+              :key="batch.batchId"
+              :label="batch.batchName"
+              :value="batch.batchId"
+            />
+          </el-select>
+
+          <el-select
+            v-model="selectedDataType"
+            placeholder="请选择数据类型"
+            class="datatype-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option label="Temperature" value="temperature" />
+            <el-option label="Humidity" value="humidity" />
+            <el-option label="Rainfall" value="rainfall" />
+            <el-option label="Soil Moisture" value="soil.moisture" />
+            <el-option label="Light Intensity" value="light.intensity" />
           </el-select>
 
           <el-input
@@ -247,23 +263,38 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getEnvironmentSoilList, deleteEnvironmentSoil } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
-const selectedTopography = ref('')
+const selectedBatchId = ref('')
+const selectedDataType = ref('')
 const searchWaterSource = ref('')
+const batchOptions = ref([])
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
     const params = {
-      topography: selectedTopography.value,
+      batchId: selectedBatchId.value,
+      dataType: selectedDataType.value,
       waterSource: searchWaterSource.value,
       pageNum: pagination.page,
       pageSize: pagination.pageSize
@@ -286,7 +317,8 @@ const handleSearch = () => {
 }
 
 const handleReset = () => {
-  selectedTopography.value = ''
+  selectedBatchId.value = ''
+  selectedDataType.value = ''
   searchWaterSource.value = ''
   pagination.page = 1
   loadData()
@@ -335,7 +367,10 @@ const handlePageChange = () => {
   loadData()
 }
 
-onMounted(() => loadData())
+onMounted(() => {
+  loadBatchOptions()
+  loadData()
+})
 </script>
 
 <style scoped>
@@ -411,7 +446,12 @@ onMounted(() => loadData())
   margin-bottom: 12px;
 }
 
-.topography-filter {
+.batch-filter {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.datatype-filter {
   width: 180px;
   flex-shrink: 0;
 }
@@ -592,7 +632,8 @@ onMounted(() => loadData())
     flex-direction: column;
   }
 
-  .topography-filter {
+  .batch-filter,
+  .datatype-filter {
     width: 100%;
   }
 

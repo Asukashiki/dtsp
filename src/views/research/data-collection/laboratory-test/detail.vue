@@ -107,7 +107,11 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labReportFile') }}:</span>
-              <span class="value">{{ detailData.labReportFile || '-' }}</span>
+              <span v-if="detailData.labReportFile" class="value file-link" @click="handlePreviewFile(detailData.labReportFile)">
+                <i class="ri-file-pdf-line"></i>
+                {{ detailData.labReportFileName || $t('research.dataCollection.laboratoryTest.form.labReportFile') }}
+              </span>
+              <span v-else class="value">-</span>
             </div>
           </div>
         </div>
@@ -144,6 +148,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLabTestDetail } from '@/api/labTest'
+import { getFilePreviewUrl } from '@/api/file'
 
 const route = useRoute()
 const router = useRouter()
@@ -169,6 +174,23 @@ const loadDetail = async () => {
     goBack()
   } finally {
     loading.value = false
+  }
+}
+
+// 文件预览处理
+const handlePreviewFile = async (fileId) => {
+  if (!fileId) return
+
+  try {
+    const res = await getFilePreviewUrl(fileId)
+    if (res.code === 200 && res.msg) {
+      window.open(res.msg, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
   }
 }
 
@@ -295,6 +317,25 @@ onMounted(() => {
 .detail-item .value.highlight {
   color: #009A44;
   font-weight: 600;
+  font-size: 16px;
+}
+
+/* 文件链接样式 */
+.file-link {
+  color: #009A44 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+}
+
+.file-link:hover {
+  color: #007a36 !important;
+  text-decoration: underline;
+}
+
+.file-link i {
   font-size: 16px;
 }
 

@@ -525,6 +525,7 @@ onMounted(() => {
   gap: 12px;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .search-input {
@@ -533,7 +534,12 @@ onMounted(() => {
 }
 
 .search-select {
-  min-width: 150px;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.search-section .el-button {
+  flex-shrink: 0;
 }
 
 /* 表格 */

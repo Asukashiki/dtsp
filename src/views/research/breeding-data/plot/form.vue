@@ -29,15 +29,13 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.plot.form.batchId')" prop="batchId">
                     <el-select v-model="formData.batchId" :placeholder="$t('research.breedingData.plot.placeholder.batchId')" style="width: 100%" @change="handleBatchChange">
-                      <el-option v-for="item in batchOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.plot.form.trialId')" prop="trialId">
-                    <el-select v-model="formData.trialId" :placeholder="$t('research.breedingData.plot.placeholder.trialId')" style="width: 100%">
-                      <el-option v-for="item in trialOptions" :key="item.value" :label="item.label" :value="item.value" />
-                    </el-select>
+                    <el-input v-model="formData.trialId" :placeholder="$t('research.breedingData.plot.placeholder.trialId')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -315,17 +313,17 @@ const ecoZoneOptions = [
 ]
 
 const seasonOptions = [
-  { label: '春季', value: 'spring' },
-  { label: '夏季', value: 'summer' },
-  { label: '秋季', value: 'autumn' },
-  { label: '冬季', value: 'winter' }
+  { label: 'spring', value: 'spring' },
+  { label: 'summer', value: 'summer' },
+  { label: 'autumn', value: 'autumn' },
+  { label: 'winter', value: 'winter' }
 ]
 
 const sowingMethodOptions = [
-  { label: '条播', value: '条播' },
-  { label: '撒播', value: '撒播' },
-  { label: '点播', value: '点播' },
-  { label: '移栽', value: '移栽' }
+  { label: 'direct_seeding', value: 'direct_seeding' },
+  { label: 'transplanting', value: 'transplanting' },
+  { label: 'broadcasting', value: 'broadcasting' },
+  { label: 'drilling', value: 'drilling' }
 ]
 
 const loadBatchOptions = async () => {
@@ -413,7 +411,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 
 .form-actions {
   display: flex;

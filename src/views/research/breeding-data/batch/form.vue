@@ -33,7 +33,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.batchId')">
-                    <el-input v-model="formData.batchId" disabled :placeholder="$t('common.autoGenerate')" />
+                    <el-input v-model="formData.batchId" disabled :placeholder="$t('research.breedingData.batch.placeholder.batchId')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -268,7 +268,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 
 .form-actions {
   display: flex;

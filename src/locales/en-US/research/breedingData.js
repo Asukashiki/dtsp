@@ -36,6 +36,7 @@ export default {
     },
 
     placeholder: {
+      batchId: 'Auto-generated breeding batch ID',
       batchName: 'Please enter plan name',
       cropType: 'Please select crop type',
       varietyName: 'Please enter variety name',
@@ -82,9 +83,12 @@ export default {
       locationInfo: 'Location Information',
       codeInfo: 'Code Information',
       sowingInfo: 'Sowing Information',
+      groundId: 'Plot ID',
       trialFieldName: 'Trial Field Name',
       batchId: 'Breeding Batch',
       trialId: 'Trial',
+      cropType: 'Crop Type',
+      varietyName: 'Variety Name',
       researchCenterId: 'Research Center ID',
       programId: 'Program ID',
       subProgramId: 'Sub-Program ID',
@@ -105,10 +109,13 @@ export default {
     },
 
     placeholder: {
-      trialFieldName: 'Please enter trial field name',
-      batchId: 'Please select breeding batch',
-      trialId: 'Please select trial',
-      researchCenterId: 'Please enter research center ID',
+     groundId: 'Auto-generated',
+     trialFieldName: 'Please enter trial field name',
+     batchId: 'Please select breeding batch',
+     trialId: 'Please select trial',
+     cropType: 'Please select crop type',
+     varietyName: 'Please enter variety name',
+     researchCenterId: 'Please enter research center ID',
       programId: 'Please enter program ID',
       subProgramId: 'Please enter sub-program ID',
       researchFieldId: 'Please enter research field ID',
@@ -128,16 +135,27 @@ export default {
     },
 
     columns: {
-      trialFieldName: 'Trial Field Name',
-      batchId: 'Batch ID',
-      cropType: 'Crop Type',
-      varietyName: 'Variety Name',
-      gpsLocation: 'GPS Location',
-      season: 'Season',
-      sowingCount: 'Sowing Records',
-      createTime: 'Created Time',
-      actions: 'Actions',
+        groundId: 'Plot ID',
+        trialFieldName: 'Trial Field Name',
+        batchId: 'Batch ID',
+        trialId: 'Trial ID',
+        cropType: 'Crop Type',
+        varietyName: 'Variety Name',
+        gpsLocation: 'GPS Location',
+        season: 'Season',
+        sowingCount: 'Sowing Records',
+        createTime: 'Created Time',
+        actions: 'Actions',
     },
+
+      // Sowing information sub-object
+      sowing: {
+          seedQuantity: 'Seed Quantity (kg)',
+          sowingMethod: 'Sowing Method',
+          sowingTime: 'Sowing Time',
+      },
+
+      addSowing: 'Add Sowing Information',
 
     deleteConfirm: 'Are you sure to delete this plot information?',
     deleteSuccess: 'Deleted successfully',
@@ -160,6 +178,8 @@ export default {
       locationInfo: 'Location Information',
       codeInfo: 'Code Information',
       plotInfo: 'Associated Plots',
+      plotSelection: 'Plot Selection',
+      trialId: 'Trial ID',
       trialName: 'Trial Name',
       batchId: 'Breeding Batch',
       cropType: 'Crop Type',
@@ -205,6 +225,7 @@ export default {
     },
 
     columns: {
+      trialId: 'Trial ID',
       trialName: 'Trial Name',
       batchId: 'Batch ID',
       cropType: 'Crop Type',
@@ -235,7 +256,10 @@ export default {
       basicInfo: 'Basic Information',
       growthInfo: 'Growth Information',
       phenologyInfo: 'Phenology Information',
+      morphological: 'Morphological Characteristics',
+      growthPeriod: 'Growth Period',
       photoInfo: 'Photo Information',
+      traitId: 'Trait Record ID',
       batchId: 'Breeding Batch',
       trialId: 'Trial',
       recordTime: 'Record Time',
@@ -249,6 +273,7 @@ export default {
     },
 
     placeholder: {
+      traitId: 'Auto-generated',
       batchId: 'Please select breeding batch',
       trialId: 'Please select trial',
       recordTime: 'Please select record time',
@@ -258,9 +283,11 @@ export default {
       daysToEmergence: 'Please enter days to emergence',
       daysToTillering: 'Please enter days to tillering',
       daysToHeading: 'Please enter days to heading',
+      photoUrl: 'Please upload photo',
     },
 
     columns: {
+      traitId: 'Trait ID',
       batchId: 'Batch ID',
       trialId: 'Trial ID',
       recordTime: 'Record Time',
@@ -268,6 +295,7 @@ export default {
       tillerCount: 'Tiller Count',
       spikeLengthCm: 'Spike Length (cm)',
       daysToEmergence: 'Days to Emergence',
+      daysToTillering: 'Days to Tillering',
       daysToHeading: 'Days to Heading',
       createTime: 'Created Time',
       actions: 'Actions',
@@ -298,10 +326,12 @@ export default {
 
     form: {
       basicInfo: 'Basic Information',
+      operationInfo: 'Operation Information',
       fertilizerInfo: 'Fertilizer Information',
       irrigationInfo: 'Irrigation Information',
       pesticideInfo: 'Pesticide Information',
       descInfo: 'Description Information',
+      farmingId: 'Farming Record ID',
       batchId: 'Breeding Batch',
       trialId: 'Trial',
       operationType: 'Operation Type',
@@ -315,6 +345,7 @@ export default {
     },
 
     placeholder: {
+      farmingId: 'Auto-generated',
       batchId: 'Please select breeding batch',
       trialId: 'Please select trial',
       operationType: 'Please select operation type',
@@ -328,12 +359,14 @@ export default {
     },
 
     columns: {
+      farmingId: 'Record ID',
       batchId: 'Batch ID',
       trialId: 'Trial ID',
       operationType: 'Operation Type',
       operationTime: 'Operation Time',
       fertilizerType: 'Fertilizer Type',
       irrigationMethod: 'Irrigation Method',
+      operationDesc: 'Operation Description',
       createTime: 'Created Time',
       actions: 'Actions',
     },
@@ -369,6 +402,7 @@ export default {
       soilData: 'Soil Data',
       climateData: 'Climate Data',
       waterData: 'Water Data',
+      envId: 'Environment Data ID',
       batchId: 'Breeding Batch',
       trialId: 'Trial',
       groundId: 'Plot',
@@ -385,6 +419,7 @@ export default {
     },
 
     placeholder: {
+      envId: 'Auto-generated',
       batchId: 'Please select breeding batch',
       trialId: 'Please select trial',
       groundId: 'Please select plot',
@@ -401,6 +436,7 @@ export default {
     },
 
     columns: {
+      envId: 'Environment Data ID',
       batchId: 'Batch ID',
       trialId: 'Trial ID',
       groundId: 'Plot ID',

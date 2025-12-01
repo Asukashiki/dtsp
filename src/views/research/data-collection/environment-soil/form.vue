@@ -27,6 +27,67 @@
         :label-width="labelWidth"
         :label-position="labelPosition"
       >
+        <!-- 基础信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-information-line"></i>
+            基础信息
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item
+                label="育种批次"
+                prop="batchId"
+              >
+                <el-select
+                  v-model="formData.batchId"
+                  placeholder="请选择育种批次"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="batch in batchOptions"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                label="试验"
+                prop="trialId"
+              >
+                <el-input
+                  v-model="formData.trialId"
+                  placeholder="请输入试验ID"
+                />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                label="数据类型"
+                prop="dataType"
+              >
+                <el-select
+                  v-model="formData.dataType"
+                  placeholder="请选择数据类型"
+                  style="width: 100%"
+                >
+                  <el-option label="Temperature" value="temperature" />
+                  <el-option label="Humidity" value="humidity" />
+                  <el-option label="Rainfall" value="rainfall" />
+                  <el-option label="Soil Moisture" value="soil.moisture" />
+                  <el-option label="Light Intensity" value="light.intensity" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
         <!-- 土壤属性 -->
         <div class="form-section">
           <div class="section-title">
@@ -335,6 +396,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentSoilDetail, addEnvironmentSoil, editEnvironmentSoil } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -352,12 +414,16 @@ window.addEventListener('resize', () => {
 
 const formRef = ref()
 const submitting = ref(false)
+const batchOptions = ref([])
 
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
 
 // 表单数据
 const formData = reactive({
+  batchId: '',
+  trialId: '',
+  dataType: '',
   soilPh: null,
   soilEc: null,
   soilNitrogenPercent: null,
@@ -378,6 +444,15 @@ const formData = reactive({
 
 // 表单验证规则
 const rules = computed(() => ({
+  batchId: [
+    { required: true, message: '请选择育种批次', trigger: 'change' }
+  ],
+  trialId: [
+    { required: true, message: '请输入试验ID', trigger: 'blur' }
+  ],
+  dataType: [
+    { required: true, message: '请选择数据类型', trigger: 'change' }
+  ],
   soilPh: [
     { required: true, message: t('research.dataCollection.environmentSoil.rules.soilPhRequired'), trigger: 'blur' }
   ],
@@ -415,6 +490,18 @@ const rules = computed(() => ({
     { required: true, message: t('research.dataCollection.environmentSoil.rules.waterSourceRequired'), trigger: 'blur' }
   ]
 }))
+
+// 加载育种批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
 
 // 加载详情数据
 const loadDetail = async () => {
@@ -467,6 +554,7 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
+  loadBatchOptions()
   if (isEdit.value) {
     loadDetail()
   }

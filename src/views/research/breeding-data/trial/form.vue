@@ -29,7 +29,7 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.batchId')" prop="batchId">
                     <el-select v-model="formData.batchId" :placeholder="$t('research.breedingData.trial.placeholder.batchId')" style="width: 100%" @change="handleBatchChange">
-                      <el-option v-for="item in batchOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -187,7 +187,7 @@
                 <el-col :xs="24">
                   <el-form-item :label="$t('research.breedingData.trial.form.plotIds')">
                     <el-select v-model="formData.plotIds" multiple :placeholder="$t('research.breedingData.trial.placeholder.plotIds')" style="width: 100%">
-                      <el-option v-for="item in plotOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in plotOptions" :key="item.groundId" :label="item.trialFieldName" :value="item.groundId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -368,7 +368,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 
 .form-actions {
   display: flex;

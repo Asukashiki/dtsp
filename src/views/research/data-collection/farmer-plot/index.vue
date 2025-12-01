@@ -32,6 +32,37 @@
           </el-input>
 
           <el-select
+            v-model="selectedBatch"
+            :placeholder="$t('research.dataCollection.farmerPlot.filterByBatch')"
+            class="batch-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('research.dataCollection.farmerPlot.allBatch')" value="" />
+            <el-option
+              v-for="batch in batchOptions"
+              :key="batch.batchId"
+              :label="batch.batchName"
+              :value="batch.batchId"
+            />
+          </el-select>
+
+          <el-select
+            v-model="selectedCropType"
+            :placeholder="$t('research.dataCollection.farmerPlot.filterByCrop')"
+            class="crop-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('research.dataCollection.farmerPlot.allCrops')" value="" />
+            <el-option label="Wheat" value="WHEAT" />
+            <el-option label="Corn" value="CORN" />
+            <el-option label="Rice" value="RICE" />
+            <el-option label="Soybean" value="SOYBEAN" />
+            <el-option label="Cotton" value="COTTON" />
+          </el-select>
+
+          <el-select
             v-model="selectedGender"
             :placeholder="$t('research.dataCollection.farmerPlot.filterByGender')"
             class="gender-filter"
@@ -227,15 +258,19 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmerPlotList, deleteFarmerPlot } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const searchKeyword = ref('')
+const selectedBatch = ref('')
+const selectedCropType = ref('')
 const selectedGender = ref('')
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
+const batchOptions = ref([])
 
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
@@ -267,9 +302,22 @@ const handleSearch = () => {
 
 const handleReset = () => {
   searchKeyword.value = ''
+  selectedBatch.value = ''
+  selectedCropType.value = ''
   selectedGender.value = ''
   pagination.page = 1
   loadData()
+}
+
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200 || res.data) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
 }
 
 const handleAdd = () => {
@@ -315,7 +363,10 @@ const handlePageChange = () => {
   loadData()
 }
 
-onMounted(() => loadData())
+onMounted(() => {
+  loadBatchOptions()
+  loadData()
+})
 </script>
 
 <style scoped>
@@ -386,19 +437,20 @@ onMounted(() => loadData())
 }
 
 .search-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 12px;
   margin-bottom: 12px;
 }
 
 .search-input {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
+.batch-filter,
+.crop-filter,
 .gender-filter {
-  width: 160px;
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .action-row {
@@ -578,11 +630,7 @@ onMounted(() => loadData())
   }
 
   .search-row {
-    flex-direction: column;
-  }
-
-  .gender-filter {
-    width: 100%;
+    grid-template-columns: 1fr;
   }
 
   .action-row {

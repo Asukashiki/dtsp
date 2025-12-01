@@ -44,7 +44,7 @@
                 class="filter-select"
                 @change="handleQuery"
               >
-                <el-option v-for="item in batchOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
               </el-select>
               <el-input
                 v-model="queryParams.trialName"
@@ -296,5 +296,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 </style>

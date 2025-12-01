@@ -18,6 +18,21 @@
       <!-- 搜索和筛选栏 -->
       <div class="search-bar">
         <div class="search-row">
+          <el-select
+            v-model="selectedBatchId"
+            placeholder="请选择育种批次"
+            class="batch-filter"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option
+              v-for="batch in batchOptions"
+              :key="batch.batchId"
+              :label="batch.batchName"
+              :value="batch.batchId"
+            />
+          </el-select>
+
           <el-input
             v-model="searchKeyword"
             :placeholder="$t('research.dataCollection.agronomicTrait.searchPlaceholder')"
@@ -222,21 +237,36 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getAgronomicTraitList, deleteAgronomicTrait } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const searchKeyword = ref('')
+const selectedBatchId = ref('')
+const batchOptions = ref([])
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
     const params = {
+      batchId: selectedBatchId.value,
       pageNum: pagination.page,
       pageSize: pagination.pageSize
     }
@@ -259,6 +289,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   searchKeyword.value = ''
+  selectedBatchId.value = ''
   pagination.page = 1
   loadData()
 }
@@ -306,7 +337,10 @@ const handlePageChange = () => {
   loadData()
 }
 
-onMounted(() => loadData())
+onMounted(() => {
+  loadBatchOptions()
+  loadData()
+})
 </script>
 
 <style scoped>
@@ -385,6 +419,11 @@ onMounted(() => loadData())
 .search-input {
   flex: 1;
   min-width: 0;
+}
+
+.batch-filter {
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .action-row {
@@ -552,6 +591,14 @@ onMounted(() => loadData())
 
   .page-subtitle {
     display: none;
+  }
+
+  .search-row {
+    flex-direction: column;
+  }
+
+  .batch-filter {
+    width: 100%;
   }
 
   .action-row {

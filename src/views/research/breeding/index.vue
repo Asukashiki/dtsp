@@ -17,11 +17,11 @@
       <div class="search-bar">
         <div class="search-row">
           <el-input
-            v-model="queryData.batchId"
-            :placeholder="$t('research.breeding.batch.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @keyup.enter="handleSearch"
+              v-model="queryData.batchId"
+              :placeholder="$t('research.breeding.batch.searchPlaceholder')"
+              class="search-input"
+              clearable
+              @keyup.enter="handleSearch"
           >
             <template #prefix>
               <i class="ri-search-line"></i>
@@ -29,26 +29,26 @@
           </el-input>
 
           <el-select
-            v-model="queryData.cropType"
-            :placeholder="$t('research.breeding.batch.filterByCrop')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
+              v-model="queryData.cropType"
+              :placeholder="$t('research.breeding.batch.filterByCrop')"
+              class="filter-select"
+              clearable
+              @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allCrops')" value="" />
-            <el-option :label="$t('research.breeding.cropType.wheat')" value="WHEAT" />
-            <el-option :label="$t('research.breeding.cropType.corn')" value="CORN" />
-            <el-option :label="$t('research.breeding.cropType.rice')" value="RICE" />
-            <el-option :label="$t('research.breeding.cropType.soybean')" value="SOYBEAN" />
-            <el-option :label="$t('research.breeding.cropType.cotton')" value="COTTON" />
+            <el-option label="Wheat" value="WHEAT" />
+            <el-option label="Corn" value="CORN" />
+            <el-option label="Rice" value="RICE" />
+            <el-option label="Soybean" value="SOYBEAN" />
+            <el-option label="Cotton" value="COTTON" />
           </el-select>
 
           <el-select
-            v-model="queryData.batchStatus"
-            :placeholder="$t('research.breeding.batch.filterByStatus')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
+              v-model="queryData.batchStatus"
+              :placeholder="$t('research.breeding.batch.filterByStatus')"
+              class="filter-select"
+              clearable
+              @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allStatus')" value="" />
             <el-option :label="$t('research.breeding.status.ongoing')" value="01" />
@@ -80,14 +80,15 @@
       <!-- PC端：数据表格 -->
       <div class="table-card pc-view">
         <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
+            v-loading="loading"
+            :data="tableData"
+            stripe
+            style="width: 100%"
         >
           <el-table-column prop="batchId" :label="$t('research.breeding.batch.columns.batchId')" width="220" fixed="left" />
           <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" />
+          <el-table-column prop="breedingMethodName" :label="'繁育方法'" min-width="140" align="center" />
           <el-table-column prop="breedingLevelName" :label="$t('research.breeding.batch.columns.breedingLevel')" width="160" align="center" />
           <el-table-column prop="startDate" :label="$t('research.breeding.batch.columns.startDate')" width="120" align="center" />
           <el-table-column prop="statusName" :label="$t('research.breeding.batch.columns.status')" width="100" align="center">
@@ -119,13 +120,13 @@
         <!-- 分页 -->
         <div class="pagination-wrapper">
           <el-pagination
-            v-model:current-page="queryData.pageNum"
-            v-model:page-size="queryData.pageSize"
-            :total="total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSearch"
-            @current-change="handleSearch"
+              v-model:current-page="queryData.pageNum"
+              v-model:page-size="queryData.pageSize"
+              :total="total"
+              :page-sizes="[10, 20, 50, 100]"
+              layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSearch"
+              @current-change="handleSearch"
           />
         </div>
       </div>
@@ -151,6 +152,11 @@
             <div class="card-row">
               <span class="label">{{ $t('research.breeding.batch.columns.cropType') }}:</span>
               <span class="value">{{ item.cropTypeName }}</span>
+            </div>
+            <!-- 添加繁育方法显示 -->
+            <div class="card-row">
+              <span class="label">繁育方法:</span>
+              <span class="value">{{ item.breedingMethodName }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.breeding.batch.columns.startDate') }}:</span>
@@ -204,11 +210,23 @@ const queryData = ref({
 
 // 作物类型映射
 const cropTypeMap = computed(() => ({
-  'WHEAT': t('research.breeding.cropType.wheat'),
-  'CORN': t('research.breeding.cropType.corn'),
-  'RICE': t('research.breeding.cropType.rice'),
-  'SOYBEAN': t('research.breeding.cropType.soybean'),
-  'COTTON': t('research.breeding.cropType.cotton')
+  'wheat': t('research.breeding.cropType.wheat'),
+  'corn': t('research.breeding.cropType.corn'),
+  'rice': t('research.breeding.cropType.rice'),
+  'soybean': t('research.breeding.cropType.soybean'),
+  'cotton': t('research.breeding.cropType.cotton')
+}))
+
+// 繁育方法映射
+const breedingMethodMap = computed(() => ({
+  'hybridization': t('research.breeding.breedingMethod.hybridization'),
+  'mutagenesis': t('research.breeding.breedingMethod.mutagenesis'),
+  'molecular': t('research.breeding.breedingMethod.molecular'),
+  'selection': t('research.breeding.breedingMethod.selection'),
+  'wide_cross': t('research.breeding.breedingMethod.wideCross'),
+  'mutation': t('research.breeding.breedingMethod.mutation'),
+  'biotechnology': t('research.breeding.breedingMethod.biotechnology'),
+  'other': t('research.breeding.breedingMethod.other')
 }))
 
 // 繁殖级别映射
@@ -242,6 +260,7 @@ const handleSearch = async () => {
       tableData.value = records.map(item => ({
         ...item,
         cropTypeName: cropTypeMap.value[item.cropType] || item.cropType,
+        breedingMethodName: breedingMethodMap.value[item.breedingMethod] || item.breedingMethod,
         breedingLevelName: breedingLevelMap.value[item.breedingLevel] || item.breedingLevel,
         statusName: statusMap.value[item.batchStatus] || item.batchStatus
       }))
@@ -287,13 +306,13 @@ const handleDetail = (id) => {
 // 删除
 const handleDelete = (id) => {
   ElMessageBox.confirm(
-    t('research.breeding.batch.deleteConfirm'),
-    t('common.warning'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
+      t('research.breeding.batch.deleteConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
   ).then(async () => {
     try {
       const response = await deleteBreedingBatchPage([id])

@@ -27,6 +27,67 @@
         :label-width="labelWidth"
         :label-position="labelPosition"
       >
+        <!-- 基础信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-information-line"></i>
+            基础信息
+          </div>
+
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item
+                label="育种批次"
+                prop="batchId"
+              >
+                <el-select
+                  v-model="formData.batchId"
+                  placeholder="请选择育种批次"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="batch in batchOptions"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                label="试验"
+                prop="trialId"
+              >
+                <el-input
+                  v-model="formData.trialId"
+                  placeholder="请输入试验ID"
+                />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+              <el-form-item
+                label="照片"
+                prop="photoUrl"
+              >
+                <el-upload
+                  :action="uploadUrl"
+                  :on-success="handlePhotoSuccess"
+                  :before-upload="beforePhotoUpload"
+                  :on-remove="handlePhotoRemove"
+                  list-type="picture-card"
+                  :limit="5"
+                  :file-list="photoFileList"
+                >
+                  <el-icon><Plus /></el-icon>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
         <!-- 生长信息 -->
         <div class="form-section">
           <div class="section-title">
@@ -319,7 +380,9 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 import { getAgronomicTraitDetail, addAgronomicTrait, editAgronomicTrait } from '@/api/breeding'
+import { getBreedingBatchOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -337,12 +400,18 @@ window.addEventListener('resize', () => {
 
 const formRef = ref()
 const submitting = ref(false)
+const batchOptions = ref([])
+const photoFileList = ref([])
+const uploadUrl = computed(() => import.meta.env.VITE_APP_LOCAL_TEST_API_URL + '/common/upload')
 
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
 
 // 表单数据
 const formData = reactive({
+  batchId: '',
+  trialId: '',
+  photoUrl: '',
   plantHeightCm: null,
   tillerCount: null,
   spikeLengthCm: null,
@@ -363,6 +432,12 @@ const formData = reactive({
 
 // 表单验证规则
 const rules = computed(() => ({
+  batchId: [
+    { required: true, message: '请选择育种批次', trigger: 'change' }
+  ],
+  trialId: [
+    { required: true, message: '请输入试验ID', trigger: 'blur' }
+  ],
   plantHeightCm: [
     { required: true, message: t('research.dataCollection.agronomicTrait.rules.plantHeightCmRequired'), trigger: 'blur' }
   ],
@@ -413,12 +488,60 @@ const rules = computed(() => ({
   ]
 }))
 
+// 加载育种批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBreedingBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
+// 照片上传处理
+const handlePhotoSuccess = (response, file, fileList) => {
+  if (response.code === 200) {
+    formData.photoUrl = response.data.url
+    ElMessage.success('照片上传成功')
+  }
+}
+
+const beforePhotoUpload = (file) => {
+  const isImage = file.type.startsWith('image/')
+  const isLt5M = file.size / 1024 / 1024 < 5
+
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件!')
+    return false
+  }
+  if (!isLt5M) {
+    ElMessage.error('图片大小不能超过 5MB!')
+    return false
+  }
+  return true
+}
+
+const handlePhotoRemove = (file, fileList) => {
+  if (fileList.length === 0) {
+    formData.photoUrl = ''
+  }
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   try {
     const res = await getAgronomicTraitDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      // 如果有照片URL,初始化文件列表
+      if (res.data.photoUrl) {
+        photoFileList.value = [{
+          name: 'photo',
+          url: res.data.photoUrl
+        }]
+      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -464,6 +587,7 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
+  loadBatchOptions()
   if (isEdit.value) {
     loadDetail()
   }

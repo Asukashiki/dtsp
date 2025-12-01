@@ -21,21 +21,21 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.environment.form.batchId')" prop="batchId">
                     <el-select v-model="formData.batchId" :placeholder="$t('research.breedingData.environment.placeholder.batchId')" style="width: 100%" @change="handleBatchChange">
-                      <el-option v-for="item in batchOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.environment.form.trialId')" prop="trialId">
                     <el-select v-model="formData.trialId" :placeholder="$t('research.breedingData.environment.placeholder.trialId')" style="width: 100%" @change="handleTrialChange">
-                      <el-option v-for="item in trialOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.environment.form.groundId')" prop="groundId">
                     <el-select v-model="formData.groundId" :placeholder="$t('research.breedingData.environment.placeholder.groundId')" style="width: 100%">
-                      <el-option v-for="item in plotOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in plotOptions" :key="item.groundId" :label="item.trialFieldName" :value="item.groundId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -144,7 +144,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentDataInfo, addEnvironmentData, editEnvironmentData, getBatchOptions, getTrialOptions, getPlotOptions } from '@/api/breedingData'
 
-const route = useRouter()
+const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
@@ -277,7 +277,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/page-common.scss';
+@use '@/assets/styles/page-common.scss';
 
 .form-actions {
   display: flex;

@@ -139,18 +139,20 @@
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.certificateFile')" prop="certificateFile">
-            <el-input
-              v-model="formData.certificateFile"
-              :placeholder="$t('research.breedingLicense.placeholder.certificateFile')"
-              clearable
+            <el-upload
+              class="doc-upload"
+              :http-request="handleUploadFile"
+              :file-list="certificateFileList"
+              :on-remove="handleRemoveFile"
+              :on-preview="handlePreviewFile"
+              :limit="1"
+              accept=".pdf"
             >
-              <template #append>
-                <el-button @click="handleUpload">
-                  <i class="ri-upload-line"></i>
-                  {{ $t('research.breedingLicense.actions.upload') }}
-                </el-button>
-              </template>
-            </el-input>
+              <el-button type="primary" link>
+                <i class="ri-upload-2-line"></i>
+                {{ $t('research.breedingLicense.placeholder.certificateFile') }}
+              </el-button>
+            </el-upload>
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.licenseStatus')" prop="licenseStatus">
@@ -176,7 +178,7 @@
         </div>
 
         <!-- Variety Traits Section -->
-        <div class="form-section">
+        <!-- <div class="form-section">
           <h2 class="section-title">
             <i class="ri-plant-line"></i>
             {{ $t('research.breedingLicense.form.varietyTraits') }}
@@ -260,7 +262,7 @@
               :placeholder="$t('research.breedingLicense.placeholder.otherTraits')"
             />
           </el-form-item>
-        </div>
+        </div> -->
 
         <!-- Form Actions -->
         <div class="form-actions">
@@ -285,6 +287,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLicenseById, addLicense, updateLicense } from '@/api/breedingLicense'
 import { getDatasetList } from '@/api/dataset'
+import { uploadFile } from '@/api/seed'
+import { getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
@@ -313,6 +317,7 @@ const formData = reactive({
   validStartDate: '',
   validEndDate: '',
   certificateFile: '',
+  certificateFileName: '',  // 新增:保存原始文件名
   licenseStatus: 'valid',
   remark: '',
   // Variety Traits
@@ -326,6 +331,9 @@ const formData = reactive({
   grainQualityTraits: '',
   otherTraits: ''
 })
+
+// 认证文件列表
+const certificateFileList = ref([])
 
 // JSON Validator
 const validateJson = (rule, value, callback) => {
@@ -460,9 +468,71 @@ const handleDatasetChange = (datasetId) => {
   }
 }
 
-// Handle Upload
-const handleUpload = () => {
-  ElMessage.info(t('common.featureComingSoon'))
+// 文件上传处理
+const handleUploadFile = async (options) => {
+  const { file } = options
+  const uploadFormData = new FormData()
+  uploadFormData.append('file', file)
+
+  try {
+    const res = await uploadFile(uploadFormData)
+    if (res.code === 200 && res.data) {
+      const fileData = res.data
+      const dataId = fileData.id || fileData.dataId
+
+      const fileObj = {
+        name: file.name,
+        uid: file.uid,
+        dataId: dataId,
+        fileId: dataId,
+        url: dataId
+      }
+
+      certificateFileList.value = [fileObj]
+      formData.certificateFile = dataId
+      formData.certificateFileName = file.name  // 保存原始文件名
+
+      ElMessage.success(t('common.uploadSuccess'))
+    } else {
+      ElMessage.error(res.msg || t('common.uploadFailed'))
+    }
+  } catch (error) {
+    console.error('Upload error:', error)
+    ElMessage.error(t('common.uploadFailed'))
+  }
+}
+
+// 文件移除处理
+const handleRemoveFile = () => {
+  certificateFileList.value = []
+  formData.certificateFile = ''
+  formData.certificateFileName = ''
+}
+
+// 文件预览处理
+const handlePreviewFile = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+    const pathToPreview = file.dataId || file.fileId || file.url
+
+    if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    } else if (pathToPreview) {
+      const res = await getFilePreviewUrl(pathToPreview)
+      previewUrl = res.code === 200 ? res.msg : ''
+    }
+
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
+  }
 }
 
 // Fetch License Detail
@@ -472,6 +542,18 @@ const fetchLicenseDetail = async (id) => {
     const res = await getLicenseById(id)
     if (res.code === 200) {
       Object.assign(formData, res.data)
+      // 处理认证文件
+      if (res.data.certificateFile) {
+        const fileId = res.data.certificateFile
+        const fileName = res.data.certificateFileName || (t('research.breedingLicense.form.certificateFile') + '.pdf')
+        certificateFileList.value = [{
+          name: fileName,
+          url: fileId,
+          dataId: fileId,
+          fileId: fileId,
+          uid: Date.now() + '-certificateFile'
+        }]
+      }
     } else {
       ElMessage.error(res.msg || t('common.loadFailed'))
     }
@@ -491,8 +573,20 @@ const handleSubmit = async () => {
     await formRef.value.validate()
 
     submitting.value = true
+
+    // 准备提交数据
+    const submitData = {
+      ...formData,
+      certificateFile: certificateFileList.value.length > 0
+        ? (certificateFileList.value[0].dataId || certificateFileList.value[0].fileId || '')
+        : '',
+      certificateFileName: certificateFileList.value.length > 0
+        ? certificateFileList.value[0].name
+        : ''
+    }
+
     const apiFunc = isEdit.value ? updateLicense : addLicense
-    const res = await apiFunc(formData)
+    const res = await apiFunc(submitData)
 
     if (res.code === 200) {
       ElMessage.success(
@@ -673,5 +767,37 @@ onMounted(async () => {
   .form-actions .el-button {
     width: 100%;
   }
+}
+
+/* 文件上传组件样式 */
+.doc-upload {
+  width: 100%;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload-list) {
+  margin-top: 8px;
+}
+
+:deep(.el-upload-list__item) {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+:deep(.el-upload-list__item:hover) {
+  background-color: #f5f7fa;
+}
+
+:deep(.el-upload-list__item-name) {
+  color: #009A44;
+  text-decoration: none;
+}
+
+:deep(.el-upload-list__item-name:hover) {
+  color: #007a36;
+  text-decoration: underline;
 }
 </style>
