@@ -1,6 +1,6 @@
 {
-  "systemName": "research.systemName",
-  "backToHome": "research.backToHome",
+  "systemName": "research.menu.systemName",
+  "backToHome": "research.menu.backToHome",
   "icon": "ri-flask-line",
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "width": "320px",
