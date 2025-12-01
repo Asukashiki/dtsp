@@ -1,6 +1,6 @@
 // 育种管理国际化文件
 export default {
-  title: 'Breeding Information Management',
+  title: 'Breeding Information',
   subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
 
   // Shared crop types
@@ -184,7 +184,7 @@ export default {
   seed: {
     // Production Data Collection
     production: {
-      title: 'Breeder Seed Production Data Collection',
+      title: 'Breeder Seed Production Data',
       subtitle: 'Record Breeder Seed production data to ensure seed propagation process is traceable',
       list: 'Production Data List',
       add: 'Add Production Data',

@@ -2,7 +2,7 @@
 export default {
   // Breeding Batch Management
   batch: {
-    title: 'Breeding Batch Management',
+    title: 'Breeding Batch ',
     subtitle: 'Manage breeding batch information including crop type, variety name, breeding method, etc.',
     list: 'Breeding Batch List',
     add: 'Add Breeding Batch',
@@ -70,7 +70,7 @@ export default {
 
   // Plot and Sowing Information Management
   plot: {
-    title: 'Plot and Sowing Information Management',
+    title: 'Plot and Sowing Information ',
     subtitle: 'Manage trial plot information and sowing records',
     list: 'Plot Information List',
     add: 'Add Plot Information',
@@ -165,7 +165,7 @@ export default {
 
   // Trial Basic Information
   trial: {
-    title: 'Trial Basic Information Management',
+    title: 'Trial Basic Information ',
     subtitle: 'Manage breeding trial basic information and associated plots',
     list: 'Trial List',
     add: 'Add Trial',

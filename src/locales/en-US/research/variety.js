@@ -320,7 +320,7 @@ export default {
 
   // Variety Query
   query: {
-    title: 'Seed Information Publicity',
+    title: 'Varietal Information Publicity',
     subtitle: 'Query published seed variety information',
     searchTitle: 'Variety Query',
 

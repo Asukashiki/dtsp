@@ -4,22 +4,22 @@ export default {
   systemDesc:
     'Variety management, breeding management and seed information services',
   backToHome: 'Back to Home',
-  
-  breedingDataManagement: 'Breeding Data Management',
-  propagationDataManagement: 'Propagation Data Management',
-  seedService: 'Seed Information Service',
 
-  breedingBatchManagement: 'Breeding Batch Management',
+  breedingDataManagement: 'Breeding Data Management',
+  propagationDataManagement: 'Multiplication Data Management ',
+  seedService: 'Breed  Information Service',
+
+  breedingBatchManagement: 'Breeding Batch',
   breedingBatchAdd: 'Add Breeding Batch',
   breedingBatchEdit: 'Edit Breeding Batch',
   breedingBatchDetail: 'Breeding Batch Detail',
 
-  plotInfoManagement: 'Plot and Sowing Information Management',
+  plotInfoManagement: 'Plot and Sowing Information ',
   plotInfoAdd: 'Add Plot Information',
   plotInfoEdit: 'Edit Plot Information',
   plotInfoDetail: 'Plot Information Detail',
 
-  trialBasicManagement: 'Trial Basic Information Management',
+  trialBasicManagement: 'Trial Basic Information',
   trialBasicAdd: 'Add Trial Information',
   trialBasicEdit: 'Edit Trial Information',
   trialBasicDetail: 'Trial Information Detail',
@@ -49,7 +49,7 @@ export default {
   laboratoryTestEdit: 'Edit Laboratory Test',
   laboratoryTestDetail: 'Laboratory Test Detail',
 
-  breederSeedProduction: 'Breeder Seed Production Data Collection',
+  breederSeedProduction: 'Breeder Seed Production Data',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',
@@ -74,7 +74,7 @@ export default {
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
 
-  propagationBatchCollection: 'Propagation Batch Information Collection',
+  propagationBatchCollection: 'Propagation Batch Information',
   propagationBatchAdd: 'Add Propagation Batch',
   propagationBatchEdit: 'Edit Propagation Batch',
   propagationBatchDetail: 'Propagation Batch Detail',
@@ -105,7 +105,7 @@ export default {
   seedPromotionManagementEdit: 'Edit Promotion Information',
   seedPromotionManagementDetail: 'Promotion Information Detail',
 
-  seedInfoPublicity: 'Seed Information Publicity',
+  seedInfoPublicity: 'Varietal Information Publicity',
   seedInfoPublicityDetail: 'Publicity Information Detail',
   enterpriseRegistration: 'Enterprise Registration',
   enterpriseAuth: 'Seed Enterprise Authentication',
@@ -118,7 +118,7 @@ export default {
   breedingManagement: 'Breeding Management',
   breedingPlan: 'Breeding Plan Management',
   breedingMaterial: 'Breeding Material Registration',
-  breedingModule: 'Breeding Information Management',
+  breedingModule: 'Breeding Information',
   breedingBatch: 'Breeding Batch Information Collection',
   breedingTracking: 'Breeding Tracking Information Collection',
   breedingTest: 'Breeding Test Information Collection',
@@ -131,7 +131,7 @@ export default {
   fieldInspection: 'Field Inspection Data Collection',
   laboratoryTest: 'Laboratory Test Data Collection',
   breederSeed: 'Breeder Seed Management',
-  seedProduction: 'Breeder Seed Production Data Collection',
+  seedProduction: 'Breeder Seed Production Data',
   seedDistribution: 'Breeder Seed Distribution Management',
   oseManagement: 'OSE Maintenance Management',
   oseReceiveConfirm: 'OSE Receive Confirmation',
@@ -148,7 +148,7 @@ export default {
   labData: 'Laboratory Test Data Collection',
   yieldData: 'Yield Data Collection',
   iotData: 'IOT Sensor Data Collection',
-  seedService: 'Seed Information Service',
+  seedService: 'Breed  Information Service',
   promotionManagement: 'Seed Promotion Management',
-  seedInfo: 'Seed Information Publicity',
+  seedInfo: 'Varietal Information Publicity',
 }
