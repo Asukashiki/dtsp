@@ -31,7 +31,6 @@
               clearable
               maxlength="50"
             />
-            <div class="help-text">{{ $t('research.breeding.seed.ose.help.oseCode') }}</div>
           </el-form-item>
 
           <el-form-item :label="$t('research.breeding.seed.ose.form.oseName')" prop="oseName">
@@ -58,7 +57,6 @@
                 :value="region.regionCode"
               />
             </el-select>
-            <div class="help-text">{{ $t('research.breeding.seed.ose.help.regionCode') }}</div>
           </el-form-item>
 
           <el-form-item :label="$t('research.breeding.seed.ose.form.location')" prop="location">
@@ -96,7 +94,6 @@
               maxlength="12"
             >
             </el-input>
-            <div class="help-text">{{ $t('research.breeding.seed.ose.help.contactNumber') }}</div>
           </el-form-item>
         </div>
 
@@ -151,7 +148,7 @@ const formData = reactive({
   location: '',
   regionCode: '',
   contactName: '',
-  contactNumber: '251'
+  contactNumber: ''
 })
 
 // 监听编辑数据变化，填充表单
@@ -168,12 +165,12 @@ watch(() => props.editData, (newVal) => {
 
 const phoneValidator = (rule, value, callback) => {
   if (!value) {
-    callback(new Error(t('research.breeding.seed.ose.rules.contactNumber')))
+
   } else {
     // 埃塞俄比亚手机号格式: 251开头，总共12位
     const phoneRegex = /^251\d{9}$/
     if (!phoneRegex.test(value)) {
-      callback(new Error(t('research.breeding.seed.ose.rules.contactNumberFormat')))
+
     } else {
       callback()
     }
@@ -181,21 +178,21 @@ const phoneValidator = (rule, value, callback) => {
 }
 
 const rules = computed(() => ({
-  oseCode: [
-    { required: true, message: t('research.breeding.seed.ose.rules.oseCode'), trigger: 'blur' }
-  ],
-  oseName: [
-    { required: true, message: t('research.breeding.seed.ose.rules.oseName'), trigger: 'blur' }
-  ],
-  location: [
-    { required: true, message: t('research.breeding.seed.ose.rules.location'), trigger: 'blur' }
-  ],
-  regionCode: [
-    { required: true, message: t('research.breeding.seed.ose.rules.regionCode'), trigger: 'change' }
-  ],
-  contactName: [
-    { required: true, message: t('research.breeding.seed.ose.rules.contactName'), trigger: 'blur' }
-  ],
+  // oseCode: [
+  //   { required: true, message: t('research.breeding.seed.ose.rules.oseCode'), trigger: 'blur' }
+  // ],
+  // oseName: [
+  //   { required: true, message: t('research.breeding.seed.ose.rules.oseName'), trigger: 'blur' }
+  // ],
+  // location: [
+  //   { required: true, message: t('research.breeding.seed.ose.rules.location'), trigger: 'blur' }
+  // ],
+  // regionCode: [
+  //   { required: true, message: t('research.breeding.seed.ose.rules.regionCode'), trigger: 'change' }
+  // ],
+  // contactName: [
+  //   { required: true, message: t('research.breeding.seed.ose.rules.contactName'), trigger: 'blur' }
+  // ],
   contactNumber: [
     { required: true, validator: phoneValidator, trigger: 'blur' }
   ]
@@ -303,11 +300,7 @@ onMounted(() => {
   color: #009A44;
 }
 
-.help-text {
-  font-size: 12px;
-  color: #909399;
-  margin-top: 4px;
-}
+
 
 .form-footer {
   display: flex;
