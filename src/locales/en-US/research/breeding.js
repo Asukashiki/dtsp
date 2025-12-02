@@ -1,6 +1,6 @@
 // 育种管理国际化文件
 export default {
-  title: 'Breeding Information',
+  title: 'Multiplication Batch Information',
   subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
 
   // Shared crop types
@@ -816,7 +816,7 @@ export default {
 
   // Breeding Tracking Information Collection
   breedingTracking: {
-    title: 'Breeding Tracking Information Collection',
+    title: 'Multiplication  Tracking Information',
     subtitle: 'Track and record growth status and yield data at each stage of the breeding process',
     list: 'Breeding Tracking List',
     add: 'Add Breeding Tracking',
