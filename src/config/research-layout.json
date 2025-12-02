@@ -103,11 +103,6 @@
           "titleKey": "research.menu.propagationBatchCollection"
         },
         {
-          "index": "/research/breeding/tracking",
-          "icon": "ri-route-line",
-          "titleKey": "research.menu.propagationTrackingCollection"
-        },
-        {
           "index": "/research/seed/breeding-certification",
           "icon": "ri-git-pull-request-line",
           "titleKey": "research.menu.seedCertificationApplication"
