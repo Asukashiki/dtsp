@@ -16,7 +16,7 @@ export default {
     form: {
       basicInfo: 'Batch Basic Information',
       identityInfo: 'Variety Identification Information',
-      batchName: 'Plan Name',
+      batchName: 'Objective',
       batchId: 'Breeding Batch ID',
       batchTime: 'Batch Time',
       cropType: 'Crop Type',
@@ -37,7 +37,7 @@ export default {
 
     placeholder: {
       batchId: 'Auto-generated breeding batch ID',
-      batchName: 'Please enter plan name',
+      batchName: 'Please enter Objective',
       cropType: 'Please select crop type',
       varietyName: 'Please enter variety name',
       species: 'Please enter species',
@@ -55,7 +55,7 @@ export default {
     },
 
     columns: {
-      batchName: 'Plan Name',
+      batchName: 'Objective',
       batchId: 'Batch ID',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',

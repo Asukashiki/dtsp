@@ -534,7 +534,7 @@ export default {
     editSuccess: 'Updated successfully',
 
     // Search and Filter
-    searchPlaceholder: 'Search plan name, batch ID',
+    searchPlaceholder: 'Search Objective, batch ID',
     filterByYear: 'Filter by breeding year',
     filterByCrop: 'Filter by crop type',
     filterByStatus: 'Filter by plan status',
@@ -571,7 +571,7 @@ export default {
     // Form Fields
     form: {
       basicInfo: 'Plan Basic Information',
-      planName: 'Plan Name',
+      planName: 'Objective',
       breedingYear: 'Breeding Year',
       batchId: 'Breeding Batch ID',
       plantingBase: 'Planting Base',
@@ -590,7 +590,7 @@ export default {
 
     // Form Placeholders
     placeholder: {
-      planName: 'Please enter plan name',
+      planName: 'Please enter Objective',
       breedingYear: 'Please select breeding year',
       batchId: 'Please enter breeding batch ID',
       plantingBase: 'Please enter planting base',
@@ -607,7 +607,7 @@ export default {
 
     // Form Validation
     rules: {
-      planNameRequired: 'Please enter plan name',
+      planNameRequired: 'Please enter Objective',
       breedingYearRequired: 'Please select breeding year',
       batchIdRequired: 'Please enter breeding batch ID',
       plantingBaseRequired: 'Please enter planting base',
@@ -624,7 +624,7 @@ export default {
 
     // Table Columns
     columns: {
-      planName: 'Plan Name',
+      planName: 'Objective',
       batchId: 'Batch ID',
       breedingYear: 'Breeding Year',
       cropType: 'Crop Type',

@@ -7,6 +7,7 @@ export default {
 
   breedingDataManagement: 'Breeding Data Management',
   propagationDataManagement: 'Multiplication Data Management ',
+  seedInstitutionManagement: 'Seed Institution Management',
   seedService: 'Breed  Information Service',
 
   breedingBatchManagement: 'Breeding Batch',
@@ -74,7 +75,7 @@ export default {
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
 
-  propagationBatchCollection: 'Propagation Batch Information',
+  propagationBatchCollection: 'OSE Propagation Batch Information',
   propagationBatchAdd: 'Add Propagation Batch',
   propagationBatchEdit: 'Edit Propagation Batch',
   propagationBatchDetail: 'Propagation Batch Detail',
@@ -84,10 +85,23 @@ export default {
   propagationTrackingEdit: 'Edit Tracking Information',
   propagationTrackingDetail: 'Tracking Information Detail',
 
+  c1PropagationBatchCollection: 'C1 Propagation Batch Information',
+  c1PropagationBatchAdd: 'Add Propagation Batch',
+  c1PropagationBatchEdit: 'Edit Propagation Batch',
+  c1PropagationBatchDetail: 'Propagation Batch Detail',
+
   seedCertificationApplication: 'Seed Certification Application',
   seedCertificationApplicationAdd: 'Add Certification Application',
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',
+
+  c1SeedPropagationApplication: 'C1 Seed Propagation Application',
+  c1SeedPropagationApplicationAdd: 'Add Propagation Application',
+  c1SeedPropagationApplicationEdit: 'Edit Propagation Application',
+  c1SeedPropagationApplicationDetail: 'Propagation Application Detail',
+
+  c1SeedPropagationApplicationAudit: 'C1 Seed Propagation Application Audit',
+  c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
 
   seedCertificationAudit: 'Seed Certification Audit',
   seedCertificationAuditDetail: 'Certification Audit Detail',
