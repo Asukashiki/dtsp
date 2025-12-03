@@ -99,7 +99,21 @@
               <el-row :gutter="20">
                 <el-col :xs="24">
                   <el-form-item :label="$t('research.breedingData.trait.form.photoUrl')">
-                    <el-input v-model="formData.photoUrl" />
+                    <el-upload
+                      class="photo-upload"
+                      :http-request="handleUploadPhoto"
+                      :file-list="photoFileList"
+                      :on-remove="handleRemovePhoto"
+                      :on-preview="handlePreviewPhoto"
+                      :limit="1"
+                      accept="image/*"
+                      list-type="picture"
+                    >
+                      <el-button type="primary" link>
+                        <i class="ri-upload-2-line"></i>
+                        {{ $t('common.upload') }}
+                      </el-button>
+                    </el-upload>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -122,6 +136,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getAgronomicTraitInfo, addAgronomicTrait, editAgronomicTrait, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { uploadFile } from '@/api/seed'
+import { getFilePreviewUrl } from '@/api/file'
 
 const route = useRoute()
 const router = useRouter()
@@ -132,6 +148,7 @@ const loading = ref(false)
 const submitLoading = ref(false)
 const batchOptions = ref([])
 const trialOptions = ref([])
+const photoFileList = ref([])
 
 const isEdit = computed(() => !!route.params.traitId)
 
@@ -182,6 +199,71 @@ const handleBatchChange = (value) => {
   loadTrialOptions(value)
 }
 
+// 照片上传处理
+const handleUploadPhoto = async (options) => {
+  const { file } = options
+  const uploadFormData = new FormData()
+  uploadFormData.append('file', file)
+
+  try {
+    const res = await uploadFile(uploadFormData)
+    if (res.code === 200 && res.data) {
+      const fileData = res.data
+      const dataId = fileData.id || fileData.dataId
+
+      const fileObj = {
+        name: file.name,
+        uid: file.uid,
+        dataId: dataId,
+        fileId: dataId,
+        url: dataId
+      }
+
+      photoFileList.value = [fileObj]
+      formData.photoUrl = dataId
+
+      ElMessage.success(t('common.uploadSuccess'))
+    } else {
+      ElMessage.error(res.msg || t('common.uploadFailed'))
+    }
+  } catch (error) {
+    console.error('Upload error:', error)
+    ElMessage.error(t('common.uploadFailed'))
+  }
+}
+
+// 照片移除处理
+const handleRemovePhoto = () => {
+  photoFileList.value = []
+  formData.photoUrl = ''
+}
+
+// 照片预览处理
+const handlePreviewPhoto = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+    const pathToPreview = file.dataId || file.fileId || file.url
+
+    if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    } else if (pathToPreview) {
+      const res = await getFilePreviewUrl(pathToPreview)
+      previewUrl = res.code === 200 ? res.msg : ''
+    }
+
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview photo:', error)
+    ElMessage.error(t('common.failed'))
+  }
+}
+
 const getInfo = async () => {
   if (!isEdit.value) return
   loading.value = true
@@ -190,6 +272,17 @@ const getInfo = async () => {
     Object.assign(formData, res.data)
     if (formData.batchId) {
       await loadTrialOptions(formData.batchId)
+    }
+    // 处理照片
+    if (res.data.photoUrl) {
+      const fileId = res.data.photoUrl
+      photoFileList.value = [{
+        name: t('research.breedingData.trait.form.photoUrl'),
+        url: fileId,
+        dataId: fileId,
+        fileId: fileId,
+        uid: Date.now() + '-photo'
+      }]
     }
   } catch (error) {
     console.error('获取详情失败:', error)
@@ -235,5 +328,36 @@ onMounted(() => {
   justify-content: center;
   gap: 16px;
   padding: 24px 0;
+}
+
+.photo-upload {
+  width: 100%;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload-list) {
+  margin-top: 8px;
+}
+
+:deep(.el-upload-list__item) {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+:deep(.el-upload-list__item:hover) {
+  background-color: #f5f7fa;
+}
+
+:deep(.el-upload-list__item-name) {
+  color: #009A44;
+  text-decoration: none;
+}
+
+:deep(.el-upload-list__item-name:hover) {
+  color: #007a36;
+  text-decoration: underline;
 }
 </style>
