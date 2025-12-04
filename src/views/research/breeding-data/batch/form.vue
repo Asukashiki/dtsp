@@ -27,18 +27,8 @@
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
-                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.batchId')">
                     <el-input v-model="formData.batchId" disabled :placeholder="$t('research.breedingData.batch.placeholder.batchId')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.batchTime')" prop="batchTime">
-                    <el-date-picker v-model="formData.batchTime" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -46,6 +36,11 @@
                     <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%">
                       <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
+                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -60,68 +55,24 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- 品种标识信息 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-plant-line"></i>
-                <span>{{ $t('research.breedingData.batch.form.identityInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.species')" prop="species">
-                    <el-input v-model="formData.species" :placeholder="$t('research.breedingData.batch.placeholder.species')" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
+                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.genus')" prop="genus">
-                    <el-input v-model="formData.genus" :placeholder="$t('research.breedingData.batch.placeholder.genus')" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.year')" prop="year">
+                    <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.batch.placeholder.year')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.family')" prop="family">
-                    <el-input v-model="formData.family" :placeholder="$t('research.breedingData.batch.placeholder.family')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.pedigree')" prop="pedigree">
-                    <el-input v-model="formData.pedigree" :placeholder="$t('research.breedingData.batch.placeholder.pedigree')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.yearOfDevelopment')" prop="yearOfDevelopment">
-                    <el-date-picker v-model="formData.yearOfDevelopment" type="year" value-format="YYYY" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.productPlace')" prop="productPlace">
-                    <el-input v-model="formData.productPlace" :placeholder="$t('research.breedingData.batch.placeholder.productPlace')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.yield')" prop="yield">
-                    <el-input v-model="formData.yield" :placeholder="$t('research.breedingData.batch.placeholder.yield')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.personInCharge')" prop="personInCharge">
-                    <el-input v-model="formData.personInCharge" :placeholder="$t('research.breedingData.batch.placeholder.personInCharge')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.startDate')" prop="startDate">
-                    <el-date-picker v-model="formData.startDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.endDate')" prop="endDate">
-                    <el-date-picker v-model="formData.endDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
+                    <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%">
+                      <el-option label="Not Approved" value="not_approved" />
+                      <el-option label="Approved" value="approved" />
+                      <el-option label="Ongoing" value="ongoing" />
+                      <el-option label="Done" value="done" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
@@ -163,41 +114,25 @@ const isEdit = computed(() => !!route.params.dataId)
 
 const formData = reactive({
   dataId: '',
-  batchName: '',
   batchId: '',
-  batchTime: '',
   cropType: '',
+  varietyCode: '',
   varietyName: '',
-  species: '',
-  genus: '',
-  family: '',
   breedingMethod: '',
-  pedigree: '',
-  yearOfDevelopment: '',
-  productPlace: '',
-  yield: '',
-  personInCharge: '',
-  startDate: '',
-  endDate: '',
+  batchName: '',
+  year: '',
+  status: '',
   remarks: ''
 })
 
 const rules = {
-  batchName: [{ required: true, message: t('research.breedingData.batch.placeholder.batchName'), trigger: 'blur' }],
-  batchTime: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
   cropType: [{ required: true, message: t('research.breedingData.batch.placeholder.cropType'), trigger: 'change' }],
+  varietyCode: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyCode'), trigger: 'blur' }],
   varietyName: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyName'), trigger: 'blur' }],
-  species: [{ required: true, message: t('research.breedingData.batch.placeholder.species'), trigger: 'blur' }],
-  genus: [{ required: true, message: t('research.breedingData.batch.placeholder.genus'), trigger: 'blur' }],
-  family: [{ required: true, message: t('research.breedingData.batch.placeholder.family'), trigger: 'blur' }],
   breedingMethod: [{ required: true, message: t('research.breedingData.batch.placeholder.breedingMethod'), trigger: 'change' }],
-  pedigree: [{ required: true, message: t('research.breedingData.batch.placeholder.pedigree'), trigger: 'blur' }],
-  yearOfDevelopment: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
-  productPlace: [{ required: true, message: t('research.breedingData.batch.placeholder.productPlace'), trigger: 'blur' }],
-  yield: [{ required: true, message: t('research.breedingData.batch.placeholder.yield'), trigger: 'blur' }],
-  personInCharge: [{ required: true, message: t('research.breedingData.batch.placeholder.personInCharge'), trigger: 'blur' }],
-  startDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
-  endDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }]
+  batchName: [{ required: true, message: t('research.breedingData.batch.placeholder.batchName'), trigger: 'blur' }],
+  year: [{ required: true, message: t('research.breedingData.batch.placeholder.year'), trigger: 'change' }],
+  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }]
 }
 
 const cropTypeOptions = [
@@ -222,8 +157,8 @@ const getInfo = async () => {
   try {
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
-    if (formData.yearOfDevelopment) {
-      formData.yearOfDevelopment = String(formData.yearOfDevelopment)
+    if (formData.year) {
+      formData.year = String(formData.year)
     }
   } catch (error) {
     console.error('获取详情失败:', error)
@@ -239,8 +174,8 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
-    if (submitData.yearOfDevelopment) {
-      submitData.yearOfDevelopment = parseInt(submitData.yearOfDevelopment)
+    if (submitData.year) {
+      submitData.year = parseInt(submitData.year)
     }
 
     if (isEdit.value) {

@@ -21,31 +21,13 @@
           <div class="card-body">
             <el-descriptions :column="2" border>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.batchId')">{{ detailData.batchId }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.batchName')">{{ detailData.batchName }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.batchTime')">{{ detailData.batchTime }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.cropType')">{{ detailData.cropType }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyCode')">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyName')">{{ detailData.varietyName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.breedingMethod')">{{ detailData.breedingMethod }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-        </div>
-
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-plant-line"></i><span>{{ $t('research.breedingData.batch.form.identityInfo') }}</span></div>
-          </div>
-          <div class="card-body">
-            <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.species')">{{ detailData.species }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.genus')">{{ detailData.genus }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.family')">{{ detailData.family }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.pedigree')">{{ detailData.pedigree }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.yearOfDevelopment')">{{ detailData.yearOfDevelopment }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.productPlace')">{{ detailData.productPlace }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.yield')">{{ detailData.yield }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.personInCharge')">{{ detailData.personInCharge }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.startDate')">{{ detailData.startDate }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.endDate')">{{ detailData.endDate }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.batchName')">{{ detailData.batchName }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.year')">{{ detailData.year }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.status')">{{ detailData.status }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.remarks')" :span="2">{{ detailData.remarks || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
