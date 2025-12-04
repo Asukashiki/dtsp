@@ -37,38 +37,67 @@
           <div class="card-body">
             <!-- 搜索筛选区 -->
             <div class="search-section">
-              <el-input
-                v-model="queryParams.batchId"
-                :placeholder="$t('research.breedingData.batch.columns.batchId')"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              >
-                <template #prefix><i class="ri-search-line"></i></template>
-              </el-input>
-              <el-input
-                v-model="queryParams.batchName"
-                :placeholder="$t('research.breedingData.batch.placeholder.batchName')"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              />
-              <el-select
-                v-model="queryParams.cropType"
-                :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-              <el-input
-                v-model="queryParams.varietyName"
-                :placeholder="$t('research.breedingData.batch.placeholder.varietyName')"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              />
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.batchId') }}:</label>
+                <el-input
+                  v-model="queryParams.batchId"
+                  :placeholder="$t('research.breedingData.batch.columns.batchId')"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix><i class="ri-search-line"></i></template>
+                </el-input>
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.batchName') }}:</label>
+                <el-input
+                  v-model="queryParams.batchName"
+                  :placeholder="$t('research.breedingData.batch.placeholder.batchName')"
+                  clearable
+                  class="search-input"
+                />
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.cropType') }}:</label>
+                <el-select
+                  v-model="queryParams.cropType"
+                  :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</label>
+                <el-input
+                  v-model="queryParams.varietyName"
+                  :placeholder="$t('research.breedingData.batch.placeholder.varietyName')"
+                  clearable
+                  class="search-input"
+                />
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.status') }}:</label>
+                <el-select
+                  v-model="queryParams.status"
+                  :placeholder="$t('research.breedingData.batch.placeholder.status')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </div>
+              <div class="search-actions">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="ri-search-line"></i>
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset">
+                  <i class="ri-refresh-line"></i>
+                  {{ $t('common.reset') }}
+                </el-button>
+              </div>
             </div>
 
             <!-- PC端表格 -->
@@ -76,13 +105,19 @@
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
                 <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100" />
+                <el-table-column prop="varietyCode" :label="$t('research.breedingData.batch.columns.varietyCode')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
-                <el-table-column prop="personInCharge" :label="$t('research.breedingData.batch.columns.personInCharge')" min-width="100" />
-                <el-table-column prop="startDate" :label="$t('research.breedingData.batch.columns.startDate')" min-width="110" />
-                <el-table-column prop="endDate" :label="$t('research.breedingData.batch.columns.endDate')" min-width="110" />
+                <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
+                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="120">
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.status)" effect="plain">
+                      {{ getStatusLabel(row.status) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -133,16 +168,26 @@
                     <span class="value">{{ item.cropType }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.batch.columns.varietyCode') }}:</span>
+                    <span class="value">{{ item.varietyCode }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
                     <span class="value">{{ item.varietyName }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.personInCharge') }}:</span>
-                    <span class="value">{{ item.personInCharge }}</span>
+                    <span class="label">{{ $t('research.breedingData.batch.columns.breedingMethod') }}:</span>
+                    <span class="value">{{ item.breedingMethod }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.startDate') }}:</span>
-                    <span class="value">{{ item.startDate }} ~ {{ item.endDate }}</span>
+                    <span class="label">{{ $t('research.breedingData.batch.columns.year') }}:</span>
+                    <span class="value">{{ item.year }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.batch.columns.status') }}:</span>
+                    <el-tag :type="getStatusType(item.status)" effect="plain" size="small">
+                      {{ getStatusLabel(item.status) }}
+                    </el-tag>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -197,7 +242,8 @@ const queryParams = reactive({
   batchId: '',
   batchName: '',
   cropType: '',
-  varietyName: ''
+  varietyName: '',
+  status: ''
 })
 
 const cropTypeOptions = [
@@ -206,6 +252,13 @@ const cropTypeOptions = [
   { label: 'corn', value: 'corn' },
   { label: 'soybean', value: 'soybean' },
   { label: 'cotton', value: 'cotton' }
+]
+
+const statusOptions = [
+  { label: 'Not Approved', value: 'not_approved' },
+  { label: 'Approved', value: 'approved' },
+  { label: 'Ongoing', value: 'ongoing' },
+  { label: 'Done', value: 'done' }
 ]
 
 const getList = async () => {
@@ -224,6 +277,37 @@ const getList = async () => {
 const handleQuery = () => {
   queryParams.pageNum = 1
   getList()
+}
+
+const handleReset = () => {
+  queryParams.pageNum = 1
+  queryParams.pageSize = 10
+  queryParams.batchId = ''
+  queryParams.batchName = ''
+  queryParams.cropType = ''
+  queryParams.varietyName = ''
+  queryParams.status = ''
+  getList()
+}
+
+const getStatusType = (status) => {
+  const statusMap = {
+    'not_approved': 'info',
+    'approved': 'success',
+    'ongoing': 'warning',
+    'done': ''
+  }
+  return statusMap[status] || 'info'
+}
+
+const getStatusLabel = (status) => {
+  const statusLabelMap = {
+    'not_approved': 'Not Approved',
+    'approved': 'Approved',
+    'ongoing': 'Ongoing',
+    'done': 'Done'
+  }
+  return statusLabelMap[status] || status
 }
 
 const handleSelectionChange = (selection) => {
@@ -280,4 +364,65 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+
+    .search-label {
+      font-size: 14px;
+      color: #606266;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .search-input {
+      width: 200px;
+    }
+
+    .filter-select {
+      width: 180px;
+    }
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+
+    @media (max-width: 768px) {
+      margin-left: 0;
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .search-item {
+      width: 100%;
+
+      .search-label {
+        min-width: 80px;
+      }
+
+      .search-input,
+      .filter-select {
+        flex: 1;
+        width: auto;
+      }
+    }
+  }
+}
 </style>

@@ -27,27 +27,26 @@
 
           <div class="card-body">
             <div class="search-section">
-              <el-select v-model="queryParams.batchId" :placeholder="$t('research.breedingData.farming.placeholder.batchId')" clearable class="filter-select" @change="handleBatchChange">
-                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
+              <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select" @change="handleQuery">
+                <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
               </el-select>
-              <el-select v-model="queryParams.trialId" :placeholder="$t('research.breedingData.farming.placeholder.trialId')" clearable class="filter-select" @change="handleQuery">
-                <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
+              <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select" @change="handleQuery">
+                <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
-              <el-select v-model="queryParams.operationType" :placeholder="$t('research.breedingData.farming.placeholder.operationType')" clearable class="filter-select" @change="handleQuery">
-                <el-option v-for="item in operationTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-              <el-date-picker v-model="queryParams.operationTime" type="date" :placeholder="$t('research.breedingData.farming.placeholder.operationTime')" clearable value-format="YYYY-MM-DD" class="filter-select" @change="handleQuery" />
+              <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" @change="handleQuery" />
             </div>
 
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.farming.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('research.breedingData.farming.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="operationType" :label="$t('research.breedingData.farming.columns.operationType')" min-width="120" />
-                <el-table-column prop="operationTime" :label="$t('research.breedingData.farming.columns.operationTime')" min-width="120" />
-                <el-table-column prop="operationDesc" :label="$t('research.breedingData.farming.columns.operationDesc')" min-width="200" show-overflow-tooltip />
-                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
+                <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="activityDate" label="Activity Date" min-width="120" />
+                <el-table-column prop="activityType" label="Activity Type" min-width="120" />
+                <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="quantity" label="Quantity" min-width="100" />
+                <el-table-column prop="unit" label="Unit" min-width="80" />
+                <el-table-column prop="operationDesc" label="Operation Description" min-width="200" show-overflow-tooltip />
                 <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -68,12 +67,13 @@
               <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
                 <div class="mobile-card-header">
                   <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                  <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.operationType }} - {{ item.operationTime }}</span></div>
+                  <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ item.activityDate }}</span></div>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.farming.columns.batchId') }}:</span><span class="value">{{ item.batchId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.farming.columns.trialId') }}:</span><span class="value">{{ item.trialId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">{{ $t('research.breedingData.farming.columns.operationDesc') }}:</span><span class="value">{{ item.operationDesc }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
@@ -97,7 +97,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getFarmingRecordList, deleteFarmingRecord, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -106,25 +106,23 @@ const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
-const batchOptions = ref([])
-const trialOptions = ref([])
+const plotOptions = ref([])
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
-  batchId: '',
-  trialId: '',
-  operationType: '',
-  operationTime: ''
+  plotId: '',
+  activityType: '',
+  activityDate: ''
 })
 
-const operationTypeOptions = [
-  { label: 'fertilizer', value: 'fertilizer' },
-  { label: 'irrigation', value: 'irrigation' },
-  { label: 'pest_control', value: 'pest_control' },
-  { label: 'weeding', value: 'weeding' },
-  { label: 'tillage', value: 'tillage' },
-  { label: 'harvest', value: 'harvest' }
+const activityTypeOptions = [
+  { label: 'Fertilizer', value: 'fertilizer' },
+  { label: 'Irrigation', value: 'irrigation' },
+  { label: 'Pest Control', value: 'pest_control' },
+  { label: 'Weeding', value: 'weeding' },
+  { label: 'Tillage', value: 'tillage' },
+  { label: 'Harvest', value: 'harvest' }
 ]
 
 const getList = async () => {
@@ -140,32 +138,13 @@ const getList = async () => {
   }
 }
 
-const loadBatchOptions = async () => {
+const loadPlotOptions = async () => {
   try {
-    const res = await getBatchOptions()
-    batchOptions.value = res.data || []
+    const res = await getPlotOptions()
+    plotOptions.value = res.data || []
   } catch (error) {
-    console.error('获取批次选项失败:', error)
+    console.error('获取地块选项失败:', error)
   }
-}
-
-const loadTrialOptions = async (batchId) => {
-  if (!batchId) {
-    trialOptions.value = []
-    return
-  }
-  try {
-    const res = await getTrialOptions(batchId)
-    trialOptions.value = res.data || []
-  } catch (error) {
-    console.error('获取试验选项失败:', error)
-  }
-}
-
-const handleBatchChange = (value) => {
-  queryParams.trialId = ''
-  loadTrialOptions(value)
-  handleQuery()
 }
 
 const handleQuery = () => {
@@ -209,7 +188,7 @@ const handleBatchDelete = () => {
 }
 
 onMounted(() => {
-  loadBatchOptions()
+  loadPlotOptions()
   getList()
 })
 </script>

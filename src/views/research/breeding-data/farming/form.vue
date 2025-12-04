@@ -10,119 +10,128 @@
         </div>
       </div>
 
+      <!-- 表单区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="loading">
+          <!-- Farming Record Information -->
           <div class="info-card">
             <div class="card-header">
-              <div class="card-title"><i class="ri-information-line"></i><span>{{ $t('research.breedingData.farming.form.basicInfo') }}</span></div>
+              <div class="card-title">
+                <i class="ri-file-list-3-line"></i>
+                <span>Farming Record Information</span>
+              </div>
             </div>
             <div class="card-body">
               <el-row :gutter="20">
+                <!-- Farming Record ID (auto-generated, read-only) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.batchId')" prop="batchId">
-                    <el-select v-model="formData.batchId" :placeholder="$t('research.breedingData.farming.placeholder.batchId')" style="width: 100%" @change="handleBatchChange">
-                      <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
+                  <el-form-item label="Farming Record ID">
+                    <el-input v-model="formData.farmingRecordId" disabled placeholder="{plot_id}-F{record_no}" />
+                  </el-form-item>
+                </el-col>
+                <!-- Plot ID -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Plot ID" prop="plotId">
+                    <el-select
+                      v-model="formData.plotId"
+                      placeholder="Please select Plot ID"
+                      filterable
+                      style="width: 100%"
+                      @change="handlePlotChange"
+                    >
+                      <el-option
+                        v-for="item in plotOptions"
+                        :key="item.plotId"
+                        :label="item.plotId"
+                        :value="item.plotId"
+                      />
                     </el-select>
                   </el-form-item>
                 </el-col>
+                <!-- Trial ID (read-only, auto-filled from Plot ID) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.trialId')" prop="trialId">
-                    <el-select v-model="formData.trialId" :placeholder="$t('research.breedingData.farming.placeholder.trialId')" style="width: 100%">
-                      <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
+                  <el-form-item label="Trial ID">
+                    <el-input v-model="formData.trialId" disabled placeholder="Auto-filled from Plot ID" />
+                  </el-form-item>
+                </el-col>
+                <!-- Batch ID (read-only, auto-filled from Plot ID) -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Batch ID">
+                    <el-input v-model="formData.batchId" disabled placeholder="Auto-filled from Plot ID" />
+                  </el-form-item>
+                </el-col>
+                <!-- Activity Date -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Activity Date" prop="activityDate">
+                    <el-date-picker
+                      v-model="formData.activityDate"
+                      type="date"
+                      value-format="YYYY-MM-DD"
+                      style="width: 100%"
+                      placeholder="Select activity date"
+                    />
+                  </el-form-item>
+                </el-col>
+                <!-- Activity Type -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Activity Type" prop="activityType">
+                    <el-select v-model="formData.activityType" placeholder="Please select activity type" style="width: 100%">
+                      <el-option label="Fertilizer" value="fertilizer" />
+                      <el-option label="Irrigation" value="irrigation" />
+                      <el-option label="Pest Control" value="pest_control" />
+                      <el-option label="Weeding" value="weeding" />
+                      <el-option label="Tillage" value="tillage" />
+                      <el-option label="Harvest" value="harvest" />
                     </el-select>
                   </el-form-item>
                 </el-col>
+                <!-- Input Name -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.operationType')" prop="operationType">
-                    <el-select v-model="formData.operationType" :placeholder="$t('research.breedingData.farming.placeholder.operationType')" style="width: 100%">
-                      <el-option label="fertilizer" value="fertilizer" />
-                      <el-option label="irrigation" value="irrigation" />
-                      <el-option label="pest_control" value="pest_control" />
-                      <el-option label="weeding" value="weeding" />
-                      <el-option label="tillage" value="tillage" />
-                      <el-option label="harvest" value="harvest" />
+                  <el-form-item label="Input Name">
+                    <el-input v-model="formData.inputName" placeholder="Enter input name (e.g., fertilizer type, pesticide name)" />
+                  </el-form-item>
+                </el-col>
+                <!-- Quantity -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Quantity">
+                    <el-input-number v-model="formData.quantity" :min="0" :precision="2" style="width: 100%" placeholder="Enter quantity" />
+                  </el-form-item>
+                </el-col>
+                <!-- Unit -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Unit">
+                    <el-select v-model="formData.unit" placeholder="Please select unit" style="width: 100%">
+                      <el-option label="kg" value="kg" />
+                      <el-option label="g" value="g" />
+                      <el-option label="L" value="L" />
+                      <el-option label="mL" value="mL" />
+                      <el-option label="bags" value="bags" />
+                      <el-option label="pieces" value="pieces" />
                     </el-select>
                   </el-form-item>
                 </el-col>
+                <!-- Operator ID (read-only, current user) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.operationTime')" prop="operationTime">
-                    <el-date-picker v-model="formData.operationTime" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  <el-form-item label="Operator ID">
+                    <el-input v-model="formData.operatorId" disabled placeholder="Current user ID" />
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <div class="info-card" v-if="formData.operationType === 'fertilizer'">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-flask-line"></i><span>{{ $t('research.breedingData.farming.form.fertilizerInfo') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.fertilizerType')" prop="fertilizerType">
-                    <el-input v-model="formData.fertilizerType" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.fertilizerAmount')" prop="fertilizerAmount">
-                    <el-input-number v-model="formData.fertilizerAmount" :min="0" :precision="2" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <div class="info-card" v-if="formData.operationType === 'irrigation'">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-water-flash-line"></i><span>{{ $t('research.breedingData.farming.form.irrigationInfo') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.irrigationMethod')" prop="irrigationMethod">
-                    <el-input v-model="formData.irrigationMethod" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <div class="info-card" v-if="formData.operationType === 'pest_control'">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-bug-line"></i><span>{{ $t('research.breedingData.farming.form.pesticideInfo') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.pesticideType')" prop="pesticideType">
-                    <el-input v-model="formData.pesticideType" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.farming.form.pesticideDosage')" prop="pesticideDosage">
-                    <el-input v-model="formData.pesticideDosage" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-file-text-line"></i><span>{{ $t('research.breedingData.farming.form.descInfo') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
+                <!-- Operation Description -->
                 <el-col :xs="24">
-                  <el-form-item :label="$t('research.breedingData.farming.form.operationDesc')">
-                    <el-input v-model="formData.operationDesc" type="textarea" :rows="3" />
+                  <el-form-item label="Operation Description">
+                    <el-input
+                      v-model="formData.operationDesc"
+                      type="textarea"
+                      :rows="3"
+                      placeholder="Enter operation description"
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
           </div>
 
+          <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
@@ -138,66 +147,57 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { useUserStore } from '@/store/user'
+import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
-const batchOptions = ref([])
-const trialOptions = ref([])
+const plotOptions = ref([])
 
 const isEdit = computed(() => !!route.params.farmingId)
 
 const formData = reactive({
-  farmingId: '',
-  batchId: '',
+  farmingRecordId: '',
+  plotId: '',
   trialId: '',
-  operationType: '',
-  operationTime: '',
-  fertilizerType: '',
-  fertilizerAmount: null,
-  irrigationMethod: '',
-  pesticideType: '',
-  pesticideDosage: '',
+  batchId: '',
+  activityDate: new Date().toISOString().split('T')[0], // 默认当前日期
+  activityType: '',
+  inputName: '',
+  quantity: null,
+  unit: '',
+  operatorId: userStore.userId || '', // 当前登录用户ID
   operationDesc: ''
 })
 
 const rules = {
-  batchId: [{ required: true, message: t('research.breedingData.farming.placeholder.batchId'), trigger: 'change' }],
-  trialId: [{ required: true, message: t('research.breedingData.farming.placeholder.trialId'), trigger: 'change' }],
-  operationType: [{ required: true, message: t('research.breedingData.farming.placeholder.operationType'), trigger: 'change' }],
-  operationTime: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }]
+  plotId: [{ required: true, message: 'Please select Plot ID', trigger: 'change' }],
+  activityDate: [{ required: true, message: 'Please select Activity Date', trigger: 'change' }],
+  activityType: [{ required: true, message: 'Please select Activity Type', trigger: 'change' }]
 }
 
-const loadBatchOptions = async () => {
+const loadPlotOptions = async () => {
   try {
-    const res = await getBatchOptions()
-    batchOptions.value = res.data || []
+    const res = await getPlotOptions()
+    plotOptions.value = res.data || []
   } catch (error) {
-    console.error('获取批次选项失败:', error)
+    console.error('Failed to load plot options:', error)
   }
 }
 
-const loadTrialOptions = async (batchId) => {
-  if (!batchId) {
-    trialOptions.value = []
-    return
+const handlePlotChange = (plotId) => {
+  // Auto-fill trialId and batchId from selected plot
+  const selectedPlot = plotOptions.value.find(item => item.plotId === plotId)
+  if (selectedPlot) {
+    formData.trialId = selectedPlot.trialId || ''
+    formData.batchId = selectedPlot.batchId || ''
   }
-  try {
-    const res = await getTrialOptions(batchId)
-    trialOptions.value = res.data || []
-  } catch (error) {
-    console.error('获取试验选项失败:', error)
-  }
-}
-
-const handleBatchChange = (value) => {
-  formData.trialId = ''
-  loadTrialOptions(value)
 }
 
 const getInfo = async () => {
@@ -206,11 +206,8 @@ const getInfo = async () => {
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
     Object.assign(formData, res.data)
-    if (formData.batchId) {
-      await loadTrialOptions(formData.batchId)
-    }
   } catch (error) {
-    console.error('获取详情失败:', error)
+    console.error('Failed to load farming record info:', error)
   } finally {
     loading.value = false
   }
@@ -222,25 +219,29 @@ const handleSubmit = async () => {
 
   submitLoading.value = true
   try {
+    const submitData = { ...formData }
+
     if (isEdit.value) {
-      await editFarmingRecord(formData)
-      ElMessage.success(t('research.breedingData.farming.editSuccess'))
+      await editFarmingRecord(submitData)
+      ElMessage.success('Farming record updated successfully')
     } else {
-      await addFarmingRecord(formData)
-      ElMessage.success(t('research.breedingData.farming.addSuccess'))
+      await addFarmingRecord(submitData)
+      ElMessage.success('Farming record added successfully')
     }
     goBack()
   } catch (error) {
-    console.error('提交失败:', error)
+    console.error('Submit failed:', error)
   } finally {
     submitLoading.value = false
   }
 }
 
-const goBack = () => router.push('/research/breeding-data/farming')
+const goBack = () => {
+  router.push('/research/breeding-data/farming')
+}
 
 onMounted(() => {
-  loadBatchOptions()
+  loadPlotOptions()
   getInfo()
 })
 </script>

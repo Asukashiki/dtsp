@@ -51,8 +51,8 @@ export function editPlotInfo(data) {
     return request({ url: `${API_BASE_URL}/breeding/plot/edit`, method: 'post', data })
 }
 
-export function deletePlotInfo(groundIds) {
-    return request({ url: `${API_BASE_URL}/breeding/plot/remove`, method: 'get', params: { groundIds } })
+export function deletePlotInfo(plotIds) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/remove`, method: 'get', params: { plotIds } })
 }
 
 export function getPlotsByBatch(batchId) {

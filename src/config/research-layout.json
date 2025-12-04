@@ -25,16 +25,15 @@
           "icon": "ri-map-pin-line",
           "titleKey": "research.menu.plotInfoManagement"
         },
-        
-        {
-          "index": "/research/breeding-data/trait",
-          "icon": "ri-leaf-line",
-          "titleKey": "research.menu.agronomicTraitDataCollection"
-        },
         {
           "index": "/research/breeding-data/farming",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.farmingRecordDataCollection"
+        },
+        {
+          "index": "/research/breeding-data/trait",
+          "icon": "ri-leaf-line",
+          "titleKey": "research.menu.agronomicTraitDataCollection"
         },
         {
           "index": "/research/breeding-data/environment",

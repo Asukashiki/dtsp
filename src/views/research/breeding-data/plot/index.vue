@@ -37,18 +37,9 @@
           <div class="card-body">
             <!-- 搜索筛选区 -->
             <div class="search-section">
-              <el-select
-                v-model="queryParams.batchId"
-                :placeholder="$t('research.breedingData.plot.placeholder.batchId')"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
-              </el-select>
               <el-input
-                v-model="queryParams.trialFieldName"
-                :placeholder="$t('research.breedingData.plot.placeholder.trialFieldName')"
+                v-model="queryParams.trialId"
+                placeholder="Trial ID"
                 clearable
                 class="search-input"
                 @change="handleQuery"
@@ -56,17 +47,17 @@
                 <template #prefix><i class="ri-search-line"></i></template>
               </el-input>
               <el-select
-                v-model="queryParams.cropType"
-                :placeholder="$t('research.breedingData.plot.placeholder.cropType')"
+                v-model="queryParams.batchId"
+                placeholder="Batch ID"
                 clearable
                 class="filter-select"
                 @change="handleQuery"
               >
-                <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
               </el-select>
               <el-input
-                v-model="queryParams.varietyName"
-                :placeholder="$t('research.breedingData.plot.placeholder.varietyName')"
+                v-model="queryParams.varietyCode"
+                placeholder="Variety Code"
                 clearable
                 class="search-input"
                 @change="handleQuery"
@@ -77,13 +68,14 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.plot.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('research.breedingData.plot.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialFieldName" :label="$t('research.breedingData.plot.columns.trialFieldName')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="cropType" :label="$t('research.breedingData.plot.columns.cropType')" min-width="100" />
-                <el-table-column prop="varietyName" :label="$t('research.breedingData.plot.columns.varietyName')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="sowingCount" :label="$t('research.breedingData.plot.columns.sowingCount')" min-width="100" />
-                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
+                <el-table-column prop="plotId" label="Plot ID" min-width="180" show-overflow-tooltip />
+                <el-table-column prop="trialId" label="Trial ID" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="batchId" label="Batch ID" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="replicationNo" label="Replication No" min-width="120" />
+                <el-table-column prop="rowNo" label="Row No" min-width="100" />
+                <el-table-column prop="columnNo" label="Column No" min-width="110" />
+                <el-table-column prop="varietyCode" label="Variety Code" min-width="130" show-overflow-tooltip />
+                <el-table-column prop="sowingDate" label="Sowing Date" min-width="120" />
                 <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -116,34 +108,34 @@
 
             <!-- 移动端卡片 -->
             <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.groundId" class="mobile-card">
+              <div v-for="item in dataList" :key="item.plotId" class="mobile-card">
                 <div class="mobile-card-header">
                   <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
                   <div class="mobile-card-title">
                     <i class="ri-map-pin-line"></i>
-                    <span>{{ item.trialFieldName }}</span>
+                    <span>{{ item.plotId }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.plot.columns.batchId') }}:</span>
-                    <span class="value">{{ item.batchId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.plot.columns.trialId') }}:</span>
+                    <span class="label">Trial ID:</span>
                     <span class="value">{{ item.trialId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.plot.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="label">Batch ID:</span>
+                    <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.plot.columns.varietyName') }}:</span>
-                    <span class="value">{{ item.varietyName }}</span>
+                    <span class="label">Replication No:</span>
+                    <span class="value">{{ item.replicationNo }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.plot.columns.sowingCount') }}:</span>
-                    <span class="value">{{ item.sowingCount }}</span>
+                    <span class="label">Variety Code:</span>
+                    <span class="value">{{ item.varietyCode }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">Sowing Date:</span>
+                    <span class="value">{{ item.sowingDate }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -196,19 +188,10 @@ const batchOptions = ref([])
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
+  trialId: '',
   batchId: '',
-  trialFieldName: '',
-  cropType: '',
-  varietyName: ''
+  varietyCode: ''
 })
-
-const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
-  { label: 'wheat', value: 'wheat' },
-  { label: 'corn', value: 'corn' },
-  { label: 'soybean', value: 'soybean' },
-  { label: 'cotton', value: 'cotton' }
-]
 
 const getList = async () => {
   loading.value = true
@@ -238,16 +221,16 @@ const handleQuery = () => {
 }
 
 const handleSelectionChange = (selection) => {
-  selectedIds.value = selection.map(item => item.groundId)
+  selectedIds.value = selection.map(item => item.plotId)
 }
 
 const handleMobileSelect = (item) => {
   if (item.checked) {
-    if (!selectedIds.value.includes(item.groundId)) {
-      selectedIds.value.push(item.groundId)
+    if (!selectedIds.value.includes(item.plotId)) {
+      selectedIds.value.push(item.plotId)
     }
   } else {
-    selectedIds.value = selectedIds.value.filter(id => id !== item.groundId)
+    selectedIds.value = selectedIds.value.filter(id => id !== item.plotId)
   }
 }
 
@@ -256,18 +239,18 @@ const handleAdd = () => {
 }
 
 const handleView = (row) => {
-  router.push(`/research/breeding-data/plot/detail/${row.groundId}`)
+  router.push(`/research/breeding-data/plot/detail/${row.plotId}`)
 }
 
 const handleEdit = (row) => {
-  router.push(`/research/breeding-data/plot/edit/${row.groundId}`)
+  router.push(`/research/breeding-data/plot/edit/${row.plotId}`)
 }
 
 const handleDelete = (row) => {
   ElMessageBox.confirm(t('research.breedingData.plot.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deletePlotInfo(row.groundId)
+    await deletePlotInfo(row.plotId)
     ElMessage.success(t('research.breedingData.plot.deleteSuccess'))
     getList()
   }).catch(() => {})
