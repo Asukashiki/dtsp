@@ -7,6 +7,12 @@ export default {
     // Menu Navigation
     menu: {
       dashboard: 'Data Dashboard',
+      registrationManagement: 'Registration Management',
+      registration: 'Union/Cooperative Registration',
+      registrationApproval: 'Union/Cooperative Approval',
+      demandManagement: 'Input Demand Management',
+      farmerDemand: 'DA Farmer Demand Entry',
+      demandAudit: 'Input Demand Audit',
       supplierManagement: 'Supplier Management',
       supplierAuth: 'Supplier Authentication',
       supplierAuthApproval: 'Supplier Auth Approval',

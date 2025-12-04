@@ -5,6 +5,40 @@
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "menus": [
     {
+      "index": "registration-management",
+      "icon": "ri-file-list-3-line",
+      "titleKey": "input.menu.registrationManagement",
+      "children": [
+        {
+          "index": "/input/registration",
+          "icon": "ri-file-add-line",
+          "titleKey": "input.menu.registration"
+        },
+        {
+          "index": "/input/registration/approval",
+          "icon": "ri-file-check-line",
+          "titleKey": "input.menu.registrationApproval"
+        }
+      ]
+    },
+    {
+      "index": "demand-management",
+      "icon": "ri-file-edit-line",
+      "titleKey": "input.menu.demandManagement",
+      "children": [
+        {
+          "index": "/input/demand/farmer",
+          "icon": "ri-user-add-line",
+          "titleKey": "input.menu.farmerDemand"
+        },
+        {
+          "index": "/input/demand/audit",
+          "icon": "ri-task-line",
+          "titleKey": "input.menu.demandAudit"
+        }
+      ]
+    },
+    {
       "index": "input-management",
       "icon": "ri-box-3-line",
       "titleKey": "input.menu.inputManagement",
