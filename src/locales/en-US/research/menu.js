@@ -151,4 +151,10 @@ export default {
   seedService: 'Breed  Information Service',
   promotionManagement: 'Seed Promotion Management',
   seedInfo: 'Varietal Information Publicity',
+
+  // Input Circulation Management
+  inputCirculation: 'Input Circulation Management',
+  inputQuotaView: 'Input Quota View',
+  oseReleaseToUnion: 'OSE Release Seeds to Union',
+  unionReceiveConfirm: 'Union Receive Confirmation',
 }

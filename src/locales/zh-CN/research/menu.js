@@ -157,4 +157,13 @@ export default {
   datasetCompilation: '育种数据集编制',
   datasetAudit: '育种数据集审核',
   breedingLicense: '育种许可数据录入',
+
+  // 投入品流通管理
+  inputCirculation: '投入品流通管理',
+  inputQuotaView: '投入品配额查看',
+  oseReleaseToUnion: 'OSE分发种子到Union',
+  unionReceiveConfirm: 'Union确认接收',
+  unionReleaseToWoreda: 'Union分发投入品到Woreda',
+  woredaReceiveConfirm: 'Woreda确认接收',
+  woredaReleaseToFarmer: 'Woreda分发投入品到农民',
 }

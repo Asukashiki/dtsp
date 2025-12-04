@@ -140,6 +140,43 @@
           "titleKey": "research.menu.seedInfoPublicity"
         }
       ]
+    },
+    {
+      "index": "input-circulation",
+      "icon": "ri-truck-line",
+      "titleKey": "research.menu.inputCirculation",
+      "children": [
+        {
+          "index": "/research/input-circulation/quota",
+          "icon": "ri-file-chart-line",
+          "titleKey": "research.menu.inputQuotaView"
+        },
+        {
+          "index": "/research/input-circulation/ose-release",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.oseReleaseToUnion"
+        },
+        {
+          "index": "/research/input-circulation/union-receive",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.unionReceiveConfirm"
+        },
+        {
+          "index": "/research/input-circulation/union-release",
+          "icon": "ri-send-plane-line",
+          "titleKey": "research.menu.unionReleaseToWoreda"
+        },
+        {
+          "index": "/research/input-circulation/woreda-receive",
+          "icon": "ri-check-double-line",
+          "titleKey": "research.menu.woredaReceiveConfirm"
+        },
+        {
+          "index": "/research/input-circulation/farmer-release",
+          "icon": "ri-user-received-line",
+          "titleKey": "research.menu.woredaReleaseToFarmer"
+        }
+      ]
     }
   ]
 }
