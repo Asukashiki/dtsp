@@ -9,7 +9,7 @@
           </el-button>
           <div class="header-content">
             <h1 class="page-title">
-              {{ isEdit ? $t('input.quota.stateQuota.edit') : $t('input.quota.stateQuota.add') }}
+              {{ isEdit ? $t('quota.stateQuota.edit') : $t('quota.stateQuota.add') }}
             </h1>
           </div>
         </div>
@@ -23,16 +23,16 @@
             <div class="card-header">
               <div class="card-title">
                 <i class="ri-information-line"></i>
-                <span>{{ $t('input.quota.stateQuota.form.basicInfo') }}</span>
+                <span>{{ $t('quota.stateQuota.form.basicInfo') }}</span>
               </div>
             </div>
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.stateQuota.form.year')" prop="year">
+                  <el-form-item :label="$t('quota.stateQuota.form.year')" prop="year">
                     <el-select
                       v-model="formData.year"
-                      :placeholder="$t('input.quota.stateQuota.placeholder.year')"
+                      :placeholder="$t('quota.stateQuota.placeholder.year')"
                       style="width: 100%"
                       :disabled="isEdit"
                     >
@@ -41,27 +41,27 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.stateQuota.form.category')" prop="categoryId">
+                  <el-form-item :label="$t('quota.stateQuota.form.category')" prop="categoryId">
                     <el-select
                       v-model="formData.categoryId"
-                      :placeholder="$t('input.quota.stateQuota.placeholder.category')"
+                      :placeholder="$t('quota.stateQuota.placeholder.category')"
                       style="width: 100%"
                       :disabled="isEdit"
                     >
                       <el-option
                         v-for="item in categoryOptions"
                         :key="item.value"
-                        :label="$t(`input.quota.category.${item.label}`)"
+                        :label="$t(`quota.category.${item.label}`)"
                         :value="item.value"
                       />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.stateQuota.form.totalQuota')" prop="totalQuota">
+                  <el-form-item :label="$t('quota.stateQuota.form.totalQuota')" prop="totalQuota">
                     <el-input-number
                       v-model="formData.totalQuota"
-                      :placeholder="$t('input.quota.stateQuota.placeholder.totalQuota')"
+                      :placeholder="$t('quota.stateQuota.placeholder.totalQuota')"
                       :min="0"
                       :precision="2"
                       :controls="false"
@@ -70,11 +70,11 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.stateQuota.form.quotaName')">
+                  <el-form-item :label="$t('quota.stateQuota.form.quotaName')">
                     <el-input
                       v-model="quotaNameDisplay"
                       disabled
-                      :placeholder="$t('input.quota.stateQuota.placeholder.quotaName')"
+                      :placeholder="$t('quota.stateQuota.placeholder.quotaName')"
                     />
                   </el-form-item>
                 </el-col>
@@ -127,13 +127,13 @@ const formData = reactive({
 
 const rules = {
   year: [
-    { required: true, message: t('input.quota.stateQuota.placeholder.year'), trigger: 'change' }
+    { required: true, message: t('quota.stateQuota.placeholder.year'), trigger: 'change' }
   ],
   categoryId: [
-    { required: true, message: t('input.quota.stateQuota.placeholder.category'), trigger: 'change' }
+    { required: true, message: t('quota.stateQuota.placeholder.category'), trigger: 'change' }
   ],
   totalQuota: [
-    { required: true, message: t('input.quota.stateQuota.placeholder.totalQuota'), trigger: 'blur' }
+    { required: true, message: t('quota.stateQuota.placeholder.totalQuota'), trigger: 'blur' }
   ]
 }
 
@@ -156,7 +156,7 @@ const categoryOptions = [
 const quotaNameDisplay = computed(() => {
   if (!formData.year || !formData.categoryId) return ''
   const category = categoryOptions.find(c => c.value === formData.categoryId)
-  const categoryLabel = category ? t(`input.quota.category.${category.label}`) : ''
+  const categoryLabel = category ? t(`quota.category.${category.label}`) : ''
   return `${formData.year}_StateQuota_${categoryLabel}`
 })
 
@@ -204,7 +204,7 @@ const handleSubmit = async () => {
       submitData.modifierDivisionId = userStore.userInfo?.divisionId
       const res = await updateStateAnnualQuota(submitData)
       if (res.code === 200) {
-        ElMessage.success(t('input.quota.stateQuota.editSuccess'))
+        ElMessage.success(t('quota.stateQuota.editSuccess'))
         goBack()
       } else {
         ElMessage.error(res.msg || t('common.saveFailed'))
@@ -212,7 +212,7 @@ const handleSubmit = async () => {
     } else {
       const res = await addStateAnnualQuota(submitData)
       if (res.code === 200) {
-        ElMessage.success(t('input.quota.stateQuota.addSuccess'))
+        ElMessage.success(t('quota.stateQuota.addSuccess'))
         goBack()
       } else {
         ElMessage.error(res.msg || t('common.saveFailed'))

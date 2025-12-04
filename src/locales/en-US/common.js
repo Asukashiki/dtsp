@@ -70,5 +70,6 @@ export default {
   },
   batchDelete: 'Batch Delete',
   yes: 'Yes',
-  no: 'No'
+  no: 'No',
+  userInfoMissing: 'User info is missing. Please login again.'
 }

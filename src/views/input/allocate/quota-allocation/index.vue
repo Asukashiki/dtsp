@@ -8,8 +8,8 @@
             <i class="ri-flow-chart"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('input.quota.allocation.title') }}</h1>
-            <p class="page-subtitle">{{ $t('input.quota.allocation.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('quota.allocation.title') }}</h1>
+            <p class="page-subtitle">{{ $t('quota.allocation.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('input.quota.allocation.list') }}</span>
+              <span>{{ $t('quota.allocation.list') }}</span>
             </div>
             <div class="header-actions">
               <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
@@ -29,7 +29,7 @@
               </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
-                {{ $t('input.quota.allocation.add') }}
+                {{ $t('quota.allocation.add') }}
               </el-button>
             </div>
           </div>
@@ -39,7 +39,7 @@
             <div class="search-section">
               <el-select
                 v-model="queryParams.year"
-                :placeholder="$t('input.quota.allocation.placeholder.year')"
+                :placeholder="$t('quota.allocation.placeholder.year')"
                 clearable
                 class="filter-select"
                 @change="handleQuery"
@@ -48,7 +48,7 @@
               </el-select>
               <el-select
                 v-model="queryParams.categoryId"
-                :placeholder="$t('input.quota.allocation.placeholder.category')"
+                :placeholder="$t('quota.allocation.placeholder.category')"
                 clearable
                 class="filter-select"
                 @change="handleQuery"
@@ -56,13 +56,13 @@
                 <el-option
                   v-for="item in categoryOptions"
                   :key="item.value"
-                  :label="$t(`input.quota.category.${item.label}`)"
+                  :label="$t(`quota.category.${item.label}`)"
                   :value="item.value"
                 />
               </el-select>
               <el-select
                 v-model="queryParams.fromDivisionLevel"
-                :placeholder="$t('input.quota.allocation.placeholder.level')"
+                :placeholder="$t('quota.allocation.placeholder.level')"
                 clearable
                 class="filter-select"
                 @change="handleQuery"
@@ -70,13 +70,13 @@
                 <el-option
                   v-for="item in divisionLevelOptions"
                   :key="item.value"
-                  :label="$t(`input.quota.allocation.level.${item.label}`)"
+                  :label="$t(`quota.allocation.level.${item.label}`)"
                   :value="item.value"
                 />
               </el-select>
               <el-select
                 v-model="queryParams.allocationStatus"
-                :placeholder="$t('input.quota.allocation.placeholder.status')"
+                :placeholder="$t('quota.allocation.placeholder.status')"
                 clearable
                 class="filter-select"
                 @change="handleQuery"
@@ -84,7 +84,7 @@
                 <el-option
                   v-for="item in statusOptions"
                   :key="item.value"
-                  :label="$t(`input.quota.allocation.status.${item.label}`)"
+                  :label="$t(`quota.allocation.status.${item.label}`)"
                   :value="item.value"
                 />
               </el-select>
@@ -94,33 +94,33 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="allocationName" :label="$t('input.quota.allocation.columns.allocationName')" min-width="250" show-overflow-tooltip />
-                <el-table-column prop="year" :label="$t('input.quota.allocation.columns.year')" width="100" />
-                <el-table-column prop="categoryName" :label="$t('input.quota.allocation.columns.category')" width="120" />
-                <el-table-column prop="fromDivisionName" :label="$t('input.quota.allocation.columns.fromDivision')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="toDivisionName" :label="$t('input.quota.allocation.columns.toDivision')" min-width="140" show-overflow-tooltip>
+                <el-table-column prop="allocationName" :label="$t('quota.allocation.columns.allocationName')" min-width="250" show-overflow-tooltip />
+                <el-table-column prop="year" :label="$t('quota.allocation.columns.year')" width="100" />
+                <el-table-column prop="categoryName" :label="$t('quota.allocation.columns.category')" width="120" />
+                <el-table-column prop="fromDivisionName" :label="$t('quota.allocation.columns.fromDivision')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="toDivisionName" :label="$t('quota.allocation.columns.toDivision')" min-width="140" show-overflow-tooltip>
                   <template #default="{ row }">
                     {{ row.toDivisionName || row.toFarmerName || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="allocatedQuota" :label="$t('input.quota.allocation.columns.allocatedQuota')" width="120" align="right">
+                <el-table-column prop="allocatedQuota" :label="$t('quota.allocation.columns.allocatedQuota')" width="120" align="right">
                   <template #default="{ row }">
                     <span class="quota-amount">{{ formatNumber(row.allocatedQuota) }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="remainingQuota" :label="$t('input.quota.allocation.columns.remainingQuota')" width="120" align="right">
+                <el-table-column prop="remainingQuota" :label="$t('quota.allocation.columns.remainingQuota')" width="120" align="right">
                   <template #default="{ row }">
                     <span class="quota-remaining">{{ formatNumber(row.remainingQuota) }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="allocationStatus" :label="$t('input.quota.allocation.columns.status')" width="120">
+                <el-table-column prop="allocationStatus" :label="$t('quota.allocation.columns.status')" width="120">
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.allocationStatus)" size="small">
                       {{ row.allocationStatusName }}
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="operateTime" :label="$t('input.quota.allocation.columns.operateTime')" width="160" />
+                <el-table-column prop="operateTime" :label="$t('quota.allocation.columns.operateTime')" width="160" />
                 <el-table-column :label="$t('common.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -166,23 +166,23 @@
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('input.quota.allocation.columns.fromDivision') }}:</span>
+                    <span class="label">{{ $t('quota.allocation.columns.fromDivision') }}:</span>
                     <span class="value">{{ item.fromDivisionName }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('input.quota.allocation.columns.toDivision') }}:</span>
+                    <span class="label">{{ $t('quota.allocation.columns.toDivision') }}:</span>
                     <span class="value">{{ item.toDivisionName || item.toFarmerName || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('input.quota.allocation.columns.allocatedQuota') }}:</span>
+                    <span class="label">{{ $t('quota.allocation.columns.allocatedQuota') }}:</span>
                     <span class="value quota-amount">{{ formatNumber(item.allocatedQuota) }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('input.quota.allocation.columns.remainingQuota') }}:</span>
+                    <span class="label">{{ $t('quota.allocation.columns.remainingQuota') }}:</span>
                     <span class="value quota-remaining">{{ formatNumber(item.remainingQuota) }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('input.quota.allocation.columns.operateTime') }}:</span>
+                    <span class="label">{{ $t('quota.allocation.columns.operateTime') }}:</span>
                     <span class="value">{{ item.operateTime }}</span>
                   </div>
                 </div>
@@ -333,7 +333,7 @@ const handleEdit = (row) => {
 
 const handleDelete = (row) => {
   ElMessageBox.confirm(
-    t('input.quota.allocation.deleteConfirm'),
+    t('quota.allocation.deleteConfirm'),
     t('common.warning'),
     {
       type: 'warning'
@@ -346,7 +346,7 @@ const handleDelete = (row) => {
         operatorDivisionId: userStore.userInfo?.divisionId
       })
       if (res.code === 200) {
-        ElMessage.success(t('input.quota.allocation.deleteSuccess'))
+        ElMessage.success(t('quota.allocation.deleteSuccess'))
         getList()
       } else {
         ElMessage.error(res.msg || t('common.deleteFailed'))
@@ -360,7 +360,7 @@ const handleDelete = (row) => {
 
 const handleBatchDelete = () => {
   ElMessageBox.confirm(
-    t('input.quota.allocation.batchDeleteConfirm'),
+    t('quota.allocation.batchDeleteConfirm'),
     t('common.warning'),
     {
       type: 'warning'
@@ -374,7 +374,7 @@ const handleBatchDelete = () => {
           operatorDivisionId: userStore.userInfo?.divisionId
         })
       }
-      ElMessage.success(t('input.quota.allocation.deleteSuccess'))
+      ElMessage.success(t('quota.allocation.deleteSuccess'))
       selectedIds.value = []
       getList()
     } catch (error) {

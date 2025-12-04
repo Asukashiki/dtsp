@@ -911,6 +911,12 @@ const routes = [
         component: () => import('../views/input/allocate/state-quota/detail.vue'),
         meta: { title: '州级配额详情', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'allocate/state-quota/allocate/:quotaId',
+        name: 'StateAnnualQuotaAllocate',
+        component: () => import('../views/input/allocate/state-quota/allocate.vue'),
+        meta: { title: '配额分配', hideInMenu: true, requiresAuth: true }
+      },
       // 配额逐级分配管理
       {
         path: 'allocate/quota-allocation',

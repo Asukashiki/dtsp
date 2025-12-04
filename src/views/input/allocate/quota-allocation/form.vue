@@ -9,7 +9,7 @@
           </el-button>
           <div class="header-content">
             <h1 class="page-title">
-              {{ isEdit ? $t('input.quota.allocation.edit') : $t('input.quota.allocation.add') }}
+              {{ isEdit ? $t('quota.allocation.edit') : $t('quota.allocation.add') }}
             </h1>
           </div>
         </div>
@@ -23,16 +23,16 @@
             <div class="card-header">
               <div class="card-title">
                 <i class="ri-information-line"></i>
-                <span>{{ $t('input.quota.allocation.form.basicInfo') }}</span>
+                <span>{{ $t('quota.allocation.form.basicInfo') }}</span>
               </div>
             </div>
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.year')" prop="year">
+                  <el-form-item :label="$t('quota.allocation.form.year')" prop="year">
                     <el-select
                       v-model="formData.year"
-                      :placeholder="$t('input.quota.allocation.placeholder.year')"
+                      :placeholder="$t('quota.allocation.placeholder.year')"
                       style="width: 100%"
                       :disabled="isEdit"
                     >
@@ -41,69 +41,69 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.category')" prop="categoryId">
+                  <el-form-item :label="$t('quota.allocation.form.category')" prop="categoryId">
                     <el-select
                       v-model="formData.categoryId"
-                      :placeholder="$t('input.quota.allocation.placeholder.category')"
+                      :placeholder="$t('quota.allocation.placeholder.category')"
                       style="width: 100%"
                       :disabled="isEdit"
                     >
                       <el-option
                         v-for="item in categoryOptions"
                         :key="item.value"
-                        :label="$t(`input.quota.category.${item.label}`)"
+                        :label="$t(`quota.category.${item.label}`)"
                         :value="item.value"
                       />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.fromDivisionLevel')" prop="fromDivisionLevel">
+                  <el-form-item :label="$t('quota.allocation.form.fromDivisionLevel')" prop="fromDivisionLevel">
                     <el-select
                       v-model="formData.fromDivisionLevel"
-                      :placeholder="$t('input.quota.allocation.placeholder.level')"
+                      :placeholder="$t('quota.allocation.placeholder.level')"
                       style="width: 100%"
                       :disabled="isEdit"
                     >
                       <el-option
                         v-for="item in divisionLevelOptions"
                         :key="item.value"
-                        :label="$t(`input.quota.allocation.level.${item.label}`)"
+                        :label="$t(`quota.allocation.level.${item.label}`)"
                         :value="item.value"
                       />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.fromDivisionId')" prop="fromDivisionId">
+                  <el-form-item :label="$t('quota.allocation.form.fromDivisionId')" prop="fromDivisionId">
                     <el-input
                       v-model="formData.fromDivisionId"
-                      :placeholder="$t('input.quota.allocation.placeholder.fromDivisionId')"
+                      :placeholder="$t('quota.allocation.placeholder.fromDivisionId')"
                       :disabled="isEdit"
                     />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.toDivisionId')" prop="toDivisionId" v-if="formData.fromDivisionLevel < 4">
+                  <el-form-item :label="$t('quota.allocation.form.toDivisionId')" prop="toDivisionId" v-if="formData.fromDivisionLevel < 4">
                     <el-input
                       v-model="formData.toDivisionId"
-                      :placeholder="$t('input.quota.allocation.placeholder.toDivisionId')"
+                      :placeholder="$t('quota.allocation.placeholder.toDivisionId')"
                       :disabled="isEdit"
                     />
                   </el-form-item>
-                  <el-form-item :label="$t('input.quota.allocation.form.toFarmerId')" prop="toFarmerId" v-else>
+                  <el-form-item :label="$t('quota.allocation.form.toFarmerId')" prop="toFarmerId" v-else>
                     <el-input
                       v-model="formData.toFarmerId"
-                      :placeholder="$t('input.quota.allocation.placeholder.toFarmerId')"
+                      :placeholder="$t('quota.allocation.placeholder.toFarmerId')"
                       :disabled="isEdit"
                     />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.allocatedQuota')" prop="allocatedQuota">
+                  <el-form-item :label="$t('quota.allocation.form.allocatedQuota')" prop="allocatedQuota">
                     <el-input-number
                       v-model="formData.allocatedQuota"
-                      :placeholder="$t('input.quota.allocation.placeholder.allocatedQuota')"
+                      :placeholder="$t('quota.allocation.placeholder.allocatedQuota')"
                       :min="0"
                       :precision="2"
                       :controls="false"
@@ -112,10 +112,10 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.totalReceivedQuota')" prop="totalReceivedQuota">
+                  <el-form-item :label="$t('quota.allocation.form.totalReceivedQuota')" prop="totalReceivedQuota">
                     <el-input-number
                       v-model="formData.totalReceivedQuota"
-                      :placeholder="$t('input.quota.allocation.placeholder.totalReceivedQuota')"
+                      :placeholder="$t('quota.allocation.placeholder.totalReceivedQuota')"
                       :min="0"
                       :precision="2"
                       :controls="false"
@@ -125,10 +125,10 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.quota.allocation.form.quotaId')" prop="quotaId">
+                  <el-form-item :label="$t('quota.allocation.form.quotaId')" prop="quotaId">
                     <el-input
                       v-model="formData.quotaId"
-                      :placeholder="$t('input.quota.allocation.placeholder.quotaId')"
+                      :placeholder="$t('quota.allocation.placeholder.quotaId')"
                       :disabled="isEdit"
                     />
                   </el-form-item>
@@ -187,13 +187,13 @@ const formData = reactive({
 })
 
 const rules = {
-  year: [{ required: true, message: t('input.quota.allocation.placeholder.year'), trigger: 'change' }],
-  categoryId: [{ required: true, message: t('input.quota.allocation.placeholder.category'), trigger: 'change' }],
-  fromDivisionLevel: [{ required: true, message: t('input.quota.allocation.placeholder.level'), trigger: 'change' }],
-  fromDivisionId: [{ required: true, message: t('input.quota.allocation.placeholder.fromDivisionId'), trigger: 'blur' }],
-  allocatedQuota: [{ required: true, message: t('input.quota.allocation.placeholder.allocatedQuota'), trigger: 'blur' }],
-  quotaId: [{ required: true, message: t('input.quota.allocation.placeholder.quotaId'), trigger: 'blur' }],
-  totalReceivedQuota: [{ required: true, message: t('input.quota.allocation.placeholder.totalReceivedQuota'), trigger: 'blur' }]
+  year: [{ required: true, message: t('quota.allocation.placeholder.year'), trigger: 'change' }],
+  categoryId: [{ required: true, message: t('quota.allocation.placeholder.category'), trigger: 'change' }],
+  fromDivisionLevel: [{ required: true, message: t('quota.allocation.placeholder.level'), trigger: 'change' }],
+  fromDivisionId: [{ required: true, message: t('quota.allocation.placeholder.fromDivisionId'), trigger: 'blur' }],
+  allocatedQuota: [{ required: true, message: t('quota.allocation.placeholder.allocatedQuota'), trigger: 'blur' }],
+  quotaId: [{ required: true, message: t('quota.allocation.placeholder.quotaId'), trigger: 'blur' }],
+  totalReceivedQuota: [{ required: true, message: t('quota.allocation.placeholder.totalReceivedQuota'), trigger: 'blur' }]
 }
 
 const yearOptions = ref([])
@@ -256,7 +256,7 @@ const handleSubmit = async () => {
       submitData.newAllocatedQuota = submitData.allocatedQuota
       const res = await updateQuotaAllocation(submitData)
       if (res.code === 200) {
-        ElMessage.success(t('input.quota.allocation.editSuccess'))
+        ElMessage.success(t('quota.allocation.editSuccess'))
         goBack()
       } else {
         ElMessage.error(res.msg || t('common.saveFailed'))
@@ -264,7 +264,7 @@ const handleSubmit = async () => {
     } else {
       const res = await addQuotaAllocation(submitData)
       if (res.code === 200) {
-        ElMessage.success(t('input.quota.allocation.addSuccess'))
+        ElMessage.success(t('quota.allocation.addSuccess'))
         goBack()
       } else {
         ElMessage.error(res.msg || t('common.saveFailed'))

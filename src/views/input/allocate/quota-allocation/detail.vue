@@ -7,7 +7,7 @@
             <i class="ri-arrow-left-line"></i>
           </el-button>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('input.quota.allocation.detail') }}</h1>
+            <h1 class="page-title">{{ $t('quota.allocation.detail') }}</h1>
           </div>
         </div>
         <div class="header-actions">
@@ -23,30 +23,30 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-information-line"></i>
-              <span>{{ $t('input.quota.allocation.form.basicInfo') }}</span>
+              <span>{{ $t('quota.allocation.form.basicInfo') }}</span>
             </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.allocationName')" :span="2">
+              <el-descriptions-item :label="$t('quota.allocation.columns.allocationName')" :span="2">
                 {{ detailData.allocationName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.year')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.year')">
                 {{ detailData.year || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.category')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.category')">
                 {{ detailData.categoryName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.fromDivision')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.fromDivision')">
                 {{ detailData.fromDivisionName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.fromLevel')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.fromLevel')">
                 {{ getLevelName(detailData.fromDivisionLevel) }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.toDivision')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.toDivision')">
                 {{ detailData.toDivisionName || detailData.toFarmerName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.parentDivision')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.parentDivision')">
                 {{ detailData.fromParentDivisionName || '-' }}
               </el-descriptions-item>
             </el-descriptions>
@@ -58,27 +58,27 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-pie-chart-line"></i>
-              <span>{{ $t('input.quota.allocation.form.quotaDetails') }}</span>
+              <span>{{ $t('quota.allocation.form.quotaDetails') }}</span>
             </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.quotaName')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.quotaName')">
                 {{ detailData.quotaName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.totalReceived')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.totalReceived')">
                 <span class="quota-amount">{{ formatNumber(detailData.totalReceivedQuota) }}</span>
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.allocatedQuota')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.allocatedQuota')">
                 <span class="quota-amount">{{ formatNumber(detailData.allocatedQuota) }}</span>
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.totalAllocated')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.totalAllocated')">
                 <span class="quota-amount">{{ formatNumber(detailData.totalAllocatedQuota) }}</span>
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.remainingQuota')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.remainingQuota')">
                 <span class="quota-remaining">{{ formatNumber(detailData.remainingQuota) }}</span>
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.status')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.status')">
                 <el-tag :type="getStatusType(detailData.allocationStatus)" size="small">
                   {{ detailData.allocationStatusName }}
                 </el-tag>
@@ -92,33 +92,33 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-user-line"></i>
-              <span>{{ $t('input.quota.allocation.form.operatorInfo') }}</span>
+              <span>{{ $t('quota.allocation.form.operatorInfo') }}</span>
             </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.operator')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.operator')">
                 {{ detailData.operatorName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.operatorDivision')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.operatorDivision')">
                 {{ detailData.operatorDivisionName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.operateTime')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.operateTime')">
                 {{ detailData.operateTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.progressUpdateTime')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.progressUpdateTime')">
                 {{ detailData.progressUpdateTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.createTime')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.createTime')">
                 {{ detailData.createTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.updateTime')">
+              <el-descriptions-item :label="$t('quota.allocation.columns.updateTime')">
                 {{ detailData.updateTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.modifier')" v-if="detailData.modifierId">
+              <el-descriptions-item :label="$t('quota.allocation.columns.modifier')" v-if="detailData.modifierId">
                 {{ detailData.modifierName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.allocation.columns.modifierDivision')" v-if="detailData.modifierId">
+              <el-descriptions-item :label="$t('quota.allocation.columns.modifierDivision')" v-if="detailData.modifierId">
                 {{ detailData.modifierDivisionName || '-' }}
               </el-descriptions-item>
             </el-descriptions>
@@ -167,10 +167,10 @@ const getInfo = async () => {
 
 const getLevelName = (level) => {
   const levels = {
-    1: t('input.quota.allocation.level.region'),
-    2: t('input.quota.allocation.level.zone'),
-    3: t('input.quota.allocation.level.worede'),
-    4: t('input.quota.allocation.level.kebele')
+    1: t('quota.allocation.level.region'),
+    2: t('quota.allocation.level.zone'),
+    3: t('quota.allocation.level.worede'),
+    4: t('quota.allocation.level.kebele')
   }
   return levels[level] || '-'
 }

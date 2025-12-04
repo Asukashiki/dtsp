@@ -70,5 +70,6 @@ export default {
     },
     batchDelete: '批量删除',
     yes: '是',
-    no: '否'
+    no: '否',
+    userInfoMissing: '用户信息丢失，请重新登录。'
   }

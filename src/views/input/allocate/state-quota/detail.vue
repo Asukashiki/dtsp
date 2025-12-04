@@ -7,7 +7,7 @@
             <i class="ri-arrow-left-line"></i>
           </el-button>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('input.quota.stateQuota.detail') }}</h1>
+            <h1 class="page-title">{{ $t('quota.stateQuota.detail') }}</h1>
           </div>
         </div>
         <div class="header-actions">
@@ -23,21 +23,21 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-information-line"></i>
-              <span>{{ $t('input.quota.stateQuota.form.basicInfo') }}</span>
+              <span>{{ $t('quota.stateQuota.form.basicInfo') }}</span>
             </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.quotaName')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.quotaName')">
                 {{ detailData.quotaName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.year')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.year')">
                 {{ detailData.year || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.category')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.category')">
                 {{ detailData.categoryName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.totalQuota')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.totalQuota')">
                 <span class="quota-amount">{{ formatNumber(detailData.totalQuota) }}</span>
               </el-descriptions-item>
             </el-descriptions>
@@ -49,27 +49,27 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-user-line"></i>
-              <span>{{ $t('input.quota.stateQuota.form.operatorInfo') }}</span>
+              <span>{{ $t('quota.stateQuota.form.operatorInfo') }}</span>
             </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.operator')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.operator')">
                 {{ detailData.operatorName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.operatorDivision')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.operatorDivision')">
                 {{ detailData.operatorDivisionName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.operateTime')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.operateTime')">
                 {{ detailData.operateTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.createTime')">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.createTime')">
                 {{ detailData.createTime || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.modifier')" v-if="detailData.modifierId">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.modifier')" v-if="detailData.modifierId">
                 {{ detailData.modifierName || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('input.quota.stateQuota.columns.updateTime')" v-if="detailData.modifierId">
+              <el-descriptions-item :label="$t('quota.stateQuota.columns.updateTime')" v-if="detailData.modifierId">
                 {{ detailData.updateTime || '-' }}
               </el-descriptions-item>
             </el-descriptions>
