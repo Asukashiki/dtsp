@@ -563,6 +563,75 @@ const routes = [
     redirect: '/input/catalog',
     meta: { requiresAuth: true, layoutConfig: inputLayoutConfig },
     children: [
+      // 注册管理
+      {
+        path: 'registration',
+        name: 'Registration',
+        component: () => import('../views/input/registration/index.vue'),
+        meta: { title: 'Union/Cooperative注册申请', requiresAuth: true }
+      },
+      {
+        path: 'registration/add',
+        name: 'RegistrationAdd',
+        component: () => import('../views/input/registration/form.vue'),
+        meta: { title: '新增注册申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'registration/edit/:id',
+        name: 'RegistrationEdit',
+        component: () => import('../views/input/registration/form.vue'),
+        meta: { title: '编辑注册申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'registration/detail/:id',
+        name: 'RegistrationDetail',
+        component: () => import('../views/input/registration/detail.vue'),
+        meta: { title: '注册申请详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'registration/approval',
+        name: 'RegistrationApproval',
+        component: () => import('../views/input/registration/approval.vue'),
+        meta: { title: 'Union/Cooperative注册审核', requiresAuth: true }
+      },
+      // DA农民需求录入
+      {
+        path: 'demand/farmer',
+        name: 'FarmerDemand',
+        component: () => import('../views/input/demand/farmer/index.vue'),
+        meta: { title: 'DA农民需求录入', requiresAuth: true }
+      },
+      {
+        path: 'demand/farmer/add',
+        name: 'FarmerDemandAdd',
+        component: () => import('../views/input/demand/farmer/form.vue'),
+        meta: { title: '新增农民需求', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'demand/farmer/edit/:id',
+        name: 'FarmerDemandEdit',
+        component: () => import('../views/input/demand/farmer/form.vue'),
+        meta: { title: '编辑农民需求', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'demand/farmer/detail/:id',
+        name: 'FarmerDemandDetail',
+        component: () => import('../views/input/demand/farmer/detail.vue'),
+        meta: { title: '农民需求详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 投入品需求审核
+      {
+        path: 'demand/audit',
+        name: 'DemandAudit',
+        component: () => import('../views/input/demand/audit/index.vue'),
+        meta: { title: '投入品需求审核', requiresAuth: true }
+      },
+      {
+        path: 'demand/audit/detail/:id',
+        name: 'DemandAuditDetail',
+        component: () => import('../views/input/demand/audit/detail.vue'),
+        meta: { title: '需求审核详情', hideInMenu: true, requiresAuth: true }
+      },
       // 投入品目录管理
       {
         path: 'catalog',

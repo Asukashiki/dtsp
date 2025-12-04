@@ -7,6 +7,12 @@ export default {
     // 菜单导航
     menu: {
       dashboard: '数据概览',
+      registrationManagement: '注册管理',
+      registration: 'Union/Cooperative注册申请',
+      registrationApproval: 'Union/Cooperative注册审核',
+      demandManagement: '投入品需求管理',
+      farmerDemand: 'DA农民需求录入',
+      demandAudit: '投入品需求审核',
       supplierManagement: '供应商管理',
       supplierAuth: '供应商认证',
       supplierAuthApproval: '供应商认证审批',
