@@ -22,8 +22,9 @@
             <el-descriptions :column="2" border>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.trialId')">{{ detailData.trialId }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.trialName')">{{ detailData.trialName }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.trial.form.batchId')">{{ detailData.batchId }}</el-descriptions-item>
+              <el-descriptions-item label="Batch Id">{{ detailData.batchId }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.cropType')">{{ detailData.cropType }}</el-descriptions-item>
+              <el-descriptions-item label="Variety Code">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.varietyName')">{{ detailData.varietyName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.locationId')">{{ detailData.locationId }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.year')">{{ detailData.year }}</el-descriptions-item>

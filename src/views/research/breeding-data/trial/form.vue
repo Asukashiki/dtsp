@@ -38,12 +38,12 @@
                     <el-input v-model="formData.trialName" :placeholder="$t('research.breedingData.trial.placeholder.trialName')" />
                   </el-form-item>
                 </el-col>
-                <!-- 3. Breeding Batch -->
+                <!-- 3. Batch Id -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.batchId')" prop="batchId">
+                  <el-form-item label="Batch Id" prop="batchId">
                     <el-select
                       v-model="formData.batchId"
-                      :placeholder="$t('research.breedingData.trial.placeholder.batchId')"
+                      placeholder="Please select Batch Id"
                       filterable
                       style="width: 100%"
                       @change="handleBatchChange"
@@ -70,25 +70,31 @@
                     <el-input v-model="formData.cropType" disabled :placeholder="$t('research.breedingData.trial.placeholder.cropType')" />
                   </el-form-item>
                 </el-col>
-                <!-- 5. Variety Name -->
+                <!-- 5. Variety Code -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Variety Code">
+                    <el-input v-model="formData.varietyCode" disabled placeholder="Auto-filled from Batch Id" />
+                  </el-form-item>
+                </el-col>
+                <!-- 6. Variety Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.varietyName')" prop="varietyName">
                     <el-input v-model="formData.varietyName" disabled :placeholder="$t('research.breedingData.trial.placeholder.varietyName')" />
                   </el-form-item>
                 </el-col>
-                <!-- 6. Location ID -->
+                <!-- 7. Location ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.locationId')" prop="locationId">
                     <el-input v-model="formData.locationId" :placeholder="$t('research.breedingData.trial.placeholder.locationId')" />
                   </el-form-item>
                 </el-col>
-                <!-- 7. Year -->
+                <!-- 8. Year -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.year')" prop="year">
                     <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.trial.placeholder.year')" />
                   </el-form-item>
                 </el-col>
-                <!-- 8. Season -->
+                <!-- 9. Season -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.season')" prop="season">
                     <el-select v-model="formData.season" :placeholder="$t('research.breedingData.trial.placeholder.season')" style="width: 100%">
@@ -96,7 +102,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 9. GPS Location -->
+                <!-- 10. GPS Location -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.gpsLocation')" prop="gpsLocation">
                     <el-input v-model="formData.gpsLocation" :placeholder="$t('research.breedingData.trial.placeholder.gpsLocation')">
@@ -108,7 +114,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <!-- 10. Design Type -->
+                <!-- 11. Design Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.designType')" prop="designType">
                     <el-select v-model="formData.designType" :placeholder="$t('research.breedingData.trial.placeholder.designType')" style="width: 100%">
@@ -116,7 +122,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 11. Replications -->
+                <!-- 12. Replications -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.replications')" prop="replications">
                     <el-input-number v-model="formData.replications" :min="1" :max="10" :placeholder="$t('research.breedingData.trial.placeholder.replications')" style="width: 100%" />
@@ -166,6 +172,7 @@ const formData = reactive({
   designType: '',
   replications: 1,
   cropType: '',
+  varietyCode: '',
   varietyName: ''
 })
 
@@ -215,10 +222,11 @@ const getStatusType = (status) => {
 }
 
 const handleBatchChange = (batchId) => {
-  // 根据选择的批次自动填充 cropType
+  // 根据选择的批次自动填充 cropType, varietyCode, varietyName
   const selectedBatch = batchOptions.value.find(item => item.batchId === batchId)
   if (selectedBatch) {
     formData.cropType = selectedBatch.cropType || ''
+    formData.varietyCode = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
   }
 }
