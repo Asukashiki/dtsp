@@ -25,6 +25,9 @@
             <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
+            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseCode')" prop="warehouseCode">
+              <el-input v-model="formData.warehouseCode" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseCode')" clearable />
+            </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.warehouseName')" prop="warehouseName">
               <el-input v-model="formData.warehouseName" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseName')" clearable />
             </el-form-item>
@@ -39,27 +42,48 @@
               <el-input v-model="formData.location" :placeholder="$t('input.inventory.warehouse.placeholder.location')" clearable />
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.capacity')" prop="capacity">
-              <el-input v-model.number="formData.capacity" :placeholder="$t('input.inventory.warehouse.placeholder.capacity')" type="number" clearable />
+              <el-input-number v-model="formData.capacity" :placeholder="$t('input.inventory.warehouse.placeholder.capacity')" :min="1" :precision="2" class="full-width" />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.belongs')" prop="belongs">
-              <el-input v-model="formData.belongs" :placeholder="$t('input.inventory.warehouse.placeholder.belongs')" clearable />
+            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseArea')" prop="warehouseArea">
+              <el-input-number v-model="formData.warehouseArea" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseArea')" :min="0" :precision="2" class="full-width">
+                <template #append>m²</template>
+              </el-input-number>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.supplierId')" prop="supplierId">
-              <el-select
-                v-model="formData.supplierId"
-                :placeholder="$t('input.inventory.warehouse.placeholder.supplierId')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="supplierLoading"
+            <el-form-item :label="$t('input.inventory.warehouse.form.organName')" prop="organName">
+              <el-input v-model="formData.organName" :placeholder="$t('input.inventory.warehouse.placeholder.organName')" clearable />
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.warehouse.form.siteCertificate')" class="full-width-item">
+              <el-upload
+                v-model:file-list="fileList"
+                :action="uploadUrl"
+                :headers="uploadHeaders"
+                :on-success="handleUploadSuccess"
+                :on-remove="handleRemove"
+                :before-upload="beforeUpload"
+                :limit="1"
+                accept=".jpg,.jpeg,.png,.pdf"
+                list-type="text"
               >
-                <el-option
-                  v-for="supplier in supplierList"
-                  :key="supplier.user_id"
-                  :label="supplier.org_name"
-                  :value="supplier.user_id"
-                />
-              </el-select>
+                <el-button type="primary" size="small">
+                  <i class="ri-upload-line"></i>
+                  {{ $t('input.inventory.warehouse.uploadFile') }}
+                </el-button>
+                <template #tip>
+                  <div class="el-upload__tip">
+                    {{ $t('input.inventory.warehouse.uploadTip') }}
+                  </div>
+                </template>
+              </el-upload>
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.warehouse.form.remark')" class="full-width-item">
+              <el-input
+                v-model="formData.remark"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('input.inventory.warehouse.placeholder.remark')"
+                maxlength="500"
+                show-word-limit
+              />
             </el-form-item>
           </div>
         </div>
@@ -96,7 +120,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getWarehouseDetail, addWarehouse, updateWarehouse } from '@/api/inventory'
-import { getSupplierCertList } from '@/api/supplier'
 
 const router = useRouter()
 const route = useRoute()
@@ -108,51 +131,91 @@ const isEdit = computed(() => route.path.includes('/edit/'))
 const warehouseId = computed(() => route.params.id)
 
 const formData = reactive({
+  warehouseCode: '',
   warehouseName: '',
   warehouseType: '',
   location: '',
   capacity: null,
-  belongs: '',
-  supplierId: null,
+  warehouseArea: null,
+  organName: '',
   contactPerson: '',
-  contactPhone: ''
+  contactPhone: '',
+  siteCertificate: '',
+  remark: ''
 })
 
-// 供应商列表
-const supplierList = ref([])
-const supplierLoading = ref(false)
-
-// 加载供应商列表
-const loadSupplierList = async () => {
-  supplierLoading.value = true
-  try {
-    const res = await getSupplierCertList({
-      page: 1,
-      pageSize: 1000,
-      status: '2' // 只获取已通过审核的供应商
-    })
-    if (res.code === 200) {
-      supplierList.value = res.data.list || []
-    }
-  } catch (error) {
-    console.error('Failed to load supplier list:', error)
-  } finally {
-    supplierLoading.value = false
-  }
-}
+// 文件上传相关
+const fileList = ref([])
+const uploadUrl = ref(import.meta.env.VITE_APP_API_URL + '/auth/file/upload')
+const uploadHeaders = ref({
+  Authorization: localStorage.getItem('token') || ''
+})
 
 const rules = computed(() => ({
+  warehouseCode: [{ required: true, message: t('input.inventory.warehouse.rules.warehouseCodeRequired'), trigger: 'blur' }],
   warehouseName: [{ required: true, message: t('input.inventory.warehouse.rules.warehouseNameRequired'), trigger: 'blur' }],
   warehouseType: [{ required: true, message: t('input.inventory.warehouse.rules.warehouseTypeRequired'), trigger: 'change' }],
   location: [{ required: true, message: t('input.inventory.warehouse.rules.locationRequired'), trigger: 'blur' }],
   capacity: [
-    { required: true, message: t('input.inventory.warehouse.rules.capacityRequired'), trigger: 'blur' },
-    { type: 'number', min: 1, message: t('input.inventory.warehouse.rules.capacityPositive'), trigger: 'blur' }
+    { required: true, message: t('input.inventory.warehouse.rules.capacityRequired'), trigger: 'change' },
+    {
+      validator: (rule, value, callback) => {
+        if (!value || value <= 0) {
+          callback(new Error(t('input.inventory.warehouse.rules.capacityPositive')))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'change'
+    }
   ],
-  belongs: [{ required: true, message: t('input.inventory.warehouse.rules.belongsRequired'), trigger: 'blur' }],
+  warehouseArea: [
+    {
+      validator: (rule, value, callback) => {
+        if (value !== null && value !== undefined && value < 0) {
+          callback(new Error(t('input.inventory.warehouse.rules.warehouseAreaPositive')))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'change'
+    }
+  ],
+  organName: [{ required: true, message: t('input.inventory.warehouse.rules.organNameRequired'), trigger: 'blur' }],
   contactPerson: [{ required: true, message: t('input.inventory.warehouse.rules.contactPersonRequired'), trigger: 'blur' }],
   contactPhone: [{ required: true, message: t('input.inventory.warehouse.rules.contactPhoneRequired'), trigger: 'blur' }]
 }))
+
+// 文件上传前校验
+const beforeUpload = (file) => {
+  const isValidType = ['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isValidType) {
+    ElMessage.error(t('input.inventory.warehouse.uploadFormatError'))
+    return false
+  }
+  if (!isLt2M) {
+    ElMessage.error(t('input.inventory.warehouse.uploadSizeError'))
+    return false
+  }
+  return true
+}
+
+// 文件上传成功
+const handleUploadSuccess = (response) => {
+  if (response.code === 200) {
+    formData.siteCertificate = response.data.url || response.data.path || response.data
+    ElMessage.success(t('input.inventory.warehouse.uploadSuccess'))
+  } else {
+    ElMessage.error(response.msg || t('input.inventory.warehouse.uploadFailed'))
+  }
+}
+
+// 文件移除
+const handleRemove = () => {
+  formData.siteCertificate = ''
+}
 
 // 返回
 const goBack = () => {
@@ -167,15 +230,26 @@ const loadData = async () => {
     const res = await getWarehouseDetail(warehouseId.value)
     if (res.code === 200 && res.data) {
       Object.assign(formData, {
+        warehouseCode: res.data.warehouse_code || '',
         warehouseName: res.data.warehouse_name,
         warehouseType: res.data.warehouse_type,
         location: res.data.location,
         capacity: res.data.capacity,
-        belongs: res.data.belongs,
-        supplierId: res.data.supplier_id,
+        warehouseArea: res.data.warehouse_area || null,
+        organName: res.data.organ_name || '',
         contactPerson: res.data.contact_person,
-        contactPhone: res.data.contact_phone
+        contactPhone: res.data.contact_phone,
+        siteCertificate: res.data.site_certificate || '',
+        remark: res.data.remark || ''
       })
+
+      // 如果有文件，设置文件列表
+      if (res.data.site_certificate) {
+        fileList.value = [{
+          name: t('input.inventory.warehouse.siteCertificateFile'),
+          url: res.data.site_certificate
+        }]
+      }
     }
   } catch (error) {
     console.error('Failed to load warehouse detail:', error)
@@ -190,14 +264,17 @@ const handleSubmit = async () => {
     submitLoading.value = true
 
     const data = {
+      warehouseCode: formData.warehouseCode,
       warehouseName: formData.warehouseName,
       warehouseType: formData.warehouseType,
       location: formData.location,
       capacity: formData.capacity,
-      belongs: formData.belongs,
-      supplierId: formData.supplierId || 0,
+      warehouseArea: formData.warehouseArea || 0,
+      organName: formData.organName,
       contactPerson: formData.contactPerson,
-      contactPhone: formData.contactPhone
+      contactPhone: formData.contactPhone,
+      siteCertificate: formData.siteCertificate || '',
+      remark: formData.remark || ''
     }
 
     if (isEdit.value) {
@@ -222,7 +299,6 @@ const handleSubmit = async () => {
 }
 
 onMounted(() => {
-  loadSupplierList()
   loadData()
 })
 </script>

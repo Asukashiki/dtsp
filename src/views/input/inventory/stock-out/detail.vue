@@ -12,12 +12,6 @@
         <div class="header-center">
           <h1 class="page-title">{{ $t('input.inventory.stockOut.detail') }}</h1>
         </div>
-        <div class="header-right">
-          <el-button v-if="detailData && detailData.status === '0'" type="success" @click="handleConfirm">
-            <i class="ri-check-line"></i>
-            <span class="btn-text">{{ $t('input.inventory.stockOut.confirm') }}</span>
-          </el-button>
-        </div>
       </div>
     </div>
 
@@ -32,44 +26,56 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.stockOutId') }}:</span>
-              <span class="value">{{ detailData.stock_out_id }}</span>
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundOrderId') }}:</span>
+              <span class="value">{{ detailData.outbound_order_id }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
-              <span class="value">{{ detailData.batch_no }}</span>
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundBatchId') }}:</span>
+              <span class="value">{{ detailData.outbound_batch_id || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.type') }}:</span>
+              <el-tag :type="getTypeTag(detailData.outbound_type)">
+                {{ getTypeText(detailData.outbound_type) }}
+              </el-tag>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.status') }}:</span>
+              <el-tag :type="getStatusTag(detailData.outbound_status)">
+                {{ getStatusText(detailData.outbound_status) }}
+              </el-tag>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.warehouseId') }}:</span>
               <span class="value">{{ detailData.warehouse_name }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.customer') }}:</span>
-              <span class="value">{{ detailData.customer }}</span>
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundObject') }}:</span>
+              <span class="value">{{ detailData.outbound_object_id || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.type') }}:</span>
-              <el-tag type="success">
-                {{ $t('input.inventory.stockOut.type.sale') }}
-              </el-tag>
+              <span class="label">{{ $t('input.inventory.stockOut.form.relatedOrderNo') }}:</span>
+              <span class="value">{{ detailData.related_order_no || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundUser') }}:</span>
+              <span class="value">{{ detailData.outbound_user || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundDept') }}:</span>
+              <span class="value">{{ detailData.outbound_dept || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.operator') }}:</span>
               <span class="value">{{ detailData.operator }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.totalQuantity') }}:</span>
-              <span class="value">{{ detailData.total_quantity }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.status') }}:</span>
-              <el-tag :type="getStatusTag(detailData.status)">
-                {{ getStatusText(detailData.status) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.createTime') }}:</span>
-              <span class="value">{{ detailData.create_time }}</span>
+              <span class="value">{{ detailData.created_at }}</span>
+            </div>
+            <div class="detail-item" v-if="detailData.outbound_time">
+              <span class="label">{{ $t('input.inventory.stockOut.form.outboundTime') }}:</span>
+              <span class="value">{{ detailData.outbound_time }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockOut.form.remark') }}:</span>
@@ -78,73 +84,120 @@
           </div>
         </div>
 
-        <!-- 出库商品明细 -->
+        <!-- 审核信息 -->
+        <div class="detail-section" v-if="detailData.audit_user || detailData.audit_time">
+          <div class="section-title">
+            <i class="ri-file-list-line"></i>
+            {{ $t('input.inventory.stockIn.auditInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.auditUser') }}:</span>
+              <span class="value">{{ detailData.audit_user || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockOut.form.auditTime') }}:</span>
+              <span class="value">{{ detailData.audit_time || '-' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 出库明细 -->
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-archive-line"></i>
-            {{ $t('input.inventory.stockOut.form.items') }}
+            {{ $t('input.inventory.stockOut.form.details') }}
           </div>
 
           <!-- PC端表格 -->
           <div class="pc-view">
-            <el-table :data="detailData.items || []" stripe style="width: 100%">
+            <el-table :data="detailData.details || []" stripe style="width: 100%">
               <el-table-column type="index" label="#" width="60" />
-              <el-table-column prop="input_name" :label="$t('input.inventory.stockOut.form.inputId')" min-width="150" />
-              <el-table-column prop="batch_no" :label="$t('input.inventory.stockOut.form.batchNo')" width="180" />
-              <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="140" align="center" />
-              <el-table-column prop="remarks" :label="$t('input.inventory.stockOut.form.itemRemarks')" min-width="150" show-overflow-tooltip />
+                <el-table-column prop="material_id" :label="$t('input.inventory.stockOut.form.materialId')" width="150" />
+              <el-table-column prop="material_name" :label="$t('input.catalog.columns.inputName')" min-width="150" />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockOut.form.materialType')" width="120" />
+              <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
+              <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
+              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100" />
+              <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
+                <template #default="{ row }">
+                  <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
+                    <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
+                  </el-button>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
 
           <!-- 移动端卡片 -->
           <div class="mobile-view">
-            <div v-if="!detailData.items || detailData.items.length === 0" class="empty-state">
+            <div v-if="!detailData.details || detailData.details.length === 0" class="empty-state">
               <p>{{ $t('input.inventory.stockOut.messages.noItems') }}</p>
             </div>
-            <div v-for="(item, index) in detailData.items" :key="index" class="item-card">
+            <div v-for="(item, index) in detailData.details" :key="index" class="item-card">
               <div class="item-header">
                 <span class="item-index">#{{ index + 1 }}</span>
-                <h4 class="item-name">{{ item.input_name }}</h4>
+                <h4 class="item-name">{{ item.material_name }}</h4>
               </div>
               <div class="item-info">
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
-                  <span class="value">{{ item.batch_no }}</span>
+                  <span class="label">{{ $t('input.inventory.stockOut.form.materialId') }}:</span>
+                  <span class="value">{{ item.material_id }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
+                  <span class="value">{{ item.material_type }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockOut.form.quantity') }}:</span>
                   <span class="value">{{ item.quantity }}</span>
                 </div>
-                <div v-if="item.remarks" class="info-row full-width">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.itemRemarks') }}:</span>
-                  <span class="value">{{ item.remarks }}</span>
+                <div v-if="item.spec_model" class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.specModel') }}:</span>
+                  <span class="value">{{ item.spec_model }}</span>
                 </div>
+                <div v-if="item.unit_of_measure" class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.unitOfMeasure') }}:</span>
+                  <span class="value">{{ item.unit_of_measure }}</span>
+                </div>
+              </div>
+              <div v-if="item.batch_splits && item.batch_splits.length > 0" class="item-footer">
+                <el-button link type="primary" size="small" @click="showBatchSplits(item)">
+                  <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
+                </el-button>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- QR Code (if available) -->
-        <!-- <div v-if="detailData.qr_code" class="detail-section">
-          <div class="section-title">
-            <i class="ri-qr-code-line"></i>
-            {{ $t('input.inventory.stockOut.qrCode') }}
-          </div>
-          <div class="qr-code-wrapper">
-            <img :src="detailData.qr_code" alt="QR Code" class="qr-code-image" />
-          </div>
-        </div> -->
       </template>
     </div>
+
+    <!-- 批次拆分弹窗 -->
+    <el-dialog
+      v-model="batchSplitsDialogVisible"
+      :title="$t('input.inventory.stockOut.form.batchSplits')"
+      width="90%"
+      max-width="800px"
+    >
+      <el-table :data="currentBatchSplits" stripe>
+        <el-table-column type="index" label="#" width="60" />
+        <el-table-column prop="inbound_batch_id" :label="$t('input.inventory.stockOut.form.inboundBatchId')" min-width="200" />
+        <el-table-column prop="split_quantity" :label="$t('input.inventory.stockOut.form.splitQuantity')" width="120" align="center" />
+        <el-table-column prop="remaining_quantity" :label="$t('input.inventory.stockOut.form.remainingQuantity')" width="120" align="center" />
+      </el-table>
+      <template #footer>
+        <el-button @click="batchSplitsDialogVisible = false">{{ $t('common.close') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getStockOutDetail, confirmStockOut } from '@/api/inventory'
+import { ElMessage } from 'element-plus'
+import { getOutboundOrderDetail } from '@/api/outbound'
 
 const router = useRouter()
 const route = useRoute()
@@ -152,14 +205,42 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
-const stockOutId = route.params.id
+const outboundOrderId = route.params.id
+
+// 批次拆分弹窗
+const batchSplitsDialogVisible = ref(false)
+const currentBatchSplits = ref([])
+
+// 检查是否有批次拆分数据
+const hasBatchSplits = computed(() => {
+  if (!detailData.value || !detailData.value.details) return false
+  return detailData.value.details.some(detail => detail.batch_splits && detail.batch_splits.length > 0)
+})
+
+// 获取类型标签
+const getTypeTag = (type) => {
+  const typeMap = {
+    1: 'success',
+    2: 'warning'
+  }
+  return typeMap[type] || 'info'
+}
+
+// 获取类型文本
+const getTypeText = (type) => {
+  const typeMap = {
+    1: t('input.inventory.stockOut.type.sale'),
+    2: t('input.inventory.stockOut.type.transfer')
+  }
+  return typeMap[type] || '-'
+}
 
 // 获取状态标签
 const getStatusTag = (status) => {
   const statusMap = {
-    '0': 'warning',
-    '1': 'success',
-    '2': 'info'
+    'pending': 'warning',
+    'completed': 'success',
+    'cancelled': 'info'
   }
   return statusMap[status] || 'info'
 }
@@ -167,9 +248,9 @@ const getStatusTag = (status) => {
 // 获取状态文本
 const getStatusText = (status) => {
   const statusMap = {
-    '0': t('input.inventory.stockOut.status.pending'),
-    '1': t('input.inventory.stockOut.status.confirmed'),
-    '2': t('input.inventory.stockOut.status.cancelled')
+    'pending': t('input.inventory.stockOut.status.pending'),
+    'completed': t('input.inventory.stockOut.status.completed'),
+    'cancelled': t('input.inventory.stockOut.status.cancelled')
   }
   return statusMap[status] || '-'
 }
@@ -179,40 +260,22 @@ const goBack = () => {
   router.back()
 }
 
-// 确认出库
-const handleConfirm = () => {
-  ElMessageBox.confirm(
-    t('input.inventory.stockOut.confirmConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
-  ).then(async () => {
-    try {
-      const res = await confirmStockOut(stockOutId)
-      if (res.code === 200) {
-        ElMessage.success(t('input.inventory.stockOut.confirmSuccess'))
-        loadData()
-      }
-    } catch (error) {
-      console.error('Failed to confirm stock out:', error)
-      ElMessage.error(t('common.failed'))
-    }
-  }).catch(() => {})
+// 显示批次拆分明细
+const showBatchSplits = (detail) => {
+  currentBatchSplits.value = detail.batch_splits || []
+  batchSplitsDialogVisible.value = true
 }
 
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getStockOutDetail(stockOutId)
+    const res = await getOutboundOrderDetail(outboundOrderId)
     if (res.code === 200) {
       detailData.value = res.data
     }
   } catch (error) {
-    console.error('Failed to load stock out detail:', error)
+    console.error('Failed to load outbound order detail:', error)
     ElMessage.error(t('common.failed'))
   } finally {
     loading.value = false
@@ -321,7 +384,7 @@ onMounted(() => {
   font-size: 14px;
   color: #909399;
   flex-shrink: 0;
-  min-width: 100px;
+  min-width: 120px;
 }
 
 .detail-item .value {
@@ -400,22 +463,16 @@ onMounted(() => {
   font-weight: 500;
 }
 
+.item-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e4e7ed;
+}
+
 .empty-state {
   text-align: center;
   padding: 40px 20px;
   color: #909399;
-}
-
-/* QR Code */
-.qr-code-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-.qr-code-image {
-  max-width: 200px;
-  height: auto;
 }
 
 /* 响应式设计 */

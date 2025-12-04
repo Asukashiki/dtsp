@@ -32,6 +32,10 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.warehouseCode') }}:</span>
+              <span class="value">{{ detailData.warehouse_code }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.warehouseName') }}:</span>
               <span class="value">{{ detailData.warehouse_name }}</span>
             </div>
@@ -41,13 +45,27 @@
                 {{ $t(`input.inventory.warehouse.type.${detailData.warehouse_type}`) }}
               </el-tag>
             </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.status') }}:</span>
+              <el-tag :type="detailData.status === '1' ? 'success' : 'info'">
+                {{ detailData.status === '1' ? $t('input.inventory.warehouse.status.enabled') : $t('input.inventory.warehouse.status.disabled') }}
+              </el-tag>
+            </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.warehouse.form.location') }}:</span>
               <span class="value">{{ detailData.location }}</span>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.organName') }}:</span>
+              <span class="value">{{ detailData.organ_name || '-' }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.capacity') }}:</span>
               <span class="value">{{ detailData.capacity }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.warehouseArea') }}:</span>
+              <span class="value">{{ detailData.warehouse_area ? detailData.warehouse_area + ' m²' : '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.usedCapacity') }}:</span>
@@ -55,21 +73,24 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.availableCapacity') }}:</span>
-              <span class="value">{{ (detailData.capacity - (detailData.used_capacity || 0)) }}</span>
+              <span class="value">{{ detailData.available_capacity || (detailData.capacity - (detailData.used_capacity || 0)) }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.warehouse.columns.usageRate') }}:</span>
               <el-progress :percentage="getUsageRate(detailData)" :color="getProgressColor(detailData)" />
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.warehouse.form.belongs') }}:</span>
-              <span class="value">{{ detailData.belongs }}</span>
+            <div class="detail-item full-width" v-if="detailData.site_certificate">
+              <span class="label">{{ $t('input.inventory.warehouse.form.siteCertificate') }}:</span>
+              <span class="value">
+                <el-link :href="detailData.site_certificate" target="_blank" type="primary">
+                  <i class="ri-file-line"></i>
+                  {{ $t('input.inventory.warehouse.viewFile') }}
+                </el-link>
+              </span>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.warehouse.form.status') }}:</span>
-              <el-tag :type="detailData.status === '1' ? 'success' : 'info'">
-                {{ detailData.status === '1' ? $t('input.inventory.warehouse.status.enabled') : $t('input.inventory.warehouse.status.disabled') }}
-              </el-tag>
+            <div class="detail-item full-width" v-if="detailData.remark">
+              <span class="label">{{ $t('input.inventory.warehouse.form.remark') }}:</span>
+              <span class="value">{{ detailData.remark }}</span>
             </div>
           </div>
         </div>
@@ -100,8 +121,20 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.createPeople') }}:</span>
+              <span class="value">{{ detailData.create_people || '-' }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.createTime') }}:</span>
               <span class="value">{{ detailData.create_time || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.updatePeople') }}:</span>
+              <span class="value">{{ detailData.update_people || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.updateTime') }}:</span>
+              <span class="value">{{ detailData.update_time || '-' }}</span>
             </div>
           </div>
         </div>

@@ -71,5 +71,19 @@ export default {
     batchDelete: '批量删除',
     yes: '是',
     no: '否',
-    userInfoMissing: '用户信息丢失，请重新登录。'
+    userInfoMissing: '用户信息丢失，请重新登录。',
+    detail: '详情',
+    all: '全部',
+    currentUser: '当前用户',
+    // 错误提示
+    error: {
+      title: '错误提示',
+      serverError: '服务器错误',
+      requestFailed: '请求失败',
+      unauthorized: '登录已过期，请重新登录',
+      notFound: '请求的资源不存在',
+      timeout: '请求超时，请检查网络连接',
+      networkError: '网络错误，请检查您的网络连接',
+      operationFailed: '操作失败'
+    }
   }

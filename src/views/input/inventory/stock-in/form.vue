@@ -1,5 +1,5 @@
 <template>
-  <div class="stock-in-form-page">
+  <div class="inbound-form-page">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
@@ -10,14 +10,14 @@
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('input.inventory.stockIn.add') }}</h1>
+          <h1 class="page-title">{{ isEdit ? $t('input.inventory.stockIn.edit') : $t('input.inventory.stockIn.create') }}</h1>
         </div>
       </div>
     </div>
 
     <!-- 表单区域 -->
     <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="stock-in-form">
+      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="inbound-form">
         <!-- 基本信息 -->
         <div class="form-block">
           <div class="block-header">
@@ -25,33 +25,21 @@
             <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierId')" prop="supplierId">
-              <el-select
-                v-model="formData.supplierId"
-                :placeholder="$t('input.inventory.stockIn.placeholder.supplierId')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="supplierLoading"
-                @change="handleSupplierChange"
-              >
-                <el-option
-                  v-for="supplier in supplierList"
-                  :key="supplier.user_id"
-                  :label="supplier.org_name"
-                  :value="supplier.user_id"
-                />
+            <el-form-item :label="$t('input.inventory.stockIn.columns.type')" prop="inboundType">
+              <el-select v-model="formData.inboundType" :placeholder="$t('input.inventory.stockIn.placeholder.type')" class="full-width">
+                <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
+                <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
+                <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.warehouseId')" prop="warehouseId">
+            <el-form-item :label="$t('input.inventory.stockIn.columns.warehouse')" prop="warehouseId">
               <el-select
                 v-model="formData.warehouseId"
-                :placeholder="$t('input.inventory.stockIn.placeholder.warehouseId')"
+                :placeholder="$t('input.inventory.stockIn.placeholder.warehouse')"
                 filterable
                 clearable
                 class="full-width"
                 :loading="warehouseLoading"
-                :disabled="!formData.supplierId"
               >
                 <el-option
                   v-for="warehouse in warehouseList"
@@ -61,71 +49,92 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.type')" prop="type">
-              <el-select v-model="formData.type" :placeholder="$t('input.inventory.stockIn.placeholder.type')" class="full-width">
-                <el-option :label="$t('input.inventory.stockIn.type.purchase')" value="0" />
-                <el-option :label="$t('input.inventory.stockIn.type.return')" value="1" />
-              </el-select>
+            <el-form-item :label="$t('input.inventory.stockIn.relatedOrderNo')" prop="relatedOrderNo">
+              <el-input v-model="formData.relatedOrderNo" :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.operator')" prop="operator">
+            <el-form-item :label="$t('input.inventory.stockIn.supplierName')" prop="supplierName">
+              <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.stockIn.supplierContact')" prop="supplierContact">
+              <el-input v-model="formData.supplierContact" :placeholder="$t('input.inventory.stockIn.placeholder.supplierContact')" clearable />
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.stockIn.supplierPhone')" prop="supplierPhone">
+              <el-input v-model="formData.supplierPhone" :placeholder="$t('input.inventory.stockIn.placeholder.supplierPhone')" clearable />
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.stockIn.columns.operator')" prop="operator">
               <el-input v-model="formData.operator" :placeholder="$t('input.inventory.stockIn.placeholder.operator')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.remarks')" prop="remarks" class="full-width-item">
-              <el-input v-model="formData.remarks" :placeholder="$t('input.inventory.stockIn.placeholder.remarks')" type="textarea" :rows="2" />
+            <el-form-item :label="$t('input.inventory.stockIn.remark')" prop="remark" class="full-width-item">
+              <el-input v-model="formData.remark" :placeholder="$t('input.inventory.stockIn.placeholder.remark')" type="textarea" :rows="2" />
             </el-form-item>
           </div>
         </div>
 
-        <!-- 入库商品明细 -->
+        <!-- 入库投入品明细 -->
         <div class="form-block">
           <div class="block-header">
             <i class="ri-archive-line"></i>
-            <h3>{{ $t('input.inventory.stockIn.form.items') }}</h3>
+            <h3>{{ $t('input.inventory.stockIn.inputDetails') }}</h3>
           </div>
 
           <div class="items-list">
-            <div v-for="(item, index) in formData.items" :key="index" class="item-row">
+            <div v-for="(item, index) in formData.details" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item :label="$t('input.inventory.stockIn.form.inputId')" :prop="`items.${index}.inputId`" :rules="itemRules.inputId">
+                <el-form-item :label="$t('input.inventory.stockIn.inputName')" :prop="`details.${index}.inputId`" :rules="detailRules.inputId">
                   <el-select
                     v-model="item.inputId"
-                    :placeholder="$t('input.inventory.stockIn.placeholder.inputId')"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.inputName')"
                     filterable
                     clearable
                     class="full-width"
                     :loading="inputLoading"
-                    :disabled="!formData.supplierId"
+                    @change="handleInputChange(item, index)"
                   >
                     <el-option
                       v-for="input in inputList"
                       :key="input.input_id"
-                      :label="`${input.input_name}${input.input_sku ? ' (' + input.input_sku + ')' : ''}`"
+                      :label="input.input_name"
                       :value="input.input_id"
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`items.${index}.quantity`" :rules="itemRules.quantity">
-                  <el-input v-model.number="item.quantity" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" type="number" />
+                <el-form-item :label="$t('input.inventory.stockIn.inputId')" :prop="`details.${index}.inputCode`">
+                  <el-input v-model="item.inputCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputId')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`items.${index}.expiryDate`" :rules="itemRules.expiryDate">
-                  <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" />
+                <el-form-item :label="$t('input.inventory.stockIn.inputBatchId')" :prop="`details.${index}.inputBatchId`">
+                  <el-input v-model="item.inputBatchId" :placeholder="$t('input.inventory.stockIn.placeholder.inputBatchId')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.itemRemarks')" :prop="`items.${index}.remarks`">
-                  <el-input v-model="item.remarks" :placeholder="$t('input.inventory.stockIn.placeholder.itemRemarks')" />
+                <el-form-item :label="$t('input.inventory.stockIn.inputType')" :prop="`details.${index}.inputType`">
+                  <el-input v-model="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.specification')" :prop="`details.${index}.specification`">
+                  <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
+                  <el-input v-model="item.unit" :placeholder="$t('input.inventory.stockIn.placeholder.unit')" clearable />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.columns.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
+                  <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.expiryDate')" :prop="`details.${index}.expiryDate`">
+                  <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" value-format="YYYY-MM-DD" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.qrCode')" :prop="`details.${index}.qrCode`">
+                  <el-input v-model="item.qrCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.qrCode')" />
                 </el-form-item>
               </div>
               <div class="item-actions">
-                <el-button type="danger" link @click="removeItem(index)">
+                <el-button type="danger" link @click="removeDetail(index)" :disabled="formData.details.length === 1">
                   <i class="ri-delete-bin-line"></i>
-                  <span class="btn-text">{{ $t('input.inventory.stockIn.actions.removeItem') }}</span>
+                  <span class="btn-text">{{ $t('common.delete') }}</span>
                 </el-button>
               </div>
             </div>
           </div>
 
-          <el-button type="primary" plain @click="addItem" class="add-item-btn">
+          <el-button type="primary" plain @click="addDetail" class="add-item-btn">
             <i class="ri-add-line"></i>
-            {{ $t('input.inventory.stockIn.actions.addItem') }}
+            {{ $t('input.inventory.stockIn.addInput') }}
           </el-button>
         </div>
 
@@ -141,42 +150,35 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createStockIn } from '@/api/inventory'
+import { createInboundOrder, getInboundOrderDetail } from '@/api/inbound'
 import { getWarehouseList } from '@/api/inventory'
-import { getSupplierCertList, getSupplierProductList } from '@/api/supplier'
+import { getInputList } from '@/api/input'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 const formRef = ref(null)
 const submitLoading = ref(false)
-
-// 仓库列表 - 存储当前供应商的仓库
-const warehouseList = ref([])
 const warehouseLoading = ref(false)
-
-// 供应商列表
-const supplierList = ref([])
-const supplierLoading = ref(false)
-
-// 投入品列表 - 存储供应商的投入品
-const inputList = ref([])
 const inputLoading = ref(false)
 
-// 加载供应商的仓库列表
-const loadWarehouseList = async (supplierId) => {
-  if (!supplierId) {
-    warehouseList.value = []
-    return
-  }
+const isEdit = computed(() => !!route.params.id)
+const inboundOrderId = route.params.id
 
+// 仓库列表
+const warehouseList = ref([])
+// 投入品列表
+const inputList = ref([])
+
+// 加载仓库列表
+const loadWarehouseList = async () => {
   warehouseLoading.value = true
   try {
     const res = await getWarehouseList({
-      supplierId: supplierId,
       page: 1,
       pageSize: 1000,
       status: '1' // 只获取启用的仓库
@@ -191,98 +193,90 @@ const loadWarehouseList = async (supplierId) => {
   }
 }
 
-// 加载供应商列表
-const loadSupplierList = async () => {
-  supplierLoading.value = true
-  try {
-    const res = await getSupplierCertList({
-      page: 1,
-      pageSize: 1000,
-      status: '2' // 只获取已通过审核的供应商
-    })
-    if (res.code === 200) {
-      // 过滤掉没有 user_id 的记录
-      supplierList.value = (res.data.list || []).filter(item => item.user_id != null)
-    }
-  } catch (error) {
-    console.error('Failed to load supplier list:', error)
-  } finally {
-    supplierLoading.value = false
-  }
-}
-
-// 加载供应商的投入品列表
-const loadSupplierInputList = async (supplierId) => {
-  if (!supplierId) {
-    inputList.value = []
-    return
-  }
-
+// 加载投入品列表
+const loadInputList = async () => {
   inputLoading.value = true
   try {
-    const res = await getSupplierProductList({
-      supplierId: supplierId,
+    const res = await getInputList({
       page: 1,
-      pageSize: 1000
+      pageSize: 1000,
+      status: 'active' // 只获取启用的投入品
     })
     if (res.code === 200) {
       inputList.value = res.data.list || []
     }
   } catch (error) {
-    console.error('Failed to load supplier input list:', error)
+    console.error('Failed to load input list:', error)
   } finally {
     inputLoading.value = false
   }
 }
 
-// 供应商改变时的处理
-const handleSupplierChange = (supplierId) => {
-  // 清空仓库和投入品选择
-  formData.warehouseId = ''
-  formData.items.forEach(item => {
-    item.inputId = ''
-  })
+// 投入品选择变化时自动填充信息
+const handleInputChange = (item, index) => {
+  if (!item.inputId) {
+    item.inputCode = ''
+    item.inputType = ''
+    item.qrCode = ''
+    return
+  }
 
-  // 加载该供应商的仓库和投入品
-  if (supplierId) {
-    loadWarehouseList(supplierId)
-    loadSupplierInputList(supplierId)
-  } else {
-    warehouseList.value = []
-    inputList.value = []
+  const selectedInput = inputList.value.find(input => input.input_id === item.inputId)
+  if (selectedInput) {
+    item.inputCode = selectedInput.input_sku || ''
+    item.inputType = getInputTypeText(selectedInput.type)
+    item.qrCode = selectedInput.qr_code || ''
   }
 }
 
+// 获取投入品类型文本
+const getInputTypeText = (type) => {
+  const typeMap = {
+    'pesticide': t('input.catalog.type.pesticide'),
+    'fertilizer': t('input.catalog.type.fertilizer'),
+    'seed': t('input.catalog.type.seed'),
+    'other': t('input.catalog.type.other')
+  }
+  return typeMap[type] || type
+}
+
 const formData = reactive({
+  inboundType: 0,
   warehouseId: '',
-  supplierId: '',
-  type: '',
+  relatedOrderNo: '',
+  supplierName: '',
+  supplierContact: '',
+  supplierPhone: '',
   operator: '',
-  remarks: '',
-  items: [
+  remark: '',
+  details: [
     {
       inputId: '',
+      inputCode: '',
+      inputBatchId: '',
+      inputType: '',
+      specification: '',
+      unit: '',
       quantity: null,
       expiryDate: '',
-      remarks: ''
+      qrCode: ''
     }
   ]
 })
 
 const rules = computed(() => ({
-  warehouseId: [{ required: true, message: t('input.inventory.stockIn.rules.warehouseIdRequired'), trigger: 'change' }],
-  supplierId: [{ required: true, message: t('input.inventory.stockIn.rules.supplierIdRequired'), trigger: 'change' }],
-  type: [{ required: true, message: t('input.inventory.stockIn.rules.typeRequired'), trigger: 'change' }],
+  inboundType: [{ required: true, message: t('input.inventory.stockIn.rules.typeRequired'), trigger: 'change' }],
+  warehouseId: [{ required: true, message: t('input.inventory.stockIn.rules.warehouseRequired'), trigger: 'change' }],
   operator: [{ required: true, message: t('input.inventory.stockIn.rules.operatorRequired'), trigger: 'blur' }]
 }))
 
-const itemRules = computed(() => ({
+const detailRules = computed(() => ({
   inputId: [{ required: true, message: t('input.inventory.stockIn.rules.inputIdRequired'), trigger: 'change' }],
+  unit: [{ required: true, message: t('input.inventory.stockIn.rules.unitRequired'), trigger: 'blur' }],
   quantity: [
     { required: true, message: t('input.inventory.stockIn.rules.quantityRequired'), trigger: 'blur' },
-    { type: 'number', min: 1, message: t('input.inventory.stockIn.rules.quantityPositive'), trigger: 'blur' }
-  ],
-  expiryDate: [{ required: true, message: t('input.inventory.stockIn.rules.expiryDateRequired'), trigger: 'change' }]
+    { type: 'number', min: 0.01, message: t('input.inventory.stockIn.rules.quantityPositive'), trigger: 'blur' }
+  ]
 }))
 
 // 返回
@@ -290,22 +284,64 @@ const goBack = () => {
   router.back()
 }
 
-// 添加商品
-const addItem = () => {
-  formData.items.push({
+// 添加投入品明细
+const addDetail = () => {
+  formData.details.push({
     inputId: '',
+    inputCode: '',
+    inputBatchId: '',
+    inputType: '',
+    specification: '',
+    unit: '',
     quantity: null,
     expiryDate: '',
-    remarks: ''
+    qrCode: ''
   })
 }
 
-// 移除商品
-const removeItem = (index) => {
-  if (formData.items.length > 1) {
-    formData.items.splice(index, 1)
+// 移除投入品明细
+const removeDetail = (index) => {
+  if (formData.details.length > 1) {
+    formData.details.splice(index, 1)
   } else {
-    ElMessage.warning(t('input.inventory.stockIn.rules.itemsRequired'))
+    ElMessage.warning(t('input.inventory.stockIn.rules.detailsRequired'))
+  }
+}
+
+// 加载详情数据
+const loadData = async () => {
+  if (!isEdit.value) return
+
+  try {
+    const res = await getInboundOrderDetail(inboundOrderId)
+    if (res.code === 200) {
+      const data = res.data
+      formData.inboundType = data.inbound_type
+      formData.warehouseId = data.warehouse_id
+      formData.relatedOrderNo = data.related_order_no || ''
+      formData.supplierName = data.supplier_name || ''
+      formData.supplierContact = data.supplier_contact || ''
+      formData.supplierPhone = data.supplier_phone || ''
+      formData.operator = data.operator || ''
+      formData.remark = data.remark || ''
+
+      if (data.details && data.details.length > 0) {
+        formData.details = data.details.map(item => ({
+          inputId: item.input_id,
+          inputCode: item.input_code || '',
+          inputBatchId: item.input_batch_id || '',
+          inputType: item.input_type || '',
+          specification: item.specification || '',
+          unit: item.unit,
+          quantity: item.quantity,
+          expiryDate: item.expiry_date || '',
+          qrCode: item.qr_code || ''
+        }))
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load inbound order detail:', error)
+    ElMessage.error(t('common.loadFailed'))
   }
 }
 
@@ -314,32 +350,50 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate()
 
-    if (formData.items.length === 0) {
-      ElMessage.warning(t('input.inventory.stockIn.rules.itemsRequired'))
+    if (formData.details.length === 0) {
+      ElMessage.warning(t('input.inventory.stockIn.rules.detailsRequired'))
+      return
+    }
+
+    // 验证所有明细
+    const hasEmptyDetail = formData.details.some(item =>
+      !item.inputId || !item.unit || !item.quantity
+    )
+    if (hasEmptyDetail) {
+      ElMessage.warning(t('input.inventory.stockIn.rules.detailsComplete'))
       return
     }
 
     submitLoading.value = true
 
     const data = {
-      warehouseId: parseInt(formData.warehouseId),
-      supplierId: formData.supplierId,
-      type: formData.type,
+      inboundType: formData.inboundType,
+      warehouseId: formData.warehouseId,
+      relatedOrderNo: formData.relatedOrderNo,
+      supplierName: formData.supplierName,
+      supplierContact: formData.supplierContact,
+      supplierPhone: formData.supplierPhone,
       operator: formData.operator,
-      remarks: formData.remarks,
-      items: formData.items.map(item => ({
-        inputId: parseInt(item.inputId),
-        quantity: item.quantity,
-        expiryDate: item.expiryDate instanceof Date
-          ? item.expiryDate.toISOString().split('T')[0]
-          : (item.expiryDate || ''),
-        remarks: item.remarks || ''
-      }))
+      remark: formData.remark,
+      details: formData.details.map(item => {
+        const selectedInput = inputList.value.find(input => input.input_id === item.inputId)
+        return {
+          materialId: item.inputId,
+          materialName: selectedInput ? selectedInput.input_name : '',
+          materialType: item.inputType,
+          materialBatchId: item.inputBatchId,
+          specModel: item.specification,
+          unitOfMeasure: item.unit,
+          quantity: item.quantity,
+          expiryDate: item.expiryDate,
+          qrCode: item.qrCode
+        }
+      })
     }
 
-    const res = await createStockIn(data)
+    const res = await createInboundOrder(data)
     if (res.code === 200) {
-      ElMessage.success(t('input.inventory.stockIn.addSuccess'))
+      ElMessage.success(t('input.inventory.stockIn.createSuccess'))
       setTimeout(() => router.back(), 1000)
     }
   } catch (error) {
@@ -350,12 +404,14 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
-  await loadSupplierList()
+  await loadWarehouseList()
+  await loadInputList()
+  await loadData()
 })
 </script>
 
 <style scoped>
-.stock-in-form-page {
+.inbound-form-page {
   min-height: calc(100vh - 120px);
 }
 
@@ -440,7 +496,7 @@ onMounted(async () => {
   width: 100%;
 }
 
-/* 商品明细 */
+/* 投入品明细 */
 .items-list {
   margin-bottom: 16px;
 }
@@ -455,7 +511,7 @@ onMounted(async () => {
 
 .item-fields {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 12px;
 }
@@ -482,9 +538,12 @@ onMounted(async () => {
 
 /* 响应式设计 */
 @media screen and (max-width: 1024px) {
-  .form-grid,
-  .item-fields {
+  .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .item-fields {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -509,6 +568,10 @@ onMounted(async () => {
 
   .form-wrapper {
     padding: 16px;
+  }
+
+  .item-fields {
+    grid-template-columns: 1fr;
   }
 
   .item-row {

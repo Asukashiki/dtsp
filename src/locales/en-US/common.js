@@ -71,5 +71,19 @@ export default {
   batchDelete: 'Batch Delete',
   yes: 'Yes',
   no: 'No',
-  userInfoMissing: 'User info is missing. Please login again.'
+  userInfoMissing: 'User info is missing. Please login again.',
+  detail: 'Detail',
+  all: 'All',
+  currentUser: 'Current User',
+  // Error Messages
+  error: {
+    title: 'Error',
+    serverError: 'Server Error',
+    requestFailed: 'Request Failed',
+    unauthorized: 'Session expired, please login again',
+    notFound: 'The requested resource does not exist',
+    timeout: 'Request timeout, please check your network connection',
+    networkError: 'Network error, please check your network connection',
+    operationFailed: 'Operation failed'
+  }
 }

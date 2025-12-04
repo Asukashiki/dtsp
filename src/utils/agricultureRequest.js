@@ -1,12 +1,18 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
+import i18n from '@/i18n'
 
 // 农业模块API基础URL配置
 const AGRICULTURE_API_URL =  import.meta.env.VITE_APP_AGRICULTURE_API_URL
 
 // 用于防止重复提示
 let isRedirecting = false
+
+// 获取国际化翻译函数
+const t = (key) => {
+  return i18n.global.t(key)
+}
 
 const agricultureRequest = axios.create({
   baseURL: AGRICULTURE_API_URL,
@@ -43,8 +49,8 @@ agricultureRequest.interceptors.response.use(
 
     // 处理 status: 401 的情况（token 无效）
     if (res.status === 401) {
-      handleUnauthorized(res.message || 'Login expired, please log in again')
-      return Promise.reject(new Error(res.message || 'Unauthorized'))
+      handleUnauthorized(res.message || t('common.error.unauthorized'))
+      return Promise.reject(new Error(res.message || t('common.error.unauthorized')))
     }
 
     // 成功响应
@@ -63,18 +69,30 @@ agricultureRequest.interceptors.response.use(
     const userStore = useUserStore()
 
     if ((res.code === 401 || res.status === 401) && userStore.token) {
-      handleUnauthorized(res.msg || 'Login expired, please log in again')
-      return Promise.reject(new Error(res.msg || 'Unauthorized'))
+      handleUnauthorized(res.msg || t('common.error.unauthorized'))
+      return Promise.reject(new Error(res.msg || t('common.error.unauthorized')))
     }
 
-    // 其他业务错误
-    // ElMessage({
-    //   message: res.msg || res.message || '操作失败',
-    //   type: 'error',
-    //   duration: 3000
-    // })
+    // 其他业务错误 - 使用弹窗显示详细错误信息
+    const errorMessage = res.msg || res.message || t('common.error.operationFailed')
 
-    return Promise.reject(new Error(res.msg || res.message || 'Operation failed'))
+    // 如果错误信息较长或包含换行，使用 MessageBox 显示
+    if (errorMessage.length > 50 || errorMessage.includes('\n')) {
+      ElMessageBox.alert(errorMessage, t('common.error.title'), {
+        confirmButtonText: t('common.confirm'),
+        type: 'error',
+        dangerouslyUseHTMLString: false
+      })
+    } else {
+      // 简短错误信息使用 Message 显示
+      ElMessage({
+        message: errorMessage,
+        type: 'error',
+        duration: 3000
+      })
+    }
+
+    return Promise.reject(new Error(errorMessage))
   },
   error => {
       console.error('Response error:', error)
@@ -84,35 +102,47 @@ agricultureRequest.interceptors.response.use(
       const { status, data } = error.response
 
       if (status === 401) {
-        handleUnauthorized('Login expired, please log in again')
+        handleUnauthorized(t('common.error.unauthorized'))
       } else if (status === 404) {
         ElMessage({
-          message: 'Request resource not found',
+          message: t('common.error.notFound'),
           type: 'error',
           duration: 3000
         })
       } else if (status === 500) {
-        ElMessage({
-          message: data?.msg || 'Server error, please try again later',
+        // 服务器错误使用弹窗显示详细信息
+        const errorMsg = data?.msg || data?.message || t('common.error.serverError')
+        ElMessageBox.alert(errorMsg, t('common.error.serverError'), {
+          confirmButtonText: t('common.confirm'),
           type: 'error',
-          duration: 3000
+          dangerouslyUseHTMLString: false
         })
       } else {
-        ElMessage({
-          message: data?.msg || error.message || 'Request failed',
-          type: 'error',
-          duration: 3000
-        })
+        // 其他HTTP错误
+        const errorMsg = data?.msg || data?.message || error.message || t('common.error.requestFailed')
+        if (errorMsg.length > 50 || errorMsg.includes('\n')) {
+          ElMessageBox.alert(errorMsg, t('common.error.requestFailed'), {
+            confirmButtonText: t('common.confirm'),
+            type: 'error',
+            dangerouslyUseHTMLString: false
+          })
+        } else {
+          ElMessage({
+            message: errorMsg,
+            type: 'error',
+            duration: 3000
+          })
+        }
       }
     } else if (error.code === 'ECONNABORTED') {
       ElMessage({
-        message: 'Request timeout, please check your network connection',
+        message: t('common.error.timeout'),
         type: 'error',
         duration: 3000
       })
     } else {
       ElMessage({
-        message: 'Network error, please check your network connection',
+        message: t('common.error.networkError'),
         type: 'error',
         duration: 3000
       })
