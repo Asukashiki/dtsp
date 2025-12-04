@@ -6,6 +6,7 @@ export default {
   
   breedingDataManagement: '育种数据管理',
   propagationDataManagement: '繁殖数据管理',
+  seedInstitutionManagement: '种子机构管理',
   seedService: '种子信息服务',
 
   breedingBatchManagement: '育种批次管理',
@@ -73,7 +74,7 @@ export default {
   oseReceiveConfirmEdit: '编辑接收确认',
   oseReceiveConfirmDetail: '接收确认详情',
 
-  propagationBatchCollection: '繁殖批次信息采集',
+  propagationBatchCollection: 'OSE繁殖批次信息采集',
   propagationBatchAdd: '新增繁殖批次',
   propagationBatchEdit: '编辑繁殖批次',
   propagationBatchDetail: '繁殖批次详情',
@@ -83,10 +84,23 @@ export default {
   propagationTrackingEdit: '编辑跟踪信息',
   propagationTrackingDetail: '跟踪信息详情',
 
+  c1PropagationBatchCollection: 'C1繁殖批次信息采集',
+  c1PropagationBatchAdd: '新增繁殖批次',
+  c1PropagationBatchEdit: '编辑繁殖批次',
+  c1PropagationBatchDetail: '繁殖批次详情',
+
   seedCertificationApplication: '繁殖种子认证申请',
   seedCertificationApplicationAdd: '新增认证申请',
   seedCertificationApplicationEdit: '编辑认证申请',
   seedCertificationApplicationDetail: '认证申请详情',
+
+  c1SeedPropagationApplication: 'C1种子繁殖申请',
+  c1SeedPropagationApplicationAdd: '新增繁殖申请',
+  c1SeedPropagationApplicationEdit: '编辑繁殖申请',
+  c1SeedPropagationApplicationDetail: '繁殖申请详情',
+
+  c1SeedPropagationApplicationAudit: 'C1种子繁殖申请审核',
+  c1SeedPropagationApplicationAuditDetail: '审核申请详情',
 
   seedCertificationAudit: '种子认证审核',
   seedCertificationAuditDetail: '认证审核详情',

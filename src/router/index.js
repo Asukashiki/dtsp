@@ -751,6 +751,56 @@ const routes = [
         name: 'InputFeedbackDetail',
         component: () => import('../views/input/feedback/detail.vue'),
         meta: { title: '反馈详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 州级年度配额管理
+      {
+        path: 'allocate/state-quota',
+        name: 'StateAnnualQuota',
+        component: () => import('../views/input/allocate/state-quota/index.vue'),
+        meta: { title: '州级年度配额管理', requiresAuth: true }
+      },
+      {
+        path: 'allocate/state-quota/add',
+        name: 'StateAnnualQuotaAdd',
+        component: () => import('../views/input/allocate/state-quota/form.vue'),
+        meta: { title: '新增州级配额', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocate/state-quota/edit/:quotaId',
+        name: 'StateAnnualQuotaEdit',
+        component: () => import('../views/input/allocate/state-quota/form.vue'),
+        meta: { title: '编辑州级配额', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocate/state-quota/detail/:quotaId',
+        name: 'StateAnnualQuotaDetail',
+        component: () => import('../views/input/allocate/state-quota/detail.vue'),
+        meta: { title: '州级配额详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 配额逐级分配管理
+      {
+        path: 'allocate/quota-allocation',
+        name: 'QuotaAllocation',
+        component: () => import('../views/input/allocate/quota-allocation/index.vue'),
+        meta: { title: '配额逐级分配管理', requiresAuth: true }
+      },
+      {
+        path: 'allocate/quota-allocation/add',
+        name: 'QuotaAllocationAdd',
+        component: () => import('../views/input/allocate/quota-allocation/form.vue'),
+        meta: { title: '新增配额分配', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocate/quota-allocation/edit/:allocationId',
+        name: 'QuotaAllocationEdit',
+        component: () => import('../views/input/allocate/quota-allocation/form.vue'),
+        meta: { title: '编辑配额分配', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocate/quota-allocation/detail/:allocationId',
+        name: 'QuotaAllocationDetail',
+        component: () => import('../views/input/allocate/quota-allocation/detail.vue'),
+        meta: { title: '配额分配详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

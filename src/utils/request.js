@@ -39,17 +39,17 @@ request.interceptors.response.use(
     if (res.code !== 200 && userStore.token) {
       
       if (res.code === 401 || res.status === 401) {
-        handleUnauthorized(res.message || '登录已过期，请重新登录')
+        handleUnauthorized(res.message || 'Login expired, please log in again')
       } else if (res.code === 500) {
-          handleUnauthorized(res.message || '登录已过期，请重新登录')
+          handleUnauthorized(res.message || 'Login expired, please log in again')
       } else {
         ElMessage({
-          message: res.msg || '请求错误',
+          message: res.msg || 'Request error',
           type: 'error',
           duration: 5 * 1000
         })
       }
-      return Promise.reject(new Error(res.msg || '请求错误'))
+      return Promise.reject(new Error(res.msg || 'Request error'))
     } else {
       return res
     }
@@ -61,17 +61,17 @@ request.interceptors.response.use(
       console.log('status',status)
       // 未授权或token过期
       if (status === 401) {
-        handleUnauthorized('登录已过期，请重新登录')
+        handleUnauthorized('Login expired, please log in again')
       } else {
         ElMessage({
-          message: error.message || '请求失败',
+          message: error.message || 'Request failed',
           type: 'error',
           duration: 5 * 1000
         })
       }
     } else {
       ElMessage({
-        message: '网络错误，请检查您的网络连接',
+        message: 'Network error, please check your network connection',
         type: 'error',
         duration: 5 * 1000
       })

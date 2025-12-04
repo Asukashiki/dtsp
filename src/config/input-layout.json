@@ -44,6 +44,26 @@
       ]
     },
     {
+      "name" : "投入品配额分配管理",
+      "index": "input-quota",
+      "icon": "ri-file-chart-2-line",
+      "titleKey": "quota.menu.inputQuota",
+      "children": [
+        {
+          "name" : "投入品年度配额管理",
+          "index": "/input/allocate/state-quota",
+          "icon": "ri-calendar-line",
+          "titleKey": "quota.stateQuota.title"
+        },
+        {
+          "name" : "投入品配额分配管理",
+          "index": "/input/allocate/quota-allocation",
+          "icon": "ri-bike-line",
+          "titleKey": "quota.allocation.title"
+        }
+      ]
+    },
+    {
       "index": "inventory-management",
       "icon": "ri-archive-line",
       "titleKey": "input.menu.inventoryManagement",
