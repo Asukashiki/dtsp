@@ -160,7 +160,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/farm'
+    path: '/new-farm'
   },
   production: {
     name: t('home.modules.production.name'),
@@ -195,7 +195,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/farm'
+    path: '/new-farm'
   }
 }))
 

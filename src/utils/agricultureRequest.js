@@ -36,6 +36,11 @@ agricultureRequest.interceptors.response.use(
   response => {
     const res = response.data
 
+    // 处理blob类型响应（文件下载）
+    if (response.config.responseType === 'blob') {
+      return res
+    }
+
     // 处理 status: 401 的情况（token 无效）
     if (res.status === 401) {
       handleUnauthorized(res.message || '登录已过期，请重新登录')

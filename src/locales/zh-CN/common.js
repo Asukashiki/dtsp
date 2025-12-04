@@ -68,5 +68,7 @@ export default {
       barley: '大麦',
       pulses: '豆类',
     },
-    batchDelete: '批量删除'
+    batchDelete: '批量删除',
+    yes: '是',
+    no: '否'
   }

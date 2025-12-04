@@ -1,0 +1,472 @@
+// Farmland Management Module i18n - English
+export default {
+  // System name
+  systemName: 'Farmland Management System',
+  backToHome: 'Back to Home',
+
+  // Module common
+  moduleName: 'Farmland Management',
+  moduleDesc: 'Manage Development Agents, Farmers and Land Data',
+  backToList: 'Back to List',
+
+  // Common fields
+  common: {
+    all: 'All',
+    male: 'Male',
+    female: 'Female',
+    noData: 'No Data',
+    actions: 'Actions',
+    operationSuccess: 'Operation successful',
+    deleteSuccess: 'Deleted successfully',
+    zoneCode: 'Zone',
+    zoneName: 'Zone',
+    woredaCode: 'Woreda',
+    woredaName: 'Woreda',
+    kebeleCode: 'Kebele',
+    kebeleName: 'Kebele',
+    selectZone: 'Please select zone',
+    selectWoreda: 'Please select woreda',
+    selectKebele: 'Please select kebele',
+    systemInfo: 'System Information',
+    createBy: 'Created By',
+    createTime: 'Created At',
+    updateBy: 'Updated By',
+    updateTime: 'Updated At',
+    remark: 'Remark',
+  },
+
+  // Menu
+  menu: {
+    dashboard: 'Dashboard',
+    daManagement: 'DA Management',
+    daList: 'DA List',
+    farmerManagement: 'Farmer Management',
+    farmerList: 'Farmer List',
+    landManagement: 'Land Management',
+    landList: 'Land List',
+  },
+
+  // Statistics cards
+  stats: {
+    totalDa: 'Total DAs',
+    activeDa: 'Active DAs',
+    totalFarmer: 'Total Farmers',
+    totalLand: 'Total Lands',
+    totalArea: 'Total Area (ha)',
+    cultivating: 'Cultivating',
+    idle: 'Idle',
+  },
+
+  // DA Management
+  da: {
+    title: 'DA Management',
+    subtitle: 'Manage Development Agent information and accounts',
+    list: 'DA List',
+    add: 'Add DA',
+    edit: 'Edit DA',
+    detail: 'DA Details',
+    delete: 'Delete DA',
+    searchPlaceholder: 'Search DA name, ID, phone',
+    noData: 'No DA data',
+
+    // Status
+    status: {
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+    },
+
+    // Form
+    form: {
+      daId: 'DA ID',
+      daName: 'DA Name',
+      idCard: 'ID Card',
+      gender: 'Gender',
+      birthday: 'Birthday',
+      phone: 'Phone',
+      email: 'Email',
+      regionCode: 'Region',
+      zoneCode: 'Zone',
+      woredaCode: 'Woreda',
+      kebeleCodes: 'Kebeles',
+      address: 'Address',
+      account: 'Account',
+      password: 'Password',
+      accountStatus: 'Account Status',
+      newPassword: 'New Password',
+      confirmPassword: 'Confirm Password',
+      remark: 'Remark',
+      createTime: 'Created At',
+    },
+    placeholder: {
+      daName: 'Please enter DA name',
+      idCard: 'Please enter ID card',
+      gender: 'Please select gender',
+      birthday: 'Please select birthday',
+      phone: 'Please enter phone',
+      email: 'Please enter email',
+      regionCode: 'Please select region',
+      zoneCode: 'Please select zone',
+      woredaCode: 'Please select woreda',
+      kebeleCodes: 'Please enter kebele codes',
+      address: 'Please enter address',
+      account: 'Please enter account',
+      password: 'Please enter password',
+      newPassword: 'Please enter new password',
+      confirmPassword: 'Please confirm password',
+      remark: 'Remark (optional)',
+    },
+    rules: {
+      daNameRequired: 'DA name is required',
+      daNameLength: 'DA name should not exceed 100 characters',
+      idCardRequired: 'ID card is required',
+      idCardExists: 'ID card already exists',
+      genderRequired: 'Gender is required',
+      phoneRequired: 'Phone is required',
+      phoneFormat: 'Please enter a valid phone number',
+      emailFormat: 'Please enter a valid email address',
+      woredaCodeRequired: 'Woreda is required',
+      kebeleCodesRequired: 'Kebeles are required',
+      accountRequired: 'Account is required',
+      accountExists: 'Account already exists',
+      accountLength: 'Account should not exceed 50 characters',
+      passwordRequired: 'Password is required',
+      passwordLength: 'Password should be 6-20 characters',
+      confirmPasswordRequired: 'Please confirm password',
+      passwordNotMatch: 'Passwords do not match',
+    },
+    columns: {
+      daId: 'DA ID',
+      daName: 'Name',
+      phone: 'Phone',
+      account: 'Account',
+      woredaCode: 'Woreda',
+      woredaName: 'Woreda',
+      kebeleCodes: 'Kebeles',
+      accountStatus: 'Status',
+      createTime: 'Created At',
+      actions: 'Actions',
+    },
+
+    // Detail page sections
+    sections: {
+      basicInfo: 'Basic Information',
+      accountInfo: 'Account Information',
+      regionInfo: 'Region Information',
+      statistics: 'Statistics',
+    },
+    stats: {
+      farmerCount: 'Farmers',
+      landCount: 'Lands',
+      totalLandArea: 'Total Land Area',
+    },
+    // Actions
+    actions: {
+      enable: 'Enable',
+      disable: 'Disable',
+      resetPassword: 'Reset Password',
+    },
+    // Confirm messages
+    confirmDelete: 'Are you sure to delete this DA? The account will be disabled.',
+    confirmToggleStatus: 'Are you sure to {action} this DA account?',
+    // Messages
+    messages: {
+      addSuccess: 'Added successfully',
+      editSuccess: 'Updated successfully',
+      deleteSuccess: 'Deleted successfully',
+      resetPasswordSuccess: 'Password reset successfully',
+    },
+    // Tips
+    tips: {
+      kebeleCodes: 'Multiple kebele codes separated by comma',
+    },
+  },
+
+  // Farmer Management
+  farmer: {
+    title: 'Farmer Management',
+    subtitle: 'Manage farmer information and land associations',
+    list: 'Farmer List',
+    add: 'Add Farmer',
+    edit: 'Edit Farmer',
+    detail: 'Farmer Details',
+    delete: 'Delete Farmer',
+    searchPlaceholder: 'Search farmer name, ID card, phone',
+    noData: 'No farmer data',
+
+    // Form
+    form: {
+      farmerId: 'Farmer ID',
+      farmerName: 'Farmer Name',
+      idCard: 'ID Card',
+      gender: 'Gender',
+      birthDate: 'Birth Date',
+      phone: 'Phone',
+      email: 'Email',
+      youthCategory: 'Youth Category',
+      unionId: 'Union',
+      cooperativeId: 'Cooperative',
+      regionCode: 'Region',
+      zoneCode: 'Zone',
+      woredaCode: 'Woreda',
+      kebeleCode: 'Kebele',
+      address: 'Address',
+      totalLandArea: 'Total Land Area',
+      landCount: 'Land Count',
+      daId: 'Responsible DA',
+      remark: 'Remark',
+      createTime: 'Created At',
+    },
+    placeholder: {
+      farmerName: 'Please enter farmer name',
+      idCard: 'Please enter ID card',
+      gender: 'Please select gender',
+      birthDate: 'Please select birth date',
+      phone: 'Please enter phone',
+      email: 'Please enter email',
+      youthCategory: 'Please select youth category',
+      unionId: 'Please enter union ID',
+      cooperativeId: 'Please enter cooperative ID',
+      kebeleCode: 'Please select kebele',
+      address: 'Please enter address',
+      daId: 'Please select responsible DA',
+      remark: 'Remark (optional)',
+    },
+    rules: {
+      farmerNameRequired: 'Farmer name is required',
+      farmerNameLength: 'Farmer name should not exceed 100 characters',
+      idCardRequired: 'ID card is required',
+      idCardExists: 'ID card already exists',
+      genderRequired: 'Gender is required',
+      phoneFormat: 'Please enter a valid phone number',
+      emailFormat: 'Please enter a valid email address',
+      kebeleCodeRequired: 'Kebele is required',
+      daIdRequired: 'Responsible DA is required',
+    },
+    columns: {
+      farmerId: 'Farmer ID',
+      farmerName: 'Name',
+      gender: 'Gender',
+      idCard: 'ID Card',
+      phone: 'Phone',
+      kebeleName: 'Kebele',
+      totalLandArea: 'Area (ha)',
+      landCount: 'Lands',
+      daName: 'DA',
+      createTime: 'Created At',
+      actions: 'Actions',
+    },
+    youthOptions: {
+      yes: 'Yes',
+      no: 'No',
+    },
+
+    // Detail page sections
+    sections: {
+      basicInfo: 'Basic Information',
+      orgInfo: 'Organization Information',
+      regionInfo: 'Region Information',
+      landStatistics: 'Land Statistics',
+      landList: 'Associated Lands',
+    },
+    stats: {
+      landCount: 'Lands',
+      totalLandArea: 'Total Land Area',
+    },
+    // Youth category
+    youthCategory: {
+      YOUTH: 'Youth',
+      ADULT: 'Adult',
+      SENIOR: 'Senior',
+    },
+    // Actions
+    actions: {
+      batchDelete: 'Batch Delete',
+      viewDetail: 'View Details',
+      import: 'Import',
+    },
+    // Import
+    import: {
+      dragText: 'Drag file here, or',
+      clickText: 'click to upload',
+      tip: 'Only .xlsx, .xls Excel files are supported',
+      updateSupport: 'Update existing data (matched by ID card)',
+      downloadTemplate: 'Download Import Template',
+      selectFile: 'Please select a file to import',
+      exceedLimit: 'Only one file can be uploaded',
+      success: 'Import completed: {success} added, {update} updated, {fail} failed',
+    },
+    // Confirm messages
+    confirmDelete: 'Are you sure to delete this farmer? Associated lands will be unlinked.',
+    confirmBatchDelete: 'Are you sure to delete {count} selected farmers?',
+    // Messages
+    messages: {
+      addSuccess: 'Added successfully',
+      editSuccess: 'Updated successfully',
+      deleteSuccess: 'Deleted successfully',
+    },
+  },
+
+  // Land Management
+  land: {
+    title: 'Land Management',
+    subtitle: 'Manage land parcels, ownership and cultivation status',
+    list: 'Land List',
+    add: 'Add Land',
+    edit: 'Edit Land',
+    detail: 'Land Details',
+    delete: 'Delete Land',
+    searchPlaceholder: 'Search land name, number',
+    noData: 'No land data',
+
+    // Form
+    form: {
+      landId: 'Land ID',
+      landName: 'Land Name',
+      landNo: 'Land Number',
+      ownerType: 'Ownership Type',
+      ownerName: 'Owner Name',
+      ownerIdCard: 'Owner ID Card',
+      landType: 'Land Type',
+      landGraphic: 'Terrain',
+      areaSize: 'Area Size',
+      areaUnit: 'Area Unit',
+      latitude: 'Latitude',
+      longitude: 'Longitude',
+      regionCode: 'Region',
+      zoneCode: 'Zone',
+      woredaCode: 'Woreda',
+      kebeleCode: 'Kebele',
+      address: 'Address',
+      farmerId: 'Associated Farmer',
+      farmerName: 'Farmer Name',
+      farmerIdCard: 'Farmer ID Card',
+      farmerPhone: 'Farmer Phone',
+      currentStatus: 'Current Status',
+      maxSeedAmount: 'Max Seed (kg)',
+      maxFertilizerAmount: 'Max Fertilizer (kg)',
+      daId: 'Responsible DA',
+      remark: 'Remark',
+      createTime: 'Created At',
+    },
+    placeholder: {
+      landName: 'Please enter land name',
+      landNo: 'Please enter land number',
+      ownerType: 'Please select ownership type',
+      ownerName: 'Please enter owner name',
+      ownerIdCard: 'Please enter owner ID card',
+      landType: 'Please select land type',
+      landGraphic: 'Please select terrain',
+      areaSize: 'Please enter area size',
+      latitude: 'Please enter latitude',
+      longitude: 'Please enter longitude',
+      kebeleCode: 'Please select kebele',
+      address: 'Please enter address',
+      farmerId: 'Please select farmer',
+      currentStatus: 'Please select status',
+      daId: 'Please select responsible DA',
+      remark: 'Remark (optional)',
+    },
+    rules: {
+      landNameRequired: 'Land name is required',
+      landNameLength: 'Land name should not exceed 100 characters',
+      ownerTypeRequired: 'Ownership type is required',
+      landTypeRequired: 'Land type is required',
+      areaSizeRequired: 'Area size is required',
+      areaSizeFormat: 'Please enter a valid number',
+      kebeleCodeRequired: 'Kebele is required',
+      addressRequired: 'Address is required',
+      daIdRequired: 'Responsible DA is required',
+    },
+    columns: {
+      landId: 'Land ID',
+      landName: 'Name',
+      landType: 'Type',
+      areaSize: 'Area (ha)',
+      ownerType: 'Ownership',
+      currentStatus: 'Status',
+      farmerName: 'Farmer',
+      kebeleName: 'Kebele',
+      daName: 'DA',
+      createTime: 'Created At',
+      actions: 'Actions',
+    },
+
+    // Status
+    status: {
+      CULTIVATING: 'Cultivating',
+      IDLE: 'Idle',
+      FALLOW: 'Fallow',
+    },
+    // Area units
+    areaUnits: {
+      HECTARE: 'Hectare',
+      MU: 'Mu',
+      SQM: 'Sqm',
+    },
+    // Ownership types
+    ownerType: {
+      PRIVATE: 'Private',
+      CONTRACT: 'Collective',
+      STATE: 'State',
+      LEASED: 'Leased',
+    },
+    // Land types
+    landType: {
+      PADDY: 'Paddy Field',
+      DRY: 'Dry Land',
+      ORCHARD: 'Orchard',
+      FOREST: 'Forest',
+      OTHER: 'Other',
+    },
+
+    // Detail page sections
+    sections: {
+      basicInfo: 'Basic Information',
+      locationInfo: 'Location Information',
+      farmerInfo: 'Associated Farmer',
+      estimatedUsage: 'Estimated Usage',
+    },
+    stats: {
+      totalCount: 'Total Parcels',
+      totalArea: 'Total Area',
+      maxSeedAmount: 'Max Seed Amount',
+      maxFertilizerAmount: 'Max Fertilizer Amount',
+    },
+    // Actions
+    actions: {
+      bindFarmer: 'Associate Farmer',
+      unbindFarmer: 'Unlink Farmer',
+      batchDelete: 'Batch Delete',
+      viewDetail: 'View Details',
+      removeFarmer: 'Remove Association',
+    },
+    // Unbound
+    unbound: 'No Farmer',
+    // Confirm messages
+    confirmDelete: 'Are you sure to delete this land parcel?',
+    confirmBatchDelete: 'Are you sure to delete {count} selected lands?',
+    confirmUnbind: 'Are you sure to unlink this land from the farmer?',
+    confirmRemove: 'Are you sure to remove this land from the farmer?',
+    // Messages
+    messages: {
+      addSuccess: 'Added successfully',
+      editSuccess: 'Updated successfully',
+      deleteSuccess: 'Deleted successfully',
+      bindSuccess: 'Associated successfully',
+      unbindSuccess: 'Unlinked successfully',
+      removeSuccess: 'Removed successfully',
+    },
+    // Tips
+    tips: {
+      areaUnit: 'Unit: Hectare (ha)',
+      farmerOptional: 'Optional, can be linked later',
+      usageCalculation: 'Seed usage: 30kg/ha, Fertilizer usage: 100kg/ha',
+    },
+  },
+
+  // Gender options
+  gender: {
+    M: 'Male',
+    F: 'Female',
+  },
+}

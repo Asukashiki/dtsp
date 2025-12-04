@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import farmLayoutConfig from '@/config/farm-layout.json'
 import inputLayoutConfig from '@/config/input-layout.json'
 import researchLayoutConfig from '@/config/research-layout.json'
+import newFarmLayoutConfig from '@/config/new-farm-layout.json'
 
 // 外部登录系统URL - 在实际部署时配置正确的SSO地址
 const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
@@ -786,6 +787,93 @@ const routes = [
         name: 'LandList',
         component: () => import('../views/farm/land/list.vue'),
         meta: { title: '土地信息管理', requiresAuth: true }
+      }
+    ]
+  },
+  // 农田管理系统（新版）
+  {
+    path: '/new-farm',
+    name: 'NewFarmSystem',
+    component: () => import('../layout/SystemLayout.vue'),
+    redirect: '/new-farm/da',
+    meta: { requiresAuth: true, layoutConfig: newFarmLayoutConfig },
+    children: [
+      // ==================== DA管理 ====================
+      {
+        path: 'da',
+        name: 'NewFarmDaList',
+        component: () => import('../views/new-farm/da/index.vue'),
+        meta: { title: 'DA管理', requiresAuth: true }
+      },
+      {
+        path: 'da/add',
+        name: 'NewFarmDaAdd',
+        component: () => import('../views/new-farm/da/form.vue'),
+        meta: { title: '新增DA', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'da/edit/:id',
+        name: 'NewFarmDaEdit',
+        component: () => import('../views/new-farm/da/form.vue'),
+        meta: { title: '编辑DA', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'da/detail/:id',
+        name: 'NewFarmDaDetail',
+        component: () => import('../views/new-farm/da/detail.vue'),
+        meta: { title: 'DA详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // ==================== 农民管理 ====================
+      {
+        path: 'farmer',
+        name: 'NewFarmFarmerList',
+        component: () => import('../views/new-farm/farmer/index.vue'),
+        meta: { title: '农民管理', requiresAuth: true }
+      },
+      {
+        path: 'farmer/add',
+        name: 'NewFarmFarmerAdd',
+        component: () => import('../views/new-farm/farmer/form.vue'),
+        meta: { title: '新增农民', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'farmer/edit/:id',
+        name: 'NewFarmFarmerEdit',
+        component: () => import('../views/new-farm/farmer/form.vue'),
+        meta: { title: '编辑农民', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'farmer/detail/:id',
+        name: 'NewFarmFarmerDetail',
+        component: () => import('../views/new-farm/farmer/detail.vue'),
+        meta: { title: '农民详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // ==================== 土地管理 ====================
+      {
+        path: 'land',
+        name: 'NewFarmLandList',
+        component: () => import('../views/new-farm/land/index.vue'),
+        meta: { title: '土地管理', requiresAuth: true }
+      },
+      {
+        path: 'land/add',
+        name: 'NewFarmLandAdd',
+        component: () => import('../views/new-farm/land/form.vue'),
+        meta: { title: '新增土地', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'land/edit/:id',
+        name: 'NewFarmLandEdit',
+        component: () => import('../views/new-farm/land/form.vue'),
+        meta: { title: '编辑土地', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'land/detail/:id',
+        name: 'NewFarmLandDetail',
+        component: () => import('../views/new-farm/land/detail.vue'),
+        meta: { title: '土地详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   }
