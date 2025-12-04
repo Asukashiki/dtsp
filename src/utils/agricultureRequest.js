@@ -26,7 +26,7 @@ agricultureRequest.interceptors.request.use(
     return config
   },
   error => {
-    console.error('请求错误:', error)
+    console.error('Request error:', error)
     return Promise.reject(error)
   }
 )
@@ -36,10 +36,15 @@ agricultureRequest.interceptors.response.use(
   response => {
     const res = response.data
 
+    // 处理blob类型响应（文件下载）
+    if (response.config.responseType === 'blob') {
+      return res
+    }
+
     // 处理 status: 401 的情况（token 无效）
     if (res.status === 401) {
-      handleUnauthorized(res.message || '登录已过期，请重新登录')
-      return Promise.reject(new Error(res.message || '未授权'))
+      handleUnauthorized(res.message || 'Login expired, please log in again')
+      return Promise.reject(new Error(res.message || 'Unauthorized'))
     }
 
     // 成功响应
@@ -58,8 +63,8 @@ agricultureRequest.interceptors.response.use(
     const userStore = useUserStore()
 
     if ((res.code === 401 || res.status === 401) && userStore.token) {
-      handleUnauthorized(res.msg || '登录已过期，请重新登录')
-      return Promise.reject(new Error(res.msg || '未授权'))
+      handleUnauthorized(res.msg || 'Login expired, please log in again')
+      return Promise.reject(new Error(res.msg || 'Unauthorized'))
     }
 
     // 其他业务错误
@@ -69,45 +74,45 @@ agricultureRequest.interceptors.response.use(
     //   duration: 3000
     // })
 
-    return Promise.reject(new Error(res.msg || res.message || '操作失败'))
+    return Promise.reject(new Error(res.msg || res.message || 'Operation failed'))
   },
   error => {
-    console.error('响应错误:', error)
+      console.error('Response error:', error)
 
     // 处理HTTP错误状态码
     if (error.response) {
       const { status, data } = error.response
 
       if (status === 401) {
-        handleUnauthorized('登录已过期，请重新登录')
+        handleUnauthorized('Login expired, please log in again')
       } else if (status === 404) {
         ElMessage({
-          message: '请求的资源不存在',
+          message: 'Request resource not found',
           type: 'error',
           duration: 3000
         })
       } else if (status === 500) {
         ElMessage({
-          message: data?.msg || '服务器错误，请稍后重试',
+          message: data?.msg || 'Server error, please try again later',
           type: 'error',
           duration: 3000
         })
       } else {
         ElMessage({
-          message: data?.msg || error.message || '请求失败',
+          message: data?.msg || error.message || 'Request failed',
           type: 'error',
           duration: 3000
         })
       }
     } else if (error.code === 'ECONNABORTED') {
       ElMessage({
-        message: '请求超时，请检查网络连接',
+        message: 'Request timeout, please check your network connection',
         type: 'error',
         duration: 3000
       })
     } else {
       ElMessage({
-        message: '网络错误，请检查您的网络连接',
+        message: 'Network error, please check your network connection',
         type: 'error',
         duration: 3000
       })

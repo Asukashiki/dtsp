@@ -62,33 +62,35 @@
         <div class="collapse-btn" @click="toggleCollapse">
           <i :class="isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'"></i>
         </div>
-        <el-menu
-          :default-active="activeMenu"
-          :collapse="isCollapsed"
-          :unique-opened="true"
-          router
-        >
-          <template v-for="item in menuList" :key="item.index">
-            <el-sub-menu v-if="item.children" :index="item.index">
-              <template #title>
+        <div class="sidebar-menu-wrapper">
+          <el-menu
+            :default-active="activeMenu"
+            :collapse="isCollapsed"
+            :unique-opened="true"
+            router
+          >
+            <template v-for="item in menuList" :key="item.index">
+              <el-sub-menu v-if="item.children" :index="item.index">
+                <template #title>
+                  <i :class="item.icon"></i>
+                  <span>{{ item.title }}</span>
+                </template>
+                <el-menu-item
+                  v-for="child in item.children"
+                  :key="child.index"
+                  :index="child.index"
+                >
+                  <i :class="child.icon"></i>
+                  <span>{{ child.title }}</span>
+                </el-menu-item>
+              </el-sub-menu>
+              <el-menu-item v-else :index="item.index">
                 <i :class="item.icon"></i>
                 <span>{{ item.title }}</span>
-              </template>
-              <el-menu-item
-                v-for="child in item.children"
-                :key="child.index"
-                :index="child.index"
-              >
-                <i :class="child.icon"></i>
-                <span>{{ child.title }}</span>
               </el-menu-item>
-            </el-sub-menu>
-            <el-menu-item v-else :index="item.index">
-              <i :class="item.icon"></i>
-              <span>{{ item.title }}</span>
-            </el-menu-item>
-          </template>
-        </el-menu>
+            </template>
+          </el-menu>
+        </div>
       </div>
 
       <!-- 移动端抽屉菜单 -->
@@ -429,6 +431,31 @@ const handleUserAction = (command) => {
   bottom: 0;
   flex-shrink: 0;
   z-index: 50;
+}
+
+/* 菜单滚动容器 */
+.sidebar-menu-wrapper {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 侧边栏滚动条样式 */
+.sidebar-menu-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-menu-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-menu-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.sidebar-menu-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .system-sidebar.collapsed {

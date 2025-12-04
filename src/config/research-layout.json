@@ -16,15 +16,16 @@
           "titleKey": "research.menu.breedingBatchManagement"
         },
         {
-          "index": "/research/breeding-data/plot",
-          "icon": "ri-map-pin-line",
-          "titleKey": "research.menu.plotInfoManagement"
-        },
-        {
           "index": "/research/breeding-data/trial",
           "icon": "ri-test-tube-line",
           "titleKey": "research.menu.trialBasicManagement"
         },
+        {
+          "index": "/research/breeding-data/plot",
+          "icon": "ri-map-pin-line",
+          "titleKey": "research.menu.plotInfoManagement"
+        },
+        
         {
           "index": "/research/breeding-data/trait",
           "icon": "ri-leaf-line",
@@ -66,21 +67,6 @@
           "titleKey": "research.menu.breedingLicense"
         },
         {
-          "index": "/research/breeding/seed-production",
-          "icon": "ri-seedling-line",
-          "titleKey": "research.menu.breederSeedProduction"
-        },
-        {
-          "index": "/research/breeding/seed-distribution",
-          "icon": "ri-share-forward-line",
-          "titleKey": "research.menu.breederSeedDistribution"
-        },
-        {
-          "index": "/research/breeding/ose-management",
-          "icon": "ri-building-4-line",
-          "titleKey": "research.menu.oseManagement"
-        },
-        {
           "index": "/research/data-collection/iot-sensor",
           "icon": "ri-sensor-line",
           "titleKey": "research.menu.iotSensorMaintenance"
@@ -92,6 +78,16 @@
       "icon": "ri-plant-line",
       "titleKey": "research.menu.propagationDataManagement",
       "children": [
+        {
+          "index": "/research/breeding/seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProduction"
+        },
+        {
+          "index": "/research/breeding/seed-distribution",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.breederSeedDistribution"
+        },
         {
           "index": "/research/breeding/ose-receive-confirm",
           "icon": "ri-checkbox-circle-line",
@@ -108,6 +104,21 @@
           "titleKey": "research.menu.seedCertificationApplication"
         },
         {
+          "index": "/research/breeding/seed-propagation",
+          "icon": "ri-plant-line",
+          "titleKey": "research.menu.c1SeedPropagationApplication"
+        },
+        {
+          "index": "/research/breeding/seed-propagation-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.c1SeedPropagationApplicationAudit"
+        },
+        {
+          "index": "/research/breeding",
+          "icon": "ri-folders-line",
+          "titleKey": "research.menu.c1PropagationBatchCollection"
+        },
+        {
           "index": "/research/seed/breeding-audit",
           "icon": "ri-pass-pending-line",
           "titleKey": "research.menu.seedCertificationAudit"
@@ -116,11 +127,24 @@
           "index": "/research/seed/breeding-certificate",
           "icon": "ri-award-line",
           "titleKey": "research.menu.seedCertificationIssuance"
-        },
+        }
+      ]
+    },
+    {
+      "index": "seed-institution-management",
+      "name" : "种子机构管理",
+      "icon": "ri-bank-line",
+      "titleKey": "research.menu.seedInstitutionManagement",
+      "children": [  
         {
           "index": "/research/union/list",
           "icon": "ri-community-line",
           "titleKey": "research.menu.propagationOrgRegistration"
+        },   
+        {
+          "index": "/research/breeding/ose-management",
+          "icon": "ri-building-4-line",
+          "titleKey": "research.menu.oseManagement"
         }
       ]
     },

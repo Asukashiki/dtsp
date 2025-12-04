@@ -68,5 +68,7 @@ export default {
     barley: 'Barley',
     pulses: 'Pulses',
   },
-  batchDelete: 'Batch Delete'
+  batchDelete: 'Batch Delete',
+  yes: 'Yes',
+  no: 'No'
 }
