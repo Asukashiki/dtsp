@@ -14,6 +14,20 @@ const t = (key) => {
   return i18n.global.t(key)
 }
 
+// 检测字符串是否包含中文字符
+const containsChinese = (str) => {
+  if (!str || typeof str !== 'string') return false
+  return /[\u4e00-\u9fa5]/.test(str)
+}
+
+// 获取安全的错误消息（不包含中文）
+const getSafeErrorMessage = (message, fallbackKey = 'common.error.operationFailed') => {
+  if (!message || containsChinese(message)) {
+    return t(fallbackKey)
+  }
+  return message
+}
+
 const agricultureRequest = axios.create({
   baseURL: AGRICULTURE_API_URL,
   timeout: 30000,
@@ -49,8 +63,9 @@ agricultureRequest.interceptors.response.use(
 
     // 处理 status: 401 的情况（token 无效）
     if (res.status === 401) {
-      handleUnauthorized(res.message || t('common.error.unauthorized'))
-      return Promise.reject(new Error(res.message || t('common.error.unauthorized')))
+      const safeMsg = getSafeErrorMessage(res.message, 'common.error.unauthorized')
+      handleUnauthorized(safeMsg)
+      return Promise.reject(new Error(safeMsg))
     }
 
     // 成功响应
@@ -69,12 +84,14 @@ agricultureRequest.interceptors.response.use(
     const userStore = useUserStore()
 
     if ((res.code === 401 || res.status === 401) && userStore.token) {
-      handleUnauthorized(res.msg || t('common.error.unauthorized'))
-      return Promise.reject(new Error(res.msg || t('common.error.unauthorized')))
+      const safeMsg = getSafeErrorMessage(res.msg, 'common.error.unauthorized')
+      handleUnauthorized(safeMsg)
+      return Promise.reject(new Error(safeMsg))
     }
 
     // 其他业务错误 - 使用弹窗显示详细错误信息
-    const errorMessage = res.msg || res.message || t('common.error.operationFailed')
+    const rawMessage = res.msg || res.message || ''
+    const errorMessage = getSafeErrorMessage(rawMessage, 'common.error.operationFailed')
 
     // 如果错误信息较长或包含换行，使用 MessageBox 显示
     if (errorMessage.length > 50 || errorMessage.includes('\n')) {
@@ -111,7 +128,8 @@ agricultureRequest.interceptors.response.use(
         })
       } else if (status === 500) {
         // 服务器错误使用弹窗显示详细信息
-        const errorMsg = data?.msg || data?.message || t('common.error.serverError')
+        const rawMsg = data?.msg || data?.message || ''
+        const errorMsg = getSafeErrorMessage(rawMsg, 'common.error.serverError')
         ElMessageBox.alert(errorMsg, t('common.error.serverError'), {
           confirmButtonText: t('common.confirm'),
           type: 'error',
@@ -119,7 +137,8 @@ agricultureRequest.interceptors.response.use(
         })
       } else {
         // 其他HTTP错误
-        const errorMsg = data?.msg || data?.message || error.message || t('common.error.requestFailed')
+        const rawMsg = data?.msg || data?.message || error.message || ''
+        const errorMsg = getSafeErrorMessage(rawMsg, 'common.error.requestFailed')
         if (errorMsg.length > 50 || errorMsg.includes('\n')) {
           ElMessageBox.alert(errorMsg, t('common.error.requestFailed'), {
             confirmButtonText: t('common.confirm'),
