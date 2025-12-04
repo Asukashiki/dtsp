@@ -28,7 +28,7 @@
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.batchId')">
-                    <el-input v-model="formData.batchId" disabled :placeholder="$t('research.breedingData.batch.placeholder.batchId')" />
+                    <el-input v-model="formData.batchId" disabled :placeholder="'BRD-{variety_code}-{year}-serial'" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">

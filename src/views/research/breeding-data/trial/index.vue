@@ -37,53 +37,70 @@
           <div class="card-body">
             <!-- 搜索筛选区 -->
             <div class="search-section">
-              <el-select
-                v-model="queryParams.batchId"
-                :placeholder="$t('research.breedingData.trial.placeholder.batchId')"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
-              </el-select>
-              <el-input
-                v-model="queryParams.trialName"
-                :placeholder="$t('research.breedingData.trial.placeholder.trialName')"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              >
-                <template #prefix><i class="ri-search-line"></i></template>
-              </el-input>
-              <el-select
-                v-model="queryParams.cropType"
-                :placeholder="$t('research.breedingData.trial.placeholder.cropType')"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-              <el-input
-                v-model="queryParams.varietyName"
-                :placeholder="$t('research.breedingData.trial.placeholder.varietyName')"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              />
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.trial.columns.trialId') }}:</label>
+                <el-input
+                  v-model="queryParams.trialId"
+                  :placeholder="$t('research.breedingData.trial.placeholder.trialId')"
+                  clearable
+                  class="search-input"
+                />
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.trial.columns.batchId') }}:</label>
+                <el-select
+                  v-model="queryParams.batchId"
+                  :placeholder="$t('research.breedingData.trial.placeholder.batchId')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.trial.columns.trialName') }}:</label>
+                <el-input
+                  v-model="queryParams.trialName"
+                  :placeholder="$t('research.breedingData.trial.placeholder.trialName')"
+                  clearable
+                  class="search-input"
+                />
+              </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.trial.columns.season') }}:</label>
+                <el-select
+                  v-model="queryParams.season"
+                  :placeholder="$t('research.breedingData.trial.placeholder.season')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </div>
+              <div class="search-actions">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="ri-search-line"></i>
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset">
+                  <i class="ri-refresh-line"></i>
+                  {{ $t('common.reset') }}
+                </el-button>
+              </div>
             </div>
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
+                <el-table-column prop="trialId" :label="$t('research.breedingData.trial.columns.trialId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="batchId" :label="$t('research.breedingData.trial.columns.batchId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialName" :label="$t('research.breedingData.trial.columns.trialName')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="cropType" :label="$t('research.breedingData.trial.columns.cropType')" min-width="100" />
-                <el-table-column prop="varietyName" :label="$t('research.breedingData.trial.columns.varietyName')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="startDate" :label="$t('research.breedingData.trial.columns.startDate')" min-width="120" />
+                <el-table-column prop="locationId" :label="$t('research.breedingData.trial.columns.locationId')" min-width="120" />
+                <el-table-column prop="year" :label="$t('research.breedingData.trial.columns.year')" min-width="100" />
                 <el-table-column prop="season" :label="$t('research.breedingData.trial.columns.season')" min-width="100" />
-                <el-table-column prop="plotCount" :label="$t('research.breedingData.trial.columns.plotCount')" min-width="100" />
+                <el-table-column prop="designType" :label="$t('research.breedingData.trial.columns.designType')" min-width="140" />
+                <el-table-column prop="replications" :label="$t('research.breedingData.trial.columns.replications')" min-width="100" />
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
                 <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
@@ -127,28 +144,32 @@
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.trialId') }}:</span>
+                    <span class="value">{{ item.trialId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.batchId') }}:</span>
                     <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trial.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="label">{{ $t('research.breedingData.trial.columns.locationId') }}:</span>
+                    <span class="value">{{ item.locationId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trial.columns.varietyName') }}:</span>
-                    <span class="value">{{ item.varietyName }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trial.columns.startDate') }}:</span>
-                    <span class="value">{{ item.startDate }}</span>
+                    <span class="label">{{ $t('research.breedingData.trial.columns.year') }}:</span>
+                    <span class="value">{{ item.year }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.season') }}:</span>
                     <span class="value">{{ item.season }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trial.columns.plotCount') }}:</span>
-                    <span class="value">{{ item.plotCount }}</span>
+                    <span class="label">{{ $t('research.breedingData.trial.columns.designType') }}:</span>
+                    <span class="value">{{ item.designType }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.replications') }}:</span>
+                    <span class="value">{{ item.replications }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -201,18 +222,17 @@ const batchOptions = ref([])
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
+  trialId: '',
   batchId: '',
   trialName: '',
-  cropType: '',
-  varietyName: ''
+  season: ''
 })
 
-const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
-  { label: 'wheat', value: 'wheat' },
-  { label: 'corn', value: 'corn' },
-  { label: 'soybean', value: 'soybean' },
-  { label: 'cotton', value: 'cotton' }
+const seasonOptions = [
+  { label: 'Spring', value: 'spring' },
+  { label: 'Summer', value: 'summer' },
+  { label: 'Autumn', value: 'autumn' },
+  { label: 'Winter', value: 'winter' }
 ]
 
 const getList = async () => {
@@ -239,6 +259,16 @@ const loadBatchOptions = async () => {
 
 const handleQuery = () => {
   queryParams.pageNum = 1
+  getList()
+}
+
+const handleReset = () => {
+  queryParams.pageNum = 1
+  queryParams.pageSize = 10
+  queryParams.trialId = ''
+  queryParams.batchId = ''
+  queryParams.trialName = ''
+  queryParams.season = ''
   getList()
 }
 
@@ -297,4 +327,67 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+
+    .search-label {
+      font-size: 14px;
+      color: #606266;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .search-input {
+      width: 200px;
+    }
+
+    .filter-select {
+      width: 180px;
+    }
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    .search-item {
+      width: 100%;
+
+      .search-label {
+        min-width: 80px;
+      }
+
+      .search-input,
+      .filter-select {
+        flex: 1;
+        width: auto;
+      }
+    }
+
+    .search-actions {
+      margin-left: 0;
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+}
 </style>
