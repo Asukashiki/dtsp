@@ -56,25 +56,31 @@ export const getWarehouseDetail = (warehouseId) => {
 /**
  * 添加仓库
  * @param {Object} data - 仓库数据
+ * @param {string} data.warehouseCode - 仓库编码
  * @param {string} data.warehouseName - 仓库名称
  * @param {string} data.warehouseType - 仓库类型
  * @param {string} data.location - 仓库位置
  * @param {number} data.capacity - 仓库容量
- * @param {string} data.belongs - 所属单位
- * @param {number} data.supplierId - 关联供应商ID
+ * @param {number} data.warehouseArea - 仓库面积
+ * @param {string} data.organName - 仓库归属部门
  * @param {string} data.contactPerson - 联系人
  * @param {string} data.contactPhone - 联系电话
+ * @param {string} data.siteCertificate - 场地证明材料
+ * @param {string} data.remark - 备注
  */
 export const addWarehouse = (data) => {
   const requestData = {
+    warehouseCode: data.warehouseCode,
     warehouseName: data.warehouseName,
     warehouseType: data.warehouseType,
     location: data.location,
     capacity: data.capacity,
-    belongs: data.belongs,
-    supplierId: data.supplierId,
+    warehouseArea: data.warehouseArea,
+    organName: data.organName,
     contactPerson: data.contactPerson,
-    contactPhone: data.contactPhone
+    contactPhone: data.contactPhone,
+    siteCertificate: data.siteCertificate,
+    remark: data.remark
   }
 
   return agricultureRequest({
@@ -97,14 +103,17 @@ export const addWarehouse = (data) => {
 export const updateWarehouse = (data) => {
   const requestData = {
     warehouseId: data.warehouseId,
+    warehouseCode: data.warehouseCode,
     warehouseName: data.warehouseName,
     warehouseType: data.warehouseType,
     location: data.location,
     capacity: data.capacity,
-    belongs: data.belongs,
-    supplierId: data.supplierId,
+    warehouseArea: data.warehouseArea,
+    organName: data.organName,
     contactPerson: data.contactPerson,
-    contactPhone: data.contactPhone
+    contactPhone: data.contactPhone,
+    siteCertificate: data.siteCertificate,
+    remark: data.remark
   }
 
   return agricultureRequest({
@@ -394,7 +403,7 @@ export const getInventoryList = (params = {}) => {
   }
 
   return agricultureRequest({
-    url: '/inventory/stock/list',
+    url: '/inventory/stock/query',
     method: 'get',
     params: requestParams
   }).then(res => {

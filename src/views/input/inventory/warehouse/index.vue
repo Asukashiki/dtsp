@@ -83,16 +83,22 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="warehouse_code" :label="$t('input.inventory.warehouse.columns.warehouseCode')" width="200" fixed="left" />
+          <el-table-column prop="warehouse_code" :label="$t('input.inventory.warehouse.columns.warehouseCode')" width="200" fixed="left" show-overflow-tooltip />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.warehouse.columns.warehouseName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="warehouse_type" :label="$t('input.inventory.warehouse.columns.warehouseType')" min-width="180" align="center">
+          <el-table-column prop="warehouse_type" :label="$t('input.inventory.warehouse.columns.warehouseType')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag :type="getTypeTag(row.warehouse_type)" size="small">
                 {{ $t(`input.inventory.warehouse.type.${row.warehouse_type}`) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="location" :label="$t('input.inventory.warehouse.columns.location')" min-width="160" show-overflow-tooltip />
+          <el-table-column prop="location" :label="$t('input.inventory.warehouse.columns.location')" min-width="200" show-overflow-tooltip />
+          <el-table-column prop="warehouse_area" :label="$t('input.inventory.warehouse.columns.warehouseArea')" min-width="120" align="right">
+            <template #default="{ row }">
+              {{ row.warehouse_area ? row.warehouse_area + ' m²' : '-' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="organ_name" :label="$t('input.inventory.warehouse.columns.organName')" min-width="160" show-overflow-tooltip />
           <el-table-column :label="$t('input.inventory.warehouse.columns.capacity')" min-width="150" align="center">
             <template #default="{ row }">
               {{ row.used_capacity || 0 }} / {{ row.capacity || 0 }}
@@ -103,8 +109,8 @@
               <el-progress :percentage="getUsageRate(row)" :color="getProgressColor(row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="contact_person" :label="$t('input.inventory.warehouse.columns.contactPerson')" min-width="160" />
-          <el-table-column prop="contact_phone" :label="$t('input.inventory.warehouse.columns.contactPhone')" min-width="160" />
+          <el-table-column prop="contact_person" :label="$t('input.inventory.warehouse.columns.contactPerson')" min-width="140" />
+          <el-table-column prop="contact_phone" :label="$t('input.inventory.warehouse.columns.contactPhone')" min-width="140" />
           <el-table-column prop="status" :label="$t('input.inventory.warehouse.columns.status')" min-width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="row.status === '1' ? 'success' : 'info'" size="small">
@@ -164,6 +170,18 @@
                 <i class="ri-map-pin-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.warehouse.columns.location') }}:</span>
                 <span class="info-value">{{ item.location || '-' }}</span>
+              </div>
+
+              <div class="info-row" v-if="item.warehouse_area">
+                <i class="ri-layout-grid-line info-icon"></i>
+                <span class="info-label">{{ $t('input.inventory.warehouse.columns.warehouseArea') }}:</span>
+                <span class="info-value">{{ item.warehouse_area }} m²</span>
+              </div>
+
+              <div class="info-row" v-if="item.organ_name">
+                <i class="ri-community-line info-icon"></i>
+                <span class="info-label">{{ $t('input.inventory.warehouse.columns.organName') }}:</span>
+                <span class="info-value">{{ item.organ_name }}</span>
               </div>
 
               <div class="info-row">

@@ -671,7 +671,7 @@ const routes = [
         meta: { title: '入库管理', requiresAuth: true }
       },
       {
-        path: 'inventory/stock-in/add',
+        path: 'inventory/stock-in/form',
         name: 'StockInAdd',
         component: () => import('../views/input/inventory/stock-in/form.vue'),
         meta: { title: '新增入库单', hideInMenu: true, requiresAuth: true }

@@ -37,6 +37,12 @@
             @change="handleSearch"
           >
             <el-option :label="$t('input.inventory.stockOut.allWarehouses')" value="" />
+            <el-option
+              v-for="warehouse in warehouseList"
+              :key="warehouse.warehouse_id"
+              :label="warehouse.warehouse_name"
+              :value="warehouse.warehouse_id"
+            />
           </el-select>
 
           <el-select
@@ -47,7 +53,8 @@
             @change="handleSearch"
           >
             <el-option :label="$t('input.inventory.stockOut.allTypes')" value="" />
-            <el-option :label="$t('input.inventory.stockOut.type.sale')" value="0" />
+            <el-option :label="$t('input.inventory.stockOut.type.sale')" value="1" />
+            <el-option :label="$t('input.inventory.stockOut.type.transfer')" value="2" />
           </el-select>
 
           <el-select
@@ -57,10 +64,10 @@
             clearable
             @change="handleSearch"
           >
-            <el-option :label="$t('input.inventory.stockOut.allStatus')" value="" />
-            <el-option :label="$t('input.inventory.stockOut.status.pending')" value="0" />
-            <el-option :label="$t('input.inventory.stockOut.status.confirmed')" value="1" />
-            <el-option :label="$t('input.inventory.stockOut.status.cancelled')" value="2" />
+            <el-option :label="$t('input.inventory.stockOut.allStatus')" value="all" />
+            <el-option :label="$t('input.inventory.stockOut.status.pending')" value="pending" />
+            <el-option :label="$t('input.inventory.stockOut.status.completed')" value="completed" />
+            <el-option :label="$t('input.inventory.stockOut.status.cancelled')" value="cancelled" />
           </el-select>
         </div>
 
@@ -84,7 +91,7 @@
         </div>
       </div>
 
-      <!-- PC端：数据表格 -->
+      <!-- PC端:数据表格 -->
       <div class="table-card pc-view">
         <el-table
           v-loading="loading"
@@ -92,37 +99,36 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="stock_out_id" :label="$t('input.inventory.stockOut.columns.stockOutId')" width="180" fixed="left" />
+          <el-table-column prop="outbound_order_id" :label="$t('input.inventory.stockOut.columns.outboundOrderId')" width="180" fixed="left" />
+          <el-table-column prop="outbound_type_name" :label="$t('input.inventory.stockOut.columns.type')" width="120" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getTypeTag(row.outbound_type)" size="small">
+                {{ getTypeText(row.outbound_type) }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stockOut.columns.warehouseName')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="customer" :label="$t('input.inventory.stockOut.columns.customer')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="type" :label="$t('input.inventory.stockOut.columns.type')" width="120" align="center">
-            <template #default="{ row }">
-              <el-tag type="success" size="small">
-                {{ $t('input.inventory.stockOut.type.sale') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="batch_no" :label="$t('input.inventory.stockOut.columns.batchNo')" min-width="180" />
-          <el-table-column prop="total_quantity" :label="$t('input.inventory.stockOut.columns.totalQuantity')" width="160" align="center" />
+          <el-table-column prop="outbound_object_name" :label="$t('input.inventory.stockOut.columns.outboundObject')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="outbound_user" :label="$t('input.inventory.stockOut.columns.outboundUser')" width="120" />
           <el-table-column prop="operator" :label="$t('input.inventory.stockOut.columns.operator')" width="120" />
-          <el-table-column prop="status" :label="$t('input.inventory.stockOut.columns.status')" width="100" align="center">
+          <el-table-column prop="outbound_status" :label="$t('input.inventory.stockOut.columns.status')" width="100" align="center">
             <template #default="{ row }">
-              <el-tag :type="getStatusTag(row.status)" size="small">
-                {{ getStatusText(row.status) }}
+              <el-tag :type="getStatusTag(row.outbound_status)" size="small">
+                {{ getStatusText(row.outbound_status) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="create_time" :label="$t('input.inventory.stockOut.columns.createTime')" width="160" />
-          <el-table-column :label="$t('input.inventory.stockOut.columns.actions')" width="240" fixed="right">
+          <el-table-column prop="created_at" :label="$t('input.inventory.stockOut.columns.createTime')" width="160" />
+          <el-table-column :label="$t('input.inventory.stockOut.columns.actions')" width="280" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
+                <i class="ri-eye-line"></i> {{ $t('input.inventory.stockOut.actions.view') }}
               </el-button>
-              <el-button v-if="row.status === '0'" link type="success" @click="handleConfirm(row)">
-                <i class="ri-check-line"></i>
+              <el-button v-if="row.outbound_status === 'pending'" link type="success" @click="handleAudit(row)">
+                <i class="ri-check-line"></i> {{ $t('input.inventory.stockOut.actions.audit') }}
               </el-button>
-              <el-button v-if="row.status === '0'" link type="danger" @click="handleDelete(row)">
-                <i class="ri-delete-bin-line"></i>
+              <el-button v-if="row.outbound_status === 'pending'" link type="danger" @click="handleCancel(row)">
+                <i class="ri-close-line"></i> {{ $t('input.inventory.stockOut.actions.cancel') }}
               </el-button>
             </template>
           </el-table-column>
@@ -141,46 +147,40 @@
         </div>
       </div>
 
-      <!-- 移动端：卡片列表 -->
+      <!-- 移动端:卡片列表 -->
       <div class="mobile-view" v-loading="loading">
         <div class="card-list">
-          <div v-for="item in tableData" :key="item.stock_out_id" class="stock-out-card" @click="handleView(item)">
+          <div v-for="item in tableData" :key="item.outbound_order_id" class="stock-out-card" @click="handleView(item)">
             <div class="card-header">
               <div class="stock-out-info">
-                <h3 class="stock-out-id">{{ item.stock_out_id }}</h3>
-                <span class="batch-no">{{ $t('input.inventory.stockOut.columns.batchNo') }}: {{ item.batch_no }}</span>
+                <h3 class="stock-out-id">{{ item.outbound_order_id }}</h3>
+                <span class="batch-no">{{ item.warehouse_name }}</span>
               </div>
               <div class="card-tags">
-                <el-tag type="success" size="small">
-                  {{ $t('input.inventory.stockOut.type.sale') }}
+                <el-tag :type="getTypeTag(item.outbound_type)" size="small">
+                  {{ getTypeText(item.outbound_type) }}
                 </el-tag>
-                <el-tag :type="getStatusTag(item.status)" size="small">
-                  {{ getStatusText(item.status) }}
+                <el-tag :type="getStatusTag(item.outbound_status)" size="small">
+                  {{ getStatusText(item.outbound_status) }}
                 </el-tag>
               </div>
             </div>
 
             <div class="card-body">
               <div class="info-row">
-                <i class="ri-home-3-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stockOut.columns.warehouseName') }}:</span>
-                <span class="info-value">{{ item.warehouse_name || '-' }}</span>
-              </div>
-
-              <div class="info-row">
                 <i class="ri-user-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stockOut.columns.customer') }}:</span>
-                <span class="info-value">{{ item.customer || '-' }}</span>
+                <span class="info-label">{{ $t('input.inventory.stockOut.columns.outboundObject') }}:</span>
+                <span class="info-value">{{ item.outbound_object_name || '-' }}</span>
               </div>
 
               <div class="info-row">
-                <i class="ri-archive-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stockOut.columns.totalQuantity') }}:</span>
-                <span class="info-value">{{ item.total_quantity }}</span>
+                <i class="ri-user-settings-line info-icon"></i>
+                <span class="info-label">{{ $t('input.inventory.stockOut.columns.outboundUser') }}:</span>
+                <span class="info-value">{{ item.outbound_user || '-' }}</span>
               </div>
 
               <div class="info-row" v-if="item.operator">
-                <i class="ri-user-settings-line info-icon"></i>
+                <i class="ri-user-3-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.stockOut.columns.operator') }}:</span>
                 <span class="info-value">{{ item.operator }}</span>
               </div>
@@ -188,16 +188,16 @@
               <div class="info-row">
                 <i class="ri-time-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.stockOut.columns.createTime') }}:</span>
-                <span class="info-value">{{ item.create_time }}</span>
+                <span class="info-value">{{ item.created_at }}</span>
               </div>
             </div>
 
             <div class="card-footer" @click.stop>
-              <el-button v-if="item.status === '0'" link type="success" size="small" @click="handleConfirm(item)">
-                <i class="ri-check-line"></i> {{ $t('input.inventory.stockOut.confirm') }}
+              <el-button v-if="item.outbound_status === 'pending'" link type="success" size="small" @click="handleAudit(item)">
+                <i class="ri-check-line"></i> {{ $t('input.inventory.stockOut.actions.audit') }}
               </el-button>
-              <el-button v-if="item.status === '0'" link type="danger" size="small" @click="handleDelete(item)">
-                <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
+              <el-button v-if="item.outbound_status === 'pending'" link type="danger" size="small" @click="handleCancel(item)">
+                <i class="ri-close-line"></i> {{ $t('input.inventory.stockOut.actions.cancel') }}
               </el-button>
             </div>
           </div>
@@ -225,6 +225,36 @@
     <div class="mobile-fab" @click="handleAdd">
       <i class="ri-add-line"></i>
     </div>
+
+    <!-- 审核弹窗 -->
+    <el-dialog
+      v-model="auditDialogVisible"
+      :title="$t('input.inventory.stockOut.actions.audit')"
+      width="90%"
+      max-width="500px"
+      :close-on-click-modal="false"
+    >
+      <el-form :model="auditForm" label-position="top">
+        <el-form-item :label="$t('input.inventory.stockOut.auditStatus')">
+          <el-radio-group v-model="auditForm.audit_status">
+            <el-radio value="approved">{{ $t('input.inventory.stockOut.actions.approve') }}</el-radio>
+            <el-radio value="rejected">{{ $t('input.inventory.stockOut.actions.reject') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="$t('input.inventory.stockOut.auditRemark')">
+          <el-input
+            v-model="auditForm.remark"
+            type="textarea"
+            :rows="3"
+            :placeholder="$t('input.inventory.stockOut.placeholder.auditRemark')"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="auditLoading" @click="handleAuditSubmit">{{ $t('common.submit') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -233,7 +263,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getStockOutList, deleteStockOut, confirmStockOut } from '@/api/inventory'
+import { getOutboundOrderList, auditOutboundOrder, confirmOutbound, cancelOutboundOrder } from '@/api/outbound'
+import { getWarehouseList } from '@/api/inventory'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -241,22 +272,50 @@ const { t } = useI18n()
 const searchKeyword = ref('')
 const filterWarehouse = ref('')
 const filterType = ref('')
-const filterStatus = ref('')
+const filterStatus = ref('all')
 const loading = ref(false)
 const tableData = ref([])
+const warehouseList = ref([])
 
 const pagination = reactive({
   page: 1,
-  pageSize: 10,
+  pageSize: 20,
   total: 0
 })
+
+// 审核弹窗
+const auditDialogVisible = ref(false)
+const auditLoading = ref(false)
+const currentRow = ref(null)
+const auditForm = reactive({
+  audit_status: 'approved',
+  remark: ''
+})
+
+// 获取类型标签
+const getTypeTag = (type) => {
+  const typeMap = {
+    1: 'success',
+    2: 'warning'
+  }
+  return typeMap[type] || 'info'
+}
+
+// 获取类型文本
+const getTypeText = (type) => {
+  const typeMap = {
+    1: t('input.inventory.stockOut.type.sale'),
+    2: t('input.inventory.stockOut.type.transfer')
+  }
+  return typeMap[type] || '-'
+}
 
 // 获取状态标签
 const getStatusTag = (status) => {
   const statusMap = {
-    '0': 'warning',
-    '1': 'success',
-    '2': 'info'
+    'pending': 'warning',
+    'completed': 'success',
+    'cancelled': 'info'
   }
   return statusMap[status] || 'info'
 }
@@ -264,28 +323,44 @@ const getStatusTag = (status) => {
 // 获取状态文本
 const getStatusText = (status) => {
   const statusMap = {
-    '0': t('input.inventory.stockOut.status.pending'),
-    '1': t('input.inventory.stockOut.status.confirmed'),
-    '2': t('input.inventory.stockOut.status.cancelled')
+    'pending': t('input.inventory.stockOut.status.pending'),
+    'completed': t('input.inventory.stockOut.status.completed'),
+    'cancelled': t('input.inventory.stockOut.status.cancelled')
   }
   return statusMap[status] || '-'
+}
+
+// 加载仓库列表
+const loadWarehouseList = async () => {
+  try {
+    const res = await getWarehouseList({
+      page: 1,
+      pageSize: 1000,
+      status: '1' // 只获取启用的仓库
+    })
+    if (res.code === 200) {
+      warehouseList.value = res.data.items || res.data.list || []
+    }
+  } catch (error) {
+    console.error('Failed to load warehouse list:', error)
+  }
 }
 
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getStockOutList({
-      warehouseId: filterWarehouse.value,
-      customer: searchKeyword.value,
-      type: filterType.value,
-      status: filterStatus.value,
+    const res = await getOutboundOrderList({
       page: pagination.page,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      outboundStatus: filterStatus.value,
+      outboundType: filterType.value,
+      outboundOrderId: searchKeyword.value,
+      warehouseId: filterWarehouse.value
     })
 
     if (res.code === 200) {
-      tableData.value = res.data.list || []
+      tableData.value = res.data.items || []
       pagination.total = res.data.total || 0
     }
   } catch (error) {
@@ -307,7 +382,7 @@ const handleReset = () => {
   searchKeyword.value = ''
   filterWarehouse.value = ''
   filterType.value = ''
-  filterStatus.value = ''
+  filterStatus.value = 'all'
   pagination.page = 1
   loadData()
 }
@@ -319,13 +394,82 @@ const handleAdd = () => {
 
 // 查看
 const handleView = (row) => {
-  router.push(`/input/inventory/stock-out/detail/${row.stock_out_id}`)
+  router.push(`/input/inventory/stock-out/detail/${row.outbound_order_id}`)
 }
 
-// 确认出库
-const handleConfirm = (row) => {
+// 审核
+const handleAudit = (row) => {
+  currentRow.value = row
+  auditForm.audit_status = 'approved'
+  auditForm.remark = ''
+  auditDialogVisible.value = true
+}
+
+// 提交审核
+const handleAuditSubmit = async () => {
+  if (!auditForm.remark && auditForm.audit_status === 'rejected') {
+    ElMessage.warning(t('input.inventory.stockOut.rules.auditRemarkRequired'))
+    return
+  }
+
+  auditLoading.value = true
+  try {
+    const now = new Date()
+    const auditTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+
+    // 转换为驼峰形式
+    const res = await auditOutboundOrder(currentRow.value.outbound_order_id, {
+      auditStatus: auditForm.audit_status,
+      auditUser: '当前用户', // TODO: 从用户信息获取
+      auditTime: auditTime,
+      remark: auditForm.remark
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('input.inventory.stockOut.auditSuccess'))
+      auditDialogVisible.value = false
+
+      // 如果审核通过,自动执行出库
+      if (auditForm.audit_status === 'approved') {
+        await handleConfirmOutbound(currentRow.value.outbound_order_id)
+      } else {
+        loadData()
+      }
+    }
+  } catch (error) {
+    console.error('Failed to audit outbound order:', error)
+    ElMessage.error(t('common.failed'))
+  } finally {
+    auditLoading.value = false
+  }
+}
+
+// 执行出库
+const handleConfirmOutbound = async (outboundOrderId) => {
+  try {
+    const now = new Date()
+    const outboundTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+
+    // 转换为驼峰形式
+    const res = await confirmOutbound(outboundOrderId, {
+      outboundTime: outboundTime,
+      operator: '当前用户' // TODO: 从用户信息获取
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('input.inventory.stockOut.confirmSuccess'))
+      loadData()
+    }
+  } catch (error) {
+    console.error('Failed to confirm outbound:', error)
+    ElMessage.error(t('common.failed'))
+  }
+}
+
+// 取消
+const handleCancel = (row) => {
   ElMessageBox.confirm(
-    t('input.inventory.stockOut.confirmConfirm'),
+    t('input.inventory.stockOut.cancelConfirm'),
     t('common.tips'),
     {
       confirmButtonText: t('common.confirm'),
@@ -334,37 +478,13 @@ const handleConfirm = (row) => {
     }
   ).then(async () => {
     try {
-      const res = await confirmStockOut(row.stock_out_id)
+      const res = await cancelOutboundOrder(row.outbound_order_id, '当前用户') // TODO: 从用户信息获取
       if (res.code === 200) {
-        ElMessage.success(t('input.inventory.stockOut.confirmSuccess'))
+        ElMessage.success(t('input.inventory.stockOut.cancelSuccess'))
         loadData()
       }
     } catch (error) {
-      console.error('Failed to confirm stock out:', error)
-      ElMessage.error(t('common.failed'))
-    }
-  }).catch(() => {})
-}
-
-// 删除
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    t('input.inventory.stockOut.deleteConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
-  ).then(async () => {
-    try {
-      const res = await deleteStockOut(row.stock_out_id)
-      if (res.code === 200) {
-        ElMessage.success(t('input.inventory.stockOut.deleteSuccess'))
-        loadData()
-      }
-    } catch (error) {
-      console.error('Failed to delete stock out:', error)
+      console.error('Failed to cancel outbound order:', error)
       ElMessage.error(t('common.failed'))
     }
   }).catch(() => {})
@@ -382,6 +502,7 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  loadWarehouseList()
   loadData()
 })
 </script>

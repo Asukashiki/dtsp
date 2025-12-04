@@ -68,5 +68,19 @@ export default {
       barley: '大麦',
       pulses: '豆类',
     },
-    batchDelete: '批量删除'
+    batchDelete: '批量删除',
+    detail: '详情',
+    all: '全部',
+    currentUser: '当前用户',
+    // 错误提示
+    error: {
+      title: '错误提示',
+      serverError: '服务器错误',
+      requestFailed: '请求失败',
+      unauthorized: '登录已过期，请重新登录',
+      notFound: '请求的资源不存在',
+      timeout: '请求超时，请检查网络连接',
+      networkError: '网络错误，请检查您的网络连接',
+      operationFailed: '操作失败'
+    }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="stock-in-detail-page">
+  <div class="inbound-detail-page">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
@@ -11,12 +11,6 @@
         </div>
         <div class="header-center">
           <h1 class="page-title">{{ $t('input.inventory.stockIn.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button v-if="detailData && detailData.status === '0'" type="success" @click="handleConfirm">
-            <i class="ri-check-line"></i>
-            <span class="btn-text">{{ $t('input.inventory.stockIn.confirm') }}</span>
-          </el-button>
         </div>
       </div>
     </div>
@@ -32,113 +26,146 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.stockInId') }}:</span>
-              <span class="value">{{ detailData.stock_in_id }}</span>
+              <span class="label">{{ $t('input.inventory.stockIn.columns.orderId') }}:</span>
+              <span class="value">{{ detailData.inbound_order_id }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.batchNo') }}:</span>
-              <span class="value">{{ detailData.batch_no }}</span>
+              <span class="label">{{ $t('input.inventory.stockIn.batchId') }}:</span>
+              <span class="value">{{ detailData.inbound_batch_id || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.warehouseId') }}:</span>
-              <span class="value">{{ detailData.warehouse_name }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.supplierId') }}:</span>
-              <span class="value">{{ detailData.supplier_name }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.type') }}:</span>
-              <el-tag :type="detailData.type === '0' ? 'success' : 'warning'">
-                {{ detailData.type === '0' ? $t('input.inventory.stockIn.type.purchase') : $t('input.inventory.stockIn.type.return') }}
+              <span class="label">{{ $t('input.inventory.stockIn.columns.type') }}:</span>
+              <el-tag :type="getTypeTag(detailData.inbound_type)">
+                {{ getTypeText(detailData.inbound_type) }}
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.operator') }}:</span>
+              <span class="label">{{ $t('input.inventory.stockIn.columns.status') }}:</span>
+              <el-tag :type="getStatusTag(detailData.inbound_status)">
+                {{ getStatusText(detailData.inbound_status) }}
+              </el-tag>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.columns.warehouse') }}:</span>
+              <span class="value">{{ detailData.warehouse_name || detailData.warehouse_id }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.relatedOrderNo') }}:</span>
+              <span class="value">{{ detailData.related_order_no || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.supplierName') }}:</span>
+              <span class="value">{{ detailData.supplier_name || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.supplierContact') }}:</span>
+              <span class="value">{{ detailData.supplier_contact || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.supplierPhone') }}:</span>
+              <span class="value">{{ detailData.supplier_phone || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.columns.operator') }}:</span>
               <span class="value">{{ detailData.operator }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.totalQuantity') }}:</span>
-              <span class="value">{{ detailData.total_quantity }}</span>
+              <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
+              <span class="value">{{ detailData.apply_time }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.status') }}:</span>
-              <el-tag :type="getStatusTag(detailData.status)">
-                {{ getStatusText(detailData.status) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockIn.form.createTime') }}:</span>
-              <span class="value">{{ detailData.create_time }}</span>
+              <span class="label">{{ $t('input.inventory.stockIn.columns.inboundTime') }}:</span>
+              <span class="value">{{ detailData.inbound_time || '-' }}</span>
             </div>
             <div class="detail-item full-width">
-              <span class="label">{{ $t('input.inventory.stockIn.form.remarks') }}:</span>
-              <span class="value">{{ detailData.remarks || '-' }}</span>
+              <span class="label">{{ $t('input.inventory.stockIn.remark') }}:</span>
+              <span class="value">{{ detailData.remark || '-' }}</span>
             </div>
           </div>
         </div>
 
-        <!-- 入库商品明细 -->
+        <!-- 审核信息（如果有） -->
+        <div v-if="detailData.audit_user" class="detail-section">
+          <div class="section-title">
+            <i class="ri-shield-check-line"></i>
+            {{ $t('input.inventory.stockIn.auditInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.auditUser') }}:</span>
+              <span class="value">{{ detailData.audit_user }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.stockIn.auditTime') }}:</span>
+              <span class="value">{{ detailData.audit_time || '-' }}</span>
+            </div>
+            <div class="detail-item full-width">
+              <span class="label">{{ $t('input.inventory.stockIn.auditRemark') }}:</span>
+              <span class="value">{{ detailData.audit_remark || '-' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 入库物料明细 -->
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-archive-line"></i>
-            {{ $t('input.inventory.stockIn.form.items') }}
+            {{ $t('input.inventory.stockIn.materialDetails') }}
           </div>
 
           <!-- PC端表格 -->
           <div class="pc-view">
-            <el-table :data="detailData.items || []" stripe style="width: 100%">
+            <el-table :data="detailData.details || []" stripe style="width: 100%">
               <el-table-column type="index" label="#" width="60" />
-              <el-table-column prop="input_name" :label="$t('input.inventory.stockIn.form.inputId')" min-width="150" />
-              <el-table-column prop="input_sku" :label="$t('input.inventory.stockIn.form.inputSku')" width="180" />
-              <el-table-column prop="quantity" :label="$t('input.inventory.stockIn.form.quantity')" width="140" align="center" />
-              <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.form.expiryDate')" width="140" />
-              <el-table-column prop="remarks" :label="$t('input.inventory.stockIn.form.itemRemarks')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.materialId')" width="150" />
+              <el-table-column prop="material_name" :label="$t('input.inventory.stockIn.materialName')" min-width="150" />
+              <el-table-column prop="spec_model" :label="$t('input.inventory.stockIn.specification')" width="120" />
+              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center" />
+              <el-table-column prop="quantity" :label="$t('input.inventory.stockIn.columns.quantity')" width="100" align="center" />
+              <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.expiryDate')" width="120" />
+              <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockIn.materialBatchId')" min-width="200" show-overflow-tooltip />
             </el-table>
           </div>
 
           <!-- 移动端卡片 -->
           <div class="mobile-view">
-            <div v-if="!detailData.items || detailData.items.length === 0" class="empty-state">
-              <p>{{ $t('input.inventory.stockIn.messages.noItems') }}</p>
+            <div v-if="!detailData.details || detailData.details.length === 0" class="empty-state">
+              <p>{{ $t('input.inventory.stockIn.noMaterials') }}</p>
             </div>
-            <div v-for="(item, index) in detailData.items" :key="index" class="item-card">
+            <div v-for="(item, index) in detailData.details" :key="index" class="item-card">
               <div class="item-header">
                 <span class="item-index">#{{ index + 1 }}</span>
-                <h4 class="item-name">{{ item.input_name }}</h4>
+                <h4 class="item-name">{{ item.material_name }}</h4>
               </div>
               <div class="item-info">
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.form.inputSku') }}:</span>
-                  <span class="value">{{ item.input_sku }}</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.materialId') }}:</span>
+                  <span class="value">{{ item.material_id }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.form.quantity') }}:</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.specification') }}:</span>
+                  <span class="value">{{ item.spec_model }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.unit_of_measure') }}:</span>
+                  <span class="value">{{ item.unit_of_measure }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.columns.quantity') }}:</span>
                   <span class="value">{{ item.quantity }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.form.expiryDate') }}:</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.expiryDate') }}:</span>
                   <span class="value">{{ item.expiry_date }}</span>
                 </div>
-                <div v-if="item.remarks" class="info-row full-width">
-                  <span class="label">{{ $t('input.inventory.stockIn.form.itemRemarks') }}:</span>
-                  <span class="value">{{ item.remarks }}</span>
+                <div v-if="item.material_batch_id" class="info-row full-width">
+                  <span class="label">{{ $t('input.inventory.stockIn.materialBatchId') }}:</span>
+                  <span class="value">{{ item.material_batch_id }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- QR Code (if available) -->
-        <!-- <div v-if="detailData.qr_code" class="detail-section">
-          <div class="section-title">
-            <i class="ri-qr-code-line"></i>
-            {{ $t('input.inventory.stockIn.qrCode') }}
-          </div>
-          <div class="qr-code-wrapper">
-            <img :src="detailData.qr_code" alt="QR Code" class="qr-code-image" />
-          </div>
-        </div> -->
       </template>
     </div>
   </div>
@@ -148,8 +175,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getStockInDetail, confirmStockIn } from '@/api/inventory'
+import { ElMessage } from 'element-plus'
+import { getInboundOrderDetail } from '@/api/inbound'
 
 const router = useRouter()
 const route = useRoute()
@@ -157,14 +184,14 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
-const stockInId = route.params.id
+const inboundOrderId = route.params.id
 
 // 获取状态标签
 const getStatusTag = (status) => {
   const statusMap = {
-    '0': 'warning',
-    '1': 'success',
-    '2': 'info'
+    'pending': 'warning',
+    'completed': 'success',
+    'cancelled': 'info'
   }
   return statusMap[status] || 'info'
 }
@@ -172,11 +199,31 @@ const getStatusTag = (status) => {
 // 获取状态文本
 const getStatusText = (status) => {
   const statusMap = {
-    '0': t('input.inventory.stockIn.status.pending'),
-    '1': t('input.inventory.stockIn.status.confirmed'),
-    '2': t('input.inventory.stockIn.status.cancelled')
+    'pending': t('input.inventory.stockIn.status.pending'),
+    'completed': t('input.inventory.stockIn.status.completed'),
+    'cancelled': t('input.inventory.stockIn.status.cancelled')
   }
   return statusMap[status] || '-'
+}
+
+// 获取类型标签
+const getTypeTag = (type) => {
+  const typeMap = {
+    0: 'success',
+    1: 'primary',
+    2: 'warning'
+  }
+  return typeMap[type] || 'info'
+}
+
+// 获取类型文本
+const getTypeText = (type) => {
+  const typeMap = {
+    0: t('input.inventory.stockIn.type.production'),
+    1: t('input.inventory.stockIn.type.purchase'),
+    2: t('input.inventory.stockIn.type.transfer')
+  }
+  return typeMap[type] || '-'
 }
 
 // 返回
@@ -184,41 +231,17 @@ const goBack = () => {
   router.back()
 }
 
-// 确认入库
-const handleConfirm = () => {
-  ElMessageBox.confirm(
-    t('input.inventory.stockIn.confirmConfirm'),
-    t('common.tips'),
-    {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
-  ).then(async () => {
-    try {
-      const res = await confirmStockIn(stockInId)
-      if (res.code === 200) {
-        ElMessage.success(t('input.inventory.stockIn.confirmSuccess'))
-        loadData()
-      }
-    } catch (error) {
-      console.error('Failed to confirm stock in:', error)
-      ElMessage.error(t('common.failed'))
-    }
-  }).catch(() => {})
-}
-
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getStockInDetail(stockInId)
+    const res = await getInboundOrderDetail(inboundOrderId)
     if (res.code === 200) {
       detailData.value = res.data
     }
   } catch (error) {
-    console.error('Failed to load stock in detail:', error)
-    ElMessage.error(t('common.failed'))
+    console.error('Failed to load inbound order detail:', error)
+    ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -230,7 +253,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.stock-in-detail-page {
+.inbound-detail-page {
   min-height: calc(100vh - 120px);
 }
 
@@ -252,14 +275,9 @@ onMounted(() => {
   align-items: center;
 }
 
-.header-left,
-.header-right {
+.header-left {
   display: flex;
   align-items: center;
-}
-
-.header-right {
-  justify-content: flex-end;
 }
 
 .header-center {
@@ -326,7 +344,7 @@ onMounted(() => {
   font-size: 14px;
   color: #909399;
   flex-shrink: 0;
-  min-width: 100px;
+  min-width: 120px;
 }
 
 .detail-item .value {
@@ -411,18 +429,6 @@ onMounted(() => {
   color: #909399;
 }
 
-/* QR Code */
-.qr-code-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-.qr-code-image {
-  max-width: 200px;
-  height: auto;
-}
-
 /* 响应式设计 */
 @media screen and (max-width: 1024px) {
   .detail-grid {
@@ -443,10 +449,6 @@ onMounted(() => {
     padding: 0 16px;
     grid-template-columns: auto 1fr;
     gap: 16px;
-  }
-
-  .header-right {
-    display: none;
   }
 
   .header-center {
@@ -477,10 +479,6 @@ onMounted(() => {
 
   .mobile-view {
     display: block;
-  }
-
-  .btn-text {
-    display: none;
   }
 }
 

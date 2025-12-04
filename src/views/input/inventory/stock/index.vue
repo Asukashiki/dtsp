@@ -37,6 +37,12 @@
             @change="handleSearch"
           >
             <el-option :label="$t('input.inventory.stock.allWarehouses')" value="" />
+            <el-option
+              v-for="warehouse in warehouseList"
+              :key="warehouse.warehouse_id"
+              :label="warehouse.warehouse_name"
+              :value="warehouse.warehouse_id"
+            />
           </el-select>
 
           <el-select
@@ -75,16 +81,16 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="input_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
-          <el-table-column prop="batch_no" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
+          <el-table-column prop="material_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
+          <el-table-column prop="material_batch_id" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="current_quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
-          <el-table-column prop="in_date" :label="$t('input.inventory.stock.columns.inDate')" width="120" />
-          <el-table-column prop="expired_date" :label="$t('input.inventory.stock.columns.expiredDate')" width="140" />
-          <el-table-column prop="stock_status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
+          <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
+          <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120" />
+          <el-table-column prop="expiry_date" :label="$t('input.inventory.stock.columns.expiredDate')" width="140" />
+          <el-table-column prop="status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
             <template #default="{ row }">
-              <el-tag :type="getStatusTag(row.stock_status)" size="small">
-                {{ getStatusText(row.stock_status) }}
+              <el-tag :type="getStatusTag(row.status)" size="small">
+                {{ getStatusText(row.status) }}
               </el-tag>
             </template>
           </el-table-column>
@@ -179,7 +185,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getInventoryList } from '@/api/inventory'
+import { getStockList } from '@/api/stock'
+import { getWarehouseList } from '@/api/inventory'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -189,6 +196,7 @@ const filterWarehouse = ref('')
 const filterStatus = ref('')
 const loading = ref(false)
 const tableData = ref([])
+const warehouseList = ref([])
 
 const pagination = reactive({
   page: 1,
@@ -216,25 +224,36 @@ const getStatusText = (status) => {
   return statusMap[status] || '-'
 }
 
+// 加载仓库列表
+const loadWarehouses = async () => {
+  try {
+    const res = await getWarehouseList({ page: 1, pageSize: 100 })
+    if (res.code === 200 && res.data) {
+      warehouseList.value = res.data.list || []
+    }
+  } catch (error) {
+    console.error('Failed to load warehouses:', error)
+  }
+}
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getInventoryList({
+    const res = await getStockList({
       warehouseId: filterWarehouse.value,
-      batchNo: searchKeyword.value,
-      stockStatus: filterStatus.value,
+      materialBatchId: searchKeyword.value,
       page: pagination.page,
       pageSize: pagination.pageSize
     })
 
-    if (res.code === 200) {
-      tableData.value = res.data.list || []
+    if (res.code === 200 && res.data) {
+      tableData.value = res.data.items || []
       pagination.total = res.data.total || 0
     }
   } catch (error) {
-    console.error('Failed to load inventory list:', error)
-    ElMessage.error(t('common.failed'))
+    console.error('Failed to load stock list:', error)
+    ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -257,7 +276,7 @@ const handleReset = () => {
 
 // 查看
 const handleView = (row) => {
-  router.push(`/input/inventory/stock/detail/${row.inventory_id}`)
+  router.push(`/input/inventory/stock/detail/${row.stock_id || row.id}`)
 }
 
 // 切换每页条数
@@ -272,6 +291,7 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  loadWarehouses()
   loadData()
 })
 </script>

@@ -27,11 +27,11 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.inputName') }}:</span>
-              <span class="value">{{ detailData.input_name }}</span>
+              <span class="value">{{ detailData.material_name }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.batchNo') }}:</span>
-              <span class="value">{{ detailData.batch_no }}</span>
+              <span class="value">{{ detailData.material_batch_id }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.warehouseName') }}:</span>
@@ -39,20 +39,20 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.currentQuantity') }}:</span>
-              <span class="value">{{ detailData.current_quantity }}</span>
+              <span class="value">{{ detailData.quantity }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.inDate') }}:</span>
-              <span class="value">{{ detailData.in_date }}</span>
+              <span class="value">{{ detailData.created_at }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.expiredDate') }}:</span>
-              <span class="value">{{ detailData.expired_date }}</span>
+              <span class="value">{{ detailData.expiry_date }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.stockStatus') }}:</span>
-              <el-tag :type="getStatusTag(detailData.stock_status)">
-                {{ getStatusText(detailData.stock_status) }}
+              <el-tag :type="getStatusTag(detailData.status)">
+                {{ getStatusText(detailData.status) }}
               </el-tag>
             </div>
             <div class="detail-item" v-if="detailData.days_to_expire !== undefined">

@@ -25,9 +25,20 @@
             <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockOut.form.warehouseId')" prop="warehouseId">
+            <el-form-item :label="$t('input.inventory.stockOut.form.type')" prop="outbound_type">
               <el-select
-                v-model="formData.warehouseId"
+                v-model="formData.outbound_type"
+                :placeholder="$t('input.inventory.stockOut.placeholder.type')"
+                class="full-width"
+              >
+                <el-option :label="$t('input.inventory.stockOut.type.sale')" :value="1" />
+                <el-option :label="$t('input.inventory.stockOut.type.transfer')" :value="2" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.warehouseId')" prop="warehouse_id">
+              <el-select
+                v-model="formData.warehouse_id"
                 :placeholder="$t('input.inventory.stockOut.placeholder.warehouseId')"
                 filterable
                 clearable
@@ -38,87 +49,179 @@
                 <el-option
                   v-for="warehouse in warehouseList"
                   :key="warehouse.warehouse_id"
-                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code})`"
+                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code || warehouse.warehouse_id})`"
                   :value="warehouse.warehouse_id"
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockOut.form.customer')" prop="customer">
-              <el-input v-model="formData.customer" :placeholder="$t('input.inventory.stockOut.placeholder.customer')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockOut.form.type')" prop="type">
-              <el-select v-model="formData.type" :placeholder="$t('input.inventory.stockOut.placeholder.type')" class="full-width">
-                <el-option :label="$t('input.inventory.stockOut.type.sale')" value="0" />
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.outboundObject')" prop="outbound_object_id">
+              <el-select
+                v-model="formData.outbound_object_id"
+                :placeholder="$t('input.inventory.stockOut.placeholder.outboundObject')"
+                filterable
+                clearable
+                class="full-width"
+                :loading="warehouseLoading"
+                :disabled="availableTargetWarehouses.length === 0"
+                @change="handleOutboundObjectChange"
+              >
+                <el-option
+                  v-for="warehouse in availableTargetWarehouses"
+                  :key="warehouse.warehouse_id"
+                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code || warehouse.warehouse_id})`"
+                  :value="warehouse.warehouse_id"
+                />
+                <template #empty>
+                  <div style="padding: 10px; text-align: center; color: #909399; font-size: 14px;">
+                    {{ $t('input.inventory.stockOut.messages.noAvailableWarehouse') }}
+                  </div>
+                </template>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockOut.form.operator')" prop="operator">
-              <el-input v-model="formData.operator" :placeholder="$t('input.inventory.stockOut.placeholder.operator')" clearable />
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')" prop="related_order_no">
+              <el-input
+                v-model="formData.related_order_no"
+                :placeholder="$t('input.inventory.stockOut.placeholder.relatedOrderNo')"
+                clearable
+              />
             </el-form-item>
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.outboundUser')" prop="outbound_user">
+              <el-input
+                v-model="formData.outbound_user"
+                :placeholder="$t('input.inventory.stockOut.placeholder.outboundUser')"
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.outboundDept')" prop="outbound_dept">
+              <el-input
+                v-model="formData.outbound_dept"
+                :placeholder="$t('input.inventory.stockOut.placeholder.outboundDept')"
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item :label="$t('input.inventory.stockOut.form.operator')" prop="operator">
+              <el-input
+                v-model="formData.operator"
+                :placeholder="$t('input.inventory.stockOut.placeholder.operator')"
+                clearable
+              />
+            </el-form-item>
+
             <el-form-item :label="$t('input.inventory.stockOut.form.remark')" prop="remark" class="full-width-item">
-              <el-input v-model="formData.remark" :placeholder="$t('input.inventory.stockOut.placeholder.remark')" type="textarea" :rows="2" />
+              <el-input
+                v-model="formData.remark"
+                :placeholder="$t('input.inventory.stockOut.placeholder.remark')"
+                type="textarea"
+                :rows="2"
+              />
             </el-form-item>
           </div>
         </div>
 
-        <!-- 出库商品明细 -->
+        <!-- 出库明细 -->
         <div class="form-block">
           <div class="block-header">
             <i class="ri-archive-line"></i>
-            <h3>{{ $t('input.inventory.stockOut.form.items') }}</h3>
+            <h3>{{ $t('input.inventory.stockOut.form.details') }}</h3>
           </div>
 
           <div class="items-list">
-            <div v-for="(item, index) in formData.items" :key="index" class="item-row">
+            <div v-for="(item, index) in formData.details" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item :label="$t('input.inventory.stockOut.form.inputId')" :prop="`items.${index}.inputId`" :rules="itemRules.inputId">
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.materialId')"
+                  :prop="`details.${index}.material_id`"
+                  :rules="detailRules.material_id"
+                >
                   <el-select
-                    v-model="item.inputId"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.inputId')"
+                    v-model="item.material_id"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.materialId')"
                     filterable
                     clearable
                     class="full-width"
-                    :loading="inputLoading"
-                    :disabled="!formData.warehouseId"
-                    @change="handleInputChange(index)"
+                    :loading="materialLoading"
+                    :disabled="!formData.warehouse_id"
+                    @change="handleMaterialChange(index)"
                   >
                     <el-option
-                      v-for="input in inputList"
-                      :key="input.input_id"
-                      :label="`${input.input_name} (${input.input_sku})`"
-                      :value="input.input_id"
+                      v-for="material in materialList"
+                      :key="material.material_id"
+                      :label="`${material.material_name} (${material.material_id})`"
+                      :value="material.material_id"
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockOut.form.batchNo')" :prop="`items.${index}.batchNo`" :rules="itemRules.batchNo">
-                  <el-select
-                    v-model="item.batchNo"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.batchNo')"
-                    filterable
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.materialType')"
+                  :prop="`details.${index}.material_type`"
+                  :rules="detailRules.material_type"
+                >
+                  <el-input
+                    v-model="item.material_type"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.materialType')"
+                    readonly
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.materialBatchId')"
+                  :prop="`details.${index}.material_batch_id`"
+                >
+                  <el-input
+                    v-model="item.material_batch_id"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.materialBatchId')"
+                    readonly
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.quantity')"
+                  :prop="`details.${index}.quantity`"
+                  :rules="detailRules.quantity"
+                >
+                  <el-input-number
+                    v-model="item.quantity"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.quantity')"
+                    :min="0.01"
+                    :step="1"
+                    :precision="2"
                     class="full-width"
-                    :loading="item.batchLoading"
-                    :disabled="!item.inputId"
-                    @change="handleBatchChange(index)"
-                  >
-                    <el-option
-                      v-for="batch in item.batchList"
-                      :key="batch.batch_no"
-                      :label="`${batch.batch_no} (${$t('input.inventory.stockOut.form.availableQuantity')}: ${batch.current_quantity})`"
-                      :value="batch.batch_no"
-                    />
-                  </el-select>
+                  />
+                  <span v-if="item.available_quantity > 0" class="available-hint">
+                    {{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.available_quantity }}
+                  </span>
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockOut.form.quantity')" :prop="`items.${index}.quantity`" :rules="itemRules.quantity">
-                  <el-input v-model.number="item.quantity" :placeholder="$t('input.inventory.stockOut.placeholder.quantity')" type="number" />
-                  <template #append v-if="item.availableQuantity">
-                    <span>{{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.availableQuantity }}</span>
-                  </template>
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.specModel')"
+                  :prop="`details.${index}.spec_model`"
+                >
+                  <el-input
+                    v-model="item.spec_model"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.specModel')"
+                    clearable
+                  />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockOut.form.itemRemarks')" :prop="`items.${index}.remarks`">
-                  <el-input v-model="item.remarks" :placeholder="$t('input.inventory.stockOut.placeholder.itemRemarks')" />
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.unitOfMeasure')"
+                  :prop="`details.${index}.unit_of_measure`"
+                >
+                  <el-input
+                    v-model="item.unit_of_measure"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.unitOfMeasure')"
+                    clearable
+                  />
                 </el-form-item>
               </div>
               <div class="item-actions">
-                <el-button type="danger" link @click="removeItem(index)">
+                <el-button type="danger" link @click="removeDetail(index)">
                   <i class="ri-delete-bin-line"></i>
                   <span class="btn-text">{{ $t('input.inventory.stockOut.actions.removeItem') }}</span>
                 </el-button>
@@ -126,7 +229,7 @@
             </div>
           </div>
 
-          <el-button type="primary" plain @click="addItem" class="add-item-btn">
+          <el-button type="primary" plain @click="addDetail" class="add-item-btn">
             <i class="ri-add-line"></i>
             {{ $t('input.inventory.stockOut.actions.addItem') }}
           </el-button>
@@ -135,7 +238,9 @@
         <!-- 操作按钮 -->
         <div class="form-actions">
           <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
+          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+            {{ $t('common.submit') }}
+          </el-button>
         </div>
       </el-form>
     </div>
@@ -147,7 +252,9 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createStockOut, getBatchList, getWarehouseList, getInventoryList } from '@/api/inventory'
+import { createOutboundOrder } from '@/api/outbound'
+import { getWarehouseList } from '@/api/inventory'
+import { getStockList } from '@/api/stock'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -159,9 +266,17 @@ const submitLoading = ref(false)
 const warehouseList = ref([])
 const warehouseLoading = ref(false)
 
-// 投入品列表 (该仓库中有库存的投入品)
-const inputList = ref([])
-const inputLoading = ref(false)
+// 可选的目标仓库列表（排除出库仓库）
+const availableTargetWarehouses = computed(() => {
+  if (!formData.warehouse_id) {
+    return warehouseList.value
+  }
+  return warehouseList.value.filter(w => w.warehouse_id !== formData.warehouse_id)
+})
+
+// 物料列表 (该仓库中有库存的物料)
+const materialList = ref([])
+const materialLoading = ref(false)
 
 // 加载仓库列表
 const loadWarehouseList = async () => {
@@ -173,7 +288,7 @@ const loadWarehouseList = async () => {
       status: '1' // 只获取启用的仓库
     })
     if (res.code === 200) {
-      warehouseList.value = res.data.list || []
+      warehouseList.value = res.data.items || res.data.list || []
     }
   } catch (error) {
     console.error('Failed to load warehouse list:', error)
@@ -182,85 +297,114 @@ const loadWarehouseList = async () => {
   }
 }
 
-// 根据仓库加载有库存的投入品列表
-const loadInputListByWarehouse = async (warehouseId) => {
+// 根据仓库加载有库存的物料列表
+const loadMaterialListByWarehouse = async (warehouseId) => {
   if (!warehouseId) {
-    inputList.value = []
+    materialList.value = []
     return
   }
 
-  inputLoading.value = true
+  materialLoading.value = true
   try {
-    // 通过库存API获取该仓库中有库存的投入品
-    const res = await getInventoryList({
+    // 通过库存API获取该仓库中有库存的物料
+    const res = await getStockList({
       warehouseId: warehouseId,
       page: 1,
       pageSize: 1000
     })
 
-    if (res.code === 200 && res.data && res.data.list) {
-      // 去重,提取唯一的投入品
-      const inputMap = new Map()
-      res.data.list.forEach(item => {
-        if (item.current_quantity > 0 && !inputMap.has(item.input_id)) {
-          inputMap.set(item.input_id, {
-            input_id: item.input_id,
-            input_name: item.input_name,
-            input_sku: item.input_sku || ''
-          })
+    if (res.code === 200 && res.data && res.data.items) {
+      // 去重,提取唯一的物料及其库存信息（包含批次号）
+      const materialMap = new Map()
+      res.data.items.forEach(item => {
+        if (item.quantity > 0) {
+          const existingMaterial = materialMap.get(item.material_id)
+          if (existingMaterial) {
+            // 累加同一物料的库存
+            existingMaterial.available_quantity += item.quantity
+            // 如果有批次号，优先使用第一个批次号
+            if (!existingMaterial.material_batch_id && item.material_batch_id) {
+              existingMaterial.material_batch_id = item.material_batch_id
+            }
+          } else {
+            materialMap.set(item.material_id, {
+              material_id: item.material_id,
+              material_name: item.material_name,
+              material_type: item.material_type || 'fertilizer',
+              material_batch_id: item.material_batch_id || '',
+              available_quantity: item.quantity
+            })
+          }
         }
       })
-      inputList.value = Array.from(inputMap.values())
+      materialList.value = Array.from(materialMap.values())
 
-      if (inputList.value.length === 0) {
-        ElMessage.warning(t('input.inventory.stockOut.messages.noStockInWarehouse') || '该仓库暂无可用库存')
+      if (materialList.value.length === 0) {
+        ElMessage.warning(t('input.inventory.stockOut.messages.noStockInWarehouse'))
       }
     }
   } catch (error) {
-    console.error('Failed to load input list by warehouse:', error)
+    console.error('Failed to load material list by warehouse:', error)
     ElMessage.error(t('common.failed'))
   } finally {
-    inputLoading.value = false
+    materialLoading.value = false
   }
 }
 
 const formData = reactive({
-  warehouseId: '',
-  customer: '',
-  type: '0',
+  outbound_type: 1,
+  warehouse_id: '',
+  outbound_object_id: '',
+  outbound_object_name: '',
+  related_order_no: '',
+  outbound_user: '',
+  outbound_dept: '',
   operator: '',
   remark: '',
-  items: [
+  details: [
     {
-      inputId: '',
-      batchNo: '',
+      material_id: '',
+      material_name: '',
+      material_type: '',
+      material_batch_id: '',
       quantity: null,
-      availableQuantity: 0,
-      batchList: [],
-      batchLoading: false,
-      remarks: ''
+      spec_model: '',
+      unit_of_measure: '',
+      available_quantity: 0
     }
   ]
 })
 
 const rules = computed(() => ({
-  warehouseId: [{ required: true, message: t('input.inventory.stockOut.rules.warehouseIdRequired'), trigger: 'change' }],
-  customer: [{ required: true, message: t('input.inventory.stockOut.rules.customerRequired'), trigger: 'blur' }],
-  type: [{ required: true, message: t('input.inventory.stockOut.rules.typeRequired'), trigger: 'change' }],
-  operator: [{ required: true, message: t('input.inventory.stockOut.rules.operatorRequired'), trigger: 'blur' }]
+  outbound_type: [
+    { required: true, message: t('input.inventory.stockOut.rules.typeRequired'), trigger: 'change' }
+  ],
+  warehouse_id: [
+    { required: true, message: t('input.inventory.stockOut.rules.warehouseIdRequired'), trigger: 'change' }
+  ],
+  outbound_object_id: [
+    { required: true, message: t('input.inventory.stockOut.rules.outboundObjectIdRequired'), trigger: 'blur' }
+  ],
+  operator: [
+    { required: true, message: t('input.inventory.stockOut.rules.operatorRequired'), trigger: 'blur' }
+  ]
 }))
 
-const itemRules = computed(() => ({
-  inputId: [{ required: true, message: t('input.inventory.stockOut.rules.inputIdRequired'), trigger: 'change' }],
-  batchNo: [{ required: true, message: t('input.inventory.stockOut.rules.batchNoRequired'), trigger: 'change' }],
+const detailRules = computed(() => ({
+  material_id: [
+    { required: true, message: t('input.inventory.stockOut.rules.materialIdRequired'), trigger: 'change' }
+  ],
+  material_type: [
+    { required: true, message: t('input.inventory.stockOut.rules.materialTypeRequired'), trigger: 'blur' }
+  ],
   quantity: [
     { required: true, message: t('input.inventory.stockOut.rules.quantityRequired'), trigger: 'blur' },
-    { type: 'number', min: 1, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' },
+    { type: 'number', min: 0.01, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' },
     {
       validator: (rule, value, callback) => {
         const index = parseInt(rule.field.split('.')[1])
-        const item = formData.items[index]
-        if (value && item.availableQuantity && value > item.availableQuantity) {
+        const detail = formData.details[index]
+        if (value && detail.available_quantity > 0 && value > detail.available_quantity) {
           callback(new Error(t('input.inventory.stockOut.rules.quantityExceeds')))
         } else {
           callback()
@@ -276,87 +420,80 @@ const goBack = () => {
   router.back()
 }
 
-// 仓库变更时,清空所有商品的选择,并重新加载该仓库的投入品
+// 仓库变更时,清空所有明细的选择,并重新加载该仓库的物料
 const handleWarehouseChange = () => {
-  // 清空所有商品选择
-  formData.items.forEach(item => {
-    item.inputId = ''
-    item.batchNo = ''
-    item.batchList = []
-    item.quantity = null
-    item.availableQuantity = 0
+  // 如果出库对象选择了当前出库仓库，清空出库对象
+  if (formData.outbound_object_id && formData.outbound_object_id === formData.warehouse_id) {
+    formData.outbound_object_id = ''
+    formData.outbound_object_name = ''
+  }
+
+  // 清空所有明细选择
+  formData.details.forEach(detail => {
+    detail.material_id = ''
+    detail.material_name = ''
+    detail.material_type = ''
+    detail.material_batch_id = ''
+    detail.quantity = null
+    detail.available_quantity = 0
   })
 
-  // 重新加载该仓库有库存的投入品
-  if (formData.warehouseId) {
-    loadInputListByWarehouse(formData.warehouseId)
+  // 重新加载该仓库有库存的物料
+  if (formData.warehouse_id) {
+    loadMaterialListByWarehouse(formData.warehouse_id)
   } else {
-    inputList.value = []
+    materialList.value = []
   }
 }
 
-// 投入品变更时,加载该投入品在该仓库的批次列表
-const handleInputChange = async (index) => {
-  const item = formData.items[index]
-  item.batchNo = ''
-  item.batchList = []
-  item.quantity = null
-  item.availableQuantity = 0
-
-  if (!item.inputId || !formData.warehouseId) {
-    return
-  }
-
-  item.batchLoading = true
-  try {
-    const res = await getBatchList({
-      warehouseId: formData.warehouseId,
-      inputId: item.inputId
-    })
-    if (res.code === 200) {
-      item.batchList = res.data || []
-      if (item.batchList.length === 0) {
-        ElMessage.warning(t('input.inventory.stockOut.messages.insufficientStock'))
-      }
-    }
-  } catch (error) {
-    console.error('Failed to load batch list:', error)
-    ElMessage.error(t('common.failed'))
-  } finally {
-    item.batchLoading = false
-  }
-}
-
-// 批次变更时,更新可用库存数量
-const handleBatchChange = (index) => {
-  const item = formData.items[index]
-  const selectedBatch = item.batchList.find(b => b.batch_no === item.batchNo)
-  if (selectedBatch) {
-    item.availableQuantity = selectedBatch.current_quantity
+// 出库对象变更时,自动填充出库对象名称
+const handleOutboundObjectChange = () => {
+  const selectedWarehouse = warehouseList.value.find(w => w.warehouse_id === formData.outbound_object_id)
+  if (selectedWarehouse) {
+    formData.outbound_object_name = selectedWarehouse.warehouse_name
   } else {
-    item.availableQuantity = 0
+    formData.outbound_object_name = ''
   }
 }
 
-// 添加商品
-const addItem = () => {
-  formData.items.push({
-    inputId: '',
-    batchNo: '',
+// 物料变更时,自动填充物料名称、类型、批次号和可用库存
+const handleMaterialChange = (index) => {
+  const detail = formData.details[index]
+  const selectedMaterial = materialList.value.find(m => m.material_id === detail.material_id)
+
+  if (selectedMaterial) {
+    detail.material_name = selectedMaterial.material_name
+    detail.material_type = selectedMaterial.material_type
+    detail.material_batch_id = selectedMaterial.material_batch_id
+    detail.available_quantity = selectedMaterial.available_quantity
+  } else {
+    detail.material_name = ''
+    detail.material_type = ''
+    detail.material_batch_id = ''
+    detail.available_quantity = 0
+  }
+}
+
+// 添加明细
+const addDetail = () => {
+  formData.details.push({
+    material_id: '',
+    material_name: '',
+    material_type: '',
+    material_batch_id: '',
     quantity: null,
-    availableQuantity: 0,
-    batchList: [],
-    batchLoading: false,
-    remarks: ''
+    spec_model: '',
+    unit_of_measure: '',
+    available_quantity: 0
   })
 }
 
-// 移除商品
-const removeItem = (index) => {
-  if (formData.items.length > 1) {
-    formData.items.splice(index, 1)
+// 移除明细
+const removeDetail = (index) => {
+  if (formData.details.length > 1) {
+    formData.details.splice(index, 1)
   } else {
-    ElMessage.warning(t('input.inventory.stockOut.rules.itemsRequired'))
+    ElMessage.warning(t('input.inventory.stockOut.rules.detailsRequired'))
   }
 }
 
@@ -365,28 +502,45 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate()
 
-    if (formData.items.length === 0) {
-      ElMessage.warning(t('input.inventory.stockOut.rules.itemsRequired'))
+    if (formData.details.length === 0) {
+      ElMessage.warning(t('input.inventory.stockOut.rules.detailsRequired'))
+      return
+    }
+
+    // 检查所有明细是否完整
+    const hasIncompleteDetail = formData.details.some(
+      detail => !detail.material_id || !detail.material_type || !detail.quantity
+    )
+    if (hasIncompleteDetail) {
+      ElMessage.warning(t('input.inventory.stockOut.rules.detailsRequired'))
       return
     }
 
     submitLoading.value = true
 
+    // 转换为驼峰形式
     const data = {
-      warehouseId: parseInt(formData.warehouseId),
-      customer: formData.customer,
-      type: formData.type,
+      outboundType: formData.outbound_type,
+      warehouseId: formData.warehouse_id,
+      outboundObjectId: formData.outbound_object_id,
+      outboundObjectName: formData.outbound_object_name,
+      relatedOrderNo: formData.related_order_no || undefined,
+      outboundUser: formData.outbound_user || undefined,
+      outboundDept: formData.outbound_dept || undefined,
       operator: formData.operator,
-      remark: formData.remark,
-      items: formData.items.map(item => ({
-        inputId: parseInt(item.inputId),
-        batchNo: item.batchNo,
-        quantity: item.quantity,
-        remarks: item.remarks
+      remark: formData.remark || undefined,
+      details: formData.details.map(detail => ({
+        materialId: detail.material_id,
+        materialName: detail.material_name,
+        materialType: detail.material_type,
+        materialBatchId: detail.material_batch_id || undefined,
+        quantity: detail.quantity,
+        specModel: detail.spec_model || undefined,
+        unitOfMeasure: detail.unit_of_measure || undefined
       }))
     }
 
-    const res = await createStockOut(data)
+    const res = await createOutboundOrder(data)
     if (res.code === 200) {
       ElMessage.success(t('input.inventory.stockOut.addSuccess'))
       setTimeout(() => router.back(), 1000)
@@ -489,7 +643,7 @@ onMounted(() => {
   width: 100%;
 }
 
-/* 商品明细 */
+/* 明细列表 */
 .items-list {
   margin-bottom: 16px;
 }
@@ -518,6 +672,12 @@ onMounted(() => {
 
 .add-item-btn {
   width: 100%;
+}
+
+.available-hint {
+  font-size: 12px;
+  color: #909399;
+  margin-left: 8px;
 }
 
 .form-actions {
