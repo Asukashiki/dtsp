@@ -44,3 +44,12 @@ export const deleteFarmerDemand = (id) => {
     data: { id }
   })
 }
+
+// 提交审核
+export const submitForAudit = (ids) => {
+  return request({
+    url: '/seed/demand/audit/submit',
+    method: 'post',
+    data: { ids }
+  })
+}

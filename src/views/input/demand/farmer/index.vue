@@ -22,10 +22,21 @@
               <i class="ri-list-check"></i>
               <span>{{ $t('farmerDemand.list') }}</span>
             </div>
-            <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
-              {{ $t('common.add') }}
-            </el-button>
+            <div class="header-actions">
+              <el-button
+                type="success"
+                @click="handleBatchSubmit"
+                :disabled="selectedRows.length === 0"
+                v-if="selectedRows.length > 0"
+              >
+                <i class="ri-send-plane-line"></i>
+                {{ $t('farmerDemand.submitForAudit') }} ({{ selectedRows.length }})
+              </el-button>
+              <el-button type="primary" @click="handleAdd">
+                <i class="ri-add-line"></i>
+                {{ $t('common.add') }}
+              </el-button>
+            </div>
           </div>
 
           <div class="card-body">
@@ -69,7 +80,12 @@
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe>
+              <el-table v-loading="loading" :data="tableData" stripe @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55"
+                  :selectable="rowSelectable"
+                />
                 <el-table-column
                   prop="batchNo"
                   :label="$t('farmerDemand.columns.batchNo')"
@@ -125,12 +141,21 @@
                   :label="$t('farmerDemand.columns.createdTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="250">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="280">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
+                      </el-button>
+                      <el-button
+                        link
+                        type="success"
+                        @click="handleSubmit(row)"
+                        v-if="row.status === 'draft' || row.status === 'rejected'"
+                      >
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('farmerDemand.submit') }}
                       </el-button>
                       <el-button
                         link
@@ -173,6 +198,11 @@
             <div class="mobile-card-list mobile-only">
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
                 <div class="mobile-card-header">
+                  <el-checkbox
+                    v-model="item.checked"
+                    @change="handleMobileCheckChange(item)"
+                    :disabled="!rowSelectable(item)"
+                  ></el-checkbox>
                   <div class="mobile-card-title">
                     <i class="ri-user-line"></i>
                     <span>{{ item.farmerName }}</span>
@@ -214,6 +244,14 @@
                 <div class="mobile-card-actions">
                   <el-button type="primary" size="small" @click="handleView(item)">
                     {{ $t('common.view') }}
+                  </el-button>
+                  <el-button
+                    type="success"
+                    size="small"
+                    @click="handleSubmit(item)"
+                    v-if="item.status === 'draft' || item.status === 'rejected'"
+                  >
+                    {{ $t('farmerDemand.submit') }}
                   </el-button>
                   <el-button
                     size="small"
@@ -262,13 +300,14 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getFarmerDemandPage, deleteFarmerDemand } from '@/api/farmerDemand'
+import { getFarmerDemandPage, deleteFarmerDemand, submitForAudit } from '@/api/farmerDemand'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
+const selectedRows = ref([])
 
 const searchForm = reactive({
   keyword: '',
@@ -322,6 +361,10 @@ const loadData = async () => {
     if (res.code === 200) {
       tableData.value = res.data?.records || res.data?.list || []
       pagination.total = res.data?.total || 0
+      // 初始化移动端复选框状态
+      tableData.value.forEach(item => {
+        item.checked = selectedRows.value.some(r => r.id === item.id)
+      })
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -358,6 +401,106 @@ const handleView = (row) => {
 const handleEdit = (row) => {
   router.push({ name: 'FarmerDemandEdit', params: { id: row.id } })
 }
+
+// 判断行是否可选择（只有草稿和驳回状态可以提交审核）
+const rowSelectable = (row) => {
+  return row.status === 'draft' || row.status === 'rejected'
+}
+
+// 表格选择变化
+const handleSelectionChange = (selection) => {
+  selectedRows.value = selection
+}
+
+// 移动端复选框变化
+const handleMobileCheckChange = (item) => {
+  if (item.checked) {
+    if (!selectedRows.value.find(r => r.id === item.id)) {
+      selectedRows.value.push(item)
+    }
+  } else {
+    selectedRows.value = selectedRows.value.filter(r => r.id !== item.id)
+  }
+}
+
+// 单条提交审核
+const handleSubmit = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('farmerDemand.submitConfirm'),
+      t('common.tip'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await submitForAudit([row.id])
+    if (res.code === 200) {
+      const result = res.data
+      if (result.successCount > 0) {
+        ElMessage.success(t('farmerDemand.submitSuccess'))
+        loadData()
+      } else {
+        ElMessage.error(t('farmerDemand.submitFailed'))
+      }
+    } else {
+      ElMessage.error(res.msg || t('farmerDemand.submitFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit:', error)
+      ElMessage.error(t('farmerDemand.submitFailed'))
+    }
+  }
+}
+
+// 批量提交审核
+const handleBatchSubmit = async () => {
+  if (selectedRows.value.length === 0) {
+    ElMessage.warning(t('farmerDemand.pleaseSelectData'))
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      t('farmerDemand.batchSubmitConfirm', { count: selectedRows.value.length }),
+      t('common.tip'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    const ids = selectedRows.value.map(row => row.id)
+    const res = await submitForAudit(ids)
+
+    if (res.code === 200) {
+      const result = res.data
+      if (result.successCount > 0) {
+        ElMessage.success(
+          t('farmerDemand.batchSubmitResult', {
+            success: result.successCount,
+            fail: result.failCount
+          })
+        )
+        selectedRows.value = []
+        loadData()
+      } else {
+        ElMessage.error(t('farmerDemand.submitFailed'))
+      }
+    } else {
+      ElMessage.error(res.msg || t('farmerDemand.submitFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to batch submit:', error)
+      ElMessage.error(t('farmerDemand.submitFailed'))
+    }
+  }
+}
+
 
 // 删除
 const handleDelete = async (row) => {
@@ -492,6 +635,10 @@ onMounted(() => {
 .card-title i {
   font-size: 22px;
 }
+n.header-actions {
+  display: flex;
+  gap: 12px;
+}
 
 .card-body {
   padding: 24px;
@@ -611,6 +758,7 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  flex-wrap: wrap;
   padding-top: 12px;
   border-top: 1px solid #f0f0f0;
 }
@@ -618,6 +766,7 @@ onMounted(() => {
 .mobile-card-actions .el-button {
   flex: 1;
 }
+  min-width: 80px;
 
 /* 响应式 */
 .pc-only {
@@ -661,6 +810,14 @@ onMounted(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+n  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .header-actions .el-button {
+    width: 100%;
   }
 
   .card-body {

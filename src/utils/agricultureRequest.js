@@ -54,6 +54,11 @@ agricultureRequest.interceptors.request.use(
 // 响应拦截器
 agricultureRequest.interceptors.response.use(
   response => {
+    // 如果是 blob 类型的响应（文件下载），直接返回整个 response
+    if (response.config.responseType === 'blob') {
+      return response
+    }
+
     const res = response.data
 
     // 处理blob类型响应（文件下载）
