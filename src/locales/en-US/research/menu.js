@@ -171,4 +171,8 @@ export default {
   inputQuotaView: 'Input Quota View',
   oseReleaseToUnion: 'OSE Release Seeds to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
+  unionReleaseToWoreda: 'Union Distribution to Woreda',
+  woredaReceiveConfirm: 'Woreda Receive Confirmation',
+  woredaReleaseToFarmer: 'Woreda Distribution to Farmer'
+
 }
