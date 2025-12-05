@@ -603,7 +603,7 @@ export default {
   yieldData: {
     title: 'Yield Data Collection',
     subtitle: 'Record field yield verification data',
-    list: 'Yield Data List',
+    list: 'Data List',
     add: 'Add Yield Data',
     edit: 'Edit Yield Data',
     detail: 'Yield Data Details',
@@ -631,10 +631,37 @@ export default {
       grainWeightKg: 'Grain Weight (kg)',
       yieldQtPerHa: 'Yield (qt/ha)',
       moistureContent: 'Moisture Content (%)',
+      inspectionInfo: 'Inspection Information',
+      inspectionDate: 'Inspection Date',
+      inspectionType: 'Inspection Type',
+      scoreCode: 'Score Code',
+      scoreValue: 'Score Value',
       recorderName: 'Recorder Name',
       remark: 'Remark',
       createTime: 'Created Time',
       createBy: 'Created By',
+    },
+
+    // Inspection type options
+    inspectionTypes: {
+      disease: 'Disease',
+      purity: 'Purity',
+      pest: 'Pest',
+      lodging: 'Lodging',
+      moisture: 'Moisture',
+      other: 'Other',
+    },
+
+    // Score code options
+    scoreCodes: {
+      yield: 'Yield',
+      diseaseRes: 'Disease Resistance',
+      pestRes: 'Pest Resistance',
+      droughtTol: 'Drought Tolerance',
+      lodgingRes: 'Lodging Resistance',
+      grainQuality: 'Grain Quality',
+      maturity: 'Maturity',
+      plantHeight: 'Plant Height',
     },
 
     placeholder: {
@@ -646,6 +673,10 @@ export default {
       grainWeightKg: 'Please enter grain weight',
       yieldQtPerHa: 'Please enter yield',
       moistureContent: 'Please enter moisture content (optional)',
+      inspectionDate: 'Please select inspection date',
+      inspectionType: 'Please select inspection type',
+      scoreCode: 'Please enter score code',
+      scoreValue: 'Please enter score value',
       recorderName: 'Please enter recorder name (optional)',
       remark: 'Please enter remark (optional)',
     },
@@ -673,6 +704,10 @@ export default {
       yieldQtPerHa: 'Yield (qt/ha)',
       moistureContent: 'Moisture Content (%)',
       harvestDate: 'Harvest Date',
+      inspectionDate: 'Inspection Date',
+      inspectionType: 'Inspection Type',
+      scoreCode: 'Score Code',
+      scoreValue: 'Score Value',
       createTime: 'Created Time',
       actions: 'Actions',
     },
