@@ -17,19 +17,11 @@
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
           </el-button>
-          <el-button
-            type="success"
-            @click="handleApprove"
-            v-if="detailData.status === 'submitted'"
-          >
+          <el-button type="success" @click="handleApprove" v-if="detailData.status === 'submitted'">
             <i class="ri-check-line"></i>
             {{ $t('demandAudit.actions.approve') }}
           </el-button>
-          <el-button
-            type="danger"
-            @click="handleReject"
-            v-if="detailData.status === 'submitted'"
-          >
+          <el-button type="danger" @click="handleReject" v-if="detailData.status === 'submitted'">
             <i class="ri-close-line"></i>
             {{ $t('demandAudit.actions.reject') }}
           </el-button>
@@ -131,52 +123,54 @@
           <div v-if="!detailData.inputItems || detailData.inputItems.length === 0" class="no-data">
             <el-empty :description="$t('demandAudit.form.noItems')" />
           </div>
-          <div v-else class="items-table pc-only">
-            <el-table :data="detailData.inputItems" stripe border>
-              <el-table-column type="index" :label="'#'" width="60" />
-              <el-table-column prop="inputCategory" :label="$t('demandAudit.form.inputCategory')" min-width="120">
-                <template #default="{ row }">
-                  {{ getInputCategoryLabel(row.inputCategory) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="inputType" :label="$t('demandAudit.form.inputType')" min-width="120" />
-              <el-table-column prop="variety" :label="$t('demandAudit.form.variety')" min-width="120" />
-              <el-table-column prop="specification" :label="$t('demandAudit.form.specification')" min-width="120" />
-              <el-table-column prop="unit" :label="$t('demandAudit.form.unit')" width="100" />
-              <el-table-column prop="quantity" :label="$t('demandAudit.form.quantity')" width="120" />
-            </el-table>
-          </div>
-          <div v-else class="items-cards mobile-only">
-            <div v-for="(item, index) in detailData.inputItems" :key="index" class="item-card">
-              <div class="item-index">{{ index + 1 }}</div>
-              <div class="item-info">
-                <div class="item-row">
-                  <span class="label">{{ $t('demandAudit.form.inputCategory') }}:</span>
-                  <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('demandAudit.form.inputType') }}:</span>
-                  <span class="value">{{ item.inputType }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('demandAudit.form.variety') }}:</span>
-                  <span class="value">{{ item.variety }}</span>
-                </div>
-                <div class="item-row" v-if="item.specification">
-                  <span class="label">{{ $t('demandAudit.form.specification') }}:</span>
-                  <span class="value">{{ item.specification }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('demandAudit.form.unit') }}:</span>
-                  <span class="value">{{ item.unit }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('demandAudit.form.quantity') }}:</span>
-                  <span class="value">{{ item.quantity }}</span>
+          <template v-else>
+            <div class="items-table pc-only">
+              <el-table :data="detailData.inputItems" stripe border>
+                <el-table-column type="index" :label="'#'" width="60" />
+                <el-table-column prop="inputCategory" :label="$t('demandAudit.form.inputCategory')" min-width="120">
+                  <template #default="{ row }">
+                    {{ getInputCategoryLabel(row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inputType" :label="$t('demandAudit.form.inputType')" min-width="120" />
+                <el-table-column prop="variety" :label="$t('demandAudit.form.variety')" min-width="120" />
+                <el-table-column prop="specification" :label="$t('demandAudit.form.specification')" min-width="120" />
+                <el-table-column prop="unit" :label="$t('demandAudit.form.unit')" width="100" />
+                <el-table-column prop="quantity" :label="$t('demandAudit.form.quantity')" width="120" />
+              </el-table>
+            </div>
+            <div class="items-cards mobile-only">
+              <div v-for="(item, index) in detailData.inputItems" :key="index" class="item-card">
+                <div class="item-index">{{ index + 1 }}</div>
+                <div class="item-info">
+                  <div class="item-row">
+                    <span class="label">{{ $t('demandAudit.form.inputCategory') }}:</span>
+                    <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('demandAudit.form.inputType') }}:</span>
+                    <span class="value">{{ item.inputType }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('demandAudit.form.variety') }}:</span>
+                    <span class="value">{{ item.variety }}</span>
+                  </div>
+                  <div class="item-row" v-if="item.specification">
+                    <span class="label">{{ $t('demandAudit.form.specification') }}:</span>
+                    <span class="value">{{ item.specification }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('demandAudit.form.unit') }}:</span>
+                    <span class="value">{{ item.unit }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('demandAudit.form.quantity') }}:</span>
+                    <span class="value">{{ item.quantity }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
         <!-- 审核记录 -->
@@ -190,13 +184,8 @@
           </div>
           <div v-else class="audit-timeline">
             <el-timeline>
-              <el-timeline-item
-                v-for="(record, index) in detailData.auditRecords"
-                :key="index"
-                :timestamp="record.auditTime"
-                placement="top"
-                :type="getAuditResultType(record.auditResult)"
-              >
+              <el-timeline-item v-for="(record, index) in detailData.auditRecords" :key="index"
+                :timestamp="record.auditTime" placement="top" :type="getAuditResultType(record.auditResult)">
                 <div class="timeline-card">
                   <div class="timeline-header">
                     <div class="audit-level">
@@ -229,19 +218,11 @@
     </div>
 
     <!-- 审核通过对话框 -->
-    <el-dialog
-      v-model="approveDialogVisible"
-      :title="$t('demandAudit.approveDialog.title')"
-      width="500px"
-    >
+    <el-dialog v-model="approveDialogVisible" :title="$t('demandAudit.approveDialog.title')" width="500px">
       <el-form :model="approveForm" label-width="100px">
         <el-form-item :label="$t('demandAudit.approveDialog.remark')">
-          <el-input
-            v-model="approveForm.remark"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')"
-          />
+          <el-input v-model="approveForm.remark" type="textarea" :rows="3"
+            :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -253,27 +234,15 @@
     </el-dialog>
 
     <!-- 审核驳回对话框 -->
-    <el-dialog
-      v-model="rejectDialogVisible"
-      :title="$t('demandAudit.rejectDialog.title')"
-      width="500px"
-    >
+    <el-dialog v-model="rejectDialogVisible" :title="$t('demandAudit.rejectDialog.title')" width="500px">
       <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
         <el-form-item :label="$t('demandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
-          <el-input
-            v-model="rejectForm.auditOpinion"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.auditOpinionPlaceholder')"
-          />
+          <el-input v-model="rejectForm.auditOpinion" type="textarea" :rows="3"
+            :placeholder="$t('demandAudit.rejectDialog.auditOpinionPlaceholder')" />
         </el-form-item>
         <el-form-item :label="$t('demandAudit.rejectDialog.remark')">
-          <el-input
-            v-model="rejectForm.remark"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')"
-          />
+          <el-input v-model="rejectForm.remark" type="textarea" :rows="3"
+            :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')" />
         </el-form-item>
       </el-form>
       <template #footer>
