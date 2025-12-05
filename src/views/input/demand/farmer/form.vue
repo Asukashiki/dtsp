@@ -17,17 +17,6 @@
       <!-- 内容区域 -->
       <div class="content-wrapper">
         <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" class="demand-form">
-          <!-- 基本信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-information-line"></i>
-              {{ $t('farmerDemand.form.basicInfo') }}
-            </div>
-            <el-form-item :label="$t('farmerDemand.form.batchId')" prop="batchId">
-              <el-input v-model="formData.batchId" :placeholder="$t('farmerDemand.placeholder.batchId')" />
-            </el-form-item>
-          </div>
-
           <!-- 农民信息 -->
           <div class="form-section">
             <div class="section-title">
@@ -205,7 +194,6 @@ const submitting = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
 const formData = reactive({
-  batchId: '',
   farmerId: '',
   farmerName: '',
   farmerIdNumber: '',
@@ -228,7 +216,6 @@ const inputCategoryOptions = computed(() => ({
 
 // 表单验证规则
 const rules = reactive({
-  batchId: [{ required: true, message: t('farmerDemand.rules.batchIdRequired'), trigger: 'blur' }],
   farmerId: [{ required: true, message: t('farmerDemand.rules.farmerIdRequired'), trigger: 'blur' }],
   farmerName: [
     { required: true, message: t('farmerDemand.rules.farmerNameRequired'), trigger: 'blur' },

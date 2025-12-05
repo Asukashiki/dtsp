@@ -501,11 +501,12 @@ const handleRemoveLicense = (index) => {
 
 // 自定义文件上传处理
 const handleUploadFile = async (options, index) => {
-  const { file } = options
+  const { file, onSuccess, onError } = options
 
   const isLt5M = file.size / 1024 / 1024 < 5
   if (!isLt5M) {
     ElMessage.error(t('common.uploadSizeError'))
+    onError && onError(new Error('File size exceeds 5MB'))
     return
   }
 
@@ -516,13 +517,21 @@ const handleUploadFile = async (options, index) => {
       const fileData = res.data
       const dataId = fileData.id || fileData.dataId
 
-      // 更新文件列表用于显示，需要包含url字段以显示预览
+      // 构建预览URL用于显示图片 - 使用完整的URL路径
+      const baseUrl = import.meta.env.VITE_APP_AGRICULTURE_API_URL || ''
+      const previewUrl = `${baseUrl}/doc/preview/${dataId}`
+
+      // 更新文件列表用于显示
+      // 使用 URL.createObjectURL 创建本地预览
+      const localPreviewUrl = URL.createObjectURL(file)
+
       const fileObj = {
         name: file.name,
         uid: file.uid,
         fileId: dataId,
         dataId: dataId,
-        url: dataId
+        url: localPreviewUrl,  // 使用本地预览URL以立即显示
+        serverUrl: previewUrl   // 保存服务器URL供后续使用
       }
       formData.licenses[index].fileList = [fileObj]
 
@@ -531,17 +540,26 @@ const handleUploadFile = async (options, index) => {
       formData.licenses[index].licenseFileName = file.name
 
       ElMessage.success(t('common.uploadSuccess'))
+      onSuccess && onSuccess(res)
     } else {
       ElMessage.error(res.msg || t('common.uploadFailed'))
+      onError && onError(new Error(res.msg || 'Upload failed'))
     }
   } catch (error) {
     console.error('File upload failed:', error)
     ElMessage.error(t('common.uploadFailed'))
+    onError && onError(error)
   }
 }
 
 // 文件移除处理
 const handleRemoveFile = (index) => {
+  // 释放本地预览URL内存
+  const fileList = formData.licenses[index].fileList
+  if (fileList && fileList.length > 0 && fileList[0].url) {
+    URL.revokeObjectURL(fileList[0].url)
+  }
+
   formData.licenses[index].licenseFileUrl = ''
   formData.licenses[index].licenseFileName = ''
   formData.licenses[index].fileList = []
@@ -576,22 +594,49 @@ const loadDetail = async () => {
 
       // 许可证件
       if (data.licenses && data.licenses.length > 0) {
-        formData.licenses = data.licenses.map(license => {
-          // 如果licenseFileUrl是文件ID，构建预览URL
-          let fileList = []
-          if (license.licenseFileUrl) {
-            const previewUrl = `${import.meta.env.VITE_APP_AGRICULTURE_API_URL}/doc/preview/${license.licenseFileUrl}`
-            fileList = [{
-              name: license.licenseFileName || 'file',
-              url: previewUrl,
-              fileId: license.licenseFileUrl
-            }]
+        // 使用Promise.all并行加载所有许可证件的文件
+        const { downloadFile } = await import('@/api/file')
+
+        const licensePromises = data.licenses.map(async (license) => {
+          if (!license.licenseFileUrl) {
+            return { ...license, fileList: [] }
           }
-          return {
-            ...license,
-            fileList
+
+          try {
+            // 通过下载接口获取文件数据
+            console.log('正在加载许可证文件:', license.licenseFileUrl)
+            const response = await downloadFile(license.licenseFileUrl)
+            console.log('文件下载响应:', response)
+
+            // 判断文件类型，创建对应的blob
+            const contentType = response.headers?.['content-type'] || 'image/jpeg'
+            const blob = new Blob([response.data], { type: contentType })
+            const blobUrl = URL.createObjectURL(blob)
+
+            console.log('创建的 Blob URL:', blobUrl, 'Content-Type:', contentType)
+
+            return {
+              ...license,
+              fileList: [{
+                name: license.licenseFileName || 'file',
+                url: blobUrl,
+                uid: license.licenseFileUrl,
+                fileId: license.licenseFileUrl,
+                status: 'success'
+              }]
+            }
+          } catch (error) {
+            console.error('加载许可证文件失败:', license.licenseFileUrl, error)
+            ElMessage.warning(`文件 ${license.licenseFileName || license.licenseFileUrl} 加载失败`)
+            // 如果下载失败，返回空文件列表
+            return {
+              ...license,
+              fileList: []
+            }
           }
         })
+
+        formData.licenses = await Promise.all(licensePromises)
       }
     }
   } catch (error) {

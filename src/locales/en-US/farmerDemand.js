@@ -157,6 +157,7 @@ export default {
     delete: 'Delete',
     submit: 'Submit',
   },
+    submitForAudit: 'Submit for Audit',
 
   // Audit Records
   auditRecords: {
@@ -202,6 +203,12 @@ export default {
   detailSections: {
     basicInfo: 'Basic Information',
     farmerInfo: 'Farmer Information',
+    submitConfirm: 'Confirm to submit this demand for village-level audit?',
+    batchSubmitConfirm: 'Confirm to submit {count} selected demands for village-level audit?',
+    submitSuccess: 'Submitted successfully',
+    submitFailed: 'Submission failed',
+    batchSubmitResult: 'Submission completed: {success} succeeded, {fail} failed',
+    pleaseSelectData: 'Please select data to submit',
     demandInfo: 'Demand Information',
     itemsInfo: 'Input Items',
     auditInfo: 'Audit Records',

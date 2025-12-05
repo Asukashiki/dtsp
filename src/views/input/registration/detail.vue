@@ -263,17 +263,44 @@ const loadDetail = async () => {
 
       // 处理许可证件图片URL
       if (data.licenses && data.licenses.length > 0) {
-        data.licenses = data.licenses.map(license => {
-          if (license.licenseFileUrl) {
-            // 如果licenseFileUrl是文件ID，构建完整的预览URL
-            const previewUrl = `${import.meta.env.VITE_APP_AGRICULTURE_API_URL}/doc/preview/${license.licenseFileUrl}`
+        const { downloadFile } = await import('@/api/file')
+
+        const licensePromises = data.licenses.map(async (license) => {
+          if (!license.licenseFileUrl) {
+            return license
+          }
+
+          try {
+            // 通过下载接口获取文件数据
+            console.log('正在加载许可证文件:', license.licenseFileUrl)
+            const response = await downloadFile(license.licenseFileUrl)
+            console.log('文件下载响应:', response)
+
+            // 判断文件类型，创建对应的blob
+            const contentType = response.headers?.['content-type'] || 'image/jpeg'
+            const blob = new Blob([response.data], { type: contentType })
+            const blobUrl = URL.createObjectURL(blob)
+
+            console.log('创建的 Blob URL:', blobUrl, 'Content-Type:', contentType)
+
             return {
               ...license,
-              licenseFileUrl: previewUrl
+              licenseFileUrl: blobUrl,
+              originalFileId: license.licenseFileUrl  // 保存原始ID供下载使用
+            }
+          } catch (error) {
+            console.error('加载许可证文件失败:', license.licenseFileUrl, error)
+            ElMessage.warning(`文件 ${license.licenseFileName || license.licenseFileUrl} 加载失败`)
+            // 如果下载失败，返回原数据（不显示图片）
+            return {
+              ...license,
+              licenseFileUrl: null,  // 设置为null，不显示图片
+              originalFileId: license.licenseFileUrl
             }
           }
-          return license
         })
+
+        data.licenses = await Promise.all(licensePromises)
       }
 
       Object.assign(detailData, data)

@@ -157,6 +157,7 @@ export default {
     delete: '删除',
     submit: '提交',
   },
+    submitForAudit: '提交审核',
 
   // 审核记录
   auditRecords: {
@@ -202,6 +203,12 @@ export default {
   detailSections: {
     basicInfo: '基本信息',
     farmerInfo: '农民信息',
+    submitConfirm: '确认提交该需求到村级审核吗?',
+    batchSubmitConfirm: '确认提交选中的 {count} 条需求到村级审核吗?',
+    submitSuccess: '提交成功',
+    submitFailed: '提交失败',
+    batchSubmitResult: '提交完成: 成功 {success} 条, 失败 {fail} 条',
+    pleaseSelectData: '请选择要提交的数据',
     demandInfo: '需求信息',
     itemsInfo: '投入品明细',
     auditInfo: '审核记录',
