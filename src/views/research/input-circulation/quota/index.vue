@@ -187,7 +187,7 @@ const handleQuery = async () => {
 
 // 查看详情
 const handleView = (row) => {
-  router.push(`/research/input-circulation/quota/detail/${row.id}`)
+  router.push(`/input/input-circulation/quota/detail/${row.id}`)
 }
 
 // 检测屏幕大小

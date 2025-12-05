@@ -198,17 +198,17 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/research/input-circulation/union-release/add')
+  router.push('/input/input-circulation/union-release/add')
 }
 
 // 编辑
 const handleEdit = (id) => {
-  router.push(`/research/input-circulation/union-release/edit/${id}`)
+  router.push(`/input/input-circulation/union-release/edit/${id}`)
 }
 
 // 详情
 const handleDetail = (id) => {
-  router.push(`/research/input-circulation/union-release/detail/${id}`)
+  router.push(`/input/input-circulation/union-release/detail/${id}`)
 }
 
 // 删除
