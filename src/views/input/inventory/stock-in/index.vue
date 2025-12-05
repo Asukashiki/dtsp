@@ -87,7 +87,7 @@
         >
           <template #default="{ row }">
             <el-tag :type="getTypeTag(row.inbound_type)" size="small">
-              {{ row.inbound_type_name }}
+              {{ getTypeText(row.inbound_type) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -461,6 +461,16 @@ const getTypeTag = (type) => {
     2: 'warning'
   }
   return map[type] || ''
+}
+
+const getTypeText = (type) => {
+  const typeMap = {
+    0: t('input.inventory.stockIn.type.production'),
+    1: t('input.inventory.stockIn.type.purchase'),
+    2: t('input.inventory.stockIn.type.transfer'),
+    3: t('input.inventory.stockIn.type.return'),
+  }
+  return typeMap[type] || '-'
 }
 
 onMounted(() => {

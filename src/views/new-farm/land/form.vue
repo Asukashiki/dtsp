@@ -343,7 +343,7 @@ const handleSubmit = async () => {
         if (isEdit.value) {
           res = await updateLand(route.params.id, data)
         } else {
-          res = await addLand(data)
+          res = await addLand({...data, daId: '222222222'})
         }
 
         if (res.code === 200) {

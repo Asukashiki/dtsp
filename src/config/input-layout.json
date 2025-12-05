@@ -4,6 +4,32 @@
   "icon": "ri-database-2-line",
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "menus": [
+      {
+      "index": "newFarmManagement",
+      "icon": "ri-plant-line",
+      "titleKey": "newFarm.moduleName",
+      "name": "农田管理",
+      "children": [
+        {
+          "index": "/input/da",
+          "icon": "ri-user-star-line",
+          "titleKey": "newFarm.menu.daManagement",
+          "name": "DA管理"
+        },
+        {
+          "index": "/input/farmer",
+          "icon": "ri-user-line",
+          "titleKey": "newFarm.menu.farmerManagement",
+            "name": "农民管理"
+        },
+        {
+          "index": "/input/land",
+          "icon": "ri-landscape-line",
+          "titleKey": "newFarm.menu.landManagement",
+            "name": "土地管理"
+        }
+      ]
+    },
     {
       "index": "registration-management",
       "icon": "ri-file-list-3-line",
@@ -21,6 +47,18 @@
         }
       ]
     },
+       {
+      "index": "input-management",
+      "icon": "ri-box-3-line",
+      "titleKey": "input.menu.inputManagement",
+      "children": [
+        {
+          "index": "/input/catalog",
+          "icon": "ri-list-check",
+          "titleKey": "input.menu.inputCatalog"
+        }
+      ]
+    },
     {
       "index": "demand-management",
       "icon": "ri-file-edit-line",
@@ -35,45 +73,6 @@
           "index": "/input/demand/audit",
           "icon": "ri-task-line",
           "titleKey": "input.menu.demandAudit"
-        }
-      ]
-    },
-    {
-      "index": "input-management",
-      "icon": "ri-box-3-line",
-      "titleKey": "input.menu.inputManagement",
-      "children": [
-        {
-          "index": "/input/catalog",
-          "icon": "ri-list-check",
-          "titleKey": "input.menu.inputCatalog"
-        },
-        {
-          "index": "/input/supplier/product",
-          "icon": "ri-store-line",
-          "titleKey": "input.menu.supplierInput"
-        }
-      ]
-    },
-    {
-      "index": "supplier-management",
-      "icon": "ri-building-line",
-      "titleKey": "input.menu.supplierManagement",
-      "children": [
-        {
-          "index": "/input/supplier/auth",
-          "icon": "ri-shield-check-line",
-          "titleKey": "input.menu.supplierAuth"
-        },
-        {
-          "index": "/input/supplier/approval",
-          "icon": "ri-checkbox-circle-line",
-          "titleKey": "input.menu.supplierAuthApproval"
-        },
-        {
-          "index": "/input/supplier/info",
-          "icon": "ri-information-line",
-          "titleKey": "input.menu.supplierInfo"
         }
       ]
     },
@@ -159,32 +158,6 @@
           "index": "/input/inventory/stock",
           "icon": "ri-stack-line",
           "titleKey": "input.menu.stockQuery"
-        }
-      ]
-    },
-    {
-      "index": "newFarmManagement",
-      "icon": "ri-plant-line",
-      "titleKey": "newFarm.moduleName",
-      "name": "农田管理",
-      "children": [
-        {
-          "index": "/input/da",
-          "icon": "ri-user-star-line",
-          "titleKey": "newFarm.menu.daManagement",
-          "name": "DA管理"
-        },
-        {
-          "index": "/input/farmer",
-          "icon": "ri-user-line",
-          "titleKey": "newFarm.menu.farmerManagement",
-            "name": "农民管理"
-        },
-        {
-          "index": "/input/land",
-          "icon": "ri-landscape-line",
-          "titleKey": "newFarm.menu.landManagement",
-            "name": "土地管理"
         }
       ]
     },

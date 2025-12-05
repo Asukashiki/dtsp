@@ -10,8 +10,6 @@ import './style.css'
 import 'remixicon/fonts/remixicon.css'
 // 引入Element Plus图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import enUs from 'element-plus/es/locale/lang/en'
 // 引入ECharts
 import * as echarts from 'echarts'
 import { useLocaleStore } from './store'
@@ -30,13 +28,12 @@ app.config.globalProperties.$echarts = echarts
 app.use(pinia)
 app.use(router)
 app.use(i18n)
+app.use(ElementPlus)
 
-// 获取当前语言设置并应用到 Element Plus
+// 设置默认语言
 const localeStore = useLocaleStore()
 if(!localeStore.defaultLocale){
   localeStore.setLocale('en-US')
 }
-const elementLocale = localeStore.currentLocale === 'zh-CN' ? zhCn : enUs
-app.use(ElementPlus, { locale: elementLocale })
 
 app.mount('#app')
