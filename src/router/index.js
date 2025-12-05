@@ -1010,6 +1010,84 @@ const routes = [
         name: 'QuotaAllocationDetail',
         component: () => import('../views/input/allocate/quota-allocation/detail.vue'),
         meta: { title: '配额分配详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 农田管理系统
+      // ==================== DA管理 ====================
+      {
+        path: 'da',
+        name: 'InputDaList',
+        component: () => import('../views/new-farm/da/index.vue'),
+        meta: { title: 'DA管理', requiresAuth: true }
+      },
+      {
+        path: 'da/add',
+        name: 'InputDaAdd',
+        component: () => import('../views/new-farm/da/form.vue'),
+        meta: { title: '新增DA', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'da/edit/:id',
+        name: 'InputDaEdit',
+        component: () => import('../views/new-farm/da/form.vue'),
+        meta: { title: '编辑DA', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'da/detail/:id',
+        name: 'InputDaDetail',
+        component: () => import('../views/new-farm/da/detail.vue'),
+        meta: { title: 'DA详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // ==================== 农民管理 ====================
+      {
+        path: 'farmer',
+        name: 'InputFarmerList',
+        component: () => import('../views/new-farm/farmer/index.vue'),
+        meta: { title: '农民管理', requiresAuth: true }
+      },
+      {
+        path: 'farmer/add',
+        name: 'InputFarmerAdd',
+        component: () => import('../views/new-farm/farmer/form.vue'),
+        meta: { title: '新增农民', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'farmer/edit/:id',
+        name: 'InputFarmerEdit',
+        component: () => import('../views/new-farm/farmer/form.vue'),
+        meta: { title: '编辑农民', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'farmer/detail/:id',
+        name: 'InputFarmerDetail',
+        component: () => import('../views/new-farm/farmer/detail.vue'),
+        meta: { title: '农民详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // ==================== 土地管理 ====================
+      {
+        path: 'land',
+        name: 'InputLandList',
+        component: () => import('../views/new-farm/land/index.vue'),
+        meta: { title: '土地管理', requiresAuth: true }
+      },
+      {
+        path: 'land/add',
+        name: 'InputLandAdd',
+        component: () => import('../views/new-farm/land/form.vue'),
+        meta: { title: '新增土地', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'land/edit/:id',
+        name: 'InputLandEdit',
+        component: () => import('../views/new-farm/land/form.vue'),
+        meta: { title: '编辑土地', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'land/detail/:id',
+        name: 'InputLandDetail',
+        component: () => import('../views/new-farm/land/detail.vue'),
+        meta: { title: '土地详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

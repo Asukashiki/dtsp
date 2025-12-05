@@ -423,17 +423,17 @@ const handleSelectionChange = (rows) => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/new-farm/farmer/add')
+  router.push('/input/farmer/add')
 }
 
 // 查看详情
 const handleView = (row) => {
-  router.push(`/new-farm/farmer/detail/${row.farmerId}`)
+  router.push(`/input/farmer/detail/${row.farmerId}`)
 }
 
 // 编辑
 const handleEdit = (row) => {
-  router.push(`/new-farm/farmer/edit/${row.farmerId}`)
+  router.push(`/input/farmer/edit/${row.farmerId}`)
 }
 
 // 删除

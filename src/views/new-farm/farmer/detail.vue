@@ -234,7 +234,7 @@ const goBack = () => {
 }
 
 const handleEdit = () => {
-  router.push(`/new-farm/farmer/edit/${route.params.id}`)
+  router.push(`/input/farmer/edit/${route.params.id}`)
 }
 
 const formatArea = (area) => {
@@ -252,7 +252,7 @@ const getLandStatusType = (status) => {
 }
 
 const handleViewLandDetail = (landId) => {
-  router.push(`/new-farm/land/detail/${landId}`)
+  router.push(`/input/land/detail/${landId}`)
 }
 
 const handleRemoveLand = async (land) => {

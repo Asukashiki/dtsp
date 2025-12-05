@@ -468,17 +468,17 @@ const handleSelectionChange = (rows) => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/new-farm/land/add')
+  router.push('/input/land/add')
 }
 
 // 查看详情
 const handleView = (row) => {
-  router.push(`/new-farm/land/detail/${row.landId}`)
+  router.push(`/input/land/detail/${row.landId}`)
 }
 
 // 编辑
 const handleEdit = (row) => {
-  router.push(`/new-farm/land/edit/${row.landId}`)
+  router.push(`/input/land/edit/${row.landId}`)
 }
 
 // 删除

@@ -32,6 +32,98 @@ const recentRecords = ref([])
 const expiringItems = ref([])
 const stockAlertStats = ref({ expired: 0, nearExpiry: 0, lowStock: 0, normal: 0 })
 
+// Ethiopian Agriculture Mock Data
+const getMockData = () => {
+  const today = new Date()
+  const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+  return {
+    overview: {
+      totalSuppliers: 156,
+      certifiedSuppliers: 142,
+      totalInputs: 2847,
+      seedInputs: 1245,
+      fertilizerInputs: 1602,
+      totalWarehouses: 48,
+      capacityUsageRate: 73.5,
+      totalStockQuantity: 185620,
+      todayStockInCount: 23,
+      todayStockOutCount: 18,
+      pendingWarnings: 7
+    },
+    topSuppliers: [
+      { orgName: 'Ethiopian Seed Enterprise', monthStockInQuantity: 12500 },
+      { orgName: 'Oromia Seed Enterprise', monthStockInQuantity: 9800 },
+      { orgName: 'Amhara Seed Enterprise', monthStockInQuantity: 8600 },
+      { orgName: 'SNNPR Agricultural Input', monthStockInQuantity: 7200 },
+      { orgName: 'Tigray Seed Corporation', monthStockInQuantity: 5400 },
+      { orgName: 'Sidama Agro Supplies', monthStockInQuantity: 4100 }
+    ],
+    warehouseStats: [
+      { warehouseName: 'Addis Ababa Central', usageRate: 85 },
+      { warehouseName: 'Adama Warehouse', usageRate: 72 },
+      { warehouseName: 'Hawassa Storage', usageRate: 68 },
+      { warehouseName: 'Bahir Dar Depot', usageRate: 78 },
+      { warehouseName: 'Jimma Facility', usageRate: 55 },
+      { warehouseName: 'Mekelle Center', usageRate: 62 }
+    ],
+    stockTrendData: Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(today)
+      d.setDate(d.getDate() - (6 - i))
+      return {
+        date: formatDate(d),
+        stockInQuantity: Math.floor(Math.random() * 800) + 400,
+        stockOutQuantity: Math.floor(Math.random() * 600) + 300
+      }
+    }),
+    inputDistribution: [
+      { typeName: 'Teff Seeds', count: 420 },
+      { typeName: 'Wheat Seeds', count: 380 },
+      { typeName: 'DAP Fertilizer', count: 520 },
+      { typeName: 'Urea Fertilizer', count: 480 },
+      { typeName: 'Coffee Seedlings', count: 290 },
+      { typeName: 'Maize Seeds', count: 350 }
+    ],
+    warnings: [
+      { warningId: 1, warningType: '1', warningLevel: 2, warehouseName: 'Adama Warehouse', warningContent: 'Teff seeds batch TF-2024-089 expires in 15 days', warningTime: formatDate(today) },
+      { warningId: 2, warningType: '3', warningLevel: 3, warehouseName: 'Hawassa Storage', warningContent: 'DAP Fertilizer stock below minimum threshold', warningTime: formatDate(today) },
+      { warningId: 3, warningType: '2', warningLevel: 3, warehouseName: 'Bahir Dar Depot', warningContent: 'Wheat seeds batch WH-2024-056 has expired', warningTime: formatDate(today) },
+      { warningId: 4, warningType: '1', warningLevel: 1, warehouseName: 'Jimma Facility', warningContent: 'Coffee seedlings approaching expiry in 25 days', warningTime: formatDate(today) },
+      { warningId: 5, warningType: '4', warningLevel: 2, warehouseName: 'Addis Ababa Central', warningContent: 'Warehouse capacity at 92% - consider redistribution', warningTime: formatDate(today) },
+      { warningId: 6, warningType: '3', warningLevel: 2, warehouseName: 'Mekelle Center', warningContent: 'NPS Fertilizer running low for upcoming season', warningTime: formatDate(today) }
+    ],
+    recentRecords: [
+      { stockRecordId: 1, stockType: '1', inputName: 'Teff Seeds (Magna)', warehouseName: 'Adama', quantity: 500, unit: 'kg', stockTime: '09:30' },
+      { stockRecordId: 2, stockType: '2', inputName: 'DAP Fertilizer', warehouseName: 'Hawassa', quantity: 200, unit: 'kg', stockTime: '10:15' },
+      { stockRecordId: 3, stockType: '1', inputName: 'Wheat Seeds (Kakaba)', warehouseName: 'Bahir Dar', quantity: 750, unit: 'kg', stockTime: '11:00' },
+      { stockRecordId: 4, stockType: '2', inputName: 'Urea Fertilizer', warehouseName: 'Jimma', quantity: 300, unit: 'kg', stockTime: '11:45' },
+      { stockRecordId: 5, stockType: '1', inputName: 'Maize Seeds (BH-661)', warehouseName: 'Addis Ababa', quantity: 450, unit: 'kg', stockTime: '13:20' },
+      { stockRecordId: 6, stockType: '2', inputName: 'Coffee Seedlings', warehouseName: 'Sidama', quantity: 1000, unit: 'pcs', stockTime: '14:30' }
+    ],
+    expiringItems: [
+      { inputStockId: 1, inputName: 'Teff Seeds (Quncho)', warehouseName: 'Adama Warehouse', quantity: 320, unit: 'kg', daysUntilExpiry: 5 },
+      { inputStockId: 2, inputName: 'Barley Seeds (HB-1307)', warehouseName: 'Bahir Dar', quantity: 180, unit: 'kg', daysUntilExpiry: 8 },
+      { inputStockId: 3, inputName: 'Sorghum Seeds', warehouseName: 'Hawassa Storage', quantity: 250, unit: 'kg', daysUntilExpiry: 12 },
+      { inputStockId: 4, inputName: 'Chickpea Seeds', warehouseName: 'Mekelle Center', quantity: 400, unit: 'kg', daysUntilExpiry: 3 },
+      { inputStockId: 5, inputName: 'Lentil Seeds', warehouseName: 'Jimma Facility', quantity: 150, unit: 'kg', daysUntilExpiry: -2 }
+    ],
+    stockAlertStats: {
+      expired: 3,
+      nearExpiry: 12,
+      lowStock: 8,
+      normal: 245
+    }
+  }
+}
+
+// Check if data is empty
+const isDataEmpty = (data) => {
+  if (!data) return true
+  if (Array.isArray(data)) return data.length === 0
+  if (typeof data === 'object') return Object.keys(data).length === 0
+  return false
+}
+
 // 全屏控制
 const isFullscreen = ref(false)
 const dashboardRef = ref(null)
@@ -106,6 +198,8 @@ const handleFullscreenChange = () => {
 
 // 获取所有数据
 const fetchAllData = async () => {
+  const mockData = getMockData()
+
   try {
     loading.value = true
 
@@ -120,50 +214,102 @@ const fetchAllData = async () => {
       expiringRes,
       stockStatusRes
     ] = await Promise.all([
-      getOverview(),
-      getTopSuppliers(10),
-      getWarehouseStats(),
-      getStockTrend(trendDays.value),
-      getInputTypeDistribution(),
-      getWarnings(20),
-      getTodayStock(),
-      getExpiringSoon(20),
-      getStockStatusDistribution()
+      getOverview().catch(() => ({ code: -1 })),
+      getTopSuppliers(10).catch(() => ({ code: -1 })),
+      getWarehouseStats().catch(() => ({ code: -1 })),
+      getStockTrend(trendDays.value).catch(() => ({ code: -1 })),
+      getInputTypeDistribution().catch(() => ({ code: -1 })),
+      getWarnings(20).catch(() => ({ code: -1 })),
+      getTodayStock().catch(() => ({ code: -1 })),
+      getExpiringSoon(20).catch(() => ({ code: -1 })),
+      getStockStatusDistribution().catch(() => ({ code: -1 }))
     ])
 
-    if (overviewRes.code === 200) overview.value = overviewRes.data
-    if (suppliersRes.code === 200) topSuppliers.value = suppliersRes.data
-    if (warehouseRes.code === 200) warehouseStats.value = warehouseRes.data
-    if (trendRes.code === 200) stockTrendData.value = trendRes.data
-    if (distributionRes.code === 200) inputDistribution.value = distributionRes.data
-    if (warningsRes.code === 200) warnings.value = warningsRes.data
-
-    // 处理今日出入库数据
-    if (todayStockRes.code === 200) {
-      recentRecords.value = todayStockRes.data || []
+    // Overview - use mock data if empty
+    if (overviewRes.code === 200 && !isDataEmpty(overviewRes.data)) {
+      overview.value = overviewRes.data
+    } else {
+      overview.value = mockData.overview
     }
 
-    // 处理即将过期数据
-    if (expiringRes.code === 200) {
-      expiringItems.value = expiringRes.data || []
+    // Suppliers - use mock data if empty
+    if (suppliersRes.code === 200 && !isDataEmpty(suppliersRes.data)) {
+      topSuppliers.value = suppliersRes.data
+    } else {
+      topSuppliers.value = mockData.topSuppliers
     }
 
-    // 处理库存状态分布数据
-    if (stockStatusRes.code === 200 && stockStatusRes.data) {
+    // Warehouse stats - use mock data if empty
+    if (warehouseRes.code === 200 && !isDataEmpty(warehouseRes.data)) {
+      warehouseStats.value = warehouseRes.data
+    } else {
+      warehouseStats.value = mockData.warehouseStats
+    }
+
+    // Stock trend - use mock data if empty
+    if (trendRes.code === 200 && !isDataEmpty(trendRes.data)) {
+      stockTrendData.value = trendRes.data
+    } else {
+      stockTrendData.value = mockData.stockTrendData
+    }
+
+    // Input distribution - use mock data if empty
+    if (distributionRes.code === 200 && !isDataEmpty(distributionRes.data)) {
+      inputDistribution.value = distributionRes.data
+    } else {
+      inputDistribution.value = mockData.inputDistribution
+    }
+
+    // Warnings - use mock data if empty
+    if (warningsRes.code === 200 && !isDataEmpty(warningsRes.data)) {
+      warnings.value = warningsRes.data
+    } else {
+      warnings.value = mockData.warnings
+    }
+
+    // Today stock records - use mock data if empty
+    if (todayStockRes.code === 200 && !isDataEmpty(todayStockRes.data)) {
+      recentRecords.value = todayStockRes.data
+    } else {
+      recentRecords.value = mockData.recentRecords
+    }
+
+    // Expiring items - use mock data if empty
+    if (expiringRes.code === 200 && !isDataEmpty(expiringRes.data)) {
+      expiringItems.value = expiringRes.data
+    } else {
+      expiringItems.value = mockData.expiringItems
+    }
+
+    // Stock status distribution - use mock data if empty
+    if (stockStatusRes.code === 200 && !isDataEmpty(stockStatusRes.data)) {
       const statusData = stockStatusRes.data
-      // 根据stockStatus字段映射：0-正常, 1-临期, 2-已过期
       stockAlertStats.value = {
         expired: statusData.find(s => s.stockStatus === '2')?.productCount || 0,
         nearExpiry: statusData.find(s => s.stockStatus === '1')?.productCount || 0,
-        lowStock: 0, // 如果API没有提供，保持为0
+        lowStock: 0,
         normal: statusData.find(s => s.stockStatus === '0')?.productCount || 0
       }
+    } else {
+      stockAlertStats.value = mockData.stockAlertStats
     }
 
     lastUpdateTime.value = formatTime()
     updateCharts()
   } catch (error) {
-    console.error('Failed to fetch dashboard data:', error)
+    console.error('Failed to fetch dashboard data, using mock data:', error)
+    // Use all mock data on complete failure
+    overview.value = mockData.overview
+    topSuppliers.value = mockData.topSuppliers
+    warehouseStats.value = mockData.warehouseStats
+    stockTrendData.value = mockData.stockTrendData
+    inputDistribution.value = mockData.inputDistribution
+    warnings.value = mockData.warnings
+    recentRecords.value = mockData.recentRecords
+    expiringItems.value = mockData.expiringItems
+    stockAlertStats.value = mockData.stockAlertStats
+    lastUpdateTime.value = formatTime()
+    updateCharts()
   } finally {
     loading.value = false
   }
@@ -537,12 +683,38 @@ const changeTrendDays = async (days) => {
   trendDays.value = days
   try {
     const res = await getStockTrend(days)
-    if (res.code === 200) {
+    if (res.code === 200 && !isDataEmpty(res.data)) {
       stockTrendData.value = res.data
-      updateStockTrendChart()
+    } else {
+      // Generate mock trend data for the specified days
+      const today = new Date()
+      const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      stockTrendData.value = Array.from({ length: days }, (_, i) => {
+        const d = new Date(today)
+        d.setDate(d.getDate() - (days - 1 - i))
+        return {
+          date: formatDate(d),
+          stockInQuantity: Math.floor(Math.random() * 800) + 400,
+          stockOutQuantity: Math.floor(Math.random() * 600) + 300
+        }
+      })
     }
+    updateStockTrendChart()
   } catch (error) {
-    console.error('Failed to fetch stock trend:', error)
+    console.error('Failed to fetch stock trend, using mock data:', error)
+    // Generate mock trend data on error
+    const today = new Date()
+    const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    stockTrendData.value = Array.from({ length: days }, (_, i) => {
+      const d = new Date(today)
+      d.setDate(d.getDate() - (days - 1 - i))
+      return {
+        date: formatDate(d),
+        stockInQuantity: Math.floor(Math.random() * 800) + 400,
+        stockOutQuantity: Math.floor(Math.random() * 600) + 300
+      }
+    })
+    updateStockTrendChart()
   }
 }
 

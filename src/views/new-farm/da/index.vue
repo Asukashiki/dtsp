@@ -397,17 +397,17 @@ const handleCurrentChange = (val) => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/new-farm/da/add')
+  router.push('/input/da/add')
 }
 
 // 查看详情
 const handleView = (row) => {
-  router.push(`/new-farm/da/detail/${row.daId}`)
+  router.push(`/input/da/detail/${row.daId}`)
 }
 
 // 编辑
 const handleEdit = (row) => {
-  router.push(`/new-farm/da/edit/${row.daId}`)
+  router.push(`/input/da/edit/${row.daId}`)
 }
 
 // 启用/禁用

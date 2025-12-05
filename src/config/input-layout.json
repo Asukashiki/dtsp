@@ -125,6 +125,32 @@
       ]
     },
     {
+      "index": "newFarmManagement",
+      "icon": "ri-plant-line",
+      "titleKey": "newFarm.moduleName",
+      "name": "农田管理",
+      "children": [
+        {
+          "index": "/input/da",
+          "icon": "ri-user-star-line",
+          "titleKey": "newFarm.menu.daManagement",
+          "name": "DA管理"
+        },
+        {
+          "index": "/input/farmer",
+          "icon": "ri-user-line",
+          "titleKey": "newFarm.menu.farmerManagement",
+            "name": "农民管理"
+        },
+        {
+          "index": "/input/land",
+          "icon": "ri-landscape-line",
+          "titleKey": "newFarm.menu.landManagement",
+            "name": "土地管理"
+        }
+      ]
+    },
+    {
       "index": "/input/dashboard",
       "icon": "ri-dashboard-line",
       "titleKey": "input.menu.dashboard"

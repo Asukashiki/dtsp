@@ -209,7 +209,7 @@ const goBack = () => {
 
 // 编辑
 const handleEdit = () => {
-  router.push(`/new-farm/da/edit/${route.params.id}`)
+  router.push(`/input/da/edit/${route.params.id}`)
 }
 
 // 格式化面积
