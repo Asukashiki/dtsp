@@ -70,10 +70,22 @@
                     <el-input v-model="formData.varietyCode" disabled placeholder="Auto-filled from Trial ID" />
                   </el-form-item>
                 </el-col>
-                <!-- Sowing Date -->
+                <!-- Plot Area (m²) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Sowing Date" prop="sowingDate">
-                    <el-date-picker v-model="formData.sowingDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" placeholder="Select sowing date" />
+                  <el-form-item label="Plot Area (m²)">
+                    <el-input-number v-model="formData.plotAreaM2" :min="0" :precision="2" style="width: 100%" placeholder="Area in square meters" />
+                  </el-form-item>
+                </el-col>
+                <!-- GPS Latitude -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="GPS Latitude">
+                    <el-input-number v-model="formData.gpsLat" :min="-90" :max="90" :precision="6" style="width: 100%" placeholder="Latitude" />
+                  </el-form-item>
+                </el-col>
+                <!-- GPS Longitude -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="GPS Longitude">
+                    <el-input-number v-model="formData.gpsLong" :min="-180" :max="180" :precision="6" style="width: 100%" placeholder="Longitude" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -117,62 +129,6 @@
             </div>
           </div>
 
-          <!-- Location Information -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-map-pin-line"></i>
-                <span>Location Information</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <!-- Region -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Region">
-                    <el-input v-model="formData.region" placeholder="Enter region" />
-                  </el-form-item>
-                </el-col>
-                <!-- Zone -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Zone">
-                    <el-input v-model="formData.zone" placeholder="Enter zone" />
-                  </el-form-item>
-                </el-col>
-                <!-- Woreda -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Woreda">
-                    <el-input v-model="formData.woreda" placeholder="Enter woreda" />
-                  </el-form-item>
-                </el-col>
-                <!-- Kebele -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Kebele">
-                    <el-input v-model="formData.kebele" placeholder="Enter kebele" />
-                  </el-form-item>
-                </el-col>
-                <!-- Plot Area (m²) -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Plot Area (m²)">
-                    <el-input-number v-model="formData.plotAreaM2" :min="0" :precision="2" style="width: 100%" placeholder="Area in square meters" />
-                  </el-form-item>
-                </el-col>
-                <!-- GPS Latitude -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="GPS Latitude">
-                    <el-input-number v-model="formData.gpsLat" :min="-90" :max="90" :precision="6" style="width: 100%" placeholder="Latitude" />
-                  </el-form-item>
-                </el-col>
-                <!-- GPS Longitude -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="GPS Longitude">
-                    <el-input-number v-model="formData.gpsLong" :min="-180" :max="180" :precision="6" style="width: 100%" placeholder="Longitude" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
@@ -187,13 +143,11 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getPlotInfo, addPlotInfo, editPlotInfo, getTrialOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -210,14 +164,9 @@ const formData = reactive({
   rowNo: null,
   columnNo: null,
   varietyCode: '',
-  sowingDate: '',
   seedQuantity: null,
   sowingMethod: '',
   sowingTime: '',
-  region: '',
-  zone: '',
-  woreda: '',
-  kebele: '',
   plotAreaM2: null,
   gpsLat: null,
   gpsLong: null
@@ -227,8 +176,7 @@ const rules = {
   trialId: [{ required: true, message: 'Please select Trial ID', trigger: 'change' }],
   replicationNo: [{ required: true, message: 'Please enter Replication No', trigger: 'blur' }],
   rowNo: [{ required: true, message: 'Please enter Row No', trigger: 'blur' }],
-  columnNo: [{ required: true, message: 'Please enter Column No', trigger: 'blur' }],
-  sowingDate: [{ required: true, message: 'Please select Sowing Date', trigger: 'change' }]
+  columnNo: [{ required: true, message: 'Please enter Column No', trigger: 'blur' }]
 }
 
 const loadTrialOptions = async () => {

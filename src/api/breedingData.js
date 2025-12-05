@@ -39,8 +39,8 @@ export function getPlotInfoList(params) {
     return request({ url: `${API_BASE_URL}/breeding/plot/list`, method: 'get', params })
 }
 
-export function getPlotInfo(groundId) {
-    return request({ url: `${API_BASE_URL}/breeding/plot/getInfo`, method: 'get', params: { groundId } })
+export function getPlotInfo(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/getInfo`, method: 'get', params: { plotId } })
 }
 
 export function addPlotInfo(data) {

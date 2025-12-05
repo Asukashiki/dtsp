@@ -155,13 +155,13 @@ const routes = [
         meta: { title: '新增地块信息', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/plot/edit/:groundId',
+        path: 'breeding-data/plot/edit/:plotId',
         name: 'PlotInfoEdit',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
         meta: { title: '编辑地块信息', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/plot/detail/:groundId',
+        path: 'breeding-data/plot/detail/:plotId',
         name: 'PlotInfoDetail',
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
