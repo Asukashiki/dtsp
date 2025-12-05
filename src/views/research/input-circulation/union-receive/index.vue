@@ -104,11 +104,11 @@ const handleQuery = async () => {
 }
 
 const handleView = (row) => {
-  router.push(`/research/input-circulation/union-receive/detail/${row.id}`)
+  router.push(`/input/input-circulation/union-receive/detail/${row.id}`)
 }
 
 const handleConfirm = (row) => {
-  router.push(`/research/input-circulation/union-receive/confirm/${row.id}`)
+  router.push(`/input/input-circulation/union-receive/confirm/${row.id}`)
 }
 
 const checkMobile = () => {

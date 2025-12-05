@@ -246,17 +246,17 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  router.push('/research/input-circulation/farmer-release/add')
+  router.push('/input/input-circulation/farmer-release/add')
 }
 
 // 编辑
 const handleEdit = (id) => {
-  router.push(`/research/input-circulation/farmer-release/edit/${id}`)
+  router.push(`/input/input-circulation/farmer-release/edit/${id}`)
 }
 
 // 详情
 const handleDetail = (id) => {
-  router.push(`/research/input-circulation/farmer-release/detail/${id}`)
+  router.push(`/input/input-circulation/farmer-release/detail/${id}`)
 }
 
 // 删除

@@ -139,15 +139,15 @@ const handleQuery = async () => {
 }
 
 const handleAdd = () => {
-  router.push('/research/input-circulation/ose-release/add')
+  router.push('/input/input-circulation/ose-release/add')
 }
 
 const handleEdit = (row) => {
-  router.push(`/research/input-circulation/ose-release/edit/${row.id}`)
+  router.push(`/input/input-circulation/ose-release/edit/${row.id}`)
 }
 
 const handleView = (row) => {
-  router.push(`/research/input-circulation/ose-release/detail/${row.id}`)
+  router.push(`/input/input-circulation/ose-release/detail/${row.id}`)
 }
 
 const handleDelete = async (row) => {

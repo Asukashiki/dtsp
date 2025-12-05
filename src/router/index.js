@@ -553,140 +553,6 @@ const routes = [
         name: 'SeedInfo',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
-      },
-
-      // ==================== 投入品流通管理 ====================
-
-      // 投入品配额查看
-      {
-        path: 'input-circulation/quota',
-        name: 'InputQuotaList',
-        component: () => import('../views/research/input-circulation/quota/index.vue'),
-        meta: { title: '投入品配额查看', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/quota/detail/:id',
-        name: 'InputQuotaDetail',
-        component: () => import('../views/research/input-circulation/quota/detail.vue'),
-        meta: { title: '配额详情', hideInMenu: true, requiresAuth: true }
-      },
-
-      // OSE分发种子到Union
-      {
-        path: 'input-circulation/ose-release',
-        name: 'OseReleaseList',
-        component: () => import('../views/research/input-circulation/ose-release/index.vue'),
-        meta: { title: 'OSE分发种子到Union', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/ose-release/add',
-        name: 'OseReleaseAdd',
-        component: () => import('../views/research/input-circulation/ose-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/ose-release/edit/:id',
-        name: 'OseReleaseEdit',
-        component: () => import('../views/research/input-circulation/ose-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/ose-release/detail/:id',
-        name: 'OseReleaseDetail',
-        component: () => import('../views/research/input-circulation/ose-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
-      },
-
-      // Union确认接收OSE分发
-      {
-        path: 'input-circulation/union-receive',
-        name: 'UnionReceiveList',
-        component: () => import('../views/research/input-circulation/union-receive/index.vue'),
-        meta: { title: 'Union确认接收', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/union-receive/confirm/:id',
-        name: 'UnionReceiveConfirm',
-        component: () => import('../views/research/input-circulation/union-receive/confirm.vue'),
-        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/union-receive/detail/:id',
-        name: 'UnionReceiveDetail',
-        component: () => import('../views/research/input-circulation/union-receive/detail.vue'),
-        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
-      },
-
-      // Union分发投入品到Woreda
-      {
-        path: 'input-circulation/union-release',
-        name: 'UnionReleaseList',
-        component: () => import('../views/research/input-circulation/union-release/index.vue'),
-        meta: { title: 'Union Distribution to Woreda', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/union-release/add',
-        name: 'UnionReleaseAdd',
-        component: () => import('../views/research/input-circulation/union-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/union-release/edit/:id',
-        name: 'UnionReleaseEdit',
-        component: () => import('../views/research/input-circulation/union-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/union-release/detail/:id',
-        name: 'UnionReleaseDetail',
-        component: () => import('../views/research/input-circulation/union-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
-      },
-
-      // Woreda确认接收Union分发
-      {
-        path: 'input-circulation/woreda-receive',
-        name: 'WoredaReceiveList',
-        component: () => import('../views/research/input-circulation/woreda-receive/index.vue'),
-        meta: { title: 'Woreda Receive Confirmation', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/woreda-receive/confirm/:id',
-        name: 'WoredaReceiveConfirm',
-        component: () => import('../views/research/input-circulation/woreda-receive/confirm.vue'),
-        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/woreda-receive/detail/:id',
-        name: 'WoredaReceiveDetail',
-        component: () => import('../views/research/input-circulation/woreda-receive/detail.vue'),
-        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
-      },
-
-      // Woreda分发投入品到农民
-      {
-        path: 'input-circulation/farmer-release',
-        name: 'FarmerReleaseList',
-        component: () => import('../views/research/input-circulation/farmer-release/index.vue'),
-        meta: { title: 'Woreda Distribution to Farmer', requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/farmer-release/add',
-        name: 'FarmerReleaseAdd',
-        component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/farmer-release/edit/:id',
-        name: 'FarmerReleaseEdit',
-        component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'input-circulation/farmer-release/detail/:id',
-        name: 'FarmerReleaseDetail',
-        component: () => import('../views/research/input-circulation/farmer-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
@@ -1011,6 +877,141 @@ const routes = [
         component: () => import('../views/input/allocate/quota-allocation/detail.vue'),
         meta: { title: '配额分配详情', hideInMenu: true, requiresAuth: true }
       },
+
+      // ==================== 投入品流通管理 ====================
+
+      // 投入品配额查看
+      {
+        path: 'input-circulation/quota',
+        name: 'InputQuotaList',
+        component: () => import('../views/research/input-circulation/quota/index.vue'),
+        meta: { title: '投入品配额查看', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/quota/detail/:id',
+        name: 'InputQuotaDetail',
+        component: () => import('../views/research/input-circulation/quota/detail.vue'),
+        meta: { title: '配额详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // OSE分发种子到Union
+      {
+        path: 'input-circulation/ose-release',
+        name: 'OseReleaseList',
+        component: () => import('../views/research/input-circulation/ose-release/index.vue'),
+        meta: { title: 'OSE分发种子到Union', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/ose-release/add',
+        name: 'OseReleaseAdd',
+        component: () => import('../views/research/input-circulation/ose-release/form.vue'),
+        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/ose-release/edit/:id',
+        name: 'OseReleaseEdit',
+        component: () => import('../views/research/input-circulation/ose-release/form.vue'),
+        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/ose-release/detail/:id',
+        name: 'OseReleaseDetail',
+        component: () => import('../views/research/input-circulation/ose-release/detail.vue'),
+        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // Union确认接收OSE分发
+      {
+        path: 'input-circulation/union-receive',
+        name: 'UnionReceiveList',
+        component: () => import('../views/research/input-circulation/union-receive/index.vue'),
+        meta: { title: 'Union确认接收', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/union-receive/confirm/:id',
+        name: 'UnionReceiveConfirm',
+        component: () => import('../views/research/input-circulation/union-receive/confirm.vue'),
+        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/union-receive/detail/:id',
+        name: 'UnionReceiveDetail',
+        component: () => import('../views/research/input-circulation/union-receive/detail.vue'),
+        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // Union分发投入品到Woreda
+      {
+        path: 'input-circulation/union-release',
+        name: 'UnionReleaseList',
+        component: () => import('../views/research/input-circulation/union-release/index.vue'),
+        meta: { title: 'Union Distribution to Woreda', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/union-release/add',
+        name: 'UnionReleaseAdd',
+        component: () => import('../views/research/input-circulation/union-release/form.vue'),
+        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/union-release/edit/:id',
+        name: 'UnionReleaseEdit',
+        component: () => import('../views/research/input-circulation/union-release/form.vue'),
+        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/union-release/detail/:id',
+        name: 'UnionReleaseDetail',
+        component: () => import('../views/research/input-circulation/union-release/detail.vue'),
+        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // Woreda确认接收Union分发
+      {
+        path: 'input-circulation/woreda-receive',
+        name: 'WoredaReceiveList',
+        component: () => import('../views/research/input-circulation/woreda-receive/index.vue'),
+        meta: { title: 'Woreda Receive Confirmation', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/woreda-receive/confirm/:id',
+        name: 'WoredaReceiveConfirm',
+        component: () => import('../views/research/input-circulation/woreda-receive/confirm.vue'),
+        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/woreda-receive/detail/:id',
+        name: 'WoredaReceiveDetail',
+        component: () => import('../views/research/input-circulation/woreda-receive/detail.vue'),
+        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // Woreda分发投入品到农民
+      {
+        path: 'input-circulation/farmer-release',
+        name: 'FarmerReleaseList',
+        component: () => import('../views/research/input-circulation/farmer-release/index.vue'),
+        meta: { title: 'Woreda Distribution to Farmer', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/farmer-release/add',
+        name: 'FarmerReleaseAdd',
+        component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
+        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/farmer-release/edit/:id',
+        name: 'FarmerReleaseEdit',
+        component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
+        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/farmer-release/detail/:id',
+        name: 'FarmerReleaseDetail',
+        component: () => import('../views/research/input-circulation/farmer-release/detail.vue'),
+        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // 农田管理系统
       // ==================== DA管理 ====================
       {
