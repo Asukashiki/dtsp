@@ -537,6 +537,32 @@ const routes = [
         meta: { title: '繁殖机构注册申请', hideInMenu: true, requiresAuth: true }
       },
 
+      // ==================== 研究中心管理 ====================
+      {
+        path: 'breeding-data/research-center',
+        name: 'ResearchCenter',
+        component: () => import('../views/research/breeding-data/research-center/index.vue'),
+        meta: { title: '研究中心管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/add',
+        name: 'ResearchCenterAdd',
+        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/edit/:locationId',
+        name: 'ResearchCenterEdit',
+        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        meta: { title: '编辑研究中心', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/detail/:locationId',
+        name: 'ResearchCenterDetail',
+        component: () => import('../views/research/breeding-data/research-center/detail.vue'),
+        meta: { title: '研究中心详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // ==================== 种子信息服务 ====================
       
       // 种子推广信息管理

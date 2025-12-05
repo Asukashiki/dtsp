@@ -443,4 +443,55 @@ export default {
     deleteConfirm: 'Are you sure to delete this environment data?',
     deleteSuccess: 'Deleted successfully',
   },
+
+  // Research Center Management
+  researchCenter: {
+    title: 'Research Center Management',
+    subtitle: 'Manage research center information including location, coordinates, and administrative regions',
+    list: 'Research Center List',
+    add: 'Add Research Center',
+    edit: 'Edit Research Center',
+    detail: 'Research Center Details',
+    deleteConfirm: 'Are you sure to delete this research center?',
+    deleteSuccess: 'Deleted successfully',
+    addSuccess: 'Added successfully',
+    editSuccess: 'Updated successfully',
+
+    form: {
+      basicInfo: 'Basic Information',
+      locationInfo: 'Location Information',
+      geoInfo: 'Geographic Coordinates',
+      locationId: 'Location ID',
+      locationName: 'Location Name',
+      region: 'Region',
+      zone: 'Zone',
+      woneda: 'Woreda',
+      latitude: 'Latitude',
+      longitude: 'Longitude',
+      remark: 'Remark',
+    },
+
+    placeholder: {
+      locationId: 'Auto-generated',
+      locationName: 'Please enter location name',
+      region: 'Please enter region',
+      zone: 'Please enter zone',
+      woneda: 'Please enter woreda (administrative region)',
+      latitude: 'Please enter latitude',
+      longitude: 'Please enter longitude',
+      remark: 'Please enter remark (optional)',
+    },
+
+    columns: {
+      locationId: 'Location ID',
+      locationName: 'Location Name',
+      region: 'Region',
+      zone: 'Zone',
+      woneda: 'Woreda',
+      latitude: 'Latitude',
+      longitude: 'Longitude',
+      createTime: 'Created Time',
+      actions: 'Actions',
+    },
+  },
 }
