@@ -176,5 +176,5 @@ export function deleteLocationMaster(locationIds) {
 }
 
 export function getLocationMasterOptions() {
-    return request({ url: `${API_BASE_URL}/seed/locationMaster/list`, method: 'get' })
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/list`, method: 'post', data: {} })
 }
