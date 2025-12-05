@@ -98,6 +98,44 @@
       ]
     },
     {
+      "name": "投入品流通管理",
+      "index": "input-circulation",
+      "icon": "ri-truck-line",
+      "titleKey": "research.menu.inputCirculation",
+      "children": [
+        {
+          "index": "/input/input-circulation/quota",
+          "icon": "ri-file-chart-line",
+          "titleKey": "research.menu.inputQuotaView"
+        },
+        {
+          "index": "/input/input-circulation/ose-release",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.oseReleaseToUnion"
+        },
+        {
+          "index": "/input/input-circulation/union-receive",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.unionReceiveConfirm"
+        },
+        {
+          "index": "/input/input-circulation/union-release",
+          "icon": "ri-send-plane-line",
+          "titleKey": "research.menu.unionReleaseToWoreda"
+        },
+        {
+          "index": "/input/input-circulation/woreda-receive",
+          "icon": "ri-check-double-line",
+          "titleKey": "research.menu.woredaReceiveConfirm"
+        },
+        {
+          "index": "/input/input-circulation/farmer-release",
+          "icon": "ri-user-received-line",
+          "titleKey": "research.menu.woredaReleaseToFarmer"
+        }
+      ]
+    },
+    {
       "index": "inventory-management",
       "icon": "ri-archive-line",
       "titleKey": "input.menu.inventoryManagement",
