@@ -36,9 +36,9 @@
           "titleKey": "research.menu.agronomicTraitDataCollection"
         },
         {
-          "index": "/research/breeding-data/environment",
-          "icon": "ri-global-line",
-          "titleKey": "research.menu.environmentDataCollection"
+          "index": "/research/data-collection/environment-new-data",
+          "icon": "ri-cloud-line",
+          "titleKey": "research.menu.environmentNewData"
         },
         {
           "index": "/research/breeding-data/field-inspection",
@@ -64,11 +64,6 @@
           "index": "/research/breeding-data/breeding-license",
           "icon": "ri-file-shield-2-line",
           "titleKey": "research.menu.breedingLicense"
-        },
-        {
-          "index": "/research/data-collection/iot-sensor",
-          "icon": "ri-sensor-line",
-          "titleKey": "research.menu.iotSensorMaintenance"
         }
       ]
     },

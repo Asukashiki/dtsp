@@ -75,6 +75,7 @@ export default {
   detail: 'Detail',
   all: 'All',
   currentUser: 'Current User',
+  systemInfo: 'System Information',
   // Error Messages
   error: {
     title: 'Error',

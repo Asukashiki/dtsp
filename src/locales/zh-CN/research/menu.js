@@ -69,6 +69,11 @@ export default {
   iotSensorMaintenanceEdit: '编辑传感器',
   iotSensorMaintenanceDetail: '传感器详情',
 
+  environmentNewData: '环境监测数据',
+  environmentNewDataAdd: '新增环境监测数据',
+  environmentNewDataEdit: '编辑环境监测数据',
+  environmentNewDataDetail: '环境监测数据详情',
+
   oseReceiveConfirm: 'OSE确认接收育种家种子',
   oseReceiveConfirmAdd: '新增接收确认',
   oseReceiveConfirmEdit: '编辑接收确认',
