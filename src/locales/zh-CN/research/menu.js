@@ -64,6 +64,11 @@ export default {
   oseManagementEdit: '编辑OSE',
   oseManagementDetail: 'OSE详情',
 
+  researchCenterManagement: '研究中心管理',
+  researchCenterAdd: '新增研究中心',
+  researchCenterEdit: '编辑研究中心',
+  researchCenterDetail: '研究中心详情',
+
   iotSensorMaintenance: '物联网传感器维护',
   iotSensorMaintenanceAdd: '新增传感器',
   iotSensorMaintenanceEdit: '编辑传感器',

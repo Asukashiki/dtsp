@@ -28,7 +28,9 @@
               <el-descriptions-item label="Row No">{{ detailData.rowNo }}</el-descriptions-item>
               <el-descriptions-item label="Column No">{{ detailData.columnNo }}</el-descriptions-item>
               <el-descriptions-item label="Variety Code">{{ detailData.varietyCode }}</el-descriptions-item>
-              <el-descriptions-item label="Sowing Date">{{ detailData.sowingDate }}</el-descriptions-item>
+              <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -43,24 +45,6 @@
               <el-descriptions-item label="Seed Quantity (kg)">{{ detailData.seedQuantity || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Sowing Method">{{ detailData.sowingMethod || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Sowing Time">{{ detailData.sowingTime || '-' }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-        </div>
-
-        <!-- Location Information -->
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-map-pin-line"></i><span>Location Information</span></div>
-          </div>
-          <div class="card-body">
-            <el-descriptions :column="2" border>
-              <el-descriptions-item label="Region">{{ detailData.region || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Zone">{{ detailData.zone || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Woreda">{{ detailData.woreda || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Kebele">{{ detailData.kebele || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>

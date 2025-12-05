@@ -65,6 +65,11 @@ export default {
   oseManagementEdit: 'Edit OSE',
   oseManagementDetail: 'OSE Detail',
 
+  researchCenterManagement: 'Research Center Management',
+  researchCenterAdd: 'Add Research Center',
+  researchCenterEdit: 'Edit Research Center',
+  researchCenterDetail: 'Research Center Detail',
+
   iotSensorMaintenance: 'IoT Sensor Maintenance',
   iotSensorMaintenanceAdd: 'Add Sensor',
   iotSensorMaintenanceEdit: 'Edit Sensor',

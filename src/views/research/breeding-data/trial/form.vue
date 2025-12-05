@@ -85,33 +85,53 @@
                 <!-- 7. Location ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.locationId')" prop="locationId">
-                    <el-input v-model="formData.locationId" :placeholder="$t('research.breedingData.trial.placeholder.locationId')" />
+                    <el-select
+                      v-model="formData.locationId"
+                      :placeholder="$t('research.breedingData.trial.placeholder.locationId')"
+                      filterable
+                      style="width: 100%"
+                      @change="handleLocationChange"
+                    >
+                      <el-option
+                        v-for="item in locationOptions"
+                        :key="item.locationId"
+                        :label="`${item.locationName} (${item.locationId})`"
+                        :value="item.locationId"
+                      >
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <span>{{ item.locationName }}</span>
+                          <span style="color: #8492a6; font-size: 13px;">{{ item.region }} - {{ item.zone }}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 8. Year -->
+                <!-- 8. GPS Location (只读,自动填充) -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.trial.form.gpsLocation')" prop="gpsLocation">
+                    <el-input
+                      v-model="formData.gpsLocation"
+                      disabled
+                      :placeholder="$t('research.breedingData.trial.placeholder.gpsLocation')"
+                    >
+                      <template #prepend>
+                        <i class="ri-map-pin-line"></i>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <!-- 9. Year -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.year')" prop="year">
                     <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.trial.placeholder.year')" />
                   </el-form-item>
                 </el-col>
-                <!-- 9. Season -->
+                <!-- 10. Season -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.season')" prop="season">
                     <el-select v-model="formData.season" :placeholder="$t('research.breedingData.trial.placeholder.season')" style="width: 100%">
                       <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
-                  </el-form-item>
-                </el-col>
-                <!-- 10. GPS Location -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.gpsLocation')" prop="gpsLocation">
-                    <el-input v-model="formData.gpsLocation" :placeholder="$t('research.breedingData.trial.placeholder.gpsLocation')">
-                      <template #append>
-                        <el-button @click="getCurrentLocation">
-                          <i class="ri-map-pin-line"></i>
-                        </el-button>
-                      </template>
-                    </el-input>
                   </el-form-item>
                 </el-col>
                 <!-- 11. Design Type -->
@@ -148,7 +168,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getTrialBasicInfo, addTrialBasic, editTrialBasic, getBatchOptions } from '@/api/breedingData'
+import { getTrialBasicInfo, addTrialBasic, editTrialBasic, getBatchOptions, getLocationMasterOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -158,6 +178,7 @@ const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
 const batchOptions = ref([])
+const locationOptions = ref([])
 
 const isEdit = computed(() => !!route.params.trialId)
 
@@ -213,6 +234,15 @@ const loadBatchOptions = async () => {
   }
 }
 
+const loadLocationOptions = async () => {
+  try {
+    const res = await getLocationMasterOptions()
+    locationOptions.value = res.data || []
+  } catch (error) {
+    console.error('获取研究中心选项失败:', error)
+  }
+}
+
 const getStatusType = (status) => {
   const statusMap = {
     'approved': 'success',
@@ -231,15 +261,16 @@ const handleBatchChange = (batchId) => {
   }
 }
 
-const getCurrentLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      formData.gpsLocation = `${position.coords.latitude},${position.coords.longitude}`
-    }, () => {
-      ElMessage.warning(t('common.locationFailed'))
-    })
-  } else {
-    ElMessage.warning(t('common.locationNotSupported'))
+const handleLocationChange = (locationId) => {
+  // 根据选择的研究中心自动填充 GPS Location
+  const selectedLocation = locationOptions.value.find(item => item.locationId === locationId)
+  if (selectedLocation) {
+    // 组合经纬度为GPS Location格式
+    if (selectedLocation.latitude && selectedLocation.longitude) {
+      formData.gpsLocation = `${selectedLocation.latitude},${selectedLocation.longitude}`
+    } else {
+      formData.gpsLocation = ''
+    }
   }
 }
 
@@ -291,6 +322,7 @@ const goBack = () => {
 
 onMounted(() => {
   loadBatchOptions()
+  loadLocationOptions()
   getInfo()
 })
 </script>

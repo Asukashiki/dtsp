@@ -155,13 +155,13 @@ const routes = [
         meta: { title: '新增地块信息', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/plot/edit/:groundId',
+        path: 'breeding-data/plot/edit/:plotId',
         name: 'PlotInfoEdit',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
         meta: { title: '编辑地块信息', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/plot/detail/:groundId',
+        path: 'breeding-data/plot/detail/:plotId',
         name: 'PlotInfoDetail',
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
@@ -561,6 +561,32 @@ const routes = [
         name: 'UnionRegistration',
         component: () => import('../views/research/union/UnionRegistration.vue'),
         meta: { title: '繁殖机构注册申请', hideInMenu: true, requiresAuth: true }
+      },
+
+      // ==================== 研究中心管理 ====================
+      {
+        path: 'breeding-data/research-center',
+        name: 'ResearchCenter',
+        component: () => import('../views/research/breeding-data/research-center/index.vue'),
+        meta: { title: '研究中心管理', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/add',
+        name: 'ResearchCenterAdd',
+        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/edit/:locationId',
+        name: 'ResearchCenterEdit',
+        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        meta: { title: '编辑研究中心', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/research-center/detail/:locationId',
+        name: 'ResearchCenterDetail',
+        component: () => import('../views/research/breeding-data/research-center/detail.vue'),
+        meta: { title: '研究中心详情', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 种子信息服务 ====================

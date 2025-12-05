@@ -129,16 +129,21 @@
       "name" : "种子机构管理",
       "icon": "ri-bank-line",
       "titleKey": "research.menu.seedInstitutionManagement",
-      "children": [  
+      "children": [
         {
           "index": "/research/union/list",
           "icon": "ri-community-line",
           "titleKey": "research.menu.propagationOrgRegistration"
-        },   
+        },
         {
           "index": "/research/breeding/ose-management",
           "icon": "ri-building-4-line",
           "titleKey": "research.menu.oseManagement"
+        },
+        {
+          "index": "/research/breeding-data/research-center",
+          "icon": "ri-building-line",
+          "titleKey": "research.menu.researchCenterManagement"
         }
       ]
     },

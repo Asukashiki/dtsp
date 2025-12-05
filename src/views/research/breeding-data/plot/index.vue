@@ -37,31 +37,45 @@
           <div class="card-body">
             <!-- 搜索筛选区 -->
             <div class="search-section">
-              <el-input
-                v-model="queryParams.trialId"
-                placeholder="Trial ID"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              >
-                <template #prefix><i class="ri-search-line"></i></template>
-              </el-input>
-              <el-select
-                v-model="queryParams.batchId"
-                placeholder="Batch ID"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
-              </el-select>
-              <el-input
-                v-model="queryParams.varietyCode"
-                placeholder="Variety Code"
-                clearable
-                class="search-input"
-                @change="handleQuery"
-              />
+              <div class="search-item">
+                <span class="search-label">Trial ID:</span>
+                <el-input
+                  v-model="queryParams.trialId"
+                  placeholder="Please enter Trial ID"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix><i class="ri-search-line"></i></template>
+                </el-input>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Batch ID:</span>
+                <el-select
+                  v-model="queryParams.batchId"
+                  placeholder="Please select Batch ID"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Variety Code:</span>
+                <el-input
+                  v-model="queryParams.varietyCode"
+                  placeholder="Please enter Variety Code"
+                  clearable
+                  class="search-input"
+                />
+              </div>
+              <div class="search-actions">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="ri-search-line"></i>Search
+                </el-button>
+                <el-button @click="handleReset">
+                  <i class="ri-refresh-line"></i>Reset
+                </el-button>
+              </div>
             </div>
 
             <!-- PC端表格 -->
@@ -220,6 +234,15 @@ const handleQuery = () => {
   getList()
 }
 
+const handleReset = () => {
+  queryParams.pageNum = 1
+  queryParams.pageSize = 10
+  queryParams.trialId = ''
+  queryParams.batchId = ''
+  queryParams.varietyCode = ''
+  getList()
+}
+
 const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map(item => item.plotId)
 }
@@ -275,4 +298,67 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+
+    .search-label {
+      font-size: 14px;
+      color: #606266;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .search-input {
+      width: 200px;
+    }
+
+    .filter-select {
+      width: 180px;
+    }
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    .search-item {
+      width: 100%;
+
+      .search-label {
+        min-width: 80px;
+      }
+
+      .search-input,
+      .filter-select {
+        flex: 1;
+        width: auto;
+      }
+    }
+
+    .search-actions {
+      margin-left: 0;
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+}
 </style>
