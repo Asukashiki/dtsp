@@ -27,13 +27,39 @@
 
           <div class="card-body">
             <div class="search-section">
-              <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select" @change="handleQuery">
-                <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
-              </el-select>
-              <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select" @change="handleQuery">
-                <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-              <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" @change="handleQuery" />
+              <el-form :model="queryParams" label-width="120px">
+                <el-row :gutter="20">
+                  <el-col :xs="24" :sm="12" :md="8">
+                    <el-form-item label="Plot ID">
+                      <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable style="width: 100%">
+                        <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12" :md="8">
+                    <el-form-item label="Activity Type">
+                      <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable style="width: 100%">
+                        <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12" :md="8">
+                    <el-form-item label="Activity Date">
+                      <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" style="width: 100%" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="24" style="text-align: right">
+                    <el-button @click="handleReset">
+                      <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
+                    </el-button>
+                    <el-button type="primary" @click="handleQuery">
+                      <i class="ri-search-line"></i>{{ $t('common.search') }}
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </el-form>
             </div>
 
             <div class="table-wrapper pc-only">
@@ -41,12 +67,13 @@
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="160" show-overflow-tooltip />
                 <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="activityDate" label="Activity Date" min-width="120" />
                 <el-table-column prop="activityType" label="Activity Type" min-width="120" />
                 <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="quantity" label="Quantity" min-width="100" />
                 <el-table-column prop="unit" label="Unit" min-width="80" />
-                <el-table-column prop="operationDesc" label="Operation Description" min-width="200" show-overflow-tooltip />
                 <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -72,6 +99,8 @@
                 <div class="mobile-card-body">
                   <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
                   <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Trial ID:</span><span class="value">{{ item.trialId }}</span></div>
+                  <div class="mobile-card-row"><span class="label">Batch ID:</span><span class="value">{{ item.batchId }}</span></div>
                   <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
                   <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
                 </div>
@@ -148,6 +177,14 @@ const loadPlotOptions = async () => {
 }
 
 const handleQuery = () => {
+  queryParams.pageNum = 1
+  getList()
+}
+
+const handleReset = () => {
+  queryParams.plotId = ''
+  queryParams.activityType = ''
+  queryParams.activityDate = ''
   queryParams.pageNum = 1
   getList()
 }
