@@ -37,47 +37,63 @@
           <div class="card-body">
             <!-- 搜索筛选区 -->
             <div class="search-section">
-              <el-select
-                v-model="queryParams.batchId"
-                :placeholder="$t('research.breedingData.trait.placeholder.batchId')"
-                clearable
-                class="filter-select"
-                @change="handleBatchChange"
-              >
-                <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
-              </el-select>
-              <el-select
-                v-model="queryParams.trialId"
-                :placeholder="$t('research.breedingData.trait.placeholder.trialId')"
-                clearable
-                class="filter-select"
-                @change="handleQuery"
-              >
-                <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialName" :value="item.trialId" />
-              </el-select>
-              <el-date-picker
-                v-model="queryParams.recordTime"
-                type="date"
-                :placeholder="$t('research.breedingData.trait.placeholder.recordTime')"
-                clearable
-                value-format="YYYY-MM-DD"
-                class="filter-select"
-                @change="handleQuery"
-              />
+              <div class="search-item">
+                <span class="search-label">Batch ID:</span>
+                <el-select
+                  v-model="queryParams.batchId"
+                  placeholder="Please select Batch ID"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Trial ID:</span>
+                <el-select
+                  v-model="queryParams.trialId"
+                  placeholder="Please select Trial ID"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Observation Date:</span>
+                <el-date-picker
+                  v-model="queryParams.observationDate"
+                  type="date"
+                  placeholder="Select Observation Date"
+                  clearable
+                  value-format="YYYY-MM-DD"
+                  class="filter-select"
+                />
+              </div>
+              <div class="search-actions">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="ri-search-line"></i>{{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset">
+                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
+                </el-button>
+              </div>
             </div>
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.trait.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('research.breedingData.trait.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="recordTime" :label="$t('research.breedingData.trait.columns.recordTime')" min-width="120" />
-                <el-table-column prop="plantHeightCm" :label="$t('research.breedingData.trait.columns.plantHeightCm')" min-width="100" />
-                <el-table-column prop="spikeLengthCm" :label="$t('research.breedingData.trait.columns.spikeLengthCm')" min-width="100" />
-                <el-table-column prop="daysToEmergence" :label="$t('research.breedingData.trait.columns.daysToEmergence')" min-width="100" />
-                <el-table-column prop="daysToHeading" :label="$t('research.breedingData.trait.columns.daysToHeading')" min-width="100" />
-                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
+                <el-table-column prop="traitRecordId" label="Trait Record ID" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="observationDate" label="Observation Date" min-width="120" />
+                <el-table-column prop="growthStage" label="Growth Stage" min-width="120" />
+                <el-table-column prop="traitCode" label="Trait Code" min-width="100" />
+                <el-table-column prop="traitName" label="Trait Name" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="traitValue" label="Trait Value" min-width="100" />
+                <el-table-column prop="unit" label="Unit" min-width="80" />
                 <el-table-column :label="$t('research.breedingData.trait.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -115,29 +131,33 @@
                   <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
                   <div class="mobile-card-title">
                     <i class="ri-plant-line"></i>
-                    <span>{{ item.batchId }} - {{ item.recordTime }}</span>
+                    <span>{{ item.traitRecordId || item.plotId }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trait.columns.trialId') }}:</span>
+                    <span class="label">Plot ID:</span>
+                    <span class="value">{{ item.plotId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">Trial ID:</span>
                     <span class="value">{{ item.trialId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trait.columns.plantHeightCm') }}:</span>
-                    <span class="value">{{ item.plantHeightCm }}</span>
+                    <span class="label">Batch ID:</span>
+                    <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trait.columns.spikeLengthCm') }}:</span>
-                    <span class="value">{{ item.spikeLengthCm }}</span>
+                    <span class="label">Observation Date:</span>
+                    <span class="value">{{ item.observationDate }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trait.columns.daysToEmergence') }}:</span>
-                    <span class="value">{{ item.daysToEmergence }}</span>
+                    <span class="label">Trait Name:</span>
+                    <span class="value">{{ item.traitName }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trait.columns.daysToHeading') }}:</span>
-                    <span class="value">{{ item.daysToHeading }}</span>
+                    <span class="label">Trait Value:</span>
+                    <span class="value">{{ item.traitValue }} {{ item.unit }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -193,7 +213,7 @@ const queryParams = reactive({
   pageSize: 10,
   batchId: '',
   trialId: '',
-  recordTime: ''
+  observationDate: ''
 })
 
 const getList = async () => {
@@ -218,27 +238,26 @@ const loadBatchOptions = async () => {
   }
 }
 
-const loadTrialOptions = async (batchId) => {
-  if (!batchId) {
-    trialOptions.value = []
-    return
-  }
+const loadTrialOptions = async () => {
   try {
-    const res = await getTrialOptions(batchId)
+    const res = await getTrialOptions()
     trialOptions.value = res.data || []
   } catch (error) {
     console.error('获取试验选项失败:', error)
   }
 }
 
-const handleBatchChange = (value) => {
-  queryParams.trialId = ''
-  loadTrialOptions(value)
-  handleQuery()
-}
-
 const handleQuery = () => {
   queryParams.pageNum = 1
+  getList()
+}
+
+const handleReset = () => {
+  queryParams.pageNum = 1
+  queryParams.pageSize = 10
+  queryParams.batchId = ''
+  queryParams.trialId = ''
+  queryParams.observationDate = ''
   getList()
 }
 
@@ -291,10 +310,74 @@ const handleBatchDelete = () => {
 
 onMounted(() => {
   loadBatchOptions()
+  loadTrialOptions()
   getList()
 })
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+
+    .search-label {
+      font-size: 14px;
+      color: #606266;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .search-input {
+      width: 200px;
+    }
+
+    .filter-select {
+      width: 180px;
+    }
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    .search-item {
+      width: 100%;
+
+      .search-label {
+        min-width: 80px;
+      }
+
+      .search-input,
+      .filter-select {
+        flex: 1;
+        width: auto;
+      }
+    }
+
+    .search-actions {
+      margin-left: 0;
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+}
 </style>
