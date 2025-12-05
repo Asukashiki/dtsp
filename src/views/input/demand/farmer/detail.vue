@@ -17,11 +17,8 @@
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
           </el-button>
-          <el-button
-            type="primary"
-            @click="handleEdit"
-            v-if="detailData.status === 'draft' || detailData.status === 'rejected'"
-          >
+          <el-button type="primary" @click="handleEdit"
+            v-if="detailData.status === 'draft' || detailData.status === 'rejected'">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
           </el-button>
@@ -115,52 +112,54 @@
           <div v-if="!detailData.inputItems || detailData.inputItems.length === 0" class="no-data">
             <el-empty :description="$t('farmerDemand.form.noItems')" />
           </div>
-          <div v-else class="items-table pc-only">
-            <el-table :data="detailData.inputItems" stripe border>
-              <el-table-column type="index" :label="'#'" width="60" />
-              <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="120">
-                <template #default="{ row }">
-                  {{ getInputCategoryLabel(row.inputCategory) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="inputType" :label="$t('farmerDemand.form.inputType')" min-width="120" />
-              <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />
-              <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />
-              <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
-              <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120" />
-            </el-table>
-          </div>
-          <div v-else class="items-cards mobile-only">
-            <div v-for="(item, index) in detailData.inputItems" :key="index" class="item-card">
-              <div class="item-index">{{ index + 1 }}</div>
-              <div class="item-info">
-                <div class="item-row">
-                  <span class="label">{{ $t('farmerDemand.form.inputCategory') }}:</span>
-                  <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('farmerDemand.form.inputType') }}:</span>
-                  <span class="value">{{ item.inputType }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
-                  <span class="value">{{ item.variety }}</span>
-                </div>
-                <div class="item-row" v-if="item.specification">
-                  <span class="label">{{ $t('farmerDemand.form.specification') }}:</span>
-                  <span class="value">{{ item.specification }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('farmerDemand.form.unit') }}:</span>
-                  <span class="value">{{ item.unit }}</span>
-                </div>
-                <div class="item-row">
-                  <span class="label">{{ $t('farmerDemand.form.quantity') }}:</span>
-                  <span class="value">{{ item.quantity }}</span>
+          <template v-else>
+            <div class="items-table pc-only">
+              <el-table :data="detailData.inputItems" stripe border>
+                <el-table-column type="index" :label="'#'" width="60" />
+                <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="120">
+                  <template #default="{ row }">
+                    {{ getInputCategoryLabel(row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inputType" :label="$t('farmerDemand.form.inputType')" min-width="120" />
+                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />
+                <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />
+                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
+                <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120" />
+              </el-table>
+            </div>
+            <div class="items-cards mobile-only">
+              <div v-for="(item, index) in detailData.inputItems" :key="index" class="item-card">
+                <div class="item-index">{{ index + 1 }}</div>
+                <div class="item-info">
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.inputCategory') }}:</span>
+                    <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.inputType') }}:</span>
+                    <span class="value">{{ item.inputType }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
+                    <span class="value">{{ item.variety }}</span>
+                  </div>
+                  <div class="item-row" v-if="item.specification">
+                    <span class="label">{{ $t('farmerDemand.form.specification') }}:</span>
+                    <span class="value">{{ item.specification }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.unit') }}:</span>
+                    <span class="value">{{ item.unit }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.quantity') }}:</span>
+                    <span class="value">{{ item.quantity }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
