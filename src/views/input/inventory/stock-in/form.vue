@@ -316,26 +316,26 @@ const loadData = async () => {
     const res = await getInboundOrderDetail(inboundOrderId)
     if (res.code === 200) {
       const data = res.data
-      formData.inboundType = data.inbound_type
-      formData.warehouseId = data.warehouse_id
-      formData.relatedOrderNo = data.related_order_no || ''
-      formData.supplierName = data.supplier_name || ''
-      formData.supplierContact = data.supplier_contact || ''
-      formData.supplierPhone = data.supplier_phone || ''
+      formData.inboundType = data.inboundType || data.inbound_type
+      formData.warehouseId = data.warehouseId || data.warehouse_id
+      formData.relatedOrderNo = data.relatedOrderNo || data.related_order_no || ''
+      formData.supplierName = data.supplierName || data.supplier_name || ''
+      formData.supplierContact = data.supplierContact || data.supplier_contact || ''
+      formData.supplierPhone = data.supplierPhone || data.supplier_phone || ''
       formData.operator = data.operator || ''
       formData.remark = data.remark || ''
 
       if (data.details && data.details.length > 0) {
         formData.details = data.details.map(item => ({
-          inputId: item.input_id,
-          inputCode: item.input_code || '',
-          inputBatchId: item.input_batch_id || '',
-          inputType: item.input_type || '',
+          inputId: item.inputId || item.input_id,
+          inputCode: item.inputCode || item.input_code || '',
+          inputBatchId: item.inputBatchId || item.input_batch_id || '',
+          inputType: item.inputType || item.input_type || '',
           specification: item.specification || '',
           unit: item.unit,
           quantity: item.quantity,
-          expiryDate: item.expiry_date || '',
-          qrCode: item.qr_code || ''
+          expiryDate: item.expiryDate || item.expiry_date || '',
+          qrCode: item.qrCode || item.qr_code || ''
         }))
       }
     }

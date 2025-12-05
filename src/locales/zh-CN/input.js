@@ -693,10 +693,10 @@ export default {
 
         // 入库类型
         type: {
-          production: '生产入库',
-          purchase: '采购入库',
-          transfer: '调拨入库',
-          return: '退货入库',
+          production: 'production',
+          purchase: 'purchase',
+          transfer: 'transfer',
+          return: 'return',
         },
 
         // 状态
@@ -776,7 +776,7 @@ export default {
           detailsComplete: '请完善所有物料明细信息',
           materialIdRequired: '请输入物料ID',
           materialNameRequired: '请输入物料名称',
-          unitRequired: '请输入单位',
+          unitRequired: 'please enter unit',
         },
 
         columns: {
