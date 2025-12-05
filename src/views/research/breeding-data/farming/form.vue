@@ -172,7 +172,7 @@ const formData = reactive({
   inputName: '',
   quantity: null,
   unit: '',
-  operatorId: userStore.userId || '', // 当前登录用户ID
+  operatorId: userStore.userInfo?.user?.ID || '', // 当前登录用户ID
   operationDesc: ''
 })
 
@@ -241,6 +241,14 @@ const goBack = () => {
 }
 
 onMounted(() => {
+  // 确保在新增模式下设置操作员ID
+  if (!isEdit.value) {
+    const userId = userStore.userInfo?.user?.ID
+    if (userId) {
+      formData.operatorId = userId
+    }
+  }
+
   loadPlotOptions()
   getInfo()
 })
