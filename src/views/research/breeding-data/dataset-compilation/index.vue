@@ -71,26 +71,24 @@
                   prop="datasetCode"
                   :label="$t('research.datasetCompilation.columns.datasetCode')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.datasetCompilation.columns.trialId')"
                   min-width="120"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="batchId"
                   :label="$t('research.datasetCompilation.columns.batchId')"
                   min-width="150"
-                />
-                <el-table-column
-                  prop="batchName"
-                  :label="$t('research.datasetCompilation.columns.batchName')"
-                  min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="versionNo"
                   :label="$t('research.datasetCompilation.columns.versionNo')"
-                  width="100"
+                  min-width="100"
                 />
                 <el-table-column
                   prop="cropType"
@@ -105,22 +103,22 @@
                 <el-table-column
                   prop="recordCount"
                   :label="$t('research.datasetCompilation.columns.recordCount')"
-                  width="100"
+                   min-width="100"
                 />
                 <el-table-column
                   prop="labTestCount"
                   :label="$t('research.datasetCompilation.columns.labTestCount')"
-                  width="100"
+                   min-width="100"
                 />
                 <el-table-column
                   prop="yieldDataCount"
                   :label="$t('research.datasetCompilation.columns.yieldDataCount')"
-                  width="100"
+                   min-width="100"
                 />
                 <el-table-column
                   prop="datasetStatus"
                   :label="$t('research.datasetCompilation.columns.datasetStatus')"
-                  width="100"
+                   min-width="100"
                 >
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.datasetStatus)">
@@ -131,9 +129,9 @@
                 <el-table-column
                   prop="createdTime"
                   :label="$t('research.datasetCompilation.columns.createTime')"
-                  width="180"
+                   min-width="180"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
+                <el-table-column :label="$t('common.actions')" fixed="right" :width="410">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
