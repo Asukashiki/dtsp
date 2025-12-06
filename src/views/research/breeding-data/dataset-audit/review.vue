@@ -37,20 +37,24 @@
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId }}</span>
+              <span class="label">{{ $t('research.datasetAudit.form.trialId') }}:</span>
+              <span class="value">{{ detailData.trialId || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.batchName') }}:</span>
-              <span class="value">{{ detailData.batchName }}</span>
+              <span class="label">{{ $t('research.datasetAudit.form.versionNo') }}:</span>
+              <span class="value">{{ detailData.versionNo || '1.0' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType }}</span>
+              <span class="value">{{ detailData.cropType || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.varietyName') }}:</span>
-              <span class="value">{{ detailData.varietyName }}</span>
+              <span class="value">{{ detailData.varietyName || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.recordCount') }}:</span>
+              <span class="value">{{ detailData.recordCount || 0 }}</span>
             </div>
           </div>
         </div>
@@ -110,6 +114,24 @@
                 <div class="stat-label">{{ $t('research.datasetAudit.columns.yieldDataCount') }}</div>
                 <div class="stat-value">{{ detailData.yieldDataCount || 0 }}</div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 编制信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-user-line"></i>
+            {{ $t('research.datasetAudit.form.compilationInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.compiledBy') }}:</span>
+              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.compiledAt') }}:</span>
+              <span class="value">{{ detailData.compiledAt || '-' }}</span>
             </div>
           </div>
         </div>
@@ -239,7 +261,7 @@ const auditForm = reactive({
 const auditRules = computed(() => ({
   auditOpinion: [
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         if (auditForm.auditStatus === 'rejected' && !value) {
           callback(new Error(t('research.datasetAudit.rules.auditOpinionRequired')))
         } else {
@@ -287,7 +309,13 @@ const loadDetail = async () => {
       try {
         const auditRes = await getAuditByDatasetId(route.params.id)
         if (auditRes.code === 200 && auditRes.data) {
-          Object.assign(detailData.value, auditRes.data)
+          const auditData = auditRes.data
+          Object.assign(detailData.value, {
+            auditStatus: auditData.auditStatus || auditData.audit_status || 'pending',
+            auditTime: auditData.auditTime || auditData.audit_time || '-',
+            auditorName: auditData.auditorName || auditData.auditor_name || '-',
+            auditOpinion: auditData.auditOpinion || auditData.audit_opinion || ''
+          })
         }
       } catch (error) {
         // 审核记录可能不存在,忽略错误
