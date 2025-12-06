@@ -82,26 +82,24 @@
                   prop="datasetCode"
                   :label="$t('research.datasetAudit.columns.datasetCode')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.datasetAudit.columns.trialId')"
                   min-width="120"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="batchId"
                   :label="$t('research.datasetAudit.columns.batchId')"
                   min-width="150"
-                />
-                <el-table-column
-                  prop="batchName"
-                  :label="$t('research.datasetAudit.columns.batchName')"
-                  min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="versionNo"
                   :label="$t('research.datasetAudit.columns.versionNo')"
-                  width="100"
+                  min-width="100"
                 />
                 <el-table-column
                   prop="varietyName"
@@ -111,7 +109,7 @@
                 <el-table-column
                   prop="recordCount"
                   :label="$t('research.datasetAudit.columns.recordCount')"
-                  width="100"
+                  min-width="100"
                   align="center"
                 />
                 <el-table-column
@@ -153,7 +151,7 @@
                 <el-table-column
                   prop="submitTime"
                   :label="$t('research.datasetAudit.columns.submitTime')"
-                  min-width="160"
+                  min-width="150"
                 />
                 <el-table-column :label="$t('common.actions')" fixed="right" width="250">
                   <template #default="{ row }">
