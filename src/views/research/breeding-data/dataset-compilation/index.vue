@@ -73,6 +73,11 @@
                   min-width="150"
                 />
                 <el-table-column
+                  prop="trialId"
+                  :label="$t('research.datasetCompilation.columns.trialId')"
+                  min-width="120"
+                />
+                <el-table-column
                   prop="batchId"
                   :label="$t('research.datasetCompilation.columns.batchId')"
                   min-width="150"
@@ -83,6 +88,11 @@
                   min-width="150"
                 />
                 <el-table-column
+                  prop="versionNo"
+                  :label="$t('research.datasetCompilation.columns.versionNo')"
+                  width="100"
+                />
+                <el-table-column
                   prop="cropType"
                   :label="$t('research.datasetCompilation.columns.cropType')"
                   min-width="120"
@@ -91,6 +101,11 @@
                   prop="varietyName"
                   :label="$t('research.datasetCompilation.columns.varietyName')"
                   min-width="120"
+                />
+                <el-table-column
+                  prop="recordCount"
+                  :label="$t('research.datasetCompilation.columns.recordCount')"
+                  width="100"
                 />
                 <el-table-column
                   prop="labTestCount"
@@ -114,7 +129,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="createTime"
+                  prop="createdTime"
                   :label="$t('research.datasetCompilation.columns.createTime')"
                   width="180"
                 />
@@ -189,8 +204,16 @@
                     <span class="value">{{ item.datasetCode || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.trialId') }}:</span>
+                    <span class="value">{{ item.trialId || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.batchId') }}:</span>
                     <span class="value">{{ item.batchId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.versionNo') }}:</span>
+                    <span class="value">{{ item.versionNo || '1.0' }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
@@ -199,6 +222,10 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
                     <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.recordCount') }}:</span>
+                    <span class="value">{{ item.recordCount || 0 }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.labTestCount') }}:</span>
@@ -210,7 +237,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.createTime') }}:</span>
-                    <span class="value">{{ item.createTime || '-' }}</span>
+                    <span class="value">{{ item.createdTime || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">

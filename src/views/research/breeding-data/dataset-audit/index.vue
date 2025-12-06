@@ -84,14 +84,35 @@
                   min-width="150"
                 />
                 <el-table-column
+                  prop="trialId"
+                  :label="$t('research.datasetAudit.columns.trialId')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="batchId"
+                  :label="$t('research.datasetAudit.columns.batchId')"
+                  min-width="150"
+                />
+                <el-table-column
                   prop="batchName"
                   :label="$t('research.datasetAudit.columns.batchName')"
                   min-width="150"
                 />
                 <el-table-column
+                  prop="versionNo"
+                  :label="$t('research.datasetAudit.columns.versionNo')"
+                  width="100"
+                />
+                <el-table-column
                   prop="varietyName"
                   :label="$t('research.datasetAudit.columns.varietyName')"
                   min-width="120"
+                />
+                <el-table-column
+                  prop="recordCount"
+                  :label="$t('research.datasetAudit.columns.recordCount')"
+                  width="100"
+                  align="center"
                 />
                 <el-table-column
                   prop="labTestCount"
@@ -183,12 +204,28 @@
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.trialId') }}:</span>
+                    <span class="value">{{ item.trialId || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.batchId') }}:</span>
+                    <span class="value">{{ item.batchId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetAudit.columns.batchName') }}:</span>
                     <span class="value">{{ item.batchName }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.versionNo') }}:</span>
+                    <span class="value">{{ item.versionNo || '1.0' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetAudit.columns.varietyName') }}:</span>
                     <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.recordCount') }}:</span>
+                    <span class="value">{{ item.recordCount || 0 }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetAudit.columns.datasetStatus') }}:</span>
