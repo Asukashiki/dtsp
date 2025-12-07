@@ -7,6 +7,7 @@ export default {
   auditSuccess: 'Audit successful',
   approveConfirm: 'Are you sure to approve this dataset?',
   rejectConfirm: 'Are you sure to reject this dataset? Please provide rejection reason',
+  needsRevisionConfirm: 'Are you sure to mark this dataset as needs revision? Please provide revision comments',
 
   // Search and Filter
   searchPlaceholder: 'Search dataset code, batch name, variety name',
@@ -20,6 +21,7 @@ export default {
     pending: 'Pending',
     approved: 'Approved',
     rejected: 'Rejected',
+    needs_revision: 'Needs Revision',
   },
 
   // Dataset Status
@@ -64,6 +66,11 @@ export default {
     submitOrg: 'Submit Organization',
     auditBy: 'Audited By',
     creationInfo: 'Creation Information',
+    lockedFlag: 'Locked Status',
+    locked: 'Locked',
+    unlocked: 'Unlocked',
+    lockDataset: 'Lock Dataset',
+    lockDatasetTip: 'Lock dataset after approval, making it read-only',
   },
 
   // Form Placeholders
@@ -81,7 +88,10 @@ export default {
 
   // List Columns
   columns: {
+    auditId: 'Audit ID',
+    datasetId: 'Dataset ID',
     datasetCode: 'Dataset Code',
+    reviewerId: 'Reviewer ID',
     trialId: 'Trial ID',
     batchId: 'Batch ID',
     batchName: 'Batch Name',
@@ -100,6 +110,8 @@ export default {
     submitterName: 'Submitter',
     auditTime: 'Audit Time',
     auditorName: 'Auditor',
+    auditOpinion: 'Audit Opinion',
+    lockedFlag: 'Locked Status',
     createdTime: 'Created Time',
     updatedTime: 'Updated Time',
     actions: 'Actions',
@@ -110,6 +122,7 @@ export default {
     view: 'View',
     approve: 'Approve',
     reject: 'Reject',
+    needsRevision: 'Needs Revision',
     audit: 'Audit',
     viewHistory: 'View History',
   },
@@ -118,9 +131,13 @@ export default {
   message: {
     approveSuccess: 'Approved successfully',
     rejectSuccess: 'Rejected successfully',
+    needsRevisionSuccess: 'Marked as needs revision successfully',
     datasetCodeGenerated: 'Dataset code generated',
     onlySubmittedCanAudit: 'Only submitted or reviewing datasets can be audited',
     rejectOpinionRequired: 'Rejection reason is required when rejecting',
+    needsRevisionOpinionRequired: 'Revision comments are required when marking as needs revision',
     auditOpinionLabel: 'Audit Opinion',
+    datasetLocked: 'Dataset is locked and cannot be modified',
+    datasetUnlocked: 'Dataset is unlocked and can be modified',
   },
 }

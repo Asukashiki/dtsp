@@ -79,9 +79,27 @@
             <div class="table-wrapper pc-only">
               <el-table v-loading="loading" :data="dataList" stripe>
                 <el-table-column
+                  prop="id"
+                  :label="$t('research.datasetAudit.columns.auditId')"
+                  min-width="120"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="datasetId"
+                  :label="$t('research.datasetAudit.columns.datasetId')"
+                  min-width="120"
+                  show-overflow-tooltip
+                />
+                <el-table-column
                   prop="datasetCode"
                   :label="$t('research.datasetAudit.columns.datasetCode')"
                   min-width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="auditorId"
+                  :label="$t('research.datasetAudit.columns.reviewerId')"
+                  min-width="120"
                   show-overflow-tooltip
                 />
                 <el-table-column
@@ -149,6 +167,37 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  prop="auditorName"
+                  :label="$t('research.datasetAudit.columns.auditorName')"
+                  min-width="100"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="auditTime"
+                  :label="$t('research.datasetAudit.columns.auditTime')"
+                  min-width="150"
+                />
+                <el-table-column
+                  prop="auditOpinion"
+                  :label="$t('research.datasetAudit.columns.auditOpinion')"
+                  min-width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="lockedFlag"
+                  :label="$t('research.datasetAudit.columns.lockedFlag')"
+                  min-width="100"
+                  align="center"
+                >
+                  <template #default="{ row }">
+                    <el-tag v-if="row.lockedFlag !== null && row.lockedFlag !== undefined" :type="row.lockedFlag === 1 ? 'danger' : 'success'" size="small">
+                      <i :class="row.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                      {{ row.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+                    </el-tag>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   prop="submitTime"
                   :label="$t('research.datasetAudit.columns.submitTime')"
                   min-width="150"
@@ -202,6 +251,18 @@
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.auditId') }}:</span>
+                    <span class="value">{{ item.id || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.datasetId') }}:</span>
+                    <span class="value">{{ item.datasetId || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.reviewerId') }}:</span>
+                    <span class="value">{{ item.auditorId || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetAudit.columns.trialId') }}:</span>
                     <span class="value">{{ item.trialId || '-' }}</span>
                   </div>
@@ -244,6 +305,28 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetAudit.columns.submitTime') }}:</span>
                     <span class="value">{{ item.submitTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.auditorName') }}:</span>
+                    <span class="value">{{ item.auditorName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.auditTime') }}:</span>
+                    <span class="value">{{ item.auditTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.auditOpinion') }}:</span>
+                    <span class="value">{{ item.auditOpinion || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetAudit.columns.lockedFlag') }}:</span>
+                    <span class="value">
+                      <el-tag v-if="item.lockedFlag !== null && item.lockedFlag !== undefined" :type="item.lockedFlag === 1 ? 'danger' : 'success'" size="small">
+                        <i :class="item.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                        {{ item.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+                      </el-tag>
+                      <span v-else>-</span>
+                    </span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">
@@ -324,7 +407,8 @@ const getAuditStatusType = (status) => {
   const typeMap = {
     pending: 'warning',
     approved: 'success',
-    rejected: 'danger'
+    rejected: 'danger',
+    needs_revision: 'warning'
   }
   return typeMap[status] || ''
 }
