@@ -50,8 +50,11 @@ export default {
   update: 'Update',
   remarks: 'Remarks',
   refresh: 'Refresh',
-  createBy: 'Registrant ID',
-  createTime: 'Registration Time',
+  createBy: 'Created By',
+  createTime: 'Created Time',
+  updateBy: 'Updated By',
+  updateTime: 'Updated Time',
+  auditInfo: 'Audit Information',
   registrationInfo: 'Registration Information',
   index: 'No.',
   total: 'Total',
@@ -75,6 +78,7 @@ export default {
   detail: 'Detail',
   all: 'All',
   currentUser: 'Current User',
+  systemInfo: 'System Information',
   // Error Messages
   error: {
     title: 'Error',

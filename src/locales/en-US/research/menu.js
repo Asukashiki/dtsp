@@ -65,10 +65,20 @@ export default {
   oseManagementEdit: 'Edit OSE',
   oseManagementDetail: 'OSE Detail',
 
+  researchCenterManagement: 'Research Center Management',
+  researchCenterAdd: 'Add Research Center',
+  researchCenterEdit: 'Edit Research Center',
+  researchCenterDetail: 'Research Center Detail',
+
   iotSensorMaintenance: 'IoT Sensor Maintenance',
   iotSensorMaintenanceAdd: 'Add Sensor',
   iotSensorMaintenanceEdit: 'Edit Sensor',
   iotSensorMaintenanceDetail: 'Sensor Detail',
+
+  environmentNewData: 'Environment Monitoring Data',
+  environmentNewDataAdd: 'Add Environment Data',
+  environmentNewDataEdit: 'Edit Environment Data',
+  environmentNewDataDetail: 'Environment Data Detail',
 
   oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
   oseReceiveConfirmAdd: 'Add Receipt Confirmation',

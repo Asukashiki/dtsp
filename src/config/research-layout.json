@@ -36,9 +36,9 @@
           "titleKey": "research.menu.agronomicTraitDataCollection"
         },
         {
-          "index": "/research/breeding-data/environment",
-          "icon": "ri-global-line",
-          "titleKey": "research.menu.environmentDataCollection"
+          "index": "/research/data-collection/environment-new-data",
+          "icon": "ri-cloud-line",
+          "titleKey": "research.menu.environmentNewData"
         },
         {
           "index": "/research/breeding-data/field-inspection",
@@ -64,11 +64,6 @@
           "index": "/research/breeding-data/breeding-license",
           "icon": "ri-file-shield-2-line",
           "titleKey": "research.menu.breedingLicense"
-        },
-        {
-          "index": "/research/data-collection/iot-sensor",
-          "icon": "ri-sensor-line",
-          "titleKey": "research.menu.iotSensorMaintenance"
         }
       ]
     },
@@ -134,16 +129,21 @@
       "name" : "种子机构管理",
       "icon": "ri-bank-line",
       "titleKey": "research.menu.seedInstitutionManagement",
-      "children": [  
+      "children": [
         {
           "index": "/research/union/list",
           "icon": "ri-community-line",
           "titleKey": "research.menu.propagationOrgRegistration"
-        },   
+        },
         {
           "index": "/research/breeding/ose-management",
           "icon": "ri-building-4-line",
           "titleKey": "research.menu.oseManagement"
+        },
+        {
+          "index": "/research/breeding-data/research-center",
+          "icon": "ri-building-line",
+          "titleKey": "research.menu.researchCenterManagement"
         }
       ]
     },

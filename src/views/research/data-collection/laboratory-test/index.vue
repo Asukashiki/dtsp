@@ -31,6 +31,39 @@
           <div class="card-body">
             <!-- 搜索区域 -->
             <div class="search-section">
+              <el-select
+                v-model="searchForm.batchId"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.batchId')"
+                filterable
+                clearable
+                class="search-input"
+              >
+                <el-option
+                  v-for="item in batchOptions"
+                  :key="item.dataId"
+                  :label="item.batchName"
+                  :value="item.batchId"
+                />
+              </el-select>
+              <el-input
+                v-model="searchForm.sampleType"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleType')"
+                clearable
+                class="search-input"
+              >
+                <template #prefix>
+                  <i class="ri-test-tube-line"></i>
+                </template>
+              </el-input>
+              <el-select
+                v-model="searchForm.passFailFlag"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                clearable
+                class="search-input"
+              >
+                <el-option label="Pass" value="true" />
+                <el-option label="Fail" value="false" />
+              </el-select>
               <el-input
                 v-model="searchForm.sampleId"
                 :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
@@ -74,6 +107,32 @@
                   :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
                   min-width="120"
                 />
+                <el-table-column
+                  prop="sampleType"
+                  :label="$t('research.dataCollection.laboratoryTest.form.sampleType')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="labParameter"
+                  :label="$t('research.dataCollection.laboratoryTest.form.labParameter')"
+                  min-width="140"
+                />
+                <el-table-column
+                  prop="resultValue"
+                  :label="$t('research.dataCollection.laboratoryTest.form.resultValue')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="passFailFlag"
+                  :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag v-if="row.passFailFlag === 'true' || row.passFailFlag === true" type="success">Pass</el-tag>
+                    <el-tag v-else-if="row.passFailFlag === 'false' || row.passFailFlag === false" type="danger">Fail</el-tag>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="germinationRate"
                   :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')"
@@ -172,6 +231,26 @@
                     <span class="value">{{ item.sampleCondition }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleType') }}:</span>
+                    <span class="value">{{ item.sampleType || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labParameter') }}:</span>
+                    <span class="value">{{ item.labParameter || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.resultValue') }}:</span>
+                    <span class="value">{{ item.resultValue || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.passFailFlag') }}:</span>
+                    <span class="value">
+                      <el-tag v-if="item.passFailFlag === 'true' || item.passFailFlag === true" type="success" size="small">Pass</el-tag>
+                      <el-tag v-else-if="item.passFailFlag === 'false' || item.passFailFlag === false" type="danger" size="small">Fail</el-tag>
+                      <span v-else>-</span>
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
                     <span class="value">{{ item.germinationRate }}%</span>
                   </div>
@@ -231,14 +310,19 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLabTestList, deleteLabTest } from '@/api/labTest'
+import { getBatchOptions } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
+const batchOptions = ref([])
 
 const searchForm = reactive({
+  batchId: '',
+  sampleType: '',
+  passFailFlag: null,
   sampleId: ''
 })
 
@@ -248,11 +332,26 @@ const pagination = reactive({
   total: 0
 })
 
+// 加载批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBatchOptions()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
     const res = await getLabTestList({
+      batchId: searchForm.batchId,
+      sampleType: searchForm.sampleType,
+      passFailFlag: searchForm.passFailFlag,
       sampleId: searchForm.sampleId,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
@@ -277,6 +376,9 @@ const handleSearch = () => {
 
 // 重置
 const handleReset = () => {
+  searchForm.batchId = ''
+  searchForm.sampleType = ''
+  searchForm.passFailFlag = null
   searchForm.sampleId = ''
   handleSearch()
 }
@@ -335,6 +437,7 @@ const handleCurrentChange = () => {
 
 // 初始化
 onMounted(() => {
+  loadBatchOptions()
   loadData()
 })
 </script>

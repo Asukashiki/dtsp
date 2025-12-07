@@ -39,8 +39,8 @@ export function getPlotInfoList(params) {
     return request({ url: `${API_BASE_URL}/breeding/plot/list`, method: 'get', params })
 }
 
-export function getPlotInfo(groundId) {
-    return request({ url: `${API_BASE_URL}/breeding/plot/getInfo`, method: 'get', params: { groundId } })
+export function getPlotInfo(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/getInfo`, method: 'get', params: { plotId } })
 }
 
 export function addPlotInfo(data) {
@@ -152,4 +152,29 @@ export function editEnvironmentData(data) {
 
 export function deleteEnvironmentData(envIds) {
     return request({ url: `${API_BASE_URL}/breeding/environment/remove`, method: 'get', params: { envIds } })
+}
+
+// ============ 研究中心管理 ============
+export function getLocationMasterList(params) {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/page`, method: 'post', data: params })
+}
+
+export function getLocationMasterInfo(locationId) {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/detail`, method: 'get', params: { locationId } })
+}
+
+export function addLocationMaster(data) {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/add`, method: 'post', data })
+}
+
+export function editLocationMaster(data) {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/update`, method: 'post', data })
+}
+
+export function deleteLocationMaster(locationIds) {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/delete`, method: 'get', params: { locationId: locationIds } })
+}
+
+export function getLocationMasterOptions() {
+    return request({ url: `${API_BASE_URL}/seed/locationMaster/list`, method: 'post', data: {} })
 }

@@ -29,39 +29,6 @@
         label-width="200px"
         class="yield-form"
       >
-        <!-- 基础信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.basicInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.batchId')" prop="batchId">
-            <el-input
-              v-model="formData.batchId"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
-              clearable
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.trialId')" prop="trialId">
-            <el-input
-              v-model="formData.trialId"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.trialId')"
-              clearable
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.harvestDate')" prop="harvestDate">
-            <el-date-picker
-              v-model="formData.harvestDate"
-              type="date"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.harvestDate')"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </div>
-
         <!-- 地块信息 -->
         <div class="form-section">
           <div class="section-title">
@@ -70,14 +37,25 @@
           </div>
 
           <el-form-item :label="$t('research.dataCollection.yieldData.form.plotId')" prop="plotId">
-            <el-input
+            <el-select
               v-model="formData.plotId"
               :placeholder="$t('research.dataCollection.yieldData.placeholder.plotId')"
+              filterable
               clearable
-            />
+              style="width: 100%"
+              :loading="plotLoading"
+              @change="handlePlotChange"
+            >
+              <el-option
+                v-for="item in plotOptions"
+                :key="item.plotId"
+                :label="item.plotId"
+                :value="item.plotId"
+              />
+            </el-select>
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.plotAreaM2')" prop="plotAreaM2">
+          <!-- <el-form-item :label="$t('research.dataCollection.yieldData.form.plotAreaM2')" prop="plotAreaM2">
             <div class="input-with-unit">
               <el-input-number
                 v-model="formData.plotAreaM2"
@@ -89,11 +67,44 @@
               />
               <span class="unit-hint">m²</span>
             </div>
+          </el-form-item> -->
+        </div>
+
+        <!-- 基础信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-information-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.basicInfo') }}
+          </div>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.batchId')" prop="batchId">
+            <el-input
+              v-model="formData.batchId"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
+              disabled
+            />
           </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.trialId')" prop="trialId">
+            <el-input
+              v-model="formData.trialId"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.trialId')"
+              disabled
+            />
+          </el-form-item>
+
+          <!-- <el-form-item :label="$t('research.dataCollection.yieldData.form.harvestDate')" prop="harvestDate">
+            <el-date-picker
+              v-model="formData.harvestDate"
+              type="date"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.harvestDate')"
+              style="width: 100%"
+            />
+          </el-form-item> -->
         </div>
 
         <!-- 产量信息 -->
-        <div class="form-section">
+        <!-- <div class="form-section">
           <div class="section-title">
             <i class="ri-bar-chart-box-line"></i>
             {{ $t('research.dataCollection.yieldData.form.yieldInfo') }}
@@ -140,6 +151,64 @@
               />
               <span class="unit-hint">%</span>
             </div>
+          </el-form-item>
+        </div> -->
+
+        <!-- 检验信息 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-file-search-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}
+          </div>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionDate')">
+            <el-date-picker
+              v-model="formData.inspectionDate"
+              type="date"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionDate')"
+              style="width: 100%"
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionType')">
+            <el-select
+              v-model="formData.inspectionType"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionType')"
+              clearable
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in inspectionTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreCode')">
+            <el-select
+              v-model="formData.scoreCode"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreCode')"
+              filterable
+              clearable
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in scoreCodeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreValue')">
+            <el-input
+              v-model="formData.scoreValue"
+              :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreValue')"
+              clearable
+            />
           </el-form-item>
         </div>
 
@@ -189,6 +258,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getYieldDataDetail, addYieldData, updateYieldData } from '@/api/yieldData'
+import { getPlotInfoList } from '@/api/breedingData'
 import { useUserStore } from '@/store'
 
 const router = useRouter()
@@ -198,6 +268,8 @@ const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
+const plotLoading = ref(false)
+const plotOptions = ref([])
 const isEdit = computed(() => !!route.params.id)
 
 const formData = reactive({
@@ -205,29 +277,49 @@ const formData = reactive({
   batchId: '',
   trialId: '',
   plotId: '',
-  plotAreaM2: null,
-  grainWeightKg: null,
-  yieldQtPerHa: null,
-  moistureContent: null,
-  harvestDate: '',
+  // plotAreaM2: null,
+  // grainWeightKg: null,
+  // yieldQtPerHa: null,
+  // moistureContent: null,
+  // harvestDate: '',
+  inspectionDate: '',
+  inspectionType: '',
+  scoreCode: '',
+  scoreValue: '',
   recorderName: '',
   remark: '',
   status: '0',
   createdBy: ''
 })
 
+// 检验类型选项
+const inspectionTypeOptions = computed(() => [
+  { value: 'Disease', label: t('research.dataCollection.yieldData.inspectionTypes.disease') },
+  { value: 'Purity', label: t('research.dataCollection.yieldData.inspectionTypes.purity') },
+  { value: 'Pest', label: t('research.dataCollection.yieldData.inspectionTypes.pest') },
+  { value: 'Lodging', label: t('research.dataCollection.yieldData.inspectionTypes.lodging') },
+  { value: 'Moisture', label: t('research.dataCollection.yieldData.inspectionTypes.moisture') },
+  { value: 'Other', label: t('research.dataCollection.yieldData.inspectionTypes.other') }
+])
+
+// 评分代码选项 (FK → TRAIT_MASTER)
+const scoreCodeOptions = computed(() => [
+  { value: 'YIELD', label: t('research.dataCollection.yieldData.scoreCodes.yield') },
+  { value: 'DISEASE_RES', label: t('research.dataCollection.yieldData.scoreCodes.diseaseRes') },
+  { value: 'PEST_RES', label: t('research.dataCollection.yieldData.scoreCodes.pestRes') },
+  { value: 'DROUGHT_TOL', label: t('research.dataCollection.yieldData.scoreCodes.droughtTol') },
+  { value: 'LODGING_RES', label: t('research.dataCollection.yieldData.scoreCodes.lodgingRes') },
+  { value: 'GRAIN_QUALITY', label: t('research.dataCollection.yieldData.scoreCodes.grainQuality') },
+  { value: 'MATURITY', label: t('research.dataCollection.yieldData.scoreCodes.maturity') },
+  { value: 'PLANT_HEIGHT', label: t('research.dataCollection.yieldData.scoreCodes.plantHeight') }
+])
+
 const rules = computed(() => ({
-  batchId: [
-    { required: true, message: t('research.dataCollection.yieldData.rules.batchIdRequired'), trigger: 'blur' }
-  ],
-  trialId: [
-    { required: true, message: t('research.dataCollection.yieldData.rules.trialIdRequired'), trigger: 'blur' }
+  plotId: [
+    { required: true, message: t('research.dataCollection.yieldData.rules.plotIdRequired'), trigger: 'change' }
   ],
   harvestDate: [
     { required: true, message: t('research.dataCollection.yieldData.rules.harvestDateRequired'), trigger: 'change' }
-  ],
-  plotId: [
-    { required: true, message: t('research.dataCollection.yieldData.rules.plotIdRequired'), trigger: 'blur' }
   ],
   plotAreaM2: [
     { required: true, message: t('research.dataCollection.yieldData.rules.plotAreaM2Required'), trigger: 'blur' },
@@ -242,6 +334,35 @@ const rules = computed(() => ({
     { type: 'number', min: 0.01, message: t('research.dataCollection.yieldData.rules.yieldQtPerHaMin'), trigger: 'blur' }
   ]
 }))
+
+// 加载地块选项
+const loadPlotOptions = async () => {
+  plotLoading.value = true
+  try {
+    const res = await getPlotInfoList({ pageNum: 1, pageSize: 1000 })
+    if (res.code === 200) {
+      plotOptions.value = res.rows || []
+    }
+  } catch (error) {
+    console.error('Failed to load plot options:', error)
+  } finally {
+    plotLoading.value = false
+  }
+}
+
+// 地块选择变化时，自动填充批次ID、试验ID和地块面积
+const handlePlotChange = (plotId) => {
+  if (!plotId) {
+    formData.batchId = ''
+    formData.trialId = ''
+    return
+  }
+  const selectedPlot = plotOptions.value.find(item => item.plotId === plotId)
+  if (selectedPlot) {
+    formData.batchId = selectedPlot.batchId || ''
+    formData.trialId = selectedPlot.trialId || ''
+  }
+}
 
 // 加载详情数据
 const loadDetail = async () => {
@@ -301,6 +422,7 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
+  loadPlotOptions()
   if (isEdit.value) {
     loadDetail()
   }

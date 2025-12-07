@@ -419,4 +419,55 @@ export default {
       actions: '操作',
     },
   },
+
+  // 研究中心管理
+  researchCenter: {
+    title: '研究中心管理',
+    subtitle: '管理研究中心基础信息，包括位置、地理坐标、行政区域等',
+    list: '研究中心列表',
+    add: '新增研究中心',
+    edit: '编辑研究中心',
+    detail: '研究中心详情',
+    deleteConfirm: '确定删除该研究中心吗？',
+    deleteSuccess: '删除成功',
+    addSuccess: '新增成功',
+    editSuccess: '编辑成功',
+
+    form: {
+      basicInfo: '基本信息',
+      locationInfo: '位置信息',
+      geoInfo: '地理坐标',
+      locationId: '位置ID',
+      locationName: '位置名称',
+      region: '地区',
+      zone: '区域',
+      woneda: '沃雷达',
+      latitude: '纬度',
+      longitude: '经度',
+      remark: '备注',
+    },
+
+    placeholder: {
+      locationId: '系统自动生成',
+      locationName: '请输入位置名称',
+      region: '请输入地区',
+      zone: '请输入区域',
+      woneda: '请输入沃雷达（行政区域）',
+      latitude: '请输入纬度',
+      longitude: '请输入经度',
+      remark: '请输入备注（选填）',
+    },
+
+    columns: {
+      locationId: '位置ID',
+      locationName: '位置名称',
+      region: '地区',
+      zone: '区域',
+      woneda: '沃雷达',
+      latitude: '纬度',
+      longitude: '经度',
+      createTime: '创建时间',
+      actions: '操作',
+    },
+  },
 }

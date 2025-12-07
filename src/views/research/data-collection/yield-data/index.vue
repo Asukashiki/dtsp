@@ -8,8 +8,7 @@
             <i class="ri-bar-chart-box-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.dataCollection.yieldData.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.dataCollection.yieldData.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('research.menu.fieldInspection') }}</h1>
           </div>
         </div>
       </div>
@@ -31,26 +30,36 @@
           <div class="card-body">
             <!-- 搜索区域 -->
             <div class="search-section">
-              <el-input
+              <el-select
                 v-model="searchForm.batchId"
                 :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
+                filterable
                 clearable
                 class="search-input"
+                :loading="plotLoading"
               >
-                <template #prefix>
-                  <i class="ri-search-line"></i>
-                </template>
-              </el-input>
-              <el-input
+                <el-option
+                  v-for="item in batchOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <el-select
                 v-model="searchForm.plotId"
                 :placeholder="$t('research.dataCollection.yieldData.placeholder.plotId')"
+                filterable
                 clearable
                 class="search-input"
+                :loading="plotLoading"
               >
-                <template #prefix>
-                  <i class="ri-search-line"></i>
-                </template>
-              </el-input>
+                <el-option
+                  v-for="item in plotOptions"
+                  :key="item.plotId"
+                  :label="item.plotId"
+                  :value="item.plotId"
+                />
+              </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
                 {{ $t('common.search') }}
@@ -80,23 +89,23 @@
                   min-width="120"
                 />
                 <el-table-column
-                  prop="plotAreaM2"
-                  :label="$t('research.dataCollection.yieldData.columns.plotAreaM2')"
-                  min-width="130"
+                  prop="inspectionDate"
+                  :label="$t('research.dataCollection.yieldData.columns.inspectionDate')"
+                  min-width="120"
                 />
                 <el-table-column
-                  prop="grainWeightKg"
-                  :label="$t('research.dataCollection.yieldData.columns.grainWeightKg')"
-                  min-width="140"
+                  prop="inspectionType"
+                  :label="$t('research.dataCollection.yieldData.columns.inspectionType')"
+                  min-width="120"
                 />
                 <el-table-column
-                  prop="yieldQtPerHa"
-                  :label="$t('research.dataCollection.yieldData.columns.yieldQtPerHa')"
-                  min-width="150"
+                  prop="scoreCode"
+                  :label="$t('research.dataCollection.yieldData.columns.scoreCode')"
+                  min-width="120"
                 />
                 <el-table-column
-                  prop="harvestDate"
-                  :label="$t('research.dataCollection.yieldData.columns.harvestDate')"
+                  prop="scoreValue"
+                  :label="$t('research.dataCollection.yieldData.columns.scoreValue')"
                   min-width="120"
                 />
                 <el-table-column
@@ -152,16 +161,16 @@
                     <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.plotAreaM2') }}:</span>
-                    <span class="value">{{ item.plotAreaM2 }} m²</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.inspectionDate') }}:</span>
+                    <span class="value">{{ item.inspectionDate || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.yieldQtPerHa') }}:</span>
-                    <span class="value">{{ item.yieldQtPerHa }}</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.inspectionType') }}:</span>
+                    <span class="value">{{ item.inspectionType || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.harvestDate') }}:</span>
-                    <span class="value">{{ item.harvestDate }}</span>
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.scoreValue') }}:</span>
+                    <span class="value">{{ item.scoreValue || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">
@@ -202,17 +211,31 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
+import { getPlotInfoList } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
+const plotLoading = ref(false)
+const plotOptions = ref([])
+
+// 从地块选项中提取唯一的批次ID
+const batchOptions = computed(() => {
+  const batchSet = new Set()
+  plotOptions.value.forEach(item => {
+    if (item.batchId) {
+      batchSet.add(item.batchId)
+    }
+  })
+  return Array.from(batchSet).map(batchId => ({ value: batchId, label: batchId }))
+})
 
 const searchForm = reactive({
   batchId: '',
@@ -304,7 +327,23 @@ const handleDelete = async (row) => {
   }
 }
 
+// 加载地块选项
+const loadPlotOptions = async () => {
+  plotLoading.value = true
+  try {
+    const res = await getPlotInfoList({ pageNum: 1, pageSize: 1000 })
+    if (res.code === 200) {
+      plotOptions.value = res.rows || []
+    }
+  } catch (error) {
+    console.error('Failed to load plot options:', error)
+  } finally {
+    plotLoading.value = false
+  }
+}
+
 onMounted(() => {
+  loadPlotOptions()
   handleSearch()
 })
 </script>

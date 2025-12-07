@@ -39,10 +39,10 @@
               <span class="label">{{ $t('research.dataCollection.yieldData.form.trialId') }}:</span>
               <span class="value">{{ detailData.trialId }}</span>
             </div>
-            <div class="detail-item">
+            <!-- <div class="detail-item">
               <span class="label">{{ $t('research.dataCollection.yieldData.form.harvestDate') }}:</span>
               <span class="value">{{ detailData.harvestDate }}</span>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -57,15 +57,15 @@
               <span class="label">{{ $t('research.dataCollection.yieldData.form.plotId') }}:</span>
               <span class="value">{{ detailData.plotId }}</span>
             </div>
-            <div class="detail-item">
+            <!-- <div class="detail-item">
               <span class="label">{{ $t('research.dataCollection.yieldData.form.plotAreaM2') }}:</span>
               <span class="value">{{ detailData.plotAreaM2 }} m²</span>
-            </div>
+            </div> -->
           </div>
         </div>
 
         <!-- 产量信息 -->
-        <div class="detail-section">
+        <!-- <div class="detail-section">
           <div class="section-title">
             <i class="ri-bar-chart-box-line"></i>
             {{ $t('research.dataCollection.yieldData.form.yieldInfo') }}
@@ -90,6 +90,32 @@
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.dataCollection.yieldData.form.remark') }}:</span>
               <span class="value">{{ detailData.remark || '-' }}</span>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- 检验信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-file-search-line"></i>
+            {{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.inspectionDate') }}:</span>
+              <span class="value">{{ detailData.inspectionDate || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.inspectionType') }}:</span>
+              <span class="value">{{ detailData.inspectionType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.scoreCode') }}:</span>
+              <span class="value">{{ detailData.scoreCode || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.scoreValue') }}:</span>
+              <span class="value">{{ detailData.scoreValue || '-' }}</span>
             </div>
           </div>
         </div>

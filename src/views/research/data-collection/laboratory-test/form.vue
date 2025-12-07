@@ -37,19 +37,38 @@
           </div>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
-            <el-input
+            <el-select
               v-model="formData.batchId"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchId')"
+              filterable
               clearable
-            />
+              style="width: 100%"
+              @change="handleBatchChange"
+            >
+              <el-option
+                v-for="item in batchOptions"
+                :key="item.dataId"
+                :label="item.batchName"
+                :value="item.batchId"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')" prop="trialId">
-            <el-input
+            <el-select
               v-model="formData.trialId"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.trialId')"
+              filterable
               clearable
-            />
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in trialOptions"
+                :key="item.trialId"
+                :label="item.trialName"
+                :value="item.trialId"
+              />
+            </el-select>
           </el-form-item>
         </div>
 
@@ -74,6 +93,42 @@
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleStatus')"
               clearable
             />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleType')" prop="sampleType">
+            <el-input
+              v-model="formData.sampleType"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleType')"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labParameter')" prop="labParameter">
+            <el-input
+              v-model="formData.labParameter"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.labParameter')"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.resultValue')" prop="resultValue">
+            <el-input
+              v-model="formData.resultValue"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.resultValue')"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')" prop="passFailFlag">
+            <el-select
+              v-model="formData.passFailFlag"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.passFailFlag')"
+              clearable
+              style="width: 100%"
+            >
+              <el-option label="Pass" value="true" />
+              <el-option label="Fail" value="false" />
+            </el-select>
           </el-form-item>
         </div>
 
@@ -259,6 +314,7 @@ import { ElMessage } from 'element-plus'
 import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
+import { getBatchOptions, getTrialOptions } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -268,11 +324,19 @@ const formRef = ref(null)
 const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
+// 下拉选项数据
+const batchOptions = ref([])
+const trialOptions = ref([])
+
 const formData = reactive({
   batchId: '',
   trialId: '',
   sampleId: '',
   sampleCondition: '',
+  sampleType: '',  // 新增：样本类型
+  labParameter: '',  // 新增：实验参数
+  resultValue: '',  // 新增：实验结果值
+  passFailFlag: null,  // 新增：实验结果标识
   germinationRate: null,
   purityPercent: null,
   moistureContentPercent: null,
@@ -339,6 +403,10 @@ const loadDetail = async () => {
     const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      // 如果有batchId，加载对应的试验选项
+      if (res.data.batchId) {
+        await loadTrialOptions(res.data.batchId)
+      }
       // 处理实验室报告文件
       if (res.data.labReportFile) {
         const fileId = res.data.labReportFile
@@ -468,6 +536,40 @@ const handleSubmit = () => {
   })
 }
 
+// 加载育种批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBatchOptions()
+    if (res.code === 200 && res.data) {
+      batchOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
+// 加载试验选项
+const loadTrialOptions = async (batchId) => {
+  if (!batchId) {
+    trialOptions.value = []
+    return
+  }
+  try {
+    const res = await getTrialOptions(batchId)
+    if (res.code === 200 && res.data) {
+      trialOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load trial options:', error)
+  }
+}
+
+// 批次变化时加载试验选项
+const handleBatchChange = (batchId) => {
+  formData.trialId = ''  // 清空试验ID
+  loadTrialOptions(batchId)
+}
+
 // 返回
 const goBack = () => {
   router.back()
@@ -475,6 +577,7 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
+  loadBatchOptions()  // 加载批次选项
   if (isEdit.value) {
     loadDetail()
   }

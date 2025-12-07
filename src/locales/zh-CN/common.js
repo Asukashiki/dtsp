@@ -50,8 +50,11 @@ export default {
     update: '更新',
     remarks: '备注',
     refresh: '刷新',
-    createBy: '登记人ID',
-    createTime: '登记时间',
+    createBy: '创建人',
+    createTime: '创建时间',
+    updateBy: '更新人',
+    updateTime: '更新时间',
+    auditInfo: '审计信息',
     registrationInfo: '登记信息',
     index: '序号',
     total: '共计',
@@ -75,6 +78,7 @@ export default {
     detail: '详情',
     all: '全部',
     currentUser: '当前用户',
+    systemInfo: '系统信息',
     // 错误提示
     error: {
       title: '错误提示',

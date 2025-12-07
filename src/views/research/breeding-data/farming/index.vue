@@ -27,39 +27,30 @@
 
           <div class="card-body">
             <div class="search-section">
-              <el-form :model="queryParams" label-width="120px">
-                <el-row :gutter="20">
-                  <el-col :xs="24" :sm="12" :md="8">
-                    <el-form-item label="Plot ID">
-                      <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable style="width: 100%">
-                        <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12" :md="8">
-                    <el-form-item label="Activity Type">
-                      <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable style="width: 100%">
-                        <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12" :md="8">
-                    <el-form-item label="Activity Date">
-                      <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" style="width: 100%" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="24" style="text-align: right">
-                    <el-button @click="handleReset">
-                      <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
-                    </el-button>
-                    <el-button type="primary" @click="handleQuery">
-                      <i class="ri-search-line"></i>{{ $t('common.search') }}
-                    </el-button>
-                  </el-col>
-                </el-row>
-              </el-form>
+              <div class="search-item">
+                <span class="search-label">Plot ID:</span>
+                <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select">
+                  <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Activity Type:</span>
+                <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select">
+                  <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Activity Date:</span>
+                <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" />
+              </div>
+              <div class="search-actions">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="ri-search-line"></i>{{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset">
+                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
+                </el-button>
+              </div>
             </div>
 
             <div class="table-wrapper pc-only">
@@ -232,4 +223,67 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.search-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+
+    .search-label {
+      font-size: 14px;
+      color: #606266;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .search-input {
+      width: 200px;
+    }
+
+    .filter-select {
+      width: 180px;
+    }
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    .search-item {
+      width: 100%;
+
+      .search-label {
+        min-width: 80px;
+      }
+
+      .search-input,
+      .filter-select {
+        flex: 1;
+        width: auto;
+      }
+    }
+
+    .search-actions {
+      margin-left: 0;
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+}
 </style>

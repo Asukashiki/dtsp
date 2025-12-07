@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-leaf-line"></i>
+            <i class="ri-building-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.trait.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.trait.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('research.breedingData.researchCenter.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.breedingData.researchCenter.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.breedingData.trait.list') }}</span>
+              <span>{{ $t('research.breedingData.researchCenter.list') }}</span>
             </div>
             <div class="header-actions">
               <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
@@ -29,7 +29,7 @@
               </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
-                {{ $t('research.breedingData.trait.add') }}
+                {{ $t('research.breedingData.researchCenter.add') }}
               </el-button>
             </div>
           </div>
@@ -38,36 +38,32 @@
             <!-- 搜索筛选区 -->
             <div class="search-section">
               <div class="search-item">
-                <span class="search-label">Batch ID:</span>
-                <el-select
-                  v-model="queryParams.batchId"
-                  placeholder="Please select Batch ID"
+                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.locationName') }}:</span>
+                <el-input
+                  v-model="queryParams.locationName"
+                  :placeholder="$t('research.breedingData.researchCenter.placeholder.locationName')"
                   clearable
-                  class="filter-select"
+                  class="search-input"
                 >
-                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
-                </el-select>
+                  <template #prefix><i class="ri-search-line"></i></template>
+                </el-input>
               </div>
               <div class="search-item">
-                <span class="search-label">Trial ID:</span>
-                <el-select
-                  v-model="queryParams.trialId"
-                  placeholder="Please select Trial ID"
+                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.region') }}:</span>
+                <el-input
+                  v-model="queryParams.region"
+                  :placeholder="$t('research.breedingData.researchCenter.placeholder.region')"
                   clearable
-                  class="filter-select"
-                >
-                  <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
-                </el-select>
+                  class="search-input"
+                />
               </div>
               <div class="search-item">
-                <span class="search-label">Observation Date:</span>
-                <el-date-picker
-                  v-model="queryParams.observationDate"
-                  type="date"
-                  placeholder="Select Observation Date"
+                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.zone') }}:</span>
+                <el-input
+                  v-model="queryParams.zone"
+                  :placeholder="$t('research.breedingData.researchCenter.placeholder.zone')"
                   clearable
-                  value-format="YYYY-MM-DD"
-                  class="filter-select"
+                  class="search-input"
                 />
               </div>
               <div class="search-actions">
@@ -84,17 +80,53 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="traitRecordId" label="Trait Record ID" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="observationDate" label="Observation Date" min-width="120" />
-                <el-table-column prop="growthStage" label="Growth Stage" min-width="120" />
-                <el-table-column prop="traitCode" label="Trait Code" min-width="100" />
-                <el-table-column prop="traitName" label="Trait Name" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="traitValue" label="Trait Value" min-width="100" />
-                <el-table-column prop="unit" label="Unit" min-width="80" />
-                <el-table-column :label="$t('research.breedingData.trait.columns.actions')" width="200" fixed="right">
+                <el-table-column
+                  prop="locationId"
+                  :label="$t('research.breedingData.researchCenter.columns.locationId')"
+                  min-width="200"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="locationName"
+                  :label="$t('research.breedingData.researchCenter.columns.locationName')"
+                  min-width="180"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="region"
+                  :label="$t('research.breedingData.researchCenter.columns.region')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="zone"
+                  :label="$t('research.breedingData.researchCenter.columns.zone')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="woneda"
+                  :label="$t('research.breedingData.researchCenter.columns.woneda')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="latitude"
+                  :label="$t('research.breedingData.researchCenter.columns.latitude')"
+                  min-width="100"
+                />
+                <el-table-column
+                  prop="longitude"
+                  :label="$t('research.breedingData.researchCenter.columns.longitude')"
+                  min-width="110"
+                />
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('research.breedingData.researchCenter.columns.createTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  :label="$t('research.breedingData.researchCenter.columns.actions')"
+                  width="200"
+                  fixed="right"
+                >
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -113,51 +145,51 @@
 
               <div class="pagination-wrapper">
                 <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
+                  :current-page="queryParams.pageNum"
+                  :page-size="queryParams.pageSize"
                   :page-sizes="[10, 20, 50]"
                   :total="total"
                   layout="total, sizes, prev, pager, next, jumper"
-                  @size-change="getList"
-                  @current-change="getList"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
                 />
               </div>
             </div>
 
             <!-- 移动端卡片 -->
             <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.traitId" class="mobile-card">
+              <div v-for="item in dataList" :key="item.locationId" class="mobile-card">
                 <div class="mobile-card-header">
                   <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
                   <div class="mobile-card-title">
-                    <i class="ri-plant-line"></i>
-                    <span>{{ item.traitRecordId || item.plotId }}</span>
+                    <i class="ri-building-line"></i>
+                    <span>{{ item.locationName }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">Plot ID:</span>
-                    <span class="value">{{ item.plotId }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.locationId') }}:</span>
+                    <span class="value">{{ item.locationId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">Trial ID:</span>
-                    <span class="value">{{ item.trialId }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.region') }}:</span>
+                    <span class="value">{{ item.region || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">Batch ID:</span>
-                    <span class="value">{{ item.batchId }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.zone') }}:</span>
+                    <span class="value">{{ item.zone || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">Observation Date:</span>
-                    <span class="value">{{ item.observationDate }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.woneda') }}:</span>
+                    <span class="value">{{ item.woneda || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">Trait Name:</span>
-                    <span class="value">{{ item.traitName }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.latitude') }}:</span>
+                    <span class="value">{{ item.latitude || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">Trait Value:</span>
-                    <span class="value">{{ item.traitValue }} {{ item.unit }}</span>
+                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.longitude') }}:</span>
+                    <span class="value">{{ item.longitude || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -175,12 +207,12 @@
 
               <div class="pagination-wrapper">
                 <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
+                  :current-page="queryParams.pageNum"
+                  :page-size="queryParams.pageSize"
                   :total="total"
                   layout="prev, pager, next"
                   small
-                  @current-change="getList"
+                  @current-change="handleCurrentChange"
                 />
               </div>
             </div>
@@ -196,7 +228,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getAgronomicTraitList, deleteAgronomicTrait, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { getLocationMasterList, deleteLocationMaster } from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -205,45 +237,26 @@ const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
-const batchOptions = ref([])
-const trialOptions = ref([])
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
-  batchId: '',
-  trialId: '',
-  observationDate: ''
+  locationName: '',
+  region: '',
+  zone: ''
 })
 
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getAgronomicTraitList(queryParams)
-    dataList.value = res.rows || []
-    total.value = res.total || 0
+    const res = await getLocationMasterList(queryParams)
+    // 后端返回的数据在 data 对象中
+    dataList.value = res.data?.records || []
+    total.value = res.data?.total || 0
   } catch (error) {
     console.error('获取列表失败:', error)
   } finally {
     loading.value = false
-  }
-}
-
-const loadBatchOptions = async () => {
-  try {
-    const res = await getBatchOptions()
-    batchOptions.value = res.data || []
-  } catch (error) {
-    console.error('获取批次选项失败:', error)
-  }
-}
-
-const loadTrialOptions = async () => {
-  try {
-    const res = await getTrialOptions()
-    trialOptions.value = res.data || []
-  } catch (error) {
-    console.error('获取试验选项失败:', error)
   }
 }
 
@@ -255,62 +268,71 @@ const handleQuery = () => {
 const handleReset = () => {
   queryParams.pageNum = 1
   queryParams.pageSize = 10
-  queryParams.batchId = ''
-  queryParams.trialId = ''
-  queryParams.observationDate = ''
+  queryParams.locationName = ''
+  queryParams.region = ''
+  queryParams.zone = ''
+  getList()
+}
+
+const handleSizeChange = (val) => {
+  queryParams.pageSize = val
+  queryParams.pageNum = 1
+  getList()
+}
+
+const handleCurrentChange = (val) => {
+  queryParams.pageNum = val
   getList()
 }
 
 const handleSelectionChange = (selection) => {
-  selectedIds.value = selection.map(item => item.traitId)
+  selectedIds.value = selection.map(item => item.locationId)
 }
 
 const handleMobileSelect = (item) => {
   if (item.checked) {
-    if (!selectedIds.value.includes(item.traitId)) {
-      selectedIds.value.push(item.traitId)
+    if (!selectedIds.value.includes(item.locationId)) {
+      selectedIds.value.push(item.locationId)
     }
   } else {
-    selectedIds.value = selectedIds.value.filter(id => id !== item.traitId)
+    selectedIds.value = selectedIds.value.filter(id => id !== item.locationId)
   }
 }
 
 const handleAdd = () => {
-  router.push('/research/breeding-data/trait/add')
+  router.push('/research/breeding-data/research-center/add')
 }
 
 const handleView = (row) => {
-  router.push(`/research/breeding-data/trait/detail/${row.traitId}`)
+  router.push(`/research/breeding-data/research-center/detail/${row.locationId}`)
 }
 
 const handleEdit = (row) => {
-  router.push(`/research/breeding-data/trait/edit/${row.traitId}`)
+  router.push(`/research/breeding-data/research-center/edit/${row.locationId}`)
 }
 
 const handleDelete = (row) => {
-  ElMessageBox.confirm(t('research.breedingData.trait.deleteConfirm'), t('common.warning'), {
+  ElMessageBox.confirm(t('research.breedingData.researchCenter.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteAgronomicTrait(row.traitId)
-    ElMessage.success(t('research.breedingData.trait.deleteSuccess'))
+    await deleteLocationMaster(row.locationId)
+    ElMessage.success(t('research.breedingData.researchCenter.deleteSuccess'))
     getList()
   }).catch(() => {})
 }
 
 const handleBatchDelete = () => {
-  ElMessageBox.confirm(t('research.breedingData.trait.deleteConfirm'), t('common.warning'), {
+  ElMessageBox.confirm(t('research.breedingData.researchCenter.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteAgronomicTrait(selectedIds.value.join(','))
-    ElMessage.success(t('research.breedingData.trait.deleteSuccess'))
+    await deleteLocationMaster(selectedIds.value.join(','))
+    ElMessage.success(t('research.breedingData.researchCenter.deleteSuccess'))
     selectedIds.value = []
     getList()
   }).catch(() => {})
 }
 
 onMounted(() => {
-  loadBatchOptions()
-  loadTrialOptions()
   getList()
 })
 </script>
@@ -341,10 +363,6 @@ onMounted(() => {
     .search-input {
       width: 200px;
     }
-
-    .filter-select {
-      width: 180px;
-    }
   }
 
   .search-actions {
@@ -360,11 +378,10 @@ onMounted(() => {
       width: 100%;
 
       .search-label {
-        min-width: 80px;
+        min-width: 100px;
       }
 
-      .search-input,
-      .filter-select {
+      .search-input {
         flex: 1;
         width: auto;
       }
