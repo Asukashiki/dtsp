@@ -68,8 +68,6 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
                     <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%">
-                      <el-option label="Not Approved" value="not_approved" />
-                      <el-option label="Approved" value="approved" />
                       <el-option label="Ongoing" value="ongoing" />
                       <el-option label="Done" value="done" />
                     </el-select>
@@ -136,7 +134,6 @@ const rules = {
 }
 
 const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
   { label: 'wheat', value: 'wheat' },
   { label: 'corn', value: 'corn' },
   { label: 'soybean', value: 'soybean' },

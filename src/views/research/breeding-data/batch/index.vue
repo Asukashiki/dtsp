@@ -247,7 +247,6 @@ const queryParams = reactive({
 })
 
 const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
   { label: 'wheat', value: 'wheat' },
   { label: 'corn', value: 'corn' },
   { label: 'soybean', value: 'soybean' },
@@ -255,8 +254,6 @@ const cropTypeOptions = [
 ]
 
 const statusOptions = [
-  { label: 'Not Approved', value: 'not_approved' },
-  { label: 'Approved', value: 'approved' },
   { label: 'Ongoing', value: 'ongoing' },
   { label: 'Done', value: 'done' }
 ]
