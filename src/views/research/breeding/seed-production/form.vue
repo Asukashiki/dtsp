@@ -34,32 +34,30 @@
                 filterable
                 clearable
                 style="width: 100%"
+                @change="handleBatchChange"
               >
                 <el-option
                   v-for="batch in breedBatchList"
-                  :key="batch.value"
-                  :label="batch.label"
-                  :value="batch.value"
-                />
+                  :key="batch.batchId"
+                  :label="batch.batchId"
+                  :value="batch.batchId"
+                >
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>{{ batch.batchId }}</span>
+                    <el-tag type="success" size="small" effect="plain">
+                      {{ batch.status }}
+                    </el-tag>
+                  </div>
+                </el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
-              <el-select
+              <el-input
                 v-model="formData.varietyName"
+                disabled
                 :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
-                filterable
-                clearable
-                style="width: 100%"
-                @change="handleVarietyChange"
-              >
-                <el-option
-                  v-for="variety in varietyList"
-                  :key="variety.varietyId"
-                  :label="variety.varietyName"
-                  :value="variety.varietyName"
-                />
-              </el-select>
+              />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
@@ -137,7 +135,8 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
-import { getLandList } from '@/api/farm'
+import { getLandList } from '@/api/newFarm'
+import { getBatchOptions } from '@/api/breedingData'
 
 const { t } = useI18n()
 
@@ -161,11 +160,7 @@ const formData = reactive({
 })
 
 // 下拉选项
-const breedBatchList = ref([
-  { label: 'BATCH001', value: 'BATCH001' },
-  { label: 'BATCH002', value: 'BATCH002' }
-])
-
+const breedBatchList = ref([])
 const varietyList = ref([])
 const landList = ref([])
 
@@ -202,6 +197,18 @@ const rules = computed(() => ({
   ]
 }))
 
+// 加载批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBatchOptions()
+    // 仅显示状态为 done 的批次
+    breedBatchList.value = (res.data || []).filter(item => item.status === 'done')
+    console.log('Loaded batches:', breedBatchList.value.length, breedBatchList.value)
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 // 加载品种列表
 const loadVarietyList = async () => {
   try {
@@ -220,59 +227,58 @@ const loadVarietyList = async () => {
     }
   } catch (error) {
     console.error('Failed to load variety list:', error)
-    ElMessage.error('加载品种列表失败')
   }
 }
 
 // 加载地块列表
 const loadLandList = async () => {
   try {
-    const res = await getLandList({ page: 1, pageSize: 1000 })
+    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
     console.log('Land API response:', res)
 
-    if (res.code === 200) {
-      // 注意：getLandList 返回的数据结构是 res.data.list，不是 res.rows
-      const list = res.data?.list || []
-      landList.value = list.map(item => ({
+    if (res.code === 200 && res.rows) {
+      landList.value = res.rows.map(item => ({
         landId: item.landId,
         landName: item.landName
       }))
       console.log('Loaded lands:', landList.value.length, landList.value)
+    } else {
+      console.warn('No land data:', res)
     }
   } catch (error) {
     console.error('Failed to load land list:', error)
-    ElMessage.error('加载地块列表失败')
   }
 }
 
-// 品种选择变化时，根据品种名称查找并记录varietyId和cropType
-const handleVarietyChange = (varietyName) => {
-  console.log('handleVarietyChange called with:', varietyName)
-  console.log('Current varietyList:', varietyList.value)
-  console.log('formData before change:', { ...formData })
+// 批次选择变化时，自动填充品种信息和作物类型
+const handleBatchChange = (batchId) => {
+  console.log('handleBatchChange called with:', batchId)
+  console.log('Current breedBatchList:', breedBatchList.value)
 
-  if (!varietyName) {
+  if (!batchId) {
     formData.varietyId = ''
+    formData.varietyName = ''
     formData.cropType = ''
-    console.log('Cleared variety fields')
+    console.log('Cleared batch related fields')
     return
   }
 
-  const selected = varietyList.value.find(item => item.varietyName === varietyName)
-  console.log('Found variety:', selected)
+  const selectedBatch = breedBatchList.value.find(item => item.batchId === batchId)
+  console.log('Found batch:', selectedBatch)
 
-  if (selected) {
-    formData.varietyId = selected.varietyId
-    formData.cropType = selected.cropType
+  if (selectedBatch) {
+    formData.varietyId = selectedBatch.varietyCode || ''
+    formData.varietyName = selectedBatch.varietyName || ''
+    formData.cropType = selectedBatch.cropType || ''
     console.log('Updated formData:', {
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType
     })
   } else {
-    console.warn('Variety not found:', varietyName)
-    console.warn('Available varieties:', varietyList.value.map(v => v.varietyName))
+    console.warn('Batch not found:', batchId)
     formData.varietyId = ''
+    formData.varietyName = ''
     formData.cropType = ''
   }
 }
@@ -310,13 +316,13 @@ const handleSubmit = async () => {
     await formRef.value.validate()
 
     // 验证必填的ID字段
-    if (!formData.varietyId) {
-      ElMessage.warning('请先选择品种')
-      console.error('varietyId is empty, varietyName:', formData.varietyName)
+    if (!formData.varietyName) {
+      ElMessage.warning('Please select a breeding batch first to populate variety information')
+      console.error('varietyName is empty, breedBatchId:', formData.breedBatchId)
       return
     }
     if (!formData.landId) {
-      ElMessage.warning('请先选择地块')
+      ElMessage.warning('Please select a land first')
       console.error('landId is empty, landName:', formData.landName)
       return
     }
@@ -360,6 +366,7 @@ const handleCancel = () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
+  loadBatchOptions()
   loadVarietyList()
   loadLandList()
 })

@@ -289,18 +289,14 @@ const handleReset = () => {
 
 const getStatusType = (status) => {
   const statusMap = {
-    'not_approved': 'info',
-    'approved': 'success',
     'ongoing': 'warning',
-    'done': ''
+    'done': 'success'
   }
   return statusMap[status] || 'info'
 }
 
 const getStatusLabel = (status) => {
   const statusLabelMap = {
-    'not_approved': 'Not Approved',
-    'approved': 'Approved',
     'ongoing': 'Ongoing',
     'done': 'Done'
   }
