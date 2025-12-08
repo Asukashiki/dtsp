@@ -4,6 +4,7 @@ export default {
   subtitle: 'Aggregate breeding batch data and submit for review',
   list: 'Dataset List',
   add: 'Add Dataset',
+  compile: 'Compile Dataset',
   edit: 'Edit Dataset',
   detail: 'Dataset Details',
   delete: 'Delete Dataset',
@@ -85,6 +86,7 @@ export default {
     compiledBy: 'Auto-filled with current user',
     compiledAt: 'Please select compilation time',
     recordCount: 'Please enter record count',
+    recordCountAutoCalculate: 'Record count auto-calculated (Field Data + Environment Data + Lab Tests + Yield Data)',
     status: 'Please select status',
     remark: 'Please enter remark (optional)',
   },
@@ -137,5 +139,7 @@ export default {
     onlyDraftCanSubmit: 'Only draft datasets can be submitted',
     submitRequirement: 'Note: At least 1 lab test record and 1 yield data record are required to submit',
     cannotEditApproved: 'This dataset has been approved and cannot be modified',
+    statisticsLoaded: 'Statistics data loaded successfully',
+    statisticsFailed: 'Failed to load statistics data',
   },
 }

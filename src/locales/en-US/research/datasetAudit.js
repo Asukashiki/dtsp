@@ -100,6 +100,7 @@ export default {
     varietyName: 'Variety Name',
     recordCount: 'Records',
     trialCount: 'Trials',
+    farmingRecordCount: 'Farming Records',
     fieldDataCount: 'Field Data',
     envDataCount: 'Env Data',
     labTestCount: 'Tests',

@@ -36,24 +36,7 @@
             {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
           </div>
 
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
-            <el-select
-              v-model="formData.batchId"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchId')"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="handleBatchChange"
-            >
-              <el-option
-                v-for="item in batchOptions"
-                :key="item.dataId"
-                :label="item.batchName"
-                :value="item.batchId"
-              />
-            </el-select>
-          </el-form-item>
-
+          <!-- 试验ID -->
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')" prop="trialId">
             <el-select
               v-model="formData.trialId"
@@ -61,14 +44,31 @@
               filterable
               clearable
               style="width: 100%"
+              @change="handleTrialChange"
             >
               <el-option
                 v-for="item in trialOptions"
                 :key="item.trialId"
-                :label="item.trialName"
+                :label="`${item.trialId} - ${item.trialName}`"
                 :value="item.trialId"
               />
             </el-select>
+          </el-form-item>
+
+          <!-- 批次ID（自动带出，只读） -->
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
+            <el-input
+              v-model="formData.batchId"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchIdAuto')"
+              disabled
+              readonly
+            >
+              <template #suffix>
+                <el-tooltip content="批次ID将根据试验ID自动填充" placement="top">
+                  <i class="ri-information-line" style="color: #909399"></i>
+                </el-tooltip>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
 
@@ -79,12 +79,20 @@
             {{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}
           </div>
 
+          <!-- 样本编号（自动生成UUID，只读） -->
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')" prop="sampleId">
             <el-input
               v-model="formData.sampleId"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleId')"
-              clearable
-            />
+              disabled
+              readonly
+            >
+              <template #suffix>
+                <el-tooltip content="样本编号自动生成" placement="top">
+                  <i class="ri-barcode-line" style="color: #909399"></i>
+                </el-tooltip>
+              </template>
+            </el-input>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleStatus')" prop="sampleCondition">
@@ -119,16 +127,35 @@
             />
           </el-form-item>
 
+          <!-- 实验结果标识（自动计算，只读） -->
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')" prop="passFailFlag">
-            <el-select
-              v-model="formData.passFailFlag"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.passFailFlag')"
-              clearable
-              style="width: 100%"
+            <el-input
+              v-model="passFailFlagDisplay"
+              disabled
+              readonly
             >
-              <el-option label="Pass" value="true" />
-              <el-option label="Fail" value="false" />
-            </el-select>
+              <template #prefix>
+                <el-tag
+                  v-if="formData.passFailFlag === 'true' || formData.passFailFlag === true"
+                  type="success"
+                  size="small"
+                >
+                  Pass
+                </el-tag>
+                <el-tag
+                  v-else-if="formData.passFailFlag === 'false' || formData.passFailFlag === false"
+                  type="danger"
+                  size="small"
+                >
+                  Fail
+                </el-tag>
+              </template>
+              <template #suffix>
+                <el-tooltip content="基于实验参数和实验结果值自动判定" placement="top">
+                  <i class="ri-information-line" style="color: #909399"></i>
+                </el-tooltip>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
 
@@ -307,14 +334,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
-import { getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { getTrialBasicList, getTrialBasicInfo } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -325,8 +352,16 @@ const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
 // 下拉选项数据
-const batchOptions = ref([])
 const trialOptions = ref([])
+
+// 生成UUID的函数
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}
 
 const formData = reactive({
   batchId: '',
@@ -353,6 +388,16 @@ const formData = reactive({
 
 // 实验室报告文件列表
 const labReportFileList = ref([])
+
+// Pass/Fail 标识显示文本
+const passFailFlagDisplay = computed(() => {
+  if (formData.passFailFlag === 'true' || formData.passFailFlag === true) {
+    return 'Pass'
+  } else if (formData.passFailFlag === 'false' || formData.passFailFlag === false) {
+    return 'Fail'
+  }
+  return '待判定'
+})
 
 const rules = computed(() => ({
   batchId: [
@@ -396,6 +441,57 @@ const rules = computed(() => ({
   ]
 }))
 
+// 监听实验参数和实验结果值的变化，自动计算Pass/Fail
+watch(
+  () => [formData.labParameter, formData.resultValue],
+  ([labParameter, resultValue]) => {
+    if (labParameter && resultValue) {
+      const paramValue = parseFloat(labParameter)
+      const testValue = parseFloat(resultValue)
+
+      if (!isNaN(paramValue) && !isNaN(testValue)) {
+        // 如果实验结果值高于实验参数，显示Pass；否则显示Fail
+        formData.passFailFlag = testValue >= paramValue ? 'true' : 'false'
+      }
+    }
+  }
+)
+
+// 加载试验选项
+const loadTrialOptions = async () => {
+  try {
+    const res = await getTrialBasicList({ pageNum: 1, pageSize: 1000 })
+    if (res && res.rows) {
+      trialOptions.value = res.rows
+    }
+  } catch (error) {
+    console.error('Failed to load trial options:', error)
+  }
+}
+
+// 处理试验ID变化 - 自动带出批次ID
+const handleTrialChange = async (trialId) => {
+  if (!trialId) {
+    formData.batchId = ''
+    return
+  }
+
+  try {
+    console.log('获取试验信息，trialId:', trialId)
+    const res = await getTrialBasicInfo(trialId)
+    console.log('试验信息API响应:', res)
+
+    if (res && res.data) {
+      console.log('试验详细数据:', res.data)
+
+      // 自动填充批次ID
+      formData.batchId = res.data.batchId || ''
+    }
+  } catch (error) {
+    console.error('Failed to get trial info:', error)
+  }
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   loading.value = true
@@ -403,10 +499,6 @@ const loadDetail = async () => {
     const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
-      // 如果有batchId，加载对应的试验选项
-      if (res.data.batchId) {
-        await loadTrialOptions(res.data.batchId)
-      }
       // 处理实验室报告文件
       if (res.data.labReportFile) {
         const fileId = res.data.labReportFile
@@ -536,40 +628,6 @@ const handleSubmit = () => {
   })
 }
 
-// 加载育种批次选项
-const loadBatchOptions = async () => {
-  try {
-    const res = await getBatchOptions()
-    if (res.code === 200 && res.data) {
-      batchOptions.value = res.data
-    }
-  } catch (error) {
-    console.error('Failed to load batch options:', error)
-  }
-}
-
-// 加载试验选项
-const loadTrialOptions = async (batchId) => {
-  if (!batchId) {
-    trialOptions.value = []
-    return
-  }
-  try {
-    const res = await getTrialOptions(batchId)
-    if (res.code === 200 && res.data) {
-      trialOptions.value = res.data
-    }
-  } catch (error) {
-    console.error('Failed to load trial options:', error)
-  }
-}
-
-// 批次变化时加载试验选项
-const handleBatchChange = (batchId) => {
-  formData.trialId = ''  // 清空试验ID
-  loadTrialOptions(batchId)
-}
-
 // 返回
 const goBack = () => {
   router.back()
@@ -577,9 +635,15 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
-  loadBatchOptions()  // 加载批次选项
+  // 加载试验选项
+  loadTrialOptions()
+
   if (isEdit.value) {
+    // 编辑模式：加载详情
     loadDetail()
+  } else {
+    // 新增模式：生成UUID作为样本编号
+    formData.sampleId = generateUUID()
   }
 })
 </script>

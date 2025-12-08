@@ -4,6 +4,7 @@ export default {
   subtitle: '汇总育种批次数据,提交审核',
   list: '数据集列表',
   add: '新增数据集',
+  compile: '编制数据集',
   edit: '编辑数据集',
   detail: '数据集详情',
   delete: '删除数据集',
@@ -85,6 +86,7 @@ export default {
     compiledBy: '自动获取当前用户',
     compiledAt: '请选择编制时间',
     recordCount: '请输入记录数量',
+    recordCountAutoCalculate: '记录数量自动计算（田间数据 + 环境数据 + 实验室测试 + 产量数据）',
     status: '请选择状态',
     remark: '请输入备注(选填)',
   },
@@ -137,5 +139,7 @@ export default {
     onlyDraftCanSubmit: '只有草稿状态的数据集可以提交',
     submitRequirement: '提示: 至少需要1条实验室检测记录和1条产量数据记录才能提交审核',
     cannotEditApproved: '该数据集已审核通过,不可修改',
+    statisticsLoaded: '统计数据已自动加载',
+    statisticsFailed: '获取统计数据失败',
   },
 }
