@@ -306,7 +306,7 @@ const formData = reactive({
   id: '',
   trialId: '',
   batchId: '',
-  versionNo: '1.0',
+  versionNo: null, // 版本号由后端自动管理，不需要前端提供
   compiledBy: '',
   compiledByName: '',
   compiledAt: '',
@@ -429,8 +429,6 @@ const handleTrialChange = async (trialId) => {
       if (res.data.season) {
         console.log('试验季节:', res.data.season)
       }
-
-      ElMessage.success('Relevant information has been automatically filled in')
     }
   } catch (error) {
     console.error('Failed to get trial info:', error)
@@ -551,7 +549,6 @@ const loadStatisticsData = async (trialId) => {
       recordCount: formData.recordCount
     })
 
-    ElMessage.success(t('research.datasetCompilation.message.statisticsLoaded'))
   } catch (error) {
     console.error('统计数据加载失败:', error)
     ElMessage.warning(t('research.datasetCompilation.message.statisticsFailed'))
@@ -648,10 +645,11 @@ const handleSubmit = () => {
     try {
       const apiFunc = isEdit.value ? updateDataset : addDataset
       // 构建提交数据，确保所有字段都正确映射
+      // 注意：versionNo 由后端自动管理，不需要前端提交
       const submitData = {
         trialId: formData.trialId,
         batchId: formData.batchId,
-        versionNo: formData.versionNo,
+        // versionNo 不提交，由后端自动生成
         compiledBy: formData.compiledBy,
         compiledByName: formData.compiledByName,
         compiledAt: formData.compiledAt,
