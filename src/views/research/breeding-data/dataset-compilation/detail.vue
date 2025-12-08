@@ -53,10 +53,10 @@
               <span class="label">{{ $t('research.datasetCompilation.form.batchId') }}:</span>
               <span class="value">{{ detailData.batchId || '-' }}</span>
             </div>
-            <div class="detail-item">
+            <!-- <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.versionNo') }}:</span>
               <span class="value">{{ detailData.versionNo || '1.0' }}</span>
-            </div>
+            </div> -->
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.recordCount') }}:</span>
               <span class="value">{{ detailData.recordCount || 0 }}</span>
