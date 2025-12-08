@@ -4,7 +4,7 @@ export default {
   subtitle: 'Aggregate breeding batch data and submit for review',
   list: 'Dataset List',
   add: 'Add Dataset',
-  compile: 'Compile Dataset',
+  compile: 'Compile',
   edit: 'Edit Dataset',
   detail: 'Dataset Details',
   delete: 'Delete Dataset',

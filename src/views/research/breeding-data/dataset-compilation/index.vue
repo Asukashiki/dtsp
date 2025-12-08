@@ -24,7 +24,7 @@
             </div>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-file-edit-line"></i>
-              {{ $t('research.datasetCompilation.compile') }}
+              {{ $t('common.add') }}
             </el-button>
           </div>
 

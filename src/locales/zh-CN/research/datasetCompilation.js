@@ -4,7 +4,7 @@ export default {
   subtitle: '汇总育种批次数据,提交审核',
   list: '数据集列表',
   add: '新增数据集',
-  compile: '编制数据集',
+  compile: '编制',
   edit: '编辑数据集',
   detail: '数据集详情',
   delete: '删除数据集',

@@ -272,7 +272,7 @@
           </el-button>
           <el-button v-if="isEditable" type="primary" @click="handleSubmit">
             <i class="ri-save-line"></i>
-            {{ isEdit ? $t('common.save') : $t('common.add') }}
+            {{ isEdit ? $t('common.save') : $t('research.datasetCompilation.compile') }}
           </el-button>
         </div>
       </el-form>

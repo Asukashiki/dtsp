@@ -396,7 +396,7 @@ const passFailFlagDisplay = computed(() => {
   } else if (formData.passFailFlag === 'false' || formData.passFailFlag === false) {
     return 'Fail'
   }
-  return '待判定'
+  return ''
 })
 
 const rules = computed(() => ({
