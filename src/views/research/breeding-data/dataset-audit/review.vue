@@ -168,6 +168,13 @@
               </el-tag>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.lockedFlag') }}:</span>
+              <el-tag :type="detailData.lockedFlag === 1 ? 'danger' : 'success'">
+                <i :class="detailData.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                {{ detailData.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+              </el-tag>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.auditTime') }}:</span>
               <span class="value">{{ detailData.auditTime || '-' }}</span>
             </div>
@@ -207,6 +214,34 @@
               />
             </el-form-item>
 
+            <!-- 锁定数据集开关 -->
+            <el-form-item :label="$t('research.datasetAudit.form.lockDataset')">
+              <div class="lock-dataset-control">
+                <el-switch
+                  v-model="auditForm.lockedFlag"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-color="#DA121A"
+                  inactive-color="#009A44"
+                  size="large"
+                >
+                  <template #active-action>
+                    <i class="ri-lock-line"></i>
+                  </template>
+                  <template #inactive-action>
+                    <i class="ri-lock-unlock-line"></i>
+                  </template>
+                </el-switch>
+                <span class="lock-label">
+                  {{ auditForm.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+                </span>
+              </div>
+              <div class="lock-tip">
+                <i class="ri-information-line"></i>
+                {{ $t('research.datasetAudit.form.lockDatasetTip') }}
+              </div>
+            </el-form-item>
+
             <div class="audit-actions">
               <el-button
                 type="success"
@@ -216,6 +251,15 @@
               >
                 <i class="ri-check-line"></i>
                 {{ $t('research.datasetAudit.actions.approve') }}
+              </el-button>
+              <el-button
+                type="warning"
+                size="large"
+                :loading="submitting"
+                @click="handleNeedsRevision"
+              >
+                <i class="ri-edit-line"></i>
+                {{ $t('research.datasetAudit.actions.needsRevision') }}
               </el-button>
               <el-button
                 type="danger"
@@ -254,7 +298,8 @@ const auditFormRef = ref(null)
 const auditForm = reactive({
   datasetId: '',
   auditStatus: '',
-  auditOpinion: ''
+  auditOpinion: '',
+  lockedFlag: 0  // 默认不锁定
 })
 
 // 审核表单验证规则
@@ -290,7 +335,8 @@ const getAuditStatusType = (status) => {
   const typeMap = {
     pending: 'warning',
     approved: 'success',
-    rejected: 'danger'
+    rejected: 'danger',
+    needs_revision: 'warning'
   }
   return typeMap[status] || ''
 }
@@ -314,7 +360,8 @@ const loadDetail = async () => {
             auditStatus: auditData.auditStatus || auditData.audit_status || 'pending',
             auditTime: auditData.auditTime || auditData.audit_time || '-',
             auditorName: auditData.auditorName || auditData.auditor_name || '-',
-            auditOpinion: auditData.auditOpinion || auditData.audit_opinion || ''
+            auditOpinion: auditData.auditOpinion || auditData.audit_opinion || '',
+            lockedFlag: auditData.lockedFlag !== null && auditData.lockedFlag !== undefined ? auditData.lockedFlag : 0
           })
         }
       } catch (error) {
@@ -399,6 +446,45 @@ const handleReject = async () => {
   } catch (error) {
     if (error !== 'cancel') {
       console.error('Failed to reject:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+// 需要修订
+const handleNeedsRevision = async () => {
+  // 标记需要修订时必须填写修订意见
+  if (!auditForm.auditOpinion) {
+    ElMessage.warning(t('research.datasetAudit.message.needsRevisionOpinionRequired'))
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      t('research.datasetAudit.needsRevisionConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    submitting.value = true
+    auditForm.auditStatus = 'needs_revision'
+
+    const res = await performAudit(auditForm)
+    if (res.code === 200) {
+      ElMessage.success(t('research.datasetAudit.message.needsRevisionSuccess'))
+      goBack()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to mark as needs revision:', error)
       ElMessage.error(t('common.operationFailed'))
     }
   } finally {
@@ -591,6 +677,42 @@ onMounted(() => {
 
 .audit-form {
   margin-top: 20px;
+}
+
+/* 锁定数据集控件 */
+.lock-dataset-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.lock-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.lock-tip {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border-left: 3px solid #009A44;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lock-tip i {
+  font-size: 16px;
+  color: #009A44;
+  flex-shrink: 0;
 }
 
 .audit-actions {

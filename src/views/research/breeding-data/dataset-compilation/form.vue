@@ -72,14 +72,14 @@
           </el-form-item>
 
           <!-- 版本号 -->
-          <el-form-item :label="$t('research.datasetCompilation.form.versionNo')" prop="versionNo">
+          <!-- <el-form-item :label="$t('research.datasetCompilation.form.versionNo')" prop="versionNo">
             <el-input
               v-model="formData.versionNo"
               :placeholder="$t('research.datasetCompilation.placeholder.versionNo')"
               :disabled="!isEditable"
               clearable
             />
-          </el-form-item>
+          </el-form-item> -->
 
           <!-- 编制人（自动获取当前用户，只读） -->
           <el-form-item :label="$t('research.datasetCompilation.form.compiledBy')" prop="compiledBy">
@@ -128,10 +128,10 @@
               disabled
               style="width: 100%"
             >
-              <el-option label="草稿" value="Draft" />
-              <el-option label="已提交" value="Submitted" />
-              <el-option label="已批准" value="Approved" />
-              <el-option label="已驳回" value="Rejected" />
+              <el-option label="Draft" value="Draft" />
+              <el-option label="Submitted" value="Submitted" />
+              <el-option label="Approved" value="Approved" />
+              <el-option label="Rejected" value="Rejected" />
             </el-select>
           </el-form-item>
 
@@ -401,11 +401,11 @@ const handleTrialChange = async (trialId) => {
         console.log('试验季节:', res.data.season)
       }
 
-      ElMessage.success('已自动填充相关信息')
+      ElMessage.success('Relevant information has been automatically filled in')
     }
   } catch (error) {
     console.error('Failed to get trial info:', error)
-    ElMessage.warning('获取试验信息失败，请手动填写')
+    ElMessage.warning('Failed to obtain experimental information, please manually fill in')
   }
 }
 
@@ -480,9 +480,18 @@ const initCurrentUser = async () => {
 
   // 设置默认编制时间为当前时间
   if (!isEdit.value) {
-    const now = new Date()
+    const now = new Date();
+    
+    // 获取本地时间的各个部分
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
     // 格式化为 YYYY-MM-DD HH:mm:ss
-    formData.compiledAt = now.toISOString().slice(0, 19).replace('T', ' ')
+    formData.compiledAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 }
 

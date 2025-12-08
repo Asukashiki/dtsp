@@ -7,6 +7,7 @@ export default {
   auditSuccess: '审核成功',
   approveConfirm: '确定审核通过该数据集吗?',
   rejectConfirm: '确定驳回该数据集吗?请填写驳回原因',
+  needsRevisionConfirm: '确定将该数据集标记为需要修订吗?请填写修订意见',
 
   // 搜索筛选
   searchPlaceholder: '搜索数据集编号、批次名称、品种名称',
@@ -20,6 +21,7 @@ export default {
     pending: '待审核',
     approved: '审核通过',
     rejected: '审核驳回',
+    needs_revision: '需要修订',
   },
 
   // 数据集状态(复用编制模块的状态)
@@ -64,6 +66,11 @@ export default {
     submitOrg: '提交机构',
     auditBy: '审核人',
     creationInfo: '创建信息',
+    lockedFlag: '锁定状态',
+    locked: '已锁定',
+    unlocked: '未锁定',
+    lockDataset: '锁定数据集',
+    lockDatasetTip: '审核通过后锁定数据集，锁定后数据集将变为只读状态',
   },
 
   // 表单占位符
@@ -81,7 +88,10 @@ export default {
 
   // 列表列
   columns: {
+    auditId: '审核ID',
+    datasetId: '数据集ID',
     datasetCode: '数据集编号',
+    reviewerId: '审核人ID',
     trialId: '试验ID',
     batchId: '批次ID',
     batchName: '批次名称',
@@ -100,6 +110,8 @@ export default {
     submitterName: '提交人',
     auditTime: '审核时间',
     auditorName: '审核人',
+    auditOpinion: '审核意见',
+    lockedFlag: '锁定状态',
     createdTime: '创建时间',
     updatedTime: '更新时间',
     actions: '操作',
@@ -110,6 +122,7 @@ export default {
     view: '查看',
     approve: '审核通过',
     reject: '驳回',
+    needsRevision: '需要修订',
     audit: '审核',
     viewHistory: '查看历史',
   },
@@ -118,9 +131,13 @@ export default {
   message: {
     approveSuccess: '审核通过成功',
     rejectSuccess: '审核驳回成功',
+    needsRevisionSuccess: '已标记为需要修订',
     datasetCodeGenerated: '数据集编号已生成',
     onlySubmittedCanAudit: '只能审核已提交或审核中的数据集',
     rejectOpinionRequired: '驳回时必须填写驳回原因',
+    needsRevisionOpinionRequired: '标记需要修订时必须填写修订意见',
     auditOpinionLabel: '审核意见',
+    datasetLocked: '数据集已锁定，不可修改',
+    datasetUnlocked: '数据集未锁定，可以修改',
   },
 }
