@@ -68,7 +68,7 @@
             <el-table-column
               prop="breedSeedProduceBatchId"
               :label="$t('research.breeding.seed.production.columns.breedSeedProduceBatchId')"
-              width="180"
+              width="200"
               show-overflow-tooltip
             />
             <el-table-column
@@ -86,7 +86,7 @@
             <el-table-column
               prop="time"
               :label="$t('research.breeding.seed.production.columns.time')"
-              min-width="120"
+              min-width="150"
             />
             <el-table-column
               prop="landName"
@@ -96,7 +96,7 @@
             <el-table-column
               prop="inputSeedQuantity"
               :label="$t('research.breeding.seed.production.columns.inputSeedQuantity')"
-              width="130"
+              width="180"
               align="right"
             >
               <template #default="{ row }">
@@ -106,7 +106,7 @@
             <el-table-column
               prop="produceSeedQuantrity"
               :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')"
-              width="130"
+              width="190"
               align="right"
             >
               <template #default="{ row }">
@@ -116,12 +116,12 @@
             <el-table-column
               prop="operatorName"
               :label="$t('research.breeding.seed.production.columns.operatorName')"
-              width="100"
+              width="110"
             />
             <el-table-column
               prop="produceStatus"
               :label="$t('research.breeding.seed.production.columns.produceStatus')"
-              width="100"
+              width="180"
               align="center"
             >
               <template #default="{ row }">

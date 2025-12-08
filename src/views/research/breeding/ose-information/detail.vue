@@ -244,8 +244,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail } from '@/api/breeding'
-import TrackingList from './components/TrackingList.vue'
-import TestList from './components/TestList.vue'
+import TrackingList from '../components/TrackingList.vue'
+import TestList from '../components/TestList.vue'
 
 const router = useRouter()
 const route = useRoute()
