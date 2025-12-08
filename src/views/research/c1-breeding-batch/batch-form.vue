@@ -44,7 +44,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
-              <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" class="full-width">
+              <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" class="full-width" disabled>
                 <el-option label="Wheat" value="Wheat" />
                 <el-option label="Maize" value="Maize" />
                 <el-option label="Teff" value="Teff" />
@@ -54,7 +54,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable />
+              <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable  disabled/>
             </el-form-item>
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">

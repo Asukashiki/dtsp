@@ -12,6 +12,7 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
+    varietyName: '品种名称',
 
     // 搜索和筛选
     searchPlaceholder: '搜索申请单位、品种名称',
