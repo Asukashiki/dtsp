@@ -207,7 +207,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import BreedingTrackingForm from './components/BreedingTrackingForm.vue'
+import BreedingTrackingForm from '../components/BreedingTrackingForm.vue'
 import { getBreedingTrackingList, removeBreedingTracking } from '@/api/enterprise'
 import { mockBatchList, mockStageNames } from '@/mock/breedingData'
 

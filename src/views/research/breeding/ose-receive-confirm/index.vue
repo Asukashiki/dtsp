@@ -193,11 +193,10 @@
         @success="handleConfirmSuccess"
       />
 
-      <!-- 详情组件 -->
+      <!-- 详情对话框 -->
       <ReceiveDetail
-        v-if="showDetail"
+        v-model="showDetail"
         :data="currentDetailData"
-        @back="showDetail = false"
       />
     </div>
   </div>

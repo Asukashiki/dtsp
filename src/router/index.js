@@ -477,25 +477,25 @@ const routes = [
       {
         path: 'breeding',
         name: 'BreedingModule',
-        component: () => import('../views/research/breeding/index.vue'),
+        component: () => import('../views/research/breeding/ose-information/index.vue'),
         meta: { title: '繁殖批次信息采集', requiresAuth: true }
       },
       {
         path: 'breeding/batch/add',
         name: 'PropagationBatchAdd',
-        component: () => import('../views/research/breeding/batch-form.vue'),
+        component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
         meta: { title: '新增繁殖批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/batch/edit/:id',
         name: 'PropagationBatchEdit',
-        component: () => import('../views/research/breeding/batch-form.vue'),
+        component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
         meta: { title: '编辑繁殖批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/detail/:id',
         name: 'BreedingDetail',
-        component: () => import('../views/research/breeding/detail.vue'),
+        component: () => import('../views/research/breeding/ose-information/detail.vue'),
         meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
       
