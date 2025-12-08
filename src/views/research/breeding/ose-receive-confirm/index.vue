@@ -93,14 +93,14 @@
             <div class="table-wrapper pc-only">
               <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
                 <el-table-column prop="oseName" :label="$t('research.breeding.seed.receiveConfirm.columns.oseName')" min-width="150" />
-                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.totalDistributeQuantity')" width="180">
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.totalDistributeQuantity')" width="280">
                   <template #default="{ row }">
                     {{ row.distributeDetail?.totalDistributeQuantity || 0 }} kg
                   </template>
                 </el-table-column>
                 <el-table-column prop="confirmTime" :label="$t('research.breeding.seed.receiveConfirm.columns.confirmTime')" width="180" />
-                <el-table-column prop="confirmPeople" :label="$t('research.breeding.seed.receiveConfirm.columns.confirmPeople')" width="120" />
-                <el-table-column prop="receiveStatus" :label="$t('research.breeding.seed.receiveConfirm.columns.receiveStatus')" width="120">
+                <el-table-column prop="confirmPeople" :label="$t('research.breeding.seed.receiveConfirm.columns.confirmPeople')" width="240" />
+                <el-table-column prop="receiveStatus" :label="$t('research.breeding.seed.receiveConfirm.columns.receiveStatus')" width="200">
                   <template #default="{ row }">
                     <el-tag :type="row.receiveStatus === 'CONFIRMED' ? 'success' : 'warning'">
                       {{ $t(`research.breeding.seed.receiveConfirm.status.${row.receiveStatus}`) }}
@@ -272,8 +272,7 @@ const loadData = async () => {
     const params = {
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      receiveStatus: filterStatus.value || undefined,
-      oseId: targetCode
+      receiveStatus: filterStatus.value || undefined
     }
     const res = await getOseReceiveConfirmList(params)
     if (res.code === 200) {
