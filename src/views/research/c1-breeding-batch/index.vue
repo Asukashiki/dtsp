@@ -89,11 +89,11 @@
           <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
           <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')" min-width="140" show-overflow-tooltip />
           <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center" />
-          <el-table-column prop="breedingLevel" :label="$t('research.c1BreedingBatch.columns.breedingLevel')" min-width="140" align="center">
+          <!-- <el-table-column prop="breedingLevel" :label="$t('research.c1BreedingBatch.columns.breedingLevel')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag size="small">{{ getBreedingLevelName(row.breedingLevel) }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.columns.startDate')" min-width="120" align="center" />
           <el-table-column prop="batchStatus" :label="$t('research.c1BreedingBatch.columns.status')" min-width="100" align="center">
             <template #default="{ row }">
