@@ -39,10 +39,11 @@ export default {
   releaseDetail: 'Release Detail',
 
   // Release detail
-  releaseDetailId: 'Detail ID',
+  releaseDetailId: 'ID',
   cropType: 'Crop Type',
   variety: 'Variety',
   inputId: 'Input ID',
+  required: 'Required Quantity',
   quantity: 'Quantity',
   unitPrice: 'Unit Price',
   releaseTime: 'Release Time',
@@ -77,6 +78,7 @@ export default {
   editReleaseFailed: 'Failed to edit release',
   deleteReleaseSuccess: 'Release deleted successfully',
   deleteReleaseFailed: 'Failed to delete release',
+  queryInputListFailed: 'Failed to query input list',
 
   // Menu items
   inputCirculation: 'Input Circulation Management',

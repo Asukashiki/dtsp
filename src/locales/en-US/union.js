@@ -159,7 +159,8 @@ export default {
     invalidFormat: 'Invalid format',
     dateRangeError: 'End date must be later than start date',
     rejectedTitle: 'Application Rejected',
-    rejectReason: 'Reject Reason'
+    rejectReason: 'Reject Reason',
+    getUnionInfoFailed: 'Failed to get union info',
   },
 
   // Status Tips
