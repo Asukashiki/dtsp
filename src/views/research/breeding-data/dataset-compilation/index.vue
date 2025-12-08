@@ -23,7 +23,7 @@
               <span>{{ $t('research.datasetCompilation.list') }}</span>
             </div>
             <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
+              <i class="ri-file-edit-line"></i>
               {{ $t('common.add') }}
             </el-button>
           </div>

@@ -109,15 +109,22 @@
             />
           </el-form-item>
 
-          <!-- 记录数量（手动输入） -->
+          <!-- 记录数量（自动计算） -->
           <el-form-item :label="$t('research.datasetCompilation.form.recordCount')" prop="recordCount">
             <el-input-number
-              v-model="formData.recordCount"
+              v-model="recordCountComputed"
               :min="0"
               :placeholder="$t('research.datasetCompilation.placeholder.recordCount')"
-              :disabled="!isEditable"
+              disabled
+              readonly
               style="width: 100%"
             />
+            <template #extra>
+              <div style="font-size: 12px; color: #909399; margin-top: 4px;">
+                <i class="ri-information-line"></i>
+                {{ $t('research.datasetCompilation.placeholder.recordCountAutoCalculate') }}
+              </div>
+            </template>
           </el-form-item>
 
           <!-- 状态（新增时默认草稿，不可编辑） -->
@@ -265,7 +272,7 @@
           </el-button>
           <el-button v-if="isEditable" type="primary" @click="handleSubmit">
             <i class="ri-save-line"></i>
-            {{ isEdit ? $t('common.save') : $t('common.add') }}
+            {{ isEdit ? $t('common.save') : $t('research.datasetCompilation.compile') }}
           </el-button>
         </div>
       </el-form>
@@ -279,7 +286,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getDatasetById, addDataset, updateDataset } from '@/api/dataset'
-import { getTrialBasicList, getTrialBasicInfo } from '@/api/breedingData'
+import { getTrialBasicList, getTrialBasicInfo, getAgronomicTraitList } from '@/api/breedingData'
+import { getLabTestList } from '@/api/labTest'
+import { getYieldDataList } from '@/api/yieldData'
+import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 import { useUserStore } from '@/store'
 
 const route = useRoute()
@@ -296,7 +306,7 @@ const formData = reactive({
   id: '',
   trialId: '',
   batchId: '',
-  versionNo: '1.0',
+  versionNo: null, // 版本号由后端自动管理，不需要前端提供
   compiledBy: '',
   compiledByName: '',
   compiledAt: '',
@@ -317,6 +327,22 @@ const formData = reactive({
 const isEditable = computed(() => {
   if (!isEdit.value) return true
   return formData.datasetStatus === 'draft' || formData.datasetStatus === 'rejected'
+})
+
+// 自动计算记录数量：田间数据 + 环境数据 + 实验室测试 + 产量数据
+const recordCountComputed = computed({
+  get() {
+    const total = (formData.fieldDataCount || 0) +
+                  (formData.envDataCount || 0) +
+                  (formData.labTestCount || 0) +
+                  (formData.yieldDataCount || 0)
+    // 同步到 formData
+    formData.recordCount = total
+    return total
+  },
+  set(value) {
+    // 只读，不允许手动设置
+  }
 })
 
 const rules = computed(() => ({
@@ -390,6 +416,9 @@ const handleTrialChange = async (trialId) => {
         console.warn('试验信息中没有批次ID')
       }
 
+      // 根据试验ID统计各数据表的记录数
+      await loadStatisticsData(trialId)
+
       // 可选：填充其他关联信息
       if (res.data.locationId) {
         console.log('试验地点:', res.data.locationId)
@@ -400,8 +429,6 @@ const handleTrialChange = async (trialId) => {
       if (res.data.season) {
         console.log('试验季节:', res.data.season)
       }
-
-      ElMessage.success('Relevant information has been automatically filled in')
     }
   } catch (error) {
     console.error('Failed to get trial info:', error)
@@ -437,6 +464,100 @@ const loadBatchInfo = async (batchId) => {
   } catch (error) {
     console.error('获取批次信息失败:', error)
     // 不显示错误提示，因为这是可选的自动填充
+  }
+}
+
+// 根据试验ID加载统计数据
+const loadStatisticsData = async (trialId) => {
+  if (!trialId) {
+    console.warn('试验ID为空，无法加载统计数据')
+    return
+  }
+
+  try {
+    console.log('开始统计数据，trialId:', trialId)
+
+    // 并行调用4个列表接口，根据试验ID统计
+    const [fieldRes, envRes, labRes, yieldRes] = await Promise.all([
+      // 1. 田间数据（农艺性状数据）
+      getAgronomicTraitList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取田间数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 2. 环境数据
+      getEnvironmentNewDataPage({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取环境数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 3. 实验室测试数据
+      getLabTestList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取实验室测试数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 4. 产量数据
+      getYieldDataList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取产量数据失败:', err)
+        return { total: 0 }
+      })
+    ])
+
+    console.log('API返回结果:', {
+      fieldRes,
+      envRes,
+      labRes,
+      yieldRes
+    })
+
+    // 提取总数（兼容不同的返回格式）
+    const fieldDataCount = fieldRes?.total || fieldRes?.data?.total || 0
+    const envDataCount = envRes?.total || envRes?.data?.total || 0
+    const labTestCount = labRes?.total || labRes?.data?.total || 0
+    const yieldDataCount = yieldRes?.total || yieldRes?.data?.total || 0
+
+    // 更新统计字段
+    formData.fieldDataCount = fieldDataCount
+    formData.envDataCount = envDataCount
+    formData.labTestCount = labTestCount
+    formData.yieldDataCount = yieldDataCount
+    formData.trialCount = 1 // 当前选择了一个试验
+
+    console.log('统计数据已更新:', {
+      trialCount: formData.trialCount,
+      fieldDataCount: formData.fieldDataCount,
+      envDataCount: formData.envDataCount,
+      labTestCount: formData.labTestCount,
+      yieldDataCount: formData.yieldDataCount,
+      recordCount: formData.recordCount
+    })
+
+  } catch (error) {
+    console.error('统计数据加载失败:', error)
+    ElMessage.warning(t('research.datasetCompilation.message.statisticsFailed'))
+    // 重置统计字段为0
+    formData.trialCount = 0
+    formData.fieldDataCount = 0
+    formData.envDataCount = 0
+    formData.labTestCount = 0
+    formData.yieldDataCount = 0
   }
 }
 
@@ -524,10 +645,11 @@ const handleSubmit = () => {
     try {
       const apiFunc = isEdit.value ? updateDataset : addDataset
       // 构建提交数据，确保所有字段都正确映射
+      // 注意：versionNo 由后端自动管理，不需要前端提交
       const submitData = {
         trialId: formData.trialId,
         batchId: formData.batchId,
-        versionNo: formData.versionNo,
+        // versionNo 不提交，由后端自动生成
         compiledBy: formData.compiledBy,
         compiledByName: formData.compiledByName,
         compiledAt: formData.compiledAt,

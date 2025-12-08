@@ -100,6 +100,7 @@ export default {
     varietyName: '品种名称',
     recordCount: '记录数量',
     trialCount: '试验数',
+    farmingRecordCount: '农事记录数',
     fieldDataCount: '田间数据数',
     envDataCount: '环境数据数',
     labTestCount: '检测数',

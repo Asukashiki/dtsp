@@ -78,6 +78,16 @@
 
             <div class="stat-card">
               <div class="stat-icon">
+                <i class="ri-seedling-line"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">{{ $t('research.datasetAudit.columns.farmingRecordCount') }}</div>
+                <div class="stat-value">{{ detailData.farmingRecordCount || 0 }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
                 <i class="ri-plant-line"></i>
               </div>
               <div class="stat-content">
@@ -106,7 +116,7 @@
               </div>
             </div>
 
-            <div class="stat-card">
+            <!-- <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-bar-chart-box-line"></i>
               </div>
@@ -114,7 +124,7 @@
                 <div class="stat-label">{{ $t('research.datasetAudit.columns.yieldDataCount') }}</div>
                 <div class="stat-value">{{ detailData.yieldDataCount || 0 }}</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -285,6 +295,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDatasetById } from '@/api/dataset'
 import { getAuditByDatasetId, performAudit } from '@/api/datasetAudit'
+import { getAgronomicTraitList, getFarmingRecordList } from '@/api/breedingData'
+import { getLabTestList } from '@/api/labTest'
+import { getYieldDataList } from '@/api/yieldData'
+import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 
 const route = useRoute()
 const router = useRouter()
@@ -341,6 +355,108 @@ const getAuditStatusType = (status) => {
   return typeMap[status] || ''
 }
 
+// 根据试验ID加载统计数据
+const loadStatisticsData = async (trialId) => {
+  if (!trialId) {
+    console.warn('试验ID为空，无法加载统计数据')
+    return null
+  }
+
+  try {
+    console.log('开始统计数据，trialId:', trialId)
+
+    // 并行调用5个列表接口，根据试验ID统计
+    const [farmingRes, fieldRes, envRes, labRes, yieldRes] = await Promise.all([
+      // 1. 农事记录数据
+      getFarmingRecordList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取农事记录数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 2. 田间数据（农艺性状数据）
+      getAgronomicTraitList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取田间数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 3. 环境数据
+      getEnvironmentNewDataPage({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取环境数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 4. 实验室测试数据
+      getLabTestList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取实验室测试数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 5. 产量数据
+      getYieldDataList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取产量数据失败:', err)
+        return { total: 0 }
+      })
+    ])
+
+    console.log('统计API返回结果:', {
+      farmingRes,
+      fieldRes,
+      envRes,
+      labRes,
+      yieldRes
+    })
+
+    // 提取总数（兼容不同的返回格式）
+    const farmingRecordCount = farmingRes?.total || farmingRes?.data?.total || 0
+    const fieldDataCount = fieldRes?.total || fieldRes?.data?.total || 0
+    const envDataCount = envRes?.total || envRes?.data?.total || 0
+    const labTestCount = labRes?.total || labRes?.data?.total || 0
+    const yieldDataCount = yieldRes?.total || yieldRes?.data?.total || 0
+
+    const statistics = {
+      trialCount: 1, // 当前选择了一个试验
+      farmingRecordCount,
+      fieldDataCount,
+      envDataCount,
+      labTestCount,
+      yieldDataCount
+    }
+
+    console.log('统计数据结果:', statistics)
+    return statistics
+  } catch (error) {
+    console.error('统计数据加载失败:', error)
+    return {
+      trialCount: 0,
+      farmingRecordCount: 0,
+      fieldDataCount: 0,
+      envDataCount: 0,
+      labTestCount: 0,
+      yieldDataCount: 0
+    }
+  }
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   loading.value = true
@@ -350,6 +466,26 @@ const loadDetail = async () => {
     if (datasetRes.code === 200 && datasetRes.data) {
       detailData.value = datasetRes.data
       auditForm.datasetId = datasetRes.data.id
+
+      // 根据试验ID加载统计数据
+      if (datasetRes.data.trialId) {
+        console.log('检测到试验ID，开始加载统计数据:', datasetRes.data.trialId)
+        const statisticsResult = await loadStatisticsData(datasetRes.data.trialId)
+        if (statisticsResult) {
+          // 将统计结果合并到详情数据中
+          Object.assign(detailData.value, {
+            trialCount: statisticsResult.trialCount,
+            farmingRecordCount: statisticsResult.farmingRecordCount,
+            fieldDataCount: statisticsResult.fieldDataCount,
+            envDataCount: statisticsResult.envDataCount,
+            labTestCount: statisticsResult.labTestCount,
+            yieldDataCount: statisticsResult.yieldDataCount
+          })
+          console.log('统计数据已更新到detailData')
+        }
+      } else {
+        console.warn('数据集中没有试验ID，无法统计数据')
+      }
 
       // 尝试加载审核信息
       try {
