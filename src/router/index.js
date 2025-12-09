@@ -477,25 +477,25 @@ const routes = [
       {
         path: 'breeding',
         name: 'BreedingModule',
-        component: () => import('../views/research/breeding/index.vue'),
+        component: () => import('../views/research/breeding/ose-information/index.vue'),
         meta: { title: '繁殖批次信息采集', requiresAuth: true }
       },
       {
         path: 'breeding/batch/add',
         name: 'PropagationBatchAdd',
-        component: () => import('../views/research/breeding/batch-form.vue'),
+        component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
         meta: { title: '新增繁殖批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/batch/edit/:id',
         name: 'PropagationBatchEdit',
-        component: () => import('../views/research/breeding/batch-form.vue'),
+        component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
         meta: { title: '编辑繁殖批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/detail/:id',
         name: 'BreedingDetail',
-        component: () => import('../views/research/breeding/detail.vue'),
+        component: () => import('../views/research/breeding/ose-information/detail.vue'),
         meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
       
@@ -531,6 +531,72 @@ const routes = [
         name: 'BreedingCertificationDetail',
         component: () => import('../views/seed/breeding-certification/detail.vue'),
         meta: { title: '认证申请详情', hideInMenu: true, requiresAuth: true }
+      },
+      
+      // C1种子繁殖申请
+      {
+        path: 'c1-propagation',
+        name: 'C1PropagationList',
+        component: () => import('../views/research/c1-propagation/index.vue'),
+        meta: { title: 'C1种子繁殖申请', requiresAuth: true }
+      },
+      {
+        path: 'c1-propagation/add',
+        name: 'C1PropagationAdd',
+        component: () => import('../views/research/c1-propagation/form.vue'),
+        meta: { title: '新增繁殖申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'c1-propagation/edit/:id',
+        name: 'C1PropagationEdit',
+        component: () => import('../views/research/c1-propagation/form.vue'),
+        meta: { title: '编辑繁殖申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'c1-propagation/detail/:id',
+        name: 'C1PropagationDetail',
+        component: () => import('../views/research/c1-propagation/detail.vue'),
+        meta: { title: '繁殖申请详情', hideInMenu: true, requiresAuth: true }
+      },
+      
+      // C1种子繁殖申请审核
+      {
+        path: 'c1-propagation-audit',
+        name: 'C1PropagationAuditList',
+        component: () => import('../views/research/c1-propagation-audit/index.vue'),
+        meta: { title: 'C1种子繁殖申请审核', requiresAuth: true }
+      },
+      {
+        path: 'c1-propagation-audit/detail/:id',
+        name: 'C1PropagationAuditDetail',
+        component: () => import('../views/research/c1-propagation-audit/detail.vue'),
+        meta: { title: '繁殖申请审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      
+      // C1繁殖批次管理
+      {
+        path: 'c1-breeding-batch',
+        name: 'C1BreedingBatchList',
+        component: () => import('../views/research/c1-breeding-batch/index.vue'),
+        meta: { title: 'C1繁殖批次管理', requiresAuth: true }
+      },
+      {
+        path: 'c1-breeding-batch/add',
+        name: 'C1BreedingBatchAdd',
+        component: () => import('../views/research/c1-breeding-batch/batch-form.vue'),
+        meta: { title: '新增C1繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'c1-breeding-batch/edit/:id',
+        name: 'C1BreedingBatchEdit',
+        component: () => import('../views/research/c1-breeding-batch/batch-form.vue'),
+        meta: { title: '编辑C1繁殖批次', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'c1-breeding-batch/detail/:id',
+        name: 'C1BreedingBatchDetail',
+        component: () => import('../views/research/c1-breeding-batch/detail.vue'),
+        meta: { title: 'C1繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
       
       // 种子认证审核

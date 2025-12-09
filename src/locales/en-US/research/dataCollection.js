@@ -537,6 +537,7 @@ export default {
 
     placeholder: {
       batchId: 'Please select breeding batch',
+      batchIdAuto: 'Auto-filled based on trial ID',
       trialId: 'Please select trial',
       testDate: 'Please select test date',
       sampleId: 'Please enter sample ID',

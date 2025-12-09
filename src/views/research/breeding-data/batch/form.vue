@@ -33,19 +33,23 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.cropType')" prop="cropType">
-                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%">
+                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%" @change="handleCropTypeChange">
                       <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
-                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" />
+                    <el-select v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" style="width: 100%" @change="handleVarietyChange">
+                      <el-option
+                        v-for="item in varietyOptions"
+                        :key="item.code"
+                        :label="`${item.name} (${item.code})`"
+                        :value="item.name"
+                      >
+                        <span>{{ item.name }} ({{ item.code }})</span>
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -67,12 +71,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
-                    <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%">
-                      <el-option label="Not Approved" value="not_approved" />
-                      <el-option label="Approved" value="approved" />
-                      <el-option label="Ongoing" value="ongoing" />
-                      <el-option label="Done" value="done" />
-                    </el-select>
+                    <el-input v-model="formData.status" disabled style="width: 100%" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
@@ -96,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -121,7 +120,7 @@ const formData = reactive({
   breedingMethod: '',
   batchName: '',
   year: '',
-  status: '',
+  status: 'ongoing',
   remarks: ''
 })
 
@@ -136,12 +135,36 @@ const rules = {
 }
 
 const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
   { label: 'wheat', value: 'wheat' },
   { label: 'corn', value: 'corn' },
   { label: 'soybean', value: 'soybean' },
   { label: 'cotton', value: 'cotton' }
 ]
+
+const cropVarietyData = {
+  wheat: [
+    { code: 'WH001', name: 'Winter Wheat A1' },
+    { code: 'WH002', name: 'Spring Wheat B2' },
+    { code: 'WH003', name: 'Durum Wheat C3' }
+  ],
+  corn: [
+    { code: 'CN001', name: 'Sweet Corn X1' },
+    { code: 'CN002', name: 'Field Corn Y2' },
+    { code: 'CN003', name: 'Popcorn Z3' }
+  ],
+  soybean: [
+    { code: 'SB001', name: 'Glycine Max P1' },
+    { code: 'SB002', name: 'Roundup Ready Q2' },
+    { code: 'SB003', name: 'Non-GMO R3' }
+  ],
+  cotton: [
+    { code: 'CT001', name: 'Upland Cotton M1' },
+    { code: 'CT002', name: 'Pima Cotton N2' },
+    { code: 'CT003', name: 'Egyptian Cotton O3' }
+  ]
+}
+
+const varietyOptions = ref([])
 
 const breedingMethodOptions = [
   { label: 'hybridization', value: 'hybridization' },
@@ -152,13 +175,21 @@ const breedingMethodOptions = [
 ]
 
 const getInfo = async () => {
-  if (!isEdit.value) return
+  if (!isEdit.value) {
+    // 新增模式下设置默认状态为ongoing
+    formData.status = 'ongoing'
+    return
+  }
   loading.value = true
   try {
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
     if (formData.year) {
       formData.year = String(formData.year)
+    }
+    // 根据作物类型初始化品种选项
+    if (formData.cropType && cropVarietyData[formData.cropType]) {
+      varietyOptions.value = cropVarietyData[formData.cropType]
     }
   } catch (error) {
     console.error('获取详情失败:', error)
@@ -190,6 +221,27 @@ const handleSubmit = async () => {
     console.error('提交失败:', error)
   } finally {
     submitLoading.value = false
+  }
+}
+
+const handleCropTypeChange = (value) => {
+  // 清空品种选择
+  formData.varietyCode = ''
+  formData.varietyName = ''
+
+  // 更新品种选项
+  if (value && cropVarietyData[value]) {
+    varietyOptions.value = cropVarietyData[value]
+  } else {
+    varietyOptions.value = []
+  }
+}
+
+const handleVarietyChange = (value) => {
+  // 根据选择的品种名称自动填充品种代码
+  const selectedVariety = varietyOptions.value.find(item => item.name === value)
+  if (selectedVariety) {
+    formData.varietyCode = selectedVariety.code
   }
 }
 

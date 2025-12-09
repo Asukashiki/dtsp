@@ -12,6 +12,7 @@ export default {
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
     editSuccess: 'Updated successfully',
+    searchVarietyName: 'Variety Name',
 
     // Search and Filter
     searchPlaceholder: 'Search applicant organization, variety name',

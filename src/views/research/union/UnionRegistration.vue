@@ -777,18 +777,18 @@ const handleUpload = (fieldName) => {
 
 const loadUnionData = async () => {
   try {
-    const response = await getUnionRegistrationByUser()
-    if (response.code === 200 && response.data) {
-      const { unionInfo, unionLicenseInfo } = response.data
-      if (unionInfo) {
-        Object.assign(formData.unionInfo, unionInfo)
-        unionData.certificationStatus = unionInfo.certificationStatus
-        unionData.rejectReason = unionInfo.rejectReason || ''
-      }
-      if (unionLicenseInfo) {
-        Object.assign(formData.unionLicenseInfo, unionLicenseInfo)
-      }
-    }
+    // const response = await getUnionRegistrationByUser()
+    // if (response.code === 200 && response.data) {
+    //   const { unionInfo, unionLicenseInfo } = response.data
+    //   if (unionInfo) {
+    //     Object.assign(formData.unionInfo, unionInfo)
+    //     unionData.certificationStatus = unionInfo.certificationStatus
+    //     unionData.rejectReason = unionInfo.rejectReason || ''
+    //   }
+    //   if (unionLicenseInfo) {
+    //     Object.assign(formData.unionLicenseInfo, unionLicenseInfo)
+    //   }
+    // }
   } catch (error) {
     console.error('Load error:', error)
   }

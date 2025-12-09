@@ -37,20 +37,24 @@
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId }}</span>
+              <span class="label">{{ $t('research.datasetAudit.form.trialId') }}:</span>
+              <span class="value">{{ detailData.trialId || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.batchName') }}:</span>
-              <span class="value">{{ detailData.batchName }}</span>
+              <span class="label">{{ $t('research.datasetAudit.form.versionNo') }}:</span>
+              <span class="value">{{ detailData.versionNo || '1.0' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType }}</span>
+              <span class="value">{{ detailData.cropType || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.varietyName') }}:</span>
-              <span class="value">{{ detailData.varietyName }}</span>
+              <span class="value">{{ detailData.varietyName || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.recordCount') }}:</span>
+              <span class="value">{{ detailData.recordCount || 0 }}</span>
             </div>
           </div>
         </div>
@@ -69,6 +73,16 @@
               <div class="stat-content">
                 <div class="stat-label">{{ $t('research.datasetAudit.columns.trialCount') }}</div>
                 <div class="stat-value">{{ detailData.trialCount || 0 }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="ri-seedling-line"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">{{ $t('research.datasetAudit.columns.farmingRecordCount') }}</div>
+                <div class="stat-value">{{ detailData.farmingRecordCount || 0 }}</div>
               </div>
             </div>
 
@@ -102,7 +116,7 @@
               </div>
             </div>
 
-            <div class="stat-card">
+            <!-- <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-bar-chart-box-line"></i>
               </div>
@@ -110,6 +124,24 @@
                 <div class="stat-label">{{ $t('research.datasetAudit.columns.yieldDataCount') }}</div>
                 <div class="stat-value">{{ detailData.yieldDataCount || 0 }}</div>
               </div>
+            </div> -->
+          </div>
+        </div>
+
+        <!-- 编制信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-user-line"></i>
+            {{ $t('research.datasetAudit.form.compilationInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.compiledBy') }}:</span>
+              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.compiledAt') }}:</span>
+              <span class="value">{{ detailData.compiledAt || '-' }}</span>
             </div>
           </div>
         </div>
@@ -143,6 +175,13 @@
               <span class="label">{{ $t('research.datasetAudit.form.auditStatus') }}:</span>
               <el-tag :type="getAuditStatusType(detailData.auditStatus)">
                 {{ $t(`research.datasetAudit.auditStatus.${detailData.auditStatus}`) }}
+              </el-tag>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetAudit.form.lockedFlag') }}:</span>
+              <el-tag :type="detailData.lockedFlag === 1 ? 'danger' : 'success'">
+                <i :class="detailData.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                {{ detailData.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
               </el-tag>
             </div>
             <div class="detail-item">
@@ -185,6 +224,34 @@
               />
             </el-form-item>
 
+            <!-- 锁定数据集开关 -->
+            <el-form-item :label="$t('research.datasetAudit.form.lockDataset')">
+              <div class="lock-dataset-control">
+                <el-switch
+                  v-model="auditForm.lockedFlag"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-color="#DA121A"
+                  inactive-color="#009A44"
+                  size="large"
+                >
+                  <template #active-action>
+                    <i class="ri-lock-line"></i>
+                  </template>
+                  <template #inactive-action>
+                    <i class="ri-lock-unlock-line"></i>
+                  </template>
+                </el-switch>
+                <span class="lock-label">
+                  {{ auditForm.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+                </span>
+              </div>
+              <div class="lock-tip">
+                <i class="ri-information-line"></i>
+                {{ $t('research.datasetAudit.form.lockDatasetTip') }}
+              </div>
+            </el-form-item>
+
             <div class="audit-actions">
               <el-button
                 type="success"
@@ -194,6 +261,15 @@
               >
                 <i class="ri-check-line"></i>
                 {{ $t('research.datasetAudit.actions.approve') }}
+              </el-button>
+              <el-button
+                type="warning"
+                size="large"
+                :loading="submitting"
+                @click="handleNeedsRevision"
+              >
+                <i class="ri-edit-line"></i>
+                {{ $t('research.datasetAudit.actions.needsRevision') }}
               </el-button>
               <el-button
                 type="danger"
@@ -219,6 +295,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDatasetById } from '@/api/dataset'
 import { getAuditByDatasetId, performAudit } from '@/api/datasetAudit'
+import { getAgronomicTraitList, getFarmingRecordList } from '@/api/breedingData'
+import { getLabTestList } from '@/api/labTest'
+import { getYieldDataList } from '@/api/yieldData'
+import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 
 const route = useRoute()
 const router = useRouter()
@@ -232,14 +312,15 @@ const auditFormRef = ref(null)
 const auditForm = reactive({
   datasetId: '',
   auditStatus: '',
-  auditOpinion: ''
+  auditOpinion: '',
+  lockedFlag: 0  // 默认不锁定
 })
 
 // 审核表单验证规则
 const auditRules = computed(() => ({
   auditOpinion: [
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         if (auditForm.auditStatus === 'rejected' && !value) {
           callback(new Error(t('research.datasetAudit.rules.auditOpinionRequired')))
         } else {
@@ -268,9 +349,112 @@ const getAuditStatusType = (status) => {
   const typeMap = {
     pending: 'warning',
     approved: 'success',
-    rejected: 'danger'
+    rejected: 'danger',
+    needs_revision: 'warning'
   }
   return typeMap[status] || ''
+}
+
+// 根据试验ID加载统计数据
+const loadStatisticsData = async (trialId) => {
+  if (!trialId) {
+    console.warn('试验ID为空，无法加载统计数据')
+    return null
+  }
+
+  try {
+    console.log('开始统计数据，trialId:', trialId)
+
+    // 并行调用5个列表接口，根据试验ID统计
+    const [farmingRes, fieldRes, envRes, labRes, yieldRes] = await Promise.all([
+      // 1. 农事记录数据
+      getFarmingRecordList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取农事记录数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 2. 田间数据（农艺性状数据）
+      getAgronomicTraitList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取田间数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 3. 环境数据
+      getEnvironmentNewDataPage({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取环境数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 4. 实验室测试数据
+      getLabTestList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取实验室测试数据失败:', err)
+        return { total: 0 }
+      }),
+
+      // 5. 产量数据
+      getYieldDataList({
+        pageNum: 1,
+        pageSize: 9999,
+        trialId: trialId
+      }).catch(err => {
+        console.error('获取产量数据失败:', err)
+        return { total: 0 }
+      })
+    ])
+
+    console.log('统计API返回结果:', {
+      farmingRes,
+      fieldRes,
+      envRes,
+      labRes,
+      yieldRes
+    })
+
+    // 提取总数（兼容不同的返回格式）
+    const farmingRecordCount = farmingRes?.total || farmingRes?.data?.total || 0
+    const fieldDataCount = fieldRes?.total || fieldRes?.data?.total || 0
+    const envDataCount = envRes?.total || envRes?.data?.total || 0
+    const labTestCount = labRes?.total || labRes?.data?.total || 0
+    const yieldDataCount = yieldRes?.total || yieldRes?.data?.total || 0
+
+    const statistics = {
+      trialCount: 1, // 当前选择了一个试验
+      farmingRecordCount,
+      fieldDataCount,
+      envDataCount,
+      labTestCount,
+      yieldDataCount
+    }
+
+    console.log('统计数据结果:', statistics)
+    return statistics
+  } catch (error) {
+    console.error('统计数据加载失败:', error)
+    return {
+      trialCount: 0,
+      farmingRecordCount: 0,
+      fieldDataCount: 0,
+      envDataCount: 0,
+      labTestCount: 0,
+      yieldDataCount: 0
+    }
+  }
 }
 
 // 加载详情数据
@@ -283,11 +467,38 @@ const loadDetail = async () => {
       detailData.value = datasetRes.data
       auditForm.datasetId = datasetRes.data.id
 
+      // 根据试验ID加载统计数据
+      if (datasetRes.data.trialId) {
+        console.log('检测到试验ID，开始加载统计数据:', datasetRes.data.trialId)
+        const statisticsResult = await loadStatisticsData(datasetRes.data.trialId)
+        if (statisticsResult) {
+          // 将统计结果合并到详情数据中
+          Object.assign(detailData.value, {
+            trialCount: statisticsResult.trialCount,
+            farmingRecordCount: statisticsResult.farmingRecordCount,
+            fieldDataCount: statisticsResult.fieldDataCount,
+            envDataCount: statisticsResult.envDataCount,
+            labTestCount: statisticsResult.labTestCount,
+            yieldDataCount: statisticsResult.yieldDataCount
+          })
+          console.log('统计数据已更新到detailData')
+        }
+      } else {
+        console.warn('数据集中没有试验ID，无法统计数据')
+      }
+
       // 尝试加载审核信息
       try {
         const auditRes = await getAuditByDatasetId(route.params.id)
         if (auditRes.code === 200 && auditRes.data) {
-          Object.assign(detailData.value, auditRes.data)
+          const auditData = auditRes.data
+          Object.assign(detailData.value, {
+            auditStatus: auditData.auditStatus || auditData.audit_status || 'pending',
+            auditTime: auditData.auditTime || auditData.audit_time || '-',
+            auditorName: auditData.auditorName || auditData.auditor_name || '-',
+            auditOpinion: auditData.auditOpinion || auditData.audit_opinion || '',
+            lockedFlag: auditData.lockedFlag !== null && auditData.lockedFlag !== undefined ? auditData.lockedFlag : 0
+          })
         }
       } catch (error) {
         // 审核记录可能不存在,忽略错误
@@ -371,6 +582,45 @@ const handleReject = async () => {
   } catch (error) {
     if (error !== 'cancel') {
       console.error('Failed to reject:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+// 需要修订
+const handleNeedsRevision = async () => {
+  // 标记需要修订时必须填写修订意见
+  if (!auditForm.auditOpinion) {
+    ElMessage.warning(t('research.datasetAudit.message.needsRevisionOpinionRequired'))
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      t('research.datasetAudit.needsRevisionConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    submitting.value = true
+    auditForm.auditStatus = 'needs_revision'
+
+    const res = await performAudit(auditForm)
+    if (res.code === 200) {
+      ElMessage.success(t('research.datasetAudit.message.needsRevisionSuccess'))
+      goBack()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to mark as needs revision:', error)
       ElMessage.error(t('common.operationFailed'))
     }
   } finally {
@@ -563,6 +813,42 @@ onMounted(() => {
 
 .audit-form {
   margin-top: 20px;
+}
+
+/* 锁定数据集控件 */
+.lock-dataset-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.lock-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.lock-tip {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border-left: 3px solid #009A44;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lock-tip i {
+  font-size: 16px;
+  color: #009A44;
+  flex-shrink: 0;
 }
 
 .audit-actions {

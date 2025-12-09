@@ -573,6 +573,7 @@ export default {
     // 表单占位符
     placeholder: {
       batchId: '请选择育种批次',
+      batchIdAuto: '将根据试验ID自动填充',
       trialId: '请选择试验',
       testDate: '请选择检测日期',
       sampleId: '请输入样本编号',

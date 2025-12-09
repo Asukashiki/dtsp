@@ -23,7 +23,7 @@
               <span>{{ $t('research.datasetCompilation.list') }}</span>
             </div>
             <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
+              <i class="ri-file-edit-line"></i>
               {{ $t('common.add') }}
             </el-button>
           </div>
@@ -71,16 +71,24 @@
                   prop="datasetCode"
                   :label="$t('research.datasetCompilation.columns.datasetCode')"
                   min-width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="trialId"
+                  :label="$t('research.datasetCompilation.columns.trialId')"
+                  min-width="120"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="batchId"
                   :label="$t('research.datasetCompilation.columns.batchId')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="batchName"
-                  :label="$t('research.datasetCompilation.columns.batchName')"
-                  min-width="150"
+                  prop="versionNo"
+                  :label="$t('research.datasetCompilation.columns.versionNo')"
+                  min-width="100"
                 />
                 <el-table-column
                   prop="cropType"
@@ -93,19 +101,24 @@
                   min-width="120"
                 />
                 <el-table-column
+                  prop="recordCount"
+                  :label="$t('research.datasetCompilation.columns.recordCount')"
+                   min-width="100"
+                />
+                <el-table-column
                   prop="labTestCount"
                   :label="$t('research.datasetCompilation.columns.labTestCount')"
-                  width="100"
+                   min-width="100"
                 />
                 <el-table-column
                   prop="yieldDataCount"
                   :label="$t('research.datasetCompilation.columns.yieldDataCount')"
-                  width="100"
+                   min-width="100"
                 />
                 <el-table-column
                   prop="datasetStatus"
                   :label="$t('research.datasetCompilation.columns.datasetStatus')"
-                  width="100"
+                   min-width="100"
                 >
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.datasetStatus)">
@@ -114,11 +127,11 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="createTime"
+                  prop="createdTime"
                   :label="$t('research.datasetCompilation.columns.createTime')"
-                  width="180"
+                   min-width="180"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
+                <el-table-column :label="$t('common.actions')" fixed="right" :width="410">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -189,8 +202,16 @@
                     <span class="value">{{ item.datasetCode || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.trialId') }}:</span>
+                    <span class="value">{{ item.trialId || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.batchId') }}:</span>
                     <span class="value">{{ item.batchId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.versionNo') }}:</span>
+                    <span class="value">{{ item.versionNo || '1.0' }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
@@ -199,6 +220,10 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
                     <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.datasetCompilation.columns.recordCount') }}:</span>
+                    <span class="value">{{ item.recordCount || 0 }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.labTestCount') }}:</span>
@@ -210,7 +235,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.createTime') }}:</span>
-                    <span class="value">{{ item.createTime || '-' }}</span>
+                    <span class="value">{{ item.createdTime || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">

@@ -68,16 +68,28 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- Trait Code -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Trait Code" prop="traitCode">
-                    <el-input v-model="formData.traitCode" placeholder="Enter trait code" />
-                  </el-form-item>
-                </el-col>
                 <!-- Trait Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Trait Name" prop="traitName">
-                    <el-input v-model="formData.traitName" placeholder="Enter trait name" />
+                    <el-select
+                      v-model="formData.traitName"
+                      placeholder="Please select trait name"
+                      filterable
+                      style="width: 100%"
+                      @change="handleTraitChange"
+                    >
+                      <el-option
+                        v-for="item in traitOptions"
+                        :key="item.code"
+                        :label="`${item.name} (${item.code})`"
+                        :value="item.name"
+                      >
+                        <div style="display: flex; justify-content: space-between;">
+                          <span>{{ item.name }}</span>
+                          <span style="color: #8492a6; font-size: 13px;">{{ item.code }}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Trait Value -->
@@ -92,10 +104,27 @@
                     <el-input v-model="formData.unit" placeholder="Enter unit (e.g., cm, kg, %)" />
                   </el-form-item>
                 </el-col>
-                <!-- Observer ID (read-only) -->
+                <!-- Observer ID (Farmer selection) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Observer ID">
-                    <el-input v-model="formData.observerId" disabled placeholder="Current user ID" />
+                  <el-form-item label="Observer ID" prop="observerId">
+                    <el-select
+                      v-model="formData.observerId"
+                      placeholder="Please select observer"
+                      filterable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in farmerOptions"
+                        :key="item.farmerId"
+                        :label="`${item.farmerName} (${item.farmerId})`"
+                        :value="item.farmerId"
+                      >
+                        <div style="display: flex; justify-content: space-between;">
+                          <span>{{ item.farmerName }}</span>
+                          <span style="color: #8492a6; font-size: 13px;">{{ item.farmerId }}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -199,21 +228,37 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/store/user'
 import { getAgronomicTraitInfo, addAgronomicTrait, editAgronomicTrait, getPlotOptions } from '@/api/breedingData'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
+import { getFarmerOptions } from '@/api/newFarm'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
 const plotOptions = ref([])
+const farmerOptions = ref([])
 const photoFileList = ref([])
+
+// Trait options with code and name
+const traitOptions = ref([
+  { code: 'PH', name: 'Plant Height' },
+  { code: 'TC', name: 'Tiller Count' },
+  { code: 'SL', name: 'Spike Length' },
+  { code: 'GY', name: 'Grain Yield' },
+  { code: 'TGW', name: 'Thousand Grain Weight' },
+  { code: 'GPC', name: 'Grain Protein Content' },
+  { code: 'LD', name: 'Lodging Resistance' },
+  { code: 'DR', name: 'Disease Resistance' },
+  { code: 'DM', name: 'Days to Maturity' },
+  { code: 'DH', name: 'Days to Heading' },
+  { code: 'FLA', name: 'Flag Leaf Area' },
+  { code: 'RT', name: 'Root Traits' }
+])
 
 const isEdit = computed(() => !!route.params.traitId)
 
@@ -228,7 +273,7 @@ const formData = reactive({
   traitName: '',
   traitValue: null,
   unit: '',
-  observerId: userStore.userInfo?.user?.ID || '',
+  observerId: '',
   plantHeightCm: null,
   tillerCount: null,
   spikeLengthCm: null,
@@ -242,9 +287,9 @@ const rules = {
   plotId: [{ required: true, message: 'Please select Plot ID', trigger: 'change' }],
   observationDate: [{ required: true, message: 'Please select Observation Date', trigger: 'change' }],
   growthStage: [{ required: true, message: 'Please select Growth Stage', trigger: 'change' }],
-  traitCode: [{ required: true, message: 'Please enter Trait Code', trigger: 'blur' }],
-  traitName: [{ required: true, message: 'Please enter Trait Name', trigger: 'blur' }],
-  traitValue: [{ required: true, message: 'Please enter Trait Value', trigger: 'blur' }]
+  traitName: [{ required: true, message: 'Please select Trait Name', trigger: 'change' }],
+  traitValue: [{ required: true, message: 'Please enter Trait Value', trigger: 'blur' }],
+  observerId: [{ required: true, message: 'Please select Observer', trigger: 'change' }]
 }
 
 // 获取当前日期
@@ -263,6 +308,24 @@ const loadPlotOptions = async () => {
     plotOptions.value = res.data || []
   } catch (error) {
     console.error('Failed to load plot options:', error)
+  }
+}
+
+// 加载农民选项
+const loadFarmerOptions = async () => {
+  try {
+    const res = await getFarmerOptions()
+    farmerOptions.value = res.data || []
+  } catch (error) {
+    console.error('Failed to load farmer options:', error)
+  }
+}
+
+// Trait 变更处理 - 自动填充 traitCode
+const handleTraitChange = (value) => {
+  const selectedTrait = traitOptions.value.find(item => item.name === value)
+  if (selectedTrait) {
+    formData.traitCode = selectedTrait.code
   }
 }
 
@@ -407,6 +470,7 @@ const goBack = () => router.push('/research/breeding-data/trait')
 
 onMounted(() => {
   loadPlotOptions()
+  loadFarmerOptions()
   getInfo()
 })
 </script>

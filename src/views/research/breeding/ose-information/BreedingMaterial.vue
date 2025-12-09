@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-flask-line"></i>
+            <i class="ri-archive-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breeding.plan.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breeding.plan.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('research.breeding.material.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.breeding.material.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -22,12 +22,12 @@
             <div class="card-header">
               <div class="card-title">
                 <i class="ri-file-list-3-line"></i>
-                <span>{{ $t('research.breeding.plan.list') }}</span>
+                <span>{{ $t('research.breeding.material.list') }}</span>
               </div>
 
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
-                {{ $t('research.breeding.plan.add') }}
+                {{ $t('research.breeding.material.add') }}
               </el-button>
             </div>
             <div class="card-body">
@@ -35,7 +35,7 @@
               <div class="search-section">
                 <el-input
                   v-model="searchQuery"
-                  :placeholder="$t('research.breeding.plan.searchPlaceholder')"
+                  :placeholder="$t('research.breeding.material.searchPlaceholder')"
                   clearable
                   class="search-input"
                 >
@@ -44,53 +44,36 @@
                   </template>
                 </el-input>
                 <el-select
-                  v-model="filterYear"
-                  :placeholder="$t('research.breeding.plan.filterByYear')"
+                  v-model="filterBatch"
+                  :placeholder="$t('research.breeding.material.filterByBatch')"
                   clearable
                   class="filter-select"
                 >
-                  <el-option :label="$t('research.breeding.plan.allYears')" value="" />
-                  <el-option label="2025" value="2025" />
-                  <el-option label="2024" value="2024" />
+                  <el-option :label="$t('research.breeding.material.allBatches')" value="" />
+                  <el-option v-for="batch in batchList" :key="batch.batchId" :label="batch.batchName" :value="batch.batchId" />
                 </el-select>
                 <el-select
-                  v-model="filterCrop"
-                  :placeholder="$t('research.breeding.plan.filterByCrop')"
+                  v-model="filterSeedType"
+                  :placeholder="$t('research.breeding.material.filterBySeedType')"
                   clearable
                   class="filter-select"
                 >
-                  <el-option :label="$t('research.breeding.plan.allCrops')" value="" />
-                  <el-option v-for="crop in cropTypes" :key="crop.value" :label="crop.label" :value="crop.value" />
-                </el-select>
-                <el-select
-                  v-model="filterStatus"
-                  :placeholder="$t('research.breeding.plan.filterByStatus')"
-                  clearable
-                  class="filter-select"
-                >
-                  <el-option :label="$t('research.breeding.plan.allStatus')" value="" />
-                  <el-option v-for="status in planStatusList" :key="status.value" :label="status.label" :value="status.value" />
+                  <el-option :label="$t('research.breeding.material.allSeedTypes')" value="" />
                 </el-select>
               </div>
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
                 <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
-                  <el-table-column prop="planName" :label="$t('research.breeding.plan.columns.planName')" min-width="150"  show-overflow-tooltip />
-                  <el-table-column prop="batchId" :label="$t('research.breeding.plan.columns.batchId')" min-width="120" />
-                  <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" min-width="100" />
-                  <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" min-width="100" />
-                  <el-table-column prop="varietyName" :label="$t('research.breeding.plan.columns.varietyName')" min-width="150" />
-                  <el-table-column prop="propagationLevel" :label="$t('research.breeding.plan.columns.propagationLevel')" min-width="130" />
-                  <el-table-column prop="personInCharge" :label="$t('research.breeding.plan.columns.personInCharge')" min-width="120" />
-                  <!-- <el-table-column prop="status" :label="$t('research.breeding.plan.columns.status')" min-width="100">
-                    <template #default="{ row }">
-                      <el-tag :type="getStatusTagType(row.status)">
-                        {{ getStatusLabel(row.status) }}
-                      </el-tag>
-                    </template>
-                  </el-table-column> -->
-                  <el-table-column :label="$t('research.breeding.plan.columns.actions')" width="300" fixed="right" >
+                  <el-table-column prop="registrationCode" :label="$t('research.breeding.material.columns.registrationCode')" min-width="150" />
+                  <el-table-column prop="batchId" :label="$t('research.breeding.material.columns.batchId')" min-width="150" />
+                  <el-table-column prop="warehouseInId" :label="$t('research.breeding.material.columns.warehouseInId')" min-width="150" />
+                  <el-table-column prop="seedType" :label="$t('research.breeding.material.columns.seedType')" min-width="150" />
+                  <el-table-column prop="quantity" :label="$t('research.breeding.material.columns.quantity')" min-width="120" />
+                  <el-table-column prop="sourceEntity" :label="$t('research.breeding.material.columns.sourceEntity')" min-width="180" show-overflow-tooltip />
+                  <el-table-column prop="receiveDate" :label="$t('research.breeding.material.columns.receiveDate')" min-width="120" />
+                  <el-table-column prop="operationTime" :label="$t('research.breeding.material.columns.operationTime')" min-width="170" />
+                  <el-table-column :label="$t('research.breeding.material.columns.actions')" width="300" fixed="right">
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">
@@ -126,40 +109,33 @@
 
               <!-- 移动端卡片 -->
               <div class="mobile-card-list mobile-only">
-                <div v-for="item in filteredList" :key="item.planId" class="mobile-card">
+                <div v-for="item in filteredList" :key="item.materialId" class="mobile-card">
                   <div class="mobile-card-header">
                     <div class="mobile-card-title">
-                      <i class="ri-flask-line"></i>
-                      <span>{{ item.planName }}</span>
+                      <i class="ri-archive-line"></i>
+                      <span>{{ item.registrationCode }}</span>
                     </div>
-                    <el-tag :type="getStatusTagType(item.status)" size="small">
-                      {{ getStatusLabel(item.status) }}
-                    </el-tag>
                   </div>
                   <div class="mobile-card-body">
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.batchId') }}:</span>
+                      <span class="label">{{ $t('research.breeding.material.columns.batchId') }}:</span>
                       <span class="value">{{ item.batchId }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.cropType') }}:</span>
-                      <span class="value">{{ item.cropType }}</span>
+                      <span class="label">{{ $t('research.breeding.material.columns.seedType') }}:</span>
+                      <span class="value">{{ item.seedType }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.varietyName') }}:</span>
-                      <span class="value">{{ item.varietyName }}</span>
+                      <span class="label">{{ $t('research.breeding.material.columns.quantity') }}:</span>
+                      <span class="value">{{ item.quantity }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.propagationLevel') }}:</span>
-                      <span class="value">{{ item.propagationLevel }}</span>
+                      <span class="label">{{ $t('research.breeding.material.columns.sourceEntity') }}:</span>
+                      <span class="value">{{ item.sourceEntity }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.personInCharge') }}:</span>
-                      <span class="value">{{ item.personInCharge }}</span>
-                    </div>
-                    <div class="mobile-card-row">
-                      <span class="label">{{ $t('research.breeding.plan.columns.startDate') }}:</span>
-                      <span class="value">{{ item.startDate }}</span>
+                      <span class="label">{{ $t('research.breeding.material.columns.receiveDate') }}:</span>
+                      <span class="value">{{ item.receiveDate }}</span>
                     </div>
                   </div>
                   <div class="mobile-card-actions">
@@ -197,9 +173,9 @@
         </div>
 
         <!-- 表单视图 -->
-        <BreedingPlanForm
+        <BreedingMaterialForm
           v-else
-          :plan-data="currentPlan"
+          :material-data="currentMaterial"
           :is-view="isView"
           @cancel="handleCancel"
           @success="handleSuccess"
@@ -213,56 +189,42 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import BreedingPlanForm from './components/BreedingPlanForm.vue'
-import { getBreedingPlanList, removeBreedingPlan } from '@/api/enterprise'
-import { mockCropTypes, mockPlanStatus } from '@/mock/breedingData'
+import BreedingMaterialForm from '../components/BreedingMaterialForm.vue'
+import { getBreedingMaterialList, removeBreedingMaterial } from '@/api/enterprise'
+import { mockBatchList } from '@/mock/breedingData'
 
 const { t } = useI18n()
 
 // 数据状态
 const loading = ref(false)
-const planList = ref([])
+const materialList = ref([])
 const showForm = ref(false)
 const isView = ref(false)
-const currentPlan = ref(null)
+const currentMaterial = ref(null)
 
 // 筛选条件
 const searchQuery = ref('')
-const filterYear = ref('')
-const filterCrop = ref('')
-const filterStatus = ref('')
+const filterBatch = ref('')
+const filterSeedType = ref('')
 
 // 分页
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-// 辅助数据 - 动态国际化labels
-const cropTypes = computed(() => {
-  return mockCropTypes.map(item => ({
-    value: item.value,
-    label: t(item.labelKey)
-  }))
-})
-
-const planStatusList = computed(() => {
-  return mockPlanStatus.map(item => ({
-    value: item.value,
-    label: t(item.labelKey)
-  }))
-})
+// 辅助数据
+const batchList = ref(mockBatchList)
 
 // 过滤后的列表
 const filteredList = computed(() => {
-  const filtered = planList.value.filter(item => {
+  const filtered = materialList.value.filter(item => {
     const matchSearch = !searchQuery.value ||
-      item.planName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      item.registrationCode.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       item.batchId.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchYear = !filterYear.value || String(item.breedingYear) === filterYear.value
-    const matchCrop = !filterCrop.value || item.cropType === filterCrop.value
-    const matchStatus = !filterStatus.value || item.status === filterStatus.value
+    const matchBatch = !filterBatch.value || item.batchId === filterBatch.value
+    const matchSeedType = !filterSeedType.value || item.seedType === filterSeedType.value
 
-    return matchSearch && matchYear && matchCrop && matchStatus
+    return matchSearch && matchBatch && matchSeedType
   })
 
   total.value = filtered.length
@@ -284,22 +246,6 @@ const handleSizeChange = (size) => {
   currentPage.value = 1
 }
 
-// 获取状态标签类型
-const getStatusTagType = (status) => {
-  const typeMap = {
-    planning: 'info',
-    ongoing: 'warning',
-    completed: 'success',
-    cancelled: 'danger'
-  }
-  return typeMap[status] || 'info'
-}
-
-// 获取状态标签文本
-const getStatusLabel = (status) => {
-  return t(`research.breeding.plan.status.${status}`)
-}
-
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -310,23 +256,23 @@ const loadData = async () => {
     }
 
     // 添加筛选条件
-    if (filterYear.value) params.breedingYear = filterYear.value
-    if (filterCrop.value) params.cropType = filterCrop.value
+    if (filterBatch.value) params.batchId = filterBatch.value
+    if (filterSeedType.value) params.seedType = filterSeedType.value
 
-    const res = await getBreedingPlanList(params)
+    const res = await getBreedingMaterialList(params)
 
     if (res.code === 200) {
-      planList.value = res.rows || []
+      materialList.value = res.rows || []
       total.value = res.total || 0
     } else {
       ElMessage.error(res.msg || t('common.loadFailed'))
-      planList.value = []
+      materialList.value = []
       total.value = 0
     }
   } catch (error) {
-    console.error('Failed to load breeding plans:', error)
+    console.error('Failed to load breeding materials:', error)
     ElMessage.error(t('common.loadFailed'))
-    planList.value = []
+    materialList.value = []
     total.value = 0
   } finally {
     loading.value = false
@@ -335,21 +281,21 @@ const loadData = async () => {
 
 // 新增
 const handleAdd = () => {
-  currentPlan.value = null
+  currentMaterial.value = null
   isView.value = false
   showForm.value = true
 }
 
 // 查看
 const handleView = (row) => {
-  currentPlan.value = { ...row }
+  currentMaterial.value = { ...row }
   isView.value = true
   showForm.value = true
 }
 
 // 编辑
 const handleEdit = (row) => {
-  currentPlan.value = { ...row }
+  currentMaterial.value = { ...row }
   isView.value = false
   showForm.value = true
 }
@@ -358,7 +304,7 @@ const handleEdit = (row) => {
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm(
-      t('research.breeding.plan.deleteConfirm'),
+      t('research.breeding.material.deleteConfirm'),
       t('common.tips'),
       {
         confirmButtonText: t('common.confirm'),
@@ -368,17 +314,17 @@ const handleDelete = async (row) => {
     )
 
     loading.value = true
-    const res = await removeBreedingPlan(row.planId)
+    const res = await removeBreedingMaterial(row.materialId)
 
     if (res.code === 200) {
-      ElMessage.success(t('research.breeding.plan.deleteSuccess'))
+      ElMessage.success(t('research.breeding.material.deleteSuccess'))
       loadData()
     } else {
       ElMessage.error(res.msg || t('common.failed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('Failed to delete breeding plan:', error)
+      console.error('Failed to delete breeding material:', error)
       ElMessage.error(t('common.failed'))
     }
   } finally {
@@ -389,13 +335,13 @@ const handleDelete = async (row) => {
 // 取消表单
 const handleCancel = () => {
   showForm.value = false
-  currentPlan.value = null
+  currentMaterial.value = null
 }
 
 // 表单提交成功
 const handleSuccess = () => {
   showForm.value = false
-  currentPlan.value = null
+  currentMaterial.value = null
   loadData()
 }
 
@@ -515,7 +461,7 @@ onMounted(() => {
 }
 
 .filter-select {
-  width: 180px;
+  width: 200px;
 }
 
 /* 表格 */

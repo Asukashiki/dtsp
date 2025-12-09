@@ -40,30 +40,60 @@
               <span class="value">{{ detailData.datasetCode || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.datasetStatus') }}:</span>
-              <el-tag :type="getStatusType(detailData.datasetStatus)">
-                {{ $t(`research.datasetCompilation.status.${detailData.datasetStatus}`) }}
+              <span class="label">{{ $t('research.datasetCompilation.form.status') }}:</span>
+              <el-tag :type="getStatusType(detailData.status || detailData.datasetStatus)">
+                {{ getStatusLabel(detailData.status || detailData.datasetStatus) }}
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId }}</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.trialId') }}:</span>
+              <span class="value">{{ detailData.trialId || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.batchName') }}:</span>
-              <span class="value">{{ detailData.batchName }}</span>
+              <span class="label">{{ $t('research.datasetCompilation.form.batchId') }}:</span>
+              <span class="value">{{ detailData.batchId || '-' }}</span>
             </div>
+            <!-- <div class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.versionNo') }}:</span>
+              <span class="value">{{ detailData.versionNo || '1.0' }}</span>
+            </div> -->
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.recordCount') }}:</span>
+              <span class="value">{{ detailData.recordCount || 0 }}</span>
+            </div>
+            <!-- <div class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.batchName') }}:</span>
+              <span class="value">{{ detailData.batchName || '-' }}</span>
+            </div> -->
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType }}</span>
+              <span class="value">{{ detailData.cropType || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.varietyName') }}:</span>
-              <span class="value">{{ detailData.varietyName }}</span>
+              <span class="value">{{ detailData.varietyName || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.datasetCompilation.form.remark') }}:</span>
               <span class="value">{{ detailData.remark || '-' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 编制信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-user-line"></i>
+            {{ $t('research.datasetCompilation.form.compilationInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.compiledBy') }}:</span>
+              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.compiledAt') }}:</span>
+              <span class="value">{{ detailData.compiledAt || '-' }}</span>
             </div>
           </div>
         </div>
@@ -213,6 +243,7 @@ const detailData = ref(null)
 
 // 获取状态类型
 const getStatusType = (status) => {
+  const statusLower = (status || '').toLowerCase()
   const typeMap = {
     draft: '',
     submitted: 'info',
@@ -220,7 +251,22 @@ const getStatusType = (status) => {
     approved: 'success',
     rejected: 'danger'
   }
-  return typeMap[status] || ''
+  return typeMap[statusLower] || ''
+}
+
+// 获取状态标签
+const getStatusLabel = (status) => {
+  if (!status) return '-'
+  const statusLower = status.toLowerCase()
+
+  const labelMap = {
+    draft: t('research.datasetCompilation.status.draft'),
+    submitted: t('research.datasetCompilation.status.submitted'),
+    reviewing: t('research.datasetCompilation.status.reviewing'),
+    approved: t('research.datasetCompilation.status.approved'),
+    rejected: t('research.datasetCompilation.status.rejected')
+  }
+  return labelMap[statusLower] || status
 }
 
 // 加载详情数据

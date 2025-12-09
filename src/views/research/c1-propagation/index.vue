@@ -1,13 +1,13 @@
 <template>
-  <div class="seed-production-container">
+  <div class="c1-propagation-container">
     <div class="page-header">
       <div class="header-content">
         <div class="header-icon-wrapper">
           <i class="ri-seedling-line header-icon"></i>
         </div>
         <div class="header-text">
-          <h1 class="page-title">{{ $t('research.breeding.seed.production.title') }}</h1>
-          <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
+          <h1 class="page-title">{{ $t('research.c1Propagation.title') }}</h1>
+          <p class="page-subtitle">{{ $t('research.c1Propagation.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
           <div class="search-row">
             <el-input
               v-model="searchQuery"
-              :placeholder="$t('research.breeding.seed.production.searchPlaceholder')"
+              :placeholder="$t('research.c1Propagation.searchPlaceholder')"
               class="search-input"
               clearable
               @clear="loadData"
@@ -30,6 +30,18 @@
               </template>
             </el-input>
 
+            <el-select
+              v-model="statusFilter"
+              :placeholder="$t('research.c1Propagation.form.applyStatus')"
+              clearable
+              class="status-filter"
+              @change="loadData"
+            >
+              <el-option label="Pending" value="pending" />
+              <el-option label="Approved" value="approved" />
+              <el-option label="Rejected" value="rejected" />
+            </el-select>
+
             <el-date-picker
               v-model="dateRange"
               type="daterange"
@@ -38,6 +50,7 @@
               :end-placeholder="$t('common.endDate')"
               class="date-filter"
               clearable
+              value-format="YYYY-MM-DD"
               @change="loadData"
             />
           </div>
@@ -56,7 +69,7 @@
             <div class="action-right">
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
-                <span class="btn-text">{{ $t('research.breeding.seed.production.add') }}</span>
+                <span class="btn-text">{{ $t('research.c1Propagation.add') }}</span>
               </el-button>
             </div>
           </div>
@@ -64,82 +77,57 @@
 
         <!-- PC端表格 -->
         <div class="table-card pc-view">
-          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+          <el-table :data="dataList" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
             <el-table-column
-              prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.production.columns.breedSeedProduceBatchId')"
-              width="200"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="varietyName"
-              :label="$t('research.breeding.seed.production.columns.varietyName')"
-              min-width="150"
+              prop="applicantOrgName"
+              :label="$t('research.c1Propagation.columns.applicantOrgName')"
+              min-width="180"
               show-overflow-tooltip
             />
             <el-table-column
               prop="cropType"
-              :label="$t('research.breeding.seed.production.columns.cropType')"
-              min-width="120"
+              :label="$t('research.c1Propagation.columns.cropType')"
+              min-width="160"
               align="center"
             />
             <el-table-column
-              prop="time"
-              :label="$t('research.breeding.seed.production.columns.time')"
-              min-width="150"
+              prop="varietyName"
+              :label="$t('research.c1Propagation.columns.varietyName')"
+              min-width="140"
+              show-overflow-tooltip
             />
             <el-table-column
-              prop="landName"
-              :label="$t('research.breeding.seed.production.columns.landName')"
-              min-width="120"
+              prop="applyDate"
+              :label="$t('research.c1Propagation.columns.applyDate')"
+              min-width="160"
+              align="center"
             />
             <el-table-column
-              prop="inputSeedQuantity"
-              :label="$t('research.breeding.seed.production.columns.inputSeedQuantity')"
-              width="180"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.inputSeedQuantity }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="produceSeedQuantrity"
-              :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')"
-              width="190"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.produceSeedQuantrity }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="operatorName"
-              :label="$t('research.breeding.seed.production.columns.operatorName')"
-              width="110"
-            />
-            <el-table-column
-              prop="produceStatus"
-              :label="$t('research.breeding.seed.production.columns.produceStatus')"
-              width="180"
+              prop="applyStatus"
+              :label="$t('research.c1Propagation.columns.applyStatus')"
+              min-width="160"
               align="center"
             >
               <template #default="{ row }">
-                <el-tag type="success" size="small">
-                  {{ $t(`research.breeding.seed.production.status.${row.produceStatus}`) }}
+                <el-tag :type="getStatusType(row.applyStatus)" size="small">
+                  {{ $t(`research.c1Propagation.status.${row.applyStatus}`) }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column
-              :label="$t('research.breeding.seed.production.columns.actions')"
-              width="150"
+              :label="$t('research.c1Propagation.columns.actions')"
+              width="180"
               fixed="right"
+              align="center"
             >
               <template #default="{ row }">
                 <el-button link type="primary" @click="handleView(row)">
-                  <i class="ri-eye-line"></i>
+                  <i class="ri-eye-line"></i> {{ $t('common.view') }}
                 </el-button>
-                <el-button link type="danger" @click="handleDelete(row)">
+                <el-button link type="primary" @click="handleEdit(row)" v-if="row.applyStatus === 'pending'">
+                  <i class="ri-edit-line"></i>
+                </el-button>
+                <el-button link type="danger" @click="handleDelete(row)" v-if="row.applyStatus === 'pending'">
                   <i class="ri-delete-bin-line"></i>
                 </el-button>
               </template>
@@ -163,46 +151,43 @@
         <div class="mobile-view" v-loading="loading">
           <div class="card-list">
             <div
-              v-for="item in filteredList"
-              :key="item.breedSeedProduceBatchId"
-              class="production-card"
+              v-for="item in dataList"
+              :key="item.id"
+              class="propagation-card"
               @click="handleView(item)"
             >
               <div class="card-header">
-                <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
-                <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.production.status.${item.produceStatus}`) }}</el-tag>
+                <el-tag :type="getStatusType(item.applyStatus)" size="small">
+                  {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
+                </el-tag>
+                <el-tag type="info" size="small">{{ item.cropType }}</el-tag>
               </div>
-              <h3 class="card-title">{{ item.varietyName }}</h3>
+              <h3 class="card-title">{{ item.applicantOrgName }}</h3>
               <div class="card-info">
                 <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.breedSeedProduceBatchId') }}</span>
-                  <span class="info-value">{{ item.breedSeedProduceBatchId }}</span>
+                  <span class="info-label">{{ $t('research.c1Propagation.columns.varietyName') }}</span>
+                  <span class="info-value">{{ item.varietyName }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.time') }}</span>
-                  <span class="info-value">{{ item.time }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.inputSeedQuantity') }}</span>
-                  <span class="info-value">{{ item.inputSeedQuantity }} kg</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceSeedQuantrity') }}</span>
-                  <span class="info-value">{{ item.produceSeedQuantrity }} kg</span>
+                  <span class="info-label">{{ $t('research.c1Propagation.columns.applyDate') }}</span>
+                  <span class="info-value">{{ item.applyDate }}</span>
                 </div>
               </div>
               <div class="card-footer">
-                <span class="create-time">{{ item.createTime }}</span>
+                <span class="create-time">{{ item.createdTime }}</span>
                 <div class="card-actions" @click.stop>
-                  <el-button link type="danger" size="small" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
+                  <el-button link type="primary" size="small" @click="handleEdit(item)" v-if="item.applyStatus === 'pending'">
+                    <i class="ri-edit-line"></i>
+                  </el-button>
+                  <el-button link type="danger" size="small" @click="handleDelete(item)" v-if="item.applyStatus === 'pending'">
+                    <i class="ri-delete-bin-line"></i>
                   </el-button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div v-if="filteredList.length === 0 && !loading" class="empty-state">
+          <div v-if="dataList.length === 0 && !loading" class="empty-state">
             <i class="ri-inbox-line"></i>
             <p>{{ $t('home.noData') }}</p>
           </div>
@@ -220,16 +205,17 @@
         </div>
       </div>
 
-      <!-- 新增表单视图 -->
-      <ProductionForm
+      <!-- 新增/编辑表单视图 -->
+      <PropagationForm
         v-if="showForm"
-        :is-edit="false"
+        :is-edit="isEdit"
+        :edit-data="currentRow"
         @cancel="showForm = false"
         @success="handleFormSuccess"
       />
 
       <!-- 详情视图 -->
-      <ProductionDetail
+      <PropagationDetail
         v-if="showDetail"
         :data="currentRow"
         @back="showDetail = false"
@@ -243,12 +229,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getBreedSeedProduceList, deleteBreedSeedProduce } from '@/api/breedSeed'
-import ProductionForm from './form.vue'
-import ProductionDetail from './detail.vue'
+import { getC1PropagationList, deleteC1Propagation } from '@/api/c1Propagation'
+import PropagationForm from './form.vue'
+import PropagationDetail from './detail.vue'
 
 const { t } = useI18n()
 
@@ -256,6 +242,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const dataList = ref([])
 const searchQuery = ref('')
+const statusFilter = ref('')
 const dateRange = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -264,32 +251,18 @@ const total = ref(0)
 // 视图控制
 const showForm = ref(false)
 const showDetail = ref(false)
+const isEdit = ref(false)
 const currentRow = ref(null)
 
-// 计算属性 - 过滤列表
-const filteredList = computed(() => {
-  let list = dataList.value
-
-  // 搜索过滤
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.varietyName?.toLowerCase().includes(query) ||
-      item.cropType?.toLowerCase().includes(query)
-    )
+// 获取状态类型
+const getStatusType = (status) => {
+  const types = {
+    pending: 'warning',
+    approved: 'success',
+    rejected: 'danger'
   }
-
-  // 日期范围过滤
-  if (dateRange.value && dateRange.value.length === 2) {
-    const [start, end] = dateRange.value
-    list = list.filter(item => {
-      const itemDate = new Date(item.time)
-      return itemDate >= start && itemDate <= end
-    })
-  }
-
-  return list
-})
+  return types[status] || 'info'
+}
 
 // 加载数据
 const loadData = async () => {
@@ -297,12 +270,20 @@ const loadData = async () => {
   try {
     const params = {
       pageNum: currentPage.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      keyword: searchQuery.value,
+      applyStatus: statusFilter.value
     }
-    const res = await getBreedSeedProduceList(params)
+    
+    if (dateRange.value && dateRange.value.length === 2) {
+      params.queryDateStart = dateRange.value[0]
+      params.queryDateEnd = dateRange.value[1]
+    }
+
+    const res = await getC1PropagationList(params)
     if (res.code === 200) {
-      dataList.value = res.rows || []
-      total.value = res.total || 0
+      dataList.value = res.data?.list || []
+      total.value = res.data?.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -315,6 +296,7 @@ const loadData = async () => {
 // 处理重置
 const handleReset = () => {
   searchQuery.value = ''
+  statusFilter.value = ''
   dateRange.value = []
   currentPage.value = 1
   loadData()
@@ -334,6 +316,15 @@ const handleCurrentChange = (val) => {
 
 // CRUD 操作
 const handleAdd = () => {
+  isEdit.value = false
+  currentRow.value = null
+  showForm.value = true
+  showDetail.value = false
+}
+
+const handleEdit = (row) => {
+  isEdit.value = true
+  currentRow.value = row
   showForm.value = true
   showDetail.value = false
 }
@@ -346,7 +337,7 @@ const handleView = (row) => {
 
 const handleDelete = (row) => {
   ElMessageBox.confirm(
-    t('research.breeding.seed.production.deleteConfirm'),
+    t('research.c1Propagation.deleteConfirm'),
     t('common.tips'),
     {
       confirmButtonText: t('common.confirm'),
@@ -356,15 +347,15 @@ const handleDelete = (row) => {
   )
     .then(async () => {
       try {
-        const res = await deleteBreedSeedProduce(row.breedSeedProduceBatchId)
+        const res = await deleteC1Propagation([row.id])
         if (res.code === 200) {
-          ElMessage.success(t('research.breeding.seed.production.deleteSuccess'))
+          ElMessage.success(t('research.c1Propagation.deleteSuccess'))
           loadData()
         } else {
           ElMessage.error(res.msg || t('common.deleteFailed'))
         }
       } catch (error) {
-        console.error('Failed to delete production:', error)
+        console.error('Failed to delete:', error)
         ElMessage.error(t('common.deleteFailed'))
       }
     })
@@ -383,7 +374,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.seed-production-container {
+.c1-propagation-container {
   min-height: calc(100vh - 120px);
   position: relative;
 }
@@ -458,6 +449,11 @@ onMounted(() => {
   min-width: 0;
 }
 
+.status-filter {
+  width: 150px;
+  flex-shrink: 0;
+}
+
 .date-filter {
   width: 300px;
   flex-shrink: 0;
@@ -501,7 +497,7 @@ onMounted(() => {
   gap: 12px;
 }
 
-.production-card {
+.propagation-card {
   background: white;
   border-radius: 12px;
   padding: 16px;
@@ -510,7 +506,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.production-card:active {
+.propagation-card:active {
   transform: scale(0.98);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
@@ -628,6 +624,7 @@ onMounted(() => {
   .search-row {
     flex-direction: column;
   }
+  .status-filter,
   .date-filter {
     width: 100%;
   }
@@ -698,7 +695,7 @@ onMounted(() => {
   .search-bar {
     padding: 12px;
   }
-  .production-card {
+  .propagation-card {
     padding: 12px;
   }
   .card-title {
