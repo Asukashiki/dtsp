@@ -47,7 +47,12 @@
 
         <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
         <el-button type="primary" @click="addDetail" style="float: right;margin-bottom: 12px">{{ $t('inputCirculation.addDetail') }}</el-button>
-        <el-table :data="formData.details" border style="margin-top: 16px;" :header-cell-style="{ textAlign: 'center' }" :cell-style="{ textAlign: 'center' }">>
+        <el-table
+            :data="formData.details"
+            border
+            style="margin-top: 16px;"
+            :header-cell-style="{ textAlign: 'center' }"
+            :cell-style="{ textAlign: 'center' }">>
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="100" />
           <el-table-column :label="$t('inputCirculation.cropType')" width="150">
             <template #default="scope">

@@ -257,6 +257,23 @@ export const importFarmerData = (formData) => {
   })
 }
 
+/**
+ * 获取全部农民列表
+ * @param
+ */
+export const getAllFarmerList = () => {
+  return request({
+    url: `/farmland/farmer/getAllFarmerList`,
+    method: 'get'
+  }).then(res => {
+    // // 转换返回数据：驼峰转下划线
+    // if (res.data) {
+    //   // res.data = toSnakeCase(res.data)
+    // }
+    return res
+  })
+}
+
 // ==================== 土地管理 API ====================
 
 /**
