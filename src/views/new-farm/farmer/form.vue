@@ -27,18 +27,18 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.farmer.form.farmerName')" prop="farmerName">
               <el-input
-                v-model="formData.farmerName"
-                :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
-                maxlength="100"
-                show-word-limit
+                  v-model="formData.farmerName"
+                  :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
+                  maxlength="100"
+                  show-word-limit
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.farmer.form.idCard')" prop="idCard">
               <el-input
-                v-model="formData.idCard"
-                :placeholder="$t('newFarm.farmer.placeholder.idCard')"
-                maxlength="50"
+                  v-model="formData.idCard"
+                  :placeholder="$t('newFarm.farmer.placeholder.idCard')"
+                  maxlength="50"
               />
             </el-form-item>
 
@@ -51,11 +51,11 @@
 
             <el-form-item :label="$t('newFarm.farmer.form.birthDate')" prop="birthDate">
               <el-date-picker
-                v-model="formData.birthDate"
-                type="date"
-                :placeholder="$t('newFarm.farmer.placeholder.birthDate')"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
+                  v-model="formData.birthDate"
+                  type="date"
+                  :placeholder="$t('newFarm.farmer.placeholder.birthDate')"
+                  value-format="YYYY-MM-DD"
+                  style="width: 100%"
               />
             </el-form-item>
 
@@ -68,26 +68,35 @@
 
             <el-form-item :label="$t('newFarm.farmer.form.phone')" prop="phone">
               <el-input
-                v-model="formData.phone"
-                :placeholder="$t('newFarm.farmer.placeholder.phone')"
-                maxlength="20"
+                  v-model="formData.phone"
+                  :placeholder="$t('newFarm.farmer.placeholder.phone')"
+                  maxlength="20"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.farmer.form.email')" prop="email">
               <el-input
-                v-model="formData.email"
-                :placeholder="$t('newFarm.farmer.placeholder.email')"
-                maxlength="100"
+                  v-model="formData.email"
+                  :placeholder="$t('newFarm.farmer.placeholder.email')"
+                  maxlength="100"
+              />
+            </el-form-item>
+
+            <el-form-item :label="`${$t('newFarm.common.createTime')}`" prop="createTime">
+              <el-input
+                  v-model="formData.createTime"
+                  readonly
+                  :placeholder="$t('newFarm.common.createTime')"
+                  style="cursor: default;"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.farmer.form.address')" prop="address" class="full-width-item">
               <el-input
-                v-model="formData.address"
-                :placeholder="$t('newFarm.farmer.placeholder.address')"
-                maxlength="200"
-                show-word-limit
+                  v-model="formData.address"
+                  :placeholder="$t('newFarm.farmer.placeholder.address')"
+                  maxlength="200"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -99,70 +108,63 @@
             <i class="ri-building-line"></i>
             <h3>{{ $t('newFarm.farmer.sections.orgInfo') }}</h3>
           </div>
+
           <div class="form-grid">
-            <el-form-item :label="$t('newFarm.farmer.form.unionId')" prop="unionId">
-              <el-input
-                v-model="formData.unionId"
-                :placeholder="$t('newFarm.farmer.placeholder.unionId')"
-                maxlength="50"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.farmer.form.cooperativeId')" prop="cooperativeId">
-              <el-input
-                v-model="formData.cooperativeId"
-                :placeholder="$t('newFarm.farmer.placeholder.cooperativeId')"
-                maxlength="50"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.farmer.form.daId')" prop="daId">
+            <el-form-item
+                :label="$t('newFarm.farmer.form.daId')"
+                prop="daId"
+                :error="daMatchError"
+            >
               <el-select
-                v-model="formData.daId"
-                :placeholder="$t('newFarm.farmer.placeholder.daId')"
-                filterable
-                clearable
-                style="width: 100%"
+                  v-model="formData.daId"
+                  :placeholder="daPlaceholder"
+                  filterable
+                  clearable
+                  style="width: 100%"
               >
                 <el-option
-                  v-for="item in daOptions"
-                  :key="item.daId"
-                  :label="item.daName"
-                  :value="item.daId"
+                    v-for="item in daOptions"
+                    :key="item.daId"
+                    :label="item.daName"
+                    :value="item.daId"
                 />
               </el-select>
             </el-form-item>
+            <div></div>
           </div>
-        </div>
 
-        <!-- 区划信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-map-pin-line"></i>
-            <h3>{{ $t('newFarm.farmer.sections.regionInfo') }}</h3>
-          </div>
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
               <el-input
-                v-model="formData.zoneCode"
-                :placeholder="$t('newFarm.common.selectZone')"
-                maxlength="50"
+                  v-model="formData.zoneCode"
+                  :placeholder="$t('newFarm.common.selectZone')"
+                  maxlength="50"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
               <el-input
-                v-model="formData.woredaCode"
-                :placeholder="$t('newFarm.common.selectWoreda')"
-                maxlength="50"
+                  v-model="formData.woredaCode"
+                  :placeholder="$t('newFarm.common.selectWoreda')"
+                  maxlength="50"
+              />
+            </el-form-item>
+          </div>
+
+          <div class="form-grid">
+            <el-form-item :label="$t('newFarm.farmer.form.cooperativeId')" prop="cooperativeId">
+              <el-input
+                  v-model="formData.cooperativeId"
+                  :placeholder="$t('newFarm.farmer.placeholder.cooperativeId')"
+                  maxlength="50"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
               <el-input
-                v-model="formData.kebeleCode"
-                :placeholder="$t('newFarm.common.selectKebele')"
-                maxlength="50"
+                  v-model="formData.kebeleCode"
+                  :placeholder="$t('newFarm.common.selectKebele')"
+                  maxlength="50"
               />
             </el-form-item>
           </div>
@@ -177,12 +179,12 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.common.remark')" prop="remark" class="full-width-item">
               <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="4"
-                :placeholder="$t('newFarm.farmer.placeholder.remark')"
-                maxlength="500"
-                show-word-limit
+                  v-model="formData.remark"
+                  type="textarea"
+                  :rows="4"
+                  :placeholder="$t('newFarm.farmer.placeholder.remark')"
+                  maxlength="500"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -201,7 +203,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -222,12 +224,30 @@ const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 const daOptions = ref([])
 
+const daMatchError = computed(() => {
+  if (defaultDaName.value) {
+    const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
+    if (!targetDa) {
+      return t('newFarm.farmer.tips.daNotInOptions', { name: defaultDaName.value })
+    }
+  }
+  return ''
+})
+const defaultDaName = ref('')
+const daPlaceholder = computed(() => {
+  if (defaultDaName.value && daMatchError.value) {
+    return t('newFarm.farmer.tips.daReadedNotInOptions', { name: defaultDaName.value })
+  }
+  return t('newFarm.farmer.placeholder.daId')
+})
+
 // 表单数据
 const formData = reactive({
   farmerName: '',
   idCard: '',
   gender: 'MALE',
   birthDate: '',
+  createTime: '',
   youthCategory: '',
   phone: '',
   email: '',
@@ -265,19 +285,37 @@ const goBack = () => {
   router.back()
 }
 
-// 加载DA选项
 const loadDaOptions = async () => {
   try {
     const res = await getDaOptions(formData.kebeleCode)
     if (res.code === 200) {
       daOptions.value = res.data || []
+      const userInfoStr = localStorage.getItem('userInfo')
+      if (userInfoStr) {
+        try {
+          const userInfo = JSON.parse(userInfoStr)
+          defaultDaName.value = userInfo.user.NAME || ''
+          if (defaultDaName.value) {
+            const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
+            if (targetDa) {
+              formData.daId = targetDa.daId
+              daMatchError.value = ''
+            } else {
+              daMatchError.value = t('newFarm.farmer.tips.daNotInOptions', { name: defaultDaName.value })
+            }
+          }
+        } catch (e) {
+          console.error('解析userInfo失败:', e)
+          daMatchError.value = ''
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to load DA options:', error)
+    daMatchError.value = ''
   }
 }
 
-// 加载详情
 const loadDetail = async () => {
   pageLoading.value = true
   try {
@@ -288,6 +326,7 @@ const loadDetail = async () => {
       formData.idCard = data.idCard || ''
       formData.gender = data.gender || 'MALE'
       formData.birthDate = data.birthDate || ''
+      formData.createTime = data.createTime ? data.createTime.split(' ')[0] : formData.createTime
       formData.youthCategory = data.youthCategory || ''
       formData.phone = data.phone || ''
       formData.email = data.email || ''
@@ -308,23 +347,25 @@ const loadDetail = async () => {
   }
 }
 
-// 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
+
+  if (daMatchError.value && !formData.daId) {
+    ElMessage.error(t('newFarm.farmer.tips.selectValidDa'))
+    return
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
       saveLoading.value = true
       try {
         const data = { ...formData }
-
         let res
         if (isEdit.value) {
           res = await updateFarmer(route.params.id, data)
         } else {
           res = await addFarmer(data)
         }
-
         if (res.code === 200) {
           ElMessage.success(isEdit.value ? t('newFarm.farmer.messages.editSuccess') : t('newFarm.farmer.messages.addSuccess'))
           setTimeout(() => router.back(), 1000)
@@ -341,10 +382,31 @@ const handleSubmit = async () => {
   })
 }
 
+watch(
+    () => formData.daId,
+    (newVal) => {
+      if (newVal) {
+        daMatchError.value = ''
+      }
+    },
+    { immediate: true }
+)
+
 onMounted(async () => {
+  // 初始化创建时间
+  const formatCurrentDate = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+  formData.createTime = formatCurrentDate()
+
   await loadDaOptions()
   if (isEdit.value) {
     await loadDetail()
+    const draftStr = sessionStorage.getItem('farmerFormDraft')
   }
 })
 </script>

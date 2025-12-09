@@ -155,7 +155,7 @@
                         v-if="row.status === 'draft' || row.status === 'rejected'"
                       >
                         <i class="ri-send-plane-line"></i>
-                        {{ $t('farmerDemand.submit') }}
+                        {{ $t('farmerDemand.actions.submit') }}
                       </el-button>
                       <el-button
                         link
@@ -766,7 +766,6 @@ n.header-actions {
 .mobile-card-actions .el-button {
   flex: 1;
 }
-  min-width: 80px;
 
 /* 响应式 */
 .pc-only {

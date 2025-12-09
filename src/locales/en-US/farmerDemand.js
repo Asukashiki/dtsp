@@ -50,6 +50,7 @@ export default {
 
   // Form Fields
   form: {
+    year: 'Current Year',
     basicInfo: 'Basic Information',
     farmerInfo: 'Farmer Information',
     demandInfo: 'Demand Information',
@@ -92,14 +93,15 @@ export default {
 
   // Form Placeholders
   placeholder: {
+    year: 'Current Year',
     batchId: 'Please select collection batch',
-    farmerId: 'Please enter farmer ID',
-    farmerName: 'Please enter farmer name',
-    farmerIdNumber: 'Please enter farmer ID number',
+    farmerId: '',
+    farmerName: 'Please select farmer name',
+    farmerIdNumber: '',
     region: 'Please enter region',
-    zone: 'Please enter zone',
-    woreda: 'Please enter woreda',
-    kebele: 'Please enter kebele',
+    zone: '',
+    woreda: '',
+    kebele: '',
     village: 'Please enter village',
     landArea: 'Please enter total land area',
     remark: 'Please enter remark',
@@ -111,11 +113,26 @@ export default {
     quantity: 'Please enter demand quantity',
   },
 
+  cascader: {
+    pesticide: 'Pesticide',
+    insecticide: 'Insecticide',
+    fungicide: 'Fungicide',
+    herbicide: 'Herbicide',
+    seed: 'Seed',
+    coffee: 'Coffee',
+    apple: 'Apple',
+    wheat: 'Wheat',
+    fertilizer: 'Fertilizer',
+    nitrogen: 'Nitrogen Fertilizer',
+    phosphorus: 'Phosphorus Fertilizer',
+    potassium: 'Potassium Fertilizer'
+  },
+
   // Form Validation Rules
   rules: {
     batchIdRequired: 'Please select collection batch',
     farmerIdRequired: 'Please enter farmer ID',
-    farmerNameRequired: 'Please enter farmer name',
+    farmerNameRequired: 'Please select farmer name',
     farmerNameLength: 'Farmer name max 100 characters',
     farmerIdNumberRequired: 'Please enter farmer ID number',
     farmerIdNumberLength: 'ID number max 50 characters',
