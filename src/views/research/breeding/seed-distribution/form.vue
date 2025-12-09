@@ -56,7 +56,7 @@
             <el-input
               v-model="formData.people"
               :placeholder="$t('research.breeding.seed.distribution.placeholder.people')"
-              clearable
+              readonly
             />
           </el-form-item>
 
@@ -64,7 +64,7 @@
             <el-input
               v-model="formData.organ"
               :placeholder="$t('research.breeding.seed.distribution.placeholder.organ')"
-              clearable
+              readonly
             />
           </el-form-item>
 
@@ -184,20 +184,27 @@ import { ElMessage } from 'element-plus'
 import { addBreedSeedDistribute } from '@/api/breedSeed'
 import { getOseList } from '@/api/breedSeed'
 import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { useUserStore } from '@/store/user'
 
 const { t } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const submitting = ref(false)
 const oseList = ref([])
 const productionBatchList = ref([])
 
+// 从用户信息中获取当前用户名称和组织名称
+const userInfo = userStore.userInfo || {}
+const currentUserName = userInfo.user?.NAME || userInfo.user?.USER_NAME || ''
+const currentOrgName = userInfo.user?.ORGAN_NAME || ''
+
 const formData = reactive({
   oseId: '',
   time: '',
-  people: '',
-  organ: '',
+  people: currentUserName,
+  organ: currentOrgName,
   remark: '',
   detailList: [
     {
