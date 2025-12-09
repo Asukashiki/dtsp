@@ -116,6 +116,16 @@
           "index": "/research/c1-breeding-certificate",
           "icon": "ri-award-line",
           "titleKey": "research.menu.c1BatchCertificate"
+        },
+        {
+          "index": "/research/seed/breeding-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.seedCertificationAudit"
+        },
+        {
+          "index": "/research/seed/breeding-certificate",
+          "icon": "ri-award-line",
+          "titleKey": "research.menu.seedCertificationIssuance"
         }
       ]
     },
