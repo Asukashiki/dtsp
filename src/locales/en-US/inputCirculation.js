@@ -43,6 +43,7 @@ export default {
   cropType: 'Crop Type',
   variety: 'Variety',
   inputId: 'Input ID',
+  inputName: 'Input Name',
   required: 'Required Quantity',
   quantity: 'Quantity',
   unitPrice: 'Unit Price',

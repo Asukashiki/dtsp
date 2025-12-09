@@ -42,6 +42,7 @@ export default {
   cropType: '作物种类',
   variety: '品种',
   inputId: '投入品',
+  inputName: '投入品名称',
   required: '需求数量',
   quantity: '分发数量',
   unitPrice: '单价',
