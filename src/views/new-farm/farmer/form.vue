@@ -133,38 +133,81 @@
             <div></div>
           </div>
 
+          <!-- 三级联动下拉框：Zone→Woreda→Kebele -->
           <div class="form-grid">
+            <!-- Zone下拉框 -->
             <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
-              <el-input
+              <el-select
                   v-model="formData.zoneCode"
                   :placeholder="$t('newFarm.common.selectZone')"
-                  maxlength="50"
-              />
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleZoneChange"
+                  :loading="zoneLoading"
+              >
+                <el-option
+                    v-for="item in zoneOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
 
+            <!-- Woreda下拉框：选完后触发Cooperative加载（和Kebele加载时机一致） -->
             <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
-              <el-input
+              <el-select
                   v-model="formData.woredaCode"
                   :placeholder="$t('newFarm.common.selectWoreda')"
-                  maxlength="50"
-              />
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleWoredaChange"
+                  :loading="woredaLoading"
+                  :disabled="!formData.zoneCode"
+              >
+                <el-option
+                    v-for="item in woredaOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
           </div>
 
           <div class="form-grid">
+            <!-- Kebele下拉框：禁用条件和Cooperative完全一致 -->
+            <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
+              <el-select
+                  v-model="formData.kebeleCode"
+                  :placeholder="$t('newFarm.common.selectKebele')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  :loading="kebeleLoading"
+                  :disabled="!formData.woredaCode"
+                  @change="handleKebeleChange"
+              >
+                <el-option
+                    v-for="item in kebeleOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
+            </el-form-item>
+
+            <!-- Cooperative输入框：禁用条件和Kebele一致（!formData.woredaCode），时机完全对齐 -->
             <el-form-item :label="$t('newFarm.farmer.form.cooperativeId')" prop="cooperativeId">
               <el-input
                   v-model="formData.cooperativeId"
                   :placeholder="$t('newFarm.farmer.placeholder.cooperativeId')"
                   maxlength="50"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
-              <el-input
-                  v-model="formData.kebeleCode"
-                  :placeholder="$t('newFarm.common.selectKebele')"
-                  maxlength="50"
+                  readonly
+                  :disabled="!formData.woredaCode"
+                  style="cursor: default;"
               />
             </el-form-item>
           </div>
@@ -213,6 +256,7 @@ import {
   updateFarmer,
   getDaOptions
 } from '@/api/newFarm'
+import { listSubRegionByCode, allTree } from '@/api/application'
 
 const router = useRouter()
 const route = useRoute()
@@ -224,7 +268,20 @@ const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 const daOptions = ref([])
 
+// 三级联动相关状态
+const zoneOptions = ref([])
+const woredaOptions = ref([])
+const kebeleOptions = ref([])
+const zoneLoading = ref(false)
+const woredaLoading = ref(false)
+const kebeleLoading = ref(false)
+const ORomiaRegionCode = '102000000'
+
+// DA匹配错误提示逻辑
 const daMatchError = computed(() => {
+  if (formData.daId) {
+    return ''
+  }
   if (defaultDaName.value) {
     const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
     if (!targetDa) {
@@ -233,8 +290,12 @@ const daMatchError = computed(() => {
   }
   return ''
 })
+
 const defaultDaName = ref('')
 const daPlaceholder = computed(() => {
+  if (formData.daId) {
+    return t('newFarm.farmer.placeholder.daId')
+  }
   if (defaultDaName.value && daMatchError.value) {
     return t('newFarm.farmer.tips.daReadedNotInOptions', { name: defaultDaName.value })
   }
@@ -278,6 +339,12 @@ const formRules = computed(() => ({
   ],
   kebeleCode: [
     { required: true, message: t('newFarm.farmer.rules.kebeleCodeRequired'), trigger: 'blur' }
+  ],
+  zoneCode: [
+    { required: true, message: t('newFarm.farmer.rules.zoneCodeRequired'), trigger: 'change' }
+  ],
+  woredaCode: [
+    { required: true, message: t('newFarm.farmer.rules.woredaCodeRequired'), trigger: 'change' }
   ]
 }))
 
@@ -285,6 +352,86 @@ const goBack = () => {
   router.back()
 }
 
+// 加载Zone选项（奥罗米亚州下的子区划）
+const loadZoneOptions = async () => {
+  zoneLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: ORomiaRegionCode })
+    if (res.code === 200) {
+      zoneOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadZoneFailed'))
+  } finally {
+    zoneLoading.value = false
+  }
+}
+
+// Zone选择变化：清空所有下级，加载Woreda
+const handleZoneChange = async (zoneCode) => {
+  formData.woredaCode = ''
+  formData.kebeleCode = ''
+  formData.cooperativeId = ''
+  woredaOptions.value = []
+  kebeleOptions.value = []
+
+  if (!zoneCode) return
+
+  woredaLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: zoneCode })
+    if (res.code === 200) {
+      woredaOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadWoredaFailed'))
+  } finally {
+    woredaLoading.value = false
+  }
+}
+
+// Woreda选择变化：加载Kebele并调用allTree接口获取合作社信息
+const handleWoredaChange = async (woredaCode) => {
+  formData.kebeleCode = ''
+  formData.cooperativeId = ''
+  kebeleOptions.value = []
+
+  if (!woredaCode) return
+
+  woredaLoading.value = true
+  try {
+    // 加载Kebele选项
+    const kebeleRes = await listSubRegionByCode({ regionCode: woredaCode })
+    if (kebeleRes.code === 200) {
+      kebeleOptions.value = kebeleRes.data || []
+    }
+
+    // 调用allTree接口获取合作社信息
+    const coopRes = await allTree({ rootId: woredaCode })
+    if (coopRes.code === 200) {
+      // 适配接口返回格式获取合作社名称
+      const orgName = Array.isArray(coopRes.data)
+          ? (coopRes.data[0]?.children[0]?.orgName || '')
+          : (coopRes.data?.children[0]?.orgName || '')
+      formData.cooperativeId = orgName
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadWoredaFailed') || '加载Woreda关联信息失败')
+  } finally {
+    woredaLoading.value = false
+  }
+}
+
+// Kebele选择变化：刷新DA选项
+const handleKebeleChange = async (kebeleCode) => {
+  if (!kebeleCode) {
+    await loadDaOptions()
+    return
+  }
+  await loadDaOptions()
+}
+
+// 加载DA选项（依赖KebeleCode）
 const loadDaOptions = async () => {
   try {
     const res = await getDaOptions(formData.kebeleCode)
@@ -299,23 +446,19 @@ const loadDaOptions = async () => {
             const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
             if (targetDa) {
               formData.daId = targetDa.daId
-              daMatchError.value = ''
-            } else {
-              daMatchError.value = t('newFarm.farmer.tips.daNotInOptions', { name: defaultDaName.value })
             }
           }
         } catch (e) {
-          console.error('解析userInfo失败:', e)
-          daMatchError.value = ''
+          ElMessage.error(t('common.parseDataError'))
         }
       }
     }
   } catch (error) {
-    console.error('Failed to load DA options:', error)
-    daMatchError.value = ''
+    ElMessage.error(t('newFarm.common.loadDaFailed'))
   }
 }
 
+// 加载详情（编辑模式）
 const loadDetail = async () => {
   pageLoading.value = true
   try {
@@ -338,15 +481,27 @@ const loadDetail = async () => {
       formData.woredaCode = data.woredaCode || ''
       formData.kebeleCode = data.kebeleCode || ''
       formData.remark = data.remark || ''
+
+      // 编辑模式回显联动数据：Zone→Woreda→Kebele
+      if (formData.zoneCode) {
+        await loadZoneOptions()
+        await handleZoneChange(formData.zoneCode)
+        if (formData.woredaCode) {
+          await handleWoredaChange(formData.woredaCode)
+          if (formData.kebeleCode) {
+            await handleKebeleChange(formData.kebeleCode)
+          }
+        }
+      }
     }
   } catch (error) {
-    console.error('Failed to load detail:', error)
     ElMessage.error(t('common.failed'))
   } finally {
     pageLoading.value = false
   }
 }
 
+// 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
 
@@ -360,6 +515,8 @@ const handleSubmit = async () => {
       saveLoading.value = true
       try {
         const data = { ...formData }
+        delete data.createTime;
+
         let res
         if (isEdit.value) {
           res = await updateFarmer(route.params.id, data)
@@ -373,7 +530,6 @@ const handleSubmit = async () => {
           ElMessage.error(res.msg || t('common.failed'))
         }
       } catch (error) {
-        console.error('Failed to save:', error)
         ElMessage.error(t('common.failed'))
       } finally {
         saveLoading.value = false
@@ -384,11 +540,7 @@ const handleSubmit = async () => {
 
 watch(
     () => formData.daId,
-    (newVal) => {
-      if (newVal) {
-        daMatchError.value = ''
-      }
-    },
+    (newVal) => {},
     { immediate: true }
 )
 
@@ -403,7 +555,10 @@ onMounted(async () => {
   }
   formData.createTime = formatCurrentDate()
 
+  // 初始化加载Zone选项
+  await loadZoneOptions()
   await loadDaOptions()
+
   if (isEdit.value) {
     await loadDetail()
     const draftStr = sessionStorage.getItem('farmerFormDraft')
@@ -430,6 +585,17 @@ onMounted(async () => {
 .full-width-item { grid-column: 1 / -1; }
 
 .form-actions { display: flex; justify-content: flex-end; gap: 16px; padding-top: 24px; border-top: 1px solid #f0f2f5; }
+
+/* 下拉框加载状态样式优化 */
+.el-select__loading { display: flex; align-items: center; justify-content: center; }
+
+/* 统一禁用状态样式：Cooperative和Kebele保持一致 */
+.el-input.is-disabled .el-input__inner,
+.el-select.is-disabled .el-select__wrapper {
+  background-color: #f5f7fa;
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
 
 @media screen and (max-width: 1024px) {
   .form-grid { grid-template-columns: 1fr; }
