@@ -485,8 +485,8 @@ onMounted(() => {
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr)
-      // daId.value = userInfo.daId || ''
-      daId.value = 'DA202401005'
+      daId.value = userInfo.daId || ''
+      // daId.value = 'DA202401005'
       // 测试环境可临时启用
     } else {
       ElMessage.warning(t('common.tips.noUserInfo'))
