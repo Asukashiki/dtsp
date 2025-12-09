@@ -160,6 +160,8 @@ function transformInputData(data) {
   const transformed = {
     inputName: data.input_name,
     type: data.type,
+    agriculturalInputType: data.agricultural_input_type,
+    variety: data.variety,
     inputSku: data.input_sku,
     trademark: data.trademark,
     registerCode: data.register_code,

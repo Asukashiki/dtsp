@@ -82,12 +82,39 @@
 
             <el-col :span="12">
               <el-form-item
+                :label="$t('input.catalog.form.agriculturalInputType')"
+                prop="agricultural_input_type"
+              >
+                <el-input
+                  v-model="formData.agricultural_input_type"
+                  :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
+                  maxlength="100"
+                />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
+                :label="$t('input.catalog.form.variety')"
+                prop="variety"
+              >
+                <el-input
+                  v-model="formData.variety"
+                  :placeholder="$t('input.catalog.placeholder.variety')"
+                  maxlength="100"
+                />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item
                 :label="$t('input.catalog.form.inputSku')"
                 prop="input_sku"
               >
                 <el-input
                   v-model="formData.input_sku"
                   :placeholder="$t('input.catalog.placeholder.inputSku')"
+                  readonly
                   maxlength="50"
                 />
               </el-form-item>
@@ -121,7 +148,7 @@
         </div>
 
         <!-- 法规与许可信息 -->
-        <div class="form-section">
+<!--        <div class="form-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('input.catalog.form.regulatoryInfo') }}
@@ -164,7 +191,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-        </div>
+        </div>-->
 
         <!-- 生产与责任信息 -->
         <div class="form-section">
@@ -299,11 +326,11 @@
           </div>
 
           <el-row :gutter="24">
-            <el-col :span="12">
+<!--            <el-col :span="12">
               <el-form-item :label="$t('input.catalog.fertilizer.fertilizerType')">
                 <el-input v-model="formData.fertilizer_properties.fertilizer_type" />
               </el-form-item>
-            </el-col>
+            </el-col>-->
 
             <el-col :span="12">
               <el-form-item :label="$t('input.catalog.fertilizer.totalNutrientContent')">
@@ -381,7 +408,7 @@
           </div>
 
           <el-row :gutter="24">
-            <el-col :span="12">
+<!--            <el-col :span="12">
               <el-form-item :label="$t('input.catalog.seed.cropType')">
                 <el-input v-model="formData.seed_properties.crop_type" />
               </el-form-item>
@@ -391,7 +418,7 @@
               <el-form-item :label="$t('input.catalog.seed.varietyName')">
                 <el-input v-model="formData.seed_properties.variety_name" />
               </el-form-item>
-            </el-col>
+            </el-col>-->
 
             <el-col :span="12">
               <el-form-item :label="$t('input.catalog.seed.varietyApprovalCode')">
@@ -504,11 +531,13 @@ const isEdit = computed(() => !!route.params.id)
 const formData = reactive({
   input_name: '',
   type: '',
+  agricultural_input_type: '',
+  variety: '',
   input_sku: '',
   trademark: '',
-  register_code: '',
-  production_license: '',
-  production_standard: '',
+  register_code: '1',
+  production_license: '1',
+  production_standard: '1',
   producer_name: '',
   producer_address: '',
   status: 'active',
@@ -560,6 +589,12 @@ const rules = computed(() => ({
   type: [
     { required: true, message: t('input.catalog.rules.inputTypeRequired'), trigger: 'change' }
   ],
+  agricultural_input_type: [
+    { max: 100, message: t('input.catalog.rules.agriculturalInputTypeLength'), trigger: 'blur' }
+  ],
+  variety: [
+    { max: 100, message: t('input.catalog.rules.varietyLength'), trigger: 'blur' }
+  ],
   input_sku: [
     { required: true, message: t('input.catalog.rules.inputSkuRequired'), trigger: 'blur' },
     { min: 8, max: 50, message: t('input.catalog.rules.inputSkuLength'), trigger: 'blur' }
@@ -577,14 +612,19 @@ const rules = computed(() => ({
     { required: true, message: t('input.catalog.rules.productionStandardRequired'), trigger: 'blur' }
   ],
   producer_name: [
-    { required: true, message: t('input.catalog.rules.producerNameRequired'), trigger: 'blur' },
     { min: 2, max: 200, message: t('input.catalog.rules.producerNameLength'), trigger: 'blur' }
   ],
   producer_address: [
-    { required: true, message: t('input.catalog.rules.producerAddressRequired'), trigger: 'blur' },
     { min: 5, max: 255, message: t('input.catalog.rules.producerAddressLength'), trigger: 'blur' }
   ]
 }))
+
+// 生成SKU编码
+const generateSku = () => {
+  // 生成格式: ZZ-XM-XXXXXX (6位随机数字)
+  const randomNumber = Math.floor(100000 + Math.random() * 900000)
+  return `ZZ-XM-${randomNumber}`
+}
 
 // 类型变化处理
 const handleTypeChange = () => {
@@ -660,6 +700,10 @@ const goBack = () => {
 onMounted(() => {
   if (isEdit.value) {
     loadDetail()
+  } else {
+    // 新增模式下自动生成SKU
+    formData.input_sku = generateSku()
+    formData.register_code = generateSku()
   }
 })
 </script>
