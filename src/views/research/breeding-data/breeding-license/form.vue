@@ -35,6 +35,7 @@
               :placeholder="$t('research.breedingLicense.placeholder.batchId')"
               filterable
               clearable
+              disabled
               style="width: 100%"
               @change="handleBatchChange"
             >
@@ -70,6 +71,7 @@
               v-model="formData.cropType"
               :placeholder="$t('research.breedingLicense.placeholder.cropType')"
               clearable
+              disabled
             />
           </el-form-item>
 
@@ -78,6 +80,7 @@
               v-model="formData.varietyName"
               :placeholder="$t('research.breedingLicense.placeholder.varietyName')"
               clearable
+              disabled
             />
           </el-form-item>
         </div>
@@ -162,8 +165,6 @@
               style="width: 100%"
             >
               <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
-              <el-option :label="$t('research.breedingLicense.status.expired')" value="expired" />
-              <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />
             </el-select>
           </el-form-item>
 

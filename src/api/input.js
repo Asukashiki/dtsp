@@ -35,6 +35,23 @@ export const getInputList = (params = {}) => {
 }
 
 /**
+ * 获取全部投入品列表
+ * @param
+ */
+export const getAllInputList = () => {
+  return agricultureRequest({
+    url: `/agriculture/input/getAllInputList`,
+    method: 'get'
+  }).then(res => {
+    // // 转换返回数据：驼峰转下划线
+    // if (res.data) {
+    //   // res.data = toSnakeCase(res.data)
+    // }
+    return res
+  })
+}
+
+/**
  * 获取投入品详情
  * @param {number} id - 投入品ID
  */
@@ -160,6 +177,8 @@ function transformInputData(data) {
   const transformed = {
     inputName: data.input_name,
     type: data.type,
+    agriculturalInputType: data.agricultural_input_type,
+    variety: data.variety,
     inputSku: data.input_sku,
     trademark: data.trademark,
     registerCode: data.register_code,

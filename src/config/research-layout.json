@@ -93,34 +93,29 @@
           "titleKey": "research.menu.propagationBatchCollection"
         },
         {
-          "index": "/research/seed/breeding-certification",
-          "icon": "ri-git-pull-request-line",
-          "titleKey": "research.menu.seedCertificationApplication"
-        },
-        {
-          "index": "/research/breeding/seed-propagation",
+          "index": "/research/c1-propagation",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.c1SeedPropagationApplication"
         },
         {
-          "index": "/research/breeding/seed-propagation-audit",
+          "index": "/research/c1-propagation-audit",
           "icon": "ri-pass-pending-line",
           "titleKey": "research.menu.c1SeedPropagationApplicationAudit"
         },
         {
-          "index": "/research/breeding",
+          "index": "/research/c1-breeding-batch",
           "icon": "ri-folders-line",
           "titleKey": "research.menu.c1PropagationBatchCollection"
         },
         {
-          "index": "/research/seed/breeding-audit",
+          "index": "/research/c1-breeding-batch-audit",
           "icon": "ri-pass-pending-line",
-          "titleKey": "research.menu.seedCertificationAudit"
+          "titleKey": "research.menu.c1BatchAudit"
         },
         {
-          "index": "/research/seed/breeding-certificate",
+          "index": "/research/c1-breeding-certificate",
           "icon": "ri-award-line",
-          "titleKey": "research.menu.seedCertificationIssuance"
+          "titleKey": "research.menu.c1BatchCertificate"
         }
       ]
     },

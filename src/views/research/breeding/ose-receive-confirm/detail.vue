@@ -1,15 +1,12 @@
 <template>
-  <div class="detail-container">
-    <div class="detail-header">
-      <div class="header-left">
-        <el-button link @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
-      </div>
-      <h2 class="detail-title">{{ $t('research.breeding.seed.receiveConfirm.detail') }}</h2>
-    </div>
-
+  <el-dialog
+    v-model="dialogVisible"
+    :title="$t('research.breeding.seed.receiveConfirm.detail')"
+    width="80%"
+    :close-on-click-modal="false"
+    @close="handleClose"
+    class="detail-dialog"
+  >
     <div class="detail-content">
       <!-- 基础信息 -->
       <div class="info-section">
@@ -109,23 +106,33 @@
         </div>
       </div>
     </div>
-  </div>
+  </el-dialog>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
   data: {
     type: Object,
-    required: true
+    default: () => ({})
   }
 })
 
-const emit = defineEmits(['back'])
+const emit = defineEmits(['update:modelValue', 'close'])
 
-const handleBack = () => {
-  emit('back')
+const dialogVisible = computed({
+  get: () => props.modelValue,
+  set: (val) => emit('update:modelValue', val)
+})
+
+const handleClose = () => {
+  emit('update:modelValue', false)
+  emit('close')
 }
 
 // 获取 breeder seed 列表
@@ -135,37 +142,25 @@ const breedSeedList = computed(() => {
 </script>
 
 <style scoped>
-.detail-container {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
+.detail-dialog :deep(.el-dialog__header) {
   background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.header-left {
-  flex: 1;
-}
-
-.detail-title {
+.detail-dialog :deep(.el-dialog__title) {
   font-size: 18px;
   font-weight: 600;
   color: #009A44;
-  margin: 0;
-  text-align: center;
-  flex: 2;
+}
+
+.detail-dialog :deep(.el-dialog__body) {
+  padding: 0;
 }
 
 .detail-content {
   padding: 24px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .info-section {

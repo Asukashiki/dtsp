@@ -110,10 +110,27 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- Operator ID (read-only, current user) -->
+                <!-- Operator ID (Farmer selection) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Operator ID">
-                    <el-input v-model="formData.operatorId" disabled placeholder="Current user ID" />
+                  <el-form-item label="Operator ID" prop="operatorId">
+                    <el-select
+                      v-model="formData.operatorId"
+                      placeholder="Please select operator"
+                      filterable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in farmerOptions"
+                        :key="item.farmerId"
+                        :label="`${item.farmerName} (${item.farmerId})`"
+                        :value="item.farmerId"
+                      >
+                        <div style="display: flex; justify-content: space-between;">
+                          <span>{{ item.farmerName }}</span>
+                          <span style="color: #8492a6; font-size: 13px;">{{ item.farmerId }}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Operation Description -->
@@ -147,18 +164,18 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/store/user'
 import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
+import { getFarmerOptions } from '@/api/newFarm'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
 const plotOptions = ref([])
+const farmerOptions = ref([])
 
 const isEdit = computed(() => !!route.params.farmingId)
 
@@ -172,14 +189,15 @@ const formData = reactive({
   inputName: '',
   quantity: null,
   unit: '',
-  operatorId: userStore.userInfo?.user?.ID || '', // 当前登录用户ID
+  operatorId: '',
   operationDesc: ''
 })
 
 const rules = {
   plotId: [{ required: true, message: 'Please select Plot ID', trigger: 'change' }],
   activityDate: [{ required: true, message: 'Please select Activity Date', trigger: 'change' }],
-  activityType: [{ required: true, message: 'Please select Activity Type', trigger: 'change' }]
+  activityType: [{ required: true, message: 'Please select Activity Type', trigger: 'change' }],
+  operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }]
 }
 
 const loadPlotOptions = async () => {
@@ -188,6 +206,15 @@ const loadPlotOptions = async () => {
     plotOptions.value = res.data || []
   } catch (error) {
     console.error('Failed to load plot options:', error)
+  }
+}
+
+const loadFarmerOptions = async () => {
+  try {
+    const res = await getFarmerOptions()
+    farmerOptions.value = res.data || []
+  } catch (error) {
+    console.error('Failed to load farmer options:', error)
   }
 }
 
@@ -241,15 +268,8 @@ const goBack = () => {
 }
 
 onMounted(() => {
-  // 确保在新增模式下设置操作员ID
-  if (!isEdit.value) {
-    const userId = userStore.userInfo?.user?.ID
-    if (userId) {
-      formData.operatorId = userId
-    }
-  }
-
   loadPlotOptions()
+  loadFarmerOptions()
   getInfo()
 })
 </script>

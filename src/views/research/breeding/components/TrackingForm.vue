@@ -2,27 +2,7 @@
   <div class="tracking-form-component">
     <el-form ref="formRef" :model="formData" :rules="rules" label-position="top">
       <el-row :gutter="responsiveGutter">
-        <el-col :span="responsiveSpan">
-          <el-form-item :label="$t('research.breeding.tracking.form.cropType')" prop="cropType">
-            <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.tracking.form.cropTypePlaceholder')" style="width: 100%">
-              <el-option :label="$t('research.breeding.cropType.wheat')" value="WHEAT" />
-              <el-option :label="$t('research.breeding.cropType.corn')" value="CORN" />
-              <el-option :label="$t('research.breeding.cropType.rice')" value="RICE" />
-              <el-option :label="$t('research.breeding.cropType.soybean')" value="SOYBEAN" />
-              <el-option :label="$t('research.breeding.cropType.cotton')" value="COTTON" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="responsiveSpan">
-          <el-form-item :label="$t('research.breeding.tracking.form.stageName')" prop="stageName">
-            <el-select v-model="formData.stageName" :placeholder="$t('research.breeding.tracking.form.stageNamePlaceholder')" style="width: 100%">
-              <el-option :label="$t('research.breeding.tracking.stage.parentPrep')" value="01" />
-              <el-option :label="$t('research.breeding.tracking.stage.original')" value="02" />
-              <el-option :label="$t('research.breeding.tracking.stage.foundation')" value="03" />
-              <el-option :label="$t('research.breeding.tracking.stage.certified')" value="04" />
-            </el-select>
-          </el-form-item>
-        </el-col>
+        <!-- Crop Type and Stage Name fields hidden -->
         <el-col :span="responsiveSpan">
           <el-form-item :label="$t('research.breeding.tracking.form.trackingResult')" prop="trackingResult">
             <el-select v-model="formData.trackingResult" :placeholder="$t('research.breeding.tracking.form.trackingResultPlaceholder')" style="width: 100%">
@@ -113,8 +93,6 @@ const updateResponsive = () => {
 }
 
 const rules = computed(() => ({
-  cropType: [{ required: true, message: t('research.breeding.tracking.validation.cropTypeRequired'), trigger: 'change' }],
-  stageName: [{ required: true, message: t('research.breeding.tracking.validation.stageNameRequired'), trigger: 'change' }],
   location: [{ required: true, message: t('research.breeding.tracking.validation.locationRequired'), trigger: 'blur' }],
   startDate: [{ required: true, message: t('research.breeding.tracking.validation.startDateRequired'), trigger: 'change' }]
 }))

@@ -1,5 +1,5 @@
 <template>
-  <div class="breeding-detail-page">
+  <div class="batch-detail-page">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
@@ -10,11 +10,11 @@
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('research.breeding.detail.title') }}</h1>
+          <h1 class="page-title">{{ $t('research.c1BreedingBatch.detail.title') }}</h1>
           <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
         </div>
         <div class="header-right">
-          <el-button type="primary" @click="handleEdit" v-if="batchInfo">
+          <el-button type="primary" @click="handleEdit" v-if="batchInfo && !isReadonly">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
           </el-button>
@@ -24,16 +24,16 @@
 
     <!-- Tab标签页 -->
     <div class="content-wrapper">
-      <el-tabs v-model="activeTab" class="breeding-tabs">
+      <el-tabs v-model="activeTab" class="batch-tabs">
         <!-- Tab 1: 基本信息 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.basicInfo')" name="basic">
+        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.basicInfo')" name="basic">
           <div class="tab-content" v-if="batchInfo">
             <!-- 状态概览卡片 -->
             <div class="status-overview-card">
               <div class="overview-item">
                 <i class="ri-seedling-line"></i>
                 <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.varietyName') }}</span>
+                  <span class="overview-label">{{ $t('research.c1BreedingBatch.form.varietyName') }}</span>
                   <span class="overview-value">{{ batchInfo.varietyName }}</span>
                 </div>
               </div>
@@ -41,9 +41,9 @@
               <div class="overview-item">
                 <i class="ri-plant-line"></i>
                 <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.cropType') }}</span>
+                  <span class="overview-label">{{ $t('research.c1BreedingBatch.form.cropType') }}</span>
                   <span class="overview-value">
-                    <el-tag size="small">{{ getCropTypeName(batchInfo.cropType) }}</el-tag>
+                    <el-tag size="small">{{ batchInfo.cropType }}</el-tag>
                   </span>
                 </div>
               </div>
@@ -51,7 +51,7 @@
               <div class="overview-item">
                 <i class="ri-checkbox-circle-line"></i>
                 <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.status') }}</span>
+                  <span class="overview-label">{{ $t('research.c1BreedingBatch.columns.status') }}</span>
                   <span class="overview-value">
                     <el-tag :type="getStatusTagType(batchInfo.batchStatus)">
                       {{ getStatusName(batchInfo.batchStatus) }}
@@ -65,22 +65,26 @@
             <div class="detail-section">
               <div class="section-title">
                 <i class="ri-information-line"></i>
-                <span>{{ $t('research.breeding.detail.basicInfo') }}</span>
+                <span>{{ $t('research.c1BreedingBatch.detail.basicInfo') }}</span>
               </div>
               <div class="info-grid">
                 <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.batchId') }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.batchId') }}</span>
                   <span class="value">{{ batchInfo.batchId }}</span>
                 </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.breedingLevel') }}</span>
+                <!-- <div class="info-item">
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.breedingLevel') }}</span>
                   <span class="value">
                     <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
                   </span>
                 </div>
                 <div class="info-item full-width">
-                  <span class="label">{{ $t('research.breeding.batch.form.parentSeedSource') }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.parentSeedSource') }}</span>
                   <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
+                </div> -->
+                <div class="info-item full-width">
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.location') }}</span>
+                  <span class="value">{{ batchInfo.location || '-' }}</span>
                 </div>
               </div>
             </div>
@@ -89,13 +93,13 @@
             <div class="detail-section">
               <div class="section-title">
                 <i class="ri-calendar-line"></i>
-                <span>{{ $t('research.breeding.detail.timeline') }}</span>
+                <span>{{ $t('research.c1BreedingBatch.detail.timeline') }}</span>
               </div>
               <div class="timeline-grid">
                 <div class="timeline-item">
                   <div class="timeline-dot start"></div>
                   <div class="timeline-content">
-                    <span class="timeline-label">{{ $t('research.breeding.batch.form.startDate') }}</span>
+                    <span class="timeline-label">{{ $t('research.c1BreedingBatch.form.startDate') }}</span>
                     <span class="timeline-value">{{ batchInfo.startDate || '-' }}</span>
                   </div>
                 </div>
@@ -103,7 +107,7 @@
                 <div class="timeline-item">
                   <div class="timeline-dot end"></div>
                   <div class="timeline-content">
-                    <span class="timeline-label">{{ $t('research.breeding.batch.form.endDate') }}</span>
+                    <span class="timeline-label">{{ $t('research.c1BreedingBatch.form.endDate') }}</span>
                     <span class="timeline-value">{{ batchInfo.endDate || '-' }}</span>
                   </div>
                 </div>
@@ -114,52 +118,26 @@
             <div class="detail-section">
               <div class="section-title">
                 <i class="ri-bar-chart-box-line"></i>
-                <span>{{ $t('research.breeding.detail.yieldData') }}</span>
+                <span>{{ $t('research.c1BreedingBatch.detail.yieldData') }}</span>
               </div>
               <div class="info-grid">
                 <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.expectedYield') }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.expectedYield') }}</span>
                   <span class="value metric">
                     <span class="number">{{ batchInfo.expectedYield || '-' }}</span>
                     <span class="unit" v-if="batchInfo.expectedYield">kg</span>
                   </span>
                 </div>
                 <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.actualYield') }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.actualYield') }}</span>
                   <span class="value metric">
                     <span class="number">{{ batchInfo.actualYield || '-' }}</span>
                     <span class="unit" v-if="batchInfo.actualYield">kg</span>
                   </span>
                 </div>
-              </div>
-            </div>
-
-            <!-- 统计信息 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-file-list-line"></i>
-                <span>{{ $t('research.breeding.detail.relatedRecords') }}</span>
-              </div>
-              <div class="stats-grid">
-                <div class="stat-card" @click="activeTab = 'tracking'">
-                  <div class="stat-icon tracking">
-                    <i class="ri-map-pin-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.trackingCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.trackingCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
-                </div>
-                <div class="stat-card" @click="activeTab = 'test'">
-                  <div class="stat-icon test">
-                    <i class="ri-test-tube-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.testCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.testCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
+                <div class="info-item">
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.plantingArea') }}</span>
+                  <span class="value">{{ batchInfo.plantingArea || '-' }} ha</span>
                 </div>
               </div>
             </div>
@@ -168,34 +146,16 @@
             <div class="detail-section" v-if="batchInfo.orgId || batchInfo.orgName">
               <div class="section-title">
                 <i class="ri-building-line"></i>
-                <span>{{ $t('research.breeding.detail.orgInfo') }}</span>
+                <span>{{ $t('research.c1BreedingBatch.detail.orgInfo') }}</span>
               </div>
               <div class="info-grid">
                 <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.orgId') }}</span>
-                  <span class="value">{{ batchInfo.orgId || '-' }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.orgType') }}</span>
+                  <span class="value">{{ batchInfo.orgType || '-' }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.orgName') }}</span>
+                  <span class="label">{{ $t('research.c1BreedingBatch.form.orgName') }}</span>
                   <span class="value">{{ batchInfo.orgName || '-' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 登记信息 -->
-            <div class="detail-section" v-if="batchInfo.createBy || batchInfo.createTime">
-              <div class="section-title">
-                <i class="ri-user-line"></i>
-                <span>{{ $t('common.registrationInfo') }}</span>
-              </div>
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">{{ $t('common.createBy') }}</span>
-                  <span class="value">{{ batchInfo.createBy || '-' }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('common.createTime') }}</span>
-                  <span class="value">{{ batchInfo.createTime || '-' }}</span>
                 </div>
               </div>
             </div>
@@ -217,21 +177,17 @@
         </el-tab-pane>
 
         <!-- Tab 2: 跟踪记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.trackingRecords')" name="tracking">
-          <TrackingList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
+        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.trackingRecords')" name="tracking">
+          <div class="tab-content">
+            <TrackingList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
+          </div>
         </el-tab-pane>
 
         <!-- Tab 3: 检测记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.testRecords')" name="test">
-          <TestList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
+        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.testRecords')" name="test">
+          <div class="tab-content">
+            <TestList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -243,7 +199,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getBreedingBatchPageDetail } from '@/api/breeding'
+import { getC1BreedingBatchById } from '@/api/c1BreedingBatch'
 import TrackingList from './components/TrackingList.vue'
 import TestList from './components/TestList.vue'
 
@@ -254,29 +210,22 @@ const { t } = useI18n()
 const activeTab = ref('basic')
 const batchInfo = ref(null)
 
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
-
+// 是否只读模式（从审核页面进入）
+const isReadonly = computed(() => route.query.readonly === 'true')
 
 // 繁殖级别映射
 const breedingLevelMap = computed(() => ({
-  '01': t('research.breeding.breedingLevel.parentPrep'),
-  '02': t('research.breeding.breedingLevel.original'),
-  '03': t('research.breeding.breedingLevel.foundation'),
-  '04': t('research.breeding.breedingLevel.certified')
+  '01': t('research.c1BreedingBatch.breedingLevel.parentPrep'),
+  '02': t('research.c1BreedingBatch.breedingLevel.original'),
+  '03': t('research.c1BreedingBatch.breedingLevel.foundation'),
+  '04': t('research.c1BreedingBatch.breedingLevel.certified')
 }))
 
 // 状态映射
 const statusMap = computed(() => ({
-  '01': t('research.breeding.status.ongoing'),
-  '02': t('research.breeding.status.completed'),
-  '03': t('research.breeding.status.terminated')
+  '01': t('research.c1BreedingBatch.status.ongoing'),
+  '02': t('research.c1BreedingBatch.status.completed'),
+  '03': t('research.c1BreedingBatch.status.terminated')
 }))
 
 // 初始化
@@ -287,21 +236,16 @@ onMounted(async () => {
 // 加载批次详情
 const loadBatchDetail = async () => {
   try {
-    const response = await getBreedingBatchPageDetail(route.params.id)
+    const response = await getC1BreedingBatchById(route.params.id)
     if (response.code === 200 && response.data) {
       batchInfo.value = response.data
     } else {
-      ElMessage.error(t('research.breeding.messages.loadError'))
+      ElMessage.error(t('research.c1BreedingBatch.messages.loadError'))
     }
   } catch (error) {
-    ElMessage.error(t('research.breeding.messages.loadError'))
+    ElMessage.error(t('research.c1BreedingBatch.messages.loadError'))
     console.error(error)
   }
-}
-
-// 获取作物类型名称
-const getCropTypeName = (type) => {
-  return cropTypeMap.value[type] || type
 }
 
 // 获取繁殖级别名称
@@ -317,16 +261,16 @@ const getStatusName = (status) => {
 // 获取状态标签类型
 const getStatusTagType = (status) => {
   const map = {
-    '01': 'primary',    // 进行中
-    '02': 'success',    // 已完成
-    '03': 'info'        // 已中止
+    '01': 'primary',
+    '02': 'success',
+    '03': 'info'
   }
   return map[status] || 'info'
 }
 
 // 编辑
 const handleEdit = () => {
-  router.push(`/research/breeding/batch/edit/${route.params.id}`)
+  router.push(`/research/c1-breeding-batch/edit/${route.params.id}`)
 }
 
 // 返回
@@ -336,7 +280,10 @@ const goBack = () => {
 </script>
 
 <style scoped lang="scss">
-.breeding-detail-page {
+.batch-detail-page {
+  padding: 20px;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
 .page-header {
@@ -352,7 +299,7 @@ const goBack = () => {
     align-items: center;
     justify-content: space-between;
 
-    .header-left {
+    .header-left, .header-right {
       min-width: 80px;
     }
 
@@ -374,7 +321,6 @@ const goBack = () => {
     }
 
     .header-right {
-      min-width: 80px;
       display: flex;
       justify-content: flex-end;
     }
@@ -387,18 +333,12 @@ const goBack = () => {
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
-  .breeding-tabs {
+  .batch-tabs {
     :deep(.el-tabs__header) {
       margin-bottom: 20px;
     }
 
-    :deep(.el-tabs__item) {
-      font-size: 16px;
-      font-weight: 500;
-    }
-
     .tab-content {
-      // 状态概览卡片
       .status-overview-card {
         display: flex;
         background: linear-gradient(135deg, #f0f9f4 0%, #e6f7ed 100%);
@@ -443,7 +383,6 @@ const goBack = () => {
         }
       }
 
-      // 详情区块
       .detail-section {
         background: #fff;
         border-radius: 12px;
@@ -495,14 +434,12 @@ const goBack = () => {
             .label {
               font-size: 13px;
               color: #909399;
-              font-weight: 500;
             }
 
             .value {
               font-size: 15px;
               color: #303133;
               font-weight: 500;
-              word-break: break-all;
 
               &.metric {
                 display: flex;
@@ -524,7 +461,6 @@ const goBack = () => {
           }
         }
 
-        // 时间线样式
         .timeline-grid {
           display: grid;
           grid-template-columns: 1fr auto 1fr;
@@ -556,11 +492,9 @@ const goBack = () => {
 
             .timeline-content {
               text-align: center;
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
 
               .timeline-label {
+                display: block;
                 font-size: 12px;
                 color: #909399;
               }
@@ -580,86 +514,24 @@ const goBack = () => {
           }
         }
 
-        // 统计卡片
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
-
-          .stat-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid #e9ecef;
-
-            &:hover {
-              background: #fff;
-              box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-              transform: translateY(-2px);
-            }
-
-            .stat-icon {
-              width: 48px;
-              height: 48px;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-
-              &.tracking {
-                background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-              }
-
-              &.test {
-                background: linear-gradient(135deg, #FEDD00 0%, #ffc107 100%);
-              }
-
-              i {
-                font-size: 24px;
-                color: #fff;
-              }
-            }
-
-            .stat-content {
-              flex: 1;
-
-              .stat-value {
-                font-size: 24px;
-                font-weight: 700;
-                color: #303133;
-                line-height: 1;
-                margin-bottom: 4px;
-              }
-
-              .stat-label {
-                font-size: 13px;
-                color: #606266;
-              }
-            }
-
-            .stat-arrow {
-              font-size: 20px;
-              color: #909399;
-              flex-shrink: 0;
-            }
-          }
-        }
-
         .remark-content {
           padding: 16px;
           background: #f8f9fa;
           border-radius: 8px;
           line-height: 1.6;
           color: #606266;
-          font-size: 14px;
-          white-space: pre-wrap;
-          word-break: break-word;
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #909399;
+
+        i {
+          font-size: 48px;
+          margin-bottom: 12px;
+          display: block;
         }
       }
     }
@@ -670,198 +542,31 @@ const goBack = () => {
   padding: 20px;
 }
 
-// 移动端适配
-@media screen and (max-width: 768px) {
-  .breeding-detail-page {
-    padding: 12px;
-  }
+@media (max-width: 768px) {
+  .page-header .header-content {
+    flex-direction: column;
+    gap: 12px;
 
-  .page-header {
-    padding: 16px;
-    margin-bottom: 16px;
-
-    .header-content {
-      flex-direction: column;
-      gap: 12px;
-
-      .header-left,
-      .header-right {
-        width: 100%;
-        min-width: auto;
-      }
-
-      .header-left {
-        display: flex;
-        justify-content: flex-start;
-      }
-
-      .header-right {
-        justify-content: stretch;
-
-        .el-button {
-          width: 100%;
-        }
-      }
-
-      .header-center {
-        .page-title {
-          font-size: 20px;
-        }
-
-        .batch-id {
-          font-size: 13px;
-        }
-      }
+    .header-left, .header-right {
+      width: 100%;
+      min-width: auto;
     }
   }
 
-  .content-wrapper {
-    padding: 16px;
+  .content-wrapper .batch-tabs .tab-content {
+    .status-overview-card {
+      flex-direction: column;
+      gap: 12px;
 
-    .breeding-tabs {
-      :deep(.el-tabs__header) {
-        margin-bottom: 16px;
+      .overview-divider {
+        width: 100%;
+        height: 1px;
+        margin: 0;
       }
+    }
 
-      :deep(.el-tabs__item) {
-        font-size: 14px;
-        padding: 0 12px;
-      }
-
-      .tab-content {
-        .status-overview-card {
-          flex-direction: column;
-          padding: 16px;
-          gap: 12px;
-
-          .overview-item {
-            i {
-              font-size: 28px;
-            }
-
-            .overview-content {
-              .overview-label {
-                font-size: 12px;
-              }
-
-              .overview-value {
-                font-size: 15px;
-              }
-            }
-          }
-
-          .overview-divider {
-            width: 100%;
-            height: 1px;
-            margin: 0;
-          }
-        }
-
-        .detail-section {
-          padding: 16px;
-          margin-bottom: 12px;
-
-          .section-title {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-
-            i {
-              font-size: 18px;
-            }
-
-            span {
-              font-size: 15px;
-            }
-          }
-
-          .info-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .info-item {
-              &.highlight {
-                padding: 10px;
-              }
-
-              .label {
-                font-size: 12px;
-              }
-
-              .value {
-                font-size: 14px;
-
-                &.metric {
-                  .number {
-                    font-size: 20px;
-                  }
-
-                  .unit {
-                    font-size: 13px;
-                  }
-                }
-              }
-            }
-          }
-
-          .timeline-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .timeline-connector {
-              width: 2px;
-              height: 40px;
-              min-width: auto;
-              justify-self: center;
-              background: linear-gradient(180deg, #009A44 0%, #FEDD00 100%);
-            }
-
-            .timeline-item {
-              .timeline-content {
-                .timeline-label {
-                  font-size: 11px;
-                }
-
-                .timeline-value {
-                  font-size: 13px;
-                }
-              }
-            }
-          }
-
-          .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .stat-card {
-              padding: 14px;
-
-              .stat-icon {
-                width: 44px;
-                height: 44px;
-
-                i {
-                  font-size: 22px;
-                }
-              }
-
-              .stat-content {
-                .stat-value {
-                  font-size: 20px;
-                }
-
-                .stat-label {
-                  font-size: 12px;
-                }
-              }
-            }
-          }
-
-          .remark-content {
-            padding: 12px;
-            font-size: 13px;
-          }
-        }
-      }
+    .detail-section .info-grid {
+      grid-template-columns: 1fr;
     }
   }
 }

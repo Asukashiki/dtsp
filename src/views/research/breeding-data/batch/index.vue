@@ -247,7 +247,6 @@ const queryParams = reactive({
 })
 
 const cropTypeOptions = [
-  { label: 'rice', value: 'rice' },
   { label: 'wheat', value: 'wheat' },
   { label: 'corn', value: 'corn' },
   { label: 'soybean', value: 'soybean' },
@@ -255,8 +254,6 @@ const cropTypeOptions = [
 ]
 
 const statusOptions = [
-  { label: 'Not Approved', value: 'not_approved' },
-  { label: 'Approved', value: 'approved' },
   { label: 'Ongoing', value: 'ongoing' },
   { label: 'Done', value: 'done' }
 ]
@@ -292,18 +289,14 @@ const handleReset = () => {
 
 const getStatusType = (status) => {
   const statusMap = {
-    'not_approved': 'info',
-    'approved': 'success',
     'ongoing': 'warning',
-    'done': ''
+    'done': 'success'
   }
   return statusMap[status] || 'info'
 }
 
 const getStatusLabel = (status) => {
   const statusLabelMap = {
-    'not_approved': 'Not Approved',
-    'approved': 'Approved',
     'ongoing': 'Ongoing',
     'done': 'Done'
   }

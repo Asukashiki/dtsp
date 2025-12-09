@@ -41,6 +41,16 @@
                 {{ $t(`input.catalog.type.${detailData.type}`) }}
               </el-tag>
             </div>
+
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
+              <span class="value">{{ detailData.agricultural_input_type }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.variety') }}:</span>
+              <span class="value">{{ detailData.variety }}</span>
+            </div>
+
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputSku') }}:</span>
               <span class="value">{{ detailData.input_sku }}</span>
@@ -67,7 +77,7 @@
         </div>
 
         <!-- 法规与许可信息 -->
-        <div class="detail-section">
+<!--        <div class="detail-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('input.catalog.form.regulatoryInfo') }}
@@ -86,7 +96,7 @@
               <span class="value">{{ detailData.production_standard }}</span>
             </div>
           </div>
-        </div>
+        </div>-->
 
         <!-- 生产与责任信息 -->
         <div class="detail-section">
@@ -169,10 +179,10 @@
             {{ $t('input.catalog.fertilizer.title') }}
           </div>
           <div class="detail-grid">
-            <div class="detail-item">
+<!--            <div class="detail-item">
               <span class="label">{{ $t('input.catalog.fertilizer.fertilizerType') }}:</span>
               <span class="value">{{ detailData.fertilizer_properties.fertilizer_type }}</span>
-            </div>
+            </div>-->
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.fertilizer.totalNutrientContent') }}:</span>
               <span class="value">{{ detailData.fertilizer_properties.total_nutrient_content }}</span>
@@ -227,14 +237,14 @@
             {{ $t('input.catalog.seed.title') }}
           </div>
           <div class="detail-grid">
-            <div class="detail-item">
+<!--            <div class="detail-item">
               <span class="label">{{ $t('input.catalog.seed.cropType') }}:</span>
               <span class="value">{{ detailData.seed_properties.crop_type }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.seed.varietyName') }}:</span>
               <span class="value">{{ detailData.seed_properties.variety_name }}</span>
-            </div>
+            </div>-->
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.seed.varietyApprovalCode') }}:</span>
               <span class="value">{{ detailData.seed_properties.variety_approval_code }}</span>
