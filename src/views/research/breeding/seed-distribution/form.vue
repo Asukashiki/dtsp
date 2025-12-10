@@ -132,7 +132,7 @@
                     <div style="display: flex; justify-content: space-between">
                       <span>{{ batch.varietyName }} - {{ batch.cropType }}</span>
                       <span style="color: #8492a6; font-size: 13px">
-                        {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.remainingQuantity || 0 }} kg
+                        {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.remainingQuantity ?? batch.produceSeedQuantrity ?? 0 }} kg
                       </span>
                     </div>
                   </el-option>
@@ -184,6 +184,7 @@ import { ElMessage } from 'element-plus'
 import { addBreedSeedDistribute } from '@/api/breedSeed'
 import { getOseList } from '@/api/breedSeed'
 import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { getBreedSeedProduceDetail } from '@/api/breedSeed'
 
 const { t } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
@@ -259,6 +260,10 @@ const loadProductionBatchList = async () => {
     const res = await getBreedSeedProduceList({ pageNum: 1, pageSize: 1000 })
     if (res.code === 200) {
       productionBatchList.value = res.rows || []
+      // 调试信息：打印第一条数据查看remainingQuantity是否正确返回
+      if (productionBatchList.value.length > 0) {
+        console.log('Production batch list loaded, sample data:', productionBatchList.value[0])
+      }
     }
   } catch (error) {
     console.error('Failed to load production batch list:', error)
@@ -281,16 +286,50 @@ const handleRemoveDetail = (index) => {
   }
 }
 
-// 生产批次变更时更新可分发量
-const handleBatchChange = (index) => {
+// 生产批次变更时更新可分发量（实时从后端获取最新剩余量）
+const handleBatchChange = async (index) => {
   const detail = formData.detailList[index]
-  const batch = productionBatchList.value.find(
-    item => item.breedSeedProduceBatchId === detail.breedSeedProduceBatchId
-  )
-  if (batch) {
-    detail.maxQuantity = batch.remainingQuantity || batch.produceSeedQuantrity || 0
-  } else {
+  if (!detail.breedSeedProduceBatchId) {
     detail.maxQuantity = null
+    return
+  }
+
+  try {
+    // 实时从后端获取批次详情，确保剩余量是最新的
+    const res = await getBreedSeedProduceDetail(detail.breedSeedProduceBatchId)
+    if (res.code === 200 && res.data) {
+      // 使用后端返回的最新剩余量
+      detail.maxQuantity = res.data.remainingQuantity || res.data.produceSeedQuantrity || 0
+
+      // 同时更新缓存列表中的数据，以便下拉选项显示最新的剩余量
+      const batchIndex = productionBatchList.value.findIndex(
+        item => item.breedSeedProduceBatchId === detail.breedSeedProduceBatchId
+      )
+      if (batchIndex !== -1) {
+        productionBatchList.value[batchIndex].remainingQuantity = res.data.remainingQuantity
+      }
+    } else {
+      // 如果接口失败，回退到使用缓存的数据
+      const batch = productionBatchList.value.find(
+        item => item.breedSeedProduceBatchId === detail.breedSeedProduceBatchId
+      )
+      if (batch) {
+        detail.maxQuantity = batch.remainingQuantity || batch.produceSeedQuantrity || 0
+      } else {
+        detail.maxQuantity = null
+      }
+    }
+  } catch (error) {
+    console.error('Failed to get batch detail:', error)
+    // 如果出错，回退到使用缓存的数据
+    const batch = productionBatchList.value.find(
+      item => item.breedSeedProduceBatchId === detail.breedSeedProduceBatchId
+    )
+    if (batch) {
+      detail.maxQuantity = batch.remainingQuantity || batch.produceSeedQuantrity || 0
+    } else {
+      detail.maxQuantity = null
+    }
   }
 }
 
@@ -311,6 +350,10 @@ const handleSubmit = async () => {
 
     if (res.code === 200) {
       ElMessage.success(t('research.breeding.seed.distribution.addSuccess'))
+
+      // 提交成功后重新加载生产批次列表，以便下次使用时能看到最新的剩余量
+      await loadProductionBatchList()
+
       emit('success')
     } else {
       ElMessage.error(res.msg || t('common.failed'))
