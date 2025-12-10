@@ -420,7 +420,7 @@
       :title="$t('demandAudit.approveDialog.title')"
       width="500px"
     >
-      <el-form :model="approveForm" label-width="100px">
+      <!-- <el-form :model="approveForm" label-width="100px">
         <el-form-item :label="$t('demandAudit.approveDialog.remark')">
           <el-input
             v-model="approveForm.remark"
@@ -429,7 +429,7 @@
             :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')"
           />
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <template #footer>
         <el-button @click="approveDialogVisible = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="primary" @click="confirmApprove" :loading="submitting">
@@ -444,7 +444,7 @@
       :title="$t('demandAudit.rejectDialog.title')"
       width="500px"
     >
-      <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
+      <!-- <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
         <el-form-item :label="$t('demandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
           <el-input
             v-model="rejectForm.auditOpinion"
@@ -461,7 +461,7 @@
             :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')"
           />
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <template #footer>
         <el-button @click="rejectDialogVisible = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="danger" @click="confirmReject" :loading="submitting">
