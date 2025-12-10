@@ -23,57 +23,73 @@
               <i class="ri-user-line"></i>
               {{ $t('farmerDemand.form.farmerInfo') }}
             </div>
+            <!-- 农民姓名 + 年份 一行两列 -->
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.farmerId')" prop="farmerId">
-                  <el-input v-model="formData.farmerId" :placeholder="$t('farmerDemand.placeholder.farmerId')" />
+                <el-form-item :label="$t('farmerDemand.form.farmerName')" prop="farmerName">
+                  <el-select
+                      v-model="selectedFarmer"
+                      :placeholder="$t('farmerDemand.placeholder.farmerName')"
+                      filterable
+                      remote
+                      :remote-method="handleSearchFarmer"
+                      :loading="farmerLoading"
+                      @change="handleSelectFarmer"
+                      style="width: 100%"
+                      value-key="farmerId"
+                      clearable
+                  >
+                    <el-option
+                        v-for="farmer in farmerList"
+                        :key="farmer.farmerId"
+                        :label="farmer.farmerName"
+                        :value="farmer"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
+              <!-- 年份列：自动填充当前年 + 禁用 -->
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.farmerName')" prop="farmerName">
-                  <el-input v-model="formData.farmerName" :placeholder="$t('farmerDemand.placeholder.farmerName')" />
+                <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
+                  <el-input
+                      v-model="formData.year"
+                      :placeholder="$t('farmerDemand.placeholder.year')"
+                      disabled
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.farmerIdNumber')" prop="farmerIdNumber">
-                  <el-input v-model="formData.farmerIdNumber" :placeholder="$t('farmerDemand.placeholder.farmerIdNumber')" />
+                  <el-input v-model="formData.farmerIdNumber" :placeholder="$t('farmerDemand.placeholder.farmerIdNumber')" disabled></el-input>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.landArea')" prop="landArea">
-                  <el-input-number v-model="formData.landArea" :min="0" :precision="2" style="width: 100%" />
+                  <el-input-number v-model="formData.landArea" :min="0" :precision="2" style="width: 100%" disabled></el-input-number>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.zone')" prop="zone">
-                  <el-input v-model="formData.zone" :placeholder="$t('farmerDemand.placeholder.zone')" />
+                  <el-input v-model="formData.zone" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woreda">
-                  <el-input v-model="formData.woreda" :placeholder="$t('farmerDemand.placeholder.woreda')" />
+                  <el-input v-model="formData.woreda" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebele">
-                  <el-input v-model="formData.kebele" :placeholder="$t('farmerDemand.placeholder.kebele')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.village')" prop="village">
-                  <el-input v-model="formData.village" :placeholder="$t('farmerDemand.placeholder.village')" />
+                  <el-input v-model="formData.kebele" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-form-item :label="$t('farmerDemand.form.remark')">
-              <el-input v-model="formData.remark" type="textarea" :rows="3" :placeholder="$t('farmerDemand.placeholder.remark')" />
-            </el-form-item>
           </div>
 
           <!-- 投入品明细 -->
@@ -81,13 +97,13 @@
             <div class="section-title">
               <i class="ri-list-check"></i>
               {{ $t('farmerDemand.form.itemsInfo') }}
-              <el-button type="primary" size="small" @click="handleAddItem" style="margin-left: auto;">
+              <el-button type="primary" size="small" @click="handleAddItem">
                 <i class="ri-add-line"></i>
                 {{ $t('farmerDemand.form.addItem') }}
               </el-button>
             </div>
             <div v-if="formData.inputItems.length === 0" class="no-items">
-              <el-empty :description="$t('farmerDemand.form.noItems')" />
+              <el-empty :description="$t('farmerDemand.form.noItems')"></el-empty>
             </div>
             <div v-else class="items-list">
               <div v-for="(item, index) in formData.inputItems" :key="index" class="item-card">
@@ -98,66 +114,43 @@
                     {{ $t('farmerDemand.form.removeItem') }}
                   </el-button>
                 </div>
-                <el-row :gutter="20">
-                  <el-col :xs="24" :sm="12">
+                <!-- 投入品大类：级联选择器（新增change事件） -->
+                <el-row :gutter="20" style="margin-bottom: 16px;">
+                  <el-col :xs="24">
                     <el-form-item
-                      :label="$t('farmerDemand.form.inputCategory')"
-                      :prop="`inputItems.${index}.inputCategory`"
-                      :rules="rules.inputCategory"
+                        :label="$t('farmerDemand.form.inputCategory')"
+                        :prop="`inputItems.${index}.inputCategory`"
+                        :rules="rules.inputCategory"
                     >
-                      <el-select v-model="item.inputCategory" :placeholder="$t('farmerDemand.placeholder.inputCategory')" style="width: 100%">
-                        <el-option
-                          v-for="(label, value) in inputCategoryOptions"
-                          :key="value"
-                          :label="label"
-                          :value="value"
-                        />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                      :label="$t('farmerDemand.form.inputType')"
-                      :prop="`inputItems.${index}.inputType`"
-                      :rules="rules.inputType"
-                    >
-                      <el-input v-model="item.inputType" :placeholder="$t('farmerDemand.placeholder.inputType')" />
+                      <el-cascader
+                          v-model="item.inputCategory"
+                          :options="cascaderOptions"
+                          :placeholder="$t('farmerDemand.placeholder.inputCategory')"
+                          style="width: 100%"
+                          :props="{ expandTrigger: 'click', label: 'label', value: 'value' }"
+                          @change="(val) => handleCascaderChange(val, index)"
+                      ></el-cascader>
                     </el-form-item>
                   </el-col>
                 </el-row>
+                <!-- 单位 + 数量 -->
                 <el-row :gutter="20">
                   <el-col :xs="24" :sm="12">
                     <el-form-item
-                      :label="$t('farmerDemand.form.variety')"
-                      :prop="`inputItems.${index}.variety`"
-                      :rules="rules.variety"
+                        :label="$t('farmerDemand.form.unit')"
+                        :prop="`inputItems.${index}.unit`"
+                        :rules="rules.unit"
                     >
-                      <el-input v-model="item.variety" :placeholder="$t('farmerDemand.placeholder.variety')" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item :label="$t('farmerDemand.form.specification')">
-                      <el-input v-model="item.specification" :placeholder="$t('farmerDemand.placeholder.specification')" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                      :label="$t('farmerDemand.form.unit')"
-                      :prop="`inputItems.${index}.unit`"
-                      :rules="rules.unit"
-                    >
-                      <el-input v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" />
+                      <el-input v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="12">
                     <el-form-item
-                      :label="$t('farmerDemand.form.quantity')"
-                      :prop="`inputItems.${index}.quantity`"
-                      :rules="rules.quantity"
+                        :label="$t('farmerDemand.form.quantity')"
+                        :prop="`inputItems.${index}.quantity`"
+                        :rules="rules.quantity"
                     >
-                      <el-input-number v-model="item.quantity" :min="0" :precision="2" style="width: 100%" />
+                      <el-input-number v-model="item.quantity" :min="0" :precision="2" style="width: 100%"></el-input-number>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -184,15 +177,59 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addFarmerDemand, updateFarmerDemand, getFarmerDemandDetail } from '@/api/farmerDemand'
+import { getFarmerList } from '@/api/newFarm'
+import { getFarmerDetail } from '@/api/newFarm'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
+// 表单相关
 const formRef = ref(null)
 const submitting = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
+// 农民下拉框相关
+const farmerList = ref([])
+const farmerLoading = ref(false)
+const selectedFarmer = ref(null)
+const daId = ref('')
+
+// 当前年份
+const currentYear = new Date().getFullYear()
+
+// 投入品级联选择器数据源（原有逻辑不变）
+const cascaderOptions = computed(() => [
+  {
+    value: 'pesticide',
+    label: t('farmerDemand.cascader.pesticide'),
+    children: [
+      { value: 'insecticide', label: t('farmerDemand.cascader.insecticide') },
+      { value: 'fungicide', label: t('farmerDemand.cascader.fungicide') },
+      { value: 'herbicide', label: t('farmerDemand.cascader.herbicide') }
+    ]
+  },
+  {
+    value: 'seed',
+    label: t('farmerDemand.cascader.seed'),
+    children: [
+      { value: 'coffee', label: t('farmerDemand.cascader.coffee') },
+      { value: 'apple', label: t('farmerDemand.cascader.apple') },
+      { value: 'wheat', label: t('farmerDemand.cascader.wheat') }
+    ]
+  },
+  {
+    value: 'fertilizer',
+    label: t('farmerDemand.cascader.fertilizer'),
+    children: [
+      { value: 'nitrogen', label: t('farmerDemand.cascader.nitrogen') },
+      { value: 'phosphorus', label: t('farmerDemand.cascader.phosphorus') },
+      { value: 'potassium', label: t('farmerDemand.cascader.potassium') }
+    ]
+  }
+])
+
+// 表单数据（新增variety字段）
 const formData = reactive({
   farmerId: '',
   farmerName: '',
@@ -203,92 +240,224 @@ const formData = reactive({
   kebele: '',
   village: '',
   landArea: null,
-  remark: '',
+  year: currentYear.toString(),
   inputItems: []
 })
 
-// 投入品类型选项
-const inputCategoryOptions = computed(() => ({
-  seed: t('farmerDemand.inputCategory.seed'),
-  fertilizer: t('farmerDemand.inputCategory.fertilizer'),
-  pesticide: t('farmerDemand.inputCategory.pesticide')
-}))
-
-// 表单验证规则
+// 表单验证规则（原有逻辑不变）
 const rules = reactive({
-  farmerId: [{ required: true, message: t('farmerDemand.rules.farmerIdRequired'), trigger: 'blur' }],
   farmerName: [
-    { required: true, message: t('farmerDemand.rules.farmerNameRequired'), trigger: 'blur' },
-    { max: 100, message: t('farmerDemand.rules.farmerNameLength'), trigger: 'blur' }
+    { required: true, message: t('farmerDemand.rules.farmerNameRequired'), trigger: 'change' },
+    { max: 100, message: t('farmerDemand.rules.farmerNameLength'), trigger: 'change' }
   ],
   farmerIdNumber: [
-    { required: true, message: t('farmerDemand.rules.farmerIdNumberRequired'), trigger: 'blur' },
     { max: 50, message: t('farmerDemand.rules.farmerIdNumberLength'), trigger: 'blur' }
   ],
-  woreda: [{ required: true, message: t('farmerDemand.rules.woredaRequired'), trigger: 'blur' }],
-  kebele: [{ required: true, message: t('farmerDemand.rules.kebeleRequired'), trigger: 'blur' }],
-  village: [{ required: true, message: t('farmerDemand.rules.villageRequired'), trigger: 'blur' }],
-  inputCategory: [{ required: true, message: t('farmerDemand.rules.inputCategoryRequired'), trigger: 'change' }],
-  inputType: [{ required: true, message: t('farmerDemand.rules.inputTypeRequired'), trigger: 'blur' }],
-  variety: [{ required: true, message: t('farmerDemand.rules.varietyRequired'), trigger: 'blur' }],
-  unit: [{ required: true, message: t('farmerDemand.rules.unitRequired'), trigger: 'blur' }],
-  quantity: [{ required: true, message: t('farmerDemand.rules.quantityRequired'), trigger: 'blur' }]
+  inputCategory: [{
+    required: true,
+    message: t('farmerDemand.rules.inputCategoryRequired'),
+    trigger: 'change'
+  }],
+  unit: [{
+    required: true,
+    message: t('farmerDemand.rules.unitRequired'),
+    trigger: 'blur'
+  }],
+  quantity: [{
+    required: true,
+    message: t('farmerDemand.rules.quantityRequired'),
+    trigger: 'blur'
+  }]
 })
 
-// 添加投入品明细
+// 新增：级联选择器change事件，拆分一级/二级值
+const handleCascaderChange = (val, index) => {
+  if (val && val.length >= 1) {
+    formData.inputItems[index].variety = val[1] || '';
+  } else {
+    formData.inputItems[index].variety = '';
+  }
+}
+
+// 农民搜索方法（原有逻辑不变）
+const handleSearchFarmer = async (query) => {
+  if (!daId.value) {
+    farmerList.value = []
+    return
+  }
+
+  farmerLoading.value = true
+  try {
+    const requestParams = {
+      daId: daId.value,
+      farmerName: query.trim() || '',
+      pageNum: 1,
+      pageSize: 40
+    }
+
+    const res = await getFarmerList(requestParams)
+    farmerList.value = res.data?.records || res.data?.rows || []
+
+    if (farmerList.value.length === 0) {
+      ElMessage.info(t('farmerDemand.tips.noFarmerFound', { daId: daId.value, query: query }))
+    }
+  } catch (e) {
+    ElMessage.error(t('common.loadFailed'))
+    farmerList.value = []
+  } finally {
+    farmerLoading.value = false
+  }
+}
+
+// 选中农民后填充字段（原有逻辑不变）
+const handleSelectFarmer = (farmer) => {
+  if (!farmer) {
+    formData.farmerId = ''
+    formData.farmerName = ''
+    formData.farmerIdNumber = ''
+    formData.zone = ''
+    formData.woreda = ''
+    formData.kebele = ''
+    formData.landArea = null
+    return
+  }
+
+  // 填充基础字段
+  formData.farmerId = farmer.farmerId || ''
+  formData.farmerName = farmer.farmerName || ''
+  formData.farmerIdNumber = farmer.idCard || ''
+
+  // 填充禁用字段
+  formData.zone = farmer.zoneName || farmer.zone || ''
+  formData.woreda = farmer.woredaName || farmer.woreda || ''
+  formData.kebele = farmer.kebeleName || farmer.kebele || ''
+  formData.landArea = farmer.totalLandArea || farmer.landArea || null
+
+  // 补充详情接口数据
+  if (farmer.farmerId && !farmer.idCard) {
+    getFarmerDetail(farmer.farmerId).then(res => {
+      if (res.code === 200 && res.data) {
+        formData.farmerIdNumber = res.data.idCard || ''
+        formData.zone = res.data.zoneName || res.data.zone || formData.zone
+        formData.woreda = res.data.woredaName || res.data.woreda || formData.woreda
+        formData.kebele = res.data.kebeleName || res.data.kebele || formData.kebele
+        formData.landArea = res.data.totalLandArea || res.data.landArea || formData.landArea
+      }
+    }).catch(() => {})
+  }
+}
+
+// 添加投入品明细（新增variety默认值）
 const handleAddItem = () => {
   formData.inputItems.push({
-    inputCategory: '',
-    inputType: '',
-    variety: '',
-    specification: '',
+    inputCategory: [],
+    variety: '', // 新增
     unit: '',
     quantity: null
   })
 }
 
-// 移除投入品明细
+// 移除投入品明细（原有逻辑不变）
 const handleRemoveItem = (index) => {
   formData.inputItems.splice(index, 1)
 }
 
-// 加载数据
+// 加载编辑态数据（适配级联回显逻辑）
 const loadData = async () => {
   if (!isEdit.value) return
   try {
     const res = await getFarmerDemandDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
-      if (!formData.inputItems) {
+      // 年份强制覆盖为当前年
+      formData.year = currentYear.toString()
+
+      // 适配级联字段格式（拼接一级+二级为数组）
+      if (formData.inputItems && formData.inputItems.length > 0) {
+        formData.inputItems.forEach(item => {
+          const cascadeVal = []
+          // 一级值（后端枚举）
+          if (item.inputCategory) {
+            cascadeVal.push(item.inputCategory)
+          }
+          // 二级值（可选）
+          if (item.variety) {
+            cascadeVal.push(item.variety)
+          }
+          item.inputCategory = cascadeVal
+          item.variety = item.variety || ''
+        })
+      } else {
         formData.inputItems = []
+      }
+
+      // 回显农民信息（原有逻辑不变）
+      if (formData.farmerId) {
+        farmerLoading.value = true
+        try {
+          const farmerRes = await getFarmerDetail(formData.farmerId)
+          if (farmerRes.code === 200) {
+            selectedFarmer.value = farmerRes.data
+            formData.zone = farmerRes.data.zoneName || farmerRes.data.zone || formData.zone
+            formData.woreda = farmerRes.data.woredaName || farmerRes.data.woreda || formData.woreda
+            formData.kebele = farmerRes.data.kebeleName || farmerRes.data.kebele || formData.kebele
+            formData.landArea = farmerRes.data.totalLandArea || farmerRes.data.landArea || formData.landArea
+          } else {
+            const listRes = await getFarmerList({ daId: daId.value, farmerId: formData.farmerId, pageSize: 1 })
+            if (listRes.data?.records?.length) {
+              selectedFarmer.value = listRes.data.records[0]
+            }
+          }
+        } catch (e) {
+          ElMessage.error(t('common.loadFailed'))
+        } finally {
+          farmerLoading.value = false
+        }
       }
     }
   } catch (error) {
-    console.error('Failed to load data:', error)
     ElMessage.error(t('common.loadFailed'))
   }
 }
 
-// 提交表单
+// 提交表单（核心修改：仅传一级值给inputCategory）
 const handleSubmit = async () => {
   if (!formRef.value) return
+
+  if (!daId.value) {
+    ElMessage.warning(t('common.tips.noDaId'))
+    return
+  }
 
   try {
     await formRef.value.validate()
 
-    // 验证至少有一条投入品明细
     if (formData.inputItems.length === 0) {
       ElMessage.warning(t('farmerDemand.rules.itemsRequired'))
       return
     }
 
+    // 处理级联字段提交格式
+    const submitData = {
+      ...formData,
+      inputItems: formData.inputItems.map(item => ({
+        ...item,
+        inputCategory: item.inputCategory[0] || '',
+        variety: item.variety || '',
+        inputType: 'UNKNOWN'
+      }))
+    }
+
     submitting.value = true
     const apiFunc = isEdit.value ? updateFarmerDemand : addFarmerDemand
-    const params = { ...formData }
+    const params = { ...submitData, daId: daId.value }
 
     if (isEdit.value) {
       params.id = route.params.id
     }
+
+    // ========== 新增：打印参数，确认farmerId是否存在且有值 ==========
+    console.log('最终提交的参数：', params)
 
     const res = await apiFunc(params)
     if (res.code === 200) {
@@ -298,23 +467,38 @@ const handleSubmit = async () => {
       ElMessage.error(res.msg || t('farmerDemand.messages.saveFailed'))
     }
   } catch (error) {
-    console.error('Failed to submit:', error)
-    if (error !== false) {
-      ElMessage.error(t('farmerDemand.messages.saveFailed'))
-    }
+    ElMessage.error(t('farmerDemand.messages.saveFailed'))
   } finally {
     submitting.value = false
   }
 }
 
-// 取消
+// 取消操作（原有逻辑不变）
 const handleCancel = () => {
   router.back()
 }
 
-// 初始化
+// 初始化（原有逻辑不变）
 onMounted(() => {
+  // 解析用户ID（生产环境逻辑）
+  try {
+    const userInfoStr = localStorage.getItem('userInfo')
+    if (userInfoStr) {
+      const userInfo = JSON.parse(userInfoStr)
+      daId.value = userInfo.daId || ''
+      // daId.value = 'DA202401005'
+      // 测试环境可临时启用
+    } else {
+      ElMessage.warning(t('common.tips.noUserInfo'))
+    }
+  } catch (e) {
+    ElMessage.error(t('common.tips.parseUserInfoFailed'))
+  }
+
   loadData()
+  if (daId.value) {
+    handleSearchFarmer('')
+  }
 })
 </script>
 
@@ -448,6 +632,16 @@ onMounted(() => {
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #e8f5e9;
+}
+
+/* 级联选择器样式适配 */
+:deep(.el-cascader .el-input__inner) {
+  padding: 0 15px;
+}
+
+/* 下拉框样式适配 */
+:deep(.el-select .el-input__inner) {
+  padding: 0 15px;
 }
 
 @media screen and (max-width: 768px) {

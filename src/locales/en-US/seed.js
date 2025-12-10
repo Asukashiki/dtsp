@@ -232,4 +232,60 @@ export default {
     printCertificate: 'Print Certificate',
     certificateInfo: 'Certificate Information',
   },
+
+  // C1 Breeding Batch Audit
+  c1BatchAudit: {
+    title: 'Breeding Batch Audit',
+    subtitle: 'Review pending breeding batches',
+    searchPlaceholder: 'Search batch ID, variety name, organization',
+    filterByCrop: 'Filter by crop type',
+    noData: 'No pending batches',
+    audit: 'Audit',
+    auditDialog: 'Audit Breeding Batch',
+    auditResult: 'Audit Result',
+    auditComment: 'Audit Comment',
+    auditCommentPlaceholder: 'Please enter audit comment',
+    approve: 'Approve',
+    reject: 'Reject',
+    resultRequired: 'Please select audit result',
+    commentRequired: 'Please enter audit comment',
+    auditSuccess: 'Audit completed successfully',
+    columns: {
+      batchId: 'Batch ID',
+      varietyName: 'Variety Name',
+      cropType: 'Crop Type',
+      orgName: 'Organization',
+      startDate: 'Start Date',
+      batchStatus: 'Batch Status',
+      auditStatus: 'Audit Status',
+    },
+    auditStatus: {
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+    },
+    status: {
+      ongoing: 'Ongoing',
+      completed: 'Completed',
+      terminated: 'Terminated',
+    },
+  },
+
+  // C1 Breeding Batch Certificate
+  c1Certificate: {
+    title: 'Seed Certificate Issuance',
+    subtitle: 'Manage approved breeding batch certificates',
+    searchPlaceholder: 'Search batch ID, variety name',
+    print: 'Print Certificate',
+    columns: {
+      batchId: 'Batch ID',
+      varietyName: 'Variety Name',
+      cropType: 'Crop Type',
+      orgName: 'Organization',
+      startDate: 'Start Date',
+      auditTime: 'Audit Time',
+      printCount: 'Print Count',
+      lastPrintTime: 'Last Print Time',
+    },
+  },
 }

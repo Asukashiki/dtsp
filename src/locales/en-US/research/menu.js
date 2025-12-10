@@ -113,6 +113,12 @@ export default {
   c1SeedPropagationApplicationAudit: 'C1 Seed Propagation Application Audit',
   c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
 
+  c1BatchAudit: 'Breeding Seed Audit',
+  c1BatchAuditDetail: 'Breeding Seed Audit Detail',
+
+  c1BatchCertificate: 'Seed Certificate Issuance',
+  c1BatchCertificateDetail: 'Seed Certificate Issuance Detail',
+
   seedCertificationAudit: 'Seed Certification Audit',
   seedCertificationAuditDetail: 'Certification Audit Detail',
 

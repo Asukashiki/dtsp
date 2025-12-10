@@ -14,7 +14,7 @@
           <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
         </div>
         <div class="header-right">
-          <el-button type="primary" @click="handleEdit" v-if="batchInfo">
+          <el-button type="primary" @click="handleEdit" v-if="batchInfo && !isReadonly">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
           </el-button>
@@ -179,14 +179,14 @@
         <!-- Tab 2: 跟踪记录 -->
         <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.trackingRecords')" name="tracking">
           <div class="tab-content">
-            <TrackingList v-if="batchInfo" :batch-id="batchInfo.batchId" @refresh="loadBatchDetail" />
+            <TrackingList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
           </div>
         </el-tab-pane>
 
         <!-- Tab 3: 检测记录 -->
         <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.testRecords')" name="test">
           <div class="tab-content">
-            <TestList v-if="batchInfo" :batch-id="batchInfo.batchId" @refresh="loadBatchDetail" />
+            <TestList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -209,6 +209,9 @@ const { t } = useI18n()
 
 const activeTab = ref('basic')
 const batchInfo = ref(null)
+
+// 是否只读模式（从审核页面进入）
+const isReadonly = computed(() => route.query.readonly === 'true')
 
 // 繁殖级别映射
 const breedingLevelMap = computed(() => ({
