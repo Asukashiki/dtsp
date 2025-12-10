@@ -23,7 +23,7 @@ export default {
   // 分发相关
   releaseId: '分发单编号',
   releaseName: '分发单名称',
-  targetId: '分发对象ID',
+  targetId: '分发对象',
   targetAddress: '分发对象收获地址',
   targetContact: '分发对象联系人',
   targetPhone: '分发对象联系电话',
@@ -38,10 +38,12 @@ export default {
   releaseDetail: '分发单详情',
 
   // 分发明细
-  releaseDetailId: '分发明细编号',
+  releaseDetailId: '编号',
   cropType: '作物种类',
   variety: '品种',
-  inputId: '投入品ID',
+  inputId: '投入品',
+  inputName: '投入品名称',
+  required: '需求数量',
   quantity: '分发数量',
   unitPrice: '单价',
   releaseTime: '分发时间',
@@ -93,6 +95,7 @@ export default {
   editReleaseFailed: '分发单编辑失败',
   deleteReleaseSuccess: '分发单删除成功',
   deleteReleaseFailed: '分发单删除失败',
+  queryInputListFailed: '获取输入品列表信息失败',
 
   // 菜单项
   inputCirculation: '投入品流通管理',

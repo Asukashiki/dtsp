@@ -192,7 +192,11 @@ export default {
     delete: 'Delete Farmer',
     searchPlaceholder: 'Search farmer name, ID card, phone',
     noData: 'No farmer data',
-
+    tips: {
+      daReadedNotInOptions: 'Please select a DA account',
+      daNotInOptions: 'Your account is not a DA account, please select the affiliated DA from the dropdown box',
+      selectValidDa: 'Please select a valid DA before submitting'
+    },
     // Form
     form: {
       farmerId: 'Farmer ID',

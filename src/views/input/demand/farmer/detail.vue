@@ -121,7 +121,6 @@
                     {{ getInputCategoryLabel(row.inputCategory) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="inputType" :label="$t('farmerDemand.form.inputType')" min-width="120" />
                 <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />
                 <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />
                 <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
@@ -136,10 +135,7 @@
                     <span class="label">{{ $t('farmerDemand.form.inputCategory') }}:</span>
                     <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
                   </div>
-                  <div class="item-row">
-                    <span class="label">{{ $t('farmerDemand.form.inputType') }}:</span>
-                    <span class="value">{{ item.inputType }}</span>
-                  </div>
+
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
                     <span class="value">{{ item.variety }}</span>

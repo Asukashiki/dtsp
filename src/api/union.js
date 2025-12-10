@@ -1,4 +1,5 @@
-import request from '../utils/agricultureRequest'
+import request, {toSnakeCase} from '../utils/agricultureRequest'
+import agricultureRequest from "../utils/agricultureRequest";
 
 // 根据环境判断使用的 API 基础 URL
 const API_BASE_URL = import.meta.env.DEV ? import.meta.env.VITE_APP_LOCAL_TEST_API_URL : ''
@@ -122,3 +123,20 @@ export const uploadFile = (formData) => {
     }
   })
 }
+
+  /**
+   * 获取union详情
+   * @param {number} id - unionID
+   */
+  export const getUnionDetailByUnionId = (id) => {
+    return request({
+      url: `${API_BASE_URL}/seed/union/registration/${id}`,
+      method: 'get'
+    }).then(res => {
+      // 转换返回数据：驼峰转下划线
+      if (res.data) {
+        res.data = toSnakeCase(res.data)
+      }
+      return res
+    })
+  }

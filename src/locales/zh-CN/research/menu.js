@@ -112,6 +112,12 @@ export default {
   c1SeedPropagationApplicationAudit: 'C1种子繁殖申请审核',
   c1SeedPropagationApplicationAuditDetail: '审核申请详情',
 
+  c1BatchAudit: 'C1繁殖批次审核',
+  c1BatchAuditDetail: 'C1繁殖批次审核详情',
+
+  c1BatchCertificate: 'C1繁殖批次证书颁发',
+  c1BatchCertificateDetail: 'C1繁殖批次证书详情',
+
   seedCertificationAudit: '种子认证审核',
   seedCertificationAuditDetail: '认证审核详情',
 

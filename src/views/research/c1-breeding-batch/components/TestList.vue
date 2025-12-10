@@ -3,11 +3,17 @@
     <!-- 列表视图 -->
     <div v-if="currentView === 'list'" class="list-view">
       <!-- 操作栏 -->
-      <div class="action-bar">
+      <div class="action-bar" v-if="!readonly">
         <el-button type="primary" @click="handleAdd">
           <i class="ri-add-line"></i>
           {{ $t('research.c1BreedingBatch.test.add') }}
         </el-button>
+        <el-button @click="loadList">
+          <i class="ri-refresh-line"></i>
+          {{ $t('common.refresh') }}
+        </el-button>
+      </div>
+      <div class="action-bar" v-else>
         <el-button @click="loadList">
           <i class="ri-refresh-line"></i>
           {{ $t('common.refresh') }}
@@ -26,7 +32,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="tester" :label="t('research.c1BreedingBatch.test.tester')" min-width="100" align="center" />
-        <el-table-column :label="t('common.actions')" width="200" align="center" fixed="right">
+        <el-table-column :label="t('common.actions')" width="200" align="center" fixed="right" v-if="!readonly">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
@@ -95,7 +101,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test } from '@/api/c1BreedingBatch'
 
 const props = defineProps({
-  batchId: { type: String, required: true }
+  batchId: { type: String, required: true },
+  readonly: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['refresh'])

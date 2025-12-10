@@ -159,7 +159,8 @@ export default {
     invalidFormat: '格式不正确',
     dateRangeError: '结束日期必须晚于开始日期',
     rejectedTitle: '申请已被驳回',
-    rejectReason: '驳回原因'
+    rejectReason: '驳回原因',
+    getUnionInfoFailed: '获取union信息失败',
   },
 
   // 状态提示

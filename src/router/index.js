@@ -27,6 +27,13 @@ const routes = [
     component: () => import('../views/seed/breeding-certification/print.vue'),
     meta: { title: '打印认证标签', hideInMenu: true, requiresAuth: true }
   },
+  // C1繁殖批次证书打印页面
+  {
+    path: '/print/seed/c1-breeding-certificate/:id',
+    name: 'C1BreedingCertificatePrint',
+    component: () => import('../views/seed/c1-breeding-certificate/print.vue'),
+    meta: { title: 'C1繁殖批次证书打印', hideInMenu: true, requiresAuth: true }
+  },
   {
     path: '/',
     name: 'Layout',
@@ -605,6 +612,22 @@ const routes = [
         name: 'BreedingCertificate',
         component: () => import('../views/seed/breeding-certificate/index.vue'),
         meta: { title: '种子认证颁发', requiresAuth: true }
+      },
+      
+      // C1繁殖批次审核
+      {
+        path: 'c1-breeding-batch-audit',
+        name: 'C1BreedingBatchAudit',
+        component: () => import('../views/seed/c1-breeding-batch-audit/index.vue'),
+        meta: { title: 'C1繁殖批次审核', requiresAuth: true }
+      },
+      
+      // C1繁殖批次证书颁发
+      {
+        path: 'c1-breeding-certificate',
+        name: 'C1BreedingCertificate',
+        component: () => import('../views/seed/c1-breeding-certificate/index.vue'),
+        meta: { title: 'C1繁殖批次证书颁发', requiresAuth: true }
       },
       
       // 繁殖机构注册

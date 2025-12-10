@@ -232,4 +232,60 @@ export default {
     printCertificate: '打印证书',
     certificateInfo: '证书信息',
   },
+
+  // C1繁殖批次审核
+  c1BatchAudit: {
+    title: 'C1繁殖批次审核',
+    subtitle: '审核待审核状态的C1繁殖批次',
+    searchPlaceholder: '搜索批次号、品种名称、机构名称',
+    filterByCrop: '按作物类型筛选',
+    noData: '暂无待审核数据',
+    audit: '审核',
+    auditDialog: '审核C1繁殖批次',
+    auditResult: '审核结果',
+    auditComment: '审核意见',
+    auditCommentPlaceholder: '请输入审核意见',
+    approve: '通过',
+    reject: '驳回',
+    resultRequired: '请选择审核结果',
+    commentRequired: '请输入审核意见',
+    auditSuccess: '审核成功',
+    columns: {
+      batchId: '批次编号',
+      varietyName: '品种名称',
+      cropType: '作物类型',
+      orgName: '机构名称',
+      startDate: '开始日期',
+      batchStatus: '批次状态',
+      auditStatus: '审核状态',
+    },
+    auditStatus: {
+      pending: '待审核',
+      approved: '已通过',
+      rejected: '已驳回',
+    },
+    status: {
+      ongoing: '进行中',
+      completed: '已完成',
+      terminated: '已终止',
+    },
+  },
+
+  // C1繁殖批次证书颁发
+  c1Certificate: {
+    title: 'C1繁殖批次证书颁发',
+    subtitle: '管理已通过审核的C1繁殖批次证书',
+    searchPlaceholder: '搜索批次号、品种名称',
+    print: '打印证书',
+    columns: {
+      batchId: '批次编号',
+      varietyName: '品种名称',
+      cropType: '作物类型',
+      orgName: '机构名称',
+      startDate: '开始日期',
+      auditTime: '审核时间',
+      printCount: '打印次数',
+      lastPrintTime: '最后打印时间',
+    },
+  },
 }

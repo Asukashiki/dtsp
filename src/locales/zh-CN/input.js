@@ -67,6 +67,8 @@ export default {
 
         inputName: '投入品名称',
         inputType: '投入品类型',
+        agriculturalInputType: '农资类型',
+        variety: '品种',
         inputSku: '唯一产品标识码/SKU',
         trademark: '注册商标',
         registerCode: '登记批号',
@@ -83,7 +85,9 @@ export default {
       placeholder: {
         inputName: '请输入投入品名称（2-100个字符）',
         inputType: '请选择投入品类型',
-        inputSku: '请输入唯一产品标识码（8-50个字符）',
+        agriculturalInputType: '请输入农资类型',
+        variety: '请输入品种',
+        inputSku: '系统自动生成',
         trademark: '请输入注册商标',
         registerCode: '请输入登记批号',
         productionLicense: '请输入生产许可证号',

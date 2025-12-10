@@ -147,3 +147,40 @@ export const deleteC1Test = (ids) => {
     data: ids
   })
 }
+
+// ========== C1繁殖批次审核 ==========
+
+// 审核通过
+export const approveC1Batch = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-batch/approve',
+    method: 'post',
+    data
+  })
+}
+
+// 审核驳回
+export const rejectC1Batch = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-batch/reject',
+    method: 'post',
+    data
+  })
+}
+
+// 获取已审核通过的批次列表（供证书颁发使用）
+export const getApprovedC1BatchList = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-batch/approved-list',
+    method: 'post',
+    data
+  })
+}
+
+// 记录打印
+export const recordC1BatchPrint = (id) => {
+  return agricultureRequest({
+    url: `/seed/c1-breeding-batch/record-print/${id}`,
+    method: 'post'
+  })
+}
