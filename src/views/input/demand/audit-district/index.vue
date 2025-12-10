@@ -8,8 +8,8 @@
             <i class="ri-task-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('input.menu.KebeleAudit') }}</h1>
-            <p class="page-subtitle">{{ $t('demandAudit.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('input.menu.DistrictAudit') }}</h1>
+            <p class="page-subtitle">{{ $t('districtDemandAudit.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-list-check"></i>
-              <span>{{ $t(activeTab === 'pending' ? 'demandAudit.list' : 'demandAudit.summary.list') }}</span>
+              <span>{{ $t(activeTab === 'pending' ? 'districtDemandAudit.list' : 'districtDemandAudit.summary.list') }}</span>
             </div>
             <div class="header-actions">
               <el-button
@@ -30,7 +30,7 @@
                 v-if="activeTab === 'pending'"
               >
                 <i class="ri-check-line"></i>
-                {{ $t('demandAudit.actions.batchApprove') }}
+                {{ $t('districtDemandAudit.actions.batchApprove') }}
               </el-button>
               <el-button
                 type="danger"
@@ -39,7 +39,7 @@
                 v-if="activeTab === 'pending'"
               >
                 <i class="ri-close-line"></i>
-                {{ $t('demandAudit.actions.batchReject') }}
+                {{ $t('districtDemandAudit.actions.batchReject') }}
               </el-button>
               <el-button
                 type="primary"
@@ -47,15 +47,15 @@
                 v-if="activeTab === 'summary'"
               >
                 <i class="ri-upload-cloud-line"></i>
-                {{ $t('demandAudit.actions.summarySubmit') }}
+                {{ $t('districtDemandAudit.actions.summarySubmit') }}
               </el-button>
             </div>
           </div>
 
           <div class="card-body">
             <el-tabs v-model="activeTab">
-              <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />
-              <el-tab-pane :label="$t('demandAudit.tabs.summary')" name="summary" />
+              <el-tab-pane :label="$t('districtDemandAudit.tabs.pending')" name="pending" />
+              <el-tab-pane :label="$t('districtDemandAudit.tabs.summary')" name="summary" />
             </el-tabs>
 
             <div v-if="activeTab === 'pending'">
@@ -63,7 +63,7 @@
               <div class="search-section">
                 <el-input
                   v-model="searchForm.keyword"
-                  :placeholder="$t('demandAudit.searchPlaceholder')"
+                  :placeholder="$t('districtDemandAudit.searchPlaceholder')"
                   clearable
                   class="search-input"
                 >
@@ -84,149 +84,96 @@
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-              <el-table
-                v-loading="loading"
-                :data="tableData"
-                stripe
-                @selection-change="handleSelectionChange"
-                empty-text=""
-              >
-                <el-table-column type="selection" width="55" />
-                <el-table-column
-                  prop="batchNo"
-                  :label="$t('demandAudit.columns.batchNo')"
-                  min-width="150"
-                />
-                <el-table-column
-                  prop="farmerName"
-                  :label="$t('demandAudit.columns.farmerName')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="farmerIdNumber"
-                  :label="$t('demandAudit.columns.farmerIdNumber')"
-                  min-width="150"
-                />
-                <el-table-column
-                  prop="woreda"
-                  :label="$t('demandAudit.columns.woreda')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="kebele"
-                  :label="$t('demandAudit.columns.kebele')"
-                  min-width="120"
-                />
-                <!-- <el-table-column
-                  prop="village"
-                  :label="$t('demandAudit.columns.village')"
-                  min-width="120"
-                /> -->
-                <el-table-column
-                  prop="landArea"
-                  :label="$t('demandAudit.columns.landArea')"
-                  min-width="120"
+                <el-table
+                  v-loading="loading"
+                  :data="tableData"
+                  stripe
+                  @selection-change="handleSelectionChange"
+                  empty-text=""
                 >
-                  <template #default="{ row }">
-                    {{ row.landArea || '-' }}
-                  </template>
-                </el-table-column>
-                <!-- <el-table-column
-                  prop="currentAuditLevel"
-                  :label="$t('demandAudit.columns.currentAuditLevel')"
-                  min-width="120"
-                >
-                  <template #default="{ row }">
-                    {{ getAuditLevelLabel(row.currentAuditLevel) }}
-                  </template>
-                </el-table-column> -->
-                <el-table-column
-                  prop="submitTime"
-                  :label="$t('demandAudit.columns.submitTime')"
-                  min-width="160"
-                />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="280">
-                  <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>
-                        {{ $t('common.view') }}
-                      </el-button>
-                      <el-button link type="success" @click="handleApprove(row)">
-                        <i class="ri-check-line"></i>
-                        {{ $t('demandAudit.actions.approve') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleReject(row)">
-                        <i class="ri-close-line"></i>
-                        {{ $t('demandAudit.actions.reject') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-              </div>
-              
-            <!-- 移动端卡片 -->
-            <div class="mobile-cards mobile-only">
-              <div v-for="item in tableData" :key="item.id" class="mobile-card">
-                <div class="mobile-card-header">
-                  <el-checkbox
-                    v-model="item.checked"
-                    @change="handleMobileCheck(item)"
+                  <el-table-column type="selection" width="55" />
+                  <el-table-column
+                    prop="source"
+                    :label="$t('districtDemandAudit.columns.source')"
+                    min-width="140"
                   />
-                  <div class="farmer-name">
-                    <i class="ri-user-line"></i>
-                    <span>{{ item.farmerName }}</span>
+                  <el-table-column
+                    prop="inputCategory"
+                    :label="$t('districtDemandAudit.columns.inputCategory')"
+                    min-width="140"
+                  />
+                  <el-table-column
+                    prop="inputType"
+                    :label="$t('districtDemandAudit.columns.inputType')"
+                    min-width="160"
+                  />
+                  <el-table-column
+                    prop="totalQuantity"
+                    :label="$t('districtDemandAudit.columns.totalQuantity')"
+                    min-width="140"
+                  />
+                  <el-table-column :label="$t('common.actions')" fixed="right" width="280">
+                    <template #default="{ row }">
+                      <div class="action-buttons">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>
+                          {{ $t('common.view') }}
+                        </el-button>
+                        <el-button link type="success" @click="handleApprove(row)">
+                          <i class="ri-check-line"></i>
+                          {{ $t('districtDemandAudit.actions.approve') }}
+                        </el-button>
+                        <el-button link type="danger" @click="handleReject(row)">
+                          <i class="ri-close-line"></i>
+                          {{ $t('districtDemandAudit.actions.reject') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+
+              <!-- 移动端卡片 -->
+              <div class="mobile-cards mobile-only">
+                <div v-for="item in tableData" :key="item.id" class="mobile-card">
+                  <div class="mobile-card-header">
+                    <el-checkbox
+                      v-model="item.checked"
+                      @change="handleMobileCheck(item)"
+                    />
+                    <div class="farmer-name">
+                      <i class="ri-user-line"></i>
+                      <span>{{ item.source }}</span>
+                    </div>
                   </div>
-                  <el-tag type="info" size="small">
-                    {{ getAuditLevelLabel(item.currentAuditLevel) }}
-                  </el-tag>
-                </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.batchNo') }}:</span>
-                    <span class="value">{{ item.batchNo }}</span>
+                  <div class="mobile-card-body">
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('districtDemandAudit.columns.inputCategory') }}:</span>
+                      <span class="value">{{ item.inputCategory }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('districtDemandAudit.columns.inputType') }}:</span>
+                      <span class="value">{{ item.inputType }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('districtDemandAudit.columns.totalQuantity') }}:</span>
+                      <span class="value">{{ item.totalQuantity }}</span>
+                    </div>
                   </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.farmerIdNumber') }}:</span>
-                    <span class="value">{{ item.farmerIdNumber }}</span>
+                  <div class="mobile-card-actions">
+                    <el-button type="primary" size="small" @click="handleView(item)">
+                      {{ $t('common.view') }}
+                    </el-button>
+                    <el-button type="success" size="small" @click="handleApprove(item)">
+                      {{ $t('districtDemandAudit.actions.approve') }}
+                    </el-button>
+                    <el-button type="danger" size="small" @click="handleReject(item)">
+                      {{ $t('districtDemandAudit.actions.reject') }}
+                    </el-button>
                   </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.kebele') }}:</span>
-                    <span class="value">{{ item.kebele }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.woreda') }}:</span>
-                    <span class="value">{{ item.woreda }}</span>
-                  </div>
-                  <!-- <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.village') }}:</span>
-                    <span class="value">{{ item.village }}</span>
-                  </div> -->
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.landArea') }}:</span>
-                    <span class="value">{{ item.landArea || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('demandAudit.columns.submitTime') }}:</span>
-                    <span class="value">{{ item.submitTime || '-' }}</span>
-                  </div>
-                </div>
-                <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
-                    {{ $t('common.view') }}
-                  </el-button>
-                  <el-button type="success" size="small" @click="handleApprove(item)">
-                    {{ $t('demandAudit.actions.approve') }}
-                  </el-button>
-                  <el-button type="danger" size="small" @click="handleReject(item)">
-                    {{ $t('demandAudit.actions.reject') }}
-                  </el-button>
                 </div>
               </div>
             </div>
-            </div>
-
 
             <!-- 分页 -->
             <div v-if="activeTab === 'pending' && pagination.total > 0" class="pagination-wrapper">
@@ -246,31 +193,26 @@
             <!-- 空状态 -->
             <el-empty
               v-if="activeTab === 'pending' && tableData.length === 0 && !loading"
-              :description="$t('demandAudit.messages.noData')"
+              :description="$t('districtDemandAudit.messages.noData')"
             />
 
             <!-- 数据汇聚 Tab 内容 -->
             <div v-if="activeTab === 'summary'">
-              <!-- <div class="summary-header">
-                <div class="summary-title">{{ $t('demandAudit.summary.title') }}</div>
-                <div class="summary-desc">{{ $t('demandAudit.summary.description') }}</div>
-              </div> -->
-
               <div class="table-wrapper pc-only">
                 <el-table :data="summaryData" v-loading="summaryLoading" stripe>
                   <el-table-column
                     prop="inputCategory"
-                    :label="$t('demandAudit.summary.inputCategory')"
+                    :label="$t('districtDemandAudit.summary.inputCategory')"
                     min-width="140"
                   />
                   <el-table-column
                     prop="inputType"
-                    :label="$t('demandAudit.summary.inputType')"
+                    :label="$t('districtDemandAudit.summary.inputType')"
                     min-width="160"
                   />
                   <el-table-column
                     prop="totalQuantity"
-                    :label="$t('demandAudit.summary.totalQuantity')"
+                    :label="$t('districtDemandAudit.summary.totalQuantity')"
                     min-width="140"
                   />
                 </el-table>
@@ -278,25 +220,29 @@
 
               <!-- 移动端汇聚卡片 -->
               <div class="mobile-cards mobile-only">
-                <div v-for="item in summaryData" :key="item.id || item.inputCategory + '-' + item.inputType + '-' + item.variety" class="mobile-card">
+                <div
+                  v-for="item in summaryData"
+                  :key="item.id || item.inputCategory + '-' + item.inputType"
+                  class="mobile-card"
+                >
                   <div class="mobile-card-body">
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.inputCategory') }}:</span>
+                      <span class="label">{{ $t('districtDemandAudit.summary.inputCategory') }}:</span>
                       <span class="value">{{ item.inputCategory }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.inputType') }}:</span>
+                      <span class="label">{{ $t('districtDemandAudit.summary.inputType') }}:</span>
                       <span class="value">{{ item.inputType }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.totalQuantity') }}:</span>
+                      <span class="label">{{ $t('districtDemandAudit.summary.totalQuantity') }}:</span>
                       <span class="value">{{ item.totalQuantity }}</span>
                     </div>
                   </div>
                 </div>
                 <el-empty
                   v-if="!summaryLoading && (!summaryData || summaryData.length === 0)"
-                  :description="$t('demandAudit.messages.noData')"
+                  :description="$t('districtDemandAudit.messages.noData')"
                 />
               </div>
             </div>
@@ -308,16 +254,16 @@
     <!-- 审核通过对话框 -->
     <el-dialog
       v-model="approveDialogVisible"
-      :title="$t('demandAudit.approveDialog.title')"
+      :title="$t('districtDemandAudit.approveDialog.title')"
       width="500px"
     >
       <el-form :model="approveForm" label-width="100px">
-        <el-form-item :label="$t('demandAudit.approveDialog.remark')">
+        <el-form-item :label="$t('districtDemandAudit.approveDialog.remark')">
           <el-input
             v-model="approveForm.remark"
             type="textarea"
             :rows="3"
-            :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')"
+            :placeholder="$t('districtDemandAudit.approveDialog.remarkPlaceholder')"
           />
         </el-form-item>
       </el-form>
@@ -332,24 +278,24 @@
     <!-- 审核驳回对话框 -->
     <el-dialog
       v-model="rejectDialogVisible"
-      :title="$t('demandAudit.rejectDialog.title')"
+      :title="$t('districtDemandAudit.rejectDialog.title')"
       width="500px"
     >
       <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
-        <el-form-item :label="$t('demandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
+        <el-form-item :label="$t('districtDemandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
           <el-input
             v-model="rejectForm.auditOpinion"
             type="textarea"
             :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.auditOpinionPlaceholder')"
+            :placeholder="$t('districtDemandAudit.rejectDialog.auditOpinionPlaceholder')"
           />
         </el-form-item>
-        <el-form-item :label="$t('demandAudit.rejectDialog.remark')">
+        <el-form-item :label="$t('districtDemandAudit.rejectDialog.remark')">
           <el-input
             v-model="rejectForm.remark"
             type="textarea"
             :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')"
+            :placeholder="$t('districtDemandAudit.rejectDialog.remarkPlaceholder')"
           />
         </el-form-item>
       </el-form>
@@ -364,7 +310,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -387,50 +333,14 @@ const summaryData = ref([])
 
 // 搜索表单
 const searchForm = reactive({
-  keyword: ''
+  keyword: '',
 })
 
 // 分页
 const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
-  total: 0
-})
-
-// 审核层级选项
-const auditLevelOptions = computed(() => ({
-  village: t('demandAudit.auditLevel.village'),
-  town: t('demandAudit.auditLevel.town'),
-  district: t('demandAudit.auditLevel.district'),
-  state: t('demandAudit.auditLevel.state'),
-  ministry: t('demandAudit.auditLevel.ministry')
-}))
-
-// 获取审核层级标签
-const getAuditLevelLabel = (level) => {
-  return auditLevelOptions.value[level] || level
-}
-
-// 审核通过对话框
-const approveDialogVisible = ref(false)
-const approveForm = reactive({
-  ids: [],
-  remark: ''
-})
-
-// 审核驳回对话框
-const rejectDialogVisible = ref(false)
-const rejectForm = reactive({
-  ids: [],
-  auditOpinion: '',
-  remark: ''
-})
-
-const rejectFormRef = ref(null)
-const rejectRules = reactive({
-  auditOpinion: [
-    { required: true, message: t('demandAudit.rejectDialog.auditOpinionRequired'), trigger: 'blur' }
-  ]
+  total: 0,
 })
 
 // 加载待审核数据
@@ -440,19 +350,20 @@ const loadData = async () => {
     const params = {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
-      farmerName: searchForm.keyword || undefined
+      keyword: searchForm.keyword || undefined,
+      level: 'district',
     }
     const res = await getPendingDemandPage(params)
     if (res.code === 200) {
-      tableData.value = res.data.records.map(item => ({
+      tableData.value = (res.data.records || []).map((item) => ({
         ...item,
-        checked: false
+        checked: false,
       }))
-      pagination.total = res.data.total
+      pagination.total = res.data.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)
-    ElMessage.error(t('demandAudit.messages.loadFailed'))
+    ElMessage.error(t('districtDemandAudit.messages.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -462,14 +373,13 @@ const loadData = async () => {
 const loadSummary = async () => {
   summaryLoading.value = true
   try {
-    const res = await getApprovedDemandSummary({})
+    const res = await getApprovedDemandSummary({ level: 'district' })
     if (res.code === 200) {
-      // 约定后端返回 data 为数组
       summaryData.value = res.data || []
     }
   } catch (error) {
     console.error('Failed to load summary:', error)
-    ElMessage.error(t('demandAudit.messages.loadFailed'))
+    ElMessage.error(t('districtDemandAudit.messages.loadFailed'))
   } finally {
     summaryLoading.value = false
   }
@@ -496,11 +406,11 @@ const handleSelectionChange = (selection) => {
 // 移动端复选框变化
 const handleMobileCheck = (item) => {
   if (item.checked) {
-    if (!selectedRows.value.find(row => row.id === item.id)) {
+    if (!selectedRows.value.find((row) => row.id === item.id)) {
       selectedRows.value.push(item)
     }
   } else {
-    selectedRows.value = selectedRows.value.filter(row => row.id !== item.id)
+    selectedRows.value = selectedRows.value.filter((row) => row.id !== item.id)
   }
 }
 
@@ -519,10 +429,10 @@ const handleApprove = (row) => {
 // 批量审核通过
 const handleBatchApprove = () => {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning(t('demandAudit.messages.selectItems'))
+    ElMessage.warning(t('districtDemandAudit.messages.selectItems'))
     return
   }
-  approveForm.ids = selectedRows.value.map(row => row.id)
+  approveForm.ids = selectedRows.value.map((row) => row.id)
   approveForm.remark = ''
   approveDialogVisible.value = true
 }
@@ -531,33 +441,34 @@ const handleBatchApprove = () => {
 const confirmApprove = async () => {
   try {
     await ElMessageBox.confirm(
-      t('demandAudit.approveDialog.confirmMessage', { count: approveForm.ids.length }),
+      t('districtDemandAudit.approveDialog.confirmMessage', { count: approveForm.ids.length }),
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
         cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     )
 
     submitting.value = true
     const res = await approveDemand({
       ids: approveForm.ids,
-      remark: approveForm.remark || undefined
+      remark: approveForm.remark || undefined,
+      level: 'district',
     })
 
     if (res.code === 200) {
-      ElMessage.success(t('demandAudit.approveDialog.success'))
+      ElMessage.success(t('districtDemandAudit.approveDialog.success'))
       approveDialogVisible.value = false
       selectedRows.value = []
       loadData()
     } else {
-      ElMessage.error(res.msg || t('demandAudit.messages.operationFailed'))
+      ElMessage.error(res.msg || t('districtDemandAudit.messages.operationFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
       console.error('Failed to approve:', error)
-      ElMessage.error(t('demandAudit.messages.operationFailed'))
+      ElMessage.error(t('districtDemandAudit.messages.operationFailed'))
     }
   } finally {
     submitting.value = false
@@ -575,21 +486,42 @@ const handleReject = (row) => {
 // 批量审核驳回
 const handleBatchReject = () => {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning(t('demandAudit.messages.selectItems'))
+    ElMessage.warning(t('districtDemandAudit.messages.selectItems'))
     return
   }
-  rejectForm.ids = selectedRows.value.map(row => row.id)
+  rejectForm.ids = selectedRows.value.map((row) => row.id)
   rejectForm.auditOpinion = ''
   rejectForm.remark = ''
   rejectDialogVisible.value = true
 }
 
-// 数据汇聚提交
+// 数据汇聚提交（预留）
 const handleSummarySubmit = () => {
-  console.log('summary submit clicked')
+  console.log('district summary submit clicked')
 }
 
 // 确认审核驳回
+const rejectFormRef = ref(null)
+const rejectDialogVisible = ref(false)
+const approveDialogVisible = ref(false)
+
+const approveForm = reactive({
+  ids: [],
+  remark: '',
+})
+
+const rejectForm = reactive({
+  ids: [],
+  auditOpinion: '',
+  remark: '',
+})
+
+const rejectRules = reactive({
+  auditOpinion: [
+    { required: true, message: t('districtDemandAudit.rejectDialog.auditOpinionRequired'), trigger: 'blur' },
+  ],
+})
+
 const confirmReject = async () => {
   if (!rejectFormRef.value) return
 
@@ -597,34 +529,35 @@ const confirmReject = async () => {
     await rejectFormRef.value.validate()
 
     await ElMessageBox.confirm(
-      t('demandAudit.rejectDialog.confirmMessage', { count: rejectForm.ids.length }),
+      t('districtDemandAudit.rejectDialog.confirmMessage', { count: rejectForm.ids.length }),
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
         cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     )
 
     submitting.value = true
     const res = await rejectDemand({
       ids: rejectForm.ids,
       auditOpinion: rejectForm.auditOpinion,
-      remark: rejectForm.remark || undefined
+      remark: rejectForm.remark || undefined,
+      level: 'district',
     })
 
     if (res.code === 200) {
-      ElMessage.success(t('demandAudit.rejectDialog.success'))
+      ElMessage.success(t('districtDemandAudit.rejectDialog.success'))
       rejectDialogVisible.value = false
       selectedRows.value = []
       loadData()
     } else {
-      ElMessage.error(res.msg || t('demandAudit.messages.operationFailed'))
+      ElMessage.error(res.msg || t('districtDemandAudit.messages.operationFailed'))
     }
   } catch (error) {
     if (error !== 'cancel' && error !== false) {
       console.error('Failed to reject:', error)
-      ElMessage.error(t('demandAudit.messages.operationFailed'))
+      ElMessage.error(t('districtDemandAudit.messages.operationFailed'))
     }
   } finally {
     submitting.value = false
@@ -655,32 +588,29 @@ onMounted(() => {
   loadData()
 })
 </script>
+
 <style scoped>
-.page-container {
+ .page-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
   padding: 24px;
-}
+ }
 
-/* age-wrapper {
-  margin: 0 auto;
-} */
-
-.page-header {
+ .page-header {
   background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
+ }
 
-.header-left {
+ .header-left {
   display: flex;
   align-items: center;
   gap: 20px;
-}
+ }
 
-.header-icon {
+ .header-icon {
   width: 80px;
   height: 80px;
   background: rgba(255, 255, 255, 0.2);
@@ -691,168 +621,168 @@ onMounted(() => {
   font-size: 40px;
   color: white;
   flex-shrink: 0;
-}
+ }
 
-.header-content {
+ .header-content {
   color: white;
-}
+ }
 
-.page-title {
+ .page-title {
   font-size: 32px;
   font-weight: 600;
   margin: 0 0 8px 0;
-}
+ }
 
-.page-subtitle {
+ .page-subtitle {
   font-size: 16px;
   opacity: 0.9;
   margin: 0;
-}
+ }
 
-.content-wrapper {
+ .content-wrapper {
   background: white;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+ }
 
-.info-card {
+ .info-card {
   background: white;
-}
+ }
 
-.card-header {
+ .card-header {
   padding: 24px;
   border-bottom: 1px solid #e8f5e9;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+ }
 
-.card-title {
+ .card-title {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 18px;
   font-weight: 600;
   color: #009A44;
-}
+ }
 
-.card-title i {
+ .card-title i {
   font-size: 22px;
-}
+ }
 
-.header-actions {
+ .header-actions {
   display: flex;
   gap: 12px;
-}
+ }
 
-.card-body {
+ .card-body {
   padding: 24px;
-}
+ }
 
-.search-section {
+ .search-section {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
   flex-wrap: wrap;
-}
+ }
 
-.search-input {
+ .search-input {
   width: 300px;
-}
+ }
 
-.table-wrapper {
+ .table-wrapper {
   margin-bottom: 16px;
-}
+ }
 
-.action-buttons {
+ .action-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-}
+ }
 
-.mobile-cards {
+ .mobile-cards {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 16px;
-}
+ }
 
-.mobile-card {
+ .mobile-card {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   overflow: hidden;
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+ }
 
-.mobile-card-header {
+ .mobile-card-header {
   padding: 16px;
   background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   align-items: center;
   gap: 12px;
-}
+ }
 
-.farmer-name {
+ .farmer-name {
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 1;
   font-weight: 600;
   color: #333;
-}
+ }
 
-.mobile-card-body {
+ .mobile-card-body {
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
+ }
 
-.mobile-card-row {
+ .mobile-card-row {
   display: flex;
   font-size: 14px;
   line-height: 1.6;
-}
+ }
 
-.mobile-card-row .label {
+ .mobile-card-row .label {
   color: #666;
   min-width: 120px;
   flex-shrink: 0;
-}
+ }
 
-.mobile-card-row .value {
+ .mobile-card-row .value {
   color: #333;
   font-weight: 500;
-}
+ }
 
-.mobile-card-actions {
+ .mobile-card-actions {
   padding: 12px 16px;
   background: #fafafa;
   border-top: 1px solid #e0e0e0;
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-}
+ }
 
-.pagination-wrapper {
+ .pagination-wrapper {
   margin-top: 16px;
   display: flex;
   justify-content: center;
-}
+ }
 
-.pc-only {
+ .pc-only {
   display: block;
-}
+ }
 
-.mobile-only {
+ .mobile-only {
   display: none;
-}
+ }
 
-@media screen and (max-width: 768px) {
+ @media screen and (max-width: 768px) {
   .page-container {
     padding: 12px;
   }
@@ -909,5 +839,5 @@ onMounted(() => {
   .mobile-only {
     display: block;
   }
-}
-</style>
+ }
+</style> 

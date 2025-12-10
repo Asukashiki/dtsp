@@ -60,6 +60,7 @@
       ]
     },
     {
+      "name": "投入品需求管理",
       "index": "demand-management",
       "icon": "ri-file-edit-line",
       "titleKey": "input.menu.demandManagement",
@@ -72,7 +73,22 @@
         {
           "index": "/input/demand/audit",
           "icon": "ri-task-line",
-          "titleKey": "input.menu.demandAudit"
+          "titleKey": "input.menu.KebeleAudit"
+        },
+        {
+          "index": "/input/demand/audit-town",
+          "icon": "ri-community-line",
+          "titleKey": "input.menu.TownAudit"
+        },
+        {
+          "index": "/input/demand/audit-district",
+          "icon": "ri-government-line",
+          "titleKey": "input.menu.DistrictAudit"
+        },
+        {
+          "index": "/input/demand/audit-state",
+          "icon": "ri-building-4-line",
+          "titleKey": "input.menu.StateAuditView"
         }
       ]
     },

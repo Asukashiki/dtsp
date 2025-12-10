@@ -11,7 +11,13 @@ export default {
   deleteSuccess: 'Deleted successfully',
   addSuccess: 'Added successfully',
   editSuccess: 'Updated successfully',
-
+  submit:'Submit',
+  submitSuccess:'Submit Success',
+  submitConfirm: 'Confirm to submit this demand for village-level audit?',
+  submitFailed: 'Submission failed',
+  batchSubmitConfirm: 'Confirm to submit {count} selected demands for village-level audit?',
+  batchSubmitResult: 'Submission completed: {success} succeeded, {fail} failed',
+  pleaseSelectData: 'Please select data to submit',
   // Search and Filter
   searchPlaceholder: 'Search farmer name, ID number, village',
   filterByBatch: 'Filter by Batch',

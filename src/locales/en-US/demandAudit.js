@@ -5,8 +5,14 @@ export default {
   list: 'Pending Audit List',
   detail: 'Audit Details',
 
+  // Tabs
+  tabs: {
+    pending: 'Pending',
+    summary: 'Data Aggregation',
+  },
+
   // Search and Filter
-  searchPlaceholder: 'Search farmer name, ID number, village',
+  searchPlaceholder: 'Search farmer name',
   filterByBatch: 'Filter by Batch',
   filterByKebele: 'Filter by Kebele',
   filterByWoreda: 'Filter by Woreda',
@@ -23,6 +29,7 @@ export default {
     batchReject: 'Batch Reject',
     submit: 'Submit for Audit',
     lockBatch: 'Lock Batch',
+    summarySubmit: 'Submit Aggregated Data',
   },
 
   // Table Columns
@@ -158,6 +165,17 @@ export default {
     seed: 'Seed',
     fertilizer: 'Fertilizer',
     pesticide: 'Pesticide',
+  },
+
+  // Aggregation
+  summary: {
+    title: 'Approved Demand Aggregation',
+    description: 'Aggregated statistics of approved input demand in current area',
+    list: 'Aggregation List',
+    inputCategory: 'Input Category',
+    inputType: 'Input Type',
+    variety: 'Variety',
+    totalQuantity: 'Total Demand Quantity',
   },
 
   // Messages
