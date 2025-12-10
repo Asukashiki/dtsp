@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-file-check-line"></i>
+            <i class="ri-file-list-3-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('registration.approval.title') }}</h1>
-            <p class="page-subtitle">{{ $t('registration.approval.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('registration.application.title') }}</h1>
+            <p class="page-subtitle">{{ $t('registration.application.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,8 +20,12 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-line"></i>
-              <span>{{ $t('registration.approval.list') }}</span>
+              <span>{{ $t('registration.application.list') }}</span>
             </div>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('registration.application.add') }}
+            </el-button>
           </div>
 
           <div class="card-body">
@@ -29,7 +33,7 @@
             <div class="search-section">
               <el-input
                 v-model="searchForm.enterpriseName"
-                :placeholder="$t('registration.approval.searchPlaceholder')"
+                :placeholder="$t('registration.application.searchPlaceholder')"
                 clearable
                 class="search-input"
               >
@@ -40,13 +44,26 @@
 
               <el-select
                 v-model="searchForm.orgType"
-                :placeholder="$t('registration.approval.filterByOrgType')"
+                :placeholder="$t('registration.application.filterByOrgType')"
                 clearable
                 class="search-input"
               >
                 <el-option value="" :label="$t('registration.application.allOrgTypes')"></el-option>
                 <el-option value="union" :label="$t('registration.application.orgType.union')"></el-option>
                 <el-option value="cooperative" :label="$t('registration.application.orgType.cooperative')"></el-option>
+              </el-select>
+
+              <el-select
+                v-model="searchForm.applicationStatus"
+                :placeholder="$t('registration.application.filterByStatus')"
+                clearable
+                class="search-input"
+              >
+                <el-option value="" :label="$t('registration.application.allStatus')"></el-option>
+                <el-option value="draft" :label="$t('registration.application.status.draft')"></el-option>
+                <el-option value="pending" :label="$t('registration.application.status.pending')"></el-option>
+                <el-option value="approved" :label="$t('registration.application.status.approved')"></el-option>
+                <el-option value="rejected" :label="$t('registration.application.status.rejected')"></el-option>
               </el-select>
 
               <el-button type="primary" @click="handleSearch">
@@ -93,36 +110,63 @@
                   :label="$t('registration.application.columns.seedEnterpriseLicenseNumber')"
                   min-width="180"
                   show-overflow-tooltip
-                />
+                >
+                  <template #default="{ row }">
+                    {{ row.seedEnterpriseLicenseNumber || '-' }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="zone"
                   :label="$t('registration.application.columns.zone')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ row.zone || '-' }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="woreda"
                   :label="$t('registration.application.columns.woreda')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ row.woreda || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="applicationStatus"
+                  :label="$t('registration.application.columns.applicationStatus')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.applicationStatus)">
+                      {{ $t(`registration.application.status.${row.applicationStatus}`) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="createdTime"
                   :label="$t('registration.application.columns.createdTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="220">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="280">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="success" @click="handleApprove(row)">
-                        <i class="ri-check-line"></i>
-                        {{ $t('registration.approval.approve') }}
+                      <el-button v-if="row.applicationStatus === 'draft' || row.applicationStatus === 'rejected'" link type="primary" @click="handleEdit(row)">
+                        <i class="ri-edit-line"></i>
+                        {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleReject(row)">
-                        <i class="ri-close-line"></i>
-                        {{ $t('registration.approval.reject') }}
+                      <el-button v-if="row.applicationStatus === 'draft'" link type="success" @click="handleSubmit(row)">
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('registration.application.submit') }}
+                      </el-button>
+                      <el-button v-if="row.applicationStatus === 'draft'" link type="danger" @click="handleDelete(row)">
+                        <i class="ri-delete-bin-line"></i>
+                        {{ $t('common.delete') }}
                       </el-button>
                     </div>
                   </template>
@@ -151,11 +195,17 @@
                     <i class="ri-building-line"></i>
                     <span>{{ item.enterpriseName }}</span>
                   </div>
-                  <el-tag :type="item.orgType === 'union' ? 'success' : 'info'" size="small">
-                    {{ $t(`registration.application.orgType.${item.orgType}`) }}
+                  <el-tag :type="getStatusType(item.applicationStatus)" size="small">
+                    {{ $t(`registration.application.status.${item.applicationStatus}`) }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('registration.application.columns.orgType') }}:</span>
+                    <el-tag :type="item.orgType === 'union' ? 'success' : 'info'" size="small">
+                      {{ $t(`registration.application.orgType.${item.orgType}`) }}
+                    </el-tag>
+                  </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('registration.application.columns.inputTypes') }}:</span>
                     <span class="value">{{ formatInputTypes(item.inputTypes) }}</span>
@@ -181,11 +231,14 @@
                   <el-button type="primary" size="small" @click="handleView(item)">
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button type="success" size="small" @click="handleApprove(item)">
-                    {{ $t('registration.approval.approve') }}
+                  <el-button v-if="item.applicationStatus === 'draft' || item.applicationStatus === 'rejected'" size="small" @click="handleEdit(item)">
+                    {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleReject(item)">
-                    {{ $t('registration.approval.reject') }}
+                  <el-button v-if="item.applicationStatus === 'draft'" type="success" size="small" @click="handleSubmit(item)">
+                    {{ $t('registration.application.submit') }}
+                  </el-button>
+                  <el-button v-if="item.applicationStatus === 'draft'" type="danger" size="small" @click="handleDelete(item)">
+                    {{ $t('common.delete') }}
                   </el-button>
                 </div>
               </div>
@@ -211,66 +264,27 @@
         </div>
       </div>
     </div>
-
-    <!-- 审核对话框 -->
-    <el-dialog
-      v-model="auditDialogVisible"
-      :title="auditType === 'approve' ? $t('registration.approval.approve') : $t('registration.approval.reject')"
-      width="600px"
-    >
-      <el-form ref="auditFormRef" :model="auditForm" :rules="auditRules" label-width="120px">
-        <el-form-item :label="$t('registration.approval.form.auditOpinion')" prop="auditOpinion">
-          <el-input
-            v-model="auditForm.auditOpinion"
-            type="textarea"
-            :rows="4"
-            :placeholder="$t('registration.approval.placeholder.auditOpinion')"
-            maxlength="1000"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item :label="$t('registration.approval.form.remark')" prop="remark">
-          <el-input
-            v-model="auditForm.remark"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('registration.approval.placeholder.remark')"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleAuditSubmit">
-          {{ $t('common.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getRegistrationAuditPage, approveRegistration, rejectRegistration } from '@/api/input-registration'
+import { getRegistrationPage, deleteRegistration, submitRegistration, getRegistrationDetail } from '@/api/registration'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
-const submitting = ref(false)
 const tableData = ref([])
-const auditDialogVisible = ref(false)
-const auditFormRef = ref(null)
-const auditType = ref('approve')
-const currentRow = ref(null)
 
 const searchForm = reactive({
   enterpriseName: '',
-  orgType: ''
+  orgType: '',
+  applicationStatus: '',
+  inputTypes: ''
 })
 
 const pagination = reactive({
@@ -278,18 +292,6 @@ const pagination = reactive({
   pageSize: 10,
   total: 0
 })
-
-const auditForm = reactive({
-  auditOpinion: '',
-  remark: ''
-})
-
-// 审核表单验证规则
-const auditRules = computed(() => ({
-  auditOpinion: auditType.value === 'reject' ? [
-    { required: true, message: t('registration.approval.rules.auditOpinionRequired'), trigger: 'blur' }
-  ] : []
-}))
 
 // 加载数据
 const loadData = async () => {
@@ -299,13 +301,27 @@ const loadData = async () => {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
       enterpriseName: searchForm.enterpriseName || undefined,
-      orgType: searchForm.orgType || undefined
+      orgType: searchForm.orgType || undefined,
+      applicationStatus: searchForm.applicationStatus || undefined,
+      inputTypes: searchForm.inputTypes || undefined
     }
 
-    const res = await getRegistrationAuditPage(params)
+    const res = await getRegistrationPage(params)
     if (res.code === 200) {
-      tableData.value = res.data?.records || []
+      // 映射数据，将location中的zone和woreda字段提取到根级别
+      const records = res.data?.records || []
+      tableData.value = records.map(record => ({
+        ...record,
+        // 确保许可证号字段存在
+        seedEnterpriseLicenseNumber: record.seedEnterpriseLicenseNumber || '',
+        // 从location对象中提取zone和woreda
+        zone: record.location?.zone || record.zone || '-',
+        woreda: record.location?.woreda || record.woreda || '-'
+      }))
       pagination.total = res.data?.total || 0
+
+      // 调试日志：检查数据
+      console.log('Registration list data:', tableData.value)
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -325,7 +341,14 @@ const handleSearch = () => {
 const handleReset = () => {
   searchForm.enterpriseName = ''
   searchForm.orgType = ''
+  searchForm.applicationStatus = ''
+  searchForm.inputTypes = ''
   handleSearch()
+}
+
+// 新增
+const handleAdd = () => {
+  router.push({ name: 'RegistrationAdd' })
 }
 
 // 查看
@@ -333,64 +356,75 @@ const handleView = (row) => {
   router.push({ name: 'RegistrationDetail', params: { id: row.id } })
 }
 
-// 通过
-const handleApprove = async (row) => {
-  currentRow.value = row
-  auditType.value = 'approve'
-  auditForm.auditOpinion = ''
-  auditForm.remark = ''
-  auditDialogVisible.value = true
-}
-
-// 驳回
-const handleReject = (row) => {
-  currentRow.value = row
-  auditType.value = 'reject'
-  auditForm.auditOpinion = ''
-  auditForm.remark = ''
-  auditDialogVisible.value = true
+// 编辑
+const handleEdit = (row) => {
+  router.push({ name: 'RegistrationEdit', params: { id: row.id } })
 }
 
 // 提交审核
-const handleAuditSubmit = async () => {
+const handleSubmit = async (row) => {
   try {
-    const valid = await auditFormRef.value.validate()
-    if (!valid) return
+    await ElMessageBox.confirm(
+      t('registration.application.messages.submitConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
 
-    const confirmMsg = auditType.value === 'approve'
-      ? t('registration.approval.messages.approveConfirm')
-      : t('registration.approval.messages.rejectConfirm')
+    // 如果row中没有version字段，先获取详情以获取最新版本号
+    let version = row.version
+    if (!version) {
+      const detailRes = await getRegistrationDetail(row.id)
+      if (detailRes.code === 200 && detailRes.data) {
+        version = detailRes.data.version || 1
+      } else {
+        ElMessage.error(t('common.loadFailed'))
+        return
+      }
+    }
 
-    await ElMessageBox.confirm(confirmMsg, t('common.warning'), {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    })
-
-    submitting.value = true
-
-    const res = auditType.value === 'approve'
-      ? await approveRegistration(currentRow.value.id, currentRow.value.version, auditForm.remark)
-      : await rejectRegistration(currentRow.value.id, currentRow.value.version, auditForm.auditOpinion, auditForm.remark)
-
+    const res = await submitRegistration(row.id, version)
     if (res.code === 200) {
-      ElMessage.success(
-        auditType.value === 'approve'
-          ? t('registration.approval.approveSuccess')
-          : t('registration.approval.rejectSuccess')
-      )
-      auditDialogVisible.value = false
+      ElMessage.success(t('registration.application.submitSuccess'))
       loadData()
     } else {
       ElMessage.error(res.msg || t('common.operationFailed'))
     }
   } catch (error) {
-    if (error !== 'cancel' && error !== false) {
-      console.error('Failed to audit:', error)
+    if (error !== 'cancel') {
+      console.error('Failed to submit:', error)
       ElMessage.error(t('common.operationFailed'))
     }
-  } finally {
-    submitting.value = false
+  }
+}
+
+// 删除
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('registration.application.deleteConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await deleteRegistration(row.id)
+    if (res.code === 200) {
+      ElMessage.success(t('registration.application.deleteSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.deleteFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to delete:', error)
+      ElMessage.error(t('common.deleteFailed'))
+    }
   }
 }
 
@@ -409,6 +443,17 @@ const formatInputTypes = (types) => {
   if (!types) return '-'
   const typeArray = typeof types === 'string' ? types.split(',') : types
   return typeArray.map(type => t(`registration.application.inputType.${type}`)).join(', ')
+}
+
+// 获取状态标签类型
+const getStatusType = (status) => {
+  const typeMap = {
+    draft: '',
+    pending: 'warning',
+    approved: 'success',
+    rejected: 'danger'
+  }
+  return typeMap[status] || ''
 }
 
 // 初始化
@@ -632,7 +677,7 @@ onMounted(() => {
 
 .mobile-card-actions .el-button {
   flex: 1;
-  min-width: calc(33.33% - 6px);
+  min-width: calc(50% - 4px);
 }
 
 /* 响应式 */
@@ -674,6 +719,9 @@ onMounted(() => {
 
   .card-header {
     padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .card-body {
@@ -695,10 +743,6 @@ onMounted(() => {
 
   .mobile-only {
     display: block;
-  }
-
-  :deep(.el-dialog) {
-    width: 90% !important;
   }
 }
 </style>

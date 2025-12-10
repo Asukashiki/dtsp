@@ -280,7 +280,7 @@ const handleSubmit = async () => {
 }
 
 const goBack = () => {
-  router.push('/research/breeding-data/research-center')
+  router.push('/research/institution/research-center')
 }
 
 onMounted(() => {

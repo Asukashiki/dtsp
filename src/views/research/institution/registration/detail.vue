@@ -224,7 +224,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getRegistrationDetail, getAuditRecordList } from '@/api/input-registration'
+import { getRegistrationDetail, getAuditRecordList } from '@/api/registration'
 
 const router = useRouter()
 const route = useRoute()

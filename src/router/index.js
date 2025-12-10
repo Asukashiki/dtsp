@@ -403,14 +403,6 @@ const routes = [
         meta: { title: 'Breeder able seed分发数据', requiresAuth: true }
       },
       
-      // OSE维护
-      {
-        path: 'breeding/ose-management',
-        name: 'OseManagement',
-        component: () => import('../views/research/breeding/ose-management/index.vue'),
-        meta: { title: 'OSE维护', requiresAuth: true }
-      },
-      
       // 物联网传感器维护
       {
         path: 'data-collection/iot-sensor',
@@ -617,41 +609,53 @@ const routes = [
       
       // 繁殖机构注册
       {
-        path: 'union/list',
-        name: 'UnionList',
-        component: () => import('../views/research/union/UnionList.vue'),
+        path: 'institution/registration',
+        name: 'InstitutionRegistration',
+        component: () => import('../views/research/institution/registration/index.vue'),
+        meta: { title: '繁殖机构注册', requiresAuth: true }
+      },
+      {
+        path: 'institution/approval',
+        name: 'InstitutionApproval',
+        component: () => import('../views/research/institution/registration/approval.vue'),
         meta: { title: '繁殖机构注册', requiresAuth: true }
       },
       {
         path: 'union/registration',
         name: 'UnionRegistration',
-        component: () => import('../views/research/union/UnionRegistration.vue'),
+        component: () => import('../views/research/institution/union/UnionRegistration.vue'),
         meta: { title: '繁殖机构注册申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management',
+        name: 'OseManagement',
+        component: () => import('../views/research/institution/ose-management/index.vue'),
+        meta: { title: 'OSE维护', requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
       {
-        path: 'breeding-data/research-center',
+        path: 'institution/research-center',
         name: 'ResearchCenter',
-        component: () => import('../views/research/breeding-data/research-center/index.vue'),
+        component: () => import('../views/research/institution/research-center/index.vue'),
         meta: { title: '研究中心管理', requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/add',
+        path: 'institution/research-center/add',
         name: 'ResearchCenterAdd',
-        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        component: () => import('../views/research/institution/research-center/form.vue'),  
         meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/edit/:locationId',
+        path: 'institution/research-center/edit/:locationId',
         name: 'ResearchCenterEdit',
-        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        component: () => import('../views/research/institution/research-center/form.vue'),
         meta: { title: '编辑研究中心', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/detail/:locationId',
+        path: 'institution/research-center/detail/:locationId',
         name: 'ResearchCenterDetail',
-        component: () => import('../views/research/breeding-data/research-center/detail.vue'),
+        component: () => import('../views/research/institution/research-center/detail.vue'),
         meta: { title: '研究中心详情', hideInMenu: true, requiresAuth: true }
       },
 

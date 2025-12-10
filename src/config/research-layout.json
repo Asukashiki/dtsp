@@ -146,9 +146,15 @@
       "titleKey": "research.menu.seedInstitutionManagement",
       "children": [
         {
-          "index": "/research/union/list",
+          "index": "/research/institution/registration",
           "icon": "ri-community-line",
-          "titleKey": "research.menu.propagationOrgRegistration",
+          "titleKey": "research.menu.institutionRegistration",
+          "roles": ["ROLE_SUPER", "OARI"]
+        },
+        {
+          "index": "/research/institution/approval",
+          "icon": "ri-community-line",
+          "titleKey": "research.menu.institutionApproval",
           "roles": ["ROLE_SUPER", "OARI"]
         },
         {
@@ -158,7 +164,7 @@
           "roles": ["ROLE_SUPER", "OARI"]
         },
         {
-          "index": "/research/breeding-data/research-center",
+          "index": "/research/institution/research-center",
           "icon": "ri-building-line",
           "titleKey": "research.menu.researchCenterManagement",
           "roles": ["ROLE_SUPER", "OARI"]
