@@ -8,7 +8,7 @@ export default {
   // Tab
   tabs: {
     pending: '待审核',
-    summary: '数据汇聚',
+    approved: '已审核',
   },
 
   // 搜索和筛选
@@ -29,7 +29,8 @@ export default {
     batchReject: '批量驳回',
     submit: '提交审核',
     lockBatch: '锁定批次',
-    summarySubmit: '汇聚数据提交',
+    aggregationSubmit: '汇聚数据提交',
+    aggregationDetail: '汇聚数据详情',
   },
 
   // 列表列
@@ -168,14 +169,29 @@ export default {
   },
 
   // 数据汇聚
-  summary: {
-    title: '已通过需求汇聚',
-    description: '汇总当前区域内已通过审核的投入品需求数据',
-    list: '汇聚列表',
-    inputCategory: '投入品大类',
+  aggregation: {
+    title: '农资汇聚详情',
+    dialogTitle: '汇聚统计数据',
+    submitConfirm: '确定要提交汇聚数据吗？',
+    submitSuccess: '汇聚数据提交成功',
+    submitFailed: '汇聚数据提交失败',
+    inputCategory: '农资分类',
     inputType: '农资类型',
-    variety: '品种',
-    totalQuantity: '需求总数量',
+    totalQuantity: '总数量',
+    totalCount: '总项目数',
+    demandCount: '涉及需求数',
+    sourceName: '来源',
+    targetName: '目标',
+    status: '状态',
+    createdTime: '创建时间',
+    noData: '暂无汇聚数据',
+  },
+
+  // 汇聚状态
+  aggregationStatus: {
+    pending: '待审核',
+    success: '成功',
+    rejected: '拒绝',
   },
 
   // 提示信息
