@@ -20,7 +20,7 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-list-check"></i>
-              <span>{{ $t(activeTab === 'pending' ? 'demandAudit.list' : 'demandAudit.summary.list') }}</span>
+              <span>{{ $t('demandAudit.list') }}</span>
             </div>
             <div class="header-actions">
               <el-button
@@ -42,12 +42,20 @@
                 {{ $t('demandAudit.actions.batchReject') }}
               </el-button>
               <el-button
-                type="primary"
-                @click="handleSummarySubmit"
-                v-if="activeTab === 'summary'"
+                type="success"
+                @click="handleAggregationSubmit"
+                v-if="activeTab === 'approved'"
               >
                 <i class="ri-upload-cloud-line"></i>
-                {{ $t('demandAudit.actions.summarySubmit') }}
+                {{ $t('demandAudit.actions.aggregationSubmit') }}
+              </el-button>
+              <el-button
+                type="primary"
+                @click="handleAggregationDetail"
+                v-if="activeTab === 'approved'"
+              >
+                <i class="ri-file-list-3-line"></i>
+                {{ $t('demandAudit.actions.aggregationDetail') }}
               </el-button>
             </div>
           </div>
@@ -55,7 +63,7 @@
           <div class="card-body">
             <el-tabs v-model="activeTab">
               <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />
-              <el-tab-pane :label="$t('demandAudit.tabs.summary')" name="summary" />
+              <el-tab-pane :label="$t('demandAudit.tabs.approved')" name="approved" />
             </el-tabs>
 
             <div v-if="activeTab === 'pending'">
@@ -249,56 +257,157 @@
               :description="$t('demandAudit.messages.noData')"
             />
 
-            <!-- 数据汇聚 Tab 内容 -->
-            <div v-if="activeTab === 'summary'">
-              <!-- <div class="summary-header">
-                <div class="summary-title">{{ $t('demandAudit.summary.title') }}</div>
-                <div class="summary-desc">{{ $t('demandAudit.summary.description') }}</div>
-              </div> -->
+            <!-- 已审核 Tab 内容 -->
+            <div v-if="activeTab === 'approved'">
+              <!-- 搜索区域 -->
+              <div class="search-section">
+                <el-input
+                  v-model="searchForm.keyword"
+                  :placeholder="$t('demandAudit.searchPlaceholder')"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix>
+                    <i class="ri-search-line"></i>
+                  </template>
+                </el-input>
 
+                <el-button type="primary" @click="handleSearch">
+                  <i class="ri-search-line"></i>
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset" style="margin-left: 0px;">
+                  <i class="ri-refresh-line"></i>
+                  {{ $t('common.reset') }}
+                </el-button>
+              </div>
+
+              <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-                <el-table :data="summaryData" v-loading="summaryLoading" stripe>
+                <el-table
+                  v-loading="approvedLoading"
+                  :data="approvedData"
+                  stripe
+                  empty-text=""
+                >
                   <el-table-column
-                    prop="inputCategory"
-                    :label="$t('demandAudit.summary.inputCategory')"
-                    min-width="140"
+                    prop="batchNo"
+                    :label="$t('demandAudit.columns.batchNo')"
+                    min-width="150"
                   />
                   <el-table-column
-                    prop="inputType"
-                    :label="$t('demandAudit.summary.inputType')"
+                    prop="farmerName"
+                    :label="$t('demandAudit.columns.farmerName')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="farmerIdNumber"
+                    :label="$t('demandAudit.columns.farmerIdNumber')"
+                    min-width="150"
+                  />
+                  <el-table-column
+                    prop="woreda"
+                    :label="$t('demandAudit.columns.woreda')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="kebele"
+                    :label="$t('demandAudit.columns.kebele')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="landArea"
+                    :label="$t('demandAudit.columns.landArea')"
+                    min-width="120"
+                  >
+                    <template #default="{ row }">
+                      {{ row.landArea || '-' }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="submitTime"
+                    :label="$t('demandAudit.columns.submitTime')"
                     min-width="160"
                   />
-                  <el-table-column
-                    prop="totalQuantity"
-                    :label="$t('demandAudit.summary.totalQuantity')"
-                    min-width="140"
-                  />
+                  <el-table-column :label="$t('common.actions')" fixed="right" width="150">
+                    <template #default="{ row }">
+                      <div class="action-buttons">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>
+                          {{ $t('common.view') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </div>
 
-              <!-- 移动端汇聚卡片 -->
+              <!-- 移动端卡片 -->
               <div class="mobile-cards mobile-only">
-                <div v-for="item in summaryData" :key="item.id || item.inputCategory + '-' + item.inputType + '-' + item.variety" class="mobile-card">
+                <div v-for="item in approvedData" :key="item.id" class="mobile-card">
+                  <div class="mobile-card-header">
+                    <div class="farmer-name">
+                      <i class="ri-user-line"></i>
+                      <span>{{ item.farmerName }}</span>
+                    </div>
+                    <el-tag type="success" size="small">
+                      {{ $t('demandAudit.status.approved') }}
+                    </el-tag>
+                  </div>
                   <div class="mobile-card-body">
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.inputCategory') }}:</span>
-                      <span class="value">{{ item.inputCategory }}</span>
+                      <span class="label">{{ $t('demandAudit.columns.batchNo') }}:</span>
+                      <span class="value">{{ item.batchNo }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.inputType') }}:</span>
-                      <span class="value">{{ item.inputType }}</span>
+                      <span class="label">{{ $t('demandAudit.columns.farmerIdNumber') }}:</span>
+                      <span class="value">{{ item.farmerIdNumber }}</span>
                     </div>
                     <div class="mobile-card-row">
-                      <span class="label">{{ $t('demandAudit.summary.totalQuantity') }}:</span>
-                      <span class="value">{{ item.totalQuantity }}</span>
+                      <span class="label">{{ $t('demandAudit.columns.kebele') }}:</span>
+                      <span class="value">{{ item.kebele }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.woreda') }}:</span>
+                      <span class="value">{{ item.woreda }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.landArea') }}:</span>
+                      <span class="value">{{ item.landArea || '-' }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.submitTime') }}:</span>
+                      <span class="value">{{ item.submitTime || '-' }}</span>
                     </div>
                   </div>
+                  <div class="mobile-card-actions">
+                    <el-button type="primary" size="small" @click="handleView(item)">
+                      {{ $t('common.view') }}
+                    </el-button>
+                  </div>
                 </div>
-                <el-empty
-                  v-if="!summaryLoading && (!summaryData || summaryData.length === 0)"
-                  :description="$t('demandAudit.messages.noData')"
+              </div>
+
+              <!-- 分页 -->
+              <div v-if="pagination.total > 0" class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :total="pagination.total"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  background
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
                 />
               </div>
+
+              <!-- 空状态 -->
+              <el-empty
+                v-if="approvedData.length === 0 && !approvedLoading"
+                :description="$t('demandAudit.messages.noData')"
+              />
             </div>
           </div>
         </div>
@@ -360,6 +469,109 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 汇聚详情对话框 -->
+    <el-dialog
+      v-model="aggregationDialogVisible"
+      :title="$t('demandAudit.aggregation.dialogTitle')"
+      width="80%"
+      top="5vh"
+    >
+      <el-table
+        v-loading="aggregationLoading"
+        :data="aggregationData"
+        stripe
+        max-height="500px"
+      >
+        <el-table-column
+          prop="inputCategory"
+          :label="$t('demandAudit.aggregation.inputCategory')"
+          min-width="120"
+        />
+        <el-table-column
+          prop="inputType"
+          :label="$t('demandAudit.aggregation.inputType')"
+          min-width="140"
+        />
+        <el-table-column
+          prop="totalQuantity"
+          :label="$t('demandAudit.aggregation.totalQuantity')"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            {{ row.totalQuantity || 0 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="totalCount"
+          :label="$t('demandAudit.aggregation.totalCount')"
+          min-width="100"
+        >
+          <template #default="{ row }">
+            {{ row.totalCount || 0 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="sourceName"
+          :label="$t('demandAudit.aggregation.sourceName')"
+          min-width="120"
+        />
+        <el-table-column
+          prop="targetName"
+          :label="$t('demandAudit.aggregation.targetName')"
+          min-width="120"
+        />
+        <el-table-column
+          prop="status"
+          :label="$t('demandAudit.aggregation.status')"
+          min-width="100"
+        >
+          <template #default="{ row }">
+            <el-tag v-if="row.status === '0'" type="info">
+              {{ $t('demandAudit.aggregationStatus.pending') }}
+            </el-tag>
+            <el-tag v-else-if="row.status === '1'" type="success">
+              {{ $t('demandAudit.aggregationStatus.success') }}
+            </el-tag>
+            <el-tag v-else-if="row.status === '2'" type="danger">
+              {{ $t('demandAudit.aggregationStatus.rejected') }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="createdTime"
+          :label="$t('demandAudit.aggregation.createdTime')"
+          min-width="160"
+        />
+      </el-table>
+
+      <!-- 分页 -->
+      <div v-if="aggregationPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
+        <el-pagination
+          :current-page="aggregationPagination.currentPage"
+          :page-size="aggregationPagination.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="aggregationPagination.total"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+          small
+          @size-change="handleAggregationSizeChange"
+          @current-change="handleAggregationCurrentChange"
+          @update:current-page="aggregationPagination.currentPage = $event"
+          @update:page-size="aggregationPagination.pageSize = $event"
+        />
+      </div>
+
+      <!-- 空状态 -->
+      <el-empty
+        v-if="aggregationData.length === 0 && !aggregationLoading"
+        :description="$t('demandAudit.aggregation.noData')"
+      />
+
+      <template #footer>
+        <el-button @click="aggregationDialogVisible = false">{{ $t('common.close') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -368,7 +580,8 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getPendingDemandPage, approveDemand, rejectDemand, getApprovedDemandSummary } from '@/api/demandAudit'
+import { getPendingDemandPage, approveDemand, rejectDemand, getApprovedDemandPage } from '@/api/demandAudit'
+import { aggregateInputDemand, getInputSummaryList } from '@/api/inputAggregation'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -381,9 +594,19 @@ const selectedRows = ref([])
 // Tab
 const activeTab = ref('pending')
 
-// 数据汇聚
-const summaryLoading = ref(false)
-const summaryData = ref([])
+// 已审核数据
+const approvedLoading = ref(false)
+const approvedData = ref([])
+
+// 汇聚详情对话框
+const aggregationDialogVisible = ref(false)
+const aggregationLoading = ref(false)
+const aggregationData = ref([])
+const aggregationPagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
 
 // 搜索表单
 const searchForm = reactive({
@@ -440,7 +663,8 @@ const loadData = async () => {
     const params = {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
-      farmerName: searchForm.keyword || undefined
+      farmerName: searchForm.keyword || undefined,
+      kebele:'huangshan'
     }
     const res = await getPendingDemandPage(params)
     if (res.code === 200) {
@@ -458,34 +682,51 @@ const loadData = async () => {
   }
 }
 
-// 加载已通过需求汇聚数据
-const loadSummary = async () => {
-  summaryLoading.value = true
+// 加载已审核数据
+const loadApprovedData = async () => {
+  approvedLoading.value = true
   try {
-    const res = await getApprovedDemandSummary({})
+    const params = {
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      farmerName: searchForm.keyword || undefined,
+      kebele:'huangshan'
+    }
+    const res = await getApprovedDemandPage(params)
     if (res.code === 200) {
-      // 约定后端返回 data 为数组
-      summaryData.value = res.data || []
+      approvedData.value = res.data.records.map(item => ({
+        ...item,
+        checked: false
+      }))
+      pagination.total = res.data.total
     }
   } catch (error) {
-    console.error('Failed to load summary:', error)
+    console.error('Failed to load approved data:', error)
     ElMessage.error(t('demandAudit.messages.loadFailed'))
   } finally {
-    summaryLoading.value = false
+    approvedLoading.value = false
   }
 }
 
 // 搜索
 const handleSearch = () => {
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 // 重置
 const handleReset = () => {
   searchForm.keyword = ''
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 // 选择变化
@@ -585,8 +826,81 @@ const handleBatchReject = () => {
 }
 
 // 数据汇聚提交
-const handleSummarySubmit = () => {
-  console.log('summary submit clicked')
+const handleAggregationSubmit = async () => {
+  try {
+    await ElMessageBox.confirm(
+      t('demandAudit.aggregation.submitConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    submitting.value = true
+    // TODO: Get current user's kebele and woreda info from context
+    const res = await aggregateInputDemand({
+      sourceCode: 'huangshan', // Placeholder: should be from user context
+      sourceName: 'huangshan', // Placeholder: should be from user context
+      targetCode: 'qingdao', // Placeholder: should be from user context
+      targetName: 'qingdao' // Placeholder: should be from user context
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('demandAudit.aggregation.submitSuccess'))
+      // Optionally refresh approved data
+      loadApprovedData()
+    } else {
+      ElMessage.error(res.msg || t('demandAudit.aggregation.submitFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit aggregation:', error)
+      ElMessage.error(t('demandAudit.aggregation.submitFailed'))
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+// 打开汇聚详情对话框
+const handleAggregationDetail = () => {
+  aggregationDialogVisible.value = true
+  loadAggregationData()
+}
+
+// 加载汇聚数据
+const loadAggregationData = async () => {
+  aggregationLoading.value = true
+  try {
+    const params = {
+      page: aggregationPagination.currentPage,
+      pageSize: aggregationPagination.pageSize,
+      // TODO: Add kebele filter from user context
+      // sourceCode: 'KB001'
+    }
+    const res = await getInputSummaryList(params)
+    if (res.code === 200) {
+      aggregationData.value = res.data.list || []
+      aggregationPagination.total = res.data.total || 0
+    }
+  } catch (error) {
+    console.error('Failed to load aggregation data:', error)
+    ElMessage.error(t('demandAudit.messages.loadFailed'))
+  } finally {
+    aggregationLoading.value = false
+  }
+}
+
+// 汇聚详情分页变化
+const handleAggregationSizeChange = () => {
+  aggregationPagination.currentPage = 1
+  loadAggregationData()
+}
+
+const handleAggregationCurrentChange = () => {
+  loadAggregationData()
 }
 
 // 确认审核驳回
@@ -634,19 +948,29 @@ const confirmReject = async () => {
 // 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 const handleCurrentChange = () => {
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 // 监听 Tab 切换
 watch(activeTab, (val) => {
   if (val === 'pending') {
+    pagination.currentPage = 1
     loadData()
-  } else if (val === 'summary' && summaryData.value.length === 0) {
-    loadSummary()
+  } else if (val === 'approved') {
+    pagination.currentPage = 1
+    loadApprovedData()
   }
 })
 
@@ -657,7 +981,7 @@ onMounted(() => {
 </script>
 <style scoped>
 .page-container {
-  min-height: 100vh;
+  min-height: 100%;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
   padding: 24px;
 }

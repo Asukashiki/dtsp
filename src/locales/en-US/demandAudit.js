@@ -8,7 +8,7 @@ export default {
   // Tabs
   tabs: {
     pending: 'Pending',
-    summary: 'Data Aggregation',
+    approved: 'Approved',
   },
 
   // Search and Filter
@@ -29,7 +29,8 @@ export default {
     batchReject: 'Batch Reject',
     submit: 'Submit for Audit',
     lockBatch: 'Lock Batch',
-    summarySubmit: 'Submit Aggregated Data',
+    aggregationSubmit: 'Submit Aggregation',
+    aggregationDetail: 'Aggregation Detail',
   },
 
   // Table Columns
@@ -168,14 +169,29 @@ export default {
   },
 
   // Aggregation
-  summary: {
-    title: 'Approved Demand Aggregation',
-    description: 'Aggregated statistics of approved input demand in current area',
-    list: 'Aggregation List',
+  aggregation: {
+    title: 'Input Aggregation Detail',
+    dialogTitle: 'Aggregation Statistics',
+    submitConfirm: 'Are you sure to submit aggregation data?',
+    submitSuccess: 'Aggregation submitted successfully',
+    submitFailed: 'Aggregation submission failed',
     inputCategory: 'Input Category',
     inputType: 'Input Type',
-    variety: 'Variety',
-    totalQuantity: 'Total Demand Quantity',
+    totalQuantity: 'Total Quantity',
+    totalCount: 'Total Items',
+    demandCount: 'Demand Count',
+    sourceName: 'Source',
+    targetName: 'Target',
+    status: 'Status',
+    createdTime: 'Created Time',
+    noData: 'No aggregation data',
+  },
+
+  // Aggregation Status
+  aggregationStatus: {
+    pending: 'Pending',
+    success: 'Success',
+    rejected: 'Rejected',
   },
 
   // Messages
