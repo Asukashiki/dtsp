@@ -176,14 +176,14 @@ const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 获取用户角色列表
 const userRoles = computed(() => {
-  const roleStr = userStore.userInfo?.user?.ROLE || userStore.userInfo?.user?.role || ''
+  const roleStr = userStore.userInfo?.user?.LOGIN_ROLE_VALUE?.['SMART-AGR'] || ''
   return roleStr.split(',').map(r => r.trim()).filter(r => r)
 })
 
 // 检查用户是否有权限访问菜单
 const hasPermission = (roles) => {
   if (!roles || roles.length === 0) return true // 没有配置角色限制，默认所有人可访问
-  if (userRoles.value.includes('ROLE_SUPER')) return true // 超级管理员有所有权限
+  if (userRoles.value.includes('agri-admin')) return true // 超级管理员有所有权限
   return roles.some(role => userRoles.value.includes(role))
 }
 
