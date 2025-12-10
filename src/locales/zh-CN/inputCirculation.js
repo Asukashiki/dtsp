@@ -23,6 +23,7 @@ export default {
   // 分发相关
   releaseId: '分发单编号',
   releaseName: '分发单名称',
+  zoneId: '分发区',
   targetId: '分发对象',
   targetAddress: '分发对象收获地址',
   targetContact: '分发对象联系人',
@@ -95,6 +96,8 @@ export default {
   deleteReleaseSuccess: '分发单删除成功',
   deleteReleaseFailed: '分发单删除失败',
   queryInputListFailed: '获取输入品列表信息失败',
+  queryZoneListFailed: '获取zone列表信息失败',
+  queryUnionListFailed: '获取Union列表信息失败',
 
   // 菜单项
   inputCirculation: '投入品流通管理',

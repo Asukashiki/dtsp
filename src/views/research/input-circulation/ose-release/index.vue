@@ -116,6 +116,7 @@ const queryParams = reactive({
 
 const handleQuery = async () => {
   loading.value = true
+  queryParams.releaseType = 'OSE_TO_UNION'
   if (dateRange.value && dateRange.value.length === 2) {
     queryParams.startTime = dateRange.value[0]
     queryParams.endTime = dateRange.value[1]
