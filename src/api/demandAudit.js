@@ -79,3 +79,16 @@ export const getApprovedDemandPage = (data) => {
     data
   })
 }
+
+/**
+ * 已通过需求汇聚数据查询
+ * @param {Object} data - 查询参数 { level }
+ * @returns {Promise}
+ */
+export const getApprovedDemandSummary = (data) => {
+  return request({
+    url: '/seed/demand/audit/approved/summary',
+    method: 'post',
+    data
+  })
+}
