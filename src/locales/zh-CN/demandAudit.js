@@ -5,8 +5,14 @@ export default {
   list: '待审核列表',
   detail: '审核详情',
 
+  // Tab
+  tabs: {
+    pending: '待审核',
+    summary: '数据汇聚',
+  },
+
   // 搜索和筛选
-  searchPlaceholder: '搜索农民姓名、身份证号、村庄',
+  searchPlaceholder: '搜索农民姓名',
   filterByBatch: '按批次筛选',
   filterByKebele: '按Kebele筛选',
   filterByWoreda: '按Woreda筛选',
@@ -23,6 +29,7 @@ export default {
     batchReject: '批量驳回',
     submit: '提交审核',
     lockBatch: '锁定批次',
+    summarySubmit: '汇聚数据提交',
   },
 
   // 列表列
@@ -158,6 +165,17 @@ export default {
     seed: '种子',
     fertilizer: '化肥',
     pesticide: '农药',
+  },
+
+  // 数据汇聚
+  summary: {
+    title: '已通过需求汇聚',
+    description: '汇总当前区域内已通过审核的投入品需求数据',
+    list: '汇聚列表',
+    inputCategory: '投入品大类',
+    inputType: '农资类型',
+    variety: '品种',
+    totalQuantity: '需求总数量',
   },
 
   // 提示信息

@@ -772,6 +772,27 @@ const routes = [
         component: () => import('../views/input/demand/audit/index.vue'),
         meta: { title: '投入品需求审核', requiresAuth: true }
       },
+      // 镇级需求审核（复用同一组件，后续可通过路由元信息区分）
+      {
+        path: 'demand/audit-town',
+        name: 'TownDemandAudit',
+        component: () => import('../views/input/demand/audit-town/index.vue'),
+        meta: { title: '镇需求审核', requiresAuth: true }
+      },
+      // 区级需求审核
+      {
+        path: 'demand/audit-district',
+        name: 'DistrictDemandAudit',
+        component: () => import('../views/input/demand/audit-district/index.vue'),
+        meta: { title: '区需求审核', requiresAuth: true }
+      },
+      // 州农业部查看
+      {
+        path: 'demand/audit-state',
+        name: 'StateDemandAuditView',
+        component: () => import('../views/input/demand/audit-state/index.vue'),
+        meta: { title: '州农业部查看', requiresAuth: true }
+      },
       {
         path: 'demand/audit/detail/:id',
         name: 'DemandAuditDetail',

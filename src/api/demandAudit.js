@@ -66,3 +66,17 @@ export const lockBatch = (data) => {
     data
   })
 }
+
+/**
+ * 已通过需求汇聚信息
+ * 例如按投入品大类/品种统计需求数量总和
+ * @param {Object} params - 查询参数（如 batchId、kebele、woreda 等，可选）
+ * @returns {Promise}
+ */
+export const getApprovedDemandSummary = (params) => {
+  return request({
+    url: '/seed/demand/audit/approved/summary',
+    method: 'get',
+    params
+  })
+}

@@ -141,7 +141,7 @@
                   :label="$t('farmerDemand.columns.createdTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="280">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="320">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -152,7 +152,7 @@
                         link
                         type="success"
                         @click="handleSubmit(row)"
-                        v-if="row.status === 'draft' || row.status === 'rejected'"
+                        v-if="row.status === '0' || row.status === '3'"
                       >
                         <i class="ri-send-plane-line"></i>
                         {{ $t('farmerDemand.actions.submit') }}
@@ -161,7 +161,7 @@
                         link
                         type="primary"
                         @click="handleEdit(row)"
-                        v-if="row.status === 'draft' || row.status === 'rejected'"
+                        v-if="row.status === '0' || row.status === '3'"
                       >
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
@@ -170,7 +170,7 @@
                         link
                         type="danger"
                         @click="handleDelete(row)"
-                        v-if="row.status === 'draft'"
+                        v-if="row.status === '0'"
                       >
                         <i class="ri-delete-bin-line"></i>
                         {{ $t('common.delete') }}
@@ -249,14 +249,14 @@
                     type="success"
                     size="small"
                     @click="handleSubmit(item)"
-                    v-if="item.status === 'draft' || item.status === 'rejected'"
+                    v-if="item.status === '0' || item.status === '3'"
                   >
                     {{ $t('farmerDemand.submit') }}
                   </el-button>
                   <el-button
                     size="small"
                     @click="handleEdit(item)"
-                    v-if="item.status === 'draft' || item.status === 'rejected'"
+                    v-if="item.status === '0' || item.status === '3'"
                   >
                     {{ $t('common.edit') }}
                   </el-button>
@@ -264,7 +264,7 @@
                     type="danger"
                     size="small"
                     @click="handleDelete(item)"
-                    v-if="item.status === 'draft'"
+                    v-if="item.status === '0'"
                   >
                     {{ $t('common.delete') }}
                   </el-button>
@@ -320,13 +320,13 @@ const pagination = reactive({
   total: 0
 })
 
-// 状态选项
+// 状态选项（0: 草稿, 1: 已提交, 2: 已通过, 3: 驳回, 4: 已锁定）
 const statusOptions = computed(() => ({
-  draft: t('farmerDemand.status.draft'),
-  submitted: t('farmerDemand.status.submitted'),
-  approved: t('farmerDemand.status.approved'),
-  rejected: t('farmerDemand.status.rejected'),
-  locked: t('farmerDemand.status.locked')
+  '0': t('farmerDemand.status.draft'),
+  '1': t('farmerDemand.status.submitted'),
+  '2': t('farmerDemand.status.approved'),
+  '3': t('farmerDemand.status.rejected'),
+  '4': t('farmerDemand.status.locked'),
 }))
 
 // 获取状态标签
@@ -337,11 +337,11 @@ const getStatusLabel = (status) => {
 // 获取状态类型
 const getStatusType = (status) => {
   const typeMap = {
-    draft: 'info',
-    submitted: 'warning',
-    approved: 'success',
-    rejected: 'danger',
-    locked: ''
+    '0': 'info', // draft
+    '1': 'warning', // submitted
+    '2': 'success', // approved
+    '3': 'danger', // rejected
+    '4': '', // locked
   }
   return typeMap[status] || 'info'
 }
@@ -402,9 +402,9 @@ const handleEdit = (row) => {
   router.push({ name: 'FarmerDemandEdit', params: { id: row.id } })
 }
 
-// 判断行是否可选择（只有草稿和驳回状态可以提交审核）
+// 判断行是否可选择（只有草稿(0)和驳回(3)状态可以提交审核）
 const rowSelectable = (row) => {
-  return row.status === 'draft' || row.status === 'rejected'
+  return row.status === '0' || row.status === '3'
 }
 
 // 表格选择变化

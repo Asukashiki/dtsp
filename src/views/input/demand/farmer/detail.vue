@@ -176,13 +176,13 @@ const { t } = useI18n()
 const loading = ref(false)
 const detailData = ref({})
 
-// 状态选项
+// 状态选项（0: 草稿, 1: 已提交, 2: 已通过, 3: 驳回, 4: 已锁定）
 const statusOptions = computed(() => ({
-  draft: t('farmerDemand.status.draft'),
-  submitted: t('farmerDemand.status.submitted'),
-  approved: t('farmerDemand.status.approved'),
-  rejected: t('farmerDemand.status.rejected'),
-  locked: t('farmerDemand.status.locked')
+  '0': t('farmerDemand.status.draft'),
+  '1': t('farmerDemand.status.submitted'),
+  '2': t('farmerDemand.status.approved'),
+  '3': t('farmerDemand.status.rejected'),
+  '4': t('farmerDemand.status.locked'),
 }))
 
 // 投入品类型选项
@@ -200,11 +200,11 @@ const getStatusLabel = (status) => {
 // 获取状态类型
 const getStatusType = (status) => {
   const typeMap = {
-    draft: 'info',
-    submitted: 'warning',
-    approved: 'success',
-    rejected: 'danger',
-    locked: ''
+    '0': 'info', // draft
+    '1': 'warning', // submitted
+    '2': 'success', // approved
+    '3': 'danger', // rejected
+    '4': '', // locked
   }
   return typeMap[status] || 'info'
 }
