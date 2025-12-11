@@ -31,6 +31,7 @@ export default {
     lockBatch: 'Lock Batch',
     aggregationSubmit: 'Submit Aggregation',
     aggregationDetail: 'Aggregation Detail',
+    back: 'Back',
   },
 
   // Table Columns

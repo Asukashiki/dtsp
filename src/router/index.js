@@ -765,12 +765,19 @@ const routes = [
         component: () => import('../views/input/demand/farmer/detail.vue'),
         meta: { title: '农民需求详情', hideInMenu: true, requiresAuth: true }
       },
-      // 投入品需求审核
+      // 村级需求汇聚（新页面）
       {
-        path: 'demand/audit',
-        name: 'DemandAudit',
+        path: 'demand/aggregation',
+        name: 'VillageAggregation',
+        component: () => import('../views/input/demand/aggregation/index.vue'),
+        meta: { title: '村级需求汇聚', requiresAuth: true }
+      },
+      // 村级审核详情（原投入品需求审核页面，现作为详情页隐藏）
+      {
+        path: 'demand/audit/:year',
+        name: 'VillageAuditDetail',
         component: () => import('../views/input/demand/audit/index.vue'),
-        meta: { title: '投入品需求审核', requiresAuth: true }
+        meta: { title: '村级审核详情', hideInMenu: true, requiresAuth: true }
       },
       // 镇级需求审核（复用同一组件，后续可通过路由元信息区分）
       {

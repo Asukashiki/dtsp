@@ -85,10 +85,10 @@ export const batchDeleteInputSummary = (ids) => {
  * @param {Object} data - 汇聚参数 { sourceCode, sourceName, targetCode, targetName }
  * @returns {Promise}
  */
-export const aggregateInputDemand = (data) => {
-  return request({
-    url: '/seed/demand/farmer/input/aggregation',
-    method: 'post',
-    data
-  })
-}
+// export const aggregateInputDemand = (data) => {
+//   return request({
+//     url: '/seed/demand/farmer/input/aggregation',
+//     method: 'post',
+//     data
+//   })
+// }
