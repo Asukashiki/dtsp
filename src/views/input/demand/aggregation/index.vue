@@ -62,7 +62,7 @@
                 min-width="140"
               >
                 <template #default="{ row }">
-                  {{ row.subQuantity || 0 }}
+                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -160,7 +160,7 @@
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
-                  <span class="value">{{ item.subQuantity || 0 }}</span>
+                  <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
@@ -310,6 +310,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateVillageInputDemand, getVillageAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import { getApprovedDemandPage } from '@/api/demandAudit'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -350,6 +351,24 @@ const detailPagination = reactive({
   total: 0
 })
 
+// 加载每行已审批数量（approvedQuantity）
+const loadApprovedCountForRow = async (row) => {
+  try {
+    const params = {
+      pageNum: 1,
+      pageSize: 1,
+      kebele: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      year: row.year
+    }
+    const res = await getApprovedDemandPage(params)
+    if (res.code === 200 && res.data) {
+      row.approvedQuantity = res.data.total || 0
+    }
+  } catch (error) {
+    console.error('Failed to load approved count for row:', error)
+  }
+}
+
 // 加载列表数据
 const loadData = async () => {
   loading.value = true
@@ -357,8 +376,8 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      // sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
-      sourceCode:'huangshan'
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      // sourceCode:'huangshan'
       // TODO: Add user context filters
       // sourceCode: 'KB001'
     }
@@ -367,6 +386,9 @@ const loadData = async () => {
     if (res.code === 200) {
       tableData.value = res.data.list || []
       pagination.total = res.data.total || 0
+
+      // 为每行加载已审批数量
+      await Promise.all(tableData.value.map(item => loadApprovedCountForRow(item)))
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -392,11 +414,12 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      // sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
-      sourceCode: 'huangshan', 
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
+      // sourceCode: 'huangshan', 
       status: '0',
+      level: '0',
       creator: JSON.parse(localStorage.getItem('userInfo')).user.username, 
-      subQuantity: 0//农民数||村的数量||
+      // subQuantity: 0//农民数||村的数量||
     })
 
     if (res.code === 200) {
