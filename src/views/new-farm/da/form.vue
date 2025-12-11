@@ -114,7 +114,7 @@
           </div>
         </div>
 
-        <!-- 区划信息（核心修改：Kebeles改为单选） -->
+        <!-- 区划信息 -->
         <div class="form-block">
           <div class="block-header">
             <i class="ri-map-pin-line"></i>
@@ -143,7 +143,7 @@
               <input type="hidden" v-model="formData.woredaCode" />
             </el-form-item>
 
-            <!-- 核心修改：去掉multiple/collapse-tags，改为单选 -->
+            <!-- 单选Kebele -->
             <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes" class="full-width-item">
               <el-select
                   v-model="formData.kebeleCodes"
@@ -198,39 +198,34 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-// 新增：导入CryptoJS用于AES加密（需确保项目已安装 crypto-js 依赖）
 import CryptoJS from 'crypto-js'
-import {
-  getDaDetail,
-  addDa,
-  updateDa
-} from '@/api/newFarm'
-import { listSubRegionByCode,listRegionNameById } from '@/api/application'// 导入区域接口
-// 新增：导入registerDa接口
+import { getDaDetail, addDa, updateDa } from '@/api/newFarm'
+import { listSubRegionByCode, listRegionNameById } from '@/api/application'
 import { registerDa } from '@/api/application'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-// 新增：定义AES加密密钥
+// AES encryption key
 const keyStr = 'ab489fe897hh78ha';
 
+// Form related references
 const formRef = ref(null)
 const saveLoading = ref(false)
 const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
-// 新增：保存用户完整信息（用于获取orgCode/orgName等字段）
+// User info storage
 const userInfo = ref(null)
 
-// 新增区域相关响应式变量
+// Region related state
 const regionLoading = ref(false)
-const zoneName = ref('') // Zone显示名称（不可修改）
-const woredaName = ref('') // Woreda显示名称（不可修改）
-const kebeleOptions = ref([]) // Kebeles下拉选项
+const zoneName = ref('') // Zone display name
+const woredaName = ref('') // Woreda display name
+const kebeleOptions = ref([]) // Kebele dropdown options
 
-// 表单数据（核心修改：kebeleCodes从数组改为字符串）
+// Form data
 const formData = reactive({
   daName: '',
   idCard: '',
@@ -241,13 +236,13 @@ const formData = reactive({
   account: '',
   password: '',
   accountStatus: '1',
-  zoneCode: '', // Zone编码（隐藏存储）
-  woredaCode: '', // Woreda编码（隐藏存储）
-  kebeleCodes: '', // Kebeles编码（单选，字符串类型）
+  zoneCode: '', // Zone code (hidden storage)
+  woredaCode: '', // Woreda code (hidden storage)
+  kebeleCodes: '', // Kebele code (single selection)
   remark: ''
 })
 
-// 表单验证规则（kebeleCodes规则保持required，触发方式不变）
+// Form validation rules (including mandatory field validation for registration API)
 const formRules = computed(() => ({
   daName: [
     { required: true, message: t('newFarm.da.rules.daNameRequired'), trigger: 'blur' },
@@ -265,9 +260,11 @@ const formRules = computed(() => ({
     { min: 6, max: 20, message: t('newFarm.da.rules.passwordLength'), trigger: 'blur' }
   ],
   phone: [
+    { required: true, message: t('newFarm.da.rules.phoneRequired'), trigger: 'blur' },
     { pattern: /^[0-9+\-\s]+$/, message: t('newFarm.da.rules.phoneFormat'), trigger: 'blur' }
   ],
   email: [
+    { required: true, message: t('newFarm.da.rules.emailRequired'), trigger: 'blur' },
     { type: 'email', message: t('newFarm.da.rules.emailFormat'), trigger: 'blur' }
   ],
   woredaCode: [
@@ -278,12 +275,12 @@ const formRules = computed(() => ({
   ]
 }))
 
-// 返回
+// Go back to previous page
 const goBack = () => {
   router.back()
 }
 
-// 新增：AES加密密码函数
+// AES encrypt password
 const encryptPassword = (password) => {
   if (!password) return ''
   const key = CryptoJS.enc.Utf8.parse(keyStr)
@@ -294,7 +291,7 @@ const encryptPassword = (password) => {
   return encrypted.toString()
 }
 
-// 加载详情(编辑模式，核心修改：适配kebeleCodes单选逻辑)
+// Load detail (edit mode)
 const loadDetail = async () => {
   pageLoading.value = true
   try {
@@ -311,15 +308,16 @@ const loadDetail = async () => {
       formData.accountStatus = data.accountStatus || '1'
       formData.zoneCode = data.zoneCode || ''
       formData.woredaCode = data.woredaCode || ''
-      // 核心修改：如果后端返回的是逗号分隔字符串/数组，转为单个值
+
+      // Adapt Kebele single selection (convert array/string to single value)
       if (data.kebeleCodes) {
         formData.kebeleCodes = Array.isArray(data.kebeleCodes)
-            ? data.kebeleCodes[0] || ''  // 数组取第一个值
-            : data.kebeleCodes.split(',')[0] || '' // 字符串分割后取第一个值
+            ? data.kebeleCodes[0] || ''
+            : data.kebeleCodes.split(',')[0] || ''
       }
       formData.remark = data.remark || ''
 
-      // 编辑模式下回填区域名称
+      // Fill region name
       if (formData.woredaCode) {
         await loadRegionInfo(formData.woredaCode, data.woredaName)
       }
@@ -332,25 +330,24 @@ const loadDetail = async () => {
   }
 }
 
-// 加载区域信息（逻辑不变）
+// Load region info
 const loadRegionInfo = async (regionCode, regionName) => {
   regionLoading.value = true
   try {
-    // 1. 设置Woreda基础信息
+    // Set Woreda info
     woredaName.value = regionName || ''
     formData.woredaCode = regionCode || ''
 
-    // 2. 第一次调用：根据woredaCode(regionCode)获取kebele数据（接口返回数组）
+    // Get Kebele list
     const firstRes = await listSubRegionByCode({ regionCode: regionCode })
     if (firstRes.code === 200) {
-      const kebeleData = firstRes.data || [] // 接口返回的是kebele数组
-      kebeleOptions.value = kebeleData // 直接赋值数组给下拉选项
+      kebeleOptions.value = firstRes.data || []
 
-      const firstKebele = kebeleData[0] || {}
+      // Get Zone info
+      const firstKebele = kebeleOptions.value[0] || {}
       const parentIdsArr = firstKebele.regParentIds.split(',').filter(item => item)
       const parentCode = parentIdsArr[3] || ''
 
-      // 3. 第二次调用：根据parentCode(zoneCode)获取Zone名称
       if (parentCode) {
         const secondRes = await listRegionNameById({ code: parentCode })
         if (secondRes.code === 200) {
@@ -366,44 +363,27 @@ const loadRegionInfo = async (regionCode, regionName) => {
     regionLoading.value = false
   }
 }
-// const regionCode = '102020100' // 声明变量，避免全局污染
-// const regionName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
-// const orgCode = '102020100' // 声明变量，避免全局污染
-// const orgName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
-// 解析用户信息并加载区域数据
+
+// Parse user info and load region data
 const parseUserInfoAndLoadRegion = () => {
-  // // ======== 测试写死开始 ========
-  //
-  // // ======== 测试写死结束 ========
-  //
-  // // 非编辑模式下加载区域信息
-  // if (!isEdit.value) {
-  //   loadRegionInfo(regionCode, regionName)
-  // }
-  // 从localStorage获取用户信息（根据实际存储位置调整）
   const userInfoStr = localStorage.getItem('userInfo')
   if (userInfoStr) {
     try {
       const parsedUserInfo = JSON.parse(userInfoStr)
-      // 新增：保存用户完整信息
       userInfo.value = parsedUserInfo
       const user = parsedUserInfo.user || {}
-      const region_code = user.region_code || '' // 取用户的region_code
-      const regionName = user.regionName || ''   // 取用户的regionName（作为Woreda值）
+      const region_code = user.region_code || ''
+      const regionName = user.regionName || ''
 
-      // 非编辑模式下加载区域信息
+      // Load region info in add mode
       if (!isEdit.value && region_code && regionName) {
         loadRegionInfo(region_code, regionName)
       }
 
-      // 原有逻辑：设置默认DA名称
+      // Set default DA name
       const defaultDaName = user.NAME || ''
       if (defaultDaName) {
-        // 此处daOptions未在当前代码定义，保留原有逻辑结构
-        // const targetDa = daOptions.value.find(item => item.daName === defaultDaName)
-        // if (targetDa) {
-        //   formData.daId = targetDa.daId
-        // }
+        // Reserved DA name matching logic
       }
     } catch (error) {
       console.error('Failed to parse user info:', error)
@@ -411,13 +391,35 @@ const parseUserInfoAndLoadRegion = () => {
   }
 }
 
-
-// 提交表单（核心修改：kebeleCodes无需数组转字符串 + 新增调用registerDa接口）
+// Submit form
 const handleSubmit = async () => {
   if (!formRef.value) return
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
+      // Validate mandatory organization/region info for registration API
+      const orgCode = userInfo.value?.user?.orgCode || ''
+      const orgName = userInfo.value?.user?.orgName || ''
+      const regionCode = userInfo.value?.user?.regionCode || ''
+      const regionName = userInfo.value?.user?.regionName || ''
+
+      if (!orgCode) {
+        ElMessage.error(t('newFarm.da.rules.orgCodeRequired'))
+        return
+      }
+      if (!orgName) {
+        ElMessage.error(t('newFarm.da.rules.orgNameRequired'))
+        return
+      }
+      if (!regionCode) {
+        ElMessage.error(t('newFarm.da.rules.regionCodeRequired'))
+        return
+      }
+      if (!regionName) {
+        ElMessage.error(t('newFarm.da.rules.regionNameRequired'))
+        return
+      }
+
       saveLoading.value = true
       try {
         const submitData = {
@@ -431,48 +433,40 @@ const handleSubmit = async () => {
           accountStatus: formData.accountStatus,
           zoneCode: formData.zoneCode,
           woredaCode: formData.woredaCode,
-          // 核心修改：单选无需转逗号分隔，直接传值
           kebeleCodes: formData.kebeleCodes,
           remark: formData.remark
         }
 
+        // Add password in add mode
         if (!isEdit.value) {
           submitData.password = formData.password
         }
 
         let res
         if (isEdit.value) {
+          // Edit DA info
           res = await updateDa(route.params.id, submitData)
         } else {
-          // 原有逻辑：调用新增DA接口
+          // Add DA info
           res = await addDa(submitData)
 
-          // 新增逻辑：调用registerDA接口（仅新增时触发）
+          // Call registration API
           if (res.code === 200) {
-
-              const registerData = {
-                account: formData.account, // 账号
-                name: formData.daName, // DA姓名对应接口的name字段
-                password: encryptPassword(formData.password), // 密码AES加密
-                mobile: formData.phone, // 手机号对应接口的mobile字段
-                email: formData.email, // 邮箱
-                gender: formData.gender === 'MALE'
-                    ? 'M'
-                    : 'F',
-                identityNum: formData.idCard, // 身份证号对应接口的identityNum字段
-                address: formData.address, // 地址
-                // 从用户信息中获取组织机构和区划信息
-                // orgCode: orgCode,
-                // orgName: orgName,
-                // regionCode: regionCode,
-                // regionName: regionName
-                orgCode: userInfo.value?.user?.orgCode || '', // 组织机构编码（请确认userInfo中实际字段名）
-                orgName: userInfo.value?.user?.orgName || '', // 组织机构名称（请确认userInfo中实际字段名）
-                regionCode: userInfo.value?.user?.regionCode || '', // 区划编码
-                regionName: userInfo.value?.user?.regionName || '' // 区划名称
-              }
-              // 调用接口（后端返回纯布尔值）
-              const registerRes = await registerDa(registerData);
+            const registerData = {
+              account: formData.account,
+              name: formData.daName,
+              password: encryptPassword(formData.password),
+              mobile: formData.phone,
+              email: formData.email,
+              gender: formData.gender === 'MALE' ? 'M' : 'F',
+              identityNum: formData.idCard,
+              address: formData.address,
+              orgCode: orgCode,
+              orgName: orgName,
+              regionCode: regionCode,
+              regionName: regionName
+            }
+            await registerDa(registerData)
           }
         }
 
@@ -492,12 +486,11 @@ const handleSubmit = async () => {
   })
 }
 
+// Page mount logic
 onMounted(() => {
-  // 编辑模式加载详情
   if (isEdit.value) {
     loadDetail()
   } else {
-    // 新增模式解析用户信息并加载区域数据
     parseUserInfoAndLoadRegion()
   }
 })
@@ -508,7 +501,7 @@ onMounted(() => {
   min-height: calc(100vh - 120px);
 }
 
-/* 页面头部 */
+/* Page header */
 .page-header {
   background: white;
   padding: 16px 0;
@@ -542,7 +535,7 @@ onMounted(() => {
   margin: 0;
 }
 
-/* 表单区域 */
+/* Form area */
 .form-wrapper {
   background: white;
   border-radius: 12px;
@@ -603,7 +596,7 @@ onMounted(() => {
   border-top: 1px solid #f0f2f5;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media screen and (max-width: 1024px) {
   .form-grid {
     grid-template-columns: 1fr;
