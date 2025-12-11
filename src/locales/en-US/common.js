@@ -89,5 +89,8 @@ export default {
     timeout: 'Request timeout, please check your network connection',
     networkError: 'Network error, please check your network connection',
     operationFailed: 'Operation failed'
-  }
+  },
+  required: 'this item is required',
+  saveSuccess: 'Save Success',
+  queryFailed: 'query Info failed'
 }

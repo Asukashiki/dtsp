@@ -91,6 +91,9 @@ export default {
     terminated: 'Terminated'
   },
 
+  // 审核状态
+  auditApproved: 'Approved',
+
   // 详情页
   detail: {
     title: 'Batch Details',

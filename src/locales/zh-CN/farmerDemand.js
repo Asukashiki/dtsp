@@ -29,6 +29,20 @@ export default {
   allKebeles: '全部Kebele',
   allCategories: '全部类型',
 
+    cascader: {
+      pesticide: '农药',
+      insecticide: '杀虫剂',
+      fungicide: '杀菌剂',
+      herbicide: '除草剂',
+      seed: '种子',
+      coffee: '咖啡',
+      apple: '苹果',
+      wheat: '小麦',
+      fertilizer: '化肥',
+      nitrogen: '氮肥',
+      phosphorus: '磷肥',
+      potassium: '钾肥'
+    },
   // 状态
   status: {
     draft: '草稿',
@@ -56,6 +70,7 @@ export default {
 
   // 表单字段
   form: {
+    year: '填报年份',
     basicInfo: '基本信息',
     farmerInfo: '农民信息',
     demandInfo: '需求信息',
@@ -98,6 +113,7 @@ export default {
 
   // 表单占位符
   placeholder: {
+    year: '当前年份',
     batchId: '请选择采集批次',
     farmerId: '请输入农民ID',
     farmerName: '请输入农民姓名',

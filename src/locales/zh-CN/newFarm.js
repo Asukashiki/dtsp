@@ -208,7 +208,11 @@ export default {
     batchDelete: '批量删除',
     batchDeleteConfirm: '确定删除选中的 {count} 个农民吗？',
     batchDeleteSuccess: '成功删除 {success} 个，失败 {fail} 个',
-
+    tips: {
+      daReadedNotInOptions: '请选择DA',
+      daNotInOptions: '当前登录账号非DA账号，请从下拉框中选取所属DA',
+      selectValidDa: '请选择有效的DA后再提交'
+    },
     // 表单
     form: {
       farmerId: '农民编码',

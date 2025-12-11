@@ -130,13 +130,13 @@ export const uploadFile = (formData) => {
    */
   export const getUnionDetailByUnionId = (id) => {
     return request({
-      url: `${API_BASE_URL}/seed/union/registration/${id}`,
+      url: `${API_BASE_URL}/seed/union/registration/getUnionInfoById/${id}`,
       method: 'get'
     }).then(res => {
       // 转换返回数据：驼峰转下划线
-      if (res.data) {
-        res.data = toSnakeCase(res.data)
-      }
+      // if (res.data) {
+      //   res.data = toSnakeCase(res.data)
+      // }
       return res
     })
   }

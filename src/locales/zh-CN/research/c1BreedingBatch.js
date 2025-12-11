@@ -91,6 +91,9 @@ export default {
     terminated: '已中止'
   },
 
+  // 审核状态
+  auditApproved: '已审核',
+
   // 详情页
   detail: {
     title: '批次详情',

@@ -8,7 +8,30 @@ export const postAppRegister = (params) => {
     })
   }
 
-  
+export const listSubRegionByCode = (params) => {
+  return request({
+    url: '/rbac/region/listSubRegionByCode',
+    method: 'get',
+    params: params
+  })
+}
+
+export const getOrgansRegionByCode = (params) => {
+  return request({
+    url: '/rbac/organ/getOrgansByRegionCode',
+    method: 'get',
+    params: params
+  })
+}
+
+
+export const allTree = (params) => {
+  return request({
+    url: '/rbac/organ/allTree',
+    method: 'get',
+    params: params
+  })
+}
 
 export const getAppRecordList = (params) => {
   return request({

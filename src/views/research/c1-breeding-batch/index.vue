@@ -109,9 +109,10 @@
           </el-table-column>
           <el-table-column :label="$t('common.actions')" width="280" fixed="right" align="center">
             <template #default="{ row }">
-              <el-button link type="primary" @click="handleDetail(row.id)">{{ $t('common.view') }}</el-button>
-              <el-button link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
-              <el-button link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
+              <el-button link type="primary" @click="handleDetail(row.id, row.auditStatus === 'approved')">{{ $t('common.view') }}</el-button>
+              <el-button v-if="row.auditStatus !== 'approved'" link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
+              <el-button v-if="row.auditStatus !== 'approved'" link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
+              <el-tag v-if="row.auditStatus === 'approved'" type="success" size="small" style="margin-left: 8px;">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
             </template>
           </el-table-column>
         </el-table>
@@ -136,7 +137,7 @@
           <i class="ri-inbox-line"></i>
           <p>{{ $t('common.noData') }}</p>
         </div>
-        <div v-for="item in tableData" :key="item.id" class="card" @click="handleDetail(item.id)">
+        <div v-for="item in tableData" :key="item.id" class="card" @click="handleDetail(item.id, item.auditStatus === 'approved')">
           <div class="card-header">
             <div class="card-title">{{ item.batchId }}</div>
             <el-tag :type="getStatusTagType(item.batchStatus)" size="small">
@@ -158,8 +159,11 @@
             </div>
           </div>
           <div class="card-footer">
-            <el-button text type="primary" @click.stop="handleEdit(item.id)">{{ $t('common.edit') }}</el-button>
-            <el-button text type="danger" @click.stop="handleDelete(item.id)">{{ $t('common.delete') }}</el-button>
+            <template v-if="item.auditStatus !== 'approved'">
+              <el-button text type="primary" @click.stop="handleEdit(item.id)">{{ $t('common.edit') }}</el-button>
+              <el-button text type="danger" @click.stop="handleDelete(item.id)">{{ $t('common.delete') }}</el-button>
+            </template>
+            <el-tag v-else type="success" size="small">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
           </div>
         </div>
       </div>
@@ -251,8 +255,8 @@ const handleEdit = (id) => {
 }
 
 // 详情
-const handleDetail = (id) => {
-  router.push(`/research/c1-breeding-batch/detail/${id}`)
+const handleDetail = (id, readonly) => {
+  router.push(`/research/c1-breeding-batch/detail/${id}?readonly=${readonly}`)
 }
 
 // 删除
