@@ -81,14 +81,14 @@
           "titleKey": "input.menu.townAggregation"
         },
         {
-          "index": "/input/demand/audit-district",
+          "index": "/input/demand/aggregation-district",
           "icon": "ri-government-line",
-          "titleKey": "input.menu.DistrictAudit"
+          "titleKey": "input.menu.districtAggregation"
         },
         {
-          "index": "/input/demand/audit-state",
+          "index": "/input/demand/aggregation-state",
           "icon": "ri-building-4-line",
-          "titleKey": "input.menu.StateAuditView"
+          "titleKey": "input.menu.stateAggregation"
         }
       ]
     },
