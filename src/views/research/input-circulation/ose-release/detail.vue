@@ -80,10 +80,8 @@ const getInputInfo = async (id) => {
     if (response.code === 200 && response.data) {
       return response.data
     }
-    return null
   } catch (error) {
     console.error('获取input信息失败:', error)
-    return null
   }
 }
 

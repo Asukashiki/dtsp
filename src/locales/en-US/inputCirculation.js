@@ -24,6 +24,7 @@ export default {
   // Release related
   releaseId: 'Release ID',
   releaseName: 'Release Name',
+  worId: 'Woreda ID',
   zoneId: 'Zone ID',
   targetId: 'Target ID',
   targetAddress: 'Target Address',
@@ -31,6 +32,7 @@ export default {
   targetPhone: 'Target Phone',
   releaseYear: 'Release Year',
   releaseDate: 'Release Date',
+  status: 'Status',
   releaseBy: 'Released By',
   auditDate: 'Audit Date',
   auditBy: 'Audited By',

@@ -23,6 +23,7 @@ export default {
   // 分发相关
   releaseId: '分发单编号',
   releaseName: '分发单名称',
+  worId: '分发Woreda',
   zoneId: '分发区',
   targetId: '分发对象',
   targetAddress: '分发对象收获地址',
@@ -30,6 +31,7 @@ export default {
   targetPhone: '分发对象联系电话',
   releaseYear: '分发年度',
   releaseDate: '分发日期',
+  status: '状态',
   releaseBy: '分发人',
   auditDate: '审核日期',
   auditBy: '审核人',
