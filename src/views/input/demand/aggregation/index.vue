@@ -357,6 +357,8 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
+      // sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:'huangshan'
       // TODO: Add user context filters
       // sourceCode: 'KB001'
     }
@@ -390,13 +392,11 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: 'huangshan', // TODO: Replace with user context
-      sourceName: 'huangshan', // TODO: Replace with user context
-      targetCode: 'qingdao', // TODO: Replace with user context
-      targetName: 'qingdao', // TODO: Replace with user context
+      // sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
+      sourceCode: 'huangshan', 
       status: '0',
-      creator: 'admin', // TODO: Replace with current user
-      subQuantity: 0
+      creator: JSON.parse(localStorage.getItem('userInfo')).user.username, 
+      subQuantity: 0//农民数||村的数量||
     })
 
     if (res.code === 200) {
@@ -440,9 +440,6 @@ const handleSubmit = async (row) => {
     submitting.value = true
     const res = await aggregateVillageInputDemand({
       sourceCode: row.sourceCode,
-      sourceName: row.sourceName,
-      targetCode: row.targetCode,
-      targetName: row.targetName,
       year: row.year,
       demandSummaryId: row.id
     })
