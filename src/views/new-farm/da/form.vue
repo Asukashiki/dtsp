@@ -366,49 +366,49 @@ const loadRegionInfo = async (regionCode, regionName) => {
     regionLoading.value = false
   }
 }
-const regionCode = '102020100' // 声明变量，避免全局污染
-const regionName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
-const orgCode = '102020100' // 声明变量，避免全局污染
-const orgName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
+// const regionCode = '102020100' // 声明变量，避免全局污染
+// const regionName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
+// const orgCode = '102020100' // 声明变量，避免全局污染
+// const orgName = '测试Woreda名称' // 同时写死Woreda名称，测试时能看到显示值
 // 解析用户信息并加载区域数据
 const parseUserInfoAndLoadRegion = () => {
-  // ======== 测试写死开始 ========
-
-  // ======== 测试写死结束 ========
-
-  // 非编辑模式下加载区域信息
-  if (!isEdit.value) {
-    loadRegionInfo(regionCode, regionName)
-  }
-  // 从localStorage获取用户信息（根据实际存储位置调整）
-  // const userInfoStr = localStorage.getItem('userInfo')
-  // if (userInfoStr) {
-  //   try {
-  //     const parsedUserInfo = JSON.parse(userInfoStr)
-  //     // 新增：保存用户完整信息
-  //     userInfo.value = parsedUserInfo
-  //     const user = parsedUserInfo.user || {}
-  //     const region_code = user.region_code || '' // 取用户的region_code
-  //     const regionName = user.regionName || ''   // 取用户的regionName（作为Woreda值）
+  // // ======== 测试写死开始 ========
   //
-  //     // 非编辑模式下加载区域信息
-  //     if (!isEdit.value && region_code && regionName) {
-  //       loadRegionInfo(region_code, regionName)
-  //     }
+  // // ======== 测试写死结束 ========
   //
-  //     // 原有逻辑：设置默认DA名称
-  //     const defaultDaName = user.NAME || ''
-  //     if (defaultDaName) {
-  //       // 此处daOptions未在当前代码定义，保留原有逻辑结构
-  //       // const targetDa = daOptions.value.find(item => item.daName === defaultDaName)
-  //       // if (targetDa) {
-  //       //   formData.daId = targetDa.daId
-  //       // }
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to parse user info:', error)
-  //   }
+  // // 非编辑模式下加载区域信息
+  // if (!isEdit.value) {
+  //   loadRegionInfo(regionCode, regionName)
   // }
+  // 从localStorage获取用户信息（根据实际存储位置调整）
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    try {
+      const parsedUserInfo = JSON.parse(userInfoStr)
+      // 新增：保存用户完整信息
+      userInfo.value = parsedUserInfo
+      const user = parsedUserInfo.user || {}
+      const region_code = user.region_code || '' // 取用户的region_code
+      const regionName = user.regionName || ''   // 取用户的regionName（作为Woreda值）
+
+      // 非编辑模式下加载区域信息
+      if (!isEdit.value && region_code && regionName) {
+        loadRegionInfo(region_code, regionName)
+      }
+
+      // 原有逻辑：设置默认DA名称
+      const defaultDaName = user.NAME || ''
+      if (defaultDaName) {
+        // 此处daOptions未在当前代码定义，保留原有逻辑结构
+        // const targetDa = daOptions.value.find(item => item.daName === defaultDaName)
+        // if (targetDa) {
+        //   formData.daId = targetDa.daId
+        // }
+      }
+    } catch (error) {
+      console.error('Failed to parse user info:', error)
+    }
+  }
 }
 
 
@@ -462,14 +462,14 @@ const handleSubmit = async () => {
                 identityNum: formData.idCard, // 身份证号对应接口的identityNum字段
                 address: formData.address, // 地址
                 // 从用户信息中获取组织机构和区划信息
-                orgCode: orgCode,
-                orgName: orgName,
-                regionCode: regionCode,
-                regionName: regionName
-                // orgCode: userInfo.value?.user?.orgCode || '', // 组织机构编码（请确认userInfo中实际字段名）
-                // orgName: userInfo.value?.user?.orgName || '', // 组织机构名称（请确认userInfo中实际字段名）
-                // regionCode: userInfo.value?.user?.regionCode || '', // 区划编码
-                // regionName: userInfo.value?.user?.regionName || '' // 区划名称
+                // orgCode: orgCode,
+                // orgName: orgName,
+                // regionCode: regionCode,
+                // regionName: regionName
+                orgCode: userInfo.value?.user?.orgCode || '', // 组织机构编码（请确认userInfo中实际字段名）
+                orgName: userInfo.value?.user?.orgName || '', // 组织机构名称（请确认userInfo中实际字段名）
+                regionCode: userInfo.value?.user?.regionCode || '', // 区划编码
+                regionName: userInfo.value?.user?.regionName || '' // 区划名称
               }
               // 调用接口（后端返回纯布尔值）
               const registerRes = await registerDa(registerData);
