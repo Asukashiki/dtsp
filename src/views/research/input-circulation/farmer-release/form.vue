@@ -9,11 +9,10 @@
     <el-card v-loading="loading" class="form-card">
       <el-form :model="formData" :rules="rules" ref="formRef" label-width="150px">
         <h3>{{ $t('inputCirculation.basicInfo') }}</h3>
-        <el-form-item :label="$t('inputCirculation.farmerId')" prop="farmerId">
-          <el-input v-model="formData.farmerId" :placeholder="$t('common.pleaseInput')" />
-        </el-form-item>
-        <el-form-item :label="$t('inputCirculation.farmerName')" prop="farmerName">
-          <el-input v-model="formData.farmerName" :placeholder="$t('common.pleaseInput')" />
+        <el-form-item :label="$t('inputCirculation.farmerName')" prop="farmerId">
+          <el-select v-model="formData.farmerId" :placeholder="$t('common.pleaseSelect')" filterable clearable @change="getFarmerInfo">
+            <el-option v-for="item in farmerList" :key="item.farmerId" :label="item.farmerName" :value="item.farmerId" />
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.farmerPhone')">
           <el-input v-model="formData.farmerPhone" :placeholder="$t('common.pleaseInput')" />
@@ -27,18 +26,18 @@
         <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
           <el-date-picker v-model="formData.releaseDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.releaseBy')">
-          <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" />
+<!--        <el-form-item :label="$t('inputCirculation.releaseBy')">-->
+<!--          <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" />-->
+<!--        </el-form-item>-->
+        <el-form-item :label="$t('inputCirculation.auditBy')">
+          <el-input v-model="formData.auditBy" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.auditDate')" prop="auditDate">
           <el-date-picker v-model="formData.auditDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.auditBy')">
-          <el-input v-model="formData.auditBy" :placeholder="$t('common.pleaseInput')" />
-        </el-form-item>
-        <el-form-item :label="$t('inputCirculation.releaseOrg')">
-          <el-input v-model="formData.releaseOrg" :placeholder="$t('common.pleaseInput')" />
-        </el-form-item>
+<!--        <el-form-item :label="$t('inputCirculation.releaseOrg')">-->
+<!--          <el-input v-model="formData.releaseOrg" :placeholder="$t('common.pleaseInput')" />-->
+<!--        </el-form-item>-->
         <el-form-item :label="$t('inputCirculation.receiveStatus')">
           <el-select v-model="formData.receiveStatus" :placeholder="$t('common.pleaseSelect')">
             <el-option label="pending" value="pending" />
@@ -48,44 +47,56 @@
         </el-form-item>
 
         <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
-        <el-button type="primary" @click="addDetail">{{ $t('inputCirculation.addDetail') }}</el-button>
-        <el-table :data="formData.details" border style="margin-top: 16px">
-          <el-table-column type="index" width="50" />
-          <el-table-column :label="$t('inputCirculation.cropType')" width="120">
+        <el-button type="primary" @click="addDetail" style="float: right;margin-bottom: 12px">{{ $t('inputCirculation.addDetail') }}</el-button>
+        <el-table
+            :data="formData.details"
+            border
+            style="margin-top: 16px"
+            :header-cell-style="{ textAlign: 'center' }"
+            :cell-style="{ textAlign: 'center' }">
+          <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="100" />
+          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
             <template #default="scope">
               <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.variety')" width="120">
+          <el-table-column :label="$t('inputCirculation.variety')" width="180">
             <template #default="scope">
               <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.inputId')" width="150">
+          <el-table-column :label="$t('inputCirculation.inputId')" width="360">
             <template #default="scope">
-              <el-input v-model="scope.row.inputId" :placeholder="$t('common.pleaseInput')" />
+              <el-select v-model="scope.row.inputId" :placeholder="$t('common.pleaseSelect')" filterable clearable collapse-tags-tooltip>
+                <el-option v-for="item in inputList" :key="item.inputId" :label="item.inputName" :value="item.inputId" />
+              </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.quantity')" width="120">
+          <el-table-column :label="$t('inputCirculation.required')" width="200">
+            <template #default="scope">
+              <el-input-number v-model="scope.row.required" :min="0" :precision="2" />
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('inputCirculation.quantity')" width="200">
             <template #default="scope">
               <el-input-number v-model="scope.row.quantity" :min="0" :precision="2" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unit')" width="100">
+          <el-table-column :label="$t('inputCirculation.unit')" width="120">
             <template #default="scope">
               <el-input v-model="scope.row.unit" :placeholder="$t('common.pleaseInput')" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unitPrice')" width="120">
+          <el-table-column :label="$t('inputCirculation.unitPrice')" width="200">
             <template #default="scope">
               <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.releaseTime')" width="180">
-            <template #default="scope">
-              <el-date-picker v-model="scope.row.releaseTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />
-            </template>
-          </el-table-column>
+<!--          <el-table-column :label="$t('inputCirculation.releaseTime')" width="180">-->
+<!--            <template #default="scope">-->
+<!--              <el-date-picker v-model="scope.row.releaseTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column :label="$t('inputCirculation.warehouseId')" width="150">
             <template #default="scope">
               <el-input v-model="scope.row.warehouseId" :placeholder="$t('common.pleaseInput')" />
@@ -96,7 +107,7 @@
               <el-input v-model="scope.row.batchId" :placeholder="$t('common.pleaseInput')" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.totalPrice')" width="120">
+          <el-table-column :label="$t('inputCirculation.totalPrice')" width="200">
             <template #default="scope">
               <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" />
             </template>
@@ -108,10 +119,10 @@
           </el-table-column>
         </el-table>
 
-        <el-form-item style="margin-top: 24px">
+        <div style="margin-top: 24px; text-align: center">
           <el-button type="primary" @click="handleSubmit">{{ $t('common.save') }}</el-button>
           <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
-        </el-form-item>
+        </div>
       </el-form>
     </el-card>
   </div>
@@ -123,6 +134,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease } from '@/api/inputCirculation'
+import {getAllInputList} from "../../../../api/input.js";
+import {getAllFarmerList, getFarmerDetail} from "../../../../api/newFarm.js";
 
 const { t } = useI18n()
 const route = useRoute()
@@ -148,11 +161,58 @@ const formData = reactive({
   details: []
 })
 
+const inputList = ref([])
+const farmerList = ref([])
+
 const rules = {
   farmerId: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  farmerName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  releaseDate: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  auditDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
+  releaseDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
+}
+
+const getFarmerList = async () => {
+  loading.value = true
+  try {
+    const response = await getAllFarmerList()
+    if (response.code === 200) {
+      farmerList.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryInputListFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+const getFarmerInfo = async (value) => {
+  if (!value || value.length === 0) return
+  loading.value = true
+  try {
+    const response = await getFarmerDetail(value)
+    if (response.code === 200 && response.data) {
+      formData.farmerPhone = response.data.phone
+      formData.farmerAddress = response.data.address
+    }
+  } catch (error) {
+    ElMessage.error(t('union.getUnionInfoFailed'))
+
+  } finally {
+    loading.value = false
+  }
+}
+
+const getInputList = async () => {
+  loading.value = true
+  try {
+    const response = await getAllInputList()
+    if (response.code === 200) {
+      inputList.value = response.data
+      console.log(inputList.value)
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryInputListFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 const fetchDetail = async () => {
@@ -179,8 +239,9 @@ const addDetail = () => {
     cropType: '',
     variety: '',
     inputId: '',
+    required: 0,
     quantity: 0,
-    unit: 'Kilograms',
+    unit: 'Kg',
     unitPrice: 0,
     releaseTime: '',
     warehouseId: '',
@@ -252,6 +313,9 @@ const handleBack = () => {
 onMounted(() => {
   if (isEdit.value) {
     fetchDetail()
+  } else{
+    getInputList()
+    getFarmerList()
   }
 })
 </script>
