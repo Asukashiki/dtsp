@@ -24,6 +24,7 @@ export default {
   // Release related
   releaseId: 'Release ID',
   releaseName: 'Release Name',
+  zoneId: 'Zone ID',
   targetId: 'Target ID',
   targetAddress: 'Target Address',
   targetContact: 'Target Contact',
@@ -80,6 +81,8 @@ export default {
   deleteReleaseSuccess: 'Release deleted successfully',
   deleteReleaseFailed: 'Failed to delete release',
   queryInputListFailed: 'Failed to query input list',
+  queryZoneListFailed: 'Failed to query zone list',
+  queryUnionListFailed: 'Failed to query union list',
 
   // Menu items
   inputCirculation: 'Input Circulation Management',

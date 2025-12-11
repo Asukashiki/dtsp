@@ -90,5 +90,7 @@ export default {
       networkError: '网络错误，请检查您的网络连接',
       operationFailed: '操作失败'
     },
-    required: '该项必填'
+    required: '该项必填',
+    saveSuccess: '保存成功',
+    queryFailed: '获取详情失败'
   }

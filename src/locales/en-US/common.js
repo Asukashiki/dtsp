@@ -90,5 +90,7 @@ export default {
     networkError: 'Network error, please check your network connection',
     operationFailed: 'Operation failed'
   },
-  required: 'this item is required'
+  required: 'this item is required',
+  saveSuccess: 'Save Success',
+  queryFailed: 'query Info failed'
 }
