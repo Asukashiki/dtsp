@@ -31,6 +31,7 @@ export default {
     lockBatch: '锁定批次',
     aggregationSubmit: '汇聚数据提交',
     aggregationDetail: '汇聚数据详情',
+    back: '返回',
   },
 
   // 列表列

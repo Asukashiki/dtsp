@@ -13,6 +13,7 @@ export default {
       demandManagement: '投入品需求管理',
       farmerDemand: 'DA农民需求录入',
       demandAudit: '投入品需求审核',
+      villageAggregation: '村级需求汇聚',
       KebeleAudit: '村需求审核',
       TownAudit: '镇需求审核',
       DistrictAudit: '区需求审核',

@@ -13,6 +13,7 @@ export default {
       demandManagement: 'Input Demand Management',
       farmerDemand: 'DA Farmer Demand Entry',
       demandAudit: 'Input Demand Audit',
+      villageAggregation: 'Village Demand Aggregation',
       KebeleAudit: 'Kebele Demand Audit',
       TownAudit: 'Town Demand Audit',
       DistrictAudit: 'District Demand Audit',

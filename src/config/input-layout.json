@@ -71,9 +71,9 @@
           "titleKey": "input.menu.farmerDemand"
         },
         {
-          "index": "/input/demand/audit",
-          "icon": "ri-task-line",
-          "titleKey": "input.menu.KebeleAudit"
+          "index": "/input/demand/aggregation",
+          "icon": "ri-database-2-line",
+          "titleKey": "input.menu.villageAggregation"
         },
         {
           "index": "/input/demand/audit-town",
