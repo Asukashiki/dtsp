@@ -33,8 +33,8 @@ function getDictLabel(item, locale) {
  * @param {Boolean} options.cache - 是否启用缓存，默认 true
  * @returns {Object} - 字典数据和工具方法
  */
-export function useDict(dictTypes, options = {}) {
-  const { immediate = true, cache = true } = options
+export function useDict(dictTypes, hookOptions = {}) {
+  const { immediate = true, cache = true } = hookOptions
   const { locale } = useI18n()
   
   // 标准化为数组
@@ -94,16 +94,30 @@ export function useDict(dictTypes, options = {}) {
   }
   
   /**
+   * 响应式的选项列表（用于模板中直接使用）
+   * 返回 { dictType: [{ label, value }] } 的响应式对象
+   */
+  const options = computed(() => {
+    const result = {}
+    for (const type of types) {
+      const data = dictData.value[type] || []
+      result[type] = data.map(item => ({
+        label: getDictLabel(item, locale.value),
+        value: item.dictValue,
+        raw: item  // 保留原始数据
+      }))
+    }
+    return result
+  })
+  
+  /**
    * 获取指定字典类型的选项列表（用于 el-select）
+   * 注意：在模板中推荐直接使用 options[dictType]
    * @param {String} dictType - 字典类型
    * @returns {Array} - [{ label, value }]
    */
   function getOptions(dictType) {
-    const data = dictData.value[dictType] || []
-    return data.map(item => ({
-      label: getDictLabel(item, locale.value),
-      value: item.dictValue
-    }))
+    return options.value[dictType] || []
   }
   
   /**
@@ -138,6 +152,7 @@ export function useDict(dictTypes, options = {}) {
     // 响应式数据
     dictData,
     loading,
+    options,  // 响应式选项对象
     
     // 方法
     loadAllDicts,
