@@ -1,13 +1,17 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 export default ({ mode }) => {
   // 加载env文件
   const env = loadEnv(mode, process.cwd())
   
   return defineConfig({
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      tailwindcss(),
+    ],
     base: '/agriculture/', // 添加基础路径配置
     resolve: {
       alias: {

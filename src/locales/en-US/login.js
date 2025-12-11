@@ -1,0 +1,23 @@
+export default {
+  title: 'System Login',
+  subtitle: 'Welcome back, please sign in to your account',
+  username: 'Username',
+  password: 'Password',
+  captcha: 'Captcha',
+  rememberMe: 'Remember me',
+  submit: 'Sign In',
+  loggingIn: 'Signing in...',
+  success: 'Login successful',
+  failed: 'Login failed, please check your username and password',
+  usernameRequired: 'Please enter username',
+  passwordRequired: 'Please enter password',
+  captchaRequired: 'Please enter captcha',
+  usernamePlaceholder: 'Enter your username',
+  passwordPlaceholder: 'Enter your password',
+  captchaPlaceholder: 'Enter captcha code',
+  brandTitle: 'Smart Agriculture',
+  brandSubtitle: 'Oromia Value Chain Big Data Platform',
+  featureSeed: 'Seed Tracking',
+  featureData: 'Data Analytics',
+  featureCrop: 'Crop Management'
+}

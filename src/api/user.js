@@ -1,5 +1,6 @@
 import request from '../utils/request'
 import agricultureRequest from '../utils/agricultureRequest'
+import { rsaEncrypt } from '../utils/rsaEncrypt'
 
 
 // 获取当前用户信息（OAuth2）
@@ -21,11 +22,19 @@ export const postUserUpdate = (params) => {
   })
 }
 
+// 修改密码（调用后端 /system/user/profile/updatePwd，需要 RSA 加密）
 export const postResetPassword = (params) => {
-  return request({
-    url: '/oauth2/resetPassword',
-    method: 'post',
-    data: params
+  // 使用 RSA 加密密码
+  const encryptedOldPassword = rsaEncrypt(params.oldPassword)
+  const encryptedNewPassword = rsaEncrypt(params.newPassword)
+  
+  return agricultureRequest({
+    url: '/system/user/profile/updatePwd',
+    method: 'put',
+    params: {
+      oldPassword: encryptedOldPassword,
+      newPassword: encryptedNewPassword
+    }
   })
 }
 

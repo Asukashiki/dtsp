@@ -31,8 +31,8 @@
         </div>
         <div class="announcements-list">
           <div
-            v-for="(item, index) in announcementList.splice(0,2)"
-            :key="index"
+            v-for="(item, index) in displayAnnouncements"
+            :key="item.noticeId || index"
             class="announcement-item"
             @click="handleAnnouncementClick(item)"
           >
@@ -40,10 +40,10 @@
               <i class="ri-megaphone-line"></i>
             </div>
             <div class="announcement-content">
-              <div class="announcement-title">{{ item.name }}</div>
-              <div class="announcement-desc">{{ item.content }}</div>
+              <div class="announcement-title">{{ parseI18nValue(item.noticeTitle, locale, item.noticeTitle) }}</div>
+              <div class="announcement-desc" v-html="stripHtml(parseI18nValue(item.noticeContent, locale, item.noticeContent))"></div>
             </div>
-            <div class="announcement-time">{{ item.publicTime }}</div>
+            <div class="announcement-time">{{ item.createTime }}</div>
           </div>
           <div v-if="!announcementList || announcementList.length === 0" class="empty-state">
             <i class="ri-inbox-line"></i>
@@ -107,12 +107,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Announcement Detail Dialog -->
-    <announcement-detail
-      v-model:visible="detailDialogVisible"
-      :announcement="currentAnnouncement"
-    />
   </div>
 </template>
 
@@ -120,14 +114,12 @@
 import { reactive, onMounted, toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getNoticeList } from '@/api/home'
-import AnnouncementDetail from './components/AnnouncementDetail.vue'
+import { listPublicNotice } from '@/api/publicNotice'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-const detailDialogVisible = ref(false)
-const currentAnnouncement = ref({})
 const pages = ref({
   pageNum: 1,
   pageSize: 6
@@ -138,6 +130,17 @@ const state = reactive({
 })
 
 const { announcementList } = toRefs(state)
+
+// 只显示前2条公告
+const displayAnnouncements = computed(() => {
+  return announcementList.value.slice(0, 2)
+})
+
+// 移除 HTML 标签用于列表预览
+const stripHtml = (html) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '').substring(0, 100)
+}
 
 // 系统模块配置
 const systemModules = computed(() => ({
@@ -234,9 +237,9 @@ onMounted(() => {
 // 获取公告数据
 const getNoticeData = async () => {
   try {
-    const res = await getNoticeList(pages.value)
-    if (res.code === 200 && res.data) {
-      state.announcementList = res.data?.data || []
+    const res = await listPublicNotice(pages.value)
+    if (res.code === 200) {
+      state.announcementList = res.rows || []
     }
   } catch (error) {
     console.log('error', error)
@@ -244,8 +247,7 @@ const getNoticeData = async () => {
 }
 
 const handleAnnouncementClick = (item) => {
-  currentAnnouncement.value = { ...item }
-  detailDialogVisible.value = true
+  router.push(`/notice/${item.noticeId}`)
 }
 
 const handleMoreAnnouncements = () => {

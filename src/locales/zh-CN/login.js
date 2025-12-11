@@ -1,0 +1,23 @@
+export default {
+  title: '系统登录',
+  subtitle: '欢迎回来，请登录您的账户',
+  username: '用户名',
+  password: '密码',
+  captcha: '验证码',
+  rememberMe: '记住我',
+  submit: '登 录',
+  loggingIn: '登录中...',
+  success: '登录成功',
+  failed: '登录失败，请检查用户名和密码',
+  usernameRequired: '请输入用户名',
+  passwordRequired: '请输入密码',
+  captchaRequired: '请输入验证码',
+  usernamePlaceholder: '请输入用户名',
+  passwordPlaceholder: '请输入密码',
+  captchaPlaceholder: '请输入验证码',
+  brandTitle: '智慧农业',
+  brandSubtitle: '奥罗米亚价值链大数据平台',
+  featureSeed: '种子追溯',
+  featureData: '数据分析',
+  featureCrop: '作物管理'
+}
