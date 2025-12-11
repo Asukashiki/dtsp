@@ -49,13 +49,13 @@
               </el-radio-group>
             </el-form-item>
 
-            <el-form-item :label="$t('newFarm.farmer.form.birthDate')" prop="birthDate">
+            <el-form-item :label="$t('newFarm.farmer.form.birthDate')" prop="birthday">
               <el-date-picker
-                  v-model="formData.birthDate"
-                  type="date"
-                  :placeholder="$t('newFarm.farmer.placeholder.birthDate')"
-                  value-format="YYYY-MM-DD"
-                  style="width: 100%"
+                  v-model="formData.birthday"
+              type="date"
+              :placeholder="$t('newFarm.farmer.placeholder.birthDate')"
+              value-format="YYYY-MM-DD"
+              style="width: 100%"
               />
             </el-form-item>
 
@@ -307,7 +307,7 @@ const formData = reactive({
   farmerName: '',
   idCard: '',
   gender: 'MALE',
-  birthDate: '',
+  birthday: '',
   createTime: '',
   youthCategory: '',
   phone: '',
@@ -459,40 +459,66 @@ const loadDaOptions = async () => {
 }
 
 // 加载详情（编辑模式）
+// 加载详情（编辑模式）
 const loadDetail = async () => {
   pageLoading.value = true
   try {
     const res = await getFarmerDetail(route.params.id)
     if (res.code === 200 && res.data) {
       const data = res.data
-      formData.farmerName = data.farmerName || ''
-      formData.idCard = data.idCard || ''
-      formData.gender = data.gender || 'MALE'
-      formData.birthDate = data.birthDate || ''
-      formData.createTime = data.createTime ? data.createTime.split(' ')[0] : formData.createTime
-      formData.youthCategory = data.youthCategory || ''
-      formData.phone = data.phone || ''
-      formData.email = data.email || ''
-      formData.address = data.address || ''
-      formData.unionId = data.unionId || ''
-      formData.cooperativeId = data.cooperativeId || ''
-      formData.daId = data.daId || ''
-      formData.zoneCode = data.zoneCode || ''
-      formData.woredaCode = data.woredaCode || ''
-      formData.kebeleCode = data.kebeleCode || ''
-      formData.remark = data.remark || ''
+      // 1. 先缓存所有字段（避免异步操作中被覆盖）
+      const baseFields = {
+        farmerName: data.farmerName || '',
+        idCard: data.idCard || '',
+        gender: data.gender || 'MALE',
+        birthday: data.birthday, // 已确认格式是 YYYY-MM-DD，匹配日期选择器的 value-format
+        createTime: data.createTime ? data.createTime.split(' ')[0] : '',
+        youthCategory: data.youthCategory || '',
+        phone: data.phone || '',
+        email: data.email || '',
+        address: data.address || '',
+        unionId: data.unionId || '',
+        cooperativeId: data.cooperativeId || '',
+        daId: data.daId || '',
+        remark: data.remark || ''
+      }
+      // 联动字段单独缓存
+      const zoneCode = data.zoneCode || ''
+      const cacheWoredaCode = data.woredaCode || ''
+      const cacheKebeleCode = data.kebeleCode || ''
 
-      // 编辑模式回显联动数据：Zone→Woreda→Kebele
-      if (formData.zoneCode) {
+      // 2. 先处理所有异步的联动字段加载（Zone→Woreda→Kebele）
+      if (zoneCode) {
         await loadZoneOptions()
-        await handleZoneChange(formData.zoneCode)
+        await handleZoneChange(zoneCode)
+        formData.woredaCode = cacheWoredaCode
         if (formData.woredaCode) {
           await handleWoredaChange(formData.woredaCode)
+          formData.kebeleCode = cacheKebeleCode
           if (formData.kebeleCode) {
             await handleKebeleChange(formData.kebeleCode)
           }
         }
       }
+
+      // 3. 最后赋值基础字段（此时日期选择器已挂载完成，能捕获到值）
+      formData.farmerName = baseFields.farmerName
+      formData.idCard = baseFields.idCard
+      formData.gender = baseFields.gender
+      formData.birthday = baseFields.birthday // 关键：延后赋值
+      formData.createTime = baseFields.createTime
+      formData.youthCategory = baseFields.youthCategory
+      formData.phone = baseFields.phone
+      formData.email = baseFields.email
+      formData.address = baseFields.address
+      formData.unionId = baseFields.unionId
+      formData.cooperativeId = baseFields.cooperativeId
+      formData.daId = baseFields.daId
+      formData.remark = baseFields.remark
+      // 联动字段兜底赋值
+      formData.zoneCode = zoneCode
+
+      console.log('最终birthday值:', formData.birthday) // 验证赋值结果
     }
   } catch (error) {
     ElMessage.error(t('common.failed'))
@@ -500,7 +526,6 @@ const loadDetail = async () => {
     pageLoading.value = false
   }
 }
-
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
@@ -516,7 +541,20 @@ const handleSubmit = async () => {
       try {
         const data = { ...formData }
         delete data.createTime;
+        // 新增和编辑：提交时都同时传递 zoneCode/woredaCode/kebeleCode 及对应的 Name 字段
+        const zone = zoneOptions.value.find(item => item.code === data.zoneCode)
+        const woreda = woredaOptions.value.find(item => item.code === data.woredaCode)
+        const kebele = kebeleOptions.value.find(item => item.code === data.kebeleCode)
 
+        if (zone) {
+          data.zoneName = zone.name
+        }
+        if (woreda) {
+          data.woredaName = woreda.name
+        }
+        if (kebele) {
+          data.kebeleName = kebele.name
+        }
         let res
         if (isEdit.value) {
           res = await updateFarmer(route.params.id, data)

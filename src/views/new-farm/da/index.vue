@@ -114,7 +114,7 @@
           <el-table-column prop="daName" :label="$t('newFarm.da.columns.daName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="phone" :label="$t('newFarm.da.columns.phone')" min-width="130" />
           <el-table-column prop="account" :label="$t('newFarm.da.columns.account')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="woredaName" :label="$t('newFarm.da.columns.woredaName')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="woredaName" :label="$t('newFarm.da.columns.woredaCode')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="accountStatus" :label="$t('newFarm.da.columns.accountStatus')" min-width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="row.accountStatus === '1' ? 'success' : 'danger'" size="small">
@@ -136,10 +136,7 @@
                 <i :class="row.accountStatus === '1' ? 'ri-forbid-line' : 'ri-checkbox-circle-line'"></i>
                 {{ row.accountStatus === '1' ? $t('newFarm.da.actions.disable') : $t('newFarm.da.actions.enable') }}
               </el-button>
-              <el-button link type="info" @click="handleResetPassword(row)">
-                <i class="ri-lock-password-line"></i>
-                {{ $t('newFarm.da.actions.resetPassword') }}
-              </el-button>
+
               <el-button link type="danger" @click="handleDelete(row)">
                 <i class="ri-delete-bin-line"></i>
                 {{ $t('common.delete') }}
@@ -202,7 +199,7 @@
                 <span class="value">{{ item.account || '-' }}</span>
               </div>
               <div class="info-row">
-                <span class="label">{{ $t('newFarm.da.columns.woredaName') }}:</span>
+                <span class="label">{{ $t('newFarm.da.columns.woredaCode') }}:</span>
                 <span class="value">{{ item.woredaName || '-' }}</span>
               </div>
             </div>
