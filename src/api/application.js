@@ -31,6 +31,14 @@ export const registerDa = (data) => {
     data: data
   })
 }
+export const getOrgansRegionByCode = (params) => {
+  return request({
+    url: '/rbac/organ/getOrgansByRegionCode',
+    method: 'get',
+    params: params
+  })
+}
+
 
 export const allTree = (params) => {
   return request({

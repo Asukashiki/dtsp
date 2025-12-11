@@ -12,10 +12,15 @@
         <el-form-item :label="$t('inputCirculation.releaseName')" prop="releaseName">
           <el-input v-model="formData.releaseName" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
+        <el-form-item :label="$t('inputCirculation.zoneId')" prop="zoneId">
+        <el-select v-model="formData.zoneId" :placeholder="$t('common.pleaseSelect')" @change="getAllUnionList">
+          <el-option v-for="item in zoneList" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+        </el-form-item>
         <el-form-item :label="$t('inputCirculation.targetId')" prop="targetId">
-          <el-cascader v-model="formData.targetId" :options="regionList"
-                       :props="{ expandTrigger: 'hover' }" :placeholder="$t('common.pleaseInput')"
-          @change="getUnionInfo"></el-cascader>
+          <el-select v-model="formData.targetId" :placeholder="$t('common.pleaseSelect')" @change="getUnionInfo">
+            <el-option v-for="item in unionList" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.targetAddress')">
           <el-input v-model="formData.targetAddress" :placeholder="$t('common.pleaseInput')" />
@@ -66,7 +71,7 @@
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.inputId')" width="360">
             <template #default="scope">
-              <el-select v-model="scope.row.inputId" :placeholder="$t('common.pleaseSelect')" filterable clearable collapse-tags-tooltip>
+              <el-select v-model="scope.row.inputId" :placeholder="$t('common.pleaseSelect')" filterable clearable>
                 <el-option v-for="item in inputList" :key="item.inputId" :label="item.inputName" :value="item.inputId" />
               </el-select>
             </template>
@@ -120,6 +125,7 @@ import { ElMessage } from 'element-plus'
 import { getOseReleaseDetail, addOseRelease, editOseRelease } from '@/api/inputCirculation'
 import {getAllInputList} from "../../../../api/input.js";
 import {getUnionDetailByUnionId} from "../../../../api/union.js";
+import {getOrgansRegionByCode, listSubRegionByCode} from "../../../../api/application.js";
 
 const { t } = useI18n()
 const route = useRoute()
@@ -132,6 +138,7 @@ const isEdit = computed(() => !!route.params.id)
 const formData = reactive({
   id: '',
   releaseName: '',
+  zoneId: '',
   targetId: '',
   targetAddress: '',
   targetContact: '',
@@ -146,16 +153,43 @@ const formData = reactive({
   details: []
 })
 
-const regionList = []
+const zoneList = ref([])
+const unionList = ref([])
 const inputList = ref([])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+  zoneId: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   targetId: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   releaseDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
-const getRegionList = async () => {
+const getAllZoneList = async () => {
+  loading.value = true
+  try {
+    const response = await listSubRegionByCode({regionCode: 102000000})
+    if (response.code === 200) {
+      zoneList.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryZoneListFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+const getAllUnionList = async (value) => {
+  loading.value = true
+  try {
+    const response = await getOrgansRegionByCode({regionCode: value})
+    if (response.code === 200) {
+      unionList.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryUnionListFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 const getInputList = async () => {
@@ -164,7 +198,6 @@ const getInputList = async () => {
     const response = await getAllInputList()
     if (response.code === 200) {
       inputList.value = response.data
-      console.log(inputList.value)
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryInputListFailed'))
@@ -227,9 +260,14 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (!valid) return
     loading.value = true
+    const submitData = { ...formData }
+    // 提取级联选择器的最后一级ID用于提交
+    if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
+      submitData.targetId = formData.targetId[formData.targetId.length - 1]
+    }
     try {
       const apiFunc = isEdit.value ? editOseRelease : addOseRelease
-      const response = await apiFunc(formData)
+      const response = await apiFunc(submitData)
       if (response.code === 200) {
         ElMessage.success(t('common.saveSuccess'))
         router.back()
@@ -248,11 +286,12 @@ const handleBack = () => {
   router.back()
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await getInputList()
   if (isEdit.value) {
-    fetchDetail()
-  } else{
-    getInputList()
+    await fetchDetail()
+  } else {
+    await getAllZoneList()
   }
 })
 </script>
