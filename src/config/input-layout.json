@@ -76,9 +76,9 @@
           "titleKey": "input.menu.villageAggregation"
         },
         {
-          "index": "/input/demand/audit-town",
+          "index": "/input/demand/aggregation-town",
           "icon": "ri-community-line",
-          "titleKey": "input.menu.TownAudit"
+          "titleKey": "input.menu.townAggregation"
         },
         {
           "index": "/input/demand/audit-district",
