@@ -102,15 +102,15 @@
                   min-width="150"
                 />
                 <el-table-column
-                  prop="kebele"
+                  prop="kebeleName"
                   :label="$t('farmerDemand.columns.kebele')"
                   min-width="120"
                 />
-                <el-table-column
+                <!-- <el-table-column
                   prop="village"
                   :label="$t('farmerDemand.columns.village')"
                   min-width="120"
-                />
+                /> -->
                 <el-table-column
                   prop="landArea"
                   :label="$t('farmerDemand.columns.landArea')"
@@ -123,7 +123,7 @@
                 <el-table-column
                   prop="statusName"
                   :label="$t('farmerDemand.columns.status')"
-                  min-width="100"
+                  min-width="140"
                 >
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.status)">
@@ -222,7 +222,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('farmerDemand.columns.kebele') }}:</span>
-                    <span class="value">{{ item.kebele }}</span>
+                    <span class="value">{{ item.kebeleName }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('farmerDemand.columns.village') }}:</span>

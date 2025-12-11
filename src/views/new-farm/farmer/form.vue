@@ -481,7 +481,7 @@ const loadDetail = async () => {
       formData.woredaCode = data.woredaCode || ''
       formData.kebeleCode = data.kebeleCode || ''
       formData.remark = data.remark || ''
-
+      console.log('formData',formData)
       // 编辑模式回显联动数据：Zone→Woreda→Kebele
       if (formData.zoneCode) {
         await loadZoneOptions()
@@ -516,6 +516,21 @@ const handleSubmit = async () => {
       try {
         const data = { ...formData }
         delete data.createTime;
+
+        // 新增和编辑：提交时都同时传递 zoneCode/woredaCode/kebeleCode 及对应的 Name 字段
+        const zone = zoneOptions.value.find(item => item.code === data.zoneCode)
+        const woreda = woredaOptions.value.find(item => item.code === data.woredaCode)
+        const kebele = kebeleOptions.value.find(item => item.code === data.kebeleCode)
+
+        if (zone) {
+          data.zoneName = zone.name
+        }
+        if (woreda) {
+          data.woredaName = woreda.name
+        }
+        if (kebele) {
+          data.kebeleName = kebele.name
+        }
 
         let res
         if (isEdit.value) {

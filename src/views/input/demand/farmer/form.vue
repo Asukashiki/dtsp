@@ -73,20 +73,20 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.zone')" prop="zone">
-                  <el-input v-model="formData.zone" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
+                <el-form-item :label="$t('farmerDemand.form.zone')" prop="zoneName">
+                  <el-input v-model="formData.zoneName" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woreda">
-                  <el-input v-model="formData.woreda" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
+                <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woredaName">
+                  <el-input v-model="formData.woredaName" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebele">
-                  <el-input v-model="formData.kebele" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
+                <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebeleName">
+                  <el-input v-model="formData.kebeleName" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -238,6 +238,9 @@ const formData = reactive({
   zone: '',
   woreda: '',
   kebele: '',
+  zoneName: '',
+  woredaName: '',
+  kebeleName: '',
   village: '',
   landArea: null,
   year: currentYear.toString(),
@@ -311,6 +314,7 @@ const handleSearchFarmer = async (query) => {
 
 // 选中农民后填充字段（原有逻辑不变）
 const handleSelectFarmer = (farmer) => {
+  console.log('farmer',farmer)
   if (!farmer) {
     formData.farmerId = ''
     formData.farmerName = ''
@@ -318,6 +322,9 @@ const handleSelectFarmer = (farmer) => {
     formData.zone = ''
     formData.woreda = ''
     formData.kebele = ''
+    formData.zoneName = ''
+    formData.woredaName = ''
+    formData.kebeleName = ''
     formData.landArea = null
     return
   }
@@ -328,23 +335,14 @@ const handleSelectFarmer = (farmer) => {
   formData.farmerIdNumber = farmer.idCard || ''
 
   // 填充禁用字段
-  formData.zone = farmer.zoneName || farmer.zone || ''
-  formData.woreda = farmer.woredaName || farmer.woreda || ''
-  formData.kebele = farmer.kebeleName || farmer.kebele || ''
-  formData.landArea = farmer.totalLandArea || farmer.landArea || null
+  formData.zone = farmer.zoneCode|| ''
+  formData.woreda = farmer.woredaCode  || ''
+  formData.kebele = farmer.kebeleCode  || ''
+  formData.zoneName = farmer.zoneName || ''
+  formData.woredaName = farmer.woredaName || ''
+  formData.kebeleName = farmer.kebeleName || ''
+  formData.landArea = farmer.totalLandArea || null
 
-  // 补充详情接口数据
-  if (farmer.farmerId && !farmer.idCard) {
-    getFarmerDetail(farmer.farmerId).then(res => {
-      if (res.code === 200 && res.data) {
-        formData.farmerIdNumber = res.data.idCard || ''
-        formData.zone = res.data.zoneName || res.data.zone || formData.zone
-        formData.woreda = res.data.woredaName || res.data.woreda || formData.woreda
-        formData.kebele = res.data.kebeleName || res.data.kebele || formData.kebele
-        formData.landArea = res.data.totalLandArea || res.data.landArea || formData.landArea
-      }
-    }).catch(() => {})
-  }
 }
 
 // 添加投入品明细（新增variety默认值）
@@ -396,11 +394,15 @@ const loadData = async () => {
         farmerLoading.value = true
         try {
           const farmerRes = await getFarmerDetail(formData.farmerId)
+          console.log('farmerRes',farmerRes)
           if (farmerRes.code === 200) {
             selectedFarmer.value = farmerRes.data
-            formData.zone = farmerRes.data.zoneName || farmerRes.data.zone || formData.zone
-            formData.woreda = farmerRes.data.woredaName || farmerRes.data.woreda || formData.woreda
-            formData.kebele = farmerRes.data.kebeleName || farmerRes.data.kebele || formData.kebele
+            formData.zone = farmerRes.data.zoneCode
+            formData.woreda = farmerRes.data.woredaCode
+            formData.kebele = farmerRes.data.kebeleCode
+            formData.zoneName = farmerRes.data.zoneName
+            formData.woredaName = farmerRes.data.woredaName
+            formData.kebeleName = farmerRes.data.kebeleName
             formData.landArea = farmerRes.data.totalLandArea || farmerRes.data.landArea || formData.landArea
           } else {
             const listRes = await getFarmerList({ daId: daId.value, farmerId: formData.farmerId, pageSize: 1 })
@@ -420,8 +422,9 @@ const loadData = async () => {
   }
 }
 
-// 提交表单（核心修改：仅传一级值给inputCategory）
+// 提交表单（核心修改：仅传一级值给inputCategory，新增时区划提交code）
 const handleSubmit = async () => {
+  console.log('selectedFarmer.value',selectedFarmer.value)
   if (!formRef.value) return
 
   if (!daId.value) {
@@ -451,6 +454,7 @@ const handleSubmit = async () => {
     submitting.value = true
     const apiFunc = isEdit.value ? updateFarmerDemand : addFarmerDemand
     const params = { ...submitData, daId: daId.value }
+    console.log('submitData',submitData)
 
     if (isEdit.value) {
       params.id = route.params.id
@@ -485,8 +489,8 @@ onMounted(() => {
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr)
-      daId.value = userInfo.daId || ''
-      // daId.value = 'DA202401005'
+      // daId.value = userInfo.daId || ''
+      daId.value = 'DA202401001'
       // 测试环境可临时启用
     } else {
       ElMessage.warning(t('common.tips.noUserInfo'))
