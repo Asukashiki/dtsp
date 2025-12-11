@@ -16,6 +16,21 @@ export const listSubRegionByCode = (params) => {
   })
 }
 
+export const listRegionNameById = (params) => {
+  return request({
+    url: '/rbac/region/listRegionNameById',
+    method: 'get',
+    params: params
+  })
+}
+
+export const registerDa = (data) => {
+  return request({
+    url: '/rbac/user/registerDA',
+    method: 'post',
+    data: data
+  })
+}
 
 export const allTree = (params) => {
   return request({

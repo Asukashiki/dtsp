@@ -33,6 +33,7 @@ export default {
     updateBy: 'Updated By',
     updateTime: 'Updated At',
     remark: 'Remark',
+    account:'account',
   },
 
   // Menu

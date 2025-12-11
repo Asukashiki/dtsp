@@ -424,10 +424,7 @@ const loadData = async () => {
 const handleSubmit = async () => {
   if (!formRef.value) return
 
-  if (!daId.value) {
-    ElMessage.warning(t('common.tips.noDaId'))
-    return
-  }
+
 
   try {
     await formRef.value.validate()
