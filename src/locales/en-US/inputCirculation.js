@@ -26,7 +26,7 @@ export default {
   releaseName: 'Release Name',
   worId: 'Woreda ID',
   zoneId: 'Zone ID',
-  targetId: 'Target ID',
+  targetId: 'Target Union',
   targetAddress: 'Target Address',
   targetContact: 'Target Contact',
   targetPhone: 'Target Phone',

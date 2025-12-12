@@ -3,10 +3,10 @@
     <!-- 查询表单 -->
     <el-card class="search-card">
       <el-form :model="queryParams" :inline="true">
-        <el-form-item :label="t('woredaName')">
+        <el-form-item :label="t('releaseName')">
           <el-input
-            v-model="queryParams.woredaName"
-            :placeholder="t('pleaseEnterWoredaName')"
+            v-model="queryParams.releaseName"
+            :placeholder="t('common.pleaseInput')"
             clearable
             @change="handleQuery"
           />
@@ -64,7 +64,7 @@
         <el-table-column prop="releaseId" :label="t('releaseId')" min-width="150" />
         <el-table-column prop="releaseName" :label="t('releaseName')" min-width="180" />
         <el-table-column prop="targetId" :label="t('targetWoreda')" min-width="150" />
-        <el-table-column prop="releaseYear" :label="t('releaseYear')" width="150" />
+<!--        <el-table-column prop="releaseYear" :label="t('releaseYear')" width="150" />-->
         <el-table-column prop="releaseDate" :label="t('releaseDate')" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.releaseDate) }}
@@ -191,7 +191,7 @@ const handleQuery = () => {
 
 // 重置查询
 const handleReset = () => {
-  queryParams.woredaName = ''
+  queryParams.releaseName = ''
   queryParams.inputType = ''
   dateRange.value = []
   queryParams.pageNum = 1
