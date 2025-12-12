@@ -48,14 +48,17 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <!-- 年份列：自动填充当前年 + 禁用 -->
+              <!-- 年份列：使用年份选择器，允许用户选择年份 -->
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
-                  <el-input
+                  <el-date-picker
                       v-model="formData.year"
+                      type="year"
+                      format="YYYY"
+                      value-format="YYYY"
                       :placeholder="$t('farmerDemand.placeholder.year')"
-                      disabled
-                  ></el-input>
+                      style="width: 100%"
+                  ></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
