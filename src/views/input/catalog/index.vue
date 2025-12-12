@@ -36,12 +36,16 @@
               :placeholder="$t('input.catalog.filterByType')"
               class="type-filter"
               @change="handleSearch"
+              v-loading="dictLoading"
           >
             <el-option :label="$t('input.catalog.type.all')" value="all" />
-            <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
-            <el-option :label="$t('input.catalog.type.fertilizer')" value="fertilizer" />
-            <el-option :label="$t('input.catalog.type.seed')" value="seed" />
-            <el-option :label="$t('input.catalog.type.other')" value="other" />
+            <!-- 从字典动态生成类型选项（移除农药） -->
+            <el-option
+                v-for="item in inputTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
           </el-select>
         </div>
 
@@ -76,9 +80,9 @@
         >
           <el-table-column type="selection" width="55" />
           <el-table-column prop="inputName" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="type" :label="$t('input.catalog.columns.inputType')" width="150" align="center">
+          <el-table-column :label="$t('input.catalog.columns.inputType')" width="150" align="center">
             <template #default="{ row }">
-              <el-tag :type="getTypeTag(row.type)" size="small">{{ $t(`input.catalog.type.${row.type}`) }}</el-tag>
+              <el-tag :type="getTypeTag(row.type)" size="small">{{ getTypeLabel(row.type) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="inputSku" :label="$t('input.catalog.columns.inputSku')" width="150" show-overflow-tooltip />
@@ -120,7 +124,7 @@
         <div class="card-list">
           <div v-for="item in tableData" :key="item.inputId" class="input-card" @click="handleView(item)">
             <div class="card-header">
-              <el-tag :type="getTypeTag(item.type)" size="small">{{ $t(`input.catalog.type.${item.type}`) }}</el-tag>
+              <el-tag :type="getTypeTag(item.type)" size="small">{{ getTypeLabel(item.type) }}</el-tag>
               <el-tag :type="item.status === 'active' ? 'success' : 'info'" size="small">{{ $t(`input.catalog.statusOptions.${item.status}`) }}</el-tag>
             </div>
             <h3 class="card-title">{{ item.inputName }}</h3>
@@ -178,26 +182,66 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getInputList, deleteInput } from '@/api/input'
+import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
 
+// 字典相关配置
+clearDictCache('input_type')
+const {
+  options,
+  loading: dictLoading,
+  refresh: refreshDict
+} = useDict(['input_type'], {
+  immediate: true,
+  cache: true
+})
+
+// 筛选条件
 const searchKeyword = ref('')
 const selectedType = ref('all')
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 
+// 分页配置
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 
-const getTypeTag = (type) => ({ pesticide: 'danger', fertilizer: 'warning', seed: 'success', other: '' }[type] || '')
+// 过滤后的投入品类型选项（移除农药）
+const inputTypeOptions = computed(() => {
+  return (options.value.input_type || []).filter(item =>
+      ['IN01', 'IN02', 'IN09'].includes(item.value) // 只保留种子、化肥、其他
+  )
+})
 
+// 获取类型标签样式（适配新编码 IN01/IN02/IN09）
+const getTypeTag = (type) => {
+  const typeMap = {
+    IN01: 'success',  // 种子
+    IN02: 'warning',  // 化肥
+    IN09: ''          // 其他
+  }
+  return typeMap[type] || ''
+}
+
+// 根据类型编码获取字典中的显示文本
+const getTypeLabel = (type) => {
+  if (!type || !options.value.input_type) return '-'
+  const typeItem = options.value.input_type.find(item => item.value === type)
+  return typeItem ? typeItem.label : '-'
+}
+
+// 加载列表数据
 const loadData = async () => {
+  // 确保字典加载完成
+  await refreshDict()
+
   loading.value = true
   try {
     const requestParams = {
@@ -209,9 +253,21 @@ const loadData = async () => {
     const res = await getInputList(requestParams)
 
     if (res && res.code === 200 && res.data) {
-      tableData.value = res.data.list || []
+      // 适配旧数据的类型编码转换
+      const list = (res.data.list || []).map(item => {
+        let type = item.type
+        // 旧值映射为新编码
+        if (type === 'seed') type = 'IN01'
+        if (type === 'fertilizer') type = 'IN02'
+        if (type === 'other') type = 'IN09'
+        // 农药类型置空（已移除）
+        if (type === 'pesticide') type = ''
+        return { ...item, type }
+      })
+
+      tableData.value = list
       pagination.total = res.data.total || 0
-      if (tableData.value.length === 0) {
+      if (tableData.value.length === 0 && pagination.page === 1) {
         ElMessage.info(t('home.noData'))
       }
     } else {
@@ -229,19 +285,30 @@ const loadData = async () => {
   }
 }
 
+// 搜索
 const handleSearch = () => {
-  pagination.page = 1;
+  pagination.page = 1
   loadData()
 }
+
+// 重置筛选条件
 const handleReset = () => {
-  searchKeyword.value = '';
-  selectedType.value = 'all';
-  pagination.page = 1;
+  searchKeyword.value = ''
+  selectedType.value = 'all'
+  pagination.page = 1
   loadData()
 }
+
+// 新增
 const handleAdd = () => router.push('/input/catalog/add')
+
+// 查看详情
 const handleView = (row) => router.push(`/input/catalog/detail/${row.inputId}`)
+
+// 编辑
 const handleEdit = (row) => router.push(`/input/catalog/edit/${row.inputId}`)
+
+// 删除
 const handleDelete = (row) => {
   ElMessageBox.confirm(
       t('input.catalog.deleteConfirm'),
@@ -252,20 +319,40 @@ const handleDelete = (row) => {
         type: 'warning'
       }
   ).then(async () => {
-    const res = await deleteInput(row.inputId);
-    if (res.code === 200) {
-      ElMessage.success(t('input.catalog.deleteSuccess'));
-      loadData()
-    } else {
-      ElMessage.error(res.msg || t('input.catalog.deleteFailed'))
+    try {
+      const res = await deleteInput(row.inputId)
+      if (res.code === 200) {
+        ElMessage.success(t('input.catalog.deleteSuccess'))
+        loadData()
+      } else {
+        ElMessage.error(res.msg || t('input.catalog.deleteFailed'))
+      }
+    } catch (error) {
+      console.error('删除失败：', error)
+      ElMessage.error(t('input.catalog.deleteFailed') + '：' + (error.message || ''))
     }
   }).catch(() => {})
 }
-const handleSelectionChange = (selection) => { selectedRows.value = selection }
-const handleSizeChange = () => { pagination.page = 1; loadData() }
-const handlePageChange = () => { loadData() }
 
-onMounted(() => {
+// 表格选择事件
+const handleSelectionChange = (selection) => {
+  selectedRows.value = selection
+}
+
+// 分页大小变更
+const handleSizeChange = () => {
+  pagination.page = 1
+  loadData()
+}
+
+// 页码变更
+const handlePageChange = () => {
+  loadData()
+}
+
+// 初始化加载
+onMounted(async () => {
+  await refreshDict()
   loadData()
 })
 </script>

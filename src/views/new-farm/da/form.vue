@@ -121,41 +121,39 @@
             <h3>{{ $t('newFarm.da.sections.regionInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
+            <!-- 区划信息区域 -->
+            <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode" :disabled="isRegionDisabled">
               <el-input
                   v-model="zoneName"
                   :placeholder="$t('newFarm.common.selectZone')"
-                  disabled
-                  maxlength="50"
+                  :disabled="isRegionDisabled"
+              maxlength="50"
               />
-              <!-- 隐藏域存储zoneCode值 -->
               <input type="hidden" v-model="formData.zoneCode" />
             </el-form-item>
 
-            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
+            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode" :disabled="isRegionDisabled">
               <el-input
                   v-model="woredaName"
                   :placeholder="$t('newFarm.common.selectWoreda')"
-                  disabled
-                  maxlength="50"
+                  :disabled="isRegionDisabled"
+              maxlength="50"
               />
-              <!-- 隐藏域存储woredaCode值 -->
               <input type="hidden" v-model="formData.woredaCode" />
             </el-form-item>
 
-            <!-- 单选Kebele -->
-            <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes" class="full-width-item">
+            <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes" class="full-width-item" :disabled="isRegionDisabled">
               <el-select
                   v-model="formData.kebeleCodes"
                   :placeholder="$t('newFarm.da.placeholder.kebeleCodes').replace('多选', '选择')"
                   maxlength="500"
-              >
-                <el-option
-                    v-for="item in kebeleOptions"
-                    :key="item.code || item.id"
-                    :label="item.name"
-                    :value="item.code || item.id"
-                />
+                  :disabled="isRegionDisabled">
+              <el-option
+                  v-for="item in kebeleOptions"
+                  :key="item.code || item.id"
+                  :label="item.name"
+                  :value="item.code || item.id"
+              />
               </el-select>
             </el-form-item>
           </div>
@@ -206,7 +204,7 @@ import { registerDa } from '@/api/application'
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-
+const isRegionDisabled = ref(false) // 控制地区元素禁用
 // AES encryption key
 const keyStr = 'ab489fe897hh78ha';
 
@@ -361,19 +359,27 @@ const loadRegionInfo = async (regionCode, regionName) => {
     }
   } catch (error) {
     console.error('Failed to load region info:', error)
-    // 关键新增：关闭拦截器弹出的所有错误弹窗（request error/network error）
     ElMessage.closeAll()
-    // 只显示自定义提示
-    ElMessage.error('The currently logged-in account is incorrect!')
-    // 保留原有逻辑：阻止错误继续冒泡
+    // 错误提示英文更新
+    ElMessage.error('For DA registration, please use a Woreda Level account; otherwise, the registration cannot be completed.')
+    // 设为禁用状态
+    isRegionDisabled.value = true
+    // 清空错误数据和选项
+    zoneName.value = ''
+    woredaName.value = ''
+    kebeleOptions.value = []
+    formData.zoneCode = ''
+    formData.woredaCode = ''
+    formData.kebeleCodes = ''
     return Promise.resolve()
-  } finally {
+  }finally {
     regionLoading.value = false
   }
 }
 
 // Parse user info and load region data
 const parseUserInfoAndLoadRegion = () => {
+  isRegionDisabled.value = false
   const userInfoStr = localStorage.getItem('userInfo')
   if (userInfoStr) {
     try {

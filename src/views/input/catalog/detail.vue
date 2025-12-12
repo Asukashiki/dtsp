@@ -22,15 +22,15 @@
     </div>
 
     <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
+    <div v-loading="loading || dictLoading" class="detail-wrapper">
       <!-- 无数据兜底 -->
-      <div v-if="!loading && !detailData" class="empty-state">
+      <div v-if="!loading && !dictLoading && !detailData" class="empty-state">
         <i class="ri-inbox-line"></i>
         <p>{{ $t('common.noData') }}</p>
       </div>
 
       <!-- 有数据时渲染 -->
-      <div v-if="loading === false && detailData">
+      <div v-if="!loading && !dictLoading && detailData">
         <!-- 基本信息 -->
         <div class="detail-section">
           <div class="section-title">
@@ -44,14 +44,14 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputType') }}:</span>
-              <el-tag :type="getTypeTag(detailData.type)">
-                {{ $t(`input.catalog.type.${detailData.type}`) }}
+              <el-tag :type="getTypeTagType">
+                {{ getTypeLabel }}
               </el-tag>
             </div>
 
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
-              <span class="value">{{ detailData.agriculturalInputType || '-' }}</span>
+              <span class="value">{{ getAgriculturalInputTypeLabel }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.variety') }}:</span>
@@ -82,7 +82,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.referencePrice') }}:</span>
-              <span class="value">{{ detailData.referencePrice || 0 }} dollars</span>
+              <span class="value">{{ detailData.referencePrice || 0 }} Br</span>
             </div>
 
             <div class="detail-item">
@@ -154,22 +154,8 @@
           </div>
         </div>
 
-        <!-- 农药特性信息 -->
-        <div v-if="detailData.type === 'pesticide'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-flask-line"></i>
-            {{ $t('input.catalog.pesticide.title') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.cropControlObject') }}:</span>
-              <span class="value text-block">{{ detailData.cropControlObject || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 种子特性信息 -->
-        <div v-if="detailData.type === 'seed'" class="detail-section">
+        <!-- 种子特性信息（IN01=种子） -->
+        <div v-if="detailData.type === 'IN01'" class="detail-section">
           <div class="section-title">
             <i class="ri-seedling-line"></i>
             {{ $t('input.catalog.seed.title') }}
@@ -186,8 +172,8 @@
           </div>
         </div>
 
-        <!-- 化肥特性信息 -->
-        <div v-if="detailData.type === 'fertilizer'" class="detail-section">
+        <!-- 化肥特性信息（IN02=化肥） -->
+        <div v-if="detailData.type === 'IN02'" class="detail-section">
           <div class="section-title">
             <i class="ri-plant-line"></i>
             {{ $t('input.catalog.fertilizer.title') }}
@@ -198,17 +184,31 @@
             </div>
           </div>
         </div>
+
+        <!-- 其他类型信息（IN09=其他） -->
+        <div v-if="detailData.type === 'IN09'" class="detail-section">
+          <div class="section-title">
+            <i class="ri-more-line"></i>
+            {{ $t('input.catalog.other.title') }}
+          </div>
+          <div class="detail-grid">
+            <div class="text-center text-gray-500 detail-item full-width">
+              {{ $t('input.catalog.other.emptyTip') }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getInputDetail } from '@/api/input'
+import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
@@ -217,16 +217,46 @@ const { t } = useI18n()
 const loading = ref(false)
 const detailData = ref(null)
 
-// 获取类型标签颜色
-const getTypeTag = (type) => {
+// 清除字典缓存并初始化
+clearDictCache('input_type')
+clearDictCache('input_category')
+
+const {
+  options,
+  loading: dictLoading,
+  refresh: refreshDict
+} = useDict([
+  'input_type',
+  'input_category'
+], {
+  immediate: true,
+  cache: true
+})
+
+// 根据type值获取对应的字典标签文本
+const getTypeLabel = computed(() => {
+  if (!detailData.value || !options.value.input_type) return '-'
+  const typeItem = options.value.input_type.find(item => item.value === detailData.value.type)
+  return typeItem ? typeItem.label : '-'
+})
+
+// 获取类型标签颜色（适配新的type值 IN01/IN02/IN09）
+const getTypeTagType = computed(() => {
+  if (!detailData.value) return ''
   const typeMap = {
-    pesticide: 'danger',
-    fertilizer: 'warning',
-    seed: 'success',
-    other: ''
+    IN01: 'success', // 种子
+    IN02: 'warning', // 化肥
+    IN09: ''         // 其他
   }
-  return typeMap[type] || ''
-}
+  return typeMap[detailData.value.type] || ''
+})
+
+// 根据agriculturalInputType值获取对应的字典标签文本
+const getAgriculturalInputTypeLabel = computed(() => {
+  if (!detailData.value || !detailData.value.agriculturalInputType || !options.value.input_category) return '-'
+  const categoryItem = options.value.input_category.find(item => item.value === detailData.value.agriculturalInputType)
+  return categoryItem ? categoryItem.label : '-'
+})
 
 // 加载详情数据
 const loadDetail = async () => {
@@ -237,11 +267,20 @@ const loadDetail = async () => {
     return
   }
 
+  // 先刷新字典，确保字典数据加载完成
+  await refreshDict()
+
   loading.value = true
   try {
     const res = await getInputDetail(id)
     if (res && res.code === 200 && res.data) {
       detailData.value = res.data
+      // 适配旧的type值映射（与录入页保持一致）
+      if (detailData.value.type === 'seed') detailData.value.type = 'IN01'
+      if (detailData.value.type === 'fertilizer') detailData.value.type = 'IN02'
+      if (detailData.value.type === 'other') detailData.value.type = 'IN09'
+      // 农药类型已移除，置空处理
+      if (detailData.value.type === 'pesticide') detailData.value.type = ''
     } else {
       ElMessage.error(res?.msg || t('input.catalog.noDataFound'))
       detailData.value = null

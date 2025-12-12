@@ -1,10 +1,10 @@
 export default {
-  // System Basic Configuration
+  // 系统基础配置
   systemName: 'Agricultural Input Supply Management System',
   systemDesc: 'Input management, inventory management and supply chain traceability',
   backToHome: 'Back to Home',
 
-  // Common Text
+  // 通用文本
   common: {
     back: 'Back',
     cancel: 'Cancel',
@@ -21,52 +21,41 @@ export default {
     view: 'View'
   },
 
-  // Home Page Common
+  // 首页通用
   home: {
     noData: 'No data available'
   },
 
-    // Menu Navigation
-    menu: {
-      dashboard: 'Data Dashboard',
-      registrationManagement: 'Registration Management',
-      registration: 'Union/Cooperative Registration',
-      registrationApproval: 'Union/Cooperative Approval',
-      demandManagement: 'Input Demand Management',
-      farmerDemand: 'DA Farmer Demand Entry',
-      demandAudit: 'Input Demand Audit',
-      villageAggregation: 'Village Demand Aggregation',
-      townAggregation: 'Town Demand Aggregation',
-      districtAggregation: 'District Demand Aggregation',
-      stateAggregation: 'State Demand Aggregation',
-      KebeleAudit: 'Kebele Demand Audit',
-      townAggregationAudit: 'Town Aggregation Audit',
-      TownAudit: 'Town Demand Audit',
-      DistrictAudit: 'District Demand Audit',
-      districtAggregationAudit: 'District Aggregation Audit',
-      StateAuditView: 'State Agriculture Dept View',
-      supplierManagement: 'Supplier Management',
-      supplierAuth: 'Supplier Authentication',
-      supplierAuthApproval: 'Supplier Auth Approval',
-      supplierInfo: 'Supplier Information',
-      inputManagement: 'Input Management',
-      inputCatalog: 'Input Catalog Management',
-      supplierInput: 'Supplier Input Information',
-      inputSupply: 'Input Supply Management',
-      inventoryManagement: 'Inventory Management',
-      warehouse: 'Warehouse Management',
-      stockIn: 'Stock In Management',
-      stockOut: 'Stock Out Management',
-      stockQuery: 'Inventory Query',
-      dashboard: 'Dashboard Management',
-      feedback: 'Information Feedback',
-    },
+  // 菜单导航
+  menu: {
+    dashboard: 'Data Overview',
+    registrationManagement: 'Registration Management',
+    registration: 'Union/Cooperative Registration Application',
+    registrationApproval: 'Union/Cooperative Registration Approval',
+    demandManagement: 'Input Demand Management',
+    farmerDemand: 'DA Farmer Demand Entry',
+    demandAudit: 'Input Demand Audit',
+    supplierManagement: 'Supplier Management',
+    supplierAuth: 'Supplier Authentication',
+    supplierAuthApproval: 'Supplier Authentication Approval',
+    supplierInfo: 'Supplier Information Maintenance',
+    inputManagement: 'Input Management',
+    inputCatalog: 'Input Catalog Management',
+    supplierInput: 'Supplier Input Information Management',
+    inputSupply: 'Input Supply Management',
+    inventoryManagement: 'Inventory Management',
+    warehouse: 'Warehouse Management',
+    stockIn: 'Stock In Management',
+    stockOut: 'Stock Out Management',
+    stockQuery: 'Inventory Query',
+    bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
+    feedback: 'Information Feedback'
+  },
 
-
-  // Input Catalog Management
+  // 投入品目录管理
   catalog: {
     title: 'Input Catalog Management',
-    subtitle: 'Manage agricultural input basic information, specifications, parameters and qualification requirements',
+    subtitle: 'Manage basic information, specifications, parameters and qualification requirements of agricultural inputs',
     edit: 'Edit Input',
     add: 'Add Input',
     list: 'Input List',
@@ -80,12 +69,12 @@ export default {
     invalidIdEdit: 'Invalid ID, cannot edit',
     deleteConfirm: 'Are you sure to delete this input?',
 
-    // Search and Filter
-    searchPlaceholder: 'Search by product name, registration number, production batch number',
+    // 搜索和筛选
+    searchPlaceholder: 'Search by product name, registration certificate number, production batch number',
     filterByType: 'Filter by input type',
     allTypes: 'All Types',
 
-    // Input Types
+    // 投入品类型
     type: {
       all: 'All',
       pesticide: 'Pesticide',
@@ -94,11 +83,12 @@ export default {
       other: 'Other'
     },
 
-    // Form Fields - Basic Information
+    // 表单字段 - 基本信息
     form: {
       specificationModel: 'Specification Model',
-      unit: 'Unit of Measure',
-      referencePrice: 'Reference Price (USD)',
+      inputBizId:'Input ID',
+      unit: 'Unit of Measurement',
+      referencePrice: 'Reference Price (Br)',
       isImport: 'Imported',
       imageUrl: 'Product Image URL',
       description: 'Product Description',
@@ -108,11 +98,11 @@ export default {
       ingredientsInfo: 'Ingredients & Usage Information',
       inputName: 'Input Name',
       inputType: 'Input Type',
-      agriculturalInputType: 'Agricultural Input Category',
+      agriculturalInputType: 'Please select input category',
       variety: 'Variety',
       inputSku: 'Unique Product Identifier/SKU',
-      trademark: 'Registered Trademark',
-      registerCode: 'Registration Batch Number',
+      trademark: 'Trademark',
+      registerCode: 'Product Registration Certificate Number',
       productionLicense: 'Production License Number',
       productionStandard: 'Product Standard Certificate Number',
       producerName: 'Manufacturer Name',
@@ -122,10 +112,10 @@ export default {
       status: 'Status'
     },
 
-    // Form Placeholders
+    // 表单占位符
     placeholder: {
       specificationModel: 'Enter specification model (max 100 characters)',
-      unit: 'Enter unit of measure (e.g.: kg, L, bag, piece)',
+      unit: 'Enter unit of measurement (e.g.: kg, L, bag, piece)',
       referencePrice: 'Enter reference price (≥ 0)',
       imageUrl: 'Enter product image URL (max 255 characters)',
       description: 'Enter product description (max 500 characters)',
@@ -136,31 +126,31 @@ export default {
       inputType: 'Select input type',
       agriculturalInputType: 'Enter agricultural input category',
       variety: 'Enter variety',
-      inputSku: 'Auto-generated by system',
-      trademark: 'Enter registered trademark',
-      registerCode: 'Enter registration batch number',
+      inputSku: 'Enter unique product identifier', // 原"系统自动生成"改为手动输入提示
+      trademark: 'Enter trademark',
+      registerCode: 'Enter product registration certificate number',
       productionLicense: 'Enter production license number',
       productionStandard: 'Enter product standard certificate number',
       producerName: 'Enter manufacturer name (2-200 characters)',
       producerAddress: 'Enter manufacturer address (5-255 characters)'
     },
 
-    // Import Status
+    // 是否进口
     isImport: {
       yes: 'Yes',
       no: 'No'
     },
 
-    // Form Validation Rules
+    // 表单验证规则
     rules: {
       inputNameRequired: 'Please enter input name',
       inputNameLength: 'Input name must be 2-100 characters',
       inputTypeRequired: 'Please select input type',
-      agriculturalInputTypeRequired: 'Please enter agricultural input category',
+      agriculturalInputTypeRequired: 'Please select input category',
       inputSkuRequired: 'Please enter unique product identifier',
       inputSkuLength: 'Product identifier must be 8-50 characters',
-      trademarkRequired: 'Please enter registered trademark',
-      registerCodeRequired: 'Please enter registration batch number',
+      trademarkRequired: 'Please enter trademark',
+      registerCodeRequired: 'Please enter product registration certificate number',
       productionLicenseRequired: 'Please enter production license number',
       productionStandardRequired: 'Please enter product standard certificate number',
       producerNameRequired: 'Please enter manufacturer name',
@@ -169,10 +159,10 @@ export default {
       producerAddressLength: 'Manufacturer address must be 5-255 characters'
     },
 
-    // Pesticide Properties
+    // 农药特性字段
     pesticide: {
       cropControlObject: 'Crops/Control Targets',
-      title: 'Pesticide Properties',
+      title: 'Pesticide Characteristic Information',
       totalIngredientContent: 'Total Active Ingredient Content',
       toxicityLevel: 'Toxicity Level',
       targetCrops: 'Applicable Crops',
@@ -185,7 +175,7 @@ export default {
       firstAid: 'Poisoning First Aid Measures',
       storageRequirements: 'Storage Requirements',
       toxicity: {
-        micro: 'Micro-toxic',
+        micro: 'Microtoxic',
         low: 'Low Toxic',
         medium: 'Medium Toxic',
         high: 'High Toxic',
@@ -193,9 +183,9 @@ export default {
       }
     },
 
-    // Fertilizer Properties
+    // 化肥特性字段
     fertilizer: {
-      title: 'Fertilizer Properties',
+      title: 'Fertilizer Characteristic Information',
       emptyTip: 'Fertilizer characteristic fields are pending system expansion, no need to fill in temporarily',
       fertilizerType: 'Fertilizer Type',
       totalNutrientContent: 'Total Nutrient Content',
@@ -211,10 +201,10 @@ export default {
       recommendedDosage: 'Recommended Dosage'
     },
 
-    // Seed Properties
+    // 种子特性字段
     seed: {
       breeder: 'Breeder',
-      title: 'Seed Properties',
+      title: 'Seed Characteristic Information',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
       varietyApprovalCode: 'Variety Approval Number',
@@ -225,26 +215,26 @@ export default {
       moistureContent: 'Moisture Content (%)'
     },
 
-    // List Columns
+    // 列表列名
     columns: {
       inputName: 'Input Name',
       inputType: 'Type',
       inputSku: 'Product Identifier',
       trademark: 'Trademark',
-      registerCode: 'Registration Batch Number',
+      registerCode: 'Registration Certificate Number',
       producerName: 'Manufacturer',
       createTime: 'Creation Time',
       status: 'Status',
       actions: 'Actions'
     },
 
-    // Status Options
+    // 状态选项
     statusOptions: {
       active: 'Active',
       inactive: 'Inactive'
     },
 
-    // Image Upload
+    // 图片上传
     upload: {
       imageTypeError: 'Only JPG/PNG/WEBP format images are supported!',
       imageSizeError: 'Image size cannot exceed 2MB!',
@@ -254,9 +244,9 @@ export default {
     }
   },
 
-  // Supplier Management
+  // 供应商管理
   supplier: {
-    // Supplier Authentication
+    // 供应商认证
     auth: {
       title: 'Supplier Authentication Application',
       subtitle: 'Fill in detailed information required for supplier identity authentication',
@@ -300,7 +290,7 @@ export default {
       uploadTip: 'Supports jpg/png/pdf, single file size ≤ 2MB'
     },
 
-    // Supplier Authentication Approval
+    // 供应商认证审批
     approval: {
       title: 'Supplier Authentication Approval',
       subtitle: 'Review identity authentication application materials submitted by suppliers',
@@ -366,7 +356,7 @@ export default {
       }
     },
 
-    // Supplier Information Maintenance
+    // 供应商信息维护
     info: {
       title: 'Supplier Information Maintenance',
       subtitle: 'View and manage authentication information of all suppliers',
@@ -410,7 +400,7 @@ export default {
       }
     },
 
-    // Supplier Input Management
+    // 供应商投入品管理
     product: {
       title: 'Supplier Input Management',
       subtitle: 'Manage association relationships between suppliers and inputs',
@@ -520,9 +510,9 @@ export default {
     }
   },
 
-  // Inventory Management
+  // 库存管理
   inventory: {
-    // Warehouse Management
+    // 仓库管理
     warehouse: {
       title: 'Warehouse Management',
       subtitle: 'Manage warehouse basic information, capacity and usage status',
@@ -632,7 +622,7 @@ export default {
       }
     },
 
-    // Stock In Management
+    // 入库管理
     stockIn: {
       title: 'Stock In Management',
       subtitle: 'Manage input stock in registration and confirmation',
@@ -683,22 +673,14 @@ export default {
       inputName: 'Input Name',
       inputId: 'Input ID',
       inputBatchId: 'Input Batch ID',
-        inputBatch: 'Input Batch',
-        inboundBatch: 'Inbound Batch',
-        productionBatch: 'Production Batch',
       inputType: 'Input Type',
-        agriculturalInputType: 'Agricultural Input Type',
-        variety: 'Variety',
       specification: 'Specification Model',
-      unit: 'Unit of Measure',
+      unit: 'Unit of Measurement',
       expiryDate: 'Expiry Date',
       qrCode: 'QR Code',
       addMaterial: 'Add Material',
       addInput: 'Add Input',
       noMaterials: 'No material details',
-        noDistributionDetails: 'No details available for this distribution order',
-        distributionLoaded: 'Distribution order details loaded successfully',
-        loadDistributionFailed: 'Failed to load distribution order details',
       searchPlaceholder: 'Search by stock in order number, batch number',
       filterByWarehouse: 'Filter by Warehouse',
       filterBySupplier: 'Filter by Supplier',
@@ -770,14 +752,9 @@ export default {
         materialName: 'Enter material name',
         inputName: 'Select input name',
         inputBatchId: 'Enter input batch ID (optional)',
-          inputBatch: 'Please select input batch',
-          inboundBatch: 'Inbound batch (auto-generated)',
-          productionBatch: 'Please enter production batch (optional)',
         inputType: 'Input type (auto-filled)',
-          agriculturalInputType: 'Agricultural input type (auto-filled)',
-          variety: 'Variety (auto-filled)',
         specification: 'Enter specification model (optional)',
-        unit: 'Enter unit of measure',
+        unit: 'Enter unit of measurement',
         qrCode: 'QR code (auto-obtained)'
       },
       rules: {
@@ -796,7 +773,7 @@ export default {
         detailsComplete: 'Please complete all material detail information',
         materialIdRequired: 'Please enter material ID',
         materialNameRequired: 'Please enter material name',
-        unitRequired: 'Please enter unit of measure'
+        unitRequired: 'Please enter unit of measurement'
       },
       columns: {
         orderId: 'Stock In Order Number',
@@ -831,7 +808,7 @@ export default {
       }
     },
 
-    // Stock Out Management
+    // 出库管理
     stockOut: {
       title: 'Stock Out Management',
       subtitle: 'Manage input stock out registration and confirmation',
@@ -899,7 +876,7 @@ export default {
         materialBatchId: 'Material Batch Number',
         quantity: 'Stock Out Quantity',
         specModel: 'Specification Model',
-        unitOfMeasure: 'Unit of Measure',
+        unitOfMeasure: 'Unit of Measurement',
         availableQuantity: 'Available Inventory',
         itemRemarks: 'Item Remarks',
         batchSplits: 'Batch Split Details',
@@ -925,7 +902,7 @@ export default {
         batchNo: 'Select batch number',
         quantity: 'Enter stock out quantity',
         specModel: 'Enter specification model (optional)',
-        unitOfMeasure: 'Enter unit of measure (optional)',
+        unitOfMeasure: 'Enter unit of measurement (optional)',
         itemRemarks: 'Enter item remarks',
         auditRemark: 'Enter audit opinion'
       },
@@ -988,7 +965,7 @@ export default {
       }
     },
 
-    // Inventory Query
+    // 库存查询
     stock: {
       title: 'Inventory Query',
       subtitle: 'Real-time query of inventory information, alerts and summary statistics',
@@ -1101,7 +1078,7 @@ export default {
     }
   },
 
-  // Data Dashboard
+  // 数据大屏
   dashboard: {
     title: 'Agricultural Input Supply Management Dashboard',
     subtitle: 'Real-time data monitoring and visual analysis',
@@ -1272,7 +1249,7 @@ export default {
     systemStatus: 'System Normal'
   },
 
-  // Information Feedback
+  // 信息反馈
   feedback: {
     title: 'Information Feedback Management',
     subtitle: 'Collect and process feedback related to input supply',
