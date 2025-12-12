@@ -86,6 +86,7 @@ export default {
     // 表单字段 - 基本信息
     form: {
       specificationModel: 'Specification Model',
+      inputBizId:'Input ID',
       unit: 'Unit of Measurement',
       referencePrice: 'Reference Price (Br)',
       isImport: 'Imported',
@@ -97,7 +98,7 @@ export default {
       ingredientsInfo: 'Ingredients & Usage Information',
       inputName: 'Input Name',
       inputType: 'Input Type',
-      agriculturalInputType: 'Agricultural Input Category',
+      agriculturalInputType: 'Please select input category',
       variety: 'Variety',
       inputSku: 'Unique Product Identifier/SKU',
       trademark: 'Trademark',
@@ -145,7 +146,7 @@ export default {
       inputNameRequired: 'Please enter input name',
       inputNameLength: 'Input name must be 2-100 characters',
       inputTypeRequired: 'Please select input type',
-      agriculturalInputTypeRequired: 'Please enter agricultural input category',
+      agriculturalInputTypeRequired: 'Please select input category',
       inputSkuRequired: 'Please enter unique product identifier',
       inputSkuLength: 'Product identifier must be 8-50 characters',
       trademarkRequired: 'Please enter trademark',

@@ -61,31 +61,7 @@ export default {
       dashboard: '大屏管理',
       feedback: '信息反馈',
     },
-  // 菜单导航
-  menu: {
-    dashboard: '数据概览',
-    registrationManagement: '注册管理',
-    registration: 'Union/Cooperative注册申请',
-    registrationApproval: 'Union/Cooperative注册审核',
-    demandManagement: '投入品需求管理',
-    farmerDemand: 'DA农民需求录入',
-    demandAudit: '投入品需求审核',
-    supplierManagement: '供应商管理',
-    supplierAuth: '供应商认证',
-    supplierAuthApproval: '供应商认证审批',
-    supplierInfo: '供应商信息维护',
-    inputManagement: '投入品管理',
-    inputCatalog: '投入品目录管理',
-    supplierInput: '供应商投入品信息管理',
-    inputSupply: '投入品供应管理',
-    inventoryManagement: '库存管理',
-    warehouse: '仓库管理',
-    stockIn: '入库管理',
-    stockOut: '出库管理',
-    stockQuery: '库存查询',
-    dashboard: '大屏管理',
-    feedback: '信息反馈'
-  },
+
 
   // 投入品目录管理
   catalog: {
@@ -120,6 +96,7 @@ export default {
 
     // 表单字段 - 基本信息
     form: {
+      inputBizId:'投入品ID',
       specificationModel: '规格型号',
       unit: '计量单位',
       referencePrice: '参考价格（Br）',
@@ -158,7 +135,7 @@ export default {
       varietySource: '请输入品种来源（最多500个字符）',
       inputName: '请输入投入品名称（2-100个字符）',
       inputType: '请选择投入品类型',
-      agriculturalInputType: '请输入农资类型',
+      agriculturalInputType: '请选择投入品品类',
       variety: '请输入品种',
       inputSku: '请输入Sku',
       trademark: '请输入品牌',
@@ -166,7 +143,7 @@ export default {
       productionLicense: '请输入生产许可证号',
       productionStandard: '请输入产品标准证号',
       producerName: '请输入生产企业名称（2-200个字符）',
-      producerAddress: '请输入生产企业地址（5-255个字符）'
+      producerAddress: '请输入生产企业地址（5-255个字符）',
     },
 
     // 是否进口

@@ -18,7 +18,7 @@
             {{ $t('common.back') }}
           </el-button>
           <el-button type="primary" @click="handleEdit"
-            v-if="detailData.status === 'draft' || detailData.status === 'rejected'">
+                     v-if="detailData.status === '0' || detailData.status === '3'">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
           </el-button>
@@ -92,10 +92,6 @@
               <div class="label">{{ $t('farmerDemand.form.kebele') }}</div>
               <div class="value">{{ detailData.kebeleName || '-' }}</div>
             </div>
-            <!-- <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.village') }}</div>
-              <div class="value">{{ detailData.village || '-' }}</div>
-            </div> -->
             <div class="info-item full-width" v-if="detailData.remark">
               <div class="label">{{ $t('farmerDemand.form.remark') }}</div>
               <div class="value">{{ detailData.remark }}</div>
@@ -118,13 +114,24 @@
                 <el-table-column type="index" :label="'#'" width="60" />
                 <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="120">
                   <template #default="{ row }">
-                    {{ getInputCategoryLabel(row.inputCategory) }}
+                    {{ getInputCategoryLabel(row.inputCategory) || row.inputCategory || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />
-                <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />
-                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
-                <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120" />
+                <el-table-column :label="$t('farmerDemand.form.variety')" min-width="120">
+                  <template #default="{ row }">
+                    {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100">
+                  <template #default="{ row }">
+                    {{ row.unit || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120">
+                  <template #default="{ row }">
+                    {{ row.quantity || '-' }}
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
             <div class="items-cards mobile-only">
@@ -133,12 +140,11 @@
                 <div class="item-info">
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.inputCategory') }}:</span>
-                    <span class="value">{{ getInputCategoryLabel(item.inputCategory) }}</span>
+                    <span class="value">{{ getInputCategoryLabel(item.inputCategory) || item.inputCategory || '-' }}</span>
                   </div>
-
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
-                    <span class="value">{{ item.variety }}</span>
+                    <span class="value">{{ item.variety || '-' }}</span>
                   </div>
                   <div class="item-row" v-if="item.specification">
                     <span class="label">{{ $t('farmerDemand.form.specification') }}:</span>
@@ -146,11 +152,11 @@
                   </div>
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.unit') }}:</span>
-                    <span class="value">{{ item.unit }}</span>
+                    <span class="value">{{ item.unit || '-' }}</span>
                   </div>
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.quantity') }}:</span>
-                    <span class="value">{{ item.quantity }}</span>
+                    <span class="value">{{ item.quantity || '-' }}</span>
                   </div>
                 </div>
               </div>
@@ -168,6 +174,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmerDemandDetail } from '@/api/farmerDemand'
+import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
@@ -176,42 +183,73 @@ const { t } = useI18n()
 const loading = ref(false)
 const detailData = ref({})
 
-// 状态选项（0: 草稿, 1: 已提交, 2: 已通过, 3: 驳回, 4: 已锁定）
-const statusOptions = computed(() => ({
-  '0': t('farmerDemand.status.draft'),
-  '1': t('farmerDemand.status.submitted'),
-  '2': t('farmerDemand.status.approved'),
-  '3': t('farmerDemand.status.rejected'),
-  '4': t('farmerDemand.status.locked'),
-}))
+// 清除字典缓存并加载
+clearDictCache('input_type')
+clearDictCache('input_category')
+clearDictCache('farmer_demand_status')
 
-// 投入品类型选项
-const inputCategoryOptions = computed(() => ({
-  seed: t('farmerDemand.inputCategory.seed'),
-  fertilizer: t('farmerDemand.inputCategory.fertilizer'),
-  pesticide: t('farmerDemand.inputCategory.pesticide')
-}))
+const {
+  options: dictOptions,
+  loading: dictLoading
+} = useDict([
+  'input_type',
+  'input_category',
+  'farmer_demand_status'
+], {
+  immediate: true,
+  cache: true
+})
 
-// 获取状态标签
+// 状态标签（从字典获取）
 const getStatusLabel = (status) => {
-  return statusOptions.value[status] || status
+  const statusDict = dictOptions.value.farmer_demand_status || {}
+  const statusMap = {
+    '0': statusDict['0'] || t('farmerDemand.status.draft'),
+    '1': statusDict['1'] || t('farmerDemand.status.submitted'),
+    '2': statusDict['2'] || t('farmerDemand.status.approved'),
+    '3': statusDict['3'] || t('farmerDemand.status.rejected'),
+    '4': statusDict['4'] || t('farmerDemand.status.locked'),
+  }
+  return statusMap[status] || statusDict[status] || status || '-'
 }
 
-// 获取状态类型
+// 状态标签类型
 const getStatusType = (status) => {
   const typeMap = {
-    '0': 'info', // draft
-    '1': 'warning', // submitted
-    '2': 'success', // approved
-    '3': 'danger', // rejected
-    '4': '', // locked
+    '0': 'info',
+    '1': 'warning',
+    '2': 'success',
+    '3': 'danger',
+    '4': '',
   }
   return typeMap[status] || 'info'
 }
 
-// 获取投入品类型标签
-const getInputCategoryLabel = (category) => {
-  return inputCategoryOptions.value[category] || category
+// 投入品大类标签
+const getInputCategoryLabel = (categoryValue) => {
+  if (!categoryValue) return '-'
+  const typeDict = dictOptions.value.input_type || []
+  const typeItem = typeDict.find(item => item.value === categoryValue)
+  if (typeItem) return typeItem.label
+
+  const categoryDict = dictOptions.value.input_category || []
+  const categoryItem = categoryDict.find(item => item.value === categoryValue)
+  if (categoryItem) return categoryItem.label
+
+  const legacyMap = {
+    seed: t('farmerDemand.inputCategory.seed'),
+    fertilizer: t('farmerDemand.inputCategory.fertilizer'),
+    pesticide: t('farmerDemand.inputCategory.pesticide')
+  }
+  return legacyMap[categoryValue] || categoryValue
+}
+
+// 投入品小类标签
+const getInputTypeLabel = (typeValue) => {
+  if (!typeValue) return '-'
+  const categoryDict = dictOptions.value.input_category || []
+  const categoryItem = categoryDict.find(item => item.value === typeValue)
+  return categoryItem ? categoryItem.label : typeValue
 }
 
 // 加载数据
@@ -241,7 +279,17 @@ const handleEdit = () => {
 }
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
+  await new Promise(resolve => {
+    const checkDict = () => {
+      if (!dictLoading.value) {
+        resolve()
+      } else {
+        setTimeout(checkDict, 100)
+      }
+    }
+    checkDict()
+  })
   loadData()
 })
 </script>
@@ -433,6 +481,7 @@ onMounted(() => {
   display: none;
 }
 
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
   .page-container {
     padding: 12px;
@@ -462,6 +511,8 @@ onMounted(() => {
 
   .header-actions {
     width: 100%;
+    display: flex;
+    gap: 8px;
   }
 
   .header-actions .el-button {
@@ -476,6 +527,15 @@ onMounted(() => {
   .info-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .item-row .label {
+    min-width: 100px;
+    font-size: 13px;
+  }
+
+  .item-row .value {
+    font-size: 14px;
   }
 
   .pc-only {

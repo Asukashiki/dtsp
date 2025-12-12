@@ -52,16 +52,20 @@
                   :label="$t('input.catalog.form.inputType')"
                   prop="type"
               >
+                <!-- 投入品类型下拉框（已移除农药选项） -->
                 <el-select
                     v-model="formData.type"
                     :placeholder="$t('input.catalog.placeholder.inputType')"
                     style="width: 100%"
                     @change="handleTypeChange"
+                    v-loading="dictLoading"
                 >
-                  <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
-                  <el-option :label="$t('input.catalog.type.fertilizer')" value="fertilizer" />
-                  <el-option :label="$t('input.catalog.type.seed')" value="seed" />
-                  <el-option :label="$t('input.catalog.type.other')" value="other" />
+                  <el-option
+                      v-for="item in options.input_type"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -69,16 +73,25 @@
               <el-form-item
                   :label="$t('input.catalog.form.agriculturalInputType')"
                   prop="agriculturalInputType"
+                  :required="['IN01', 'IN02'].includes(formData.type)"
               >
-                <el-input
+                <!-- 投入品品类下拉框：根据类型过滤选项 -->
+                <el-select
                     v-model="formData.agriculturalInputType"
                     :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
-                    maxlength="100"
-                />
+                    style="width: 100%"
+                    v-loading="dictLoading"
+                >
+                  <el-option
+                      v-for="item in filterCategoryOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-            </el-col>
+            <el-col :span="12"></el-col>
             <el-col :span="12">
               <el-form-item
                   :label="$t('input.catalog.form.inputSku')"
@@ -257,29 +270,8 @@
           </el-row>
         </div>
 
-        <!-- 农药特性信息 -->
-        <div v-if="formData.type === 'pesticide'" class="form-section">
-          <div class="section-title">
-            <i class="ri-flask-line"></i>
-            {{ $t('input.catalog.pesticide.title') }}
-          </div>
-          <el-row :gutter="24">
-            <el-col :span="24">
-              <el-form-item :label="$t('input.catalog.pesticide.cropControlObject')">
-                <el-input
-                    v-model="formData.cropControlObject"
-                    :placeholder="$t('input.catalog.placeholder.cropControlObject')"
-                    type="textarea"
-                    :rows="2"
-                    maxlength="500"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-
-        <!-- 种子特性信息 -->
-        <div v-if="formData.type === 'seed'" class="form-section">
+        <!-- 种子特性信息（仅IN01=种子显示） -->
+        <div v-if="formData.type === 'IN01'" class="form-section">
           <div class="section-title">
             <i class="ri-seedling-line"></i>
             {{ $t('input.catalog.seed.title') }}
@@ -306,8 +298,8 @@
           </el-row>
         </div>
 
-        <!-- 化肥特性信息 -->
-        <div v-if="formData.type === 'fertilizer'" class="form-section">
+        <!-- 化肥特性信息（仅IN02=化肥显示） -->
+        <div v-if="formData.type === 'IN02'" class="form-section">
           <div class="section-title">
             <i class="ri-plant-line"></i>
             {{ $t('input.catalog.fertilizer.title') }}
@@ -315,6 +307,19 @@
           <el-row :gutter="24">
             <el-col :span="24" class="text-center text-gray-500">
               {{ $t('input.catalog.fertilizer.emptyTip') }}
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- 其他类型（仅IN09=其他显示） -->
+        <div v-if="formData.type === 'IN09'" class="form-section">
+          <div class="section-title">
+            <i class="ri-more-line"></i>
+            {{ $t('input.catalog.other.title') }}
+          </div>
+          <el-row :gutter="24">
+            <el-col :span="24" class="text-center text-gray-500">
+              {{ $t('input.catalog.other.emptyTip') }}
             </el-col>
           </el-row>
         </div>
@@ -336,11 +341,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getInputDetail, addInput, updateInput, uploadInputImage } from '@/api/input'
+import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
@@ -364,6 +370,54 @@ const isEdit = computed(() => !!route.params.id)
 
 // 图片上传配置
 const imageFileList = ref([])
+
+// 清除字典缓存并初始化
+clearDictCache('input_type')
+clearDictCache('crop_type')
+clearDictCache('flow_status')
+clearDictCache('input_category')
+
+const {
+  options,
+  loading: dictLoading,
+  refresh: refreshDict
+} = useDict([
+  'input_type',
+  'crop_type',
+  'flow_status',
+  'input_category'
+], {
+  immediate: true,
+  cache: true
+})
+
+// 动态过滤投入品品类选项
+const filterCategoryOptions = computed(() => {
+  const categoryList = options.value.input_category || []
+  if (formData.type === 'IN01') {
+    return categoryList.filter(item => item.value.startsWith('IN01'))
+  } else if (formData.type === 'IN02') {
+    return categoryList.filter(item => item.value.startsWith('IN02'))
+  }
+  return []
+})
+
+// 统一投入品品类占位符（国际化）
+const getCategoryPlaceholder = computed(() => {
+  return t('input.catalog.placeholder.agriculturalInputType')
+})
+
+onMounted(async () => {
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth <= 768;
+  });
+
+  await refreshDict();
+
+  if (isEdit.value) {
+    loadDetail();
+  }
+})
 
 // 表单数据
 const formData = reactive({
@@ -402,7 +456,11 @@ const rules = computed(() => ({
     { required: true, message: t('input.catalog.rules.inputTypeRequired'), trigger: 'change' }
   ],
   agriculturalInputType: [
-    { required: true, message: t('input.catalog.rules.agriculturalInputTypeRequired'), trigger: 'blur' },
+    {
+      required: ['IN01', 'IN02'].includes(formData.type),
+      message: t('input.catalog.rules.agriculturalInputTypeRequired'),
+      trigger: 'change'
+    },
   ],
   productionLicense: [
     { required: true, message: t('input.catalog.rules.productionLicenseRequired'), trigger: 'blur' },
@@ -416,28 +474,28 @@ const rules = computed(() => ({
   ]
 }));
 
+// 投入品类型变化处理
+const handleTypeChange = () => {
+  formData.agriculturalInputType = '';
+  formData.breeder = '';
+  formData.varietySource = '';
+
+  if (formData.type && formData.agriculturalInputType) {
+    formData.inputBizId = generateInputBizId(formData.type, formData.agriculturalInputType);
+  }
+};
 
 // 生成投入品业务ID
 const generateInputBizId = (type, agriculturalInputType) => {
-  const typeCodeMap = { pesticide: 'PE', fertilizer: 'FE', seed: 'SE', other: 'OT' };
+  const typeCodeMap = {
+    IN01: 'SE',
+    IN02: 'FE',
+    IN09: 'OT'
+  };
   const categoryCode = agriculturalInputType ? agriculturalInputType.substring(0, 2).toUpperCase() : 'NY';
   const year = new Date().getFullYear();
   const randomNum = Math.floor(100000 + Math.random() * 900000);
   return `IN_${typeCodeMap[type] || 'OT'}_${categoryCode}_${year}_${randomNum}`;
-};
-
-// 类型变化处理
-const handleTypeChange = () => {
-  if (formData.type !== 'pesticide') {
-    formData.cropControlObject = '';
-  }
-  if (formData.type !== 'seed') {
-    formData.breeder = '';
-    formData.varietySource = '';
-  }
-  if (formData.type && formData.agriculturalInputType) {
-    formData.inputBizId = generateInputBizId(formData.type, formData.agriculturalInputType);
-  }
 };
 
 // 图片上传校验
@@ -480,12 +538,16 @@ const handleImageRemove = () => {
   imageFileList.value = [];
 };
 
-// 加载详情
+// 加载详情（适配旧数据）
 const loadDetail = async () => {
   try {
     const res = await getInputDetail(route.params.id);
     if (res.code === 200) {
       Object.assign(formData, res.data);
+      if (formData.type === 'seed') formData.type = 'IN01';
+      if (formData.type === 'fertilizer') formData.type = 'IN02';
+      if (formData.type === 'other') formData.type = 'IN09';
+
       if (res.data.imageUrl) {
         imageFileList.value = [{ url: res.data.imageUrl }];
       }
@@ -529,21 +591,19 @@ const handleSubmit = async () => {
 const goBack = () => {
   router.back();
 };
-
-// 初始化
-onMounted(() => {
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth <= 768;
-  });
-
-  if (isEdit.value) {
-    loadDetail();
-  }
-  // 新增模式下不再自动生成 SKU，改为手动输入
-});
 </script>
 
 <style scoped>
+.text-xs {
+  font-size: 12px;
+}
+.text-gray-400 {
+  color: #909399;
+}
+.mt-1 {
+  margin-top: 4px;
+}
+
 .input-form-container {
   min-height: calc(100vh - 120px);
 }
