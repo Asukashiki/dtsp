@@ -39,9 +39,9 @@ export const postResetPassword = (params) => {
 }
 
 export const getLogout = () => {
-  return request({
-    url: '/oauth2/logout',
-    method: 'get'
+  return agricultureRequest({
+    url: '/logout',
+    method: 'post'
   })
 }
 

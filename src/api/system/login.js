@@ -66,3 +66,26 @@ export function getRouters() {
     method: 'get'
   })
 }
+
+// 获取部门树（公开接口，用于注册页面）
+export function getRegisterDeptTree() {
+  return request({
+    url: '/register/deptTree',
+    headers: {
+      isToken: false
+    },
+    method: 'get'
+  })
+}
+
+// 获取字典数据（公开接口，用于注册页面）
+export function getRegisterDict(dictType) {
+  return request({
+    url: '/register/dict/' + dictType,
+    headers: {
+      isToken: false
+    },
+    method: 'get'
+  })
+}
+

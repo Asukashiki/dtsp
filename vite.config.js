@@ -31,6 +31,14 @@ export default ({ mode }) => {
           }
         }
       }
+    },
+    // 生产环境打包配置
+    build: {
+      // 移除 console 和 debugger
+      minify: 'esbuild',
+      esbuild: {
+        drop: mode === 'production' ? ['console', 'debugger'] : []
+      }
     }
   })
 }

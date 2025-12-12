@@ -1511,12 +1511,18 @@ router.beforeEach(async (to, from, next) => {
       return routeWhitelist.some(prefix => path === prefix || path.startsWith(prefix + '/'))
     }
     
-    // 只有当路由需要认证且不在白名单时才检查
-    if (requiresAuth && userStore.menus.length > 0) {
+    // 只有当路由需要认证时才检查权限
+    if (requiresAuth) {
       // 首先检查白名单
       if (isInWhitelist(to.path)) {
         console.log('路由守卫: 白名单路径，允许访问:', to.path)
         return next()
+      }
+      
+      // 如果用户没有任何菜单权限，阻止访问非白名单路由
+      if (userStore.menus.length === 0) {
+        console.warn('路由守卫: 用户没有任何菜单权限，无法访问:', to.path)
+        return next('/401')
       }
       
       // 检查菜单权限

@@ -240,6 +240,25 @@ export const useUserStore = defineStore('user', {
         }
       }
       
+      // 子路由自动放行逻辑：如果父路径有权限，则 add/edit/detail 子路由自动放行
+      // 例如：有 /research/breeding-data/trial 权限，则自动放行：
+      //   - /research/breeding-data/trial/add
+      //   - /research/breeding-data/trial/edit/xxx
+      //   - /research/breeding-data/trial/detail/xxx
+      const subRoutePatterns = ['/add', '/edit/', '/detail/', '/form']
+      for (const pattern of subRoutePatterns) {
+        const patternIndex = normalizedPath.indexOf(pattern)
+        if (patternIndex > 0) {
+          // 提取父路径
+          const parentPath = normalizedPath.substring(0, patternIndex)
+          // 检查父路径是否有权限
+          if (this.validPaths.has(parentPath)) {
+            console.log(`路由守卫: 子路由自动放行 - 父路径 ${parentPath} 有权限，允许访问 ${normalizedPath}`)
+            return true
+          }
+        }
+      }
+      
       return false
     }
   }
