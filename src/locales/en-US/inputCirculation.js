@@ -45,7 +45,7 @@ export default {
   releaseDetailId: 'ID',
   cropType: 'Crop Type',
   variety: 'Variety',
-  inputId: 'Input ID',
+  inputId: 'Input',
   inputName: 'Input Name',
   required: 'Required Quantity',
   quantity: 'Quantity',
