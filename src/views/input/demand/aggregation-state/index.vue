@@ -36,11 +36,11 @@
                 :label="$t('stateAggregation.columns.year')"
                 min-width="100"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="sourceCode"
                 :label="$t('stateAggregation.columns.sourceCode')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="sourceName"
                 :label="$t('stateAggregation.columns.sourceName')"
@@ -134,10 +134,10 @@
                 </el-tag>
               </div>
               <div class="mobile-card-body">
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.sourceName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>

@@ -36,17 +36,17 @@
                 :label="$t('villageAggregation.columns.year')"
                 min-width="100"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="sourceCode"
                 :label="$t('villageAggregation.columns.sourceCode')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="sourceName"
                 :label="$t('villageAggregation.columns.sourceName')"
                 min-width="140"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="targetCode"
                 :label="$t('villageAggregation.columns.targetCode')"
                 min-width="140"
@@ -55,7 +55,7 @@
                 prop="targetName"
                 :label="$t('villageAggregation.columns.targetName')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="subQuantity"
                 :label="$t('villageAggregation.columns.subQuantity')"
@@ -142,22 +142,22 @@
                 </el-tag>
               </div>
               <div class="mobile-card-body">
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.sourceName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>
                 </div>
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.targetCode') }}:</span>
                   <span class="value">{{ item.targetCode }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.targetName') }}:</span>
                   <span class="value">{{ item.targetName }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
