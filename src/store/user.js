@@ -186,11 +186,6 @@ export const useUserStore = defineStore('user', {
     flattenPaths(menus, parentPath = '') {
       let paths = []
       for (const menu of menus) {
-        // 新格式使用 hidden 字段，true 表示隐藏
-        if (menu.hidden === true) {
-          continue
-        }
-
         let fullPath = menu.path || ''
         // 新格式：path 可能是 /system（绝对路径）或 system/menu（相对路径）
         // 相对路径只需要加前导斜杠，不需要拼接父路径
