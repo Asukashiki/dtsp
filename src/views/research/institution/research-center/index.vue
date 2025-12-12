@@ -300,15 +300,15 @@ const handleMobileSelect = (item) => {
 }
 
 const handleAdd = () => {
-  router.push('/research/breeding-data/research-center/add')
+  router.push('/research/institution/research-center/add')
 }
 
 const handleView = (row) => {
-  router.push(`/research/breeding-data/research-center/detail/${row.locationId}`)
+  router.push(`/research/institution/research-center/detail/${row.locationId}`)
 }
 
 const handleEdit = (row) => {
-  router.push(`/research/breeding-data/research-center/edit/${row.locationId}`)
+  router.push(`/research/institution/research-center/edit/${row.locationId}`)
 }
 
 const handleDelete = (row) => {

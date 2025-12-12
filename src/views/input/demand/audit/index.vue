@@ -8,9 +8,15 @@
             <i class="ri-task-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('demandAudit.title') }}</h1>
+            <h1 class="page-title">{{ $t('input.menu.KebeleAudit') }}</h1>
             <p class="page-subtitle">{{ $t('demandAudit.subtitle') }}</p>
           </div>
+        </div>
+        <div class="header-right">
+          <el-button type="primary" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+            {{ $t('demandAudit.actions.back') }}
+          </el-button>
         </div>
       </div>
 
@@ -27,6 +33,7 @@
                 type="primary"
                 @click="handleBatchApprove"
                 :disabled="selectedRows.length === 0"
+                v-if="activeTab === 'pending'"
               >
                 <i class="ri-check-line"></i>
                 {{ $t('demandAudit.actions.batchApprove') }}
@@ -35,6 +42,7 @@
                 type="danger"
                 @click="handleBatchReject"
                 :disabled="selectedRows.length === 0"
+                v-if="activeTab === 'pending'"
               >
                 <i class="ri-close-line"></i>
                 {{ $t('demandAudit.actions.batchReject') }}
@@ -43,36 +51,43 @@
           </div>
 
           <div class="card-body">
-            <!-- 搜索区域 -->
-            <div class="search-section">
-              <el-input
-                v-model="searchForm.keyword"
-                :placeholder="$t('demandAudit.searchPlaceholder')"
-                clearable
-                class="search-input"
-              >
-                <template #prefix>
+            <el-tabs v-model="activeTab">
+              <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />
+              <el-tab-pane :label="$t('demandAudit.tabs.approved')" name="approved" />
+            </el-tabs>
+
+            <div v-if="activeTab === 'pending'">
+              <!-- 搜索区域 -->
+              <div class="search-section">
+                <el-input
+                  v-model="searchForm.keyword"
+                  :placeholder="$t('demandAudit.searchPlaceholder')"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix>
+                    <i class="ri-search-line"></i>
+                  </template>
+                </el-input>
+
+                <el-button type="primary" @click="handleSearch">
                   <i class="ri-search-line"></i>
-                </template>
-              </el-input>
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset" style="margin-left: 0px;">
+                  <i class="ri-refresh-line"></i>
+                  {{ $t('common.reset') }}
+                </el-button>
+              </div>
 
-              <el-button type="primary" @click="handleSearch">
-                <i class="ri-search-line"></i>
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-refresh-line"></i>
-                {{ $t('common.reset') }}
-              </el-button>
-            </div>
-
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
+              <!-- PC端表格 -->
+              <div class="table-wrapper pc-only">
               <el-table
                 v-loading="loading"
                 :data="tableData"
                 stripe
                 @selection-change="handleSelectionChange"
+                empty-text=""
               >
                 <el-table-column type="selection" width="55" />
                 <el-table-column
@@ -91,20 +106,20 @@
                   min-width="150"
                 />
                 <el-table-column
-                  prop="kebele"
-                  :label="$t('demandAudit.columns.kebele')"
-                  min-width="120"
-                />
-                <el-table-column
                   prop="woreda"
                   :label="$t('demandAudit.columns.woreda')"
                   min-width="120"
                 />
                 <el-table-column
+                  prop="kebele"
+                  :label="$t('demandAudit.columns.kebele')"
+                  min-width="120"
+                />
+                <!-- <el-table-column
                   prop="village"
                   :label="$t('demandAudit.columns.village')"
                   min-width="120"
-                />
+                /> -->
                 <el-table-column
                   prop="landArea"
                   :label="$t('demandAudit.columns.landArea')"
@@ -114,7 +129,7 @@
                     {{ row.landArea || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                   prop="currentAuditLevel"
                   :label="$t('demandAudit.columns.currentAuditLevel')"
                   min-width="120"
@@ -122,13 +137,13 @@
                   <template #default="{ row }">
                     {{ getAuditLevelLabel(row.currentAuditLevel) }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
                   prop="submitTime"
                   :label="$t('demandAudit.columns.submitTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="280">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -147,8 +162,8 @@
                   </template>
                 </el-table-column>
               </el-table>
-            </div>
-
+              </div>
+              
             <!-- 移动端卡片 -->
             <div class="mobile-cards mobile-only">
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
@@ -182,10 +197,10 @@
                     <span class="label">{{ $t('demandAudit.columns.woreda') }}:</span>
                     <span class="value">{{ item.woreda }}</span>
                   </div>
-                  <div class="mobile-card-row">
+                  <!-- <div class="mobile-card-row">
                     <span class="label">{{ $t('demandAudit.columns.village') }}:</span>
                     <span class="value">{{ item.village }}</span>
-                  </div>
+                  </div> -->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('demandAudit.columns.landArea') }}:</span>
                     <span class="value">{{ item.landArea || '-' }}</span>
@@ -208,9 +223,11 @@
                 </div>
               </div>
             </div>
+            </div>
+
 
             <!-- 分页 -->
-            <div v-if="pagination.total > 0" class="pagination-wrapper">
+            <div v-if="activeTab === 'pending' && pagination.total > 0" class="pagination-wrapper">
               <el-pagination
                 v-model:current-page="pagination.currentPage"
                 v-model:page-size="pagination.pageSize"
@@ -225,7 +242,163 @@
             </div>
 
             <!-- 空状态 -->
-            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('demandAudit.messages.noData')" />
+            <el-empty
+              v-if="activeTab === 'pending' && tableData.length === 0 && !loading"
+              :description="$t('demandAudit.messages.noData')"
+            />
+
+            <!-- 已审核 Tab 内容 -->
+            <div v-if="activeTab === 'approved'">
+              <!-- 搜索区域 -->
+              <div class="search-section">
+                <el-input
+                  v-model="searchForm.keyword"
+                  :placeholder="$t('demandAudit.searchPlaceholder')"
+                  clearable
+                  class="search-input"
+                >
+                  <template #prefix>
+                    <i class="ri-search-line"></i>
+                  </template>
+                </el-input>
+
+                <el-button type="primary" @click="handleSearch">
+                  <i class="ri-search-line"></i>
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button @click="handleReset" style="margin-left: 0px;">
+                  <i class="ri-refresh-line"></i>
+                  {{ $t('common.reset') }}
+                </el-button>
+              </div>
+
+              <!-- PC端表格 -->
+              <div class="table-wrapper pc-only">
+                <el-table
+                  v-loading="approvedLoading"
+                  :data="approvedData"
+                  stripe
+                  empty-text=""
+                >
+                  <el-table-column
+                    prop="batchNo"
+                    :label="$t('demandAudit.columns.batchNo')"
+                    min-width="150"
+                  />
+                  <el-table-column
+                    prop="farmerName"
+                    :label="$t('demandAudit.columns.farmerName')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="farmerIdNumber"
+                    :label="$t('demandAudit.columns.farmerIdNumber')"
+                    min-width="150"
+                  />
+                  <el-table-column
+                    prop="woreda"
+                    :label="$t('demandAudit.columns.woreda')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="kebele"
+                    :label="$t('demandAudit.columns.kebele')"
+                    min-width="120"
+                  />
+                  <el-table-column
+                    prop="landArea"
+                    :label="$t('demandAudit.columns.landArea')"
+                    min-width="120"
+                  >
+                    <template #default="{ row }">
+                      {{ row.landArea || '-' }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="submitTime"
+                    :label="$t('demandAudit.columns.submitTime')"
+                    min-width="160"
+                  />
+                  <el-table-column :label="$t('common.actions')" fixed="right" width="150">
+                    <template #default="{ row }">
+                      <div class="action-buttons">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>
+                          {{ $t('common.view') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+
+              <!-- 移动端卡片 -->
+              <div class="mobile-cards mobile-only">
+                <div v-for="item in approvedData" :key="item.id" class="mobile-card">
+                  <div class="mobile-card-header">
+                    <div class="farmer-name">
+                      <i class="ri-user-line"></i>
+                      <span>{{ item.farmerName }}</span>
+                    </div>
+                    <el-tag type="success" size="small">
+                      {{ $t('demandAudit.status.approved') }}
+                    </el-tag>
+                  </div>
+                  <div class="mobile-card-body">
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.batchNo') }}:</span>
+                      <span class="value">{{ item.batchNo }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.farmerIdNumber') }}:</span>
+                      <span class="value">{{ item.farmerIdNumber }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.kebele') }}:</span>
+                      <span class="value">{{ item.kebele }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.woreda') }}:</span>
+                      <span class="value">{{ item.woreda }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.landArea') }}:</span>
+                      <span class="value">{{ item.landArea || '-' }}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                      <span class="label">{{ $t('demandAudit.columns.submitTime') }}:</span>
+                      <span class="value">{{ item.submitTime || '-' }}</span>
+                    </div>
+                  </div>
+                  <div class="mobile-card-actions">
+                    <el-button type="primary" size="small" @click="handleView(item)">
+                      {{ $t('common.view') }}
+                    </el-button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 分页 -->
+              <div v-if="pagination.total > 0" class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :total="pagination.total"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  background
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
+
+              <!-- 空状态 -->
+              <el-empty
+                v-if="approvedData.length === 0 && !approvedLoading"
+                :description="$t('demandAudit.messages.noData')"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -237,7 +410,7 @@
       :title="$t('demandAudit.approveDialog.title')"
       width="500px"
     >
-      <el-form :model="approveForm" label-width="100px">
+      <!-- <el-form :model="approveForm" label-width="100px">
         <el-form-item :label="$t('demandAudit.approveDialog.remark')">
           <el-input
             v-model="approveForm.remark"
@@ -246,7 +419,7 @@
             :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')"
           />
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <template #footer>
         <el-button @click="approveDialogVisible = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="primary" @click="confirmApprove" :loading="submitting">
@@ -261,7 +434,7 @@
       :title="$t('demandAudit.rejectDialog.title')"
       width="500px"
     >
-      <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
+      <!-- <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
         <el-form-item :label="$t('demandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
           <el-input
             v-model="rejectForm.auditOpinion"
@@ -278,7 +451,7 @@
             :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')"
           />
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <template #footer>
         <el-button @click="rejectDialogVisible = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="danger" @click="confirmReject" :loading="submitting">
@@ -290,19 +463,30 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getPendingDemandPage, approveDemand, rejectDemand } from '@/api/demandAudit'
+import { getPendingDemandPage, approveDemand, rejectDemand, getApprovedDemandPage } from '@/api/demandAudit'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
+
+// 获取路由年份参数
+const yearParam = ref(route.params.year || '')
 
 const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
+
+// Tab
+const activeTab = ref('pending')
+
+// 已审核数据
+const approvedLoading = ref(false)
+const approvedData = ref([])
 
 // 搜索表单
 const searchForm = reactive({
@@ -352,14 +536,17 @@ const rejectRules = reactive({
   ]
 })
 
-// 加载数据
+// 加载待审核数据
 const loadData = async () => {
   loading.value = true
   try {
     const params = {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
-      farmerName: searchForm.keyword || undefined
+      farmerName: searchForm.keyword || undefined,
+      // kebele:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      kebele:'huangshan',
+      year: yearParam.value // 添加年份参数
     }
     const res = await getPendingDemandPage(params)
     if (res.code === 200) {
@@ -377,17 +564,53 @@ const loadData = async () => {
   }
 }
 
+// 加载已审核数据
+const loadApprovedData = async () => {
+  approvedLoading.value = true
+  try {
+    const params = {
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      farmerName: searchForm.keyword || undefined,
+      // kebele:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      kebele:'huangshan',
+      year: yearParam.value // 添加年份参数
+    }
+    const res = await getApprovedDemandPage(params)
+    if (res.code === 200) {
+      approvedData.value = res.data.records.map(item => ({
+        ...item,
+        checked: false
+      }))
+      pagination.total = res.data.total
+    }
+  } catch (error) {
+    console.error('Failed to load approved data:', error)
+    ElMessage.error(t('demandAudit.messages.loadFailed'))
+  } finally {
+    approvedLoading.value = false
+  }
+}
+
 // 搜索
 const handleSearch = () => {
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 // 重置
 const handleReset = () => {
   searchForm.keyword = ''
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 // 选择变化
@@ -486,6 +709,7 @@ const handleBatchReject = () => {
   rejectDialogVisible.value = true
 }
 
+
 // 确认审核驳回
 const confirmReject = async () => {
   if (!rejectFormRef.value) return
@@ -531,11 +755,37 @@ const confirmReject = async () => {
 // 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
 }
 
 const handleCurrentChange = () => {
-  loadData()
+  if (activeTab.value === 'pending') {
+    loadData()
+  } else if (activeTab.value === 'approved') {
+    loadApprovedData()
+  }
+}
+
+// 监听 Tab 切换
+watch(activeTab, (val) => {
+  if (val === 'pending') {
+    pagination.currentPage = 1
+    loadData()
+  } else if (val === 'approved') {
+    pagination.currentPage = 1
+    loadApprovedData()
+  }
+})
+
+// 返回到需求汇聚页面
+const handleBack = () => {
+  router.push({
+    name: 'VillageAggregation'
+  })
 }
 
 // 初始化
@@ -543,10 +793,9 @@ onMounted(() => {
   loadData()
 })
 </script>
-
 <style scoped>
 .page-container {
-  min-height: 100vh;
+  min-height: 100%;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
   padding: 24px;
 }
@@ -561,12 +810,19 @@ onMounted(() => {
   padding: 32px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.header-right {
+  flex-shrink: 0;
 }
 
 .header-icon {
@@ -641,6 +897,7 @@ onMounted(() => {
 
 .search-section {
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -656,8 +913,8 @@ onMounted(() => {
 
 .action-buttons {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .mobile-cards {

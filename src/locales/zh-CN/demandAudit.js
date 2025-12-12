@@ -5,8 +5,14 @@ export default {
   list: '待审核列表',
   detail: '审核详情',
 
+  // Tab
+  tabs: {
+    pending: '待审核',
+    approved: '已审核',
+  },
+
   // 搜索和筛选
-  searchPlaceholder: '搜索农民姓名、身份证号、村庄',
+  searchPlaceholder: '搜索农民姓名',
   filterByBatch: '按批次筛选',
   filterByKebele: '按Kebele筛选',
   filterByWoreda: '按Woreda筛选',
@@ -23,6 +29,9 @@ export default {
     batchReject: '批量驳回',
     submit: '提交审核',
     lockBatch: '锁定批次',
+    aggregationSubmit: '汇聚数据提交',
+    aggregationDetail: '汇聚数据详情',
+    back: '返回',
   },
 
   // 列表列
@@ -158,6 +167,32 @@ export default {
     seed: '种子',
     fertilizer: '化肥',
     pesticide: '农药',
+  },
+
+  // 数据汇聚
+  aggregation: {
+    title: '农资汇聚详情',
+    dialogTitle: '汇聚统计数据',
+    submitConfirm: '确定要提交汇聚数据吗？',
+    submitSuccess: '汇聚数据提交成功',
+    submitFailed: '汇聚数据提交失败',
+    inputCategory: '农资分类',
+    inputType: '农资类型',
+    totalQuantity: '总数量',
+    totalCount: '总项目数',
+    demandCount: '涉及需求数',
+    sourceName: '来源',
+    targetName: '目标',
+    status: '状态',
+    createdTime: '创建时间',
+    noData: '暂无汇聚数据',
+  },
+
+  // 汇聚状态
+  aggregationStatus: {
+    pending: '待审核',
+    success: '成功',
+    rejected: '拒绝',
   },
 
   // 提示信息

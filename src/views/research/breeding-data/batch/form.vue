@@ -27,8 +27,13 @@
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
+                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.batchId')">
-                    <el-input v-model="formData.batchId" disabled :placeholder="'BRD-{variety_code}-{year}-serial'" />
+                    <el-input v-model="formData.batchId" disabled :placeholder="'B_{cropType}_{year}_000001'" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -39,17 +44,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
+                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-select v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" style="width: 100%" @change="handleVarietyChange">
-                      <el-option
-                        v-for="item in varietyOptions"
-                        :key="item.code"
-                        :label="`${item.name} (${item.code})`"
-                        :value="item.name"
-                      >
-                        <span>{{ item.name }} ({{ item.code }})</span>
-                      </el-option>
-                    </el-select>
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -60,13 +61,18 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
-                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.year')" prop="year">
+                    <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.batch.placeholder.year')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.year')" prop="year">
-                    <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.batch.placeholder.year')" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.parentalSeedSource')" prop="parentalSeedSource">
+                    <el-input v-model="formData.parentalSeedSource" :placeholder="$t('research.breedingData.batch.placeholder.parentalSeedSource')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.objective')" prop="objective">
+                    <el-input v-model="formData.objective" :placeholder="$t('research.breedingData.batch.placeholder.objective')" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -120,6 +126,8 @@ const formData = reactive({
   breedingMethod: '',
   batchName: '',
   year: '',
+  parentalSeedSource: '',
+  objective: '',
   status: 'ongoing',
   remarks: ''
 })
@@ -130,41 +138,35 @@ const rules = {
   varietyName: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyName'), trigger: 'blur' }],
   breedingMethod: [{ required: true, message: t('research.breedingData.batch.placeholder.breedingMethod'), trigger: 'change' }],
   batchName: [{ required: true, message: t('research.breedingData.batch.placeholder.batchName'), trigger: 'blur' }],
-  year: [{ required: true, message: t('research.breedingData.batch.placeholder.year'), trigger: 'change' }],
-  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }]
+  year: [
+    { required: true, message: t('research.breedingData.batch.placeholder.year'), trigger: 'change' },
+    {
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback()
+          return
+        }
+        const currentYear = new Date().getFullYear()
+        const selectedYear = parseInt(value)
+        if (selectedYear < currentYear) {
+          callback(new Error(t('research.breedingData.batch.validation.yearNotLessThanCurrent')))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'change'
+    }
+  ],
+  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }],
+  parentalSeedSource: [{ required: true, message: t('research.breedingData.batch.placeholder.parentalSeedSource'), trigger: 'blur' }],
+  objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }]
 }
 
 const cropTypeOptions = [
-  { label: 'wheat', value: 'wheat' },
-  { label: 'corn', value: 'corn' },
-  { label: 'soybean', value: 'soybean' },
-  { label: 'cotton', value: 'cotton' }
+  { label: 'wheat', value: 'T01' },
+  { label: 'corn', value: 'T02' },
+  { label: 'teff', value: 'T03' }
 ]
-
-const cropVarietyData = {
-  wheat: [
-    { code: 'WH001', name: 'Winter Wheat A1' },
-    { code: 'WH002', name: 'Spring Wheat B2' },
-    { code: 'WH003', name: 'Durum Wheat C3' }
-  ],
-  corn: [
-    { code: 'CN001', name: 'Sweet Corn X1' },
-    { code: 'CN002', name: 'Field Corn Y2' },
-    { code: 'CN003', name: 'Popcorn Z3' }
-  ],
-  soybean: [
-    { code: 'SB001', name: 'Glycine Max P1' },
-    { code: 'SB002', name: 'Roundup Ready Q2' },
-    { code: 'SB003', name: 'Non-GMO R3' }
-  ],
-  cotton: [
-    { code: 'CT001', name: 'Upland Cotton M1' },
-    { code: 'CT002', name: 'Pima Cotton N2' },
-    { code: 'CT003', name: 'Egyptian Cotton O3' }
-  ]
-}
-
-const varietyOptions = ref([])
 
 const breedingMethodOptions = [
   { label: 'hybridization', value: 'hybridization' },
@@ -186,10 +188,6 @@ const getInfo = async () => {
     Object.assign(formData, res.data)
     if (formData.year) {
       formData.year = String(formData.year)
-    }
-    // 根据作物类型初始化品种选项
-    if (formData.cropType && cropVarietyData[formData.cropType]) {
-      varietyOptions.value = cropVarietyData[formData.cropType]
     }
   } catch (error) {
     console.error('获取详情失败:', error)
@@ -224,30 +222,36 @@ const handleSubmit = async () => {
   }
 }
 
-const handleCropTypeChange = (value) => {
-  // 清空品种选择
-  formData.varietyCode = ''
-  formData.varietyName = ''
-
-  // 更新品种选项
-  if (value && cropVarietyData[value]) {
-    varietyOptions.value = cropVarietyData[value]
-  } else {
-    varietyOptions.value = []
-  }
+const handleCropTypeChange = () => {
+  // 自动生成 batchId
+  generateBatchId()
 }
 
-const handleVarietyChange = (value) => {
-  // 根据选择的品种名称自动填充品种代码
-  const selectedVariety = varietyOptions.value.find(item => item.name === value)
-  if (selectedVariety) {
-    formData.varietyCode = selectedVariety.code
+// 生成 batchId: B_${cropType}_${year}_serial(6位)
+const generateBatchId = () => {
+  // 编辑模式下不自动生成
+  if (isEdit.value) return
+
+  const { cropType, year } = formData
+
+  if (!cropType || !year) {
+    formData.batchId = ''
+    return
   }
+
+  // 生成6位流水号（这里暂时使用随机数，实际应该从后端获取最新的流水号）
+  const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+  formData.batchId = `B_${cropType}_${year}_${serial}`
 }
 
 const goBack = () => {
   router.push('/research/breeding-data/batch')
 }
+
+// 监听年份变化，自动生成 batchId
+watch(() => formData.year, () => {
+  generateBatchId()
+})
 
 onMounted(() => {
   getInfo()

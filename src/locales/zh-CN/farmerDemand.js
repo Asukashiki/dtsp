@@ -11,7 +11,13 @@ export default {
   deleteSuccess: '删除成功',
   addSuccess: '新增成功',
   editSuccess: '编辑成功',
-
+  submit:'提交',
+  submitSuccess:'提交成功',
+  submitConfirm: '确认提交该需求到村级审核吗?',
+  submitFailed: '提交失败',
+  batchSubmitConfirm: '确认提交选中的 {count} 条需求到村级审核吗?',
+  batchSubmitResult: '提交完成: 成功 {success} 条, 失败 {fail} 条',
+  pleaseSelectData: '请选择要提交的数据',
   // 搜索和筛选
   searchPlaceholder: '搜索农民姓名、身份证号、村庄',
   filterByBatch: '按批次筛选',

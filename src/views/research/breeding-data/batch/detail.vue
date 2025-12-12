@@ -20,13 +20,14 @@
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.batchName')">{{ detailData.batchName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.batchId')">{{ detailData.batchId }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.cropType')">{{ detailData.cropType }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyCode')">{{ detailData.varietyCode }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.cropType')">{{ displayCropType }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyName')">{{ detailData.varietyName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.breedingMethod')">{{ detailData.breedingMethod }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.batchName')">{{ detailData.batchName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.year')">{{ detailData.year }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.parentalSeedSource')">{{ detailData.parentalSeedSource || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.objective')">{{ detailData.objective || '-' }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.status')">{{ detailData.status }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.remarks')" :span="2">{{ detailData.remarks || '-' }}</el-descriptions-item>
             </el-descriptions>
@@ -38,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getBreedingBatchInfo } from '@/api/breedingData'
 
@@ -46,6 +47,16 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+
+// 计算属性：显示作物种类名称
+const displayCropType = computed(() => {
+  const cropTypeNameMap = {
+    'T01': 'wheat',
+    'T02': 'corn',
+    'T03': 'teff'
+  }
+  return cropTypeNameMap[detailData.value.cropType] || detailData.value.cropType
+})
 
 const getInfo = async () => {
   loading.value = true

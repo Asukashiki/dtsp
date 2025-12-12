@@ -255,7 +255,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getRegistrationAuditPage, approveRegistration, rejectRegistration } from '@/api/registration'
+import { getRegistrationAuditPage, approveRegistration, rejectRegistration } from '@/api/input-registration'
 
 const router = useRouter()
 const { t } = useI18n()

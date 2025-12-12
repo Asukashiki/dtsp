@@ -28,6 +28,8 @@ export default {
       genus: '属',
       family: '科',
       breedingMethod: '繁育方法',
+      parentalSeedSource: '亲本种子来源',
+      objective: '育种目标',
       pedigree: '血统',
       yearOfDevelopment: '繁育年份',
       productPlace: '生产地',
@@ -50,6 +52,8 @@ export default {
       genus: '请输入属',
       family: '请输入科',
       breedingMethod: '请选择繁育方法',
+      parentalSeedSource: '请输入亲本种子来源',
+      objective: '请输入育种目标',
       pedigree: '请输入血统',
       yearOfDevelopment: '请选择繁育年份',
       productPlace: '请输入生产地',
@@ -67,6 +71,8 @@ export default {
       varietyCode: '品种编码',
       varietyName: '品种名称',
       breedingMethod: '繁育方法',
+      parentalSeedSource: '亲本种子来源',
+      objective: '请输入育种目标',
       year: '开展年份',
       status: '批次状态',
       personInCharge: '负责人',
@@ -74,6 +80,11 @@ export default {
       endDate: '结束时间',
       createTime: '创建时间',
       actions: '操作',
+    },
+
+    // 验证规则
+    validation: {
+      yearNotLessThanCurrent: '开展年份不能小于当前年份'
     },
   },
 

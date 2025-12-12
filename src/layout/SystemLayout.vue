@@ -69,8 +69,8 @@
             :unique-opened="true"
             router
           >
-            <template v-for="item in menuList" :key="item.index">
-              <el-sub-menu v-if="item.children" :index="item.index">
+            <template v-for="item in menuList">
+              <el-sub-menu v-if="item.children" :index="item.index" :key="item.index">
                 <template #title>
                   <i :class="item.icon"></i>
                   <span>{{ item.title }}</span>
@@ -84,7 +84,7 @@
                   <span>{{ child.title }}</span>
                 </el-menu-item>
               </el-sub-menu>
-              <el-menu-item v-else :index="item.index">
+              <el-menu-item v-else :index="item.index" :key="item.index">
                 <i :class="item.icon"></i>
                 <span>{{ item.title }}</span>
               </el-menu-item>
@@ -110,8 +110,8 @@
           :unique-opened="true"
           @select="handleMobileMenuSelect"
         >
-          <template v-for="item in menuList" :key="item.index">
-            <el-sub-menu v-if="item.children" :index="item.index">
+          <template v-for="item in menuList">
+            <el-sub-menu v-if="item.children" :index="item.index" :key="item.index">
               <template #title>
                 <i :class="item.icon"></i>
                 <span>{{ item.title }}</span>
@@ -125,7 +125,7 @@
                 <span>{{ child.title }}</span>
               </el-menu-item>
             </el-sub-menu>
-            <el-menu-item v-else :index="item.index">
+            <el-menu-item v-else :index="item.index" :key="item.index">
               <i :class="item.icon"></i>
               <span>{{ item.title }}</span>
             </el-menu-item>
@@ -174,17 +174,45 @@ const userName = computed(() => userStore.userInfo?.user?.name || '用户')
 const organName = computed(() => userStore.userInfo?.user?.organName || '访客')
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
-// 菜单列表
+// 获取用户角色列表
+const userRoles = computed(() => {
+  const roleStr = userStore.userInfo?.user?.LOGIN_ROLE_VALUE?.['SMART-AGR'] || ''
+  return roleStr.split(',').map(r => r.trim()).filter(r => r)
+})
+
+// 检查用户是否有权限访问菜单
+const hasPermission = (roles) => {
+  if (!roles || roles.length === 0) return true // 没有配置角色限制，默认所有人可访问
+  if (userRoles.value.includes('agri-admin')) return true // 超级管理员有所有权限
+  return roles.some(role => userRoles.value.includes(role))
+}
+
+// 菜单列表（根据角色过滤）
 const menuList = computed(() => {
   if (!config.value.menus) return []
-  return config.value.menus.map(menu => ({
-    ...menu,
-    title: t(menu.titleKey),
-    children: menu.children?.map(child => ({
-      ...child,
-      title: t(child.titleKey)
-    }))
-  }))
+
+  return config.value.menus.map(menu => {
+    // 过滤子菜单
+    const filteredChildren = menu.children
+      ? menu.children
+          .filter(child => hasPermission(child.roles))
+          .map(child => ({
+            ...child,
+            title: t(child.titleKey)
+          }))
+      : undefined
+
+    // 如果父菜单有子菜单，且子菜单被过滤后为空，则不显示父菜单
+    if (menu.children && (!filteredChildren || filteredChildren.length === 0)) {
+      return null
+    }
+
+    return {
+      ...menu,
+      title: t(menu.titleKey),
+      children: filteredChildren
+    }
+  }).filter(menu => menu !== null) // 移除被过滤掉的父菜单
 })
 
 const menuWidth =  computed(() => {

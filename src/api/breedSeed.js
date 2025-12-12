@@ -31,6 +31,17 @@ export const getBreedSeedProduceDetail = (breedSeedProduceBatchId) => {
 }
 
 /**
+ * 获取生产批次的剩余量（用于实时查询）
+ * Get remaining quantity of production batch
+ */
+export const getBreedSeedProduceRemainingQuantity = (breedSeedProduceBatchId) => {
+  return agricultureRequest({
+    url: `/seed/breed/produce/detail/${breedSeedProduceBatchId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 新增生产数据
  * Add breeder seed production
  */

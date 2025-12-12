@@ -12,10 +12,16 @@
         <el-form-item :label="$t('inputCirculation.releaseName')" prop="releaseName">
           <el-input v-model="formData.releaseName" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
+        <el-form-item :label="$t('inputCirculation.worId')" prop="zoneId">
+          <el-select v-model="formData.zoneId" :placeholder="$t('common.pleaseSelect')" @change="getAllCoorList">
+            <el-option v-for="item in worList" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('inputCirculation.targetId')" prop="targetId">
-          <el-cascader v-model="formData.targetId" :options="regionList"
-                       :props="{ expandTrigger: 'hover' }" :placeholder="$t('common.pleaseInput')"
-                       @change="getUnionInfo"></el-cascader>        </el-form-item>
+          <el-select v-model="formData.targetId" :placeholder="$t('common.pleaseSelect')" @change="getCoorInfo">
+            <el-option v-for="item in coorList" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('inputCirculation.targetAddress')">
           <el-input v-model="formData.targetAddress" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
@@ -29,7 +35,7 @@
           <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
-          <el-date-picker v-model="formData.releaseDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />
+          <el-date-picker v-model="formData.releaseDate" type="date" value-format="YYYY-MM-DD" />
         </el-form-item>
 <!--        <el-form-item :label="$t('inputCirculation.releaseBy')">-->
 <!--          <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" />-->
@@ -48,23 +54,31 @@
         <el-button type="primary" @click="addDetail" style="float: right;margin-bottom: 12px">{{ $t('inputCirculation.addDetail') }}</el-button>
         <el-table :data="formData.details" border style="margin-top: 16px">
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="100" />
-          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
-            <template #default="scope">
-              <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('inputCirculation.variety')" width="180">
-            <template #default="scope">
-              <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" />
-            </template>
-          </el-table-column>
           <el-table-column :label="$t('inputCirculation.inputId')" width="360">
             <template #default="scope">
-              <el-select v-model="scope.row.inputId" :placeholder="$t('common.pleaseSelect')" filterable clearable collapse-tags-tooltip>
+              <el-select v-model="scope.row.inputId"
+                         :placeholder="$t('common.pleaseSelect')"
+                         filterable
+                         clearable
+                         @change="handleInputChange(scope.$index)"
+                         style="width: 100%">
                 <el-option v-for="item in inputList" :key="item.inputId" :label="item.inputName" :value="item.inputId" />
               </el-select>
             </template>
           </el-table-column>
+
+          <el-table-column :label="$t('inputCirculation.variety')" width="120">
+            <template #default="scope">
+              <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" readonly />
+            </template>
+          </el-table-column>
+
+          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" readonly />
+            </template>
+          </el-table-column>
+
           <el-table-column :label="$t('inputCirculation.required')" width="200">
             <template #default="scope">
               <el-input-number v-model="scope.row.required" :min="0" :precision="2" />
@@ -114,6 +128,8 @@ import { ElMessage } from 'element-plus'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease } from '@/api/inputCirculation'
 import {getAllInputList} from "../../../../api/input.js";
 import {getUnionDetailByUnionId} from "../../../../api/union.js";
+import {getCurrentUserInfo} from "../../../../api/user.js";
+import {getOrgansRegionByCode, listSubRegionByCode} from "../../../../api/application.js";
 
 const { t } = useI18n()
 const route = useRoute()
@@ -126,6 +142,7 @@ const isEdit = computed(() => !!route.params.id)
 const formData = reactive({
   id: '',
   releaseName: '',
+  zoneId: '',
   targetId: '',
   targetAddress: '',
   targetContact: '',
@@ -140,7 +157,8 @@ const formData = reactive({
   details: []
 })
 
-const regionList = []
+const worList = ref([])
+const coorList = ref([])
 const inputList = ref([])
 
 const rules = {
@@ -149,7 +167,42 @@ const rules = {
   releaseDate: [{ required: true, message: t('common.required'), trigger: 'change' }],
 }
 
-const getRegionList = async () => {
+const getUserInfo = async () => {
+  loading.value = true
+  try {
+    const response = await getCurrentUserInfo()
+    if (response.code === 200 && response.data) {
+      // let userCode = response.data.region_parent_code
+      formData.releaseBy = response.data.user.name
+      formData.releaseOrg = response.data.user.organName
+      // 因为目前没有union层级用户，所以这里的parentCode暂时写死
+      let userParentCode = 102010000
+      // 调接口获取zone下的woreda列表（获取子区划）
+      await getSubRegionByCode(userParentCode)
+    }
+  } catch (error) {
+    ElMessage.error(t('common.queryUserInfoFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+const getSubRegionByCode = async (code) => {
+  console.log('code:', code)
+  if (!code || code.length === 0) return
+  loading.value = true
+  try {
+    const response = await listSubRegionByCode({regionCode: code})
+    console.log('response:', response)
+    if (response.code === 200 && response.data) {
+      worList.value = response.data
+      console.log('worList.value:', worList.value)
+    }
+  } catch (error) {
+    ElMessage.error(t('common.querySubRegionFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 const getInputList = async () => {
@@ -157,8 +210,16 @@ const getInputList = async () => {
   try {
     const response = await getAllInputList()
     if (response.code === 200) {
-      inputList.value = response.data
-      console.log(inputList.value)
+      inputList.value = response.data.map(item => {
+        return {
+          inputId: item.inputId,
+          inputName: item.inputName,
+          // 尝试多种可能的字段名
+          variety: item.variety || '',
+          agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type ||
+              item.inputType || item.type || ''
+        }
+      })
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryInputListFailed'))
@@ -167,7 +228,34 @@ const getInputList = async () => {
   }
 }
 
-const getUnionInfo = async (value) => {
+// 投入品选择变化处理
+const handleInputChange = (index) => {
+  const detail = formData.details[index]
+  const selectedInput = inputList.value.find(i => i.inputId === detail.inputId)
+  if (selectedInput) {
+    detail.variety = selectedInput.variety
+    detail.cropType = selectedInput.agriculturalInputType
+    detail.inputName = selectedInput.inputName
+  } else {
+    console.warn('未找到对应的投入品信息')
+  }
+}
+
+const getAllCoorList = async (value) => {
+  loading.value = true
+  try {
+    const response = await getOrgansRegionByCode({regionCode: value})
+    if (response.code === 200) {
+      coorList.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryCoorListFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
+const getCoorInfo = async (value) => {
   if (!value || value.length === 0) return
   loading.value = true
   try {
@@ -243,10 +331,10 @@ const handleBack = () => {
 }
 
 onMounted(() => {
+  getUserInfo()
+  getInputList()
   if (isEdit.value) {
     fetchDetail()
-  } else{
-    getInputList()
   }
 })
 </script>
