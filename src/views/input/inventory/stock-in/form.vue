@@ -50,7 +50,22 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.stockIn.relatedOrderNo')" prop="relatedOrderNo">
-              <el-input v-model="formData.relatedOrderNo" :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')" clearable />
+              <el-select
+                v-model="formData.relatedOrderNo"
+                :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')"
+                filterable
+                clearable
+                class="full-width"
+                :loading="distributionLoading"
+                @change="handleDistributionChange"
+              >
+                <el-option
+                  v-for="distribution in distributionList"
+                  :key="distribution.id"
+                  :label="distribution.releaseName"
+                  :value="distribution.id"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.stockIn.supplierName')" prop="supplierName">
               <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
@@ -101,11 +116,20 @@
                 <el-form-item :label="$t('input.inventory.stockIn.inputId')" :prop="`details.${index}.inputCode`">
                   <el-input v-model="item.inputCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputId')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.inputBatchId')" :prop="`details.${index}.inputBatchId`">
-                  <el-input v-model="item.inputBatchId" :placeholder="$t('input.inventory.stockIn.placeholder.inputBatchId')" clearable />
+                <el-form-item :label="$t('input.inventory.stockIn.inboundBatch')" :prop="`details.${index}.batchNo`">
+                  <el-input v-model="item.batchNo" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inboundBatch')" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.productionBatch')" :prop="`details.${index}.productionBatchNo`">
+                  <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.inputType')" :prop="`details.${index}.inputType`">
                   <el-input v-model="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
+                  <el-input v-model="item.agriculturalInputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')" />
+                </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.variety')" :prop="`details.${index}.variety`">
+                  <el-input v-model="item.variety" disabled :placeholder="$t('input.inventory.stockIn.placeholder.variety')" />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.specification')" :prop="`details.${index}.specification`">
                   <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
@@ -156,6 +180,7 @@ import { ElMessage } from 'element-plus'
 import { createInboundOrder, getInboundOrderDetail } from '@/api/inbound'
 import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
+import { getDistributionList, getDistributionDetail } from '@/api/distribution'
 
 const router = useRouter()
 const route = useRoute()
@@ -165,6 +190,7 @@ const formRef = ref(null)
 const submitLoading = ref(false)
 const warehouseLoading = ref(false)
 const inputLoading = ref(false)
+const distributionLoading = ref(false)
 
 const isEdit = computed(() => !!route.params.id)
 const inboundOrderId = route.params.id
@@ -173,6 +199,8 @@ const inboundOrderId = route.params.id
 const warehouseList = ref([])
 // 投入品列表
 const inputList = ref([])
+// 分发单列表
+const distributionList = ref([])
 
 // 加载仓库列表
 const loadWarehouseList = async () => {
@@ -212,11 +240,79 @@ const loadInputList = async () => {
   }
 }
 
+// 加载分发单列表
+const loadDistributionList = async () => {
+  distributionLoading.value = true
+  try {
+    const res = await getDistributionList()
+    if (res.code === 200) {
+      distributionList.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load distribution list:', error)
+  } finally {
+    distributionLoading.value = false
+  }
+}
+
+// 分发单选择变化时自动加载明细
+const handleDistributionChange = async (distributionId) => {
+  if (!distributionId) {
+    // 清空时不做处理
+    return
+  }
+
+  try {
+    const res = await getDistributionDetail(distributionId)
+    if (res.code === 200 && res.data) {
+      const distributionData = res.data
+      const details = distributionData.details || []
+
+      if (details.length === 0) {
+        ElMessage.warning(t('input.inventory.stockIn.noDistributionDetails'))
+        return
+      }
+
+      // 清空现有明细
+      formData.details = []
+
+      // 根据分发单明细创建入库明细
+      for (const detail of details) {
+        // 从投入品列表中查找对应的投入品信息
+        const input = inputList.value.find(i => i.input_id === detail.inputId)
+
+        formData.details.push({
+          inputId: detail.inputId || '',
+          inputCode: input?.input_sku || '',
+          batchNo: '', // 入库批次后端自动生成
+          productionBatchNo: '', // 生产批次需手动填写
+          inputType: input ? getInputTypeText(input.type) : '',
+          agriculturalInputType: detail.cropType || '',
+          variety: detail.variety || '',
+          specification: '',
+          unit: detail.unit || '',
+          quantity: detail.required || detail.quantity || null,
+          expiryDate: '',
+          qrCode: input?.qr_code || ''
+        })
+      }
+
+      ElMessage.success(t('input.inventory.stockIn.distributionLoaded'))
+    }
+  } catch (error) {
+    console.error('Failed to load distribution detail:', error)
+    ElMessage.error(t('input.inventory.stockIn.loadDistributionFailed'))
+  }
+}
+
 // 投入品选择变化时自动填充信息
-const handleInputChange = (item, index) => {
+const handleInputChange = async (item, index) => {
   if (!item.inputId) {
     item.inputCode = ''
     item.inputType = ''
+    item.agriculturalInputType = ''
+    item.variety = ''
+    item.expiryDate = ''
     item.qrCode = ''
     return
   }
@@ -225,6 +321,8 @@ const handleInputChange = (item, index) => {
   if (selectedInput) {
     item.inputCode = selectedInput.input_sku || ''
     item.inputType = getInputTypeText(selectedInput.type)
+    item.agriculturalInputType = selectedInput.agricultural_input_type || ''
+    item.variety = selectedInput.variety || ''
     item.qrCode = selectedInput.qr_code || ''
   }
 }
@@ -253,8 +351,11 @@ const formData = reactive({
     {
       inputId: '',
       inputCode: '',
-      inputBatchId: '',
+      batchNo: '', // 入库批次（自动生成，readonly）
+      productionBatchNo: '', // 生产批次（手动填写）
       inputType: '',
+      agriculturalInputType: '',
+      variety: '',
       specification: '',
       unit: '',
       quantity: null,
@@ -289,8 +390,11 @@ const addDetail = () => {
   formData.details.push({
     inputId: '',
     inputCode: '',
-    inputBatchId: '',
+    batchNo: '', // 入库批次（自动生成）
+    productionBatchNo: '', // 生产批次（手动填写）
     inputType: '',
+    agriculturalInputType: '',
+    variety: '',
     specification: '',
     unit: '',
     quantity: null,
@@ -329,8 +433,11 @@ const loadData = async () => {
         formData.details = data.details.map(item => ({
           inputId: item.inputId || item.input_id,
           inputCode: item.inputCode || item.input_code || '',
-          inputBatchId: item.inputBatchId || item.input_batch_id || '',
+          batchNo: item.batchNo || item.batch_no || '',
+          productionBatchNo: item.productionBatchNo || item.production_batch_no || '',
           inputType: item.inputType || item.input_type || '',
+          agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type || '',
+          variety: item.variety || '',
           specification: item.specification || '',
           unit: item.unit,
           quantity: item.quantity,
@@ -381,7 +488,10 @@ const handleSubmit = async () => {
           materialId: item.inputId,
           materialName: selectedInput ? selectedInput.input_name : '',
           materialType: item.inputType,
-          materialBatchId: item.inputBatchId,
+          batchNo: item.batchNo,
+          productionBatchNo: item.productionBatchNo, // 生产批次
+          agriculturalInputType: item.agriculturalInputType,
+          variety: item.variety,
           specModel: item.specification,
           unitOfMeasure: item.unit,
           quantity: item.quantity,
@@ -406,6 +516,7 @@ const handleSubmit = async () => {
 onMounted(async () => {
   await loadWarehouseList()
   await loadInputList()
+  await loadDistributionList()
   await loadData()
 })
 </script>

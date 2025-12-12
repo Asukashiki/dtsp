@@ -50,10 +50,6 @@
               <span class="value">{{ detailData.warehouse_name }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundObject') }}:</span>
-              <span class="value">{{ detailData.outbound_object_id || '-' }}</span>
-            </div>
-            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.relatedOrderNo') }}:</span>
               <span class="value">{{ detailData.related_order_no || '-' }}</span>
             </div>
@@ -113,9 +109,11 @@
           <div class="pc-view">
             <el-table :data="detailData.details || []" stripe style="width: 100%">
               <el-table-column type="index" label="#" width="60" />
-                <el-table-column prop="material_id" :label="$t('input.inventory.stockOut.form.materialId')" width="150" />
-              <el-table-column prop="material_name" :label="$t('input.catalog.columns.inputName')" min-width="150" />
-              <el-table-column prop="material_type" :label="$t('input.inventory.stockOut.form.materialType')" width="120" />
+              <el-table-column prop="material_name" :label="$t('input.inventory.stockOut.form.inputName')" min-width="150" />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockOut.form.inputType')" width="120" />
+              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockOut.form.agriculturalInputType')" width="120" />
+              <el-table-column prop="variety" :label="$t('input.inventory.stockOut.form.variety')" width="120" />
+              <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockOut.form.batchNo')" width="150" />
               <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
               <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100" />
@@ -141,12 +139,20 @@
               </div>
               <div class="item-info">
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.materialId') }}:</span>
-                  <span class="value">{{ item.material_id }}</span>
+                  <span class="label">{{ $t('input.inventory.stockOut.form.inputType') }}:</span>
+                  <span class="value">{{ item.material_type || '-' }}</span>
                 </div>
-                <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
-                  <span class="value">{{ item.material_type }}</span>
+                <div v-if="item.agricultural_input_type" class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.agriculturalInputType') }}:</span>
+                  <span class="value">{{ item.agricultural_input_type }}</span>
+                </div>
+                <div v-if="item.variety" class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.variety') }}:</span>
+                  <span class="value">{{ item.variety }}</span>
+                </div>
+                <div v-if="item.material_batch_id" class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
+                  <span class="value">{{ item.material_batch_id }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockOut.form.quantity') }}:</span>

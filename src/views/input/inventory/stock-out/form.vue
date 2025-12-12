@@ -55,37 +55,24 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item :label="$t('input.inventory.stockOut.form.outboundObject')" prop="outbound_object_id">
+            <el-form-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')" prop="related_order_no">
               <el-select
-                v-model="formData.outbound_object_id"
-                :placeholder="$t('input.inventory.stockOut.placeholder.outboundObject')"
+                v-model="formData.related_order_no"
+                :placeholder="$t('input.inventory.stockOut.placeholder.relatedOrderNo')"
                 filterable
                 clearable
                 class="full-width"
-                :loading="warehouseLoading"
-                :disabled="availableTargetWarehouses.length === 0"
-                @change="handleOutboundObjectChange"
+                :loading="distributionLoading"
+                @focus="handleDistributionFocus"
+                @change="handleDistributionChange"
               >
                 <el-option
-                  v-for="warehouse in availableTargetWarehouses"
-                  :key="warehouse.warehouse_id"
-                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code || warehouse.warehouse_id})`"
-                  :value="warehouse.warehouse_id"
+                  v-for="distribution in distributionList"
+                  :key="distribution.id"
+                  :label="distribution.releaseName"
+                  :value="distribution.id"
                 />
-                <template #empty>
-                  <div style="padding: 10px; text-align: center; color: #909399; font-size: 14px;">
-                    {{ $t('input.inventory.stockOut.messages.noAvailableWarehouse') }}
-                  </div>
-                </template>
               </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')" prop="related_order_no">
-              <el-input
-                v-model="formData.related_order_no"
-                :placeholder="$t('input.inventory.stockOut.placeholder.relatedOrderNo')"
-                clearable
-              />
             </el-form-item>
 
             <el-form-item :label="$t('input.inventory.stockOut.form.outboundUser')" prop="outbound_user">
@@ -134,13 +121,13 @@
             <div v-for="(item, index) in formData.details" :key="index" class="item-row">
               <div class="item-fields">
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.materialId')"
+                  :label="$t('input.inventory.stockIn.form.inputId')"
                   :prop="`details.${index}.material_id`"
                   :rules="detailRules.material_id"
                 >
                   <el-select
                     v-model="item.material_id"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.materialId')"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.inputId')"
                     filterable
                     clearable
                     class="full-width"
@@ -158,24 +145,46 @@
                 </el-form-item>
 
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.materialType')"
+                  :label="$t('input.inventory.stockIn.inputType')"
                   :prop="`details.${index}.material_type`"
                   :rules="detailRules.material_type"
                 >
                   <el-input
                     v-model="item.material_type"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.materialType')"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.inputType')"
                     readonly
                   />
                 </el-form-item>
 
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.materialBatchId')"
+                  :label="$t('input.inventory.stockIn.agriculturalInputType')"
+                  :prop="`details.${index}.agricultural_input_type`"
+                >
+                  <el-input
+                    v-model="item.agricultural_input_type"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')"
+                    readonly
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  :label="$t('input.inventory.stockIn.variety')"
+                  :prop="`details.${index}.variety`"
+                >
+                  <el-input
+                    v-model="item.variety"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.variety')"
+                    readonly
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  :label="$t('input.inventory.stockOut.form.batchNo')"
                   :prop="`details.${index}.material_batch_id`"
                 >
                   <el-input
                     v-model="item.material_batch_id"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.materialBatchId')"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.batchNo')"
                     readonly
                   />
                 </el-form-item>
@@ -251,10 +260,11 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { createOutboundOrder } from '@/api/outbound'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { createOutboundOrder, validateStock } from '@/api/outbound'
 import { getWarehouseList } from '@/api/inventory'
 import { getStockList } from '@/api/stock'
+import { getDistributionList, getDistributionDetail } from '@/api/distribution'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -266,17 +276,13 @@ const submitLoading = ref(false)
 const warehouseList = ref([])
 const warehouseLoading = ref(false)
 
-// 可选的目标仓库列表（排除出库仓库）
-const availableTargetWarehouses = computed(() => {
-  if (!formData.warehouse_id) {
-    return warehouseList.value
-  }
-  return warehouseList.value.filter(w => w.warehouse_id !== formData.warehouse_id)
-})
-
-// 物料列表 (该仓库中有库存的物料)
+// 投入品列表 (该仓库中有库存的投入品)
 const materialList = ref([])
 const materialLoading = ref(false)
+
+// 分发单列表
+const distributionList = ref([])
+const distributionLoading = ref(false)
 
 // 加载仓库列表
 const loadWarehouseList = async () => {
@@ -297,7 +303,7 @@ const loadWarehouseList = async () => {
   }
 }
 
-// 根据仓库加载有库存的物料列表
+// 根据仓库加载有库存的投入品列表
 const loadMaterialListByWarehouse = async (warehouseId) => {
   if (!warehouseId) {
     materialList.value = []
@@ -306,7 +312,7 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
 
   materialLoading.value = true
   try {
-    // 通过库存API获取该仓库中有库存的物料
+    // 通过库存API获取该仓库中有库存的投入品
     const res = await getStockList({
       warehouseId: warehouseId,
       page: 1,
@@ -314,24 +320,33 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
     })
 
     if (res.code === 200 && res.data && res.data.items) {
-      // 去重,提取唯一的物料及其库存信息（包含批次号）
+      // 去重,提取唯一的投入品及其库存信息（包含批次号、农资类型、品种）
       const materialMap = new Map()
       res.data.items.forEach(item => {
         if (item.quantity > 0) {
           const existingMaterial = materialMap.get(item.material_id)
           if (existingMaterial) {
-            // 累加同一物料的库存
+            // 累加同一投入品的库存
             existingMaterial.available_quantity += item.quantity
             // 如果有批次号，优先使用第一个批次号
             if (!existingMaterial.material_batch_id && item.material_batch_id) {
               existingMaterial.material_batch_id = item.material_batch_id
             }
+            // 如果有农资类型和品种，优先使用第一个
+            if (!existingMaterial.agricultural_input_type && item.agricultural_input_type) {
+              existingMaterial.agricultural_input_type = item.agricultural_input_type
+            }
+            if (!existingMaterial.variety && item.variety) {
+              existingMaterial.variety = item.variety
+            }
           } else {
             materialMap.set(item.material_id, {
               material_id: item.material_id,
               material_name: item.material_name,
-              material_type: item.material_type || 'fertilizer',
+              material_type: item.material_type || '',
               material_batch_id: item.material_batch_id || '',
+              agricultural_input_type: item.agricultural_input_type || '',
+              variety: item.variety || '',
               available_quantity: item.quantity
             })
           }
@@ -346,7 +361,7 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
   } catch (error) {
     console.error('Failed to load material list by warehouse:', error)
     ElMessage.error(t('common.failed'))
-  } finally {
+  } finally{
     materialLoading.value = false
   }
 }
@@ -354,8 +369,6 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
 const formData = reactive({
   outbound_type: 1,
   warehouse_id: '',
-  outbound_object_id: '',
-  outbound_object_name: '',
   related_order_no: '',
   outbound_user: '',
   outbound_dept: '',
@@ -366,6 +379,8 @@ const formData = reactive({
       material_id: '',
       material_name: '',
       material_type: '',
+      agricultural_input_type: '',
+      variety: '',
       material_batch_id: '',
       quantity: null,
       spec_model: '',
@@ -381,9 +396,6 @@ const rules = computed(() => ({
   ],
   warehouse_id: [
     { required: true, message: t('input.inventory.stockOut.rules.warehouseIdRequired'), trigger: 'change' }
-  ],
-  outbound_object_id: [
-    { required: true, message: t('input.inventory.stockOut.rules.outboundObjectIdRequired'), trigger: 'blur' }
   ],
   operator: [
     { required: true, message: t('input.inventory.stockOut.rules.operatorRequired'), trigger: 'blur' }
@@ -415,30 +427,144 @@ const detailRules = computed(() => ({
   ]
 }))
 
+// 加载分发单列表
+const loadDistributionList = async () => {
+  distributionLoading.value = true
+  try {
+    const res = await getDistributionList()
+    if (res.code === 200) {
+      // 合并OSE→Union和Union→Woreda的分发单
+      distributionList.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load distribution list:', error)
+    ElMessage.error('加载分发单列表失败')
+  } finally {
+    distributionLoading.value = false
+  }
+}
+
+// 分发单下拉框获取焦点时，检查是否选择了仓库
+const handleDistributionFocus = () => {
+  if (!formData.warehouse_id) {
+    ElMessage.warning('请先选择出库仓库')
+    return
+  }
+}
+
+// 选择分发单后，自动带入明细
+const handleDistributionChange = async (distributionId) => {
+  if (!distributionId) {
+    return
+  }
+
+  if (!formData.warehouse_id) {
+   /* 请先选择出库仓库*/
+    ElMessage.warning('Please select the outbound warehouse first')
+    formData.related_order_no = ''
+    return
+  }
+
+  try {
+    // 获取分发单详情
+    const res = await getDistributionDetail(distributionId)
+    if (res.code === 200 && res.data) {
+      const details = res.data.details || []
+
+      if (details.length === 0) {
+        /*该分发单没有明细信息 请手动录入*/
+        ElMessage.warning('This distribution form does not contain detailed information. Please enter it manually')
+        return
+      }
+
+      // 校验当前仓库是否有这些投入品的库存
+      const insufficientItems = []
+      const newDetails = []
+
+      for (const detail of details) {
+        // 从投入品列表中查找对应的投入品信息
+        const material = materialList.value.find(m => m.material_id === detail.inputId)
+
+        if (!material || material.available_quantity <= 0) {
+          insufficientItems.push({
+            name: detail.variety || detail.cropType || detail.inputId,
+            required: detail.required || detail.quantity
+          })
+        } else {
+          // 创建出库明细
+          newDetails.push({
+            material_id: detail.inputId || '',
+            material_name: material.material_name || '',
+            material_type: material.material_type || '',
+            agricultural_input_type: detail.cropType || '',
+            variety: detail.variety || '',
+            material_batch_id: material.material_batch_id || '',
+            quantity: detail.required || detail.quantity || null,
+            spec_model: '',
+            unit_of_measure: detail.unit || '',
+            available_quantity: material.available_quantity || 0
+          })
+        }
+      }
+
+      // 如果有库存不足的投入品，提示用户
+      if (insufficientItems.length > 0) {
+        debugger;
+        const itemNames = insufficientItems.map(item => `${item.name}(Demand：${item.required})`).join('、')
+
+        ElMessageBox.confirm(
+          `The following inputs are currently in insufficient stock in the warehouse：${itemNames}。Whether to continue？`,
+          'Insufficient stock prompt',
+          {
+            confirmButtonText: 'continue',
+            cancelButtonText: 'cancel',
+            type: 'warning'
+          }
+        ).then(() => {
+          // 用户选择继续，使用有库存的明细
+          if (newDetails.length > 0) {
+            formData.details = newDetails
+            ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`)
+          } else {
+            ElMessage.warning('There is no inventory of any of the inputs listed in this distribution order in the current warehouse')
+          }
+        }).catch(() => {
+          // 用户取消，清空关联单号选择
+          formData.related_order_no = ''
+        })
+      } else {
+        // 全部有库存，直接替换明细
+        formData.details = newDetails
+        ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`)
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load distribution detail:', error)
+    ElMessage.error('Failed to load the distribution sheet details')
+    formData.related_order_no = ''
+  }
+}
+
 // 返回
 const goBack = () => {
   router.back()
 }
 
-// 仓库变更时,清空所有明细的选择,并重新加载该仓库的物料
+// 仓库变更时,清空所有明细的选择,并重新加载该仓库的投入品
 const handleWarehouseChange = () => {
-  // 如果出库对象选择了当前出库仓库，清空出库对象
-  if (formData.outbound_object_id && formData.outbound_object_id === formData.warehouse_id) {
-    formData.outbound_object_id = ''
-    formData.outbound_object_name = ''
-  }
-
   // 清空所有明细选择
   formData.details.forEach(detail => {
     detail.material_id = ''
     detail.material_name = ''
     detail.material_type = ''
+    detail.agricultural_input_type = ''
+    detail.variety = ''
     detail.material_batch_id = ''
     detail.quantity = null
     detail.available_quantity = 0
   })
 
-  // 重新加载该仓库有库存的物料
+  // 重新加载该仓库有库存的投入品
   if (formData.warehouse_id) {
     loadMaterialListByWarehouse(formData.warehouse_id)
   } else {
@@ -446,17 +572,7 @@ const handleWarehouseChange = () => {
   }
 }
 
-// 出库对象变更时,自动填充出库对象名称
-const handleOutboundObjectChange = () => {
-  const selectedWarehouse = warehouseList.value.find(w => w.warehouse_id === formData.outbound_object_id)
-  if (selectedWarehouse) {
-    formData.outbound_object_name = selectedWarehouse.warehouse_name
-  } else {
-    formData.outbound_object_name = ''
-  }
-}
-
-// 物料变更时,自动填充物料名称、类型、批次号和可用库存
+// 投入品变更时,自动填充投入品名称、类型、农资类型、品种、批次号和可用库存
 const handleMaterialChange = (index) => {
   const detail = formData.details[index]
   const selectedMaterial = materialList.value.find(m => m.material_id === detail.material_id)
@@ -464,11 +580,15 @@ const handleMaterialChange = (index) => {
   if (selectedMaterial) {
     detail.material_name = selectedMaterial.material_name
     detail.material_type = selectedMaterial.material_type
+    detail.agricultural_input_type = selectedMaterial.agricultural_input_type
+    detail.variety = selectedMaterial.variety
     detail.material_batch_id = selectedMaterial.material_batch_id
     detail.available_quantity = selectedMaterial.available_quantity
   } else {
     detail.material_name = ''
     detail.material_type = ''
+    detail.agricultural_input_type = ''
+    detail.variety = ''
     detail.material_batch_id = ''
     detail.available_quantity = 0
   }
@@ -480,6 +600,8 @@ const addDetail = () => {
     material_id: '',
     material_name: '',
     material_type: '',
+    agricultural_input_type: '',
+    variety: '',
     material_batch_id: '',
     quantity: null,
     spec_model: '',
@@ -518,13 +640,58 @@ const handleSubmit = async () => {
 
     submitLoading.value = true
 
+    // 提交前校验库存是否充足
+    try {
+      const validateRes = await validateStock({
+        warehouseId: formData.warehouse_id,
+        details: formData.details.map(detail => ({
+          materialId: detail.material_id,
+          materialName: detail.material_name,
+          quantity: detail.quantity
+        }))
+      })
+
+      // 如果库存不足，提示用户
+      if (!validateRes.data.valid) {
+        const insufficientItems = validateRes.data.insufficient_items || []
+        if (insufficientItems.length > 0) {
+          const itemList = insufficientItems.map(item =>
+            `${item.material_name}(需求：${item.required_quantity}，可用：${item.available_quantity}，缺少：${item.shortage})`
+          ).join('<br/>')
+
+          await ElMessageBox.confirm(
+            `<div>以下投入品库存不足：<br/>${itemList}<br/><br/>是否仍要提交出库单？</div>`,
+            '库存不足警告',
+            {
+              confirmButtonText: '仍要提交',
+              cancelButtonText: '返回修改',
+              type: 'warning',
+              dangerouslyUseHTMLString: true
+            }
+          )
+        } else {
+          ElMessage.error(validateRes.data.message || '库存校验失败')
+          submitLoading.value = false
+          return
+        }
+      }
+    } catch (validateError) {
+      // 如果用户点击了取消，或者校验失败，中止提交
+      if (validateError === 'cancel') {
+        submitLoading.value = false
+        return
+      }
+      console.error('Stock validation error:', validateError)
+      // 校验失败不中断提交流程，继续提交
+    }
+
     // 转换为驼峰形式
     const data = {
       outboundType: formData.outbound_type,
       warehouseId: formData.warehouse_id,
-      outboundObjectId: formData.outbound_object_id,
-      outboundObjectName: formData.outbound_object_name,
       relatedOrderNo: formData.related_order_no || undefined,
+      outboundObjectId: formData.outbound_type === 1 ? 'CUSTOMER_DEFAULT' : formData.warehouse_id,
+      outboundObjectName: formData.outbound_type === 1 ? 'Default account' : warehouseList.value.find(w => w.warehouse_id === formData.warehouse_id)?.warehouse_name || '',
       outboundUser: formData.outbound_user || undefined,
       outboundDept: formData.outbound_dept || undefined,
       operator: formData.operator,
@@ -533,6 +700,8 @@ const handleSubmit = async () => {
         materialId: detail.material_id,
         materialName: detail.material_name,
         materialType: detail.material_type,
+        agriculturalInputType: detail.agricultural_input_type || undefined,
+        variety: detail.variety || undefined,
         materialBatchId: detail.material_batch_id || undefined,
         quantity: detail.quantity,
         specModel: detail.spec_model || undefined,
@@ -554,6 +723,7 @@ const handleSubmit = async () => {
 
 onMounted(() => {
   loadWarehouseList()
+  loadDistributionList()
 })
 </script>
 
