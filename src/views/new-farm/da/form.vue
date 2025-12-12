@@ -16,7 +16,7 @@
     </div>
 
     <!-- 表单区域 -->
-    <div class="form-wrapper" v-loading="pageLoading">
+    <div class="form-wrapper" v-loading="pageLoading || regionLoading">
       <el-form ref="formRef" :model="formData" :rules="formRules" label-position="top" class="da-form">
         <!-- 基本信息 -->
         <div class="form-block">
@@ -27,18 +27,18 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.da.form.daName')" prop="daName">
               <el-input
-                v-model="formData.daName"
-                :placeholder="$t('newFarm.da.placeholder.daName')"
-                maxlength="100"
-                show-word-limit
+                  v-model="formData.daName"
+                  :placeholder="$t('newFarm.da.placeholder.daName')"
+                  maxlength="100"
+                  show-word-limit
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.da.form.idCard')" prop="idCard">
               <el-input
-                v-model="formData.idCard"
-                :placeholder="$t('newFarm.da.placeholder.idCard')"
-                maxlength="50"
+                  v-model="formData.idCard"
+                  :placeholder="$t('newFarm.da.placeholder.idCard')"
+                  maxlength="50"
               />
             </el-form-item>
 
@@ -51,26 +51,26 @@
 
             <el-form-item :label="$t('newFarm.da.form.phone')" prop="phone">
               <el-input
-                v-model="formData.phone"
-                :placeholder="$t('newFarm.da.placeholder.phone')"
-                maxlength="20"
+                  v-model="formData.phone"
+                  :placeholder="$t('newFarm.da.placeholder.phone')"
+                  maxlength="20"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.da.form.email')" prop="email">
               <el-input
-                v-model="formData.email"
-                :placeholder="$t('newFarm.da.placeholder.email')"
-                maxlength="100"
+                  v-model="formData.email"
+                  :placeholder="$t('newFarm.da.placeholder.email')"
+                  maxlength="100"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.da.form.address')" prop="address" class="full-width-item">
               <el-input
-                v-model="formData.address"
-                :placeholder="$t('newFarm.da.placeholder.address')"
-                maxlength="200"
-                show-word-limit
+                  v-model="formData.address"
+                  :placeholder="$t('newFarm.da.placeholder.address')"
+                  maxlength="200"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -85,30 +85,30 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.da.form.account')" prop="account">
               <el-input
-                v-model="formData.account"
-                :placeholder="$t('newFarm.da.placeholder.account')"
-                :disabled="isEdit"
-                maxlength="50"
+                  v-model="formData.account"
+                  :placeholder="$t('newFarm.da.placeholder.account')"
+                  :disabled="isEdit"
+                  maxlength="50"
               />
             </el-form-item>
 
             <el-form-item v-if="!isEdit" :label="$t('newFarm.da.form.password')" prop="password">
               <el-input
-                v-model="formData.password"
-                type="password"
-                :placeholder="$t('newFarm.da.placeholder.password')"
-                show-password
-                maxlength="20"
+                  v-model="formData.password"
+                  type="password"
+                  :placeholder="$t('newFarm.da.placeholder.password')"
+                  show-password
+                  maxlength="20"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.da.form.accountStatus')" prop="accountStatus">
               <el-switch
-                v-model="formData.accountStatus"
-                active-value="1"
-                inactive-value="0"
-                :active-text="$t('newFarm.da.status.enabled')"
-                :inactive-text="$t('newFarm.da.status.disabled')"
+                  v-model="formData.accountStatus"
+                  active-value="1"
+                  inactive-value="0"
+                  :active-text="$t('newFarm.da.status.enabled')"
+                  :inactive-text="$t('newFarm.da.status.disabled')"
               />
             </el-form-item>
           </div>
@@ -123,27 +123,40 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
               <el-input
-                v-model="formData.zoneCode"
-                :placeholder="$t('newFarm.common.selectZone')"
-                maxlength="50"
+                  v-model="zoneName"
+                  :placeholder="$t('newFarm.common.selectZone')"
+                  disabled
+                  maxlength="50"
               />
+              <!-- 隐藏域存储zoneCode值 -->
+              <input type="hidden" v-model="formData.zoneCode" />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
               <el-input
-                v-model="formData.woredaCode"
-                :placeholder="$t('newFarm.common.selectWoreda')"
-                maxlength="50"
+                  v-model="woredaName"
+                  :placeholder="$t('newFarm.common.selectWoreda')"
+                  disabled
+                  maxlength="50"
               />
+              <!-- 隐藏域存储woredaCode值 -->
+              <input type="hidden" v-model="formData.woredaCode" />
             </el-form-item>
 
+            <!-- 单选Kebele -->
             <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes" class="full-width-item">
-              <el-input
-                v-model="formData.kebeleCodes"
-                :placeholder="$t('newFarm.da.placeholder.kebeleCodes')"
-                maxlength="500"
-              />
-              <div class="form-tip">{{ $t('newFarm.da.tips.kebeleCodes') }}</div>
+              <el-select
+                  v-model="formData.kebeleCodes"
+                  :placeholder="$t('newFarm.da.placeholder.kebeleCodes').replace('多选', '选择')"
+                  maxlength="500"
+              >
+                <el-option
+                    v-for="item in kebeleOptions"
+                    :key="item.code || item.id"
+                    :label="item.name"
+                    :value="item.code || item.id"
+                />
+              </el-select>
             </el-form-item>
           </div>
         </div>
@@ -157,12 +170,12 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.common.remark')" prop="remark" class="full-width-item">
               <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="4"
-                :placeholder="$t('newFarm.da.placeholder.remark')"
-                maxlength="500"
-                show-word-limit
+                  v-model="formData.remark"
+                  type="textarea"
+                  :rows="4"
+                  :placeholder="$t('newFarm.da.placeholder.remark')"
+                  maxlength="500"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -185,22 +198,34 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import {
-  getDaDetail,
-  addDa,
-  updateDa
-} from '@/api/newFarm'
+import CryptoJS from 'crypto-js'
+import { getDaDetail, addDa, updateDa } from '@/api/newFarm'
+import { listSubRegionByCode, listRegionNameById } from '@/api/application'
+import { registerDa } from '@/api/application'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
+// AES encryption key
+const keyStr = 'ab489fe897hh78ha';
+
+// Form related references
 const formRef = ref(null)
 const saveLoading = ref(false)
 const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
-// 表单数据
+// User info storage
+const userInfo = ref(null)
+
+// Region related state
+const regionLoading = ref(false)
+const zoneName = ref('') // Zone display name
+const woredaName = ref('') // Woreda display name
+const kebeleOptions = ref([]) // Kebele dropdown options
+
+// Form data
 const formData = reactive({
   daName: '',
   idCard: '',
@@ -211,13 +236,13 @@ const formData = reactive({
   account: '',
   password: '',
   accountStatus: '1',
-  zoneCode: '',
-  woredaCode: '',
-  kebeleCodes: '',
+  zoneCode: '', // Zone code (hidden storage)
+  woredaCode: '', // Woreda code (hidden storage)
+  kebeleCodes: '', // Kebele code (single selection)
   remark: ''
 })
 
-// 表单验证规则
+// Form validation rules (including mandatory field validation for registration API)
 const formRules = computed(() => ({
   daName: [
     { required: true, message: t('newFarm.da.rules.daNameRequired'), trigger: 'blur' },
@@ -235,22 +260,38 @@ const formRules = computed(() => ({
     { min: 6, max: 20, message: t('newFarm.da.rules.passwordLength'), trigger: 'blur' }
   ],
   phone: [
+    { required: true, message: t('newFarm.da.rules.phoneRequired'), trigger: 'blur' },
     { pattern: /^[0-9+\-\s]+$/, message: t('newFarm.da.rules.phoneFormat'), trigger: 'blur' }
   ],
   email: [
+    { required: true, message: t('newFarm.da.rules.emailRequired'), trigger: 'blur' },
     { type: 'email', message: t('newFarm.da.rules.emailFormat'), trigger: 'blur' }
   ],
   woredaCode: [
     { required: true, message: t('newFarm.da.rules.woredaCodeRequired'), trigger: 'blur' }
+  ],
+  kebeleCodes: [
+    { required: true, message: t('newFarm.da.rules.kebeleCodesRequired'), trigger: 'change' }
   ]
 }))
 
-// 返回
+// Go back to previous page
 const goBack = () => {
   router.back()
 }
 
-// 加载详情(编辑模式)
+// AES encrypt password
+const encryptPassword = (password) => {
+  if (!password) return ''
+  const key = CryptoJS.enc.Utf8.parse(keyStr)
+  const encrypted = CryptoJS.AES.encrypt(password, key, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7
+  })
+  return encrypted.toString()
+}
+
+// Load detail (edit mode)
 const loadDetail = async () => {
   pageLoading.value = true
   try {
@@ -267,8 +308,19 @@ const loadDetail = async () => {
       formData.accountStatus = data.accountStatus || '1'
       formData.zoneCode = data.zoneCode || ''
       formData.woredaCode = data.woredaCode || ''
-      formData.kebeleCodes = data.kebeleCodes || ''
+
+      // Adapt Kebele single selection (convert array/string to single value)
+      if (data.kebeleCodes) {
+        formData.kebeleCodes = Array.isArray(data.kebeleCodes)
+            ? data.kebeleCodes[0] || ''
+            : data.kebeleCodes.split(',')[0] || ''
+      }
       formData.remark = data.remark || ''
+
+      // Fill region name
+      if (formData.woredaCode) {
+        await loadRegionInfo(formData.woredaCode, data.woredaName)
+      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -278,15 +330,99 @@ const loadDetail = async () => {
   }
 }
 
-// 提交表单
+// Load region info
+const loadRegionInfo = async (regionCode, regionName) => {
+  regionLoading.value = true
+  try {
+    // Set Woreda info
+    woredaName.value = regionName || ''
+    formData.woredaCode = regionCode || ''
+
+    // Get Kebele list
+    const firstRes = await listSubRegionByCode({ regionCode: regionCode })
+    if (firstRes.code === 200) {
+      kebeleOptions.value = firstRes.data || []
+
+      // Get Zone info
+      const firstKebele = kebeleOptions.value[0] || {}
+      const parentIdsArr = firstKebele.regParentIds.split(',').filter(item => item)
+      const parentCode = parentIdsArr[3] || ''
+
+      if (parentCode) {
+        const secondRes = await listRegionNameById({ code: parentCode })
+        if (secondRes.code === 200) {
+          zoneName.value = secondRes.data || ''
+          formData.zoneCode = parentCode
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load region info:', error)
+    ElMessage.error(t('newFarm.da.rules.loadRegionFailed'))
+  } finally {
+    regionLoading.value = false
+  }
+}
+
+// Parse user info and load region data
+const parseUserInfoAndLoadRegion = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    try {
+      const parsedUserInfo = JSON.parse(userInfoStr)
+      userInfo.value = parsedUserInfo
+      const user = parsedUserInfo.user || {}
+      const region_code = user.region_code || ''
+      const regionName = user.regionName || ''
+
+      // Load region info in add mode
+      if (!isEdit.value && region_code && regionName) {
+        loadRegionInfo(region_code, regionName)
+      }
+
+      // Set default DA name
+      const defaultDaName = user.NAME || ''
+      if (defaultDaName) {
+        // Reserved DA name matching logic
+      }
+    } catch (error) {
+      console.error('Failed to parse user info:', error)
+    }
+  }
+}
+
+// Submit form
 const handleSubmit = async () => {
   if (!formRef.value) return
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
+      // Validate mandatory organization/region info for registration API
+      const orgCode = userInfo.value?.user?.orgCode || ''
+      const orgName = userInfo.value?.user?.orgName || ''
+      const regionCode = userInfo.value?.user?.regionCode || ''
+      const regionName = userInfo.value?.user?.regionName || ''
+
+      if (!orgCode) {
+        ElMessage.error(t('newFarm.da.rules.orgCodeRequired'))
+        return
+      }
+      if (!orgName) {
+        ElMessage.error(t('newFarm.da.rules.orgNameRequired'))
+        return
+      }
+      if (!regionCode) {
+        ElMessage.error(t('newFarm.da.rules.regionCodeRequired'))
+        return
+      }
+      if (!regionName) {
+        ElMessage.error(t('newFarm.da.rules.regionNameRequired'))
+        return
+      }
+
       saveLoading.value = true
       try {
-        const data = {
+        const submitData = {
           daName: formData.daName,
           idCard: formData.idCard,
           gender: formData.gender,
@@ -301,15 +437,37 @@ const handleSubmit = async () => {
           remark: formData.remark
         }
 
+        // Add password in add mode
         if (!isEdit.value) {
-          data.password = formData.password
+          submitData.password = formData.password
         }
 
         let res
         if (isEdit.value) {
-          res = await updateDa(route.params.id, data)
+          // Edit DA info
+          res = await updateDa(route.params.id, submitData)
         } else {
-          res = await addDa(data)
+          // Add DA info
+          res = await addDa(submitData)
+
+          // Call registration API
+          if (res.code === 200) {
+            const registerData = {
+              account: formData.account,
+              name: formData.daName,
+              password: encryptPassword(formData.password),
+              mobile: formData.phone,
+              email: formData.email,
+              gender: formData.gender === 'MALE' ? 'M' : 'F',
+              identityNum: formData.idCard,
+              address: formData.address,
+              orgCode: orgCode,
+              orgName: orgName,
+              regionCode: regionCode,
+              regionName: regionName
+            }
+            await registerDa(registerData)
+          }
         }
 
         if (res.code === 200) {
@@ -328,9 +486,12 @@ const handleSubmit = async () => {
   })
 }
 
+// Page mount logic
 onMounted(() => {
   if (isEdit.value) {
     loadDetail()
+  } else {
+    parseUserInfoAndLoadRegion()
   }
 })
 </script>
@@ -340,7 +501,7 @@ onMounted(() => {
   min-height: calc(100vh - 120px);
 }
 
-/* 页面头部 */
+/* Page header */
 .page-header {
   background: white;
   padding: 16px 0;
@@ -374,7 +535,7 @@ onMounted(() => {
   margin: 0;
 }
 
-/* 表单区域 */
+/* Form area */
 .form-wrapper {
   background: white;
   border-radius: 12px;
@@ -435,7 +596,7 @@ onMounted(() => {
   border-top: 1px solid #f0f2f5;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media screen and (max-width: 1024px) {
   .form-grid {
     grid-template-columns: 1fr;

@@ -13,57 +13,68 @@
         {
           "index": "/research/breeding-data/batch",
           "icon": "ri-calendar-line",
-          "titleKey": "research.menu.breedingBatchManagement"
+          "titleKey": "research.menu.breedingBatchManagement",
+          "roles": ["agri-admin", "OARI"]
         },
         {
           "index": "/research/breeding-data/trial",
           "icon": "ri-test-tube-line",
-          "titleKey": "research.menu.trialBasicManagement"
+          "titleKey": "research.menu.trialBasicManagement",
+          "roles": ["agri-admin", "OARI"]
         },
         {
           "index": "/research/breeding-data/plot",
           "icon": "ri-map-pin-line",
-          "titleKey": "research.menu.plotInfoManagement"
+          "titleKey": "research.menu.plotInfoManagement",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/farming",
           "icon": "ri-plant-line",
-          "titleKey": "research.menu.farmingRecordDataCollection"
+          "titleKey": "research.menu.farmingRecordDataCollection",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/trait",
           "icon": "ri-leaf-line",
-          "titleKey": "research.menu.agronomicTraitDataCollection"
+          "titleKey": "research.menu.agronomicTraitDataCollection",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/data-collection/environment-new-data",
           "icon": "ri-cloud-line",
-          "titleKey": "research.menu.environmentNewData"
+          "titleKey": "research.menu.environmentNewData",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/field-inspection",
           "icon": "ri-bar-chart-box-line",
-          "titleKey": "research.menu.fieldInspection"
+          "titleKey": "research.menu.fieldInspection",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/laboratory-test",
           "icon": "ri-flask-line",
-          "titleKey": "research.menu.laboratoryTest"
+          "titleKey": "research.menu.laboratoryTest",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/dataset-compilation",
           "icon": "ri-file-list-line",
-          "titleKey": "research.menu.datasetCompilation"
+          "titleKey": "research.menu.datasetCompilation",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding-data/dataset-audit",
           "icon": "ri-checkbox-circle-line",
-          "titleKey": "research.menu.datasetAudit"
+          "titleKey": "research.menu.datasetAudit",
+          "roles": ["agri-admin", "OARI"]
         },
         {
           "index": "/research/breeding-data/breeding-license",
           "icon": "ri-file-shield-2-line",
-          "titleKey": "research.menu.breedingLicense"
+          "titleKey": "research.menu.breedingLicense",
+          "roles": ["agri-admin", "OARI"]
         }
       ]
     },
@@ -75,47 +86,56 @@
         {
           "index": "/research/breeding/seed-production",
           "icon": "ri-seedling-line",
-          "titleKey": "research.menu.breederSeedProduction"
+          "titleKey": "research.menu.breederSeedProduction",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding/seed-distribution",
           "icon": "ri-share-forward-line",
-          "titleKey": "research.menu.breederSeedDistribution"
+          "titleKey": "research.menu.breederSeedDistribution",
+          "roles": ["agri-admin", "RC"]
         },
         {
           "index": "/research/breeding/ose-receive-confirm",
           "icon": "ri-checkbox-circle-line",
-          "titleKey": "research.menu.oseReceiveConfirm"
+          "titleKey": "research.menu.oseReceiveConfirm",
+          "roles": ["agri-admin", "OSE"]
         },
         {
           "index": "/research/breeding",
           "icon": "ri-folders-line",
-          "titleKey": "research.menu.propagationBatchCollection"
+          "titleKey": "research.menu.propagationBatchCollection",
+          "roles": ["agri-admin", "OSE"]
         },
         {
           "index": "/research/c1-propagation",
           "icon": "ri-plant-line",
-          "titleKey": "research.menu.c1SeedPropagationApplication"
+          "titleKey": "research.menu.c1SeedPropagationApplication",
+          "roles": ["agri-admin", "OSE", "Union", "Cooperative"]
         },
         {
           "index": "/research/c1-propagation-audit",
           "icon": "ri-pass-pending-line",
-          "titleKey": "research.menu.c1SeedPropagationApplicationAudit"
+          "titleKey": "research.menu.c1SeedPropagationApplicationAudit",
+          "roles": ["agri-admin", "OIA"]
         },
         {
           "index": "/research/c1-breeding-batch",
           "icon": "ri-folders-line",
-          "titleKey": "research.menu.c1PropagationBatchCollection"
+          "titleKey": "research.menu.c1PropagationBatchCollection",
+          "roles": ["agri-admin", "OSE", "Union", "Cooperative"]
         },
         {
           "index": "/research/c1-breeding-batch-audit",
           "icon": "ri-pass-pending-line",
-          "titleKey": "research.menu.c1BatchAudit"
+          "titleKey": "research.menu.c1BatchAudit",
+          "roles": ["agri-admin", "OIA"]
         },
         {
           "index": "/research/c1-breeding-certificate",
           "icon": "ri-award-line",
-          "titleKey": "research.menu.c1BatchCertificate"
+          "titleKey": "research.menu.c1BatchCertificate",
+          "roles": ["agri-admin", "OIA"]
         }
       ]
     },
@@ -126,19 +146,28 @@
       "titleKey": "research.menu.seedInstitutionManagement",
       "children": [
         {
-          "index": "/research/union/list",
+          "index": "/research/institution/registration",
           "icon": "ri-community-line",
-          "titleKey": "research.menu.propagationOrgRegistration"
+          "titleKey": "research.menu.institutionRegistration",
+          "roles": ["agri-admin", "OARI"]
+        },
+        {
+          "index": "/research/institution/approval",
+          "icon": "ri-community-line",
+          "titleKey": "research.menu.institutionApproval",
+          "roles": ["agri-admin", "OARI"]
         },
         {
           "index": "/research/breeding/ose-management",
           "icon": "ri-building-4-line",
-          "titleKey": "research.menu.oseManagement"
+          "titleKey": "research.menu.oseManagement",
+          "roles": ["agri-admin", "OARI"]
         },
         {
-          "index": "/research/breeding-data/research-center",
+          "index": "/research/institution/research-center",
           "icon": "ri-building-line",
-          "titleKey": "research.menu.researchCenterManagement"
+          "titleKey": "research.menu.researchCenterManagement",
+          "roles": ["agri-admin", "OARI"]
         }
       ]
     },
@@ -150,12 +179,14 @@
         {
           "index": "/research/seed/promotion",
           "icon": "ri-megaphone-line",
-          "titleKey": "research.menu.seedPromotionManagement"
+          "titleKey": "research.menu.seedPromotionManagement",
+          "roles": ["agri-admin", "OARI", "RC", "OSE", "Union", "Cooperative", "OIA"]
         },
         {
           "index": "/research/seed/info",
           "icon": "ri-file-list-3-line",
-          "titleKey": "research.menu.seedInfoPublicity"
+          "titleKey": "research.menu.seedInfoPublicity",
+          "roles": ["agri-admin", "OARI", "RC", "OSE", "Union", "Cooperative", "OIA"]
         }
       ]
     }

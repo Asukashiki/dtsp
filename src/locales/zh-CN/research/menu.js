@@ -129,6 +129,14 @@ export default {
   propagationOrgRegistrationEdit: '编辑机构注册',
   propagationOrgRegistrationDetail: '机构注册详情',
 
+  institutionRegistration: 'Union/Cooperative注册申请',
+  institutionRegistrationAdd: '新增组织注册',
+  institutionRegistrationEdit: '编辑组织注册',
+  institutionRegistrationDetail: '组织注册详情',
+
+  institutionApproval: 'Union/Cooperative注册申请审核',
+  institutionApprovalDetail: '审核详情',
+
   seedPromotionManagement: '种子推广信息管理',
   seedPromotionManagementAdd: '新增推广信息',
   seedPromotionManagementEdit: '编辑推广信息',

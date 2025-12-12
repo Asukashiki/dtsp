@@ -151,11 +151,11 @@ const getInfo = async () => {
 }
 
 const handleEdit = () => {
-  router.push(`/research/breeding-data/research-center/edit/${route.params.locationId}`)
+  router.push(`/research/institution/research-center/edit/${route.params.locationId}`)
 }
 
 const goBack = () => {
-  router.push('/research/breeding-data/research-center')
+  router.push('/research/institution/research-center')
 }
 
 onMounted(() => {

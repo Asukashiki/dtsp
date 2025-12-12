@@ -410,14 +410,6 @@ const routes = [
         meta: { title: 'Breeder able seed分发数据', requiresAuth: true }
       },
       
-      // OSE维护
-      {
-        path: 'breeding/ose-management',
-        name: 'OseManagement',
-        component: () => import('../views/research/breeding/ose-management/index.vue'),
-        meta: { title: 'OSE维护', requiresAuth: true }
-      },
-      
       // 物联网传感器维护
       {
         path: 'data-collection/iot-sensor',
@@ -640,41 +632,53 @@ const routes = [
       
       // 繁殖机构注册
       {
-        path: 'union/list',
-        name: 'UnionList',
-        component: () => import('../views/research/union/UnionList.vue'),
+        path: 'institution/registration',
+        name: 'InstitutionRegistration',
+        component: () => import('../views/research/institution/registration/index.vue'),
+        meta: { title: '繁殖机构注册', requiresAuth: true }
+      },
+      {
+        path: 'institution/approval',
+        name: 'InstitutionApproval',
+        component: () => import('../views/research/institution/registration/approval.vue'),
         meta: { title: '繁殖机构注册', requiresAuth: true }
       },
       {
         path: 'union/registration',
         name: 'UnionRegistration',
-        component: () => import('../views/research/union/UnionRegistration.vue'),
+        component: () => import('../views/research/institution/union/UnionRegistration.vue'),
         meta: { title: '繁殖机构注册申请', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management',
+        name: 'OseManagement',
+        component: () => import('../views/research/institution/ose-management/index.vue'),
+        meta: { title: 'OSE维护', requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
       {
-        path: 'breeding-data/research-center',
+        path: 'institution/research-center',
         name: 'ResearchCenter',
-        component: () => import('../views/research/breeding-data/research-center/index.vue'),
+        component: () => import('../views/research/institution/research-center/index.vue'),
         meta: { title: '研究中心管理', requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/add',
+        path: 'institution/research-center/add',
         name: 'ResearchCenterAdd',
-        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        component: () => import('../views/research/institution/research-center/form.vue'),  
         meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/edit/:locationId',
+        path: 'institution/research-center/edit/:locationId',
         name: 'ResearchCenterEdit',
-        component: () => import('../views/research/breeding-data/research-center/form.vue'),
+        component: () => import('../views/research/institution/research-center/form.vue'),
         meta: { title: '编辑研究中心', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'breeding-data/research-center/detail/:locationId',
+        path: 'institution/research-center/detail/:locationId',
         name: 'ResearchCenterDetail',
-        component: () => import('../views/research/breeding-data/research-center/detail.vue'),
+        component: () => import('../views/research/institution/research-center/detail.vue'),
         meta: { title: '研究中心详情', hideInMenu: true, requiresAuth: true }
       },
 
@@ -761,12 +765,40 @@ const routes = [
         component: () => import('../views/input/demand/farmer/detail.vue'),
         meta: { title: '农民需求详情', hideInMenu: true, requiresAuth: true }
       },
-      // 投入品需求审核
+      // 村级需求汇聚（新页面）
       {
-        path: 'demand/audit',
-        name: 'DemandAudit',
+        path: 'demand/aggregation',
+        name: 'VillageAggregation',
+        component: () => import('../views/input/demand/aggregation/index.vue'),
+        meta: { title: '村级需求汇聚', requiresAuth: true }
+      },
+      // 村级审核详情（原投入品需求审核页面，现作为详情页隐藏）
+      {
+        path: 'demand/audit/:year',
+        name: 'VillageAuditDetail',
         component: () => import('../views/input/demand/audit/index.vue'),
-        meta: { title: '投入品需求审核', requiresAuth: true }
+        meta: { title: '村级审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 镇级需求审核（复用同一组件，后续可通过路由元信息区分）
+      {
+        path: 'demand/audit-town',
+        name: 'TownDemandAudit',
+        component: () => import('../views/input/demand/audit-town/index.vue'),
+        meta: { title: '镇需求审核', requiresAuth: true }
+      },
+      // 区级需求审核
+      {
+        path: 'demand/audit-district',
+        name: 'DistrictDemandAudit',
+        component: () => import('../views/input/demand/audit-district/index.vue'),
+        meta: { title: '区需求审核', requiresAuth: true }
+      },
+      // 州农业部查看
+      {
+        path: 'demand/audit-state',
+        name: 'StateDemandAuditView',
+        component: () => import('../views/input/demand/audit-state/index.vue'),
+        meta: { title: '州农业部查看', requiresAuth: true }
       },
       {
         path: 'demand/audit/detail/:id',

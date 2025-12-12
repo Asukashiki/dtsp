@@ -59,21 +59,28 @@
             :header-cell-style="{ textAlign: 'center' }"
             :cell-style="{ textAlign: 'center' }">>
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="100" />
-          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
-            <template #default="scope">
-              <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('inputCirculation.variety')" width="180">
-            <template #default="scope">
-              <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" />
-            </template>
-          </el-table-column>
           <el-table-column :label="$t('inputCirculation.inputId')" width="360">
             <template #default="scope">
-              <el-select v-model="scope.row.inputId" :placeholder="$t('common.pleaseSelect')" filterable clearable>
+              <el-select v-model="scope.row.inputId"
+                         :placeholder="$t('common.pleaseSelect')"
+                         filterable
+                         clearable
+                         @change="handleInputChange(scope.$index)"
+                         style="width: 100%">
                 <el-option v-for="item in inputList" :key="item.inputId" :label="item.inputName" :value="item.inputId" />
               </el-select>
+            </template>
+          </el-table-column>
+
+          <el-table-column :label="$t('inputCirculation.variety')" width="120">
+            <template #default="scope">
+              <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" readonly />
+            </template>
+          </el-table-column>
+
+          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" readonly />
             </template>
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.required')" width="200">
@@ -126,6 +133,7 @@ import { getOseReleaseDetail, addOseRelease, editOseRelease } from '@/api/inputC
 import {getAllInputList} from "../../../../api/input.js";
 import {getUnionDetailByUnionId} from "../../../../api/union.js";
 import {getOrgansRegionByCode, listSubRegionByCode} from "../../../../api/application.js";
+import {getCurrentUserInfo} from "../../../../api/user.js";
 
 const { t } = useI18n()
 const route = useRoute()
@@ -164,6 +172,23 @@ const rules = {
   releaseDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
+const getUserInfo = async () => {
+  loading.value = true
+  try {
+    const response = await getCurrentUserInfo()
+    if (response.code === 200 && response.data) {
+      console.log(response.data)
+     formData.releaseBy = response.data.user.name
+      formData.releaseOrg = response.data.user.organName
+      console.log(formData.releaseBy)
+    }
+  } catch (error) {
+    ElMessage.error(t('common.queryUserInfoFailed'))
+  } finally {
+    loading.value = false
+  }
+}
+
 const getAllZoneList = async () => {
   loading.value = true
   try {
@@ -197,12 +222,34 @@ const getInputList = async () => {
   try {
     const response = await getAllInputList()
     if (response.code === 200) {
-      inputList.value = response.data
+      inputList.value = response.data.map(item => {
+        return {
+          inputId: item.inputId,
+          inputName: item.inputName,
+          // 尝试多种可能的字段名
+          variety: item.variety || '',
+          agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type ||
+              item.inputType || item.type || ''
+        }
+      })
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryInputListFailed'))
   } finally {
     loading.value = false
+  }
+}
+
+// 投入品选择变化处理
+const handleInputChange = (index) => {
+  const detail = formData.details[index]
+  const selectedInput = inputList.value.find(i => i.inputId === detail.inputId)
+  if (selectedInput) {
+    detail.variety = selectedInput.variety
+    detail.cropType = selectedInput.agriculturalInputType
+    detail.inputName = selectedInput.inputName
+  } else {
+    console.warn('未找到对应的投入品信息')
   }
 }
 
@@ -287,6 +334,7 @@ const handleBack = () => {
 }
 
 onMounted(async () => {
+  await getUserInfo()
   await getInputList()
   if (isEdit.value) {
     await fetchDetail()

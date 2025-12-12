@@ -48,7 +48,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('newFarm.farmer.form.birthDate') }}:</span>
-              <span class="value">{{ detail.birthDate || '-' }}</span>
+              <span class="value">{{ detail.birthday || '-' }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('newFarm.farmer.form.youthCategory') }}:</span>
@@ -84,10 +84,7 @@
             {{ $t('newFarm.farmer.sections.orgInfo') }}
           </h3>
           <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.unionId') }}:</span>
-              <span class="value">{{ detail.unionName || detail.unionId || '-' }}</span>
-            </div>
+
             <div class="info-item">
               <span class="label">{{ $t('newFarm.farmer.form.cooperativeId') }}:</span>
               <span class="value">{{ detail.cooperativeName || detail.cooperativeId || '-' }}</span>

@@ -104,12 +104,16 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100" />
-                <el-table-column prop="varietyCode" :label="$t('research.breedingData.batch.columns.varietyCode')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
+                  <template #default="{ row }">
+                    {{ getCropTypeLabel(row.cropType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
                 <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="120">
                   <template #default="{ row }">
@@ -165,15 +169,15 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.varietyCode') }}:</span>
-                    <span class="value">{{ item.varietyCode }}</span>
+                    <span class="value">{{ getCropTypeLabel(item.cropType) }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
                     <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.batch.columns.objective') }}:</span>
+                    <span class="value">{{ item.objective }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.breedingMethod') }}:</span>
@@ -247,10 +251,9 @@ const queryParams = reactive({
 })
 
 const cropTypeOptions = [
-  { label: 'wheat', value: 'wheat' },
-  { label: 'corn', value: 'corn' },
-  { label: 'soybean', value: 'soybean' },
-  { label: 'cotton', value: 'cotton' }
+  { label: 'wheat', value: 'T01' },
+  { label: 'corn', value: 'T02' },
+  { label: 'teff', value: 'T03' }
 ]
 
 const statusOptions = [
@@ -301,6 +304,15 @@ const getStatusLabel = (status) => {
     'done': 'Done'
   }
   return statusLabelMap[status] || status
+}
+
+const getCropTypeLabel = (code) => {
+  const cropMap = {
+    'T01': 'wheat',
+    'T02': 'corn',
+    'T03': 'teff'
+  }
+  return cropMap[code] || code
 }
 
 const handleSelectionChange = (selection) => {

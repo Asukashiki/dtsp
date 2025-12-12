@@ -23,7 +23,7 @@
         <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" width="200" />
         <el-table-column prop="releaseOrg" :label="$t('inputCirculation.releaseOrg')" width="150" />
         <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" width="160" />
-        <el-table-column prop="receiveStatus" :label="$t('inputCirculation.receiveStatus')" width="120" />
+        <el-table-column prop="receiveStatus" :label="$t('inputCirculation.status')" width="120" />
         <el-table-column prop="confirmBy" :label="$t('inputCirculation.confirmBy')" width="120" />
         <el-table-column prop="confirmTime" :label="$t('inputCirculation.confirmTime')" width="160" />
         <el-table-column :label="$t('common.actions')" width="200" fixed="right">

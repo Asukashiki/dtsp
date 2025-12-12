@@ -33,6 +33,7 @@ export default {
     updateBy: '更新人',
     updateTime: '更新时间',
     remark: '备注',
+    account:'账户',
   },
 
   // 菜单
@@ -154,6 +155,7 @@ export default {
       accountStatus: '账号状态',
       createTime: '创建时间',
       actions: '操作',
+      account:'账户'
     },
 
     // 详情页分区

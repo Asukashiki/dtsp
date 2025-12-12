@@ -1,0 +1,35 @@
+# 系统角色-模块-功能-菜单对应表
+| 序号 | 角色 | 模块 | 功能 | 菜单名称 |
+| :---: | :---: | :---: | :---: | :---: |
+| 1 | OARI | 育种数据管理 | 育种批次管理 | Breeding Batch |
+| 2 | OARI | 育种数据管理 | 试验基础信息管理 | Trial Basic Information |
+| 3 | OARI | 育种数据管理 | 育种数据集审核 | Breeding Dataset Audit |
+| 4 | OARI | 育种数据管理 | 育种许可数据录入 | Breeding License Data Entry |
+| 5 | OARI | 种子机构管理 | 繁殖机构注册 | Propagation Organization Registratio |
+| 6 | OARI | 种子机构管理 | OSE维护管理 | OSE Maintenance Management |
+| 7 | OARI | 种子机构管理 | 研究中心管理 | Research Center Management |
+| 8 | RC | 育种数据管理 | 地块及播种信息管理 | Plot and Sowing Information |
+| 9 | RC | 育种数据管理 | 农事记录数据采集 | Farming Record Data Collection |
+| 10 | RC | 育种数据管理 | 农艺性状数据采集 | Agronomic Trait Data Collection |
+| 11 | RC | 繁殖数据管理 | 田间检验数据采集 | Field Inspection Data Collection |
+| 12 | RC | 繁殖数据管理 | 实验室测试数据采集 | Laboratory Test Data Collection |
+| 13 | RC | 育种数据管理 | 环境监测数据 | Environment Monitoring Data |
+| 14 | RC | 育种数据管理 | 育种数据集编制 | Breeding Dataset Compilation |
+| 15 | RC | 繁殖数据管理 | Breeder able seed生产数据采集 | Breeder Seed Production Data |
+| 16 | RC | 繁殖数据管理 | Breeder able seed分发数据 | Breeder Seed Distribution Data |
+| 17 | OSE | 繁殖数据管理 | OSE接收确认 | OSE Receive Confirmation |
+| 18 | OSE | 繁殖数据管理 | OSE繁殖批次信息采集 | OSE Propagation Batch Information |
+| 19 | OSE/Union/Cooperative | 繁殖数据管理 | C1种子繁殖申请 | C1 Seed Certification Application |
+| 20 | OSE/Union/Cooperative | 繁殖数据管理 | C1繁殖批次信息采集 | C1 Seed Propagation Application |
+| 21 | OIA | 繁殖数据管理 | C1种子繁殖申请审核 | C1 Seed Propagation Application Audit |
+| 22 | OIA | 繁殖数据管理 | C1种子田间检测 | C1 Propagation Batch Information |
+| 23 | OIA | 繁殖数据管理 | 种子认证审核 | Seed Certification Audit |
+| 24 | OIA | 繁殖数据管理 | 种子认证颁发 | Seed Certification Issuance |
+| 25 | ALL | 育种信息服务 | 品种信息公示 | Varietal Information Publicity |
+
+
+# 权限说明
+    - ROLE_SUPER 为超级管理员，具有所有模块的所有功能的权限
+    - @dtsp\src\store\user.js 中 userInfo 数据格式为：
+    {"user":{"deptLeaderInfo":[],"role":"JS_SHENG_SH,SJ_SHRY,DDMCJ,JS_SHENG_TB,YXGL_ZX,YXGL_RWCJ,JS_SHI_TB,HNSSSSS,14100011123,PT_JL_YWRY,PT_J_FGLD,ROLE_SUPER,DDM_STREET,JS_BU_SH,YXGL_USER,SJ_DASHRY,SJ_JSDARY,DDM_USER,icd_admin,YXGL_SYB,pt_user","regionName":"Reg_Oromia","ORGAN_CODE":"102000000","EMAIL":"87789802@qq.com","ORGANNAME":"Reg_Oromia","ROLE":"JS_SHENG_SH,SJ_SHRY,DDMCJ,JS_SHENG_TB,YXGL_ZX,YXGL_RWCJ,JS_SHI_TB,HNSSSSS,14100011123,PT_JL_YWRY,PT_J_FGLD,ROLE_SUPER,DDM_STREET,JS_BU_SH,YXGL_USER,SJ_DASHRY,SJ_JSDARY,DDM_USER,icd_admin,YXGL_SYB,pt_user","regionCode":"102000000","organCode":"102000000","USERNAME":"oromia_admin","region_name":"Reg_Oromia","LOGIN_ROLE_VALUE":{"YY":"ROLE_SUPER,admin","INSPUR-ICD-BSP":"PT_J_FGLD,PT_JL_YWRY,ROLE_SUPER","INSPUR-ICD":"ROLE_SUPER,pt_user,YXGL_SYB,icd_admin,DDM_USER,SJ_JSDARY,SJ_DASHRY,YXGL_USER,JS_BU_SH,DDM_STREET,JS_SHENG_SH,PT_J_FGLD,PT_JL_YWRY,14100011123,HNSSSSS,JS_SHI_TB,YXGL_RWCJ,YXGL_ZX,JS_SHENG_TB,DDMCJ,SJ_SHRY"},"id":"4DA926B77AC64381A8D645CEF39A5C13","ID":"4DA926B77AC64381A8D645CEF39A5C13","email":"87789802@qq.com","organ_code":"102000000","REGION_CODE":"102000000","REGION_SHORT_CODE":"102000","mobile":"13256689746","REGIONSHORTCODE":"102000","dept_leader_info":[],"REGIONCODE":"102000000","ORGAN_NAME":"Reg_Oromia","REGIONNAME":"Reg_Oromia","NAME":"oromia_admin","ORGANCODE":"102000000","organName":"Reg_Oromia","organ_name":"Reg_Oromia","REGION_NAME":"Reg_Oromia","name":"oromia_admin","region_short_code":"102000","DEPTLEADERINFO":[],"regionShortCode":"102000","username":"oromia_admin","DEPT_LEADER_INFO":[],"MOBILE":"13256689746","region_code":"102000000"},"flag":true,"expireTime":86400}
+    

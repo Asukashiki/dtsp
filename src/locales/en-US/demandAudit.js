@@ -5,8 +5,14 @@ export default {
   list: 'Pending Audit List',
   detail: 'Audit Details',
 
+  // Tabs
+  tabs: {
+    pending: 'Pending',
+    approved: 'Approved',
+  },
+
   // Search and Filter
-  searchPlaceholder: 'Search farmer name, ID number, village',
+  searchPlaceholder: 'Search farmer name',
   filterByBatch: 'Filter by Batch',
   filterByKebele: 'Filter by Kebele',
   filterByWoreda: 'Filter by Woreda',
@@ -23,6 +29,9 @@ export default {
     batchReject: 'Batch Reject',
     submit: 'Submit for Audit',
     lockBatch: 'Lock Batch',
+    aggregationSubmit: 'Submit Aggregation',
+    aggregationDetail: 'Aggregation Detail',
+    back: 'Back',
   },
 
   // Table Columns
@@ -158,6 +167,32 @@ export default {
     seed: 'Seed',
     fertilizer: 'Fertilizer',
     pesticide: 'Pesticide',
+  },
+
+  // Aggregation
+  aggregation: {
+    title: 'Input Aggregation Detail',
+    dialogTitle: 'Aggregation Statistics',
+    submitConfirm: 'Are you sure to submit aggregation data?',
+    submitSuccess: 'Aggregation submitted successfully',
+    submitFailed: 'Aggregation submission failed',
+    inputCategory: 'Input Category',
+    inputType: 'Input Type',
+    totalQuantity: 'Total Quantity',
+    totalCount: 'Total Items',
+    demandCount: 'Demand Count',
+    sourceName: 'Source',
+    targetName: 'Target',
+    status: 'Status',
+    createdTime: 'Created Time',
+    noData: 'No aggregation data',
+  },
+
+  // Aggregation Status
+  aggregationStatus: {
+    pending: 'Pending',
+    success: 'Success',
+    rejected: 'Rejected',
   },
 
   // Messages

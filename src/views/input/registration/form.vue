@@ -359,7 +359,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addRegistration, updateRegistration, getRegistrationDetail } from '@/api/registration'
+import { addRegistration, updateRegistration, getRegistrationDetail } from '@/api/input-registration'
 import { uploadFile } from '@/api/file'
 
 const router = useRouter()

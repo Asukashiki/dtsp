@@ -64,12 +64,13 @@
         <el-table-column prop="releaseId" :label="t('releaseId')" min-width="150" />
         <el-table-column prop="releaseName" :label="t('releaseName')" min-width="180" />
         <el-table-column prop="targetId" :label="t('targetWoreda')" min-width="150" />
-        <el-table-column prop="releaseYear" :label="t('releaseYear')" width="100" />
+        <el-table-column prop="releaseYear" :label="t('releaseYear')" width="150" />
         <el-table-column prop="releaseDate" :label="t('releaseDate')" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.releaseDate) }}
           </template>
         </el-table-column>
+        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="160" />
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column :label="t('actions')" width="220" fixed="right">
           <template #default="{ row }">
@@ -168,6 +169,7 @@ const queryParams = reactive({
 
 // 查询列表
 const handleQuery = () => {
+  queryParams.releaseType = 'UNION_TO_WOREDA'
   if (dateRange.value && dateRange.value.length === 2) {
     queryParams.startTime = dateRange.value[0]
     queryParams.endTime = dateRange.value[1]

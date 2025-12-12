@@ -16,8 +16,8 @@ export default {
     form: {
       basicInfo: 'Batch Basic Information',
       identityInfo: 'Variety Identification Information',
-      batchName: 'Objective',
-      batchId: 'Breeding Batch ID',
+      batchName: 'Batch Name',
+      batchId: 'Batch ID',
       batchTime: 'Batch Time',
       cropType: 'Crop Type',
       varietyCode: 'Variety Code',
@@ -28,6 +28,8 @@ export default {
       genus: 'Genus',
       family: 'Family',
       breedingMethod: 'Breeding Method',
+      parentalSeedSource: 'Parental Seed Source',
+      objective: 'Objective',
       pedigree: 'Pedigree',
       yearOfDevelopment: 'Year of Development',
       productPlace: 'Production Place',
@@ -39,7 +41,7 @@ export default {
     },
 
     placeholder: {
-      batchId: 'Auto-generated breeding batch ID',
+      batchId: 'Auto-generated batch ID',
       batchName: 'Please enter Objective',
       cropType: 'Please select crop type',
       varietyCode: 'Please enter variety code',
@@ -50,6 +52,8 @@ export default {
       genus: 'Please enter genus',
       family: 'Please enter family',
       breedingMethod: 'Please select breeding method',
+      parentalSeedSource: 'Please enter parental seed source',
+      objective: 'Please enter objective',
       pedigree: 'Please enter pedigree',
       yearOfDevelopment: 'Please select year of development',
       productPlace: 'Please enter production place',
@@ -61,12 +65,14 @@ export default {
     },
 
     columns: {
-      batchName: 'Objective',
+      batchName: 'Batch Name',
       batchId: 'Batch ID',
       cropType: 'Crop Type',
       varietyCode: 'Variety Code',
       varietyName: 'Variety Name',
       breedingMethod: 'Breeding Method',
+      parentalSeedSource: 'Parental Seed Source',
+      objective: 'Objective',
       year: 'Year',
       status: 'Status',
       personInCharge: 'Person in Charge',
@@ -74,6 +80,11 @@ export default {
       endDate: 'End Date',
       createTime: 'Created Time',
       actions: 'Actions',
+    },
+
+    // Validation rules
+    validation: {
+      yearNotLessThanCurrent: 'Year cannot be less than current year'
     },
   },
 
