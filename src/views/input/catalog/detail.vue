@@ -82,7 +82,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.referencePrice') }}:</span>
-              <span class="value">{{ detailData.referencePrice || 0 }} dollars</span>
+              <span class="value">{{ detailData.referencePrice || 0 }} Br</span>
             </div>
 
             <div class="detail-item">

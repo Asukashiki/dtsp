@@ -78,16 +78,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.variety')"
-                  prop="variety"
-              >
-                <el-input
-                    v-model="formData.variety"
-                    :placeholder="$t('input.catalog.placeholder.variety')"
-                    maxlength="100"
-                />
-              </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item
@@ -97,7 +87,6 @@
                 <el-input
                     v-model="formData.inputSku"
                     :placeholder="$t('input.catalog.placeholder.inputSku')"
-                    readonly
                     maxlength="50"
                 />
               </el-form-item>
@@ -427,11 +416,6 @@ const rules = computed(() => ({
   ]
 }));
 
-// 生成SKU编码
-const generateSku = () => {
-  const randomNumber = Math.floor(100000 + Math.random() * 900000)
-  return `ZZ-XM-${randomNumber}`
-}
 
 // 生成投入品业务ID
 const generateInputBizId = (type, agriculturalInputType) => {
@@ -554,9 +538,8 @@ onMounted(() => {
 
   if (isEdit.value) {
     loadDetail();
-  } else {
-    formData.inputSku = generateSku();
   }
+  // 新增模式下不再自动生成 SKU，改为手动输入
 });
 </script>
 
