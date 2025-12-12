@@ -193,7 +193,7 @@
             {{ $t('input.catalog.fertilizer.title') }}
           </div>
           <div class="detail-grid">
-            <div class="detail-item full-width text-center text-gray-500">
+            <div class="text-center text-gray-500 detail-item full-width">
               {{ $t('input.catalog.fertilizer.emptyTip') }}
             </div>
           </div>

@@ -208,3 +208,67 @@ export const uploadInputImage = (formData) => {
     timeout: 60000
   })
 }
+ /* 转换投入品数据：前端格式 -> 后端格式
+ * 下划线命名 -> 驼峰命名
+ */
+function transformInputData(data) {
+  const transformed = {
+    inputName: data.input_name,
+    type: data.type,
+    agriculturalInputType: data.agricultural_input_type,
+    variety: data.variety,
+    inputSku: data.input_sku,
+    trademark: data.trademark,
+    registerCode: data.register_code,
+    productionLicense: data.production_license,
+    productionStandard: data.production_standard,
+    producerName: data.producer_name,
+    producerAddress: data.producer_address,
+    status: data.status
+  }
+
+  // 根据类型添加对应的特性数据
+  if (data.type === 'pesticide' && data.pesticide_properties) {
+    transformed.pesticideProperties = {
+      totalIngredientContent: data.pesticide_properties.total_ingredient_content,
+      toxicityLevel: data.pesticide_properties.toxicity_level,
+      targetCrops: data.pesticide_properties.target_crops,
+      controlTargets: data.pesticide_properties.control_targets,
+      applicationMethod: data.pesticide_properties.application_method,
+      dosage: data.pesticide_properties.dosage,
+      dilutionRatio: data.pesticide_properties.dilution_ratio,
+      safetyInterval: data.pesticide_properties.safety_interval,
+      precautions: data.pesticide_properties.precautions,
+      firstAid: data.pesticide_properties.first_aid,
+      storageRequirements: data.pesticide_properties.storage_requirements
+    }
+  } else if (data.type === 'fertilizer' && data.fertilizer_properties) {
+    transformed.fertilizerProperties = {
+      fertilizerType: data.fertilizer_properties.fertilizer_type,
+      totalNutrientContent: data.fertilizer_properties.total_nutrient_content,
+      nitrogenContent: data.fertilizer_properties.nitrogen_content,
+      phosphorusContent: data.fertilizer_properties.phosphorus_content,
+      potassiumContent: data.fertilizer_properties.potassium_content,
+      organicMatterContent: data.fertilizer_properties.organic_matter_content,
+      mediumTraceElements: data.fertilizer_properties.medium_trace_elements,
+      phValue: data.fertilizer_properties.ph_value,
+      suitableCrops: data.fertilizer_properties.suitable_crops,
+      applicationPeriod: data.fertilizer_properties.application_period,
+      applicationMethod: data.fertilizer_properties.application_method,
+      recommendedDosage: data.fertilizer_properties.recommended_dosage
+    }
+  } else if (data.type === 'seed' && data.seed_properties) {
+    transformed.seedProperties = {
+      cropType: data.seed_properties.crop_type,
+      varietyName: data.seed_properties.variety_name,
+      varietyApprovalCode: data.seed_properties.variety_approval_code,
+      varietySource: data.seed_properties.variety_source,
+      purity: data.seed_properties.purity,
+      cleanliness: data.seed_properties.cleanliness,
+      germinationRate: data.seed_properties.germination_rate,
+      moistureContent: data.seed_properties.moisture_content
+    }
+  }
+
+  return transformed
+}
