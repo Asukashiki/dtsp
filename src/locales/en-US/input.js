@@ -61,31 +61,7 @@ export default {
       dashboard: 'Dashboard Management',
       feedback: 'Information Feedback',
     },
-  // Menu Navigation
-  menu: {
-    dashboard: 'Data Overview',
-    registrationManagement: 'Registration Management',
-    registration: 'Union/Cooperative Registration Application',
-    registrationApproval: 'Union/Cooperative Registration Approval',
-    demandManagement: 'Input Demand Management',
-    farmerDemand: 'DA Farmer Demand Entry',
-    demandAudit: 'Input Demand Audit',
-    supplierManagement: 'Supplier Management',
-    supplierAuth: 'Supplier Authentication',
-    supplierAuthApproval: 'Supplier Authentication Approval',
-    supplierInfo: 'Supplier Information Maintenance',
-    inputManagement: 'Input Management',
-    inputCatalog: 'Input Catalog Management',
-    supplierInput: 'Supplier Input Information Management',
-    inputSupply: 'Input Supply Management',
-    inventoryManagement: 'Inventory Management',
-    warehouse: 'Warehouse Management',
-    stockIn: 'Stock In Management',
-    stockOut: 'Stock Out Management',
-    stockQuery: 'Inventory Query',
-    dashboard: 'Dashboard Management',
-    feedback: 'Information Feedback'
-  },
+
 
   // Input Catalog Management
   catalog: {

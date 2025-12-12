@@ -61,31 +61,7 @@ export default {
       dashboard: '大屏管理',
       feedback: '信息反馈',
     },
-  // 菜单导航
-  menu: {
-    dashboard: '数据概览',
-    registrationManagement: '注册管理',
-    registration: 'Union/Cooperative注册申请',
-    registrationApproval: 'Union/Cooperative注册审核',
-    demandManagement: '投入品需求管理',
-    farmerDemand: 'DA农民需求录入',
-    demandAudit: '投入品需求审核',
-    supplierManagement: '供应商管理',
-    supplierAuth: '供应商认证',
-    supplierAuthApproval: '供应商认证审批',
-    supplierInfo: '供应商信息维护',
-    inputManagement: '投入品管理',
-    inputCatalog: '投入品目录管理',
-    supplierInput: '供应商投入品信息管理',
-    inputSupply: '投入品供应管理',
-    inventoryManagement: '库存管理',
-    warehouse: '仓库管理',
-    stockIn: '入库管理',
-    stockOut: '出库管理',
-    stockQuery: '库存查询',
-    dashboard: '大屏管理',
-    feedback: '信息反馈'
-  },
+
 
   // 投入品目录管理
   catalog: {
