@@ -1,1505 +1,1411 @@
 export default {
-    // 系统通用
-    systemName: '农业投入品供应管理系统',
-    systemDesc: '投入品管理、库存管理及供应链追溯',
-    backToHome: '返回首页',
+  // 系统基础配置
+  systemName: '农业投入品供应管理系统',
+  systemDesc: '投入品管理、库存管理及供应链追溯',
+  backToHome: '返回首页',
 
-    // 菜单导航
-    menu: {
-      dashboard: '数据概览',
-      registrationManagement: '注册管理',
-      registration: 'Union/Cooperative注册申请',
-      registrationApproval: 'Union/Cooperative注册审核',
-      demandManagement: '投入品需求管理',
-      farmerDemand: 'DA农民需求录入',
-      demandAudit: '投入品需求审核',
-      supplierManagement: '供应商管理',
-      supplierAuth: '供应商认证',
-      supplierAuthApproval: '供应商认证审批',
-      supplierInfo: '供应商信息维护',
-      inputManagement: '投入品管理',
-      inputCatalog: '投入品目录管理',
-      supplierInput: '供应商投入品信息管理',
-      inputSupply: '投入品供应管理',
-      inventoryManagement: '库存管理',
-      warehouse: '仓库管理',
-      stockIn: '入库管理',
-      stockOut: '出库管理',
-      stockQuery: '库存查询',
-      dashboard: '大屏管理',
-      feedback: '信息反馈',
+  // 通用文本
+  common: {
+    back: '返回',
+    cancel: '取消',
+    submit: '提交',
+    failed: '操作失败',
+    submitFailed: '提交失败',
+    invalidId: '无效的ID',
+    noData: '暂无数据',
+    dataLoadFailed: '数据加载失败',
+    tips: '提示',
+    confirm: '确认',
+    edit: '编辑',
+    delete: '删除',
+    view: '查看'
+  },
+
+  // 首页通用
+  home: {
+    noData: '暂无数据'
+  },
+
+  // 菜单导航
+  menu: {
+    dashboard: '数据概览',
+    registrationManagement: '注册管理',
+    registration: 'Union/Cooperative注册申请',
+    registrationApproval: 'Union/Cooperative注册审核',
+    demandManagement: '投入品需求管理',
+    farmerDemand: 'DA农民需求录入',
+    demandAudit: '投入品需求审核',
+    supplierManagement: '供应商管理',
+    supplierAuth: '供应商认证',
+    supplierAuthApproval: '供应商认证审批',
+    supplierInfo: '供应商信息维护',
+    inputManagement: '投入品管理',
+    inputCatalog: '投入品目录管理',
+    supplierInput: '供应商投入品信息管理',
+    inputSupply: '投入品供应管理',
+    inventoryManagement: '库存管理',
+    warehouse: '仓库管理',
+    stockIn: '入库管理',
+    stockOut: '出库管理',
+    stockQuery: '库存查询',
+    dashboard: '大屏管理',
+    feedback: '信息反馈'
+  },
+
+  // 投入品目录管理
+  catalog: {
+    title: '投入品目录管理',
+    subtitle: '管理农业投入品基础信息、规格参数及资质要求',
+    edit: '编辑投入品',
+    add: '新增投入品',
+    list: '投入品列表',
+    detail: '投入品详情',
+    delete: '删除投入品',
+    editSuccess: '编辑投入品成功',
+    addSuccess: '新增投入品成功',
+    deleteSuccess: '删除成功',
+    deleteFailed: '删除失败',
+    noDataFound: '未找到该投入品数据',
+    invalidIdEdit: '无效的ID，无法编辑',
+    deleteConfirm: '确定删除该投入品吗？',
+
+    // 搜索和筛选
+    searchPlaceholder: '搜索产品名称、登记证号、生产批号',
+    filterByType: '按投入品类型筛选',
+    allTypes: '全部类型',
+
+    // 投入品类型
+    type: {
+      all: '全部',
+      pesticide: '农药',
+      fertilizer: '化肥',
+      seed: '种子',
+      other: '其他'
     },
 
-    // 投入品目录管理
-    catalog: {
-      title: '投入品目录管理',
-      subtitle: '管理农业投入品基础信息、规格参数及资质要求',
-      list: '投入品列表',
-      add: '新增投入品',
-      edit: '编辑投入品',
-      detail: '投入品详情',
-      delete: '删除投入品',
-      deleteConfirm: '确定删除该投入品吗？',
+    // 表单字段 - 基本信息
+    form: {
+      specificationModel: '规格型号',
+      unit: '计量单位',
+      referencePrice: '参考价格（美元）',
+      isImport: '是否进口',
+      imageUrl: '产品图片地址',
+      description: '产品描述',
+      basicInfo: '基本信息',
+      productionInfo: '生产与责任信息',
+      regulatoryInfo: '法规与许可信息',
+      ingredientsInfo: '成分与使用信息',
+      inputName: '投入品名称',
+      inputType: '投入品类型',
+      agriculturalInputType: '农资类型',
+      variety: '品种',
+      inputSku: '唯一产品标识码/SKU',
+      trademark: '注册商标',
+      registerCode: '登记批号',
+      productionLicense: '生产许可证号',
+      productionStandard: '产品标准证号',
+      producerName: '生产企业名称',
+      producerAddress: '生产企业地址',
+      createTime: '创建时间',
+      createPeople: '创建人',
+      status: '状态'
+    },
+
+    // 表单占位符
+    placeholder: {
+      specificationModel: '请输入规格型号（最多100个字符）',
+      unit: '请输入计量单位（如：kg、L、袋、件）',
+      referencePrice: '请输入参考价格（≥ 0）',
+      imageUrl: '请输入产品图片地址（最多255个字符）',
+      description: '请输入产品描述（最多500个字符）',
+      cropControlObject: '请输入作物/防治对象（最多500个字符）',
+      breeder: '请输入育种者名称（最多200个字符）',
+      varietySource: '请输入品种来源（最多500个字符）',
+      inputName: '请输入投入品名称（2-100个字符）',
+      inputType: '请选择投入品类型',
+      agriculturalInputType: '请输入农资类型',
+      variety: '请输入品种',
+      inputSku: '系统自动生成',
+      trademark: '请输入注册商标',
+      registerCode: '请输入登记批号',
+      productionLicense: '请输入生产许可证号',
+      productionStandard: '请输入产品标准证号',
+      producerName: '请输入生产企业名称（2-200个字符）',
+      producerAddress: '请输入生产企业地址（5-255个字符）'
+    },
+
+    // 是否进口
+    isImport: {
+      yes: '是',
+      no: '否'
+    },
+
+    // 表单验证规则
+    rules: {
+      inputNameRequired: '请输入投入品名称',
+      inputNameLength: '投入品名称应为2-100个字符',
+      inputTypeRequired: '请选择投入品类型',
+      agriculturalInputTypeRequired: '请输入投入品品类',
+      inputSkuRequired: '请输入唯一产品标识码',
+      inputSkuLength: '产品标识码应为8-50个字符',
+      trademarkRequired: '请输入注册商标',
+      registerCodeRequired: '请输入登记批号',
+      productionLicenseRequired: '请输入生产许可证号',
+      productionStandardRequired: '请输入产品标准证号',
+      producerNameRequired: '请输入生产企业名称',
+      producerNameLength: '企业名称应为2-200个字符',
+      producerAddressRequired: '请输入生产企业地址',
+      producerAddressLength: '企业地址应为5-255个字符'
+    },
+
+    // 农药特性字段
+    pesticide: {
+      cropControlObject: '作物/防治对象',
+      title: '农药特性信息',
+      totalIngredientContent: '总有效成分含量',
+      toxicityLevel: '毒性等级',
+      targetCrops: '适用作物',
+      controlTargets: '防治对象',
+      applicationMethod: '施用方法',
+      dosage: '使用剂量',
+      dilutionRatio: '稀释倍数',
+      safetyInterval: '安全间隔期（天）',
+      precautions: '注意事项',
+      firstAid: '中毒急救措施',
+      storageRequirements: '储存要求',
+      toxicity: {
+        micro: '微毒',
+        low: '低毒',
+        medium: '中等毒',
+        high: '高毒',
+        severe: '剧毒'
+      }
+    },
+
+    // 化肥特性字段
+    fertilizer: {
+      title: '化肥特性信息',
+      emptyTip: '化肥特性字段待系统扩展，暂无需填写',
+      fertilizerType: '肥料类型',
+      totalNutrientContent: '总养分含量',
+      nitrogenContent: '氮含量',
+      phosphorusContent: '磷含量(P₂O₅)',
+      potassiumContent: '钾含量(K₂O)',
+      organicMatterContent: '有机质含量',
+      mediumTraceElements: '中微量元素',
+      phValue: 'pH值',
+      suitableCrops: '适用作物',
+      applicationPeriod: '施用时期',
+      applicationMethod: '施用方法',
+      recommendedDosage: '建议用量'
+    },
+
+    // 种子特性字段
+    seed: {
+      breeder: '育种者',
+      title: '种子特性信息',
+      cropType: '作物种类',
+      varietyName: '品种名称',
+      varietyApprovalCode: '品种审定编号',
+      varietySource: '品种来源',
+      purity: '纯度(%)',
+      cleanliness: '净度(%)',
+      germinationRate: '发芽率(%)',
+      moistureContent: '水分含量(%)'
+    },
+
+    // 列表列名
+    columns: {
+      inputName: '投入品名称',
+      inputType: '类型',
+      inputSku: '产品标识码',
+      trademark: '商标',
+      registerCode: '登记批号',
+      producerName: '生产企业',
+      createTime: '创建时间',
+      status: '状态',
+      actions: '操作'
+    },
+
+    // 状态选项
+    statusOptions: {
+      active: '启用',
+      inactive: '停用'
+    },
+
+    // 图片上传
+    upload: {
+      imageTypeError: '仅支持上传 JPG/PNG/WEBP 格式的图片！',
+      imageSizeError: '图片大小不能超过 2MB！',
+      imageSuccess: '图片上传成功！',
+      imageError: '图片上传失败：{msg}',
+      uploadTip: '点击上传'
+    }
+  },
+
+  // 供应商管理
+  supplier: {
+    // 供应商认证
+    auth: {
+      title: '供应商认证申请',
+      subtitle: '填写供应商身份认证所需的详细资料',
+      applySuccess: '认证申请提交成功',
+      applyFailed: '认证申请提交失败',
+      form: {
+        orgName: '企业/组织名称',
+        creditCode: '统一社会信用代码',
+        legalPerson: '法定代表人/负责人',
+        legalId: '法定代表人身份证号',
+        adCode: '行政区划',
+        businessScope: '经营范围/主要产品',
+        licensePath: '营业执照',
+        contactName: '联系人姓名',
+        contactPhone: '联系人手机'
+      },
+      placeholder: {
+        orgName: '请输入企业/组织名称',
+        creditCode: '请输入统一社会信用代码',
+        legalPerson: '请输入法定代表人/负责人',
+        legalId: '请输入身份证号',
+        adCode: '请选择行政区划',
+        businessScope: '请输入经营范围或主要产品',
+        contactName: '请输入联系人姓名',
+        contactPhone: '请输入联系人手机号'
+      },
+      rules: {
+        orgNameRequired: '请输入企业/组织名称',
+        creditCodeRequired: '请输入统一社会信用代码',
+        creditCodeLength: '统一社会信用代码应为18位',
+        legalPersonRequired: '请输入法定代表人/负责人',
+        legalIdRequired: '请输入法定代表人身份证号',
+        legalIdFormat: '请输入正确的身份证号',
+        adCodeRequired: '请选择行政区划',
+        businessScopeRequired: '请输入经营范围或主要产品',
+        licensePathRequired: '请上传营业执照',
+        contactNameRequired: '请输入联系人姓名',
+        contactPhoneRequired: '请输入联系人手机号',
+        contactPhoneFormat: '请输入正确的手机号码'
+      },
+      uploadTip: '支持 jpg/png/pdf，单个文件不超过2MB'
+    },
+
+    // 供应商认证审批
+    approval: {
+      title: '供应商认证审批',
+      subtitle: '审核供应商提交的身份认证申请材料',
+      list: '待审批列表',
+      detail: '审批详情',
+      approveSuccess: '审核已通过',
+      rejectSuccess: '已驳回',
+      searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
+      advancedSearch: '高级筛选',
+      showAdvanced: '展开高级筛选',
+      hideAdvanced: '收起高级筛选',
+      resetFilters: '重置筛选',
+      applyFilters: '应用筛选',
+      filter: {
+        keyword: '关键词',
+        status: '认证状态',
+        allStatus: '全部状态',
+        adCode: '行政区划',
+        allRegion: '全部区划',
+        applyTime: '申请时间',
+        approveTime: '审批时间',
+        timeTo: '至'
+      },
+      status: {
+        pending: '审核中',
+        approved: '已通过',
+        rejected: '已驳回'
+      },
+      columns: {
+        orgName: '企业/组织名称',
+        creditCode: '统一社会信用代码',
+        legalPerson: '法定代表人',
+        contactName: '联系人',
+        contactPhone: '联系电话',
+        applyTime: '申请时间',
+        status: '认证状态',
+        actions: '操作'
+      },
+      form: {
+        applicantInfo: '申请人信息',
+        certInfo: '认证信息',
+        auditInfo: '审核操作',
+        auditResult: '审核结果',
+        auditOpinion: '审核意见',
+        pass: '通过',
+        reject: '驳回'
+      },
+      placeholder: {
+        auditOpinion: '请输入审核意见'
+      },
+      rules: {
+        auditResultRequired: '请选择审核结果',
+        auditOpinionRequired: '请输入审核意见'
+      },
+      actions: {
+        submit: '提交审核',
+        audit: '审核',
+        view: '查看'
+      },
+      messages: {
+        submitSuccess: '审核提交成功',
+        confirmSubmit: '确定提交审核结果吗？'
+      }
+    },
+
+    // 供应商信息维护
+    info: {
+      title: '供应商信息维护',
+      subtitle: '查看和管理所有供应商的认证信息',
+      list: '供应商列表',
+      detail: '供应商详情',
+      searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
+      showAdvanced: '展开高级筛选',
+      hideAdvanced: '收起高级筛选',
+      resetFilters: '重置筛选',
+      applyFilters: '应用筛选',
+      filter: {
+        keyword: '关键词',
+        status: '认证状态',
+        allStatus: '全部状态',
+        adCode: '行政区划',
+        allRegion: '全部区划',
+        applyTime: '申请时间',
+        approveTime: '审批时间'
+      },
+      columns: {
+        orgName: '企业/组织名称',
+        creditCode: '统一社会信用代码',
+        legalPerson: '法定代表人',
+        contactName: '联系人',
+        contactPhone: '联系电话',
+        adCode: '行政区划',
+        applyTime: '申请时间',
+        approveTime: '审批时间',
+        status: '认证状态',
+        actions: '操作'
+      },
+      actions: {
+        view: '查看详情',
+        edit: '编辑',
+        delete: '删除'
+      },
+      status: {
+        pending: '审核中',
+        approved: '已通过',
+        rejected: '已驳回'
+      }
+    },
+
+    // 供应商投入品管理
+    product: {
+      title: '供应商投入品管理',
+      subtitle: '管理供应商与投入品的关联关系',
+      list: '投入品供应列表',
+      detail: '供应详情',
+      add: '新增供应关系',
+      edit: '编辑供应关系',
+      delete: '删除供应关系',
+      batchDelete: '批量删除',
+      deleteConfirm: '确定删除该供应关系吗？',
+      batchDeleteConfirm: '确定删除选中的供应关系吗？',
       deleteSuccess: '删除成功',
       addSuccess: '新增成功',
       editSuccess: '编辑成功',
-
-      // 搜索和筛选
-      searchPlaceholder: '搜索产品名称、登记证号、生产批号',
+      searchPlaceholder: '搜索商品名称、商品编码、供应商',
+      filterBySupplier: '按供应商筛选',
       filterByType: '按投入品类型筛选',
+      filterByQuality: '按质量评级筛选',
+      allSuppliers: '全部供应商',
       allTypes: '全部类型',
-
-      // 投入品类型
-      type: {
+      allQuality: '全部评级',
+      keyword: '关键词',
+      inputType: {
         all: '全部',
         pesticide: '农药',
         fertilizer: '化肥',
         seed: '种子',
-        other: '其他',
+        other: '其他'
       },
-
-      // 表单字段 - 基本信息
+      qualityRating: {
+        all: '全部',
+        A: 'A级（优秀）',
+        B: 'B级（良好）',
+        C: 'C级（一般）',
+        D: 'D级（较差）'
+      },
+      certStatus: {
+        notPassed: '未通过',
+        pending: '审核中',
+        passed: '已通过'
+      },
       form: {
-        basicInfo: '基本信息',
-        productionInfo: '生产与责任信息',
-        regulatoryInfo: '法规与许可信息',
-        ingredientsInfo: '成分与使用信息',
-
+        basicInfo: '基础信息',
+        supplyInfo: '供应信息',
+        productInfo: '商品详情',
+        qualityInfo: '质量信息',
+        supplierId: '供应商',
+        supplierName: '供应商名称',
+        inputId: '投入品',
         inputName: '投入品名称',
         inputType: '投入品类型',
-        agriculturalInputType: '农资类型',
-        variety: '品种',
-        inputSku: '唯一产品标识码/SKU',
-        trademark: '注册商标',
-        registerCode: '登记批号',
-        productionLicense: '生产许可证号',
-        productionStandard: '产品标准证号',
-        producerName: '生产企业名称',
-        producerAddress: '生产企业地址',
-        createTime: '创建时间',
-        createPeople: '创建人',
-        status: '状态',
-      },
-
-      // 表单占位符
-      placeholder: {
-        inputName: '请输入投入品名称（2-100个字符）',
-        inputType: '请选择投入品类型',
-        agriculturalInputType: '请输入农资类型',
-        variety: '请输入品种',
-        inputSku: '系统自动生成',
-        trademark: '请输入注册商标',
-        registerCode: '请输入登记批号',
-        productionLicense: '请输入生产许可证号',
-        productionStandard: '请输入产品标准证号',
-        producerName: '请输入生产企业名称（2-200个字符）',
-        producerAddress: '请输入生产企业地址（5-255个字符）',
-      },
-
-      // 表单验证
-      rules: {
-        inputNameRequired: '请输入投入品名称',
-        inputNameLength: '投入品名称应为2-100个字符',
-        inputTypeRequired: '请选择投入品类型',
-        inputSkuRequired: '请输入唯一产品标识码',
-        inputSkuLength: '产品标识码应为8-50个字符',
-        trademarkRequired: '请输入注册商标',
-        registerCodeRequired: '请输入登记批号',
-        productionLicenseRequired: '请输入生产许可证号',
-        productionStandardRequired: '请输入产品标准证号',
-        producerNameRequired: '请输入生产企业名称',
-        producerNameLength: '企业名称应为2-200个字符',
-        producerAddressRequired: '请输入生产企业地址',
-        producerAddressLength: '企业地址应为5-255个字符',
-      },
-
-      // 农药特性字段
-      pesticide: {
-        title: '农药特性信息',
-        totalIngredientContent: '总有效成分含量',
-        toxicityLevel: '毒性等级',
-        targetCrops: '适用作物',
-        controlTargets: '防治对象',
-        applicationMethod: '施用方法',
-        dosage: '使用剂量',
-        dilutionRatio: '稀释倍数',
-        safetyInterval: '安全间隔期（天）',
-        precautions: '注意事项',
-        firstAid: '中毒急救措施',
-        storageRequirements: '储存要求',
-
-        toxicity: {
-          micro: '微毒',
-          low: '低毒',
-          medium: '中等毒',
-          high: '高毒',
-          severe: '剧毒',
-        },
-      },
-
-      // 化肥特性字段
-      fertilizer: {
-        title: '化肥特性信息',
-        fertilizerType: '肥料类型',
-        totalNutrientContent: '总养分含量',
-        nitrogenContent: '氮含量',
-        phosphorusContent: '磷含量(P₂O₅)',
-        potassiumContent: '钾含量(K₂O)',
-        organicMatterContent: '有机质含量',
-        mediumTraceElements: '中微量元素',
-        phValue: 'pH值',
-        suitableCrops: '适用作物',
-        applicationPeriod: '施用时期',
-        applicationMethod: '施用方法',
-        recommendedDosage: '建议用量',
-      },
-
-      // 种子特性字段
-      seed: {
-        title: '种子特性信息',
-        cropType: '作物种类',
-        varietyName: '品种名称',
-        varietyApprovalCode: '品种审定编号',
-        varietySource: '品种来源',
-        purity: '纯度(%)',
-        cleanliness: '净度(%)',
-        germinationRate: '发芽率(%)',
-        moistureContent: '水分含量(%)',
-      },
-
-      // 列表列
-      columns: {
-        inputName: '投入品名称',
-        inputType: '类型',
-        inputSku: '产品标识码',
-        trademark: '商标',
-        registerCode: '登记批号',
-        producerName: '生产企业',
-        createTime: '创建时间',
-        status: '状态',
-        actions: '操作',
-      },
-
-      // 状态
-      statusOptions: {
-        active: '启用',
-        inactive: '停用',
-      },
-    },
-
-    // 供应商管理
-    supplier: {
-      // 供应商认证
-      auth: {
-        title: '供应商认证申请',
-        subtitle: '填写供应商身份认证所需的详细资料',
-        applySuccess: '认证申请提交成功',
-        applyFailed: '认证申请提交失败',
-
-        form: {
-          orgName: '企业/组织名称',
-          creditCode: '统一社会信用代码',
-          legalPerson: '法定代表人/负责人',
-          legalId: '法定代表人身份证号',
-          adCode: '行政区划',
-          businessScope: '经营范围/主要产品',
-          licensePath: '营业执照',
-          contactName: '联系人姓名',
-          contactPhone: '联系人手机',
-        },
-
-        placeholder: {
-          orgName: '请输入企业/组织名称',
-          creditCode: '请输入统一社会信用代码',
-          legalPerson: '请输入法定代表人/负责人',
-          legalId: '请输入身份证号',
-          adCode: '请选择行政区划',
-          businessScope: '请输入经营范围或主要产品',
-          contactName: '请输入联系人姓名',
-          contactPhone: '请输入联系人手机号',
-        },
-
-        rules: {
-          orgNameRequired: '请输入企业/组织名称',
-          creditCodeRequired: '请输入统一社会信用代码',
-          creditCodeLength: '统一社会信用代码应为18位',
-          legalPersonRequired: '请输入法定代表人/负责人',
-          legalIdRequired: '请输入法定代表人身份证号',
-          legalIdFormat: '请输入正确的身份证号',
-          adCodeRequired: '请选择行政区划',
-          businessScopeRequired: '请输入经营范围或主要产品',
-          licensePathRequired: '请上传营业执照',
-          contactNameRequired: '请输入联系人姓名',
-          contactPhoneRequired: '请输入联系人手机号',
-          contactPhoneFormat: '请输入正确的手机号码',
-        },
-
-        uploadTip: '支持 jpg/png/pdf，单个文件不超过2MB',
-      },
-
-      // 供应商认证审批
-      approval: {
-        title: '供应商认证审批',
-        subtitle: '审核供应商提交的身份认证申请材料',
-        list: '待审批列表',
-        detail: '审批详情',
-        approveSuccess: '审核已通过',
-        rejectSuccess: '已驳回',
-
-        searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
-        advancedSearch: '高级筛选',
-        showAdvanced: '展开高级筛选',
-        hideAdvanced: '收起高级筛选',
-        resetFilters: '重置筛选',
-        applyFilters: '应用筛选',
-
-        filter: {
-          keyword: '关键词',
-          status: '认证状态',
-          allStatus: '全部状态',
-          adCode: '行政区划',
-          allRegion: '全部区划',
-          applyTime: '申请时间',
-          approveTime: '审批时间',
-          timeTo: '至',
-        },
-
-        status: {
-          pending: '审核中',
-          approved: '已通过',
-          rejected: '已驳回',
-        },
-
-        columns: {
-          orgName: '企业/组织名称',
-          creditCode: '统一社会信用代码',
-          legalPerson: '法定代表人',
-          contactName: '联系人',
-          contactPhone: '联系电话',
-          applyTime: '申请时间',
-          status: '认证状态',
-          actions: '操作',
-        },
-
-        form: {
-          applicantInfo: '申请人信息',
-          certInfo: '认证信息',
-          auditInfo: '审核操作',
-          auditResult: '审核结果',
-          auditOpinion: '审核意见',
-          pass: '通过',
-          reject: '驳回',
-        },
-
-        placeholder: {
-          auditOpinion: '请输入审核意见',
-        },
-
-        rules: {
-          auditResultRequired: '请选择审核结果',
-          auditOpinionRequired: '请输入审核意见',
-        },
-
-        actions: {
-          submit: '提交审核',
-          audit: '审核',
-          view: '查看',
-        },
-
-        messages: {
-          submitSuccess: '审核提交成功',
-          confirmSubmit: '确定提交审核结果吗？',
-        },
-      },
-
-      // 供应商信息维护
-      info: {
-        title: '供应商信息维护',
-        subtitle: '查看和管理所有供应商的认证信息',
-        list: '供应商列表',
-        detail: '供应商详情',
-
-        searchPlaceholder: '搜索企业名称、统一社会信用代码、联系人',
-        showAdvanced: '展开高级筛选',
-        hideAdvanced: '收起高级筛选',
-        resetFilters: '重置筛选',
-        applyFilters: '应用筛选',
-
-        filter: {
-          keyword: '关键词',
-          status: '认证状态',
-          allStatus: '全部状态',
-          adCode: '行政区划',
-          allRegion: '全部区划',
-          applyTime: '申请时间',
-          approveTime: '审批时间',
-        },
-
-        columns: {
-          orgName: '企业/组织名称',
-          creditCode: '统一社会信用代码',
-          legalPerson: '法定代表人',
-          contactName: '联系人',
-          contactPhone: '联系电话',
-          adCode: '行政区划',
-          applyTime: '申请时间',
-          approveTime: '审批时间',
-          status: '认证状态',
-          actions: '操作',
-        },
-
-        actions: {
-          view: '查看详情',
-          edit: '编辑',
-          delete: '删除',
-        },
-
-        status: {
-          pending: '审核中',
-          approved: '已通过',
-          rejected: '已驳回',
-        },
-      },
-
-      // 供应商投入品管理
-      product: {
-        title: '供应商投入品管理',
-        subtitle: '管理供应商与投入品的关联关系',
-        list: '投入品供应列表',
-        detail: '供应详情',
-        add: '新增供应关系',
-        edit: '编辑供应关系',
-        delete: '删除供应关系',
-        batchDelete: '批量删除',
-        deleteConfirm: '确定删除该供应关系吗？',
-        batchDeleteConfirm: '确定删除选中的供应关系吗？',
-        deleteSuccess: '删除成功',
-        addSuccess: '新增成功',
-        editSuccess: '编辑成功',
-
-        // 搜索和筛选
-        searchPlaceholder: '搜索商品名称、商品编码、供应商',
-        filterBySupplier: '按供应商筛选',
-        filterByType: '按投入品类型筛选',
-        filterByQuality: '按质量评级筛选',
-        allSuppliers: '全部供应商',
-        allTypes: '全部类型',
-        allQuality: '全部评级',
-        keyword: '关键词',
-
-        // 投入品类型
-        inputType: {
-          all: '全部',
-          pesticide: '农药',
-          fertilizer: '化肥',
-          seed: '种子',
-          other: '其他',
-        },
-
-        // 质量评级
-        qualityRating: {
-          all: '全部',
-          A: 'A级（优秀）',
-          B: 'B级（良好）',
-          C: 'C级（一般）',
-          D: 'D级（较差）',
-        },
-
-        // 认证状态
-        certStatus: {
-          notPassed: '未通过',
-          pending: '审核中',
-          passed: '已通过',
-        },
-
-        // 表单字段
-        form: {
-          basicInfo: '基础信息',
-          supplyInfo: '供应信息',
-          productInfo: '商品详情',
-          qualityInfo: '质量信息',
-
-          supplierId: '供应商',
-          supplierName: '供应商名称',
-          inputId: '投入品',
-          inputName: '投入品名称',
-          inputType: '投入品类型',
-          inputSku: '投入品编码',
-          inputSpec: '商品规格',
-          supplierProductCode: '供应商商品编码',
-          supplierProductName: '供应商商品名称',
-          currentPrice: '当前价格',
-          qualityRating: '质量评级',
-          certStatus: '认证状态',
-          notes: '备注信息',
-          createTime: '创建时间',
-          updateTime: '更新时间',
-        },
-
-        // 表单占位符
-        placeholder: {
-          supplierId: '请选择供应商',
-          inputId: '请选择投入品',
-          inputName: '请输入投入品名称',
-          inputSku: '请输入投入品编码',
-          supplierProductCode: '请输入供应商商品编码（最多100字符）',
-          supplierProductName: '请输入供应商商品名称（最多200字符）',
-          qualityRating: '请选择质量评级',
-          notes: '请输入备注信息（最多500字符）',
-        },
-
-        // 表单验证
-        rules: {
-          supplierIdRequired: '请选择供应商',
-          inputIdRequired: '请选择投入品',
-          supplierProductCodeLength: '供应商商品编码不能超过100字符',
-          supplierProductNameLength: '供应商商品名称不能超过200字符',
-          notesLength: '备注信息不能超过500字符',
-        },
-
-        // 列表列
-        columns: {
-          inputName: '商品名称',
-          inputSpec: '商品规格',
-          inputType: '类型',
-          supplierName: '供应商名称',
-          supplierProductCode: '供应商商品编码',
-          currentPrice: '当前价格',
-          qualityRating: '质量评级',
-          certStatus: '认证状态',
-          createTime: '创建时间',
-          actions: '操作',
-        },
-
-        // 操作按钮
-        actions: {
-          view: '详情',
-          edit: '编辑',
-          delete: '删除',
-        },
-
-        // 提示信息
-        messages: {
-          selectItems: '请选择要删除的项目',
-          relationExists: '该供应商与投入品的关联已存在',
-          noData: '暂无数据',
-        },
-
-        // 详情弹窗区域
-        detailSections: {
-          basicInfo: '基础信息',
-          supplyInfo: '供应关系属性',
-          editSupplyInfo: '编辑供应信息',
-        },
-      },
-    },
-
-    // 库存管理
-    inventory: {
-      // 仓库管理
-      warehouse: {
-        title: '仓库管理',
-        subtitle: '管理仓库基本信息、容量及使用情况',
-        list: '仓库列表',
-        detail: '仓库详情',
-        add: '新增仓库',
-        edit: '编辑仓库',
-        delete: '删除仓库',
-        deleteConfirm: '确定删除该仓库吗？',
-        deleteSuccess: '删除成功',
-        addSuccess: '新增成功',
-        editSuccess: '编辑成功',
-
-        searchPlaceholder: '搜索仓库名称',
-        filterByType: '按仓库类型筛选',
-        filterByStatus: '按状态筛选',
-        allTypes: '全部类型',
-        allStatus: '全部状态',
-
-        // 仓库类型
-        type: {
-          normal: '普通仓库',
-          cold: '冷藏仓库',
-          dangerous: '危险品仓库',
-        },
-
-        // 表单字段
-        form: {
-          warehouseCode: '仓库编号',
-          warehouseName: '仓库名称',
-          warehouseType: '仓库类型',
-          location: '仓库位置',
-          capacity: '仓库容量',
-          warehouseArea: '仓库面积',
-          usedCapacity: '已用容量',
-          availableCapacity: '可用容量',
-          belongs: '所属单位',
-          organName: '仓库归属部门',
-          supplierId: '关联供应商',
-          supplierName: '供应商名称',
-          siteCertificate: '场地证明材料',
-          contactPerson: '联系人',
-          contactPhone: '联系电话',
-          remark: '备注',
-          status: '状态',
-          createPeople: '创建人',
-          createTime: '创建时间',
-          updatePeople: '修改人',
-          updateTime: '更新时间',
-        },
-
-        placeholder: {
-          warehouseCode: '请输入仓库编码',
-          warehouseName: '请输入仓库名称',
-          warehouseType: '请选择仓库类型',
-          location: '请输入仓库位置',
-          capacity: '请输入仓库容量',
-          warehouseArea: '请输入仓库面积',
-          organName: '请输入仓库归属部门',
-          contactPerson: '请输入联系人',
-          contactPhone: '请输入联系电话',
-          remark: '请输入备注信息（选填）',
-        },
-
-        rules: {
-          warehouseCodeRequired: '请输入仓库编码',
-          warehouseNameRequired: '请输入仓库名称',
-          warehouseTypeRequired: '请选择仓库类型',
-          locationRequired: '请输入仓库位置',
-          capacityRequired: '请输入仓库容量',
-          capacityPositive: '仓库容量必须大于0',
-          warehouseAreaPositive: '仓库面积必须大于等于0',
-          organNameRequired: '请输入仓库归属部门',
-          contactPersonRequired: '请输入联系人',
-          contactPhoneRequired: '请输入联系电话',
-          contactPhoneFormat: '请输入正确的电话号码',
-        },
-
-        columns: {
-          warehouseCode: '仓库编号',
-          warehouseName: '仓库名称',
-          warehouseType: '仓库类型',
-          location: '仓库位置',
-          warehouseArea: '仓库面积',
-          belongs: '所属单位',
-          organName: '仓库归属部门',
-          supplierName: '供应商名称',
-          capacity: '容量',
-          usageRate: '使用率',
-          contactPerson: '联系人',
-          contactPhone: '联系电话',
-          status: '状态',
-          actions: '操作',
-        },
-
-        status: {
-          enabled: '启用',
-          disabled: '停用',
-        },
-
-        actions: {
-          view: '查看',
-          edit: '编辑',
-          delete: '删除',
-        },
-
-        systemInfo: '系统信息',
-
-        uploadFile: '上传文件',
-        uploadTip: '支持 jpg/png/pdf 格式，单个文件不超过 2MB',
-        uploadSuccess: '文件上传成功',
-        uploadFailed: '文件上传失败',
-        uploadFormatError: '文件格式不正确，只支持 jpg/png/pdf 格式',
-        uploadSizeError: '文件大小不能超过 2MB',
-        siteCertificateFile: '场地证明材料',
-        viewFile: '查看文件',
-
-        messages: {
-          noData: '暂无数据',
-        },
-      },
-
-      // 入库管理
-      stockIn: {
-        title: '入库管理',
-        subtitle: '管理投入品入库登记及入库确认',
-        create: '新建入库单',
-        createSuccess: '创建成功',
-        list: '入库单列表',
-        detail: '入库单详情',
-        add: '新增入库单',
-        edit: '编辑入库单',
-        delete: '删除入库单',
-        confirm: '确认入库',
-        audit: '审核',
-        approve: '通过',
-        reject: '拒绝',
-        deleteConfirm: '确定删除该入库单吗？',
-        confirmConfirm: '确认入库后将更新库存，确定要确认入库吗？',
-        confirmMessage: '确认执行入库操作？',
-        cancelMessage: '确定要取消该入库单吗？',
-        deleteSuccess: '删除成功',
-        addSuccess: '新增成功',
-        editSuccess: '编辑成功',
-        confirmSuccess: '入库确认成功',
-        auditSuccess: '审核成功',
-        rejectSuccess: '已拒绝',
-        cancelSuccess: '取消成功',
-        pendingCount: '待审核数量',
-        totalCount: '总数量',
-        material: '物料',
-        batch: '批次号',
-        batchId: '入库批次号',
-        batchInfo: '批次号信息',
-        auditOpinion: '审核意见',
-        rejectReason: '拒绝原因',
-        auditInfo: '审核信息',
-        auditUser: '审核人',
-        auditTime: '审核时间',
-        auditRemark: '审核备注',
-        relatedOrderNo: '关联单号',
-        supplierName: '供应商名称',
-        supplierContact: '供应商联系人',
-        supplierPhone: '供应商电话',
-        remark: '备注',
-        materialDetails: '入库物料明细',
-        inputDetails: '入库投入品明细',
-        materialId: '物料ID',
-        materialName: '物料名称',
-        materialBatchId: '物料批次号',
-        inputName: '投入品名称',
-        inputId: '投入品ID',
-        inputBatchId: '投入品批次ID',
-        inputType: '投入品类型',
-        specification: '规格型号',
-        unit: '计量单位',
-        expiryDate: '过期时间',
-        qrCode: '二维码',
-        addMaterial: '添加物料',
-        addInput: '添加投入品',
-        noMaterials: '暂无物料明细',
-
-        searchPlaceholder: '搜索入库单号、批次号',
-        filterByWarehouse: '按仓库筛选',
-        filterBySupplier: '按供应商筛选',
-        filterByType: '按入库类型筛选',
-        filterByStatus: '按状态筛选',
-        allWarehouses: '全部仓库',
-        allSuppliers: '全部供应商',
-        allTypes: '全部类型',
-        allStatus: '全部状态',
-
-        filter: {
-          status: '入库状态',
-          type: '入库类型',
-          orderId: '入库单号',
-        },
-
-        // 入库类型
-        type: {
-          production: 'production',
-          purchase: 'purchase',
-          transfer: 'transfer',
-          return: 'return',
-        },
-
-        // 状态
-        status: {
-          pending: '待审核',
-          approved: '已通过',
-          rejected: '已拒绝',
-          confirmed: '已完成',
-          completed: '已完成',
-          cancelled: '已取消',
-        },
-
-        // 表单字段
-        form: {
-          stockInId: '入库单号',
-          warehouseId: '入库仓库',
-          batchNo: '批次号',
-          supplierId: '供应商',
-          type: '入库类型',
-          operator: '操作员',
-          expiredTime: '过期日期',
-          totalQuantity: '总数量',
-          remarks: '备注',
-          status: '状态',
-          createTime: '创建时间',
-          items: '入库商品明细',
-          inputId: '投入品',
-          quantity: '入库数量',
-          expiryDate: '过期日期',
-          inputSku: 'SKU编码',
-          itemRemarks: '明细备注',
-        },
-
-        placeholder: {
-          warehouseId: '请选择入库仓库',
-          warehouse: '请选择仓库',
-          supplierId: '请选择供应商',
-          type: '请选择入库类型',
-          operator: '请输入操作员',
-          expiredTime: '请选择过期日期',
-          remarks: '请输入备注',
-          remark: '请输入备注',
-          inputId: '请选择投入品',
-          quantity: '请输入入库数量',
-          expiryDate: '请选择商品过期日期',
-          itemRemarks: '请输入明细备注',
-          orderId: '请输入入库单号',
-          auditOpinion: '请输入审核意见',
-          rejectReason: '请输入拒绝原因',
-          relatedOrderNo: '请输入关联单号（选填）',
-          supplierName: '请输入供应商名称（选填）',
-          supplierContact: '请输入供应商联系人（选填）',
-          supplierPhone: '请输入供应商电话（选填）',
-          materialId: '请输入物料ID',
-          materialName: '请输入物料名称',
-          inputName: '请选择投入品名称',
-          inputBatchId: '请输入投入品批次ID（选填）',
-          inputType: '投入品类型（自动填充）',
-          specification: '请输入规格型号（选填）',
-          unit: '请输入计量单位',
-          qrCode: '二维码（自动获取）',
-        },
-
-        rules: {
-          warehouseIdRequired: '请选择入库仓库',
-          warehouseRequired: '请选择仓库',
-          supplierIdRequired: '请选择供应商',
-          typeRequired: '请选择入库类型',
-          operatorRequired: '请输入操作员',
-          expiredTimeRequired: '请选择过期日期',
-          expiryDateRequired: '请选择商品过期日期',
-          inputIdRequired: '请选择投入品',
-          quantityRequired: '请输入入库数量',
-          quantityPositive: '入库数量必须大于0',
-          itemsRequired: '请至少添加一条入库商品明细',
-          detailsRequired: '请至少添加一条物料明细',
-          detailsComplete: '请完善所有物料明细信息',
-          materialIdRequired: '请输入物料ID',
-          materialNameRequired: '请输入物料名称',
-          unitRequired: 'please enter unit',
-        },
-
-        columns: {
-          orderId: '入库单号',
-          stockInId: '入库单号',
-          warehouseName: '仓库',
-          warehouse: '仓库',
-          supplierName: '供应商',
-          supplier: '供应商',
-          type: '入库类型',
-          batchNo: '批次号',
-          totalQuantity: '总数量',
-          quantity: '数量',
-          operator: '操作员',
-          expiredTime: '过期日期',
-          applyTime: '申请时间',
-          inboundTime: '入库时间',
-          status: '状态',
-          createTime: '创建时间',
-          actions: '操作',
-        },
-
-        actions: {
-          view: '查看',
-          edit: '编辑',
-          delete: '删除',
-          confirm: '确认入库',
-          addItem: '添加商品',
-          removeItem: '移除',
-        },
-
-        messages: {
-          noData: '暂无数据',
-          noItems: '暂无商品明细',
-        },
-      },
-
-      // 出库管理
-      stockOut: {
-        title: '出库管理',
-        subtitle: '管理投入品出库登记及出库确认',
-        list: '出库单列表',
-        detail: '出库单详情',
-        add: '新增出库单',
-        edit: '编辑出库单',
-        delete: '删除出库单',
-        confirm: '确认出库',
-        audit: '审核',
-        auditStatus: '审核状态',
-        auditRemark: '审核意见',
-        auditSuccess: '审核成功',
-        cancelConfirm: '确定要取消该出库单吗?',
-        cancelSuccess: '取消成功',
-        deleteConfirm: '确定删除该出库单吗？',
-        confirmConfirm: '确认出库后将扣减库存，确定要确认出库吗？',
-        deleteSuccess: '删除成功',
-        addSuccess: '新增成功',
-        editSuccess: '编辑成功',
-        confirmSuccess: '出库确认成功',
-
-        searchPlaceholder: '搜索出库单号、关联单号、出库对象',
-        filterByWarehouse: '按仓库筛选',
-        filterByType: '按出库类型筛选',
-        filterByStatus: '按状态筛选',
-        allWarehouses: '全部仓库',
-        allTypes: '全部类型',
-        allStatus: '全部状态',
-
-        // 出库类型
-        type: {
-          sale: '销售出库',
-          transfer: '调拨出库',
-        },
-
-        // 状态
-        status: {
-          pending: '待审核',
-          completed: '已完成',
-          cancelled: '已取消',
-        },
-
-        // 表单字段
-        form: {
-          outboundOrderId: '出库单号',
-          outboundBatchId: '出库批次号',
-          stockOutId: '出库单号',
-          warehouseId: '出库仓库',
-          batchNo: '批次号',
-          customer: '客户',
-          outboundObject: '出库对象',
-          outboundObjectId: '出库对象',
-          outboundUser: '出库员',
-          outboundDept: '出库部门',
-          relatedOrderNo: '关联单号',
-          type: '出库类型',
-          operator: '经办人',
-          totalQuantity: '总数量',
-          remark: '备注',
-          status: '状态',
-          createTime: '创建时间',
-          outboundTime: '出库时间',
-          auditUser: '审核人',
-          auditTime: '审核时间',
-          items: '出库商品明细',
-          details: '出库明细',
-          inputId: '投入品',
-          materialId: '物料',
-          materialName: '物料名称',
-          materialType: '物料类型',
-          materialBatchId: '物料批次号',
-          quantity: '出库数量',
-          specModel: '规格型号',
-          unitOfMeasure: '计量单位',
-          availableQuantity: '可用库存',
-          itemRemarks: '明细备注',
-          batchSplits: '批次拆分明细',
-          inboundBatchId: '入库批次号',
-          splitQuantity: '扣减数量',
-          remainingQuantity: '剩余库存',
-        },
-
-        placeholder: {
-          warehouseId: '请选择出库仓库',
-          customer: '请输入客户名称',
-          outboundObject: '请选择目标仓库',
-          outboundObjectId: '请选择目标仓库',
-          outboundUser: '请输入出库员',
-          outboundDept: '请输入出库部门',
-          relatedOrderNo: '请输入关联单号(选填)',
-          type: '请选择出库类型',
-          operator: '请输入经办人',
-          remark: '请输入备注',
-          inputId: '请选择投入品',
-          materialId: '请选择物料',
-          materialType: '请选择物料类型',
-          materialBatchId: '物料批次号（自动带出）',
-          batchNo: '请选择批次号',
-          quantity: '请输入出库数量',
-          specModel: '请输入规格型号(选填)',
-          unitOfMeasure: '请输入计量单位(选填)',
-          itemRemarks: '请输入明细备注',
-          auditRemark: '请输入审核意见',
-        },
-
-        rules: {
-          warehouseIdRequired: '请选择出库仓库',
-          customerRequired: '请输入客户名称',
-          outboundObjectIdRequired: '请选择目标仓库',
-          typeRequired: '请选择出库类型',
-          operatorRequired: '请输入经办人',
-          inputIdRequired: '请选择投入品',
-          materialIdRequired: '请选择物料',
-          materialTypeRequired: '请选择物料类型',
-          batchNoRequired: '请选择批次号',
-          quantityRequired: '请输入出库数量',
-          quantityPositive: '出库数量必须大于0',
-          quantityExceeds: '出库数量不能超过可用库存',
-          itemsRequired: '请至少添加一条出库商品明细',
-          detailsRequired: '请至少添加一条出库明细',
-          auditRemarkRequired: '请输入审核意见',
-        },
-
-        columns: {
-          outboundOrderId: '出库单号',
-          stockOutId: '出库单号',
-          warehouseName: '仓库',
-          customer: '客户',
-          outboundObject: '出库对象',
-          outboundObjectName: '出库对象',
-          outboundUser: '出库员',
-          outboundDept: '出库部门',
-          type: '出库类型',
-          batchNo: '批次号',
-          relatedOrderNo: '关联单号',
-          totalQuantity: '总数量',
-          operator: '经办人',
-          auditUser: '审核人',
-          auditTime: '审核时间',
-          outboundTime: '出库时间',
-          status: '状态',
-          createTime: '创建时间',
-          actions: '操作',
-        },
-
-        actions: {
-          view: '查看',
-          edit: '编辑',
-          delete: '删除',
-          cancel: '取消',
-          confirm: '确认出库',
-          audit: '审核',
-          approve: '通过',
-          reject: '拒绝',
-          addItem: '添加商品',
-          removeItem: '移除',
-        },
-
-        messages: {
-          noData: '暂无数据',
-          noItems: '暂无商品明细',
-          insufficientStock: '库存不足，无法出库',
-          noStockInWarehouse: '该仓库暂无可用库存',
-          noAvailableWarehouse: '暂无可选的目标仓库（不能选择出库仓库本身）',
-        },
-      },
-
-      // 库存查询
-      stock: {
-        title: '库存查询',
-        subtitle: '实时查询库存信息、预警及汇总统计',
-        list: '库存列表',
-        detail: '库存详情',
-        warning: '库存预警',
-        summary: '汇总统计',
-        logs: '库存变动日志',
-        viewLogs: '查看变动日志',
-        dashboard: '库存监控仪表盘',
-        dashboardSubtitle: '实时监控库存状态与预警信息',
-
-        // 仪表盘指标
-        metrics: {
-          totalStock: '总库存总量',
-          nearExpiryCount: '临期商品数量',
-          overCapacityWarehouses: '超容量仓库数',
-          pendingAlerts: '待处理预警数',
-          totalValue: '库存总价值',
-          warehouseUsage: '仓库使用率',
-        },
-
-        searchPlaceholder: '搜索投入品名称、批次号',
-        filterByWarehouse: '按仓库筛选',
-        filterByInput: '按投入品筛选',
-        filterByStatus: '按库存状态筛选',
-        filterByOperation: '按操作类型筛选',
-        allWarehouses: '全部仓库',
-        allInputs: '全部投入品',
-        allStatus: '全部状态',
-        allOperations: '全部操作',
-
-        // 库存状态
-        status: {
-          normal: '正常',
-          active: '正常',
-          nearExpiry: '临期',
-          expired: '过期',
-          inactive: '停用',
-        },
-
-        // 操作类型
-        operationType: {
-          inbound: '入库',
-          outbound: '出库',
-        },
-
-        // 预警类型
-        warningType: {
-          all: '全部预警',
-          nearExpiry: '临期预警',
-          expired: '过期预警',
-        },
-
-        // 表单字段
-        form: {
-          inventoryId: '库存记录ID',
-          inputId: '投入品',
-          inputName: '投入品名称',
-          batchNo: '批次号',
-          warehouseId: '仓库',
-          warehouseName: '仓库名称',
-          currentQuantity: '当前库存数量',
-          inDate: '入库日期',
-          expiredDate: '过期日期',
-          stockStatus: '库存状态',
-          daysToExpire: '距过期天数',
-        },
-
-        columns: {
-          inputName: '投入品名称',
-          materialName: '投入品名称',
-          materialId: '投入品ID',
-          materialBatchId: '批次ID',
-          batchNo: '批次号',
-          warehouseName: '仓库名称',
-          warehouse: '仓库',
-          quantity: '库存数量',
-          currentQuantity: '当前数量',
-          inboundQuantity: '累计入库',
-          outboundQuantity: '累计出库',
-          inDate: '入库日期',
-          expiryDate: '过期日期',
-          expiredDate: '过期日期',
-          stockStatus: '库存状态',
-          status: '状态',
-          qrCode: '二维码',
-          createdAt: '创建时间',
-          updatedAt: '更新时间',
-          actions: '操作',
-          operationType: '操作类型',
-          changeQuantity: '变动数量',
-          beforeQuantity: '变动前',
-          afterQuantity: '变动后',
-          referenceOrderId: '关联单号',
-          operator: '操作人',
-        },
-
-        summaryColumns: {
-          inputName: '投入品名称',
-          warehouseName: '仓库名称',
-          totalQuantity: '总库存',
-          normalQuantity: '正常库存',
-          nearExpiryQuantity: '临期库存',
-          expiredQuantity: '过期库存',
-        },
-
-        actions: {
-          view: '查看',
-          viewWarning: '查看预警',
-          viewSummary: '查看汇总',
-          exportData: '导出数据',
-        },
-
-        messages: {
-          noData: '暂无数据',
-          noWarning: '暂无预警信息',
-        },
-
-        tabs: {
-          list: '库存列表',
-          warning: '库存预警',
-          summaryByInput: '按投入品汇总',
-          summaryByWarehouse: '按仓库汇总',
-        },
-      },
-    },
-
-    // 数据大屏
-    dashboard: {
-      title: '农业投入品供应管理大屏',
-      subtitle: '实时数据监控与可视化分析',
-      lastUpdate: '最后更新',
-      autoRefresh: '自动刷新',
-      fullscreen: '全屏',
-      exitFullscreen: '退出全屏',
-
-      // 总览卡片
-      overview: {
-        totalSuppliers: '供应商总数',
-        certifiedSuppliers: '已认证供应商',
-        pendingSuppliers: '待审核供应商',
-        rejectedSuppliers: '未通过供应商',
-        totalInputs: '投入品总数',
-        seedInputs: '种子类',
-        fertilizerInputs: '化肥类',
-        pesticideInputs: '农药类',
-        totalWarehouses: '仓库总数',
-        totalCapacity: '总库存容量',
-        usedCapacity: '已用容量',
-        capacityUsageRate: '库存使用率',
-        totalStockQuantity: '当前总库存',
-        normalStock: '正常库存',
-        nearExpiryStock: '临期库存',
-        expiredStock: '过期库存',
-        todayStockIn: '今日入库',
-        todayStockOut: '今日出库',
-        monthStockIn: '本月入库量',
-        monthStockOut: '本月出库量',
-        pendingWarnings: '待处理预警',
-        unit: '个',
-        tons: '吨',
-        todayBusiness: '今日业务',
-      },
-
-      // 供应商TOP榜单
-      topSuppliers: {
-        title: 'TOP供应商榜单',
-        subtitle: '本月表现最佳供应商',
-        rank: '排名',
-        supplierName: '供应商名称',
-        monthStockIn: '本月入库量',
-        productCount: '供应投入品数',
-        cooperationDays: '合作天数',
+        inputSku: '投入品编码',
+        inputSpec: '商品规格',
+        supplierProductCode: '供应商商品编码',
+        supplierProductName: '供应商商品名称',
+        currentPrice: '当前价格',
         qualityRating: '质量评级',
-        contactPerson: '联系人',
-        contactPhone: '联系电话',
-        viewMore: '查看更多',
-        days: '天',
-        items: '件',
+        certStatus: '认证状态',
+        notes: '备注信息',
+        createTime: '创建时间',
+        updateTime: '更新时间'
       },
-
-      // 仓库统计
-      warehouse: {
-        title: '仓库统计',
-        subtitle: '仓库容量使用情况',
-        warehouseName: '仓库名称',
-        location: '位置',
-        capacity: '容量',
-        currentStock: '当前库存',
-        usageRate: '使用率',
-        productTypes: '商品种类',
-        monthIn: '本月入库',
-        monthOut: '本月出库',
-        warning: '容量预警',
-        normal: '正常',
-        types: '种',
-        times: '次',
+      placeholder: {
+        supplierId: '请选择供应商',
+        inputId: '请选择投入品',
+        inputName: '请输入投入品名称',
+        inputSku: '请输入投入品编码',
+        supplierProductCode: '请输入供应商商品编码（最多100字符）',
+        supplierProductName: '请输入供应商商品名称（最多200字符）',
+        qualityRating: '请选择质量评级',
+        notes: '请输入备注信息（最多500字符）'
       },
-
-      // 入库出库趋势
-      stockTrend: {
-        title: '入库出库趋势',
-        subtitle: '近期库存变化分析',
-        stockIn: '入库数量',
-        stockOut: '出库数量',
-        netChange: '净增库存',
-        last7Days: '近7天',
-        last30Days: '近30天',
-        date: '日期',
-        quantity: '数量',
-        count: '单数',
+      rules: {
+        supplierIdRequired: '请选择供应商',
+        inputIdRequired: '请选择投入品',
+        supplierProductCodeLength: '供应商商品编码不能超过100字符',
+        supplierProductNameLength: '供应商商品名称不能超过200字符',
+        notesLength: '备注信息不能超过500字符'
       },
-
-      // 投入品类型分布
-      inputDistribution: {
-        title: '投入品类型分布',
-        subtitle: '各类型投入品占比',
-        seed: '种子',
-        fertilizer: '化肥',
-        pesticide: '农药',
-        other: '其他',
-        count: '数量',
-        stockQuantity: '库存量',
-        percentage: '占比',
+      columns: {
+        inputName: '商品名称',
+        inputSpec: '商品规格',
+        inputType: '类型',
+        supplierName: '供应商名称',
+        supplierProductCode: '供应商商品编码',
+        currentPrice: '当前价格',
+        qualityRating: '质量评级',
+        certStatus: '认证状态',
+        createTime: '创建时间',
+        actions: '操作'
       },
-
-      // 预警信息
-      warnings: {
-        title: '预警信息',
-        subtitle: '待处理预警列表',
-        warningType: '预警类型',
-        warningLevel: '级别',
-        objectName: '对象',
-        content: '内容',
-        warningTime: '预警时间',
-        warehouseName: '仓库',
-        batchNo: '批次号',
-        status: '状态',
-        noWarnings: '暂无预警信息',
-
-        types: {
-          nearExpiry: '临期预警',
-          expired: '过期预警',
-          lowStock: '库存不足',
-          overCapacity: '超容量',
-        },
-
-        levels: {
-          low: '低',
-          medium: '中',
-          high: '高',
-        },
-
-        statusOptions: {
-          pending: '未处理',
-          processed: '已处理',
-          ignored: '已忽略',
-        },
+      actions: {
+        view: '详情',
+        edit: '编辑',
+        delete: '删除'
       },
-
-      // 实时动态
-      activities: {
-        title: '实时动态',
-        subtitle: '最新业务活动',
-        stockInActivity: '入库',
-        stockOutActivity: '出库',
-        supplierActivity: '供应商认证',
-        warehouseActivity: '仓库',
-        justNow: '刚刚',
-        minutesAgo: '分钟前',
-        hoursAgo: '小时前',
+      messages: {
+        selectItems: '请选择要删除的项目',
+        relationExists: '该供应商与投入品的关联已存在',
+        noData: '暂无数据'
       },
+      detailSections: {
+        basicInfo: '基础信息',
+        supplyInfo: '供应关系属性',
+        editSupplyInfo: '编辑供应信息'
+      }
+    }
+  },
 
-      // 今日出入库
-      todayStock: {
-        title: '今日出入库',
-        in: '入库',
-        out: '出库',
-        warehouse: '仓库',
-        operator: '经办人',
-        supplier: '供应商',
-        customer: '客户',
-        quantity: '数量',
-        time: '时间',
-        status: '状态',
-        noData: '暂无数据',
-        statusPending: '待处理',
-        statusConfirmed: '已确认',
-        statusCancelled: '已作废',
-      },
-
-      // 即将过期
-      expiring: {
-        title: '即将过期',
-        daysLeft: '剩余',
-        days: '天',
-        urgent: '紧急',
-        warehouse: '仓库',
-        quantity: '库存',
-        batchNo: '批次',
-        noData: '暂无即将过期商品',
-        expired: '已过期',
-      },
-
-      // 库存状态分布
-      stockStatus: {
-        title: '库存状态分布',
-        normal: '正常',
-        nearExpiry: '临期',
-        expired: '过期',
-        lowStock: '库存不足',
-        productCount: '商品种类',
-        totalQuantity: '库存总量',
-        percentage: '占比',
-      },
-
-      // 刷新和系统状态
-      autoRefreshOn: '自动刷新',
-      autoRefreshOff: '已暂停',
-      refreshInterval: '刷新间隔',
-      systemStatus: '系统正常',
-    },
-
-    // 信息反馈
-    feedback: {
-      title: '信息反馈管理',
-      subtitle: '收集和处理投入品供应相关的反馈信息',
-      list: '反馈列表',
-      detail: '反馈详情',
-      add: '提交反馈',
-      edit: '编辑反馈',
-      delete: '删除反馈',
-      deleteConfirm: '确定删除该反馈吗？',
+  // 库存管理
+  inventory: {
+    // 仓库管理
+    warehouse: {
+      title: '仓库管理',
+      subtitle: '管理仓库基本信息、容量及使用情况',
+      list: '仓库列表',
+      detail: '仓库详情',
+      add: '新增仓库',
+      edit: '编辑仓库',
+      delete: '删除仓库',
+      deleteConfirm: '确定删除该仓库吗？',
       deleteSuccess: '删除成功',
-      addSuccess: '反馈提交成功',
+      addSuccess: '新增成功',
       editSuccess: '编辑成功',
-      batchDelete: '批量删除',
-      batchDeleteConfirm: '确定删除选中的 {count} 条反馈吗？',
-
-      // 搜索和筛选
-      searchPlaceholder: '搜索反馈标题、内容、反馈编号',
-      filterByType: '按反馈类型筛选',
-      filterByStatus: '按处理状态筛选',
-      filterByPriority: '按优先级筛选',
+      searchPlaceholder: '搜索仓库名称',
+      filterByType: '按仓库类型筛选',
+      filterByStatus: '按状态筛选',
       allTypes: '全部类型',
       allStatus: '全部状态',
-      allPriority: '全部优先级',
-      filterByTime: '按时间筛选',
-
-      // 反馈类型
       type: {
-        complaint: '投诉',
-        suggestion: '建议',
-        inquiry: '咨询',
-        fault: '故障报告',
-        other: '其他',
+        normal: '普通仓库',
+        cold: '冷藏仓库',
+        dangerous: '危险品仓库'
       },
-
-      // 处理状态
-      status: {
-        pending: '待处理',
-        processing: '处理中',
-        completed: '已完成',
-        closed: '已关闭',
-      },
-
-      // 优先级
-      priority: {
-        low: '低',
-        medium: '中',
-        high: '高',
-        urgent: '紧急',
-      },
-
-      // 列表列
-      columns: {
-        feedbackNo: '反馈编号',
-        feedbackType: '反馈类型',
-        title: '标题',
-        inputName: '投入品名称',
-        supplierName: '供应商名称',
-        contactName: '联系人',
-        contactPhone: '联系电话',
-        priority: '优先级',
-        status: '状态',
-        createTime: '提交时间',
-        handlerName: '处理人',
-        handleTime: '处理时间',
-        processingHours: '处理耗时',
-        satisfaction: '满意度',
-        actions: '操作',
-      },
-
-      // 表单字段
       form: {
-        basicInfo: '基本信息',
-        contactInfo: '联系方式',
-        processingInfo: '处理信息',
-        evaluationInfo: '评价信息',
-
-        feedbackType: '反馈类型',
-        title: '反馈标题',
-        content: '反馈内容',
-        inputName: '投入品名称',
+        warehouseCode: '仓库编号',
+        warehouseName: '仓库名称',
+        warehouseType: '仓库类型',
+        location: '仓库位置',
+        capacity: '仓库容量',
+        warehouseArea: '仓库面积',
+        usedCapacity: '已用容量',
+        availableCapacity: '可用容量',
+        belongs: '所属单位',
+        organName: '仓库归属部门',
+        supplierId: '关联供应商',
         supplierName: '供应商名称',
-        contactName: '联系人姓名',
+        siteCertificate: '场地证明材料',
+        contactPerson: '联系人',
         contactPhone: '联系电话',
-        contactEmail: '联系邮箱',
-        priority: '优先级',
-        attachments: '附件',
         remark: '备注',
-
-        handlerName: '处理人',
-        handleTime: '处理时间',
-        handleResult: '处理结果',
-        handleRemark: '处理备注',
-        processingHours: '处理耗时(小时)',
-
-        satisfaction: '满意度评分',
-        evaluation: '评价内容',
-        evaluationTime: '评价时间',
-
-        replyContent: '回复内容',
-        replyTime: '回复时间',
-        replyUser: '回复人',
-        noReplies: '暂无回复',
+        status: '状态',
+        createPeople: '创建人',
+        createTime: '创建时间',
+        updatePeople: '修改人',
+        updateTime: '更新时间'
       },
-
-      // 表单占位符
       placeholder: {
-        feedbackType: '请选择反馈类型',
-        title: '请输入反馈标题(最多200字符)',
-        content: '请详细描述您的反馈内容...',
-        inputName: '请输入投入品名称',
-        supplierName: '请输入供应商名称',
-        contactName: '请输入联系人姓名',
+        warehouseCode: '请输入仓库编码',
+        warehouseName: '请输入仓库名称',
+        warehouseType: '请选择仓库类型',
+        location: '请输入仓库位置',
+        capacity: '请输入仓库容量',
+        warehouseArea: '请输入仓库面积',
+        organName: '请输入仓库归属部门',
+        contactPerson: '请输入联系人',
         contactPhone: '请输入联系电话',
-        contactEmail: '请输入联系邮箱',
-        priority: '请选择优先级',
-        remark: '请输入备注信息(最多500字符)',
-        handleResult: '请输入处理结果',
-        handleRemark: '请输入处理备注',
-        evaluation: '请输入您的评价...',
-        replyContent: '请输入回复内容...',
+        remark: '请输入备注信息（选填）'
       },
-
-      // 表单验证
       rules: {
-        feedbackTypeRequired: '请选择反馈类型',
-        titleRequired: '请输入反馈标题',
-        titleLength: '反馈标题最多200字符',
-        contentRequired: '请输入反馈内容',
-        contactNameLength: '联系人姓名最多100字符',
-        contactPhoneLength: '联系电话最多20字符',
-        contactPhoneFormat: '请输入正确的电话号码',
-        contactEmailFormat: '请输入正确的邮箱地址',
-        contactEmailLength: '邮箱地址最多100字符',
-        remarkLength: '备注最多500字符',
-        handleResultRequired: '请输入处理结果',
-        replyContentRequired: '请输入回复内容',
+        warehouseCodeRequired: '请输入仓库编码',
+        warehouseNameRequired: '请输入仓库名称',
+        warehouseTypeRequired: '请选择仓库类型',
+        locationRequired: '请输入仓库位置',
+        capacityRequired: '请输入仓库容量',
+        capacityPositive: '仓库容量必须大于0',
+        warehouseAreaPositive: '仓库面积必须大于等于0',
+        organNameRequired: '请输入仓库归属部门',
+        contactPersonRequired: '请输入联系人',
+        contactPhoneRequired: '请输入联系电话',
+        contactPhoneFormat: '请输入正确的电话号码'
       },
+      columns: {
+        warehouseCode: '仓库编号',
+        warehouseName: '仓库名称',
+        warehouseType: '仓库类型',
+        location: '仓库位置',
+        warehouseArea: '仓库面积',
+        belongs: '所属单位',
+        organName: '仓库归属部门',
+        supplierName: '供应商名称',
+        capacity: '容量',
+        usageRate: '使用率',
+        contactPerson: '联系人',
+        contactPhone: '联系电话',
+        status: '状态',
+        actions: '操作'
+      },
+      status: {
+        enabled: '启用',
+        disabled: '停用'
+      },
+      actions: {
+        view: '查看',
+        edit: '编辑',
+        delete: '删除'
+      },
+      systemInfo: '系统信息',
+      uploadFile: '上传文件',
+      uploadTip: '支持 jpg/png/pdf 格式，单个文件不超过 2MB',
+      uploadSuccess: '文件上传成功',
+      uploadFailed: '文件上传失败',
+      uploadFormatError: '文件格式不正确，只支持 jpg/png/pdf 格式',
+      uploadSizeError: '文件大小不能超过 2MB',
+      siteCertificateFile: '场地证明材料',
+      viewFile: '查看文件',
+      messages: {
+        noData: '暂无数据'
+      }
+    },
 
-      // 操作按钮
+    // 入库管理
+    stockIn: {
+      title: '入库管理',
+      subtitle: '管理投入品入库登记及入库确认',
+      create: '新建入库单',
+      createSuccess: '创建成功',
+      list: '入库单列表',
+      detail: '入库单详情',
+      add: '新增入库单',
+      edit: '编辑入库单',
+      delete: '删除入库单',
+      confirm: '确认入库',
+      audit: '审核',
+      approve: '通过',
+      reject: '拒绝',
+      deleteConfirm: '确定删除该入库单吗？',
+      confirmConfirm: '确认入库后将更新库存，确定要确认入库吗？',
+      confirmMessage: '确认执行入库操作？',
+      cancelMessage: '确定要取消该入库单吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+      confirmSuccess: '入库确认成功',
+      auditSuccess: '审核成功',
+      rejectSuccess: '已拒绝',
+      cancelSuccess: '取消成功',
+      pendingCount: '待审核数量',
+      totalCount: '总数量',
+      material: '物料',
+      batch: '批次号',
+      batchId: '入库批次号',
+      batchInfo: '批次号信息',
+      auditOpinion: '审核意见',
+      rejectReason: '拒绝原因',
+      auditInfo: '审核信息',
+      auditUser: '审核人',
+      auditTime: '审核时间',
+      auditRemark: '审核备注',
+      relatedOrderNo: '关联单号',
+      supplierName: '供应商名称',
+      supplierContact: '供应商联系人',
+      supplierPhone: '供应商电话',
+      remark: '备注',
+      materialDetails: '入库物料明细',
+      inputDetails: '入库投入品明细',
+      materialId: '物料ID',
+      materialName: '物料名称',
+      materialBatchId: '物料批次号',
+      inputName: '投入品名称',
+      inputId: '投入品ID',
+      inputBatchId: '投入品批次ID',
+      inputType: '投入品类型',
+      specification: '规格型号',
+      unit: '计量单位',
+      expiryDate: '过期时间',
+      qrCode: '二维码',
+      addMaterial: '添加物料',
+      addInput: '添加投入品',
+      noMaterials: '暂无物料明细',
+      searchPlaceholder: '搜索入库单号、批次号',
+      filterByWarehouse: '按仓库筛选',
+      filterBySupplier: '按供应商筛选',
+      filterByType: '按入库类型筛选',
+      filterByStatus: '按状态筛选',
+      allWarehouses: '全部仓库',
+      allSuppliers: '全部供应商',
+      allTypes: '全部类型',
+      allStatus: '全部状态',
+      filter: {
+        status: '入库状态',
+        type: '入库类型',
+        orderId: '入库单号'
+      },
+      type: {
+        production: '生产入库',
+        purchase: '采购入库',
+        transfer: '调拨入库',
+        return: '退货入库'
+      },
+      status: {
+        pending: '待审核',
+        approved: '已通过',
+        rejected: '已拒绝',
+        confirmed: '已完成',
+        completed: '已完成',
+        cancelled: '已取消'
+      },
+      form: {
+        stockInId: '入库单号',
+        warehouseId: '入库仓库',
+        batchNo: '批次号',
+        supplierId: '供应商',
+        type: '入库类型',
+        operator: '操作员',
+        expiredTime: '过期日期',
+        totalQuantity: '总数量',
+        remarks: '备注',
+        status: '状态',
+        createTime: '创建时间',
+        items: '入库商品明细',
+        inputId: '投入品',
+        quantity: '入库数量',
+        expiryDate: '过期日期',
+        inputSku: 'SKU编码',
+        itemRemarks: '明细备注'
+      },
+      placeholder: {
+        warehouseId: '请选择入库仓库',
+        warehouse: '请选择仓库',
+        supplierId: '请选择供应商',
+        type: '请选择入库类型',
+        operator: '请输入操作员',
+        expiredTime: '请选择过期日期',
+        remarks: '请输入备注',
+        remark: '请输入备注',
+        inputId: '请选择投入品',
+        quantity: '请输入入库数量',
+        expiryDate: '请选择商品过期日期',
+        itemRemarks: '请输入明细备注',
+        orderId: '请输入入库单号',
+        auditOpinion: '请输入审核意见',
+        rejectReason: '请输入拒绝原因',
+        relatedOrderNo: '请输入关联单号（选填）',
+        supplierName: '请输入供应商名称（选填）',
+        supplierContact: '请输入供应商联系人（选填）',
+        supplierPhone: '请输入供应商电话（选填）',
+        materialId: '请输入物料ID',
+        materialName: '请输入物料名称',
+        inputName: '请选择投入品名称',
+        inputBatchId: '请输入投入品批次ID（选填）',
+        inputType: '投入品类型（自动填充）',
+        specification: '请输入规格型号（选填）',
+        unit: '请输入计量单位',
+        qrCode: '二维码（自动获取）'
+      },
+      rules: {
+        warehouseIdRequired: '请选择入库仓库',
+        warehouseRequired: '请选择仓库',
+        supplierIdRequired: '请选择供应商',
+        typeRequired: '请选择入库类型',
+        operatorRequired: '请输入操作员',
+        expiredTimeRequired: '请选择过期日期',
+        expiryDateRequired: '请选择商品过期日期',
+        inputIdRequired: '请选择投入品',
+        quantityRequired: '请输入入库数量',
+        quantityPositive: '入库数量必须大于0',
+        itemsRequired: '请至少添加一条入库商品明细',
+        detailsRequired: '请至少添加一条物料明细',
+        detailsComplete: '请完善所有物料明细信息',
+        materialIdRequired: '请输入物料ID',
+        materialNameRequired: '请输入物料名称',
+        unitRequired: '请输入计量单位'
+      },
+      columns: {
+        orderId: '入库单号',
+        stockInId: '入库单号',
+        warehouseName: '仓库',
+        warehouse: '仓库',
+        supplierName: '供应商',
+        supplier: '供应商',
+        type: '入库类型',
+        batchNo: '批次号',
+        totalQuantity: '总数量',
+        quantity: '数量',
+        operator: '操作员',
+        expiredTime: '过期日期',
+        applyTime: '申请时间',
+        inboundTime: '入库时间',
+        status: '状态',
+        createTime: '创建时间',
+        actions: '操作'
+      },
       actions: {
         view: '查看',
         edit: '编辑',
         delete: '删除',
-        reply: '回复',
-        handle: '处理',
-        close: '关闭',
-        reopen: '重新打开',
-        evaluate: '评价',
-        submitEvaluation: '提交评价',
+        confirm: '确认入库',
+        addItem: '添加商品',
+        removeItem: '移除'
       },
-
-      // 满意度评分
-      satisfactionLevel: {
-        1: '非常不满意',
-        2: '不满意',
-        3: '一般',
-        4: '满意',
-        5: '非常满意',
-      },
-
-      // 提示信息
       messages: {
-        deleteConfirm: '确定删除该反馈吗？此操作不可恢复。',
-        closeConfirm: '确定关闭该反馈吗？',
-        handleSuccess: '处理成功',
-        replySuccess: '回复成功',
-        evaluationSuccess: '评价提交成功',
-        onlyPendingCanEdit: '只能编辑待处理状态的反馈',
-        onlyPendingCanDelete: '只能删除待处理状态的反馈',
-      },
-
-      // 统计
-      statistics: {
-        totalCount: '反馈总数',
-        pendingCount: '待处理',
-        processingCount: '处理中',
-        completedCount: '已完成',
-        closedCount: '已关闭',
-        avgProcessingHours: '平均处理时长(小时)',
-        avgSatisfaction: '平均满意度',
-        todayCount: '今日新增',
-      },
-
-      // 详情页专用
-      replies: '回复记录',
-      handler: '处理人员',
-      user: '用户',
-      hours: '小时',
+        noData: '暂无数据',
+        noItems: '暂无商品明细'
+      }
     },
+
+    // 出库管理
+    stockOut: {
+      title: '出库管理',
+      subtitle: '管理投入品出库登记及出库确认',
+      list: '出库单列表',
+      detail: '出库单详情',
+      add: '新增出库单',
+      edit: '编辑出库单',
+      delete: '删除出库单',
+      confirm: '确认出库',
+      audit: '审核',
+      auditStatus: '审核状态',
+      auditRemark: '审核意见',
+      auditSuccess: '审核成功',
+      cancelConfirm: '确定要取消该出库单吗?',
+      cancelSuccess: '取消成功',
+      deleteConfirm: '确定删除该出库单吗？',
+      confirmConfirm: '确认出库后将扣减库存，确定要确认出库吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+      confirmSuccess: '出库确认成功',
+      searchPlaceholder: '搜索出库单号、关联单号、出库对象',
+      filterByWarehouse: '按仓库筛选',
+      filterByType: '按出库类型筛选',
+      filterByStatus: '按状态筛选',
+      allWarehouses: '全部仓库',
+      allTypes: '全部类型',
+      allStatus: '全部状态',
+      type: {
+        sale: '销售出库',
+        transfer: '调拨出库'
+      },
+      status: {
+        pending: '待审核',
+        completed: '已完成',
+        cancelled: '已取消'
+      },
+      form: {
+        outboundOrderId: '出库单号',
+        outboundBatchId: '出库批次号',
+        stockOutId: '出库单号',
+        warehouseId: '出库仓库',
+        batchNo: '批次号',
+        customer: '客户',
+        outboundObject: '出库对象',
+        outboundObjectId: '出库对象',
+        outboundUser: '出库员',
+        outboundDept: '出库部门',
+        relatedOrderNo: '关联单号',
+        type: '出库类型',
+        operator: '经办人',
+        totalQuantity: '总数量',
+        remark: '备注',
+        status: '状态',
+        createTime: '创建时间',
+        outboundTime: '出库时间',
+        auditUser: '审核人',
+        auditTime: '审核时间',
+        items: '出库商品明细',
+        details: '出库明细',
+        inputId: '投入品',
+        materialId: '物料',
+        materialName: '物料名称',
+        materialType: '物料类型',
+        materialBatchId: '物料批次号',
+        quantity: '出库数量',
+        specModel: '规格型号',
+        unitOfMeasure: '计量单位',
+        availableQuantity: '可用库存',
+        itemRemarks: '明细备注',
+        batchSplits: '批次拆分明细',
+        inboundBatchId: '入库批次号',
+        splitQuantity: '扣减数量',
+        remainingQuantity: '剩余库存'
+      },
+      placeholder: {
+        warehouseId: '请选择出库仓库',
+        customer: '请输入客户名称',
+        outboundObject: '请选择目标仓库',
+        outboundObjectId: '请选择目标仓库',
+        outboundUser: '请输入出库员',
+        outboundDept: '请输入出库部门',
+        relatedOrderNo: '请输入关联单号(选填)',
+        type: '请选择出库类型',
+        operator: '请输入经办人',
+        remark: '请输入备注',
+        inputId: '请选择投入品',
+        materialId: '请选择物料',
+        materialType: '请选择物料类型',
+        materialBatchId: '物料批次号（自动带出）',
+        batchNo: '请选择批次号',
+        quantity: '请输入出库数量',
+        specModel: '请输入规格型号(选填)',
+        unitOfMeasure: '请输入计量单位(选填)',
+        itemRemarks: '请输入明细备注',
+        auditRemark: '请输入审核意见'
+      },
+      rules: {
+        warehouseIdRequired: '请选择出库仓库',
+        customerRequired: '请输入客户名称',
+        outboundObjectIdRequired: '请选择目标仓库',
+        typeRequired: '请选择出库类型',
+        operatorRequired: '请输入经办人',
+        inputIdRequired: '请选择投入品',
+        materialIdRequired: '请选择物料',
+        materialTypeRequired: '请选择物料类型',
+        batchNoRequired: '请选择批次号',
+        quantityRequired: '请输入出库数量',
+        quantityPositive: '出库数量必须大于0',
+        quantityExceeds: '出库数量不能超过可用库存',
+        itemsRequired: '请至少添加一条出库商品明细',
+        detailsRequired: '请至少添加一条出库明细',
+        auditRemarkRequired: '请输入审核意见'
+      },
+      columns: {
+        outboundOrderId: '出库单号',
+        stockOutId: '出库单号',
+        warehouseName: '仓库',
+        customer: '客户',
+        outboundObject: '出库对象',
+        outboundObjectName: '出库对象',
+        outboundUser: '出库员',
+        outboundDept: '出库部门',
+        type: '出库类型',
+        batchNo: '批次号',
+        relatedOrderNo: '关联单号',
+        totalQuantity: '总数量',
+        operator: '经办人',
+        auditUser: '审核人',
+        auditTime: '审核时间',
+        outboundTime: '出库时间',
+        status: '状态',
+        createTime: '创建时间',
+        actions: '操作'
+      },
+      actions: {
+        view: '查看',
+        edit: '编辑',
+        delete: '删除',
+        cancel: '取消',
+        confirm: '确认出库',
+        audit: '审核',
+        approve: '通过',
+        reject: '拒绝',
+        addItem: '添加商品',
+        removeItem: '移除'
+      },
+      messages: {
+        noData: '暂无数据',
+        noItems: '暂无商品明细',
+        insufficientStock: '库存不足，无法出库',
+        noStockInWarehouse: '该仓库暂无可用库存',
+        noAvailableWarehouse: '暂无可选的目标仓库（不能选择出库仓库本身）'
+      }
+    },
+
+    // 库存查询
+    stock: {
+      title: '库存查询',
+      subtitle: '实时查询库存信息、预警及汇总统计',
+      list: '库存列表',
+      detail: '库存详情',
+      warning: '库存预警',
+      summary: '汇总统计',
+      logs: '库存变动日志',
+      viewLogs: '查看变动日志',
+      dashboard: '库存监控仪表盘',
+      dashboardSubtitle: '实时监控库存状态与预警信息',
+      metrics: {
+        totalStock: '总库存总量',
+        nearExpiryCount: '临期商品数量',
+        overCapacityWarehouses: '超容量仓库数',
+        pendingAlerts: '待处理预警数',
+        totalValue: '库存总价值',
+        warehouseUsage: '仓库使用率'
+      },
+      searchPlaceholder: '搜索投入品名称、批次号',
+      filterByWarehouse: '按仓库筛选',
+      filterByInput: '按投入品筛选',
+      filterByStatus: '按库存状态筛选',
+      filterByOperation: '按操作类型筛选',
+      allWarehouses: '全部仓库',
+      allInputs: '全部投入品',
+      allStatus: '全部状态',
+      allOperations: '全部操作',
+      status: {
+        normal: '正常',
+        active: '正常',
+        nearExpiry: '临期',
+        expired: '过期',
+        inactive: '停用'
+      },
+      operationType: {
+        inbound: '入库',
+        outbound: '出库'
+      },
+      warningType: {
+        all: '全部预警',
+        nearExpiry: '临期预警',
+        expired: '过期预警'
+      },
+      form: {
+        inventoryId: '库存记录ID',
+        inputId: '投入品',
+        inputName: '投入品名称',
+        batchNo: '批次号',
+        warehouseId: '仓库',
+        warehouseName: '仓库名称',
+        currentQuantity: '当前库存数量',
+        inDate: '入库日期',
+        expiredDate: '过期日期',
+        stockStatus: '库存状态',
+        daysToExpire: '距过期天数'
+      },
+      columns: {
+        inputName: '投入品名称',
+        materialName: '投入品名称',
+        materialId: '投入品ID',
+        materialBatchId: '批次ID',
+        batchNo: '批次号',
+        warehouseName: '仓库名称',
+        warehouse: '仓库',
+        quantity: '库存数量',
+        currentQuantity: '当前数量',
+        inboundQuantity: '累计入库',
+        outboundQuantity: '累计出库',
+        inDate: '入库日期',
+        expiryDate: '过期日期',
+        expiredDate: '过期日期',
+        stockStatus: '库存状态',
+        status: '状态',
+        qrCode: '二维码',
+        createdAt: '创建时间',
+        updatedAt: '更新时间',
+        actions: '操作',
+        operationType: '操作类型',
+        changeQuantity: '变动数量',
+        beforeQuantity: '变动前',
+        afterQuantity: '变动后',
+        referenceOrderId: '关联单号',
+        operator: '操作人'
+      },
+      summaryColumns: {
+        inputName: '投入品名称',
+        warehouseName: '仓库名称',
+        totalQuantity: '总库存',
+        normalQuantity: '正常库存',
+        nearExpiryQuantity: '临期库存',
+        expiredQuantity: '过期库存'
+      },
+      actions: {
+        view: '查看',
+        viewWarning: '查看预警',
+        viewSummary: '查看汇总',
+        exportData: '导出数据'
+      },
+      messages: {
+        noData: '暂无数据',
+        noWarning: '暂无预警信息'
+      },
+      tabs: {
+        list: '库存列表',
+        warning: '库存预警',
+        summaryByInput: '按投入品汇总',
+        summaryByWarehouse: '按仓库汇总'
+      }
+    }
+  },
+
+  // 数据大屏
+  dashboard: {
+    title: '农业投入品供应管理大屏',
+    subtitle: '实时数据监控与可视化分析',
+    lastUpdate: '最后更新',
+    autoRefresh: '自动刷新',
+    fullscreen: '全屏',
+    exitFullscreen: '退出全屏',
+    overview: {
+      totalSuppliers: '供应商总数',
+      certifiedSuppliers: '已认证供应商',
+      pendingSuppliers: '待审核供应商',
+      rejectedSuppliers: '未通过供应商',
+      totalInputs: '投入品总数',
+      seedInputs: '种子类',
+      fertilizerInputs: '化肥类',
+      pesticideInputs: '农药类',
+      totalWarehouses: '仓库总数',
+      totalCapacity: '总库存容量',
+      usedCapacity: '已用容量',
+      capacityUsageRate: '库存使用率',
+      totalStockQuantity: '当前总库存',
+      normalStock: '正常库存',
+      nearExpiryStock: '临期库存',
+      expiredStock: '过期库存',
+      todayStockIn: '今日入库',
+      todayStockOut: '今日出库',
+      monthStockIn: '本月入库量',
+      monthStockOut: '本月出库量',
+      pendingWarnings: '待处理预警',
+      unit: '个',
+      tons: '吨',
+      todayBusiness: '今日业务'
+    },
+    topSuppliers: {
+      title: 'TOP供应商榜单',
+      subtitle: '本月表现最佳供应商',
+      rank: '排名',
+      supplierName: '供应商名称',
+      monthStockIn: '本月入库量',
+      productCount: '供应投入品数',
+      cooperationDays: '合作天数',
+      qualityRating: '质量评级',
+      contactPerson: '联系人',
+      contactPhone: '联系电话',
+      viewMore: '查看更多',
+      days: '天',
+      items: '件'
+    },
+    warehouse: {
+      title: '仓库统计',
+      subtitle: '仓库容量使用情况',
+      warehouseName: '仓库名称',
+      location: '位置',
+      capacity: '容量',
+      currentStock: '当前库存',
+      usageRate: '使用率',
+      productTypes: '商品种类',
+      monthIn: '本月入库',
+      monthOut: '本月出库',
+      warning: '容量预警',
+      normal: '正常',
+      types: '种',
+      times: '次'
+    },
+    stockTrend: {
+      title: '入库出库趋势',
+      subtitle: '近期库存变化分析',
+      stockIn: '入库数量',
+      stockOut: '出库数量',
+      netChange: '净增库存',
+      last7Days: '近7天',
+      last30Days: '近30天',
+      date: '日期',
+      quantity: '数量',
+      count: '单数'
+    },
+    inputDistribution: {
+      title: '投入品类型分布',
+      subtitle: '各类型投入品占比',
+      seed: '种子',
+      fertilizer: '化肥',
+      pesticide: '农药',
+      other: '其他',
+      count: '数量',
+      stockQuantity: '库存量',
+      percentage: '占比'
+    },
+    warnings: {
+      title: '预警信息',
+      subtitle: '待处理预警列表',
+      warningType: '预警类型',
+      warningLevel: '级别',
+      objectName: '对象',
+      content: '内容',
+      warningTime: '预警时间',
+      warehouseName: '仓库',
+      batchNo: '批次号',
+      status: '状态',
+      noWarnings: '暂无预警信息',
+      types: {
+        nearExpiry: '临期预警',
+        expired: '过期预警',
+        lowStock: '库存不足',
+        overCapacity: '超容量'
+      },
+      levels: {
+        low: '低',
+        medium: '中',
+        high: '高'
+      },
+      statusOptions: {
+        pending: '未处理',
+        processed: '已处理',
+        ignored: '已忽略'
+      }
+    },
+    activities: {
+      title: '实时动态',
+      subtitle: '最新业务活动',
+      stockInActivity: '入库',
+      stockOutActivity: '出库',
+      supplierActivity: '供应商认证',
+      warehouseActivity: '仓库',
+      justNow: '刚刚',
+      minutesAgo: '分钟前',
+      hoursAgo: '小时前'
+    },
+    todayStock: {
+      title: '今日出入库',
+      in: '入库',
+      out: '出库',
+      warehouse: '仓库',
+      operator: '经办人',
+      supplier: '供应商',
+      customer: '客户',
+      quantity: '数量',
+      time: '时间',
+      status: '状态',
+      noData: '暂无数据',
+      statusPending: '待处理',
+      statusConfirmed: '已确认',
+      statusCancelled: '已作废'
+    },
+    expiring: {
+      title: '即将过期',
+      daysLeft: '剩余',
+      days: '天',
+      urgent: '紧急',
+      warehouse: '仓库',
+      quantity: '库存',
+      batchNo: '批次',
+      noData: '暂无即将过期商品',
+      expired: '已过期'
+    },
+    stockStatus: {
+      title: '库存状态分布',
+      normal: '正常',
+      nearExpiry: '临期',
+      expired: '过期',
+      lowStock: '库存不足',
+      productCount: '商品种类',
+      totalQuantity: '库存总量',
+      percentage: '占比'
+    },
+    autoRefreshOn: '自动刷新',
+    autoRefreshOff: '已暂停',
+    refreshInterval: '刷新间隔',
+    systemStatus: '系统正常'
+  },
+
+  // 信息反馈
+  feedback: {
+    title: '信息反馈管理',
+    subtitle: '收集和处理投入品供应相关的反馈信息',
+    list: '反馈列表',
+    detail: '反馈详情',
+    add: '提交反馈',
+    edit: '编辑反馈',
+    delete: '删除反馈',
+    deleteConfirm: '确定删除该反馈吗？',
+    deleteSuccess: '删除成功',
+    addSuccess: '反馈提交成功',
+    editSuccess: '编辑成功',
+    batchDelete: '批量删除',
+    batchDeleteConfirm: '确定删除选中的 {count} 条反馈吗？',
+    searchPlaceholder: '搜索反馈标题、内容、反馈编号',
+    filterByType: '按反馈类型筛选',
+    filterByStatus: '按处理状态筛选',
+    filterByPriority: '按优先级筛选',
+    allTypes: '全部类型',
+    allStatus: '全部状态',
+    allPriority: '全部优先级',
+    filterByTime: '按时间筛选',
+    type: {
+      complaint: '投诉',
+      suggestion: '建议',
+      inquiry: '咨询',
+      fault: '故障报告',
+      other: '其他'
+    },
+    status: {
+      pending: '待处理',
+      processing: '处理中',
+      completed: '已完成',
+      closed: '已关闭'
+    },
+    priority: {
+      low: '低',
+      medium: '中',
+      high: '高',
+      urgent: '紧急'
+    },
+    columns: {
+      feedbackNo: '反馈编号',
+      feedbackType: '反馈类型',
+      title: '标题',
+      inputName: '投入品名称',
+      supplierName: '供应商名称',
+      contactName: '联系人',
+      contactPhone: '联系电话',
+      priority: '优先级',
+      status: '状态',
+      createTime: '提交时间',
+      handlerName: '处理人',
+      handleTime: '处理时间',
+      processingHours: '处理耗时',
+      satisfaction: '满意度',
+      actions: '操作'
+    },
+    form: {
+      basicInfo: '基本信息',
+      contactInfo: '联系方式',
+      processingInfo: '处理信息',
+      evaluationInfo: '评价信息',
+      feedbackType: '反馈类型',
+      title: '反馈标题',
+      content: '反馈内容',
+      inputName: '投入品名称',
+      supplierName: '供应商名称',
+      contactName: '联系人姓名',
+      contactPhone: '联系电话',
+      contactEmail: '联系邮箱',
+      priority: '优先级',
+      attachments: '附件',
+      remark: '备注',
+      handlerName: '处理人',
+      handleTime: '处理时间',
+      handleResult: '处理结果',
+      handleRemark: '处理备注',
+      processingHours: '处理耗时(小时)',
+      satisfaction: '满意度评分',
+      evaluation: '评价内容',
+      evaluationTime: '评价时间',
+      replyContent: '回复内容',
+      replyTime: '回复时间',
+      replyUser: '回复人',
+      noReplies: '暂无回复'
+    },
+    placeholder: {
+      feedbackType: '请选择反馈类型',
+      title: '请输入反馈标题(最多200字符)',
+      content: '请详细描述您的反馈内容...',
+      inputName: '请输入投入品名称',
+      supplierName: '请输入供应商名称',
+      contactName: '请输入联系人姓名',
+      contactPhone: '请输入联系电话',
+      contactEmail: '请输入联系邮箱',
+      priority: '请选择优先级',
+      remark: '请输入备注信息(最多500字符)',
+      handleResult: '请输入处理结果',
+      handleRemark: '请输入处理备注',
+      evaluation: '请输入您的评价...',
+      replyContent: '请输入回复内容...'
+    },
+    rules: {
+      feedbackTypeRequired: '请选择反馈类型',
+      titleRequired: '请输入反馈标题',
+      titleLength: '反馈标题最多200字符',
+      contentRequired: '请输入反馈内容',
+      contactNameLength: '联系人姓名最多100字符',
+      contactPhoneLength: '联系电话最多20字符',
+      contactPhoneFormat: '请输入正确的电话号码',
+      contactEmailFormat: '请输入正确的邮箱地址',
+      contactEmailLength: '邮箱地址最多100字符',
+      remarkLength: '备注最多500字符',
+      handleResultRequired: '请输入处理结果',
+      replyContentRequired: '请输入回复内容'
+    },
+    actions: {
+      view: '查看',
+      edit: '编辑',
+      delete: '删除',
+      reply: '回复',
+      handle: '处理',
+      close: '关闭',
+      reopen: '重新打开',
+      evaluate: '评价',
+      submitEvaluation: '提交评价'
+    },
+    satisfactionLevel: {
+      1: '非常不满意',
+      2: '不满意',
+      3: '一般',
+      4: '满意',
+      5: '非常满意'
+    },
+    messages: {
+      deleteConfirm: '确定删除该反馈吗？此操作不可恢复。',
+      closeConfirm: '确定关闭该反馈吗？',
+      handleSuccess: '处理成功',
+      replySuccess: '回复成功',
+      evaluationSuccess: '评价提交成功',
+      onlyPendingCanEdit: '只能编辑待处理状态的反馈',
+      onlyPendingCanDelete: '只能删除待处理状态的反馈'
+    },
+    statistics: {
+      totalCount: '反馈总数',
+      pendingCount: '待处理',
+      processingCount: '处理中',
+      completedCount: '已完成',
+      closedCount: '已关闭',
+      avgProcessingHours: '平均处理时长(小时)',
+      avgSatisfaction: '平均满意度',
+      todayCount: '今日新增'
+    },
+    replies: '回复记录',
+    handler: '处理人员',
+    user: '用户',
+    hours: '小时'
   }
+}

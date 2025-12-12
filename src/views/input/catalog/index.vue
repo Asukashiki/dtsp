@@ -19,12 +19,12 @@
       <div class="search-bar">
         <div class="search-row">
           <el-input
-            v-model="searchKeyword"
-            :placeholder="$t('input.catalog.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @clear="handleSearch"
-            @keyup.enter="handleSearch"
+              v-model="searchKeyword"
+              :placeholder="$t('input.catalog.searchPlaceholder')"
+              class="search-input"
+              clearable
+              @clear="handleSearch"
+              @keyup.enter="handleSearch"
           >
             <template #prefix>
               <i class="ri-search-line"></i>
@@ -32,10 +32,10 @@
           </el-input>
 
           <el-select
-            v-model="selectedType"
-            :placeholder="$t('input.catalog.filterByType')"
-            class="type-filter"
-            @change="handleSearch"
+              v-model="selectedType"
+              :placeholder="$t('input.catalog.filterByType')"
+              class="type-filter"
+              @change="handleSearch"
           >
             <el-option :label="$t('input.catalog.type.all')" value="all" />
             <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
@@ -68,27 +68,29 @@
       <!-- PC端：数据表格 -->
       <div class="table-card pc-view">
         <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
+            v-loading="loading"
+            :data="tableData"
+            stripe
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="input_name" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
+          <el-table-column prop="inputName" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
           <el-table-column prop="type" :label="$t('input.catalog.columns.inputType')" width="150" align="center">
             <template #default="{ row }">
               <el-tag :type="getTypeTag(row.type)" size="small">{{ $t(`input.catalog.type.${row.type}`) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="input_sku" :label="$t('input.catalog.columns.inputSku')" width="150" show-overflow-tooltip />
+          <el-table-column prop="inputSku" :label="$t('input.catalog.columns.inputSku')" width="150" show-overflow-tooltip />
           <el-table-column prop="trademark" :label="$t('input.catalog.columns.trademark')" width="120" />
-          <el-table-column prop="register_code" :label="$t('input.catalog.columns.registerCode')" width="140" />
-          <el-table-column prop="producer_name" :label="$t('input.catalog.columns.producerName')" min-width="200" show-overflow-tooltip />
-          <el-table-column prop="create_time" :label="$t('input.catalog.columns.createTime')" width="160" />
+          <el-table-column prop="registerCode" :label="$t('input.catalog.columns.registerCode')" width="140" />
+          <el-table-column prop="producerName" :label="$t('input.catalog.columns.producerName')" min-width="200" show-overflow-tooltip />
+          <el-table-column prop="createTime" :label="$t('input.catalog.columns.createTime')" width="160" />
           <el-table-column prop="status" :label="$t('input.catalog.columns.status')" width="100" align="center">
             <template #default="{ row }">
-              <el-tag :type="row.status === 'active' ? 'success' : 'info'" size="small">{{ $t(`input.catalog.statusOptions.${row.status}`) }}</el-tag>
+              <el-tag :type="row.status === 'active' ? 'success' : 'info'" size="small">
+                {{ $t(`input.catalog.statusOptions.${row.status}`) }}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="$t('input.catalog.columns.actions')" width="220" fixed="right">
@@ -102,13 +104,13 @@
 
         <div class="pagination-wrapper">
           <el-pagination
-            v-model:current-page="pagination.page"
-            v-model:page-size="pagination.pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="pagination.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
+              v-model:current-page="pagination.page"
+              v-model:page-size="pagination.pageSize"
+              :page-sizes="[10, 20, 50, 100]"
+              :total="pagination.total"
+              layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSizeChange"
+              @current-change="handlePageChange"
           />
         </div>
       </div>
@@ -116,12 +118,12 @@
       <!-- 移动端：卡片列表 -->
       <div class="mobile-view" v-loading="loading">
         <div class="card-list">
-          <div v-for="item in tableData" :key="item.input_id" class="input-card" @click="handleView(item)">
+          <div v-for="item in tableData" :key="item.inputId" class="input-card" @click="handleView(item)">
             <div class="card-header">
               <el-tag :type="getTypeTag(item.type)" size="small">{{ $t(`input.catalog.type.${item.type}`) }}</el-tag>
               <el-tag :type="item.status === 'active' ? 'success' : 'info'" size="small">{{ $t(`input.catalog.statusOptions.${item.status}`) }}</el-tag>
             </div>
-            <h3 class="card-title">{{ item.input_name }}</h3>
+            <h3 class="card-title">{{ item.inputName }}</h3>
             <div class="card-info">
               <div class="info-item">
                 <span class="info-label">{{ $t('input.catalog.columns.trademark') }}</span>
@@ -129,15 +131,15 @@
               </div>
               <div class="info-item">
                 <span class="info-label">{{ $t('input.catalog.columns.registerCode') }}</span>
-                <span class="info-value">{{ item.register_code }}</span>
+                <span class="info-value">{{ item.registerCode }}</span>
               </div>
               <div class="info-item full">
                 <span class="info-label">{{ $t('input.catalog.columns.producerName') }}</span>
-                <span class="info-value">{{ item.producer_name }}</span>
+                <span class="info-value">{{ item.producerName }}</span>
               </div>
             </div>
             <div class="card-footer">
-              <span class="create-time">{{ item.create_time }}</span>
+              <span class="create-time">{{ item.createTime }}</span>
               <div class="card-actions" @click.stop>
                 <el-button link type="primary" size="small" @click="handleEdit(item)">
                   <i class="ri-edit-line"></i> {{ $t('common.edit') }}
@@ -157,12 +159,12 @@
 
         <div class="mobile-pagination">
           <el-pagination
-            v-model:current-page="pagination.page"
-            :total="pagination.total"
-            :page-size="pagination.pageSize"
-            layout="prev, pager, next"
-            small
-            @current-change="handlePageChange"
+              v-model:current-page="pagination.page"
+              :total="pagination.total"
+              :page-size="pagination.pageSize"
+              layout="prev, pager, next"
+              small
+              @current-change="handlePageChange"
           />
         </div>
       </div>
@@ -198,27 +200,74 @@ const getTypeTag = (type) => ({ pesticide: 'danger', fertilizer: 'warning', seed
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getInputList({ keyword: searchKeyword.value, type: selectedType.value, page: pagination.page, pageSize: pagination.pageSize })
-    if (res.code === 200) { tableData.value = res.data.list; pagination.total = res.data.total }
-  } catch (error) { ElMessage.error(t('common.failed')) }
-  finally { loading.value = false }
+    const requestParams = {
+      keyword: searchKeyword.value.trim(),
+      type: selectedType.value === 'all' ? '' : selectedType.value,
+      page: pagination.page,
+      pageSize: pagination.pageSize
+    }
+    const res = await getInputList(requestParams)
+
+    if (res && res.code === 200 && res.data) {
+      tableData.value = res.data.list || []
+      pagination.total = res.data.total || 0
+      if (tableData.value.length === 0) {
+        ElMessage.info(t('home.noData'))
+      }
+    } else {
+      ElMessage.error(res?.msg || t('common.dataLoadFailed'))
+      tableData.value = []
+      pagination.total = 0
+    }
+  } catch (error) {
+    console.error('加载数据失败：', error)
+    ElMessage.error(t('common.failed') + '：' + (error.message || ''))
+    tableData.value = []
+    pagination.total = 0
+  } finally {
+    loading.value = false
+  }
 }
 
-const handleSearch = () => { pagination.page = 1; loadData() }
-const handleReset = () => { searchKeyword.value = ''; selectedType.value = 'all'; pagination.page = 1; loadData() }
+const handleSearch = () => {
+  pagination.page = 1;
+  loadData()
+}
+const handleReset = () => {
+  searchKeyword.value = '';
+  selectedType.value = 'all';
+  pagination.page = 1;
+  loadData()
+}
 const handleAdd = () => router.push('/input/catalog/add')
-const handleView = (row) => router.push(`/input/catalog/detail/${row.input_id}`)
-const handleEdit = (row) => router.push(`/input/catalog/edit/${row.input_id}`)
+const handleView = (row) => router.push(`/input/catalog/detail/${row.inputId}`)
+const handleEdit = (row) => router.push(`/input/catalog/edit/${row.inputId}`)
 const handleDelete = (row) => {
-  ElMessageBox.confirm(t('input.catalog.deleteConfirm'), t('common.tips'), { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' })
-    .then(async () => { const res = await deleteInput(row.input_id); if (res.code === 200) { ElMessage.success(t('input.catalog.deleteSuccess')); loadData() } })
-    .catch(() => {})
+  ElMessageBox.confirm(
+      t('input.catalog.deleteConfirm'),
+      t('common.tips'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+  ).then(async () => {
+    const res = await deleteInput(row.inputId);
+    if (res.code === 200) {
+      ElMessage.success(t('input.catalog.deleteSuccess'));
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('input.catalog.deleteFailed'))
+    }
+  }).catch(() => {})
 }
 const handleSelectionChange = (selection) => { selectedRows.value = selection }
 const handleSizeChange = () => { pagination.page = 1; loadData() }
 const handlePageChange = () => { loadData() }
 
-onMounted(() => loadData())
+onMounted(() => {
+  loadData()
+})
 </script>
 
 <style scoped>
@@ -266,7 +315,7 @@ onMounted(() => loadData())
 .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
 .mobile-pagination { display: flex; justify-content: center; padding: 16px 0; }
 
-/* ==================== 响应式设计 ==================== */
+/* 响应式设计 */
 @media screen and (max-width: 1024px) {
   .page-header { margin: -16px -16px 16px -16px; padding: 20px 0; }
   .header-content { padding: 0 16px; }

@@ -1,1498 +1,1411 @@
 export default {
-    // System Common
-    systemName: 'Agricultural Input Supply Management System',
-    systemDesc: 'Input management, inventory management and supply chain traceability',
-    backToHome: 'Back to Home',
+  // System Basic Configuration
+  systemName: 'Agricultural Input Supply Management System',
+  systemDesc: 'Input management, inventory management and supply chain traceability',
+  backToHome: 'Back to Home',
 
-    // Menu Navigation
-    menu: {
-      dashboard: 'Data Dashboard',
-      registrationManagement: 'Registration Management',
-      registration: 'Union/Cooperative Registration',
-      registrationApproval: 'Union/Cooperative Approval',
-      demandManagement: 'Input Demand Management',
-      farmerDemand: 'DA Farmer Demand Entry',
-      demandAudit: 'Input Demand Audit',
-      supplierManagement: 'Supplier Management',
-      supplierAuth: 'Supplier Authentication',
-      supplierAuthApproval: 'Supplier Auth Approval',
-      supplierInfo: 'Supplier Information',
-      inputManagement: 'Input Management',
-      inputCatalog: 'Input Catalog Management',
-      supplierInput: 'Supplier Input Information',
-      inputSupply: 'Input Supply Management',
-      inventoryManagement: 'Inventory Management',
-      warehouse: 'Warehouse Management',
-      stockIn: 'Stock In Management',
-      stockOut: 'Stock Out Management',
-      stockQuery: 'Inventory Query',
-      dashboard: 'Dashboard Management',
-      feedback: 'Information Feedback',
+  // Common Text
+  common: {
+    back: 'Back',
+    cancel: 'Cancel',
+    submit: 'Submit',
+    failed: 'Operation failed',
+    submitFailed: 'Submission failed',
+    invalidId: 'Invalid ID',
+    noData: 'No data available',
+    dataLoadFailed: 'Data loading failed',
+    tips: 'Tips',
+    confirm: 'Confirm',
+    edit: 'Edit',
+    delete: 'Delete',
+    view: 'View'
+  },
+
+  // Home Page Common
+  home: {
+    noData: 'No data available'
+  },
+
+  // Menu Navigation
+  menu: {
+    dashboard: 'Data Overview',
+    registrationManagement: 'Registration Management',
+    registration: 'Union/Cooperative Registration Application',
+    registrationApproval: 'Union/Cooperative Registration Approval',
+    demandManagement: 'Input Demand Management',
+    farmerDemand: 'DA Farmer Demand Entry',
+    demandAudit: 'Input Demand Audit',
+    supplierManagement: 'Supplier Management',
+    supplierAuth: 'Supplier Authentication',
+    supplierAuthApproval: 'Supplier Authentication Approval',
+    supplierInfo: 'Supplier Information Maintenance',
+    inputManagement: 'Input Management',
+    inputCatalog: 'Input Catalog Management',
+    supplierInput: 'Supplier Input Information Management',
+    inputSupply: 'Input Supply Management',
+    inventoryManagement: 'Inventory Management',
+    warehouse: 'Warehouse Management',
+    stockIn: 'Stock In Management',
+    stockOut: 'Stock Out Management',
+    stockQuery: 'Inventory Query',
+    dashboard: 'Dashboard Management',
+    feedback: 'Information Feedback'
+  },
+
+  // Input Catalog Management
+  catalog: {
+    title: 'Input Catalog Management',
+    subtitle: 'Manage agricultural input basic information, specifications, parameters and qualification requirements',
+    edit: 'Edit Input',
+    add: 'Add Input',
+    list: 'Input List',
+    detail: 'Input Details',
+    delete: 'Delete Input',
+    editSuccess: 'Input edited successfully',
+    addSuccess: 'Input added successfully',
+    deleteSuccess: 'Deleted successfully',
+    deleteFailed: 'Deletion failed',
+    noDataFound: 'No input data found',
+    invalidIdEdit: 'Invalid ID, cannot edit',
+    deleteConfirm: 'Are you sure to delete this input?',
+
+    // Search and Filter
+    searchPlaceholder: 'Search by product name, registration number, production batch number',
+    filterByType: 'Filter by input type',
+    allTypes: 'All Types',
+
+    // Input Types
+    type: {
+      all: 'All',
+      pesticide: 'Pesticide',
+      fertilizer: 'Fertilizer',
+      seed: 'Seed',
+      other: 'Other'
     },
 
-    // Input Catalog Management
-    catalog: {
-      title: 'Input Catalog Management',
-      subtitle: 'Manage agricultural input basic information, specifications and qualification requirements',
-      list: 'Input List',
-      add: 'Add Input',
-      edit: 'Edit Input',
-      detail: 'Input Details',
-      delete: 'Delete Input',
-      deleteConfirm: 'Are you sure to delete this input?',
+    // Form Fields - Basic Information
+    form: {
+      specificationModel: 'Specification Model',
+      unit: 'Unit of Measure',
+      referencePrice: 'Reference Price (USD)',
+      isImport: 'Imported',
+      imageUrl: 'Product Image URL',
+      description: 'Product Description',
+      basicInfo: 'Basic Information',
+      productionInfo: 'Production & Responsibility Information',
+      regulatoryInfo: 'Regulatory & Licensing Information',
+      ingredientsInfo: 'Ingredients & Usage Information',
+      inputName: 'Input Name',
+      inputType: 'Input Type',
+      agriculturalInputType: 'Agricultural Input Category',
+      variety: 'Variety',
+      inputSku: 'Unique Product Identifier/SKU',
+      trademark: 'Registered Trademark',
+      registerCode: 'Registration Batch Number',
+      productionLicense: 'Production License Number',
+      productionStandard: 'Product Standard Certificate Number',
+      producerName: 'Manufacturer Name',
+      producerAddress: 'Manufacturer Address',
+      createTime: 'Creation Time',
+      createPeople: 'Creator',
+      status: 'Status'
+    },
+
+    // Form Placeholders
+    placeholder: {
+      specificationModel: 'Enter specification model (max 100 characters)',
+      unit: 'Enter unit of measure (e.g.: kg, L, bag, piece)',
+      referencePrice: 'Enter reference price (≥ 0)',
+      imageUrl: 'Enter product image URL (max 255 characters)',
+      description: 'Enter product description (max 500 characters)',
+      cropControlObject: 'Enter crops/control targets (max 500 characters)',
+      breeder: 'Enter breeder name (max 200 characters)',
+      varietySource: 'Enter variety source (max 500 characters)',
+      inputName: 'Enter input name (2-100 characters)',
+      inputType: 'Select input type',
+      agriculturalInputType: 'Enter agricultural input category',
+      variety: 'Enter variety',
+      inputSku: 'Auto-generated by system',
+      trademark: 'Enter registered trademark',
+      registerCode: 'Enter registration batch number',
+      productionLicense: 'Enter production license number',
+      productionStandard: 'Enter product standard certificate number',
+      producerName: 'Enter manufacturer name (2-200 characters)',
+      producerAddress: 'Enter manufacturer address (5-255 characters)'
+    },
+
+    // Import Status
+    isImport: {
+      yes: 'Yes',
+      no: 'No'
+    },
+
+    // Form Validation Rules
+    rules: {
+      inputNameRequired: 'Please enter input name',
+      inputNameLength: 'Input name must be 2-100 characters',
+      inputTypeRequired: 'Please select input type',
+      agriculturalInputTypeRequired: 'Please enter agricultural input category',
+      inputSkuRequired: 'Please enter unique product identifier',
+      inputSkuLength: 'Product identifier must be 8-50 characters',
+      trademarkRequired: 'Please enter registered trademark',
+      registerCodeRequired: 'Please enter registration batch number',
+      productionLicenseRequired: 'Please enter production license number',
+      productionStandardRequired: 'Please enter product standard certificate number',
+      producerNameRequired: 'Please enter manufacturer name',
+      producerNameLength: 'Manufacturer name must be 2-200 characters',
+      producerAddressRequired: 'Please enter manufacturer address',
+      producerAddressLength: 'Manufacturer address must be 5-255 characters'
+    },
+
+    // Pesticide Properties
+    pesticide: {
+      cropControlObject: 'Crops/Control Targets',
+      title: 'Pesticide Properties',
+      totalIngredientContent: 'Total Active Ingredient Content',
+      toxicityLevel: 'Toxicity Level',
+      targetCrops: 'Applicable Crops',
+      controlTargets: 'Control Targets',
+      applicationMethod: 'Application Method',
+      dosage: 'Usage Dosage',
+      dilutionRatio: 'Dilution Ratio',
+      safetyInterval: 'Safety Interval (days)',
+      precautions: 'Precautions',
+      firstAid: 'Poisoning First Aid Measures',
+      storageRequirements: 'Storage Requirements',
+      toxicity: {
+        micro: 'Micro-toxic',
+        low: 'Low Toxic',
+        medium: 'Medium Toxic',
+        high: 'High Toxic',
+        severe: 'Highly Toxic'
+      }
+    },
+
+    // Fertilizer Properties
+    fertilizer: {
+      title: 'Fertilizer Properties',
+      emptyTip: 'Fertilizer characteristic fields are pending system expansion, no need to fill in temporarily',
+      fertilizerType: 'Fertilizer Type',
+      totalNutrientContent: 'Total Nutrient Content',
+      nitrogenContent: 'Nitrogen Content',
+      phosphorusContent: 'Phosphorus Content (P₂O₅)',
+      potassiumContent: 'Potassium Content (K₂O)',
+      organicMatterContent: 'Organic Matter Content',
+      mediumTraceElements: 'Medium & Trace Elements',
+      phValue: 'pH Value',
+      suitableCrops: 'Applicable Crops',
+      applicationPeriod: 'Application Period',
+      applicationMethod: 'Application Method',
+      recommendedDosage: 'Recommended Dosage'
+    },
+
+    // Seed Properties
+    seed: {
+      breeder: 'Breeder',
+      title: 'Seed Properties',
+      cropType: 'Crop Type',
+      varietyName: 'Variety Name',
+      varietyApprovalCode: 'Variety Approval Number',
+      varietySource: 'Variety Source',
+      purity: 'Purity (%)',
+      cleanliness: 'Cleanliness (%)',
+      germinationRate: 'Germination Rate (%)',
+      moistureContent: 'Moisture Content (%)'
+    },
+
+    // List Columns
+    columns: {
+      inputName: 'Input Name',
+      inputType: 'Type',
+      inputSku: 'Product Identifier',
+      trademark: 'Trademark',
+      registerCode: 'Registration Batch Number',
+      producerName: 'Manufacturer',
+      createTime: 'Creation Time',
+      status: 'Status',
+      actions: 'Actions'
+    },
+
+    // Status Options
+    statusOptions: {
+      active: 'Active',
+      inactive: 'Inactive'
+    },
+
+    // Image Upload
+    upload: {
+      imageTypeError: 'Only JPG/PNG/WEBP format images are supported!',
+      imageSizeError: 'Image size cannot exceed 2MB!',
+      imageSuccess: 'Image uploaded successfully!',
+      imageError: 'Image upload failed: {msg}',
+      uploadTip: 'Click to upload'
+    }
+  },
+
+  // Supplier Management
+  supplier: {
+    // Supplier Authentication
+    auth: {
+      title: 'Supplier Authentication Application',
+      subtitle: 'Fill in detailed information required for supplier identity authentication',
+      applySuccess: 'Authentication application submitted successfully',
+      applyFailed: 'Failed to submit authentication application',
+      form: {
+        orgName: 'Enterprise/Organization Name',
+        creditCode: 'Unified Social Credit Code',
+        legalPerson: 'Legal Representative/Person in Charge',
+        legalId: 'Legal Representative ID Number',
+        adCode: 'Administrative Division',
+        businessScope: 'Business Scope/Main Products',
+        licensePath: 'Business License',
+        contactName: 'Contact Person',
+        contactPhone: 'Contact Phone Number'
+      },
+      placeholder: {
+        orgName: 'Enter enterprise/organization name',
+        creditCode: 'Enter unified social credit code',
+        legalPerson: 'Enter legal representative/person in charge',
+        legalId: 'Enter ID number of legal representative',
+        adCode: 'Select administrative division',
+        businessScope: 'Enter business scope or main products',
+        contactName: 'Enter contact person name',
+        contactPhone: 'Enter contact phone number'
+      },
+      rules: {
+        orgNameRequired: 'Please enter enterprise/organization name',
+        creditCodeRequired: 'Please enter unified social credit code',
+        creditCodeLength: 'Unified social credit code must be 18 characters',
+        legalPersonRequired: 'Please enter legal representative/person in charge',
+        legalIdRequired: 'Please enter legal representative ID number',
+        legalIdFormat: 'Please enter valid ID number',
+        adCodeRequired: 'Please select administrative division',
+        businessScopeRequired: 'Please enter business scope or main products',
+        licensePathRequired: 'Please upload business license',
+        contactNameRequired: 'Please enter contact person name',
+        contactPhoneRequired: 'Please enter contact phone number',
+        contactPhoneFormat: 'Please enter valid phone number'
+      },
+      uploadTip: 'Supports jpg/png/pdf, single file size ≤ 2MB'
+    },
+
+    // Supplier Authentication Approval
+    approval: {
+      title: 'Supplier Authentication Approval',
+      subtitle: 'Review identity authentication application materials submitted by suppliers',
+      list: 'Pending Approval List',
+      detail: 'Approval Details',
+      approveSuccess: 'Approved successfully',
+      rejectSuccess: 'Rejected successfully',
+      searchPlaceholder: 'Search by enterprise name, unified social credit code, contact person',
+      advancedSearch: 'Advanced Filter',
+      showAdvanced: 'Expand Advanced Filter',
+      hideAdvanced: 'Collapse Advanced Filter',
+      resetFilters: 'Reset Filters',
+      applyFilters: 'Apply Filters',
+      filter: {
+        keyword: 'Keyword',
+        status: 'Authentication Status',
+        allStatus: 'All Status',
+        adCode: 'Administrative Division',
+        allRegion: 'All Regions',
+        applyTime: 'Application Time',
+        approveTime: 'Approval Time',
+        timeTo: 'to'
+      },
+      status: {
+        pending: 'Under Review',
+        approved: 'Approved',
+        rejected: 'Rejected'
+      },
+      columns: {
+        orgName: 'Enterprise/Organization Name',
+        creditCode: 'Unified Social Credit Code',
+        legalPerson: 'Legal Representative',
+        contactName: 'Contact Person',
+        contactPhone: 'Contact Phone',
+        applyTime: 'Application Time',
+        status: 'Authentication Status',
+        actions: 'Actions'
+      },
+      form: {
+        applicantInfo: 'Applicant Information',
+        certInfo: 'Authentication Information',
+        auditInfo: 'Audit Operation',
+        auditResult: 'Audit Result',
+        auditOpinion: 'Audit Opinion',
+        pass: 'Approve',
+        reject: 'Reject'
+      },
+      placeholder: {
+        auditOpinion: 'Enter audit opinion'
+      },
+      rules: {
+        auditResultRequired: 'Please select audit result',
+        auditOpinionRequired: 'Please enter audit opinion'
+      },
+      actions: {
+        submit: 'Submit Audit',
+        audit: 'Audit',
+        view: 'View'
+      },
+      messages: {
+        submitSuccess: 'Audit submitted successfully',
+        confirmSubmit: 'Are you sure to submit the audit result?'
+      }
+    },
+
+    // Supplier Information Maintenance
+    info: {
+      title: 'Supplier Information Maintenance',
+      subtitle: 'View and manage authentication information of all suppliers',
+      list: 'Supplier List',
+      detail: 'Supplier Details',
+      searchPlaceholder: 'Search by enterprise name, unified social credit code, contact person',
+      showAdvanced: 'Expand Advanced Filter',
+      hideAdvanced: 'Collapse Advanced Filter',
+      resetFilters: 'Reset Filters',
+      applyFilters: 'Apply Filters',
+      filter: {
+        keyword: 'Keyword',
+        status: 'Authentication Status',
+        allStatus: 'All Status',
+        adCode: 'Administrative Division',
+        allRegion: 'All Regions',
+        applyTime: 'Application Time',
+        approveTime: 'Approval Time'
+      },
+      columns: {
+        orgName: 'Enterprise/Organization Name',
+        creditCode: 'Unified Social Credit Code',
+        legalPerson: 'Legal Representative',
+        contactName: 'Contact Person',
+        contactPhone: 'Contact Phone',
+        adCode: 'Administrative Division',
+        applyTime: 'Application Time',
+        approveTime: 'Approval Time',
+        status: 'Authentication Status',
+        actions: 'Actions'
+      },
+      actions: {
+        view: 'View Details',
+        edit: 'Edit',
+        delete: 'Delete'
+      },
+      status: {
+        pending: 'Under Review',
+        approved: 'Approved',
+        rejected: 'Rejected'
+      }
+    },
+
+    // Supplier Input Management
+    product: {
+      title: 'Supplier Input Management',
+      subtitle: 'Manage association relationships between suppliers and inputs',
+      list: 'Input Supply List',
+      detail: 'Supply Details',
+      add: 'Add Supply Relationship',
+      edit: 'Edit Supply Relationship',
+      delete: 'Delete Supply Relationship',
+      batchDelete: 'Batch Delete',
+      deleteConfirm: 'Are you sure to delete this supply relationship?',
+      batchDeleteConfirm: 'Are you sure to delete the selected supply relationships?',
       deleteSuccess: 'Deleted successfully',
       addSuccess: 'Added successfully',
-      editSuccess: 'Updated successfully',
-
-      // Search and Filter
-      searchPlaceholder: 'Search product name, registration number, batch number',
-      filterByType: 'Filter by input type',
+      editSuccess: 'Edited successfully',
+      searchPlaceholder: 'Search by product name, product code, supplier',
+      filterBySupplier: 'Filter by Supplier',
+      filterByType: 'Filter by Input Type',
+      filterByQuality: 'Filter by Quality Rating',
+      allSuppliers: 'All Suppliers',
       allTypes: 'All Types',
-
-      // Input Types
-      type: {
+      allQuality: 'All Ratings',
+      keyword: 'Keyword',
+      inputType: {
         all: 'All',
         pesticide: 'Pesticide',
         fertilizer: 'Fertilizer',
         seed: 'Seed',
-        other: 'Other',
+        other: 'Other'
       },
-
-      // Form Fields - Basic Info
+      qualityRating: {
+        all: 'All',
+        A: 'Grade A (Excellent)',
+        B: 'Grade B (Good)',
+        C: 'Grade C (Average)',
+        D: 'Grade D (Poor)'
+      },
+      certStatus: {
+        notPassed: 'Not Passed',
+        pending: 'Under Review',
+        passed: 'Passed'
+      },
       form: {
         basicInfo: 'Basic Information',
-        productionInfo: 'Production & Responsibility',
-        regulatoryInfo: 'Regulatory & Licensing',
-        ingredientsInfo: 'Ingredients & Usage',
-
+        supplyInfo: 'Supply Information',
+        productInfo: 'Product Details',
+        qualityInfo: 'Quality Information',
+        supplierId: 'Supplier',
+        supplierName: 'Supplier Name',
+        inputId: 'Input',
         inputName: 'Input Name',
         inputType: 'Input Type',
-        agriculturalInputType: 'Agricultural Input Type',
-        variety: 'Variety',
-        inputSku: 'Product SKU',
-        trademark: 'Trademark',
-        registerCode: 'Registration Number',
-        productionLicense: 'Production License',
-        productionStandard: 'Product Standard',
-        producerName: 'Producer Name',
-        producerAddress: 'Producer Address',
-        createTime: 'Created Time',
-        createPeople: 'Creator',
-        status: 'Status',
-      },
-
-      // Form Placeholders
-      placeholder: {
-        inputName: 'Enter input name (2-100 characters)',
-        inputType: 'Select input type',
-        agriculturalInputType: 'Enter agricultural input type',
-        variety: 'Enter variety',
-        inputSku: 'Auto-generated by system',
-        trademark: 'Enter trademark',
-        registerCode: 'Enter registration number',
-        productionLicense: 'Enter production license',
-        productionStandard: 'Enter product standard',
-        producerName: 'Enter producer name (2-200 characters)',
-        producerAddress: 'Enter producer address (5-255 characters)',
-      },
-
-      // Form Rules
-      rules: {
-        inputNameRequired: 'Please enter input name',
-        inputNameLength: 'Input name should be 2-100 characters',
-        inputTypeRequired: 'Please select input type',
-        inputSkuRequired: 'Please enter product SKU',
-        inputSkuLength: 'Product SKU should be 8-50 characters',
-        trademarkRequired: 'Please enter trademark',
-        registerCodeRequired: 'Please enter registration number',
-        productionLicenseRequired: 'Please enter production license',
-        productionStandardRequired: 'Please enter product standard',
-        producerNameRequired: 'Please enter producer name',
-        producerNameLength: 'Producer name should be 2-200 characters',
-        producerAddressRequired: 'Please enter producer address',
-        producerAddressLength: 'Producer address should be 5-255 characters',
-      },
-
-      // Pesticide Properties
-      pesticide: {
-        title: 'Pesticide Properties',
-        totalIngredientContent: 'Total Active Ingredient',
-        toxicityLevel: 'Toxicity Level',
-        targetCrops: 'Target Crops',
-        controlTargets: 'Control Targets',
-        applicationMethod: 'Application Method',
-        dosage: 'Dosage',
-        dilutionRatio: 'Dilution Ratio',
-        safetyInterval: 'Safety Interval (days)',
-        precautions: 'Precautions',
-        firstAid: 'First Aid',
-        storageRequirements: 'Storage Requirements',
-
-        toxicity: {
-          micro: 'Micro-toxic',
-          low: 'Low Toxic',
-          medium: 'Medium Toxic',
-          high: 'High Toxic',
-          severe: 'Severe Toxic',
-        },
-      },
-
-      // Fertilizer Properties
-      fertilizer: {
-        title: 'Fertilizer Properties',
-        fertilizerType: 'Fertilizer Type',
-        totalNutrientContent: 'Total Nutrient',
-        nitrogenContent: 'Nitrogen Content',
-        phosphorusContent: 'Phosphorus (P₂O₅)',
-        potassiumContent: 'Potassium (K₂O)',
-        organicMatterContent: 'Organic Matter',
-        mediumTraceElements: 'Trace Elements',
-        phValue: 'pH Value',
-        suitableCrops: 'Suitable Crops',
-        applicationPeriod: 'Application Period',
-        applicationMethod: 'Application Method',
-        recommendedDosage: 'Recommended Dosage',
-      },
-
-      // Seed Properties
-      seed: {
-        title: 'Seed Properties',
-        cropType: 'Crop Type',
-        varietyName: 'Variety Name',
-        varietyApprovalCode: 'Approval Code',
-        varietySource: 'Variety Source',
-        purity: 'Purity (%)',
-        cleanliness: 'Cleanliness (%)',
-        germinationRate: 'Germination Rate (%)',
-        moistureContent: 'Moisture Content (%)',
-      },
-
-      // Table Columns
-      columns: {
-        inputName: 'Input Name',
-        inputType: 'Type',
-        inputSku: 'SKU',
-        trademark: 'Trademark',
-        registerCode: 'Reg. Number',
-        producerName: 'Producer',
-        createTime: 'Created',
-        status: 'Status',
-        actions: 'Actions',
-      },
-
-      // Status Options
-      statusOptions: {
-        active: 'Active',
-        inactive: 'Inactive',
-      },
-    },
-
-    // Supplier Management
-    supplier: {
-      // Supplier Authentication
-      auth: {
-        title: 'Supplier Authentication Application',
-        subtitle: 'Submit detailed information for supplier identity verification',
-        applySuccess: 'Authentication application submitted successfully',
-        applyFailed: 'Failed to submit authentication application',
-
-        form: {
-          orgName: 'Enterprise/Organization Name',
-          creditCode: 'Unified Social Credit Code',
-          legalPerson: 'Legal Representative/Person in Charge',
-          legalId: 'Legal Representative ID Number',
-          adCode: 'Administrative Region',
-          businessScope: 'Business Scope/Main Products',
-          licensePath: 'Business License',
-          contactName: 'Contact Person Name',
-          contactPhone: 'Contact Phone',
-        },
-
-        placeholder: {
-          orgName: 'Please enter enterprise/organization name',
-          creditCode: 'Please enter unified social credit code',
-          legalPerson: 'Please enter legal representative/person in charge',
-          legalId: 'Please enter ID number',
-          adCode: 'Please select administrative region',
-          businessScope: 'Please enter business scope or main products',
-          contactName: 'Please enter contact person name',
-          contactPhone: 'Please enter contact phone',
-        },
-
-        rules: {
-          orgNameRequired: 'Please enter enterprise/organization name',
-          creditCodeRequired: 'Please enter unified social credit code',
-          creditCodeLength: 'Unified social credit code',
-          legalPersonRequired: 'Please enter legal representative/person in charge',
-          legalIdRequired: 'Please enter legal representative ID number',
-          legalIdFormat: 'Please enter a valid ID number',
-          adCodeRequired: 'Please select administrative region',
-          businessScopeRequired: 'Please enter business scope or main products',
-          licensePathRequired: 'Please upload business license',
-          contactNameRequired: 'Please enter contact person name',
-          contactPhoneRequired: 'Please enter contact phone',
-          contactPhoneFormat: 'Please enter a valid phone number',
-        },
-
-        uploadTip: 'Supports jpg/png/pdf, single file size less than 2MB',
-      },
-
-      // Supplier Authentication Approval
-      approval: {
-        title: 'Supplier Authentication Approval',
-        subtitle: 'Review supplier identity authentication application materials',
-        list: 'Pending Approval List',
-        detail: 'Approval Details',
-        approveSuccess: 'Approved successfully',
-        rejectSuccess: 'Rejected',
-
-        searchPlaceholder: 'Search enterprise name, credit code, contact',
-        advancedSearch: 'Advanced Filters',
-        showAdvanced: 'Show Advanced Filters',
-        hideAdvanced: 'Hide Advanced Filters',
-        resetFilters: 'Reset Filters',
-        applyFilters: 'Apply Filters',
-
-        filter: {
-          keyword: 'Keyword',
-          status: 'Status',
-          allStatus: 'All Status',
-          adCode: 'Region',
-          allRegion: 'All Regions',
-          applyTime: 'Apply Time',
-          approveTime: 'Approve Time',
-          timeTo: 'to',
-        },
-
-        status: {
-          pending: 'Under Review',
-          approved: 'Approved',
-          rejected: 'Rejected',
-        },
-
-        columns: {
-          orgName: 'Enterprise/Organization Name',
-          creditCode: 'Unified Social Credit Code',
-          legalPerson: 'Legal Representative',
-          contactName: 'Contact Person',
-          contactPhone: 'Contact Phone',
-          applyTime: 'Application Time',
-          status: 'Authentication Status',
-          actions: 'Actions',
-        },
-
-        form: {
-          applicantInfo: 'Applicant Information',
-          certInfo: 'Authentication Information',
-          auditInfo: 'Audit Operation',
-          auditResult: 'Audit Result',
-          auditOpinion: 'Audit Opinion',
-          pass: 'Approve',
-          reject: 'Reject',
-        },
-
-        placeholder: {
-          auditOpinion: 'Please enter audit opinion',
-        },
-
-        rules: {
-          auditResultRequired: 'Please select audit result',
-          auditOpinionRequired: 'Please enter audit opinion',
-        },
-
-        actions: {
-          submit: 'Submit Audit',
-          audit: 'Audit',
-          view: 'View',
-        },
-
-        messages: {
-          submitSuccess: 'Audit submitted successfully',
-          confirmSubmit: 'Are you sure to submit the audit result?',
-        },
-      },
-
-      // Supplier Information Maintenance
-      info: {
-        title: 'Supplier Information Maintenance',
-        subtitle: 'View and manage all supplier certification information',
-        list: 'Supplier List',
-        detail: 'Supplier Details',
-
-        searchPlaceholder: 'Search enterprise name, credit code, contact',
-        showAdvanced: 'Show Advanced Filters',
-        hideAdvanced: 'Hide Advanced Filters',
-        resetFilters: 'Reset Filters',
-        applyFilters: 'Apply Filters',
-
-        filter: {
-          keyword: 'Keyword',
-          status: 'Status',
-          allStatus: 'All Status',
-          adCode: 'Region',
-          allRegion: 'All Regions',
-          applyTime: 'Apply Time',
-          approveTime: 'Approve Time',
-        },
-
-        columns: {
-          orgName: 'Enterprise/Organization Name',
-          creditCode: 'Unified Social Credit Code',
-          legalPerson: 'Legal Representative',
-          contactName: 'Contact Person',
-          contactPhone: 'Contact Phone',
-          adCode: 'Administrative Region',
-          applyTime: 'Application Time',
-          approveTime: 'Approval Time',
-          status: 'Authentication Status',
-          actions: 'Actions',
-        },
-
-        actions: {
-          view: 'View Details',
-          edit: 'Edit',
-          delete: 'Delete',
-        },
-
-        status: {
-          pending: 'Under Review',
-          approved: 'Approved',
-          rejected: 'Rejected',
-        },
-      },
-
-      // Supplier Product Management
-      product: {
-        title: 'Supplier Product Management',
-        subtitle: 'Manage the relationship between suppliers and agricultural inputs',
-        list: 'Product Supply List',
-        detail: 'Supply Details',
-        add: 'Add Supply Relationship',
-        edit: 'Edit Supply Relationship',
-        delete: 'Delete Supply Relationship',
-        batchDelete: 'Batch Delete',
-        deleteConfirm: 'Are you sure to delete this supply relationship?',
-        batchDeleteConfirm: 'Are you sure to delete the selected supply relationships?',
-        deleteSuccess: 'Deleted successfully',
-        addSuccess: 'Added successfully',
-        editSuccess: 'Updated successfully',
-
-        // Search and Filter
-        searchPlaceholder: 'Search product name, code, supplier',
-        filterBySupplier: 'Filter by Supplier',
-        filterByType: 'Filter by Input Type',
-        filterByQuality: 'Filter by Quality Rating',
-        allSuppliers: 'All Suppliers',
-        allTypes: 'All Types',
-        allQuality: 'All Ratings',
-        keyword: 'Keyword',
-
-        // Input Type
-        inputType: {
-          all: 'All',
-          pesticide: 'Pesticide',
-          fertilizer: 'Fertilizer',
-          seed: 'Seed',
-          other: 'Other',
-        },
-
-        // Quality Rating
-        qualityRating: {
-          all: 'All',
-          A: 'Grade A (Excellent)',
-          B: 'Grade B (Good)',
-          C: 'Grade C (Fair)',
-          D: 'Grade D (Poor)',
-        },
-
-        // Certification Status
-        certStatus: {
-          notPassed: 'Not Passed',
-          pending: 'Under Review',
-          passed: 'Passed',
-        },
-
-        // Form Fields
-        form: {
-          basicInfo: 'Basic Information',
-          supplyInfo: 'Supply Information',
-          productInfo: 'Product Details',
-          qualityInfo: 'Quality Information',
-
-          supplierId: 'Supplier',
-          supplierName: 'Supplier Name',
-          inputId: 'Input',
-          inputName: 'Input Name',
-          inputType: 'Input Type',
-          inputSku: 'Input Code',
-          inputSpec: 'Product Specification',
-          supplierProductCode: 'Supplier Product Code',
-          supplierProductName: 'Supplier Product Name',
-          currentPrice: 'Current Price',
-          qualityRating: 'Quality Rating',
-          certStatus: 'Certification Status',
-          notes: 'Notes',
-          createTime: 'Create Time',
-          updateTime: 'Update Time',
-        },
-
-        // Form Placeholders
-        placeholder: {
-          supplierId: 'Please select supplier',
-          inputId: 'Please select input',
-          inputName: 'Please enter input name',
-          inputSku: 'Please enter input code',
-          supplierProductCode: 'Please enter supplier product code (max 100 chars)',
-          supplierProductName: 'Please enter supplier product name (max 200 chars)',
-          qualityRating: 'Please select quality rating',
-          notes: 'Please enter notes (max 500 chars)',
-        },
-
-        // Form Validation
-        rules: {
-          supplierIdRequired: 'Please select supplier',
-          inputIdRequired: 'Please select input',
-          supplierProductCodeLength: 'Supplier product code cannot exceed 100 characters',
-          supplierProductNameLength: 'Supplier product name cannot exceed 200 characters',
-          notesLength: 'Notes cannot exceed 500 characters',
-        },
-
-        // Table Columns
-        columns: {
-          inputName: 'Product Name',
-          inputSpec: 'Specification',
-          inputType: 'Type',
-          supplierName: 'Supplier Name',
-          supplierProductCode: 'Supplier Product Code',
-          currentPrice: 'Current Price',
-          qualityRating: 'Quality Rating',
-          certStatus: 'Certification Status',
-          createTime: 'Create Time',
-          actions: 'Actions',
-        },
-
-        // Actions
-        actions: {
-          view: 'Details',
-          edit: 'Edit',
-          delete: 'Delete',
-        },
-
-        // Messages
-        messages: {
-          selectItems: 'Please select items to delete',
-          relationExists: 'The relationship between this supplier and input already exists',
-          noData: 'No data',
-        },
-
-        // Detail Dialog Sections
-        detailSections: {
-          basicInfo: 'Basic Information',
-          supplyInfo: 'Supply Relationship Attributes',
-          editSupplyInfo: 'Edit Supply Information',
-        },
-      },
-    },
-
-    // Inventory Management
-    inventory: {
-      // Warehouse Management
-      warehouse: {
-        title: 'Warehouse Management',
-        subtitle: 'Manage warehouse basic information, capacity and usage',
-        list: 'Warehouse List',
-        detail: 'Warehouse Details',
-        add: 'Add Warehouse',
-        edit: 'Edit Warehouse',
-        delete: 'Delete Warehouse',
-        deleteConfirm: 'Are you sure to delete this warehouse?',
-        deleteSuccess: 'Successfully deleted',
-        addSuccess: 'Successfully added',
-        editSuccess: 'Successfully updated',
-
-        searchPlaceholder: 'Search warehouse name',
-        filterByType: 'Filter by warehouse type',
-        filterByStatus: 'Filter by status',
-        allTypes: 'All Types',
-        allStatus: 'All Status',
-
-        // Warehouse Types
-        type: {
-          normal: 'Normal Warehouse',
-          cold: 'Cold Storage',
-          dangerous: 'Dangerous Goods Warehouse',
-        },
-
-        // Form Fields
-        form: {
-          warehouseCode: 'Warehouse Code',
-          warehouseName: 'Warehouse Name',
-          warehouseType: 'Warehouse Type',
-          location: 'Location',
-          capacity: 'Capacity',
-          warehouseArea: 'Warehouse Area',
-          usedCapacity: 'Used Capacity',
-          availableCapacity: 'Available Capacity',
-          belongs: 'Organization',
-          organName: 'Department',
-          supplierId: 'Supplier',
-          supplierName: 'Supplier Name',
-          siteCertificate: 'Site Certificate',
-          contactPerson: 'Contact Person',
-          contactPhone: 'Contact Phone',
-          remark: 'Remark',
-          status: 'Status',
-          createPeople: 'Created By',
-          createTime: 'Create Time',
-          updatePeople: 'Updated By',
-          updateTime: 'Update Time',
-        },
-
-        placeholder: {
-          warehouseCode: 'Please enter warehouse code',
-          warehouseName: 'Please enter warehouse name',
-          warehouseType: 'Please select warehouse type',
-          location: 'Please enter location',
-          capacity: 'Please enter capacity',
-          warehouseArea: 'Please enter warehouse area',
-          organName: 'Please enter department',
-          contactPerson: 'Please enter contact person',
-          contactPhone: 'Please enter contact phone',
-          remark: 'Please enter remark (optional)',
-        },
-
-        rules: {
-          warehouseCodeRequired: 'Please enter warehouse code',
-          warehouseNameRequired: 'Please enter warehouse name',
-          warehouseTypeRequired: 'Please select warehouse type',
-          locationRequired: 'Please enter location',
-          capacityRequired: 'Please enter capacity',
-          capacityPositive: 'Capacity must be greater than 0',
-          warehouseAreaPositive: 'Warehouse area must be greater than or equal to 0',
-          organNameRequired: 'Please enter department',
-          contactPersonRequired: 'Please enter contact person',
-          contactPhoneRequired: 'Please enter contact phone',
-          contactPhoneFormat: 'Please enter valid phone number',
-        },
-
-        columns: {
-          warehouseCode: 'Warehouse Code',
-          warehouseName: 'Warehouse Name',
-          warehouseType: 'Warehouse Type',
-          location: 'Location',
-          warehouseArea: 'Warehouse Area',
-          belongs: 'Organization',
-          organName: 'Department',
-          supplierName: 'Supplier Name',
-          capacity: 'Capacity',
-          usageRate: 'Usage Rate',
-          contactPerson: 'Contact Person',
-          contactPhone: 'Contact Phone',
-          status: 'Status',
-          actions: 'Actions',
-        },
-
-        status: {
-          enabled: 'Enabled',
-          disabled: 'Disabled',
-        },
-
-        actions: {
-          view: 'View',
-          edit: 'Edit',
-          delete: 'Delete',
-        },
-
-        systemInfo: 'System Information',
-
-        uploadFile: 'Upload File',
-        uploadTip: 'Supports jpg/png/pdf format, maximum file size 2MB',
-        uploadSuccess: 'File uploaded successfully',
-        uploadFailed: 'File upload failed',
-        uploadFormatError: 'Invalid file format, only jpg/png/pdf are supported',
-        uploadSizeError: 'File size cannot exceed 2MB',
-        siteCertificateFile: 'Site Certificate',
-        viewFile: 'View File',
-
-        messages: {
-          noData: 'No data available',
-        },
-      },
-
-      // Stock In Management
-      stockIn: {
-        title: 'Stock In Management',
-        subtitle: 'Manage stock in registration and confirmation',
-        create: 'Create Stock In',
-        createSuccess: 'Created successfully',
-        list: 'Stock In List',
-        detail: 'Stock In Details',
-        add: 'Add Stock In',
-        edit: 'Edit Stock In',
-        delete: 'Delete Stock In',
-        confirm: 'Confirm Stock In',
-        audit: 'Audit',
-        approve: 'Approve',
-        reject: 'Reject',
-        deleteConfirm: 'Are you sure to delete this stock in record?',
-        confirmConfirm: 'Confirming will update inventory. Continue?',
-        confirmMessage: 'Confirm stock in operation?',
-        cancelMessage: 'Are you sure to cancel this stock in order?',
-        deleteSuccess: 'Successfully deleted',
-        addSuccess: 'Successfully added',
-        editSuccess: 'Successfully updated',
-        confirmSuccess: 'Stock in confirmed successfully',
-        auditSuccess: 'Audit successful',
-        rejectSuccess: 'Rejected',
-        cancelSuccess: 'Cancelled successfully',
-        pendingCount: 'Pending Count',
-        totalCount: 'Total Count',
-        material: 'Material',
-        batch: 'Batch No',
-        batchId: 'Stock In Batch ID',
-        batchInfo: 'Batch Information',
-        auditOpinion: 'Audit Opinion',
-        rejectReason: 'Reject Reason',
-        auditInfo: 'Audit Information',
-        auditUser: 'Auditor',
-        auditTime: 'Audit Time',
-        auditRemark: 'Audit Remark',
-        relatedOrderNo: 'Related Order No',
-        supplierName: 'Supplier Name',
-        supplierContact: 'Supplier Contact',
-        supplierPhone: 'Supplier Phone',
-        remark: 'Remark',
-        materialDetails: 'Material Details',
-        inputDetails: 'Input Details',
-        materialId: 'Material ID',
-        materialName: 'Material Name',
-        materialBatchId: 'Material Batch ID',
-        inputName: 'Input Name',
-        inputId: 'Input ID',
-        inputBatchId: 'Input Batch ID',
-        inputType: 'Input Type',
-        specification: 'Specification',
-        unit: 'Unit',
-        expiryDate: 'Expiry Date',
-        qrCode: 'QR Code',
-        addMaterial: 'Add Material',
-        addInput: 'Add Input',
-        noMaterials: 'No materials',
-        selectInputFirst: 'Please select input first',
-
-        searchPlaceholder: 'Search stock in ID, batch number',
-        filterByWarehouse: 'Filter by warehouse',
-        filterBySupplier: 'Filter by supplier',
-        filterByType: 'Filter by type',
-        filterByStatus: 'Filter by status',
-        allWarehouses: 'All Warehouses',
-        allSuppliers: 'All Suppliers',
-        allTypes: 'All Types',
-        allStatus: 'All Status',
-
-        filter: {
-          status: 'Stock In Status',
-          type: 'Stock In Type',
-          orderId: 'Stock In Order ID',
-        },
-
-        // Stock In Types
-        type: {
-          production: 'Production',
-          purchase: 'Purchase',
-          transfer: 'Transfer',
-          return: 'Return',
-        },
-
-        // Status
-        status: {
-          pending: 'Pending',
-          approved: 'Approved',
-          rejected: 'Rejected',
-          confirmed: 'Confirmed',
-          completed: 'Completed',
-          cancelled: 'Cancelled',
-        },
-
-        // Form Fields
-        form: {
-          stockInId: 'Stock In ID',
-          warehouseId: 'Warehouse',
-          batchNo: 'Batch Number',
-          supplierId: 'Supplier',
-          type: 'Type',
-          operator: 'Operator',
-          expiredTime: 'Expiry Date',
-          totalQuantity: 'Total Quantity',
-          remarks: 'Remarks',
-          status: 'Status',
-          createTime: 'Create Time',
-          items: 'Items',
-          inputId: 'Input',
-          quantity: 'Quantity',
-          expiryDate: 'Expiry Date',
-          inputSku: 'SKU Code',
-          itemRemarks: 'Item Remarks',
-        },
-
-        placeholder: {
-          warehouseId: 'Please select warehouse',
-          warehouse: 'Please select warehouse',
-          supplierId: 'Please select supplier',
-          type: 'Please select type',
-          operator: 'Please enter operator',
-          expiredTime: 'Please select expiry date',
-          remarks: 'Please enter remarks',
-          remark: 'Please enter remark',
-          inputId: 'Please select input',
-          inputName: 'Please select input name',
-          inputBatchId: 'Please enter input batch ID (optional)',
-          inputType: 'Input type (auto-filled)',
-          specification: 'Please enter specification (optional)',
-          unit: 'Please enter unit',
-          qrCode: 'QR Code (auto-fetched)',
-          quantity: 'Please enter quantity',
-          expiryDate: 'Please select item expiry date',
-          itemRemarks: 'Please enter item remarks',
-          orderId: 'Please enter stock in order ID',
-          auditOpinion: 'Please enter audit opinion',
-          rejectReason: 'Please enter reject reason',
-          relatedOrderNo: 'Please enter related order no (optional)',
-          supplierName: 'Please enter supplier name (optional)',
-          supplierContact: 'Please enter supplier contact (optional)',
-          supplierPhone: 'Please enter supplier phone (optional)',
-        },
-
-        rules: {
-          warehouseIdRequired: 'Please select warehouse',
-          supplierIdRequired: 'Please select supplier',
-          typeRequired: 'Please select type',
-          operatorRequired: 'Please enter operator',
-          expiredTimeRequired: 'Please select expiry date',
-          expiryDateRequired: 'Please select item expiry date',
-          inputIdRequired: 'Please select input',
-          quantityRequired: 'Please enter quantity',
-          quantityPositive: 'Quantity must be greater than 0',
-          itemsRequired: 'Please add at least one item',
-        },
-
-        columns: {
-          orderId: 'Order ID',
-          stockInId: 'Stock In ID',
-          warehouseName: 'Warehouse',
-          warehouse: 'Warehouse',
-          supplierName: 'Supplier',
-          supplier: 'Supplier',
-          type: 'Type',
-          batchNo: 'Batch Number',
-          totalQuantity: 'Total Quantity',
-          quantity: 'Quantity',
-          operator: 'Operator',
-          expiredTime: 'Expiry Date',
-          applyTime: 'Apply Time',
-          inboundTime: 'Inbound Time',
-          status: 'Status',
-          createTime: 'Create Time',
-          actions: 'Actions',
-        },
-
-        actions: {
-          view: 'View',
-          edit: 'Edit',
-          delete: 'Delete',
-          confirm: 'Confirm',
-          addItem: 'Add Item',
-          removeItem: 'Remove',
-        },
-
-        messages: {
-          noData: 'No data available',
-          noItems: 'No items',
-        },
-      },
-
-      // Stock Out Management
-      stockOut: {
-        title: 'Stock Out Management',
-        subtitle: 'Manage stock out registration and confirmation',
-        list: 'Stock Out List',
-        detail: 'Stock Out Details',
-        add: 'Add Stock Out',
-        edit: 'Edit Stock Out',
-        delete: 'Delete Stock Out',
-        confirm: 'Confirm Stock Out',
-        audit: 'Audit',
-        auditStatus: 'Audit Status',
-        auditRemark: 'Audit Remark',
-        auditSuccess: 'Audit successful',
-        cancelConfirm: 'Are you sure to cancel this outbound order?',
-        cancelSuccess: 'Cancelled successfully',
-        deleteConfirm: 'Are you sure to delete this stock out record?',
-        confirmConfirm: 'Confirming will deduct inventory. Continue?',
-        deleteSuccess: 'Successfully deleted',
-        addSuccess: 'Successfully added',
-        editSuccess: 'Successfully updated',
-        confirmSuccess: 'Stock out confirmed successfully',
-
-        searchPlaceholder: 'Search outbound order ID, related order no, outbound object',
-        filterByWarehouse: 'Filter by warehouse',
-        filterByType: 'Filter by type',
-        filterByStatus: 'Filter by status',
-        allWarehouses: 'All Warehouses',
-        allTypes: 'All Types',
-        allStatus: 'All Status',
-
-        // Stock Out Types
-        type: {
-          sale: 'Sale',
-          transfer: 'Transfer',
-        },
-
-        // Status
-        status: {
-          pending: 'Pending',
-          completed: 'Completed',
-          cancelled: 'Cancelled',
-        },
-
-        // Form Fields
-        form: {
-          outboundOrderId: 'Outbound Order ID',
-          outboundBatchId: 'Outbound Batch ID',
-          stockOutId: 'Stock Out ID',
-          warehouseId: 'Outbound Warehouse',
-          batchNo: 'Batch Number',
-          customer: 'Customer',
-          outboundObject: 'Outbound Object',
-          outboundObjectId: 'Outbound Object',
-          outboundUser: 'Outbound User',
-          outboundDept: 'Outbound Department',
-          relatedOrderNo: 'Related Order No',
-          type: 'Type',
-          operator: 'Operator',
-          totalQuantity: 'Total Quantity',
-          remark: 'Remark',
-          status: 'Status',
-          createTime: 'Create Time',
-          outboundTime: 'Outbound Time',
-          auditUser: 'Auditor',
-          auditTime: 'Audit Time',
-          items: 'Items',
-          details: 'Outbound Details',
-          inputId: 'Input',
-          materialId: 'Material',
-          materialName: 'Material Name',
-          materialType: 'Material Type',
-          materialBatchId: 'Material Batch ID',
-          quantity: 'Quantity',
-          specModel: 'Specification',
-          unitOfMeasure: 'Unit',
-          availableQuantity: 'Available Stock',
-          itemRemarks: 'Item Remarks',
-          batchSplits: 'Batch Splits',
-          inboundBatchId: 'Inbound Batch ID',
-          splitQuantity: 'Split Quantity',
-          remainingQuantity: 'Remaining Quantity',
-        },
-
-        placeholder: {
-          warehouseId: 'Please select outbound warehouse',
-          customer: 'Please enter customer name',
-          outboundObject: 'Please select target warehouse',
-          outboundObjectId: 'Please select target warehouse',
-          outboundUser: 'Please enter outbound user',
-          outboundDept: 'Please enter outbound department',
-          relatedOrderNo: 'Please enter related order no (optional)',
-          type: 'Please select type',
-          operator: 'Please enter operator',
-          remark: 'Please enter remark',
-          inputId: 'Please select input',
-          materialId: 'Please select material',
-          materialType: 'Please select material type',
-          materialBatchId: 'Material Batch ID (Auto-filled)',
-          batchNo: 'Please select batch number',
-          quantity: 'Please enter quantity',
-          specModel: 'Please enter specification (optional)',
-          unitOfMeasure: 'Please enter unit (optional)',
-          itemRemarks: 'Please enter item remarks',
-          auditRemark: 'Please enter audit remark',
-        },
-
-        rules: {
-          warehouseIdRequired: 'Please select outbound warehouse',
-          customerRequired: 'Please enter customer name',
-          outboundObjectIdRequired: 'Please select target warehouse',
-          typeRequired: 'Please select type',
-          operatorRequired: 'Please enter operator',
-          inputIdRequired: 'Please select input',
-          materialIdRequired: 'Please select material',
-          materialTypeRequired: 'Please select material type',
-          batchNoRequired: 'Please select batch number',
-          quantityRequired: 'Please enter quantity',
-          quantityPositive: 'Quantity must be greater than 0',
-          quantityExceeds: 'Quantity exceeds available stock',
-          itemsRequired: 'Please add at least one item',
-          detailsRequired: 'Please add at least one detail',
-          auditRemarkRequired: 'Please enter audit remark',
-        },
-
-        columns: {
-          outboundOrderId: 'Outbound Order ID',
-          stockOutId: 'Stock Out ID',
-          warehouseName: 'Warehouse',
-          customer: 'Customer',
-          outboundObject: 'Outbound Object',
-          outboundObjectName: 'Outbound Object',
-          outboundUser: 'Outbound User',
-          outboundDept: 'Outbound Department',
-          type: 'Type',
-          batchNo: 'Batch Number',
-          relatedOrderNo: 'Related Order No',
-          totalQuantity: 'Total Quantity',
-          operator: 'Operator',
-          auditUser: 'Auditor',
-          auditTime: 'Audit Time',
-          outboundTime: 'Outbound Time',
-          status: 'Status',
-          createTime: 'Create Time',
-          actions: 'Actions',
-        },
-
-        actions: {
-          view: 'View',
-          edit: 'Edit',
-          delete: 'Delete',
-          cancel: 'Cancel',
-          confirm: 'Confirm',
-          audit: 'Audit',
-          approve: 'Approve',
-          reject: 'Reject',
-          addItem: 'Add Item',
-          removeItem: 'Remove',
-        },
-
-        messages: {
-          noData: 'No data available',
-          noItems: 'No items',
-          insufficientStock: 'Insufficient stock',
-          noStockInWarehouse: 'No available stock in this warehouse',
-          noAvailableWarehouse: 'No available target warehouse (cannot select the outbound warehouse itself)',
-        },
-      },
-
-      // Inventory Query
-      stock: {
-        title: 'Inventory Query',
-        subtitle: 'Real-time inventory query, alerts and summary statistics',
-        list: 'Inventory List',
-        detail: 'Inventory Details',
-        warning: 'Stock Alerts',
-        summary: 'Summary Statistics',
-        logs: 'Stock Change Logs',
-        viewLogs: 'View Change Logs',
-        dashboard: 'Stock Monitoring Dashboard',
-        dashboardSubtitle: 'Real-time monitoring of stock status and alerts',
-
-        // Dashboard Metrics
-        metrics: {
-          totalStock: 'Total Stock Quantity',
-          nearExpiryCount: 'Near Expiry Items',
-          overCapacityWarehouses: 'Over Capacity Warehouses',
-          pendingAlerts: 'Pending Alerts',
-          totalValue: 'Total Inventory Value',
-          warehouseUsage: 'Warehouse Usage',
-        },
-
-        searchPlaceholder: 'Search input name, batch number',
-        filterByWarehouse: 'Filter by warehouse',
-        filterByInput: 'Filter by input',
-        filterByStatus: 'Filter by status',
-        filterByOperation: 'Filter by operation',
-        allWarehouses: 'All Warehouses',
-        allInputs: 'All Inputs',
-        allStatus: 'All Status',
-        allOperations: 'All Operations',
-
-        // Stock Status
-        status: {
-          normal: 'Normal',
-          active: 'Active',
-          nearExpiry: 'Near Expiry',
-          expired: 'Expired',
-          inactive: 'Inactive',
-        },
-
-        // Operation Type
-        operationType: {
-          inbound: 'Inbound',
-          outbound: 'Outbound',
-        },
-
-        // Warning Types
-        warningType: {
-          all: 'All Alerts',
-          nearExpiry: 'Near Expiry',
-          expired: 'Expired',
-        },
-
-        // Form Fields
-        form: {
-          inventoryId: 'Inventory ID',
-          inputId: 'Input',
-          inputName: 'Input Name',
-          batchNo: 'Batch Number',
-          warehouseId: 'Warehouse',
-          warehouseName: 'Warehouse Name',
-          currentQuantity: 'Current Quantity',
-          inDate: 'In Date',
-          expiredDate: 'Expiry Date',
-          stockStatus: 'Stock Status',
-          daysToExpire: 'Days to Expire',
-        },
-
-        columns: {
-          inputName: 'Input Name',
-          materialName: 'Material Name',
-          materialId: 'Material ID',
-          materialBatchId: 'Batch ID',
-          batchNo: 'Batch Number',
-          warehouseName: 'Warehouse Name',
-          warehouse: 'Warehouse',
-          quantity: 'Quantity',
-          currentQuantity: 'Current Quantity',
-          inboundQuantity: 'Total Inbound',
-          outboundQuantity: 'Total Outbound',
-          inDate: 'In Date',
-          expiryDate: 'Expiry Date',
-          expiredDate: 'Expiry Date',
-          stockStatus: 'Status',
-          status: 'Status',
-          qrCode: 'QR Code',
-          createdAt: 'Created At',
-          updatedAt: 'Updated At',
-          actions: 'Actions',
-          operationType: 'Operation Type',
-          changeQuantity: 'Change Quantity',
-          beforeQuantity: 'Before',
-          afterQuantity: 'After',
-          referenceOrderId: 'Reference Order',
-          operator: 'Operator',
-        },
-
-        summaryColumns: {
-          inputName: 'Input Name',
-          warehouseName: 'Warehouse Name',
-          totalQuantity: 'Total Stock',
-          normalQuantity: 'Normal Stock',
-          nearExpiryQuantity: 'Near Expiry Stock',
-          expiredQuantity: 'Expired Stock',
-        },
-
-        actions: {
-          view: 'View',
-          viewWarning: 'View Alerts',
-          viewSummary: 'View Summary',
-          exportData: 'Export Data',
-        },
-
-        messages: {
-          noData: 'No data available',
-          noWarning: 'No alerts',
-        },
-
-        tabs: {
-          list: 'Inventory List',
-          warning: 'Stock Alerts',
-          summaryByInput: 'Summary by Input',
-          summaryByWarehouse: 'Summary by Warehouse',
-        },
-      },
-    },
-
-    // Data Dashboard
-    dashboard: {
-      title: 'Agricultural Input Supply Management Dashboard',
-      subtitle: 'Real-time Data Monitoring & Visualization',
-      lastUpdate: 'Last Update',
-      autoRefresh: 'Auto Refresh',
-      fullscreen: 'Fullscreen',
-      exitFullscreen: 'Exit Fullscreen',
-
-      // Overview Cards
-      overview: {
-        totalSuppliers: 'Total Suppliers',
-        certifiedSuppliers: 'Certified Suppliers',
-        pendingSuppliers: 'Pending Suppliers',
-        rejectedSuppliers: 'Rejected Suppliers',
-        totalInputs: 'Total Inputs',
-        seedInputs: 'Seeds',
-        fertilizerInputs: 'Fertilizers',
-        pesticideInputs: 'Pesticides',
-        totalWarehouses: 'Total Warehouses',
-        totalCapacity: 'Total Capacity',
-        usedCapacity: 'Used Capacity',
-        capacityUsageRate: 'Capacity Usage Rate',
-        totalStockQuantity: 'Total Stock Quantity',
-        normalStock: 'Normal Stock',
-        nearExpiryStock: 'Near Expiry Stock',
-        expiredStock: 'Expired Stock',
-        todayStockIn: 'Today Stock In',
-        todayStockOut: 'Today Stock Out',
-        monthStockIn: 'Monthly Stock In',
-        monthStockOut: 'Monthly Stock Out',
-        pendingWarnings: 'Pending Warnings',
-        unit: '',
-        tons: 'tons',
-        todayBusiness: 'Today Business',
-      },
-
-      // Top Suppliers
-      topSuppliers: {
-        title: 'TOP Suppliers Ranking',
-        subtitle: 'Best Performing Suppliers This Month',
-        rank: 'Rank',
-        supplierName: 'Supplier Name',
-        monthStockIn: 'Monthly Stock In',
-        productCount: 'Product Count',
-        cooperationDays: 'Cooperation Days',
+        inputSku: 'Input Code',
+        inputSpec: 'Product Specification',
+        supplierProductCode: 'Supplier Product Code',
+        supplierProductName: 'Supplier Product Name',
+        currentPrice: 'Current Price',
         qualityRating: 'Quality Rating',
-        contactPerson: 'Contact Person',
-        contactPhone: 'Contact Phone',
-        viewMore: 'View More',
-        days: 'days',
-        items: 'items',
+        certStatus: 'Certification Status',
+        notes: 'Remarks',
+        createTime: 'Creation Time',
+        updateTime: 'Update Time'
       },
-
-      // Warehouse Statistics
-      warehouse: {
-        title: 'Warehouse Statistics',
-        subtitle: 'Warehouse Capacity Utilization',
-        warehouseName: 'Warehouse Name',
-        location: 'Location',
-        capacity: 'Capacity',
-        currentStock: 'Current Stock',
-        usageRate: 'Usage Rate',
-        productTypes: 'Product Types',
-        monthIn: 'Monthly In',
-        monthOut: 'Monthly Out',
-        warning: 'Capacity Warning',
-        normal: 'Normal',
-        types: 'types',
-        times: 'times',
+      placeholder: {
+        supplierId: 'Select supplier',
+        inputId: 'Select input',
+        inputName: 'Enter input name',
+        inputSku: 'Enter input code',
+        supplierProductCode: 'Enter supplier product code (max 100 characters)',
+        supplierProductName: 'Enter supplier product name (max 200 characters)',
+        qualityRating: 'Select quality rating',
+        notes: 'Enter remarks (max 500 characters)'
       },
-
-      // Stock Trend
-      stockTrend: {
-        title: 'Stock In/Out Trend',
-        subtitle: 'Recent Inventory Changes Analysis',
-        stockIn: 'Stock In Quantity',
-        stockOut: 'Stock Out Quantity',
-        netChange: 'Net Stock Change',
-        last7Days: 'Last 7 Days',
-        last30Days: 'Last 30 Days',
-        date: 'Date',
-        quantity: 'Quantity',
-        count: 'Count',
+      rules: {
+        supplierIdRequired: 'Please select supplier',
+        inputIdRequired: 'Please select input',
+        supplierProductCodeLength: 'Supplier product code cannot exceed 100 characters',
+        supplierProductNameLength: 'Supplier product name cannot exceed 200 characters',
+        notesLength: 'Remarks cannot exceed 500 characters'
       },
-
-      // Input Distribution
-      inputDistribution: {
-        title: 'Input Type Distribution',
-        subtitle: 'Distribution by Input Type',
-        seed: 'Seed',
-        fertilizer: 'Fertilizer',
-        pesticide: 'Pesticide',
-        other: 'Other',
-        count: 'Count',
-        stockQuantity: 'Stock Quantity',
-        percentage: 'Percentage',
+      columns: {
+        inputName: 'Product Name',
+        inputSpec: 'Product Specification',
+        inputType: 'Type',
+        supplierName: 'Supplier Name',
+        supplierProductCode: 'Supplier Product Code',
+        currentPrice: 'Current Price',
+        qualityRating: 'Quality Rating',
+        certStatus: 'Certification Status',
+        createTime: 'Creation Time',
+        actions: 'Actions'
       },
-
-      // Warnings
-      warnings: {
-        title: 'Warning Information',
-        subtitle: 'Pending Warnings List',
-        warningType: 'Warning Type',
-        warningLevel: 'Level',
-        objectName: 'Object',
-        content: 'Content',
-        warningTime: 'Warning Time',
-        warehouseName: 'Warehouse',
-        batchNo: 'Batch Number',
-        status: 'Status',
-        noWarnings: 'No warnings',
-
-        types: {
-          nearExpiry: 'Near Expiry Warning',
-          expired: 'Expired Warning',
-          lowStock: 'Low Stock',
-          overCapacity: 'Over Capacity',
-        },
-
-        levels: {
-          low: 'Low',
-          medium: 'Medium',
-          high: 'High',
-        },
-
-        statusOptions: {
-          pending: 'Pending',
-          processed: 'Processed',
-          ignored: 'Ignored',
-        },
+      actions: {
+        view: 'Details',
+        edit: 'Edit',
+        delete: 'Delete'
       },
-
-      // Real-time Activities
-      activities: {
-        title: 'Real-time Activities',
-        subtitle: 'Latest Business Activities',
-        stockInActivity: 'Stock In',
-        stockOutActivity: 'Stock Out',
-        supplierActivity: 'Supplier Authentication',
-        warehouseActivity: 'Warehouse',
-        justNow: 'Just now',
-        minutesAgo: 'minutes ago',
-        hoursAgo: 'hours ago',
+      messages: {
+        selectItems: 'Please select items to delete',
+        relationExists: 'The association between this supplier and input already exists',
+        noData: 'No data available'
       },
+      detailSections: {
+        basicInfo: 'Basic Information',
+        supplyInfo: 'Supply Relationship Attributes',
+        editSupplyInfo: 'Edit Supply Information'
+      }
+    }
+  },
 
-      // Today Stock
-      todayStock: {
-        title: 'Today Stock',
-        in: 'In',
-        out: 'Out',
-        warehouse: 'Warehouse',
-        operator: 'Operator',
-        supplier: 'Supplier',
-        customer: 'Customer',
-        quantity: 'Quantity',
-        time: 'Time',
-        status: 'Status',
-        noData: 'No data',
-        statusPending: 'Pending',
-        statusConfirmed: 'Confirmed',
-        statusCancelled: 'Cancelled',
-      },
-
-      // Expiring Soon
-      expiring: {
-        title: 'Expiring Soon',
-        daysLeft: 'Left',
-        days: 'days',
-        urgent: 'Urgent',
-        warehouse: 'Warehouse',
-        quantity: 'Stock',
-        batchNo: 'Batch',
-        noData: 'No expiring items',
-        expired: 'Expired',
-      },
-
-      // Stock Status Distribution
-      stockStatus: {
-        title: 'Stock Status Distribution',
-        normal: 'Normal',
-        nearExpiry: 'Near Expiry',
-        expired: 'Expired',
-        lowStock: 'Low Stock',
-        productCount: 'Product Count',
-        totalQuantity: 'Total Quantity',
-        percentage: 'Percentage',
-      },
-
-      // Refresh and System Status
-      autoRefreshOn: 'Auto Refresh',
-      autoRefreshOff: 'Paused',
-      refreshInterval: 'Refresh Interval',
-      systemStatus: 'System Normal',
-    },
-
-    // Feedback Management
-    feedback: {
-      title: 'Feedback Management',
-      subtitle: 'Collect and process feedback related to agricultural input supply',
-      list: 'Feedback List',
-      detail: 'Feedback Details',
-      add: 'Submit Feedback',
-      edit: 'Edit Feedback',
-      delete: 'Delete Feedback',
-      deleteConfirm: 'Are you sure to delete this feedback?',
-      deleteSuccess: 'Delete Successful',
-      addSuccess: 'Feedback Submitted Successfully',
-      editSuccess: 'Edit Successful',
-      batchDelete: 'Batch Delete',
-      batchDeleteConfirm: 'Are you sure to delete {count} selected feedback(s)?',
-
-      // Search and Filter
-      searchPlaceholder: 'Search by title, content, or feedback number',
-      filterByType: 'Filter by Type',
+  // Inventory Management
+  inventory: {
+    // Warehouse Management
+    warehouse: {
+      title: 'Warehouse Management',
+      subtitle: 'Manage warehouse basic information, capacity and usage status',
+      list: 'Warehouse List',
+      detail: 'Warehouse Details',
+      add: 'Add Warehouse',
+      edit: 'Edit Warehouse',
+      delete: 'Delete Warehouse',
+      deleteConfirm: 'Are you sure to delete this warehouse?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      searchPlaceholder: 'Search by warehouse name',
+      filterByType: 'Filter by Warehouse Type',
       filterByStatus: 'Filter by Status',
-      filterByPriority: 'Filter by Priority',
       allTypes: 'All Types',
       allStatus: 'All Status',
-      allPriority: 'All Priority',
-      filterByTime: 'Filter by Time',
-
-      // Feedback Type
       type: {
-        complaint: 'Complaint',
-        suggestion: 'Suggestion',
-        inquiry: 'Inquiry',
-        fault: 'Fault Report',
-        other: 'Other',
+        normal: 'General Warehouse',
+        cold: 'Cold Storage Warehouse',
+        dangerous: 'Hazardous Goods Warehouse'
       },
-
-      // Status
-      status: {
-        pending: 'Pending',
-        processing: 'Processing',
-        completed: 'Completed',
-        closed: 'Closed',
-      },
-
-      // Priority
-      priority: {
-        low: 'Low',
-        medium: 'Medium',
-        high: 'High',
-        urgent: 'Urgent',
-      },
-
-      // Table Columns
-      columns: {
-        feedbackNo: 'Feedback No.',
-        feedbackType: 'Type',
-        title: 'Title',
-        inputName: 'Input Name',
-        supplierName: 'Supplier',
-        contactName: 'Contact',
-        contactPhone: 'Phone',
-        priority: 'Priority',
-        status: 'Status',
-        createTime: 'Submit Time',
-        handlerName: 'Handler',
-        handleTime: 'Handle Time',
-        processingHours: 'Processing Hours',
-        satisfaction: 'Satisfaction',
-        actions: 'Actions',
-      },
-
-      // Form Fields
       form: {
-        basicInfo: 'Basic Information',
-        contactInfo: 'Contact Information',
-        processingInfo: 'Processing Information',
-        evaluationInfo: 'Evaluation Information',
-
-        feedbackType: 'Feedback Type',
-        title: 'Title',
-        content: 'Content',
-        inputName: 'Input Name',
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        warehouseType: 'Warehouse Type',
+        location: 'Warehouse Location',
+        capacity: 'Warehouse Capacity',
+        warehouseArea: 'Warehouse Area',
+        usedCapacity: 'Used Capacity',
+        availableCapacity: 'Available Capacity',
+        belongs: 'Affiliated Unit',
+        organName: 'Warehouse Affiliation Department',
+        supplierId: 'Associated Supplier',
         supplierName: 'Supplier Name',
-        contactName: 'Contact Name',
+        siteCertificate: 'Site Certification Materials',
+        contactPerson: 'Contact Person',
         contactPhone: 'Contact Phone',
-        contactEmail: 'Contact Email',
-        priority: 'Priority',
-        attachments: 'Attachments',
-        remark: 'Remark',
-
-        handlerName: 'Handler',
-        handleTime: 'Handle Time',
-        handleResult: 'Handle Result',
-        handleRemark: 'Handle Remark',
-        processingHours: 'Processing Hours',
-
-        satisfaction: 'Satisfaction',
-        evaluation: 'Evaluation',
-        evaluationTime: 'Evaluation Time',
-
-        replyContent: 'Reply Content',
-        replyTime: 'Reply Time',
-        replyUser: 'Reply User',
-        noReplies: 'No replies yet',
+        remark: 'Remarks',
+        status: 'Status',
+        createPeople: 'Creator',
+        createTime: 'Creation Time',
+        updatePeople: 'Modifier',
+        updateTime: 'Update Time'
       },
-
-      // Form Placeholders
       placeholder: {
-        feedbackType: 'Please select feedback type',
-        title: 'Please enter title (max 200 characters)',
-        content: 'Please describe your feedback in detail...',
-        inputName: 'Please enter input name',
-        supplierName: 'Please enter supplier name',
-        contactName: 'Please enter contact name',
-        contactPhone: 'Please enter contact phone',
-        contactEmail: 'Please enter contact email',
-        priority: 'Please select priority',
-        remark: 'Please enter remark (max 500 characters)',
-        handleResult: 'Please enter handle result',
-        handleRemark: 'Please enter handle remark',
-        evaluation: 'Please enter your evaluation...',
-        replyContent: 'Please enter reply content...',
+        warehouseCode: 'Enter warehouse code',
+        warehouseName: 'Enter warehouse name',
+        warehouseType: 'Select warehouse type',
+        location: 'Enter warehouse location',
+        capacity: 'Enter warehouse capacity',
+        warehouseArea: 'Enter warehouse area',
+        organName: 'Enter warehouse affiliation department',
+        contactPerson: 'Enter contact person',
+        contactPhone: 'Enter contact phone',
+        remark: 'Enter remarks (optional)'
       },
-
-      // Form Validation Rules
       rules: {
-        feedbackTypeRequired: 'Please select feedback type',
-        titleRequired: 'Please enter title',
-        titleLength: 'Title max 200 characters',
-        contentRequired: 'Please enter content',
-        contactNameLength: 'Contact name max 100 characters',
-        contactPhoneLength: 'Contact phone max 20 characters',
-        contactPhoneFormat: 'Please enter valid phone number',
-        contactEmailFormat: 'Please enter valid email address',
-        contactEmailLength: 'Email address max 100 characters',
-        remarkLength: 'Remark max 500 characters',
-        handleResultRequired: 'Please enter handle result',
-        replyContentRequired: 'Please enter reply content',
+        warehouseCodeRequired: 'Please enter warehouse code',
+        warehouseNameRequired: 'Please enter warehouse name',
+        warehouseTypeRequired: 'Please select warehouse type',
+        locationRequired: 'Please enter warehouse location',
+        capacityRequired: 'Please enter warehouse capacity',
+        capacityPositive: 'Warehouse capacity must be greater than 0',
+        warehouseAreaPositive: 'Warehouse area must be greater than or equal to 0',
+        organNameRequired: 'Please enter warehouse affiliation department',
+        contactPersonRequired: 'Please enter contact person',
+        contactPhoneRequired: 'Please enter contact phone',
+        contactPhoneFormat: 'Please enter valid phone number'
       },
+      columns: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        warehouseType: 'Warehouse Type',
+        location: 'Location',
+        warehouseArea: 'Warehouse Area',
+        belongs: 'Affiliated Unit',
+        organName: 'Affiliation Department',
+        supplierName: 'Supplier Name',
+        capacity: 'Capacity',
+        usageRate: 'Usage Rate',
+        contactPerson: 'Contact Person',
+        contactPhone: 'Contact Phone',
+        status: 'Status',
+        actions: 'Actions'
+      },
+      status: {
+        enabled: 'Enabled',
+        disabled: 'Disabled'
+      },
+      actions: {
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete'
+      },
+      systemInfo: 'System Information',
+      uploadFile: 'Upload File',
+      uploadTip: 'Supports jpg/png/pdf format, single file ≤ 2MB',
+      uploadSuccess: 'File uploaded successfully',
+      uploadFailed: 'File upload failed',
+      uploadFormatError: 'Invalid file format, only jpg/png/pdf are supported',
+      uploadSizeError: 'File size cannot exceed 2MB',
+      siteCertificateFile: 'Site Certification Materials',
+      viewFile: 'View File',
+      messages: {
+        noData: 'No data available'
+      }
+    },
 
-      // Action Buttons
+    // Stock In Management
+    stockIn: {
+      title: 'Stock In Management',
+      subtitle: 'Manage input stock in registration and confirmation',
+      create: 'Create New Stock In Order',
+      createSuccess: 'Created successfully',
+      list: 'Stock In Order List',
+      detail: 'Stock In Order Details',
+      add: 'Add Stock In Order',
+      edit: 'Edit Stock In Order',
+      delete: 'Delete Stock In Order',
+      confirm: 'Confirm Stock In',
+      audit: 'Audit',
+      approve: 'Approve',
+      reject: 'Reject',
+      deleteConfirm: 'Are you sure to delete this stock in order?',
+      confirmConfirm: 'Inventory will be updated after confirmation. Are you sure to confirm stock in?',
+      confirmMessage: 'Confirm stock in operation?',
+      cancelMessage: 'Are you sure to cancel this stock in order?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      confirmSuccess: 'Stock in confirmed successfully',
+      auditSuccess: 'Audited successfully',
+      rejectSuccess: 'Rejected successfully',
+      cancelSuccess: 'Cancelled successfully',
+      pendingCount: 'Pending Audit Count',
+      totalCount: 'Total Count',
+      material: 'Material',
+      batch: 'Batch Number',
+      batchId: 'Stock In Batch Number',
+      batchInfo: 'Batch Number Information',
+      auditOpinion: 'Audit Opinion',
+      rejectReason: 'Rejection Reason',
+      auditInfo: 'Audit Information',
+      auditUser: 'Auditor',
+      auditTime: 'Audit Time',
+      auditRemark: 'Audit Remarks',
+      relatedOrderNo: 'Associated Order Number',
+      supplierName: 'Supplier Name',
+      supplierContact: 'Supplier Contact Person',
+      supplierPhone: 'Supplier Phone',
+      remark: 'Remarks',
+      materialDetails: 'Stock In Material Details',
+      inputDetails: 'Stock In Input Details',
+      materialId: 'Material ID',
+      materialName: 'Material Name',
+      materialBatchId: 'Material Batch Number',
+      inputName: 'Input Name',
+      inputId: 'Input ID',
+      inputBatchId: 'Input Batch ID',
+      inputType: 'Input Type',
+      specification: 'Specification Model',
+      unit: 'Unit of Measure',
+      expiryDate: 'Expiry Date',
+      qrCode: 'QR Code',
+      addMaterial: 'Add Material',
+      addInput: 'Add Input',
+      noMaterials: 'No material details',
+      searchPlaceholder: 'Search by stock in order number, batch number',
+      filterByWarehouse: 'Filter by Warehouse',
+      filterBySupplier: 'Filter by Supplier',
+      filterByType: 'Filter by Stock In Type',
+      filterByStatus: 'Filter by Status',
+      allWarehouses: 'All Warehouses',
+      allSuppliers: 'All Suppliers',
+      allTypes: 'All Types',
+      allStatus: 'All Status',
+      filter: {
+        status: 'Stock In Status',
+        type: 'Stock In Type',
+        orderId: 'Stock In Order Number'
+      },
+      type: {
+        production: 'Production Stock In',
+        purchase: 'Purchase Stock In',
+        transfer: 'Transfer Stock In',
+        return: 'Return Stock In'
+      },
+      status: {
+        pending: 'Pending Audit',
+        approved: 'Approved',
+        rejected: 'Rejected',
+        confirmed: 'Completed',
+        completed: 'Completed',
+        cancelled: 'Cancelled'
+      },
+      form: {
+        stockInId: 'Stock In Order Number',
+        warehouseId: 'Stock In Warehouse',
+        batchNo: 'Batch Number',
+        supplierId: 'Supplier',
+        type: 'Stock In Type',
+        operator: 'Operator',
+        expiredTime: 'Expiry Date',
+        totalQuantity: 'Total Quantity',
+        remarks: 'Remarks',
+        status: 'Status',
+        createTime: 'Creation Time',
+        items: 'Stock In Product Details',
+        inputId: 'Input',
+        quantity: 'Stock In Quantity',
+        expiryDate: 'Expiry Date',
+        inputSku: 'SKU Code',
+        itemRemarks: 'Item Remarks'
+      },
+      placeholder: {
+        warehouseId: 'Select stock in warehouse',
+        warehouse: 'Select warehouse',
+        supplierId: 'Select supplier',
+        type: 'Select stock in type',
+        operator: 'Enter operator',
+        expiredTime: 'Select expiry date',
+        remarks: 'Enter remarks',
+        remark: 'Enter remarks',
+        inputId: 'Select input',
+        quantity: 'Enter stock in quantity',
+        expiryDate: 'Select product expiry date',
+        itemRemarks: 'Enter item remarks',
+        orderId: 'Enter stock in order number',
+        auditOpinion: 'Enter audit opinion',
+        rejectReason: 'Enter rejection reason',
+        relatedOrderNo: 'Enter associated order number (optional)',
+        supplierName: 'Enter supplier name (optional)',
+        supplierContact: 'Enter supplier contact person (optional)',
+        supplierPhone: 'Enter supplier phone (optional)',
+        materialId: 'Enter material ID',
+        materialName: 'Enter material name',
+        inputName: 'Select input name',
+        inputBatchId: 'Enter input batch ID (optional)',
+        inputType: 'Input type (auto-filled)',
+        specification: 'Enter specification model (optional)',
+        unit: 'Enter unit of measure',
+        qrCode: 'QR code (auto-obtained)'
+      },
+      rules: {
+        warehouseIdRequired: 'Please select stock in warehouse',
+        warehouseRequired: 'Please select warehouse',
+        supplierIdRequired: 'Please select supplier',
+        typeRequired: 'Please select stock in type',
+        operatorRequired: 'Please enter operator',
+        expiredTimeRequired: 'Please select expiry date',
+        expiryDateRequired: 'Please select product expiry date',
+        inputIdRequired: 'Please select input',
+        quantityRequired: 'Please enter stock in quantity',
+        quantityPositive: 'Stock in quantity must be greater than 0',
+        itemsRequired: 'Please add at least one stock in product detail',
+        detailsRequired: 'Please add at least one material detail',
+        detailsComplete: 'Please complete all material detail information',
+        materialIdRequired: 'Please enter material ID',
+        materialNameRequired: 'Please enter material name',
+        unitRequired: 'Please enter unit of measure'
+      },
+      columns: {
+        orderId: 'Stock In Order Number',
+        stockInId: 'Stock In Order Number',
+        warehouseName: 'Warehouse',
+        warehouse: 'Warehouse',
+        supplierName: 'Supplier',
+        supplier: 'Supplier',
+        type: 'Stock In Type',
+        batchNo: 'Batch Number',
+        totalQuantity: 'Total Quantity',
+        quantity: 'Quantity',
+        operator: 'Operator',
+        expiredTime: 'Expiry Date',
+        applyTime: 'Application Time',
+        inboundTime: 'Stock In Time',
+        status: 'Status',
+        createTime: 'Creation Time',
+        actions: 'Actions'
+      },
       actions: {
         view: 'View',
         edit: 'Edit',
         delete: 'Delete',
-        reply: 'Reply',
-        handle: 'Handle',
-        close: 'Close',
-        reopen: 'Reopen',
-        evaluate: 'Evaluate',
-        submitEvaluation: 'Submit Evaluation',
+        confirm: 'Confirm Stock In',
+        addItem: 'Add Product',
+        removeItem: 'Remove'
       },
-
-      // Satisfaction Levels
-      satisfactionLevel: {
-        1: 'Very Dissatisfied',
-        2: 'Dissatisfied',
-        3: 'Neutral',
-        4: 'Satisfied',
-        5: 'Very Satisfied',
-      },
-
-      // Messages
       messages: {
-        deleteConfirm: 'Are you sure to delete this feedback? This action cannot be undone.',
-        closeConfirm: 'Are you sure to close this feedback?',
-        handleSuccess: 'Handle Successful',
-        replySuccess: 'Reply Successful',
-        evaluationSuccess: 'Evaluation Submitted Successfully',
-        onlyPendingCanEdit: 'Only pending feedback can be edited',
-        onlyPendingCanDelete: 'Only pending feedback can be deleted',
-      },
-
-      // Statistics
-      statistics: {
-        totalCount: 'Total',
-        pendingCount: 'Pending',
-        processingCount: 'Processing',
-        completedCount: 'Completed',
-        closedCount: 'Closed',
-        avgProcessingHours: 'Avg Processing Hours',
-        avgSatisfaction: 'Avg Satisfaction',
-        todayCount: 'Today New',
-      },
-
-      // Detail page specific
-      replies: 'Replies',
-      handler: 'Handler',
-      user: 'User',
-      hours: 'hours',
+        noData: 'No data available',
+        noItems: 'No product details'
+      }
     },
+
+    // Stock Out Management
+    stockOut: {
+      title: 'Stock Out Management',
+      subtitle: 'Manage input stock out registration and confirmation',
+      list: 'Stock Out Order List',
+      detail: 'Stock Out Order Details',
+      add: 'Add Stock Out Order',
+      edit: 'Edit Stock Out Order',
+      delete: 'Delete Stock Out Order',
+      confirm: 'Confirm Stock Out',
+      audit: 'Audit',
+      auditStatus: 'Audit Status',
+      auditRemark: 'Audit Opinion',
+      auditSuccess: 'Audited successfully',
+      cancelConfirm: 'Are you sure to cancel this stock out order?',
+      cancelSuccess: 'Cancelled successfully',
+      deleteConfirm: 'Are you sure to delete this stock out order?',
+      confirmConfirm: 'Inventory will be deducted after confirmation. Are you sure to confirm stock out?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      confirmSuccess: 'Stock out confirmed successfully',
+      searchPlaceholder: 'Search by stock out order number, associated order number, outbound object',
+      filterByWarehouse: 'Filter by Warehouse',
+      filterByType: 'Filter by Stock Out Type',
+      filterByStatus: 'Filter by Status',
+      allWarehouses: 'All Warehouses',
+      allTypes: 'All Types',
+      allStatus: 'All Status',
+      type: {
+        sale: 'Sales Stock Out',
+        transfer: 'Transfer Stock Out'
+      },
+      status: {
+        pending: 'Pending Audit',
+        completed: 'Completed',
+        cancelled: 'Cancelled'
+      },
+      form: {
+        outboundOrderId: 'Stock Out Order Number',
+        outboundBatchId: 'Stock Out Batch Number',
+        stockOutId: 'Stock Out Order Number',
+        warehouseId: 'Stock Out Warehouse',
+        batchNo: 'Batch Number',
+        customer: 'Customer',
+        outboundObject: 'Outbound Object',
+        outboundObjectId: 'Outbound Object',
+        outboundUser: 'Stock Out Operator',
+        outboundDept: 'Stock Out Department',
+        relatedOrderNo: 'Associated Order Number',
+        type: 'Stock Out Type',
+        operator: 'Handler',
+        totalQuantity: 'Total Quantity',
+        remark: 'Remarks',
+        status: 'Status',
+        createTime: 'Creation Time',
+        outboundTime: 'Stock Out Time',
+        auditUser: 'Auditor',
+        auditTime: 'Audit Time',
+        items: 'Stock Out Product Details',
+        details: 'Stock Out Details',
+        inputId: 'Input',
+        materialId: 'Material',
+        materialName: 'Material Name',
+        materialType: 'Material Type',
+        materialBatchId: 'Material Batch Number',
+        quantity: 'Stock Out Quantity',
+        specModel: 'Specification Model',
+        unitOfMeasure: 'Unit of Measure',
+        availableQuantity: 'Available Inventory',
+        itemRemarks: 'Item Remarks',
+        batchSplits: 'Batch Split Details',
+        inboundBatchId: 'Stock In Batch Number',
+        splitQuantity: 'Deduction Quantity',
+        remainingQuantity: 'Remaining Inventory'
+      },
+      placeholder: {
+        warehouseId: 'Select stock out warehouse',
+        customer: 'Enter customer name',
+        outboundObject: 'Select target warehouse',
+        outboundObjectId: 'Select target warehouse',
+        outboundUser: 'Enter stock out operator',
+        outboundDept: 'Enter stock out department',
+        relatedOrderNo: 'Enter associated order number (optional)',
+        type: 'Select stock out type',
+        operator: 'Enter handler',
+        remark: 'Enter remarks',
+        inputId: 'Select input',
+        materialId: 'Select material',
+        materialType: 'Select material type',
+        materialBatchId: 'Material batch number (auto-filled)',
+        batchNo: 'Select batch number',
+        quantity: 'Enter stock out quantity',
+        specModel: 'Enter specification model (optional)',
+        unitOfMeasure: 'Enter unit of measure (optional)',
+        itemRemarks: 'Enter item remarks',
+        auditRemark: 'Enter audit opinion'
+      },
+      rules: {
+        warehouseIdRequired: 'Please select stock out warehouse',
+        customerRequired: 'Please enter customer name',
+        outboundObjectIdRequired: 'Please select target warehouse',
+        typeRequired: 'Please select stock out type',
+        operatorRequired: 'Please enter handler',
+        inputIdRequired: 'Please select input',
+        materialIdRequired: 'Please select material',
+        materialTypeRequired: 'Please select material type',
+        batchNoRequired: 'Please select batch number',
+        quantityRequired: 'Please enter stock out quantity',
+        quantityPositive: 'Stock out quantity must be greater than 0',
+        quantityExceeds: 'Stock out quantity cannot exceed available inventory',
+        itemsRequired: 'Please add at least one stock out product detail',
+        detailsRequired: 'Please add at least one stock out detail',
+        auditRemarkRequired: 'Please enter audit opinion'
+      },
+      columns: {
+        outboundOrderId: 'Stock Out Order Number',
+        stockOutId: 'Stock Out Order Number',
+        warehouseName: 'Warehouse',
+        customer: 'Customer',
+        outboundObject: 'Outbound Object',
+        outboundObjectName: 'Outbound Object',
+        outboundUser: 'Stock Out Operator',
+        outboundDept: 'Stock Out Department',
+        type: 'Stock Out Type',
+        batchNo: 'Batch Number',
+        relatedOrderNo: 'Associated Order Number',
+        totalQuantity: 'Total Quantity',
+        operator: 'Handler',
+        auditUser: 'Auditor',
+        auditTime: 'Audit Time',
+        outboundTime: 'Stock Out Time',
+        status: 'Status',
+        createTime: 'Creation Time',
+        actions: 'Actions'
+      },
+      actions: {
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete',
+        cancel: 'Cancel',
+        confirm: 'Confirm Stock Out',
+        audit: 'Audit',
+        approve: 'Approve',
+        reject: 'Reject',
+        addItem: 'Add Product',
+        removeItem: 'Remove'
+      },
+      messages: {
+        noData: 'No data available',
+        noItems: 'No product details',
+        insufficientStock: 'Insufficient inventory, cannot perform stock out',
+        noStockInWarehouse: 'No available inventory in this warehouse',
+        noAvailableWarehouse: 'No available target warehouses (cannot select the stock out warehouse itself)'
+      }
+    },
+
+    // Inventory Query
+    stock: {
+      title: 'Inventory Query',
+      subtitle: 'Real-time query of inventory information, alerts and summary statistics',
+      list: 'Inventory List',
+      detail: 'Inventory Details',
+      warning: 'Inventory Alerts',
+      summary: 'Summary Statistics',
+      logs: 'Inventory Change Logs',
+      viewLogs: 'View Change Logs',
+      dashboard: 'Inventory Monitoring Dashboard',
+      dashboardSubtitle: 'Real-time monitoring of inventory status and alert information',
+      metrics: {
+        totalStock: 'Total Inventory Quantity',
+        nearExpiryCount: 'Near Expiry Product Count',
+        overCapacityWarehouses: 'Over Capacity Warehouse Count',
+        pendingAlerts: 'Pending Alert Count',
+        totalValue: 'Total Inventory Value',
+        warehouseUsage: 'Warehouse Usage Rate'
+      },
+      searchPlaceholder: 'Search by input name, batch number',
+      filterByWarehouse: 'Filter by Warehouse',
+      filterByInput: 'Filter by Input',
+      filterByStatus: 'Filter by Inventory Status',
+      filterByOperation: 'Filter by Operation Type',
+      allWarehouses: 'All Warehouses',
+      allInputs: 'All Inputs',
+      allStatus: 'All Status',
+      allOperations: 'All Operations',
+      status: {
+        normal: 'Normal',
+        active: 'Normal',
+        nearExpiry: 'Near Expiry',
+        expired: 'Expired',
+        inactive: 'Inactive'
+      },
+      operationType: {
+        inbound: 'Stock In',
+        outbound: 'Stock Out'
+      },
+      warningType: {
+        all: 'All Alerts',
+        nearExpiry: 'Near Expiry Alert',
+        expired: 'Expired Alert'
+      },
+      form: {
+        inventoryId: 'Inventory Record ID',
+        inputId: 'Input',
+        inputName: 'Input Name',
+        batchNo: 'Batch Number',
+        warehouseId: 'Warehouse',
+        warehouseName: 'Warehouse Name',
+        currentQuantity: 'Current Inventory Quantity',
+        inDate: 'Stock In Date',
+        expiredDate: 'Expiry Date',
+        stockStatus: 'Inventory Status',
+        daysToExpire: 'Days Until Expiry'
+      },
+      columns: {
+        inputName: 'Input Name',
+        materialName: 'Input Name',
+        materialId: 'Input ID',
+        materialBatchId: 'Batch ID',
+        batchNo: 'Batch Number',
+        warehouseName: 'Warehouse Name',
+        warehouse: 'Warehouse',
+        quantity: 'Inventory Quantity',
+        currentQuantity: 'Current Quantity',
+        inboundQuantity: 'Total Stock In',
+        outboundQuantity: 'Total Stock Out',
+        inDate: 'Stock In Date',
+        expiryDate: 'Expiry Date',
+        expiredDate: 'Expiry Date',
+        stockStatus: 'Inventory Status',
+        status: 'Status',
+        qrCode: 'QR Code',
+        createdAt: 'Creation Time',
+        updatedAt: 'Update Time',
+        actions: 'Actions',
+        operationType: 'Operation Type',
+        changeQuantity: 'Change Quantity',
+        beforeQuantity: 'Before Change',
+        afterQuantity: 'After Change',
+        referenceOrderId: 'Associated Order Number',
+        operator: 'Operator'
+      },
+      summaryColumns: {
+        inputName: 'Input Name',
+        warehouseName: 'Warehouse Name',
+        totalQuantity: 'Total Inventory',
+        normalQuantity: 'Normal Inventory',
+        nearExpiryQuantity: 'Near Expiry Inventory',
+        expiredQuantity: 'Expired Inventory'
+      },
+      actions: {
+        view: 'View',
+        viewWarning: 'View Alerts',
+        viewSummary: 'View Summary',
+        exportData: 'Export Data'
+      },
+      messages: {
+        noData: 'No data available',
+        noWarning: 'No alert information'
+      },
+      tabs: {
+        list: 'Inventory List',
+        warning: 'Inventory Alerts',
+        summaryByInput: 'Summary by Input',
+        summaryByWarehouse: 'Summary by Warehouse'
+      }
+    }
+  },
+
+  // Data Dashboard
+  dashboard: {
+    title: 'Agricultural Input Supply Management Dashboard',
+    subtitle: 'Real-time data monitoring and visual analysis',
+    lastUpdate: 'Last Updated',
+    autoRefresh: 'Auto Refresh',
+    fullscreen: 'Full Screen',
+    exitFullscreen: 'Exit Full Screen',
+    overview: {
+      totalSuppliers: 'Total Suppliers',
+      certifiedSuppliers: 'Certified Suppliers',
+      pendingSuppliers: 'Pending Approval Suppliers',
+      rejectedSuppliers: 'Rejected Suppliers',
+      totalInputs: 'Total Inputs',
+      seedInputs: 'Seeds',
+      fertilizerInputs: 'Fertilizers',
+      pesticideInputs: 'Pesticides',
+      totalWarehouses: 'Total Warehouses',
+      totalCapacity: 'Total Inventory Capacity',
+      usedCapacity: 'Used Capacity',
+      capacityUsageRate: 'Inventory Usage Rate',
+      totalStockQuantity: 'Current Total Inventory',
+      normalStock: 'Normal Inventory',
+      nearExpiryStock: 'Near Expiry Inventory',
+      expiredStock: 'Expired Inventory',
+      todayStockIn: 'Today\'s Stock In',
+      todayStockOut: 'Today\'s Stock Out',
+      monthStockIn: 'Monthly Stock In Quantity',
+      monthStockOut: 'Monthly Stock Out Quantity',
+      pendingWarnings: 'Pending Alerts',
+      unit: 'pcs',
+      tons: 'tons',
+      todayBusiness: 'Today\'s Business'
+    },
+    topSuppliers: {
+      title: 'TOP Suppliers Ranking',
+      subtitle: 'Best Performing Suppliers This Month',
+      rank: 'Rank',
+      supplierName: 'Supplier Name',
+      monthStockIn: 'Monthly Stock In Quantity',
+      productCount: 'Supplied Input Count',
+      cooperationDays: 'Cooperation Days',
+      qualityRating: 'Quality Rating',
+      contactPerson: 'Contact Person',
+      contactPhone: 'Contact Phone',
+      viewMore: 'View More',
+      days: 'days',
+      items: 'items'
+    },
+    warehouse: {
+      title: 'Warehouse Statistics',
+      subtitle: 'Warehouse Capacity Usage Status',
+      warehouseName: 'Warehouse Name',
+      location: 'Location',
+      capacity: 'Capacity',
+      currentStock: 'Current Inventory',
+      usageRate: 'Usage Rate',
+      productTypes: 'Product Categories',
+      monthIn: 'Monthly Stock In',
+      monthOut: 'Monthly Stock Out',
+      warning: 'Capacity Alert',
+      normal: 'Normal',
+      types: 'types',
+      times: 'times'
+    },
+    stockTrend: {
+      title: 'Stock In/Out Trend',
+      subtitle: 'Recent Inventory Change Analysis',
+      stockIn: 'Stock In Quantity',
+      stockOut: 'Stock Out Quantity',
+      netChange: 'Net Inventory Increase',
+      last7Days: 'Last 7 Days',
+      last30Days: 'Last 30 Days',
+      date: 'Date',
+      quantity: 'Quantity',
+      count: 'Order Count'
+    },
+    inputDistribution: {
+      title: 'Input Type Distribution',
+      subtitle: 'Proportion by Input Type',
+      seed: 'Seeds',
+      fertilizer: 'Fertilizers',
+      pesticide: 'Pesticides',
+      other: 'Other',
+      count: 'Count',
+      stockQuantity: 'Inventory Quantity',
+      percentage: 'Proportion'
+    },
+    warnings: {
+      title: 'Alert Information',
+      subtitle: 'Pending Alert List',
+      warningType: 'Alert Type',
+      warningLevel: 'Level',
+      objectName: 'Object',
+      content: 'Content',
+      warningTime: 'Alert Time',
+      warehouseName: 'Warehouse',
+      batchNo: 'Batch Number',
+      status: 'Status',
+      noWarnings: 'No alert information',
+      types: {
+        nearExpiry: 'Near Expiry Alert',
+        expired: 'Expired Alert',
+        lowStock: 'Insufficient Inventory',
+        overCapacity: 'Over Capacity'
+      },
+      levels: {
+        low: 'Low',
+        medium: 'Medium',
+        high: 'High'
+      },
+      statusOptions: {
+        pending: 'Unprocessed',
+        processed: 'Processed',
+        ignored: 'Ignored'
+      }
+    },
+    activities: {
+      title: 'Real-time Activity',
+      subtitle: 'Latest Business Activities',
+      stockInActivity: 'Stock In',
+      stockOutActivity: 'Stock Out',
+      supplierActivity: 'Supplier Authentication',
+      warehouseActivity: 'Warehouse',
+      justNow: 'Just Now',
+      minutesAgo: 'minutes ago',
+      hoursAgo: 'hours ago'
+    },
+    todayStock: {
+      title: 'Today\'s Stock In/Out',
+      in: 'Stock In',
+      out: 'Stock Out',
+      warehouse: 'Warehouse',
+      operator: 'Handler',
+      supplier: 'Supplier',
+      customer: 'Customer',
+      quantity: 'Quantity',
+      time: 'Time',
+      status: 'Status',
+      noData: 'No data available',
+      statusPending: 'Pending',
+      statusConfirmed: 'Confirmed',
+      statusCancelled: 'Cancelled'
+    },
+    expiring: {
+      title: 'Expiring Soon',
+      daysLeft: 'Remaining',
+      days: 'days',
+      urgent: 'Urgent',
+      warehouse: 'Warehouse',
+      quantity: 'Inventory',
+      batchNo: 'Batch',
+      noData: 'No products expiring soon',
+      expired: 'Expired'
+    },
+    stockStatus: {
+      title: 'Inventory Status Distribution',
+      normal: 'Normal',
+      nearExpiry: 'Near Expiry',
+      expired: 'Expired',
+      lowStock: 'Insufficient Inventory',
+      productCount: 'Product Categories',
+      totalQuantity: 'Total Inventory Quantity',
+      percentage: 'Proportion'
+    },
+    autoRefreshOn: 'Auto Refresh',
+    autoRefreshOff: 'Paused',
+    refreshInterval: 'Refresh Interval',
+    systemStatus: 'System Normal'
+  },
+
+  // Information Feedback
+  feedback: {
+    title: 'Information Feedback Management',
+    subtitle: 'Collect and process feedback related to input supply',
+    list: 'Feedback List',
+    detail: 'Feedback Details',
+    add: 'Submit Feedback',
+    edit: 'Edit Feedback',
+    delete: 'Delete Feedback',
+    deleteConfirm: 'Are you sure to delete this feedback?',
+    deleteSuccess: 'Deleted successfully',
+    addSuccess: 'Feedback submitted successfully',
+    editSuccess: 'Edited successfully',
+    batchDelete: 'Batch Delete',
+    batchDeleteConfirm: 'Are you sure to delete the selected {count} feedback records?',
+    searchPlaceholder: 'Search by feedback title, content, feedback number',
+    filterByType: 'Filter by Feedback Type',
+    filterByStatus: 'Filter by Processing Status',
+    filterByPriority: 'Filter by Priority',
+    allTypes: 'All Types',
+    allStatus: 'All Status',
+    allPriority: 'All Priority',
+    filterByTime: 'Filter by Time',
+    type: {
+      complaint: 'Complaint',
+      suggestion: 'Suggestion',
+      inquiry: 'Inquiry',
+      fault: 'Fault Report',
+      other: 'Other'
+    },
+    status: {
+      pending: 'Pending',
+      processing: 'Processing',
+      completed: 'Completed',
+      closed: 'Closed'
+    },
+    priority: {
+      low: 'Low',
+      medium: 'Medium',
+      high: 'High',
+      urgent: 'Urgent'
+    },
+    columns: {
+      feedbackNo: 'Feedback Number',
+      feedbackType: 'Feedback Type',
+      title: 'Title',
+      inputName: 'Input Name',
+      supplierName: 'Supplier Name',
+      contactName: 'Contact Person',
+      contactPhone: 'Contact Phone',
+      priority: 'Priority',
+      status: 'Status',
+      createTime: 'Submission Time',
+      handlerName: 'Processor',
+      handleTime: 'Processing Time',
+      processingHours: 'Processing Duration',
+      satisfaction: 'Satisfaction',
+      actions: 'Actions'
+    },
+    form: {
+      basicInfo: 'Basic Information',
+      contactInfo: 'Contact Information',
+      processingInfo: 'Processing Information',
+      evaluationInfo: 'Evaluation Information',
+      feedbackType: 'Feedback Type',
+      title: 'Feedback Title',
+      content: 'Feedback Content',
+      inputName: 'Input Name',
+      supplierName: 'Supplier Name',
+      contactName: 'Contact Person Name',
+      contactPhone: 'Contact Phone',
+      contactEmail: 'Contact Email',
+      priority: 'Priority',
+      attachments: 'Attachments',
+      remark: 'Remarks',
+      handlerName: 'Processor',
+      handleTime: 'Processing Time',
+      handleResult: 'Processing Result',
+      handleRemark: 'Processing Remarks',
+      processingHours: 'Processing Duration (hours)',
+      satisfaction: 'Satisfaction Score',
+      evaluation: 'Evaluation Content',
+      evaluationTime: 'Evaluation Time',
+      replyContent: 'Reply Content',
+      replyTime: 'Reply Time',
+      replyUser: 'Responder',
+      noReplies: 'No replies'
+    },
+    placeholder: {
+      feedbackType: 'Select feedback type',
+      title: 'Enter feedback title (max 200 characters)',
+      content: 'Please describe your feedback in detail...',
+      inputName: 'Enter input name',
+      supplierName: 'Enter supplier name',
+      contactName: 'Enter contact person name',
+      contactPhone: 'Enter contact phone',
+      contactEmail: 'Enter contact email',
+      priority: 'Select priority',
+      remark: 'Enter remarks (max 500 characters)',
+      handleResult: 'Enter processing result',
+      handleRemark: 'Enter processing remarks',
+      evaluation: 'Enter your evaluation...',
+      replyContent: 'Enter reply content...'
+    },
+    rules: {
+      feedbackTypeRequired: 'Please select feedback type',
+      titleRequired: 'Please enter feedback title',
+      titleLength: 'Feedback title cannot exceed 200 characters',
+      contentRequired: 'Please enter feedback content',
+      contactNameLength: 'Contact person name cannot exceed 100 characters',
+      contactPhoneLength: 'Contact phone cannot exceed 20 characters',
+      contactPhoneFormat: 'Please enter valid phone number',
+      contactEmailFormat: 'Please enter valid email address',
+      contactEmailLength: 'Email address cannot exceed 100 characters',
+      remarkLength: 'Remarks cannot exceed 500 characters',
+      handleResultRequired: 'Please enter processing result',
+      replyContentRequired: 'Please enter reply content'
+    },
+    actions: {
+      view: 'View',
+      edit: 'Edit',
+      delete: 'Delete',
+      reply: 'Reply',
+      handle: 'Process',
+      close: 'Close',
+      reopen: 'Reopen',
+      evaluate: 'Evaluate',
+      submitEvaluation: 'Submit Evaluation'
+    },
+    satisfactionLevel: {
+      1: 'Very Dissatisfied',
+      2: 'Dissatisfied',
+      3: 'Average',
+      4: 'Satisfied',
+      5: 'Very Satisfied'
+    },
+    messages: {
+      deleteConfirm: 'Are you sure to delete this feedback? This operation cannot be undone.',
+      closeConfirm: 'Are you sure to close this feedback?',
+      handleSuccess: 'Processed successfully',
+      replySuccess: 'Replied successfully',
+      evaluationSuccess: 'Evaluation submitted successfully',
+      onlyPendingCanEdit: 'Only pending feedback can be edited',
+      onlyPendingCanDelete: 'Only pending feedback can be deleted'
+    },
+    statistics: {
+      totalCount: 'Total Feedback',
+      pendingCount: 'Pending',
+      processingCount: 'Processing',
+      completedCount: 'Completed',
+      closedCount: 'Closed',
+      avgProcessingHours: 'Average Processing Time (hours)',
+      avgSatisfaction: 'Average Satisfaction',
+      todayCount: 'New Today'
+    },
+    replies: 'Reply Records',
+    handler: 'Processing Personnel',
+    user: 'User',
+    hours: 'hours'
   }
+}

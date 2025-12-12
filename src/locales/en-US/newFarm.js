@@ -118,7 +118,7 @@ export default {
       regionCode: 'Please select region',
       zoneCode: 'Please select zone',
       woredaCode: 'Please select woreda',
-      kebeleCodes: 'Please select kebele', 
+      kebeleCodes: 'Please select kebele',
       address: 'Please enter address',
       account: 'Please enter account',
       password: 'Please enter password',
@@ -137,7 +137,8 @@ export default {
       emailRequired: 'Email address is required',
       emailFormat: 'Please enter a valid email address',
       woredaCodeRequired: 'Woreda is required',
-      kebeleCodesRequired: 'Kebeles are required',
+      zoneCodeRequired: 'Zone is required',
+      kebeleCodesRequired: 'Kebele is required',
       accountRequired: 'Account is required',
       accountExists: 'Account already exists',
       accountLength: 'Account should not exceed 50 characters',
@@ -150,6 +151,7 @@ export default {
       regionCodeRequired: 'Region Code is required',
       regionNameRequired: 'Region Name is required',
       loadRegionFailed: 'Failed to load region information',
+
     },
     columns: {
       daId: 'DA ID',
@@ -264,6 +266,7 @@ export default {
       daIdRequired: 'Responsible DA is required',
       zoneCodeRequired: 'Zone is required',
       woredaCodeRequired: 'Woreda is required',
+      loadRegionFailed: 'The currently logged-in account is incorrect!'
     },
     columns: {
       farmerId: 'Farmer ID',
@@ -399,6 +402,7 @@ export default {
       kebeleCodeRequired: 'Kebele is required',
       addressRequired: 'Address is required',
       daIdRequired: 'Responsible DA is required',
+      zoneCodeRequired:'Zone is required'
     },
     columns: {
       landId: 'Land ID',

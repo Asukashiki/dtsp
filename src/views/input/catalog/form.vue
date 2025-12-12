@@ -21,11 +21,11 @@
     <!-- 表单区域 -->
     <div class="form-wrapper">
       <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        :label-width="labelWidth"
-        :label-position="labelPosition"
+          ref="formRef"
+          :model="formData"
+          :rules="rules"
+          :label-width="labelWidth"
+          :label-position="labelPosition"
       >
         <!-- 基本信息 -->
         <div class="form-section">
@@ -33,110 +33,154 @@
             <i class="ri-information-line"></i>
             {{ $t('input.catalog.form.basicInfo') }}
           </div>
-
           <el-row :gutter="24">
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.inputName')"
-                prop="input_name"
+                  :label="$t('input.catalog.form.inputName')"
+                  prop="inputName"
               >
                 <el-input
-                  v-model="formData.input_name"
-                  :placeholder="$t('input.catalog.placeholder.inputName')"
-                  maxlength="100"
-                  show-word-limit
+                    v-model="formData.inputName"
+                    :placeholder="$t('input.catalog.placeholder.inputName')"
+                    maxlength="100"
+                    show-word-limit
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.inputType')"
-                prop="type"
+                  :label="$t('input.catalog.form.inputType')"
+                  prop="type"
               >
                 <el-select
-                  v-model="formData.type"
-                  :placeholder="$t('input.catalog.placeholder.inputType')"
-                  style="width: 100%"
-                  @change="handleTypeChange"
+                    v-model="formData.type"
+                    :placeholder="$t('input.catalog.placeholder.inputType')"
+                    style="width: 100%"
+                    @change="handleTypeChange"
                 >
-                  <el-option
-                    :label="$t('input.catalog.type.pesticide')"
-                    value="pesticide"
-                  />
-                  <el-option
-                    :label="$t('input.catalog.type.fertilizer')"
-                    value="fertilizer"
-                  />
-                  <el-option
-                    :label="$t('input.catalog.type.seed')"
-                    value="seed"
-                  />
-                  <el-option
-                    :label="$t('input.catalog.type.other')"
-                    value="other"
-                  />
+                  <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
+                  <el-option :label="$t('input.catalog.type.fertilizer')" value="fertilizer" />
+                  <el-option :label="$t('input.catalog.type.seed')" value="seed" />
+                  <el-option :label="$t('input.catalog.type.other')" value="other" />
                 </el-select>
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.agriculturalInputType')"
-                prop="agricultural_input_type"
+                  :label="$t('input.catalog.form.agriculturalInputType')"
+                  prop="agriculturalInputType"
               >
                 <el-input
-                  v-model="formData.agricultural_input_type"
-                  :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
-                  maxlength="100"
+                    v-model="formData.agriculturalInputType"
+                    :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
+                    maxlength="100"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.variety')"
-                prop="variety"
+                  :label="$t('input.catalog.form.variety')"
+                  prop="variety"
               >
                 <el-input
-                  v-model="formData.variety"
-                  :placeholder="$t('input.catalog.placeholder.variety')"
-                  maxlength="100"
+                    v-model="formData.variety"
+                    :placeholder="$t('input.catalog.placeholder.variety')"
+                    maxlength="100"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.inputSku')"
-                prop="input_sku"
+                  :label="$t('input.catalog.form.inputSku')"
+                  prop="inputSku"
               >
                 <el-input
-                  v-model="formData.input_sku"
-                  :placeholder="$t('input.catalog.placeholder.inputSku')"
-                  readonly
-                  maxlength="50"
+                    v-model="formData.inputSku"
+                    :placeholder="$t('input.catalog.placeholder.inputSku')"
+                    readonly
+                    maxlength="50"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.trademark')"
-                prop="trademark"
+                  :label="$t('input.catalog.form.trademark')"
+                  prop="trademark"
               >
                 <el-input
-                  v-model="formData.trademark"
-                  :placeholder="$t('input.catalog.placeholder.trademark')"
-                  maxlength="100"
+                    v-model="formData.trademark"
+                    :placeholder="$t('input.catalog.placeholder.trademark')"
+                    maxlength="100"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.status')"
-                prop="status"
+                  :label="$t('input.catalog.form.specificationModel')"
+                  prop="specificationModel"
+              >
+                <el-input
+                    v-model="formData.specificationModel"
+                    :placeholder="$t('input.catalog.placeholder.specificationModel')"
+                    maxlength="100"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                  :label="$t('input.catalog.form.unit')"
+                  prop="unit"
+              >
+                <el-input
+                    v-model="formData.unit"
+                    :placeholder="$t('input.catalog.placeholder.unit')"
+                    maxlength="20"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                  :label="$t('input.catalog.form.referencePrice')"
+                  prop="referencePrice"
+              >
+                <el-input-number
+                    v-model="formData.referencePrice"
+                    :placeholder="$t('input.catalog.placeholder.referencePrice')"
+                    :precision="2"
+                    :min="0"
+                    style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                  :label="$t('input.catalog.form.isImport')"
+                  prop="isImport"
+              >
+                <el-radio-group v-model="formData.isImport">
+                  <el-radio :label="0">{{ $t('input.catalog.isImport.no') }}</el-radio>
+                  <el-radio :label="1">{{ $t('input.catalog.isImport.yes') }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                  :label="$t('input.catalog.form.description')"
+                  prop="description"
+              >
+                <el-input
+                    v-model="formData.description"
+                    :placeholder="$t('input.catalog.placeholder.description')"
+                    type="textarea"
+                    :rows="2"
+                    maxlength="500"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                  :label="$t('input.catalog.form.status')"
+                  prop="status"
               >
                 <el-radio-group v-model="formData.status">
                   <el-radio value="active">{{ $t('input.catalog.statusOptions.active') }}</el-radio>
@@ -148,50 +192,47 @@
         </div>
 
         <!-- 法规与许可信息 -->
-<!--        <div class="form-section">
+        <div class="form-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('input.catalog.form.regulatoryInfo') }}
           </div>
-
           <el-row :gutter="24">
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.registerCode')"
-                prop="register_code"
+                  :label="$t('input.catalog.form.registerCode')"
+                  prop="registerCode"
               >
                 <el-input
-                  v-model="formData.register_code"
-                  :placeholder="$t('input.catalog.placeholder.registerCode')"
+                    v-model="formData.registerCode"
+                    :placeholder="$t('input.catalog.placeholder.registerCode')"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.productionLicense')"
-                prop="production_license"
+                  :label="$t('input.catalog.form.productionLicense')"
+                  prop="productionLicense"
               >
                 <el-input
-                  v-model="formData.production_license"
-                  :placeholder="$t('input.catalog.placeholder.productionLicense')"
+                    v-model="formData.productionLicense"
+                    :placeholder="$t('input.catalog.placeholder.productionLicense')"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.productionStandard')"
-                prop="production_standard"
+                  :label="$t('input.catalog.form.productionStandard')"
+                  prop="productionStandard"
               >
                 <el-input
-                  v-model="formData.production_standard"
-                  :placeholder="$t('input.catalog.placeholder.productionStandard')"
+                    v-model="formData.productionStandard"
+                    :placeholder="$t('input.catalog.placeholder.productionStandard')"
                 />
               </el-form-item>
             </el-col>
           </el-row>
-        </div>-->
+        </div>
 
         <!-- 生产与责任信息 -->
         <div class="form-section">
@@ -199,30 +240,28 @@
             <i class="ri-building-line"></i>
             {{ $t('input.catalog.form.productionInfo') }}
           </div>
-
           <el-row :gutter="24">
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.producerName')"
-                prop="producer_name"
+                  :label="$t('input.catalog.form.producerName')"
+                  prop="producerName"
               >
                 <el-input
-                  v-model="formData.producer_name"
-                  :placeholder="$t('input.catalog.placeholder.producerName')"
-                  maxlength="200"
+                    v-model="formData.producerName"
+                    :placeholder="$t('input.catalog.placeholder.producerName')"
+                    maxlength="200"
                 />
               </el-form-item>
             </el-col>
-
             <el-col :span="12">
               <el-form-item
-                :label="$t('input.catalog.form.producerAddress')"
-                prop="producer_address"
+                  :label="$t('input.catalog.form.producerAddress')"
+                  prop="producerAddress"
               >
                 <el-input
-                  v-model="formData.producer_address"
-                  :placeholder="$t('input.catalog.placeholder.producerAddress')"
-                  maxlength="255"
+                    v-model="formData.producerAddress"
+                    :placeholder="$t('input.catalog.placeholder.producerAddress')"
+                    maxlength="255"
                 />
               </el-form-item>
             </el-col>
@@ -235,166 +274,16 @@
             <i class="ri-flask-line"></i>
             {{ $t('input.catalog.pesticide.title') }}
           </div>
-
           <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.totalIngredientContent')">
-                <el-input v-model="formData.pesticide_properties.total_ingredient_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.toxicityLevel')">
-                <el-select
-                  v-model="formData.pesticide_properties.toxicity_level"
-                  style="width: 100%"
-                >
-                  <el-option :label="$t('input.catalog.pesticide.toxicity.micro')" value="micro" />
-                  <el-option :label="$t('input.catalog.pesticide.toxicity.low')" value="low" />
-                  <el-option :label="$t('input.catalog.pesticide.toxicity.medium')" value="medium" />
-                  <el-option :label="$t('input.catalog.pesticide.toxicity.high')" value="high" />
-                  <el-option :label="$t('input.catalog.pesticide.toxicity.severe')" value="severe" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.targetCrops')">
-                <el-input v-model="formData.pesticide_properties.target_crops" type="textarea" :rows="2" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.controlTargets')">
-                <el-input v-model="formData.pesticide_properties.control_targets" type="textarea" :rows="2" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.applicationMethod')">
-                <el-input v-model="formData.pesticide_properties.application_method" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.dosage')">
-                <el-input v-model="formData.pesticide_properties.dosage" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.dilutionRatio')">
-                <el-input v-model="formData.pesticide_properties.dilution_ratio" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.pesticide.safetyInterval')">
-                <el-input-number
-                  v-model="formData.pesticide_properties.safety_interval"
-                  :min="0"
-                  style="width: 100%"
+            <el-col :span="24">
+              <el-form-item :label="$t('input.catalog.pesticide.cropControlObject')">
+                <el-input
+                    v-model="formData.cropControlObject"
+                    :placeholder="$t('input.catalog.placeholder.cropControlObject')"
+                    type="textarea"
+                    :rows="2"
+                    maxlength="500"
                 />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item :label="$t('input.catalog.pesticide.precautions')">
-                <el-input v-model="formData.pesticide_properties.precautions" type="textarea" :rows="3" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item :label="$t('input.catalog.pesticide.firstAid')">
-                <el-input v-model="formData.pesticide_properties.first_aid" type="textarea" :rows="3" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item :label="$t('input.catalog.pesticide.storageRequirements')">
-                <el-input v-model="formData.pesticide_properties.storage_requirements" type="textarea" :rows="2" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-
-        <!-- 化肥特性信息 -->
-        <div v-if="formData.type === 'fertilizer'" class="form-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('input.catalog.fertilizer.title') }}
-          </div>
-
-          <el-row :gutter="24">
-<!--            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.fertilizerType')">
-                <el-input v-model="formData.fertilizer_properties.fertilizer_type" />
-              </el-form-item>
-            </el-col>-->
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.totalNutrientContent')">
-                <el-input v-model="formData.fertilizer_properties.total_nutrient_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item :label="$t('input.catalog.fertilizer.nitrogenContent')">
-                <el-input v-model="formData.fertilizer_properties.nitrogen_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item :label="$t('input.catalog.fertilizer.phosphorusContent')">
-                <el-input v-model="formData.fertilizer_properties.phosphorus_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item :label="$t('input.catalog.fertilizer.potassiumContent')">
-                <el-input v-model="formData.fertilizer_properties.potassium_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.organicMatterContent')">
-                <el-input v-model="formData.fertilizer_properties.organic_matter_content" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.phValue')">
-                <el-input v-model="formData.fertilizer_properties.ph_value" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item :label="$t('input.catalog.fertilizer.mediumTraceElements')">
-                <el-input v-model="formData.fertilizer_properties.medium_trace_elements" type="textarea" :rows="2" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.suitableCrops')">
-                <el-input v-model="formData.fertilizer_properties.suitable_crops" type="textarea" :rows="2" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.applicationPeriod')">
-                <el-input v-model="formData.fertilizer_properties.application_period" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.applicationMethod')">
-                <el-input v-model="formData.fertilizer_properties.application_method" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.fertilizer.recommendedDosage')">
-                <el-input v-model="formData.fertilizer_properties.recommended_dosage" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -406,91 +295,48 @@
             <i class="ri-seedling-line"></i>
             {{ $t('input.catalog.seed.title') }}
           </div>
-
           <el-row :gutter="24">
-<!--            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.cropType')">
-                <el-input v-model="formData.seed_properties.crop_type" />
+            <el-col :span="12">
+              <el-form-item :label="$t('input.catalog.seed.breeder')">
+                <el-input
+                    v-model="formData.breeder"
+                    :placeholder="$t('input.catalog.placeholder.breeder')"
+                    maxlength="200"
+                />
               </el-form-item>
             </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.varietyName')">
-                <el-input v-model="formData.seed_properties.variety_name" />
-              </el-form-item>
-            </el-col>-->
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.varietyApprovalCode')">
-                <el-input v-model="formData.seed_properties.variety_approval_code" />
-              </el-form-item>
-            </el-col>
-
             <el-col :span="12">
               <el-form-item :label="$t('input.catalog.seed.varietySource')">
-                <el-input v-model="formData.seed_properties.variety_source" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.purity')">
-                <el-input-number
-                  v-model="formData.seed_properties.purity"
-                  :min="0"
-                  :max="100"
-                  :precision="2"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.cleanliness')">
-                <el-input-number
-                  v-model="formData.seed_properties.cleanliness"
-                  :min="0"
-                  :max="100"
-                  :precision="2"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.germinationRate')">
-                <el-input-number
-                  v-model="formData.seed_properties.germination_rate"
-                  :min="0"
-                  :max="100"
-                  :precision="2"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.moistureContent')">
-                <el-input-number
-                  v-model="formData.seed_properties.moisture_content"
-                  :min="0"
-                  :max="100"
-                  :precision="2"
-                  style="width: 100%"
+                <el-input
+                    v-model="formData.varietySource"
+                    :placeholder="$t('input.catalog.placeholder.varietySource')"
+                    maxlength="500"
                 />
               </el-form-item>
             </el-col>
           </el-row>
         </div>
 
+        <!-- 化肥特性信息 -->
+        <div v-if="formData.type === 'fertilizer'" class="form-section">
+          <div class="section-title">
+            <i class="ri-plant-line"></i>
+            {{ $t('input.catalog.fertilizer.title') }}
+          </div>
+          <el-row :gutter="24">
+            <el-col :span="24" class="text-center text-gray-500">
+              {{ $t('input.catalog.fertilizer.emptyTip') }}
+            </el-col>
+          </el-row>
+        </div>
+
         <!-- 操作按钮 -->
         <div class="form-actions">
-          <el-button @click="goBack">
-            {{ $t('common.cancel') }}
-          </el-button>
+          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
           <el-button
-            type="primary"
-            :loading="submitting"
-            @click="handleSubmit"
+              type="primary"
+              :loading="submitting"
+              @click="handleSubmit"
           >
             {{ $t('common.submit') }}
           </el-button>
@@ -501,11 +347,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getInputDetail, addInput, updateInput } from '@/api/input'
+import { getInputDetail, addInput, updateInput, uploadInputImage } from '@/api/input'
 
 const route = useRoute()
 const router = useRouter()
@@ -527,199 +373,202 @@ const submitting = ref(false)
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
 
+// 图片上传配置
+const imageFileList = ref([])
+
 // 表单数据
 const formData = reactive({
-  input_name: '',
+  inputId: '',
+  inputBizId: '',
+  inputName: '',
   type: '',
-  agricultural_input_type: '',
+  agriculturalInputType: '',
   variety: '',
-  input_sku: '',
+  inputSku: '',
   trademark: '',
-  register_code: '1',
-  production_license: '1',
-  production_standard: '1',
-  producer_name: '',
-  producer_address: '',
   status: 'active',
-  pesticide_properties: {
-    total_ingredient_content: '',
-    toxicity_level: '',
-    target_crops: '',
-    control_targets: '',
-    application_method: '',
-    dosage: '',
-    dilution_ratio: '',
-    safety_interval: 0,
-    precautions: '',
-    first_aid: '',
-    storage_requirements: ''
-  },
-  fertilizer_properties: {
-    fertilizer_type: '',
-    total_nutrient_content: '',
-    nitrogen_content: '',
-    phosphorus_content: '',
-    potassium_content: '',
-    organic_matter_content: '',
-    medium_trace_elements: '',
-    ph_value: '',
-    suitable_crops: '',
-    application_period: '',
-    application_method: '',
-    recommended_dosage: ''
-  },
-  seed_properties: {
-    crop_type: '',
-    variety_name: '',
-    variety_approval_code: '',
-    variety_source: '',
-    purity: 0,
-    cleanliness: 0,
-    germination_rate: 0,
-    moisture_content: 0
-  }
+  specificationModel: '',
+  unit: '',
+  referencePrice: 0,
+  imageUrl: '',
+  description: '',
+  isImport: 0,
+  registerCode: '',
+  productionLicense: '',
+  productionStandard: '',
+  producerName: '',
+  producerAddress: '',
+  breeder: '',
+  varietySource: '',
+  cropControlObject: ''
 })
 
 // 表单验证规则
 const rules = computed(() => ({
-  input_name: [
+  inputName: [
     { required: true, message: t('input.catalog.rules.inputNameRequired'), trigger: 'blur' },
     { min: 2, max: 100, message: t('input.catalog.rules.inputNameLength'), trigger: 'blur' }
   ],
   type: [
     { required: true, message: t('input.catalog.rules.inputTypeRequired'), trigger: 'change' }
   ],
-  agricultural_input_type: [
-    { max: 100, message: t('input.catalog.rules.agriculturalInputTypeLength'), trigger: 'blur' }
+  agriculturalInputType: [
+    { required: true, message: t('input.catalog.rules.agriculturalInputTypeRequired'), trigger: 'blur' },
   ],
-  variety: [
-    { max: 100, message: t('input.catalog.rules.varietyLength'), trigger: 'blur' }
+  productionLicense: [
+    { required: true, message: t('input.catalog.rules.productionLicenseRequired'), trigger: 'blur' },
   ],
-  input_sku: [
-    { required: true, message: t('input.catalog.rules.inputSkuRequired'), trigger: 'blur' },
-    { min: 8, max: 50, message: t('input.catalog.rules.inputSkuLength'), trigger: 'blur' }
-  ],
-  trademark: [
-    { required: true, message: t('input.catalog.rules.trademarkRequired'), trigger: 'blur' }
-  ],
-  register_code: [
+  registerCode: [
     { required: true, message: t('input.catalog.rules.registerCodeRequired'), trigger: 'blur' }
   ],
-  production_license: [
-    { required: true, message: t('input.catalog.rules.productionLicenseRequired'), trigger: 'blur' }
-  ],
-  production_standard: [
-    { required: true, message: t('input.catalog.rules.productionStandardRequired'), trigger: 'blur' }
-  ],
-  producer_name: [
-    { min: 2, max: 200, message: t('input.catalog.rules.producerNameLength'), trigger: 'blur' }
-  ],
-  producer_address: [
-    { min: 5, max: 255, message: t('input.catalog.rules.producerAddressLength'), trigger: 'blur' }
+  inputSku: [
+    { required: true, message: t('input.catalog.rules.inputSkuRequired'), trigger: 'blur' },
+    { min: 8, max: 50, message: t('input.catalog.rules.inputSkuLength'), trigger: 'blur' }
   ]
-}))
+}));
 
 // 生成SKU编码
 const generateSku = () => {
-  // 生成格式: ZZ-XM-XXXXXX (6位随机数字)
   const randomNumber = Math.floor(100000 + Math.random() * 900000)
   return `ZZ-XM-${randomNumber}`
 }
 
+// 生成投入品业务ID
+const generateInputBizId = (type, agriculturalInputType) => {
+  const typeCodeMap = { pesticide: 'PE', fertilizer: 'FE', seed: 'SE', other: 'OT' };
+  const categoryCode = agriculturalInputType ? agriculturalInputType.substring(0, 2).toUpperCase() : 'NY';
+  const year = new Date().getFullYear();
+  const randomNum = Math.floor(100000 + Math.random() * 900000);
+  return `IN_${typeCodeMap[type] || 'OT'}_${categoryCode}_${year}_${randomNum}`;
+};
+
 // 类型变化处理
 const handleTypeChange = () => {
-  // 类型变化时可以重置特性字段
-  console.log('Type changed to:', formData.type)
-}
+  if (formData.type !== 'pesticide') {
+    formData.cropControlObject = '';
+  }
+  if (formData.type !== 'seed') {
+    formData.breeder = '';
+    formData.varietySource = '';
+  }
+  if (formData.type && formData.agriculturalInputType) {
+    formData.inputBizId = generateInputBizId(formData.type, formData.agriculturalInputType);
+  }
+};
 
-// 加载详情数据
+// 图片上传校验
+const beforeImageUpload = (file) => {
+  const isImage = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type);
+  if (!isImage) {
+    ElMessage.error(t('input.catalog.upload.imageTypeError'));
+    return false;
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    ElMessage.error(t('input.catalog.upload.imageSizeError'));
+    return false;
+  }
+  return true;
+};
+
+// 自定义图片上传逻辑
+const customUpload = async (options) => {
+  const formData = new FormData();
+  formData.append('file', options.file);
+
+  try {
+    const res = await uploadInputImage(formData);
+    if (res.code === 200) {
+      formData.imageUrl = res.data;
+      imageFileList.value = [{ url: res.data }];
+      ElMessage.success(t('input.catalog.upload.imageSuccess'));
+    } else {
+      ElMessage.error(t('input.catalog.upload.imageError', { msg: res.msg || t('common.failed') }));
+    }
+  } catch (err) {
+    ElMessage.error(`${t('input.catalog.upload.imageError')}：${err.response?.data?.msg || err.message}`);
+  }
+};
+
+// 移除图片
+const handleImageRemove = () => {
+  formData.imageUrl = '';
+  imageFileList.value = [];
+};
+
+// 加载详情
 const loadDetail = async () => {
   try {
-    const res = await getInputDetail(route.params.id)
+    const res = await getInputDetail(route.params.id);
     if (res.code === 200) {
-      Object.assign(formData, res.data)
+      Object.assign(formData, res.data);
+      if (res.data.imageUrl) {
+        imageFileList.value = [{ url: res.data.imageUrl }];
+      }
     }
   } catch (error) {
-    console.error('Failed to load detail:', error)
-    ElMessage.error(t('common.failed'))
+    console.error('加载详情失败:', error);
+    ElMessage.error(t('common.failed'));
   }
-}
+};
 
 // 提交表单
 const handleSubmit = async () => {
   try {
-    await formRef.value.validate()
+    await formRef.value.validate();
+    submitting.value = true;
 
-    submitting.value = true
+    const submitData = { ...formData };
+    let res;
 
-    const submitData = { ...formData }
-
-    // 根据类型只保留对应的特性数据
-    if (formData.type === 'pesticide') {
-      delete submitData.fertilizer_properties
-      delete submitData.seed_properties
-    } else if (formData.type === 'fertilizer') {
-      delete submitData.pesticide_properties
-      delete submitData.seed_properties
-    } else if (formData.type === 'seed') {
-      delete submitData.pesticide_properties
-      delete submitData.fertilizer_properties
+    if (isEdit.value) {
+      res = await updateInput(route.params.id, submitData);
     } else {
-      delete submitData.pesticide_properties
-      delete submitData.fertilizer_properties
-      delete submitData.seed_properties
+      res = await addInput(submitData);
     }
 
-    let res
-    if (isEdit.value) {
-      res = await updateInput(route.params.id, submitData)
-      if (res.code === 200) {
-        ElMessage.success(t('input.catalog.editSuccess'))
-        router.push('/input/catalog')
-      }
+    if (res.code === 200) {
+      ElMessage.success(isEdit.value ? t('input.catalog.editSuccess') : t('input.catalog.addSuccess'));
+      router.push('/input/catalog');
     } else {
-      res = await addInput(submitData)
-      if (res.code === 200) {
-        ElMessage.success(t('input.catalog.addSuccess'))
-        router.push('/input/catalog')
-      }
+      ElMessage.error(res.msg || t('common.submitFailed'));
     }
   } catch (error) {
-    console.error('Form validation failed or submit error:', error)
+    console.error('表单提交失败:', error);
+    ElMessage.error(t('common.submitFailed'));
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
-// 返回
+// 返回上一页
 const goBack = () => {
-  router.back()
-}
+  router.back();
+};
 
 // 初始化
 onMounted(() => {
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth <= 768;
+  });
+
   if (isEdit.value) {
-    loadDetail()
+    loadDetail();
   } else {
-    // 新增模式下自动生成SKU
-    formData.input_sku = generateSku()
-    formData.register_code = generateSku()
+    formData.inputSku = generateSku();
   }
-})
+});
 </script>
 
 <style scoped>
 .input-form-container {
   min-height: calc(100vh - 120px);
 }
-
-/* 页面头部 */
 .page-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
   margin: -24px -24px 24px -24px;
 }
-
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -728,25 +577,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
+.header-left, .header-right { flex: 1; }
+.header-center { flex: 2; text-align: center; }
 .page-title {
   font-size: 20px;
   font-weight: 600;
   margin: 0;
   color: #1f2937;
 }
-
-/* 表单区域 */
 .form-wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -755,16 +593,9 @@ onMounted(() => {
   padding: 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
-/* 表单分节 */
 .form-section {
   margin-bottom: 32px;
 }
-
-.form-section:last-of-type {
-  margin-bottom: 0;
-}
-
 .section-title {
   font-size: 16px;
   font-weight: 600;
@@ -776,12 +607,37 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
 }
+.section-title i { font-size: 20px; }
 
-.section-title i {
-  font-size: 20px;
+/* 图片上传样式 */
+.image-uploader {
+  --el-upload-picture-card-size: 120px;
+}
+:deep(.el-upload--picture-card) {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed #dcdfe6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+:deep(.el-upload--picture-card:hover) {
+  border-color: #009A44;
+}
+:deep(.el-upload__text) {
+  font-size: 14px;
+  color: #606266;
+  margin-top: 8px;
+}
+:deep(.el-upload-list--picture-card .el-upload-list__item) {
+  width: 100%;
+  height: 120px;
 }
 
-/* 操作按钮 */
 .form-actions {
   margin-top: 32px;
   padding-top: 24px;
@@ -791,146 +647,21 @@ onMounted(() => {
   gap: 16px;
 }
 
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .form-wrapper {
-    padding: 24px 16px;
-  }
-}
-
+/* 响应式 */
 @media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .header-left .el-button {
-    font-size: 14px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .header-right {
-    display: none;
-  }
-
-  .form-wrapper {
-    padding: 16px 12px;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .form-section {
-    margin-bottom: 24px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  /* 单列布局 */
-  :deep(.el-row) {
-    display: block !important;
-  }
-
-  :deep(.el-col) {
-    max-width: 100% !important;
-    margin-bottom: 0 !important;
-  }
-
-  :deep(.el-form-item) {
-    margin-bottom: 18px;
-  }
-
-  :deep(.el-form-item__label) {
-    text-align: left !important;
-    padding: 0 0 8px 0 !important;
-    line-height: 1.4 !important;
-    font-size: 14px;
-  }
-
-  :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select),
-  :deep(.el-textarea),
-  :deep(.el-input-number) {
-    width: 100% !important;
-  }
-
-  :deep(.el-radio-group) {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .form-actions {
-    margin-top: 24px;
-    padding-top: 20px;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-    margin: 0;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .form-wrapper {
-    padding: 12px 8px;
-  }
-
-  .form-section {
-    margin-bottom: 20px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  :deep(.el-form-item) {
-    margin-bottom: 16px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 13px;
-  }
+  .page-header { margin: -12px -12px 12px -12px; }
+  .header-content { padding: 12px; }
+  .page-title { font-size: 16px; }
+  .header-right { display: none; }
+  .form-wrapper { padding: 24px 16px; border-radius: 0; box-shadow: none; }
+  :deep(.el-row) { display: block !important; }
+  :deep(.el-col) { max-width: 100% !important; }
+  :deep(.el-form-item__label) { text-align: left !important; padding-bottom: 8px !important; }
+  :deep(.el-form-item__content) { margin-left: 0 !important; }
+  .image-uploader { --el-upload-picture-card-size: 100%; }
+  :deep(.el-upload--picture-card) { height: 150px; }
+  :deep(.el-upload-list--picture-card .el-upload-list__item) { height: 150px; }
+  .form-actions { flex-direction: column; gap: 12px; }
+  .form-actions .el-button { width: 100%; }
 }
 </style>

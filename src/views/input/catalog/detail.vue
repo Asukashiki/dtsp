@@ -23,7 +23,14 @@
 
     <!-- 详情区域 -->
     <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
+      <!-- 无数据兜底 -->
+      <div v-if="!loading && !detailData" class="empty-state">
+        <i class="ri-inbox-line"></i>
+        <p>{{ $t('common.noData') }}</p>
+      </div>
+
+      <!-- 有数据时渲染 -->
+      <div v-if="loading === false && detailData">
         <!-- 基本信息 -->
         <div class="detail-section">
           <div class="section-title">
@@ -33,7 +40,7 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputName') }}:</span>
-              <span class="value">{{ detailData.input_name }}</span>
+              <span class="value">{{ detailData.inputName || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputType') }}:</span>
@@ -44,20 +51,45 @@
 
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
-              <span class="value">{{ detailData.agricultural_input_type }}</span>
+              <span class="value">{{ detailData.agriculturalInputType || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.variety') }}:</span>
-              <span class="value">{{ detailData.variety }}</span>
+              <span class="value">{{ detailData.variety || '-' }}</span>
             </div>
 
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputSku') }}:</span>
-              <span class="value">{{ detailData.input_sku }}</span>
+              <span class="value">{{ detailData.inputSku || '-' }}</span>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.inputBizId') }}:</span>
+              <span class="value">{{ detailData.inputBizId || '-' }}</span>
+            </div>
+
+            <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.trademark') }}:</span>
-              <span class="value">{{ detailData.trademark }}</span>
+              <span class="value">{{ detailData.trademark || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.specificationModel') }}:</span>
+              <span class="value">{{ detailData.specificationModel || '-' }}</span>
+            </div>
+
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.unit') }}:</span>
+              <span class="value">{{ detailData.unit || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.referencePrice') }}:</span>
+              <span class="value">{{ detailData.referencePrice || 0 }} dollars</span>
+            </div>
+
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.isImport') }}:</span>
+              <el-tag :type="detailData.isImport === 1 ? 'primary' : 'info'">
+                {{ detailData.isImport === 1 ? $t('input.catalog.isImport.yes') : $t('input.catalog.isImport.no') }}
+              </el-tag>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.status') }}:</span>
@@ -65,19 +97,25 @@
                 {{ $t(`input.catalog.statusOptions.${detailData.status}`) }}
               </el-tag>
             </div>
+
+            <div class="detail-item full-width">
+              <span class="label">{{ $t('input.catalog.form.description') }}:</span>
+              <span class="value text-block">{{ detailData.description || '-' }}</span>
+            </div>
+
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.createTime') }}:</span>
-              <span class="value">{{ detailData.create_time }}</span>
+              <span class="value">{{ detailData.createTime || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.createPeople') }}:</span>
-              <span class="value">{{ detailData.create_people }}</span>
+              <span class="value">{{ detailData.createPeople || '-' }}</span>
             </div>
           </div>
         </div>
 
         <!-- 法规与许可信息 -->
-<!--        <div class="detail-section">
+        <div class="detail-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
             {{ $t('input.catalog.form.regulatoryInfo') }}
@@ -85,18 +123,18 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.registerCode') }}:</span>
-              <span class="value">{{ detailData.register_code }}</span>
+              <span class="value">{{ detailData.registerCode || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.productionLicense') }}:</span>
-              <span class="value">{{ detailData.production_license }}</span>
+              <span class="value">{{ detailData.productionLicense || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.productionStandard') }}:</span>
-              <span class="value">{{ detailData.production_standard }}</span>
+              <span class="value">{{ detailData.productionStandard || '-' }}</span>
             </div>
           </div>
-        </div>-->
+        </div>
 
         <!-- 生产与责任信息 -->
         <div class="detail-section">
@@ -107,171 +145,60 @@
           <div class="detail-grid">
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.catalog.form.producerName') }}:</span>
-              <span class="value">{{ detailData.producer_name }}</span>
+              <span class="value">{{ detailData.producerName || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.catalog.form.producerAddress') }}:</span>
-              <span class="value">{{ detailData.producer_address }}</span>
+              <span class="value">{{ detailData.producerAddress || '-' }}</span>
             </div>
           </div>
         </div>
 
         <!-- 农药特性信息 -->
-        <div v-if="detailData.type === 'pesticide' && detailData.pesticide_properties" class="detail-section">
+        <div v-if="detailData.type === 'pesticide'" class="detail-section">
           <div class="section-title">
             <i class="ri-flask-line"></i>
             {{ $t('input.catalog.pesticide.title') }}
           </div>
           <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.totalIngredientContent') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.total_ingredient_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.toxicityLevel') }}:</span>
-              <el-tag v-if="detailData.pesticide_properties.toxicity_level">
-                {{ $t(`input.catalog.pesticide.toxicity.${detailData.pesticide_properties.toxicity_level}`) }}
-              </el-tag>
-            </div>
             <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.targetCrops') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.target_crops }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.controlTargets') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.control_targets }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.applicationMethod') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.application_method }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.dosage') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.dosage }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.dilutionRatio') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.dilution_ratio }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.pesticide.safetyInterval') }}:</span>
-              <span class="value">{{ detailData.pesticide_properties.safety_interval }} 天</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.precautions') }}:</span>
-              <span class="value text-block">{{ detailData.pesticide_properties.precautions }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.firstAid') }}:</span>
-              <span class="value text-block">{{ detailData.pesticide_properties.first_aid }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.pesticide.storageRequirements') }}:</span>
-              <span class="value text-block">{{ detailData.pesticide_properties.storage_requirements }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 化肥特性信息 -->
-        <div v-if="detailData.type === 'fertilizer' && detailData.fertilizer_properties" class="detail-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('input.catalog.fertilizer.title') }}
-          </div>
-          <div class="detail-grid">
-<!--            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.fertilizerType') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.fertilizer_type }}</span>
-            </div>-->
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.totalNutrientContent') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.total_nutrient_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.nitrogenContent') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.nitrogen_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.phosphorusContent') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.phosphorus_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.potassiumContent') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.potassium_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.organicMatterContent') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.organic_matter_content }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.phValue') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.ph_value }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.fertilizer.mediumTraceElements') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.medium_trace_elements }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.fertilizer.suitableCrops') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.suitable_crops }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.applicationPeriod') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.application_period }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.applicationMethod') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.application_method }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.fertilizer.recommendedDosage') }}:</span>
-              <span class="value">{{ detailData.fertilizer_properties.recommended_dosage }}</span>
+              <span class="label">{{ $t('input.catalog.pesticide.cropControlObject') }}:</span>
+              <span class="value text-block">{{ detailData.cropControlObject || '-' }}</span>
             </div>
           </div>
         </div>
 
         <!-- 种子特性信息 -->
-        <div v-if="detailData.type === 'seed' && detailData.seed_properties" class="detail-section">
+        <div v-if="detailData.type === 'seed'" class="detail-section">
           <div class="section-title">
             <i class="ri-seedling-line"></i>
             {{ $t('input.catalog.seed.title') }}
           </div>
           <div class="detail-grid">
-<!--            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.cropType') }}:</span>
-              <span class="value">{{ detailData.seed_properties.crop_type }}</span>
-            </div>
             <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.varietyName') }}:</span>
-              <span class="value">{{ detailData.seed_properties.variety_name }}</span>
-            </div>-->
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.varietyApprovalCode') }}:</span>
-              <span class="value">{{ detailData.seed_properties.variety_approval_code }}</span>
+              <span class="label">{{ $t('input.catalog.seed.breeder') }}:</span>
+              <span class="value">{{ detailData.breeder || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.catalog.seed.varietySource') }}:</span>
-              <span class="value">{{ detailData.seed_properties.variety_source }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.purity') }}:</span>
-              <span class="value">{{ detailData.seed_properties.purity }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.cleanliness') }}:</span>
-              <span class="value">{{ detailData.seed_properties.cleanliness }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.germinationRate') }}:</span>
-              <span class="value">{{ detailData.seed_properties.germination_rate }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.moistureContent') }}:</span>
-              <span class="value">{{ detailData.seed_properties.moisture_content }}%</span>
+              <span class="value">{{ detailData.varietySource || '-' }}</span>
             </div>
           </div>
         </div>
-      </template>
+
+        <!-- 化肥特性信息 -->
+        <div v-if="detailData.type === 'fertilizer'" class="detail-section">
+          <div class="section-title">
+            <i class="ri-plant-line"></i>
+            {{ $t('input.catalog.fertilizer.title') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item full-width text-center text-gray-500">
+              {{ $t('input.catalog.fertilizer.emptyTip') }}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -303,16 +230,26 @@ const getTypeTag = (type) => {
 
 // 加载详情数据
 const loadDetail = async () => {
+  const id = Number(route.params.id)
+  if (isNaN(id) || id <= 0) {
+    ElMessage.error(t('common.invalidId'))
+    goBack()
+    return
+  }
+
   loading.value = true
   try {
-    const res = await getInputDetail(route.params.id)
-    if (res.code === 200) {
+    const res = await getInputDetail(id)
+    if (res && res.code === 200 && res.data) {
       detailData.value = res.data
+    } else {
+      ElMessage.error(res?.msg || t('input.catalog.noDataFound'))
+      detailData.value = null
     }
   } catch (error) {
-    console.error('Failed to load detail:', error)
-    ElMessage.error(t('common.failed'))
-    goBack()
+    console.error('加载详情失败：', error)
+    ElMessage.error(t('common.failed') + '：' + (error.message || ''))
+    detailData.value = null
   } finally {
     loading.value = false
   }
@@ -320,7 +257,12 @@ const loadDetail = async () => {
 
 // 编辑
 const handleEdit = () => {
-  router.push(`/input/catalog/edit/${route.params.id}`)
+  const id = Number(route.params.id)
+  if (id && id > 0) {
+    router.push(`/input/catalog/edit/${id}`)
+  } else {
+    ElMessage.error(t('input.catalog.invalidIdEdit'))
+  }
 }
 
 // 返回
@@ -376,6 +318,22 @@ onMounted(() => {
 .detail-wrapper {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* 无数据状态 */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #909399;
+}
+.empty-state i {
+  font-size: 64px;
+  margin-bottom: 16px;
+  display: block;
+}
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
 }
 
 /* 详情分节 */
@@ -437,7 +395,7 @@ onMounted(() => {
   line-height: 1.6;
 }
 
-/* ==================== 响应式设计 ==================== */
+/* 响应式设计 */
 @media screen and (max-width: 1024px) {
   .page-header {
     margin: -16px -16px 16px -16px;

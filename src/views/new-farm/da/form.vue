@@ -270,6 +270,9 @@ const formRules = computed(() => ({
   woredaCode: [
     { required: true, message: t('newFarm.da.rules.woredaCodeRequired'), trigger: 'blur' }
   ],
+  zoneCode: [
+    { required: true, message: t('newFarm.da.rules.zoneCodeRequired'), trigger: ['blur', 'change'] }
+  ],
   kebeleCodes: [
     { required: true, message: t('newFarm.da.rules.kebeleCodesRequired'), trigger: 'change' }
   ]
@@ -358,7 +361,12 @@ const loadRegionInfo = async (regionCode, regionName) => {
     }
   } catch (error) {
     console.error('Failed to load region info:', error)
-    ElMessage.error(t('newFarm.da.rules.loadRegionFailed'))
+    // 关键新增：关闭拦截器弹出的所有错误弹窗（request error/network error）
+    ElMessage.closeAll()
+    // 只显示自定义提示
+    ElMessage.error('The currently logged-in account is incorrect!')
+    // 保留原有逻辑：阻止错误继续冒泡
+    return Promise.resolve()
   } finally {
     regionLoading.value = false
   }
