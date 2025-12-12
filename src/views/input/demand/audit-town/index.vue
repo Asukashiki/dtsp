@@ -97,6 +97,10 @@
                         <i class="ri-check-line"></i>
                         {{ $t('demandAudit.actions.approve') }}
                       </el-button>
+                      <el-button v-if="row.status === '1'||row.status === '2'" link type="danger" @click="handleReject(row)">
+                        <i class="ri-close-line"></i>
+                        {{ $t('demandAudit.actions.reject') }}
+                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -279,6 +283,39 @@ const handleApprove = async (row) => {
     if (error !== 'cancel') {
       console.error('Failed to approve:', error)
       ElMessage.error(t('townAggregationAudit.messages.approveFailed'))
+    }
+  }
+}
+
+// 驳回
+const handleReject = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('townAggregationAudit.rejectDialog.confirmMessage'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    const res = await updateVillageDemandSummaryMain({
+      id: row.id,
+      sourceCode: row.sourceCode,
+      status: '3' // 审批驳回
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('townAggregationAudit.messages.rejectSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('townAggregationAudit.messages.rejectFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to reject:', error)
+      ElMessage.error(t('townAggregationAudit.messages.rejectFailed'))
     }
   }
 }

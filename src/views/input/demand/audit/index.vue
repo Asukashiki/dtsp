@@ -319,12 +319,16 @@
                     :label="$t('demandAudit.columns.submitTime')"
                     min-width="160"
                   />
-                  <el-table-column :label="$t('common.actions')" fixed="right" width="150">
+                  <el-table-column :label="$t('common.actions')" fixed="right" width="220">
                     <template #default="{ row }">
                       <div class="action-buttons">
                         <el-button link type="primary" @click="handleView(row)">
                           <i class="ri-eye-line"></i>
                           {{ $t('common.view') }}
+                        </el-button>
+                        <el-button link type="danger" @click="handleReject(row)">
+                          <i class="ri-close-line"></i>
+                          {{ $t('demandAudit.actions.reject') }}
                         </el-button>
                       </div>
                     </template>
@@ -373,6 +377,9 @@
                   <div class="mobile-card-actions">
                     <el-button type="primary" size="small" @click="handleView(item)">
                       {{ $t('common.view') }}
+                    </el-button>
+                    <el-button type="danger" size="small" @click="handleReject(item)">
+                      {{ $t('demandAudit.actions.reject') }}
                     </el-button>
                   </div>
                 </div>
@@ -692,7 +699,7 @@ const confirmApprove = async () => {
 // 单个审核驳回
 const handleReject = (row) => {
   rejectForm.ids = [row.id]
-  rejectForm.auditOpinion = ''
+  rejectForm.auditOpinion = '1'
   rejectForm.remark = ''
   rejectDialogVisible.value = true
 }
@@ -704,7 +711,7 @@ const handleBatchReject = () => {
     return
   }
   rejectForm.ids = selectedRows.value.map(row => row.id)
-  rejectForm.auditOpinion = ''
+  rejectForm.auditOpinion = '1'
   rejectForm.remark = ''
   rejectDialogVisible.value = true
 }
@@ -712,11 +719,7 @@ const handleBatchReject = () => {
 
 // 确认审核驳回
 const confirmReject = async () => {
-  if (!rejectFormRef.value) return
-
   try {
-    await rejectFormRef.value.validate()
-
     await ElMessageBox.confirm(
       t('demandAudit.rejectDialog.confirmMessage', { count: rejectForm.ids.length }),
       t('common.warning'),

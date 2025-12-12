@@ -35,10 +35,16 @@ export default {
     aggregateLoadFailed: '加载汇聚数据失败',
     approveSuccess: '审批成功',
     approveFailed: '审批失败',
+    rejectSuccess: '驳回成功',
+    rejectFailed: '驳回失败',
   },
 
   approveDialog: {
     confirmMessage: '确认审批通过此记录吗？',
+  },
+
+  rejectDialog: {
+    confirmMessage: '确认驳回此记录吗？',
   },
 
   actions: {

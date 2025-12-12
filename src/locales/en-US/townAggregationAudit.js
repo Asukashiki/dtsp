@@ -35,10 +35,16 @@ export default {
     aggregateLoadFailed: 'Failed to load aggregation data',
     approveSuccess: 'Approved successfully',
     approveFailed: 'Approval failed',
+    rejectSuccess: 'Rejected successfully',
+    rejectFailed: 'Rejection failed',
   },
 
   approveDialog: {
     confirmMessage: 'Are you sure to approve this record?',
+  },
+
+  rejectDialog: {
+    confirmMessage: 'Are you sure to reject this record?',
   },
 
   actions: {

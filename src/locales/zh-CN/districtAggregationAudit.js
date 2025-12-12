@@ -34,6 +34,11 @@ export default {
     confirmMessage: '确定要审批通过这条记录吗？',
   },
 
+  // 驳回对话框
+  rejectDialog: {
+    confirmMessage: '确定要驳回这条记录吗？',
+  },
+
   // 明细对话框
   detailDialog: {
     title: '汇聚明细',
@@ -47,5 +52,7 @@ export default {
     detailLoadFailed: '加载明细数据失败',
     approveSuccess: '审批成功',
     approveFailed: '审批失败',
+    rejectSuccess: '驳回成功',
+    rejectFailed: '驳回失败',
   },
 }

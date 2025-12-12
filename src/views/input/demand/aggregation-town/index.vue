@@ -102,11 +102,11 @@
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'" link type="primary" @click="handleApprove(row)">
+                    <el-button v-if="row.status === '0'||row.status === '3'" link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
                       {{ $t('townAggregation.actions.approve') }}
                     </el-button>
-                    <el-button v-if="row.status === '0'" link type="success" @click="handleSubmit(row)">
+                    <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
                       <i class="ri-upload-cloud-line"></i>
                       {{ $t('townAggregation.actions.submit') }}
                     </el-button>
@@ -172,10 +172,10 @@
                 </div>
               </div>
               <div class="mobile-card-actions">
-                <el-button v-if="item.status === '0'" type="primary" size="small" @click="handleApprove(item)">
+                <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
                   {{ $t('townAggregation.actions.approve') }}
                 </el-button>
-                <el-button v-if="item.status === '0'" type="success" size="small" @click="handleSubmit(item)">
+                <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
                   {{ $t('townAggregation.actions.submit') }}
                 </el-button>
                 <el-button type="info" size="small" @click="handleDetail(item)">

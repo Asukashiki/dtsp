@@ -34,6 +34,11 @@ export default {
     confirmMessage: 'Are you sure to approve this record?',
   },
 
+  // Reject Dialog
+  rejectDialog: {
+    confirmMessage: 'Are you sure to reject this record?',
+  },
+
   // Detail Dialog
   detailDialog: {
     title: 'Aggregation Detail',
@@ -47,5 +52,7 @@ export default {
     detailLoadFailed: 'Failed to load detail data',
     approveSuccess: 'Approved successfully',
     approveFailed: 'Failed to approve',
+    rejectSuccess: 'Rejected successfully',
+    rejectFailed: 'Failed to reject',
   },
 }
