@@ -8,14 +8,14 @@
             <i class="ri-database-2-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('villageAggregation.title') }}</h1>
-            <p class="page-subtitle">{{ $t('villageAggregation.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('districtAggregation.title') }}</h1>
+            <p class="page-subtitle">{{ $t('districtAggregation.subtitle') }}</p>
           </div>
         </div>
         <div class="header-right">
           <el-button type="primary" size="large" @click="handleAddYear">
             <i class="ri-add-line"></i>
-            {{ $t('villageAggregation.actions.addYear') }}
+            {{ $t('districtAggregation.actions.addYear') }}
           </el-button>
         </div>
       </div>
@@ -33,32 +33,32 @@
             >
               <el-table-column
                 prop="year"
-                :label="$t('villageAggregation.columns.year')"
+                :label="$t('districtAggregation.columns.year')"
                 min-width="100"
               />
               <el-table-column
                 prop="sourceCode"
-                :label="$t('villageAggregation.columns.sourceCode')"
+                :label="$t('districtAggregation.columns.sourceCode')"
                 min-width="140"
               />
               <el-table-column
                 prop="sourceName"
-                :label="$t('villageAggregation.columns.sourceName')"
+                :label="$t('districtAggregation.columns.sourceName')"
                 min-width="140"
               />
               <el-table-column
                 prop="targetCode"
-                :label="$t('villageAggregation.columns.targetCode')"
+                :label="$t('districtAggregation.columns.targetCode')"
                 min-width="140"
               />
               <el-table-column
                 prop="targetName"
-                :label="$t('villageAggregation.columns.targetName')"
+                :label="$t('districtAggregation.columns.targetName')"
                 min-width="140"
               />
               <el-table-column
                 prop="subQuantity"
-                :label="$t('villageAggregation.columns.subQuantity')"
+                :label="$t('districtAggregation.columns.subQuantity')"
                 min-width="140"
               >
                 <template #default="{ row }">
@@ -67,52 +67,52 @@
               </el-table-column>
               <el-table-column
                 prop="status"
-                :label="$t('villageAggregation.columns.status')"
+                :label="$t('districtAggregation.columns.status')"
                 min-width="100"
               >
                 <template #default="{ row }">
                   <el-tag v-if="row.status === '0'" type="info">
-                    {{ $t('villageAggregation.status.draft') }}
+                    {{ $t('districtAggregation.status.draft') }}
                   </el-tag>
                   <el-tag v-else-if="row.status === '1'" type="warning">
-                    {{ $t('villageAggregation.status.pending') }}
+                    {{ $t('districtAggregation.status.pending') }}
                   </el-tag>
                   <el-tag v-else-if="row.status === '2'" type="success">
-                    {{ $t('villageAggregation.status.approved') }}
+                    {{ $t('districtAggregation.status.approved') }}
                   </el-tag>
                   <el-tag v-else-if="row.status === '3'" type="danger">
-                    {{ $t('villageAggregation.status.rejected') }}
+                    {{ $t('districtAggregation.status.rejected') }}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column
                 prop="creator"
-                :label="$t('villageAggregation.columns.creator')"
+                :label="$t('districtAggregation.columns.creator')"
                 min-width="120"
               />
               <el-table-column
                 prop="createTime"
-                :label="$t('villageAggregation.columns.createTime')"
+                :label="$t('districtAggregation.columns.createTime')"
                 min-width="160"
               />
               <el-table-column
-                :label="$t('villageAggregation.columns.actions')"
+                :label="$t('districtAggregation.columns.actions')"
                 fixed="right"
                 width="340"
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="primary" @click="handleApprove(row)">
+                    <el-button v-if="row.status === '0'" link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
-                      {{ $t('villageAggregation.actions.approve') }}
+                      {{ $t('districtAggregation.actions.approve') }}
                     </el-button>
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
+                    <el-button v-if="row.status === '0'" link type="success" @click="handleSubmit(row)">
                       <i class="ri-upload-cloud-line"></i>
-                      {{ $t('villageAggregation.actions.submit') }}
+                      {{ $t('districtAggregation.actions.submit') }}
                     </el-button>
                     <el-button link type="info" @click="handleDetail(row)">
                       <i class="ri-list-check"></i>
-                      {{ $t('villageAggregation.actions.detail') }}
+                      {{ $t('districtAggregation.actions.detail') }}
                     </el-button>
                   </div>
                 </template>
@@ -129,57 +129,57 @@
                   <span>{{ item.year }}</span>
                 </div>
                 <el-tag v-if="item.status === '0'" type="info" size="small">
-                  {{ $t('villageAggregation.status.draft') }}
+                  {{ $t('districtAggregation.status.draft') }}
                 </el-tag>
                 <el-tag v-else-if="item.status === '1'" type="warning" size="small">
-                  {{ $t('villageAggregation.status.pending') }}
+                  {{ $t('districtAggregation.status.pending') }}
                 </el-tag>
                 <el-tag v-else-if="item.status === '2'" type="success" size="small">
-                  {{ $t('villageAggregation.status.approved') }}
+                  {{ $t('districtAggregation.status.approved') }}
                 </el-tag>
                 <el-tag v-else-if="item.status === '3'" type="danger" size="small">
-                  {{ $t('villageAggregation.status.rejected') }}
+                  {{ $t('districtAggregation.status.rejected') }}
                 </el-tag>
               </div>
               <div class="mobile-card-body">
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.sourceCode') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.sourceName') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.sourceName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.targetCode') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.targetCode') }}:</span>
                   <span class="value">{{ item.targetCode }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.targetName') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.targetName') }}:</span>
                   <span class="value">{{ item.targetName }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.creator') }}:</span>
                   <span class="value">{{ item.creator }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.createTime') }}:</span>
+                  <span class="label">{{ $t('districtAggregation.columns.createTime') }}:</span>
                   <span class="value">{{ item.createTime }}</span>
                 </div>
               </div>
               <div class="mobile-card-actions">
-                <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
-                  {{ $t('villageAggregation.actions.approve') }}
+                <el-button v-if="item.status === '0'" type="primary" size="small" @click="handleApprove(item)">
+                  {{ $t('districtAggregation.actions.approve') }}
                 </el-button>
-                <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
-                  {{ $t('villageAggregation.actions.submit') }}
+                <el-button v-if="item.status === '0'" type="success" size="small" @click="handleSubmit(item)">
+                  {{ $t('districtAggregation.actions.submit') }}
                 </el-button>
                 <el-button type="info" size="small" @click="handleDetail(item)">
-                  {{ $t('villageAggregation.actions.detail') }}
+                  {{ $t('districtAggregation.actions.detail') }}
                 </el-button>
               </div>
             </div>
@@ -205,7 +205,7 @@
           <!-- 空状态 -->
           <el-empty
             v-if="tableData.length === 0 && !loading"
-            :description="$t('villageAggregation.messages.noData')"
+            :description="$t('districtAggregation.messages.noData')"
           />
         </div>
       </div>
@@ -214,15 +214,15 @@
     <!-- 新增年度对话框 -->
     <el-dialog
       v-model="addYearDialogVisible"
-      :title="$t('villageAggregation.addYearDialog.title')"
+      :title="$t('districtAggregation.addYearDialog.title')"
       width="500px"
     >
       <el-form :model="addYearForm" :rules="addYearRules" ref="addYearFormRef" label-width="100px">
-        <el-form-item :label="$t('villageAggregation.addYearDialog.year')" prop="year">
+        <el-form-item :label="$t('districtAggregation.addYearDialog.year')" prop="year">
           <el-date-picker
             v-model="addYearForm.year"
             type="year"
-            :placeholder="$t('villageAggregation.addYearDialog.yearPlaceholder')"
+            :placeholder="$t('districtAggregation.addYearDialog.yearPlaceholder')"
             style="width: 100%"
             value-format="YYYY"
           />
@@ -230,10 +230,10 @@
       </el-form>
       <template #footer>
         <el-button @click="addYearDialogVisible = false">
-          {{ $t('villageAggregation.addYearDialog.cancel') }}
+          {{ $t('districtAggregation.addYearDialog.cancel') }}
         </el-button>
         <el-button type="primary" @click="confirmAddYear" :loading="submitting">
-          {{ $t('villageAggregation.addYearDialog.confirm') }}
+          {{ $t('districtAggregation.addYearDialog.confirm') }}
         </el-button>
       </template>
     </el-dialog>
@@ -241,7 +241,7 @@
     <!-- 汇聚明细对话框 -->
     <el-dialog
       v-model="detailDialogVisible"
-      :title="$t('villageAggregation.detailDialog.title')"
+      :title="$t('districtAggregation.detailDialog.title')"
       width="80%"
       top="5vh"
     >
@@ -253,22 +253,22 @@
       >
         <el-table-column
           prop="inputCategory"
-          :label="$t('villageAggregation.detailDialog.columns.inputCategory')"
+          :label="$t('districtAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
         />
         <el-table-column
           prop="inputType"
-          :label="$t('villageAggregation.detailDialog.columns.inputType')"
+          :label="$t('districtAggregation.detailDialog.columns.inputType')"
           min-width="150"
         />
         <el-table-column
           prop="totalQuantity"
-          :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
+          :label="$t('districtAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
         <el-table-column
           prop="totalCount"
-          :label="$t('villageAggregation.detailDialog.columns.totalCount')"
+          :label="$t('districtAggregation.detailDialog.columns.totalCount')"
           min-width="120"
         />
       </el-table>
@@ -292,7 +292,7 @@
 
       <el-empty
         v-if="detailData.length === 0 && !detailLoading"
-        :description="$t('villageAggregation.detailDialog.noData')"
+        :description="$t('districtAggregation.detailDialog.noData')"
       />
 
       <template #footer>
@@ -309,8 +309,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateVillageInputDemand, getVillageAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
-import { getApprovedDemandPage } from '@/api/demandAudit'
+import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateTownInputDemand, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -335,7 +334,7 @@ const addYearForm = reactive({
 
 const addYearRules = reactive({
   year: [
-    { required: true, message: t('villageAggregation.addYearDialog.yearRequired'), trigger: 'change' }
+    { required: true, message: t('districtAggregation.addYearDialog.yearRequired'), trigger: 'change' }
   ]
 })
 
@@ -351,21 +350,28 @@ const detailPagination = reactive({
   total: 0
 })
 
-// 加载每行已审批数量（approvedQuantity）
+// 加载某一行已审批数量（已通过镇级记录数）
 const loadApprovedCountForRow = async (row) => {
   try {
     const params = {
-      pageNum: 1,
-      pageSize: 1,
-      kebele: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      year: row.year
+      page: 1,
+      pageSize: 10000,
+      targetCode: row.sourceCode,
+      year: row.year,
+      status: '2'
     }
-    const res = await getApprovedDemandPage(params)
-    if (res.code === 200 && res.data) {
-      row.approvedQuantity = res.data.total || 0
+    const res = await getVillageDemandSummaryMainList(params)
+
+    if (res.code === 200) {
+      const list = res.data?.list || []
+      // 使用接口返回列表长度作为已审批数量
+      row.approvedQuantity = list.length
+    } else {
+      row.approvedQuantity = 0
     }
   } catch (error) {
     console.error('Failed to load approved count for row:', error)
+    row.approvedQuantity = 0
   }
 }
 
@@ -377,9 +383,6 @@ const loadData = async () => {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
       sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
-      // sourceCode:'huangshan'
-      // TODO: Add user context filters
-      // sourceCode: 'KB001'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
@@ -387,12 +390,12 @@ const loadData = async () => {
       tableData.value = res.data.list || []
       pagination.total = res.data.total || 0
 
-      // 为每行加载已审批数量
+      // 为每一行加载已审批数量
       await Promise.all(tableData.value.map(item => loadApprovedCountForRow(item)))
     }
   } catch (error) {
     console.error('Failed to load data:', error)
-    ElMessage.error(t('villageAggregation.messages.loadFailed'))
+    ElMessage.error(t('districtAggregation.messages.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -414,25 +417,23 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
-      // sourceCode: 'huangshan', 
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
       status: '0',
-      level: '0',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username, 
-      // subQuantity: 0//农民数||村的数量||
+      level: '2',
+      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
     })
 
     if (res.code === 200) {
-      ElMessage.success(t('villageAggregation.addYearDialog.success'))
+      ElMessage.success(t('districtAggregation.addYearDialog.success'))
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('villageAggregation.addYearDialog.failed'))
+      ElMessage.error(res.msg || t('districtAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
       console.error('Failed to add year:', error)
-      ElMessage.error(t('villageAggregation.addYearDialog.failed'))
+      ElMessage.error(t('districtAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false
@@ -442,7 +443,7 @@ const confirmAddYear = async () => {
 // 审批 - 跳转到审核页面
 const handleApprove = (row) => {
   router.push({
-    name: 'VillageAuditDetail',
+    name: 'DistrictAuditDetail',
     params: { year: row.year }
   })
 }
@@ -451,7 +452,7 @@ const handleApprove = (row) => {
 const handleSubmit = async (row) => {
   try {
     await ElMessageBox.confirm(
-      t('villageAggregation.submitDialog.confirmMessage'),
+      t('districtAggregation.submitDialog.confirmMessage'),
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
@@ -461,14 +462,14 @@ const handleSubmit = async (row) => {
     )
 
     submitting.value = true
-    const res = await aggregateVillageInputDemand({
+    // 区级汇聚提交: 传递sourceCode和summaryId
+    const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
-      year: row.year,
-      demandSummaryId: row.id
+      summaryId: row.id
     })
 
     if (res.code === 200) {
-      ElMessage.success(t('villageAggregation.submitDialog.success'))
+      ElMessage.success(t('districtAggregation.submitDialog.success'))
 
       // 更新状态为待审核（1）
       const updateRes = await updateVillageDemandSummaryMain({
@@ -480,15 +481,15 @@ const handleSubmit = async (row) => {
       if (updateRes.code === 200) {
         loadData()
       } else {
-        ElMessage.error(updateRes.msg || t('villageAggregation.submitDialog.failed'))
+        ElMessage.error(updateRes.msg || t('districtAggregation.submitDialog.failed'))
       }
     } else {
-      ElMessage.error(res.msg || t('villageAggregation.submitDialog.failed'))
+      ElMessage.error(res.msg || t('districtAggregation.submitDialog.failed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
       console.error('Failed to submit aggregation:', error)
-      ElMessage.error(t('villageAggregation.submitDialog.failed'))
+      ElMessage.error(t('districtAggregation.submitDialog.failed'))
     }
   } finally {
     submitting.value = false
@@ -509,9 +510,9 @@ const loadDetailData = async () => {
 
   detailLoading.value = true
   try {
-    const res = await getVillageAggregationDetail({
-      sourceCode: currentDetailRow.value.sourceCode,
-      year: currentDetailRow.value.year
+    // 区级汇聚明细: 只传递sourceCode
+    const res = await getTownAggregationDetail({
+      sourceCode: currentDetailRow.value.sourceCode
     })
 
     if (res.code === 200) {
@@ -520,7 +521,7 @@ const loadDetailData = async () => {
     }
   } catch (error) {
     console.error('Failed to load detail data:', error)
-    ElMessage.error(t('villageAggregation.detailDialog.loadFailed'))
+    ElMessage.error(t('districtAggregation.detailDialog.loadFailed'))
   } finally {
     detailLoading.value = false
   }
