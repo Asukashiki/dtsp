@@ -742,6 +742,7 @@ const confirmReject = async () => {
       rejectDialogVisible.value = false
       selectedRows.value = []
       loadData()
+      loadApprovedData()
     } else {
       ElMessage.error(res.msg || t('demandAudit.messages.operationFailed'))
     }
