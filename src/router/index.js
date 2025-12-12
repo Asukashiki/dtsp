@@ -779,19 +779,40 @@ const routes = [
         component: () => import('../views/input/demand/audit/index.vue'),
         meta: { title: '村级审核详情', hideInMenu: true, requiresAuth: true }
       },
-      // 镇级需求审核（复用同一组件，后续可通过路由元信息区分）
+      // 镇级需求汇聚（新页面）
       {
-        path: 'demand/audit-town',
-        name: 'TownDemandAudit',
-        component: () => import('../views/input/demand/audit-town/index.vue'),
-        meta: { title: '镇需求审核', requiresAuth: true }
+        path: 'demand/aggregation-town',
+        name: 'TownAggregation',
+        component: () => import('../views/input/demand/aggregation-town/index.vue'),
+        meta: { title: '镇级需求汇聚', requiresAuth: true }
       },
-      // 区级需求审核
+      // 镇级审核详情（隐藏页面，通过年度参数访问）
       {
-        path: 'demand/audit-district',
-        name: 'DistrictDemandAudit',
+        path: 'demand/audit-town/:year',
+        name: 'TownAuditDetail',
+        component: () => import('../views/input/demand/audit-town/index.vue'),
+        meta: { title: '镇级审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 区级需求汇聚（新页面）
+      {
+        path: 'demand/aggregation-district',
+        name: 'DistrictAggregation',
+        component: () => import('../views/input/demand/aggregation-district/index.vue'),
+        meta: { title: '区级需求汇聚', requiresAuth: true }
+      },
+      // 区级审核详情（隐藏页面，通过年度参数访问）
+      {
+        path: 'demand/audit-district/:year',
+        name: 'DistrictAuditDetail',
         component: () => import('../views/input/demand/audit-district/index.vue'),
-        meta: { title: '区需求审核', requiresAuth: true }
+        meta: { title: '区级审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 州级需求汇聚（新页面）
+      {
+        path: 'demand/aggregation-state',
+        name: 'StateAggregation',
+        component: () => import('../views/input/demand/aggregation-state/index.vue'),
+        meta: { title: '州级需求汇聚', requiresAuth: true }
       },
       // 州农业部查看
       {

@@ -62,7 +62,7 @@ const fetchDetail = async () => {
           const inputInfo = await getInputInfo(detail.inputId)
           console.log('inputInfo:', inputInfo)
           if (inputInfo) {
-            detail.inputName = inputInfo.input_name || detail.inputId
+            detail.inputName = inputInfo.inputName || detail.inputId
           }
         }
       }

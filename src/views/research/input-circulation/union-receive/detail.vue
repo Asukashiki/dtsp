@@ -12,7 +12,7 @@
         <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ detailData.targetPhone }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ detailData.releaseOrg }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ detailData.releaseDate }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.receiveStatus')">{{ detailData.receiveStatus }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.status')">{{ detailData.receiveStatus }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.confirmBy')">{{ detailData.confirmBy || '-' }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">{{ detailData.confirmOrg || '-' }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.confirmTime')">{{ detailData.confirmTime || '-' }}</el-descriptions-item>

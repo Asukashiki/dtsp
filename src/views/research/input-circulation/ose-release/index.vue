@@ -3,8 +3,8 @@
     <!-- 查询表单 -->
     <el-card class="search-card">
       <el-form :model="queryParams" :inline="true">
-        <el-form-item :label="$t('inputCirculation.unionName')">
-          <el-input v-model="queryParams.unionName" :placeholder="$t('common.pleaseInput')" @change="handleQuery" />
+        <el-form-item :label="$t('inputCirculation.releaseName')">
+          <el-input v-model="queryParams.releaseName" :placeholder="$t('common.pleaseInput')" @change="handleQuery" />
         </el-form-item>
 <!--        <el-form-item :label="$t('inputCirculation.inputType')">
           <el-select v-model="queryParams.inputType" :placeholder="$t('common.pleaseSelect')" @change="handleQuery" clearable>
@@ -24,13 +24,17 @@
             @change="handleQuery"
           />
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleQuery">{{ t('search') }}</el-button>
+          <el-button @click="handleReset">{{ t('reset') }}</el-button>
+        </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 工具栏 -->
     <el-card class="toolbar-card">
-      <el-button type="primary" @click="handleAdd">{{ $t('common.add') }}</el-button>
-      <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch">{{ $t('common.batchDelete') }}</el-button>
+      <el-button type="primary" @click="handleAdd"><el-icon><Plus /></el-icon>{{ $t('common.add') }}</el-button>
+      <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch"><el-icon><Delete /></el-icon>{{ $t('common.batchDelete') }}</el-button>
     </el-card>
 
     <!-- 数据表格 - 桌面端 -->
@@ -138,6 +142,15 @@ const handleQuery = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 重置查询
+const handleReset = () => {
+  queryParams.releaseName = ''
+  queryParams.inputType = ''
+  dateRange.value = []
+  queryParams.pageNum = 1
+  handleQuery()
 }
 
 const handleAdd = () => {

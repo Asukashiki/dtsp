@@ -48,14 +48,17 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <!-- 年份列：自动填充当前年 + 禁用 -->
+              <!-- 年份列：使用年份选择器，允许用户选择年份 -->
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
-                  <el-input
+                  <el-date-picker
                       v-model="formData.year"
+                      type="year"
+                      format="YYYY"
+                      value-format="YYYY"
                       :placeholder="$t('farmerDemand.placeholder.year')"
-                      disabled
-                  ></el-input>
+                      style="width: 100%"
+                  ></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -367,8 +370,11 @@ const loadData = async () => {
     const res = await getFarmerDemandDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
-      // 年份强制覆盖为当前年
-      formData.year = currentYear.toString()
+      // 保留后端返回的年份，允许用户修改
+      // 如果后端没有返回年份，则使用当前年
+      if (!formData.year) {
+        formData.year = currentYear.toString()
+      }
 
       // 适配级联字段格式（拼接一级+二级为数组）
       if (formData.inputItems && formData.inputItems.length > 0) {
