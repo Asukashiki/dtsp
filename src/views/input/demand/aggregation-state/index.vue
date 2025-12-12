@@ -230,8 +230,10 @@
       :title="$t('stateAggregation.detailDialog.title')"
       width="80%"
       top="5vh"
+      @closed="handleDialogClosed"
     >
       <el-table
+        ref="detailTableRef"
         v-loading="detailLoading"
         :data="detailData"
         stripe
@@ -363,6 +365,7 @@ const detailDialogVisible = ref(false)
 const detailLoading = ref(false)
 const detailData = ref([])
 const currentDetailRow = ref(null)
+const detailTableRef = ref(null)
 
 const detailPagination = reactive({
   currentPage: 1,
@@ -516,6 +519,22 @@ const handleExpandChange = async (row, expandedRows) => {
       row.subLoading = false
     }
   }
+}
+
+// 处理弹窗关闭
+const handleDialogClosed = () => {
+  // 收起所有展开行
+  if (detailTableRef.value) {
+    detailData.value.forEach(row => {
+      detailTableRef.value.toggleRowExpansion(row, false)
+    })
+  }
+
+  // 清空所有展开的子数据，下次打开时重新加载
+  detailData.value.forEach(row => {
+    delete row.subDetailData
+    delete row.subLoading
+  })
 }
 
 // 明细分页变化
