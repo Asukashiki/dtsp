@@ -180,8 +180,6 @@ function transformInputData(data) {
     agriculturalInputType: data.agricultural_input_type,
     variety: data.variety,
     inputSku: data.input_sku,
-    batchId: data.batch_id,
-    expiryDate: data.expiry_date,
     trademark: data.trademark,
     registerCode: data.register_code,
     productionLicense: data.production_license,

@@ -122,20 +122,6 @@
 
             <el-col :span="12">
               <el-form-item
-                label="批次号"
-                prop="batch_id"
-              >
-                <el-input
-                  v-model="formData.batch_no"
-                  placeholder="批次号将自动生成"
-                  readonly
-                  maxlength="50"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item
                 :label="$t('input.catalog.form.trademark')"
                 prop="trademark"
               >
@@ -143,22 +129,6 @@
                   v-model="formData.trademark"
                   :placeholder="$t('input.catalog.placeholder.trademark')"
                   maxlength="100"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item
-                label="过期日期"
-                prop="expiry_date"
-              >
-                <el-date-picker
-                  v-model="formData.expiry_date"
-                  type="date"
-                  placeholder="请选择过期日期"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
@@ -564,8 +534,6 @@ const formData = reactive({
   agricultural_input_type: '',
   variety: '',
   input_sku: '',
-  batch_id: '',
-  expiry_date: '',
   trademark: '',
   register_code: '1',
   production_license: '1',

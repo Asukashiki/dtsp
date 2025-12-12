@@ -56,16 +56,8 @@
               <span class="value">{{ detailData.input_sku }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">批次号:</span>
-              <span class="value">{{ detailData.batch_id }}</span>
-            </div>
-            <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.trademark') }}:</span>
               <span class="value">{{ detailData.trademark }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">过期日期:</span>
-              <span class="value">{{ detailData.expiry_date }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.status') }}:</span>

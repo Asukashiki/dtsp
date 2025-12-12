@@ -194,3 +194,27 @@ export const getOutboundStatsByType = (params) => {
     params
   })
 }
+
+/**
+ * 批量校验库存是否充足
+ * @param {Object} data - 校验数据
+ * @param {String} data.warehouseId - 仓库ID
+ * @param {Array} data.details - 出库明细列表
+ * @param {String} data.details[].materialId - 物料ID
+ * @param {String} data.details[].materialName - 物料名称
+ * @param {Number} data.details[].quantity - 出库数量
+ */
+export const validateStock = (data) => {
+  return agricultureRequest({
+    url: '/api/outbound/orders/validate-stock',
+    method: 'post',
+    data: {
+      warehouseId: data.warehouseId,
+      details: data.details?.map(detail => ({
+        materialId: detail.materialId,
+        materialName: detail.materialName,
+        quantity: detail.quantity
+      }))
+    }
+  })
+}
