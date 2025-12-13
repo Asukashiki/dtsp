@@ -50,12 +50,12 @@ export default {
   laboratoryTestEdit: 'Edit Laboratory Test',
   laboratoryTestDetail: 'Laboratory Test Detail',
 
-  breederSeedProduction: 'Breeder Seed Production Data',
+  breederSeedProduction: 'Seed Production Data',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',
 
-  breederSeedDistribution: 'Breeder Seed Distribution Data',
+  breederSeedDistribution: 'Seed Distribution Data',
   breederSeedDistributionAdd: 'Add Seed Distribution',
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
@@ -85,7 +85,7 @@ export default {
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
 
-  propagationBatchCollection: 'OSE Propagation Batch Information',
+  propagationBatchCollection: 'Seed Multiplication Batch Information',
   propagationBatchAdd: 'Add Propagation Batch',
   propagationBatchEdit: 'Edit Propagation Batch',
   propagationBatchDetail: 'Propagation Batch Detail',
@@ -95,7 +95,7 @@ export default {
   propagationTrackingEdit: 'Edit Tracking Information',
   propagationTrackingDetail: 'Tracking Information Detail',
 
-  c1PropagationBatchCollection: 'C1 Propagation Batch Information',
+  c1PropagationBatchCollection: 'Seed Multiplication Information',
   c1PropagationBatchAdd: 'Add Propagation Batch',
   c1PropagationBatchEdit: 'Edit Propagation Batch',
   c1PropagationBatchDetail: 'Propagation Batch Detail',
@@ -105,12 +105,12 @@ export default {
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',
 
-  c1SeedPropagationApplication: 'C1 Seed Propagation Application',
+  c1SeedPropagationApplication: 'Seed Propagation Application',
   c1SeedPropagationApplicationAdd: 'Add Propagation Application',
   c1SeedPropagationApplicationEdit: 'Edit Propagation Application',
   c1SeedPropagationApplicationDetail: 'Propagation Application Detail',
 
-  c1SeedPropagationApplicationAudit: 'C1 Seed Propagation Application Audit',
+  c1SeedPropagationApplicationAudit: 'Seed Multiplication Application Audit',
   c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
 
   c1BatchAudit: 'Breeding Seed Audit',
@@ -169,7 +169,7 @@ export default {
   fieldInspection: 'Field Inspection Data Collection',
   laboratoryTest: 'Laboratory Test Data Collection',
   breederSeed: 'Breeder Seed Management',
-  seedProduction: 'Breeder Seed Production Data',
+  seedProduction: 'Seed Production Data',
   seedDistribution: 'Breeder Seed Distribution Management',
   oseManagement: 'OSE Maintenance Management',
   oseReceiveConfirm: 'OSE Receive Confirmation',
