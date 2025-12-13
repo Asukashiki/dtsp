@@ -134,18 +134,20 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getUnionReleaseDetail, addUnionRelease, editUnionRelease } from '@/api/inputCirculation'
+import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock } from '@/api/inputCirculation'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application'
 import { getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store/user'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const formRef = ref(null)
@@ -298,13 +300,39 @@ const getDemandQuantity = (inputType, inputCategory) => {
   return demand ? demand.totalQuantity : 0
 }
 
-// 校验数量
-const validateQuantity = (index) => {
+// 校验数量 - 同时检查需求量和库存
+const validateQuantity = async (index) => {
   const detail = formData.details[index]
+  if (!detail.inputType) return
+  
+  // 校验需求量
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (detail.quantity > maxQty) {
     detail.quantity = maxQty
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
+    return
+  }
+  
+  // 校验库存 - 计算表单中同类型的总数量
+  const totalFormQuantity = formData.details
+    .filter(d => d.inputType === detail.inputType && 
+                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
+    .reduce((sum, d) => sum + (d.quantity || 0), 0)
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (stockRes.code === 200 && stockRes.data) {
+      const available = stockRes.data.availableStock || 0
+      if (totalFormQuantity > available) {
+        const excessQty = totalFormQuantity - available
+        const adjustedQty = Math.max(0, (detail.quantity || 0) - excessQty)
+        detail.quantity = adjustedQty
+        ElMessage.error(t('inputCirculation.stockInsufficient', { available, requested: totalFormQuantity }))
+      }
+    }
+  } catch (error) {
+    console.error('Failed to validate stock:', error)
   }
 }
 
@@ -347,6 +375,29 @@ const handleSubmit = async () => {
     if (!valid) return
     loading.value = true
     try {
+      // 库存校验
+      const quantityByType = {}
+      for (const detail of formData.details) {
+        const key = `${detail.inputType}_${detail.inputCategory || ''}`
+        if (!quantityByType[key]) {
+          quantityByType[key] = { inputType: detail.inputType, inputCategory: detail.inputCategory, quantity: 0 }
+        }
+        quantityByType[key].quantity += (detail.quantity || 0)
+      }
+      
+      for (const key of Object.keys(quantityByType)) {
+        const item = quantityByType[key]
+        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, userStore.userInfo.user.organCode)
+        if (stockRes.code === 200 && stockRes.data) {
+          const available = stockRes.data.availableStock || 0
+          if (item.quantity > available) {
+            ElMessage.error(t('inputCirculation.stockInsufficient', { available: available, requested: item.quantity }))
+            loading.value = false
+            return
+          }
+        }
+      }
+
       const apiFunc = isEdit.value ? editUnionRelease : addUnionRelease
       const response = await apiFunc(formData)
       if (response.code === 200) {

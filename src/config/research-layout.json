@@ -23,6 +23,12 @@
           "roles": ["agri-admin", "OARI"]
         },
         {
+          "index": "/research/breeding-data/trial-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.trialBasicAudit",
+          "roles": ["agri-admin", "OARI"]
+        },
+        {
           "index": "/research/breeding-data/plot",
           "icon": "ri-map-pin-line",
           "titleKey": "research.menu.plotInfoManagement",

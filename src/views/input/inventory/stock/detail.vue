@@ -66,11 +66,11 @@
         <div v-if="detailData.qr_code" class="detail-section">
           <div class="section-title">
             <i class="ri-qr-code-line"></i>
-            {{ $t('input.inventory.stock.qrCode') }}
+            {{ $t('input.inventory.stock.columns.qrCode') }}
           </div>
           <div class="qr-code-wrapper">
             <img :src="detailData.qr_code" alt="QR Code" class="qr-code-image" />
-            <p class="qr-code-hint">{{ $t('input.inventory.stock.qrCodeHint') }}</p>
+            <p class="qr-code-hint">{{ $t('input.inventory.stock.columns.qrCodeHint') }}</p>
           </div>
         </div>
       </template>

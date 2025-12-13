@@ -286,6 +286,7 @@ const loading = ref(false)
 const inboundList = ref([])
 const total = ref(0)
 const pendingCount = ref(0)
+const currentUserOrganCode = ref('') // 当前用户部门ID
 
 const queryParams = reactive({
   page: 1,
@@ -295,11 +296,26 @@ const queryParams = reactive({
   inboundOrderId: ''
 })
 
+// 获取当前用户部门ID
+const getCurrentUserOrganCode = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    const userInfo = JSON.parse(userInfoStr)
+    const user = userInfo.user || userInfo
+    return user.ORGANCODE || ''
+  }
+  return ''
+}
+
 // 查询入库单列表
 const handleQuery = async () => {
   loading.value = true
   try {
-    const res = await getInboundOrderList(queryParams)
+    const params = {
+      ...queryParams,
+      organCode: currentUserOrganCode.value // 添加部门过滤参数
+    }
+    const res = await getInboundOrderList(params)
     if (res.code === 200) {
       inboundList.value = res.data.items || []
       total.value = res.data.total || 0
@@ -474,6 +490,7 @@ const getTypeText = (type) => {
 }
 
 onMounted(() => {
+  currentUserOrganCode.value = getCurrentUserOrganCode()
   handleQuery()
   loadPendingCount()
 })

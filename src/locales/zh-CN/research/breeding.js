@@ -7,8 +7,8 @@ export default {
   seed: {
     // 生产数据采集
     production: {
-      title: '育种家种子生产数据采集',
-      subtitle: '记录Breeder Seed生产数据,确保种子繁育过程可追溯',
+      title: '种子生产数据采集',
+      subtitle: '记录Seed生产数据,确保种子繁育过程可追溯',
       list: '生产数据列表',
       add: '新增生产数据',
       detail: '生产数据详情',

@@ -70,7 +70,14 @@
             {{ formatDateTime(row.releaseDate) }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="160" />
+        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="120" />
+        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">
+          <template #default="scope">
+            <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
+              {{ getStockStatusText(scope.row.stockStatus) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column :label="t('actions')" width="280" fixed="right">
           <template #default="{ row }">
@@ -145,7 +152,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete } from '@element-plus/icons-vue'
-import { getUnionReleaseList, deleteUnionRelease } from '@/api/inputCirculation'
+import { getUnionReleaseList, deleteUnionRelease, getReleaseStockStatus } from '@/api/inputCirculation'
 import { useResponsive } from '@/hooks/useResponsive'
 
 const router = useRouter()
@@ -180,13 +187,47 @@ const handleQuery = () => {
 
   loading.value = true
   getUnionReleaseList(queryParams)
-    .then(response => {
+    .then(async response => {
       releaseList.value = response.rows || []
       total.value = response.total || 0
+      // 加载出入库状态
+      await loadStockStatus()
     })
     .finally(() => {
       loading.value = false
     })
+}
+
+// 加载出入库状态
+const loadStockStatus = async () => {
+  if (releaseList.value.length === 0) return
+  const releaseIds = releaseList.value.map(item => item.releaseId).join(',')
+  try {
+    const response = await getReleaseStockStatus(releaseIds)
+    if (response.code === 200 && response.data) {
+      releaseList.value.forEach(item => {
+        item.stockStatus = response.data[item.releaseId] || 'notProcessed'
+      })
+    }
+  } catch (error) {
+    console.error('Failed to load stock status:', error)
+  }
+}
+
+// 获取出入库状态样式
+const getStockStatusTag = (status) => {
+  const map = {
+    notProcessed: 'info',
+    outPending: 'warning',
+    outCompleted: 'success',
+    notFound: 'danger'
+  }
+  return map[status] || 'info'
+}
+
+// 获取出入库状态文本
+const getStockStatusText = (status) => {
+  return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
 }
 
 // 重置查询

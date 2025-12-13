@@ -29,7 +29,7 @@
                 <!-- 1. Trial ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.trialId')">
-                    <el-input v-model="formData.trialId" disabled :placeholder="'TR-{variety_code}-{location_id}-{year}-serial'" />
+                    <el-input v-model="formData.trialId" disabled :placeholder="'T_{cropType}_{year}_000001'" />
                   </el-form-item>
                 </el-col>
                 <!-- 2. Trial Name -->
@@ -56,9 +56,9 @@
                       >
                         <div style="display: flex; justify-content: space-between;">
                           <span>{{ item.batchId }}</span>
-                          <el-tag :type="getStatusType(item.status)" size="small" effect="plain">
+                          <!-- <el-tag :type="getStatusType(item.status)" size="small" effect="plain">
                             {{ item.status }}
-                          </el-tag>
+                          </el-tag> -->
                         </div>
                       </el-option>
                     </el-select>
@@ -155,7 +155,10 @@
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+            <el-button type="primary" @click="handleSave" :loading="saveLoading">{{ $t('common.save') }}</el-button>
+            <el-button v-if="canSubmit" type="success" @click="handleSubmitAudit" :loading="submitLoading">
+              {{ $t('research.trialBasicAudit.action.submit') }}
+            </el-button>
           </div>
         </el-form>
       </div>
@@ -164,11 +167,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicInfo, addTrialBasic, editTrialBasic, getBatchOptions, getLocationMasterOptions } from '@/api/breedingData'
+import { submitTrial } from '@/api/research/trialBasicAudit'
 
 const route = useRoute()
 const router = useRouter()
@@ -176,6 +180,7 @@ const { t } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
+const saveLoading = ref(false)
 const submitLoading = ref(false)
 const batchOptions = ref([])
 const locationOptions = ref([])
@@ -194,7 +199,14 @@ const formData = reactive({
   replications: 1,
   cropType: '',
   varietyCode: '',
-  varietyName: ''
+  varietyName: '',
+  trialStatus: 'S0' // 默认草稿状态
+})
+
+// 判断是否可以提交审核 (草稿状态 S0 或 已退回状态 S3)
+const canSubmit = computed(() => {
+  const status = formData.trialStatus || 'S0'
+  return status === 'S0' || status === 'S3'
 })
 
 const rules = {
@@ -227,7 +239,7 @@ const loadBatchOptions = async () => {
     const res = await getBatchOptions()
     // 仅显示已批准和进行中的批次
     batchOptions.value = (res.data || []).filter(item =>
-      item.status === 'approved' || item.status === 'ongoing'
+      item.status === "S2"
     )
   } catch (error) {
     console.error('获取批次选项失败:', error)
@@ -259,6 +271,8 @@ const handleBatchChange = (batchId) => {
     formData.varietyCode = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
   }
+  // 批次变更时重新生成试验ID
+  generateTrialId()
 }
 
 const handleLocationChange = (locationId) => {
@@ -290,11 +304,12 @@ const getInfo = async () => {
   }
 }
 
-const handleSubmit = async () => {
+// 保存草稿
+const handleSave = async () => {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
-  submitLoading.value = true
+  saveLoading.value = true
   try {
     const submitData = { ...formData }
     if (submitData.year) {
@@ -310,15 +325,83 @@ const handleSubmit = async () => {
     }
     goBack()
   } catch (error) {
-    console.error('提交失败:', error)
+    console.error('保存失败:', error)
   } finally {
-    submitLoading.value = false
+    saveLoading.value = false
   }
+}
+
+// 提交审核
+const handleSubmitAudit = async () => {
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
+
+  ElMessageBox.confirm(
+    t('research.trialBasicAudit.action.submitConfirm'),
+    t('common.warning'),
+    {
+      type: 'warning',
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel')
+    }
+  ).then(async () => {
+    submitLoading.value = true
+    try {
+      console.log(formData,'formData')
+      const submitData = { ...formData }
+      if (submitData.year) {
+        submitData.year = parseInt(submitData.year)
+      }
+
+      // 先保存数据
+      let trialId = formData.trialId
+      if (isEdit.value) {
+        await editTrialBasic(submitData)
+      } else {
+        const res = await addTrialBasic(submitData)
+        trialId = res.data // 后端返回的trialId直接在data字段中
+        formData.trialId = trialId
+      }
+
+      // 再提交审核
+      await submitTrial(trialId)
+      ElMessage.success(t('research.trialBasicAudit.action.submitSuccess'))
+      goBack()
+    } catch (error) {
+      console.error('提交审核失败:', error)
+    } finally {
+      submitLoading.value = false
+    }
+  }).catch(() => {})
+}
+
+// 生成 trialId: T_${cropType}_${year}_serial(6位)
+const generateTrialId = () => {
+  // 编辑模式下不自动生成
+  if (isEdit.value) return
+
+  const { cropType, year } = formData
+
+  if (!cropType || !year) {
+    formData.trialId = ''
+    return
+  }
+
+  // 生成6位流水号（这里暂时使用随机数，实际应该从后端获取最新的流水号）
+  const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+  formData.trialId = `T_${cropType}_${year}_${serial}`
+
+  console.log(formData.trialId,'formData.trialId')
 }
 
 const goBack = () => {
   router.push('/research/breeding-data/trial')
 }
+
+// 监听年份变化，自动生成试验ID
+watch(() => formData.year, () => {
+  generateTrialId()
+})
 
 onMounted(() => {
   loadBatchOptions()

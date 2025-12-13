@@ -16,19 +16,6 @@
       <!-- 搜索和筛选栏 -->
       <div class="search-bar">
         <div class="search-row">
-          <el-input
-            v-model="searchKeyword"
-            :placeholder="$t('input.inventory.stock.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @clear="handleSearch"
-            @keyup.enter="handleSearch"
-          >
-            <template #prefix>
-              <i class="ri-search-line"></i>
-            </template>
-          </el-input>
-
           <el-select
             v-model="filterWarehouse"
             :placeholder="$t('input.inventory.stock.filterByWarehouse')"
@@ -42,6 +29,36 @@
               :key="warehouse.warehouse_id"
               :label="warehouse.warehouse_name"
               :value="warehouse.warehouse_id"
+            />
+          </el-select>
+
+          <el-select
+            v-model="filterMaterialType"
+            :placeholder="$t('input.catalog.form.inputType')"
+            class="filter-select"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('input.catalog.type.all')" value="" />
+            <el-option :label="$t('input.catalog.type.seed')" value="seed" />
+            <el-option :label="$t('input.catalog.type.fertilizer')" value="fertilizer" />
+            <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
+            <el-option :label="$t('input.catalog.type.other')" value="other" />
+          </el-select>
+
+          <el-select
+            v-model="filterAgriculturalInputType"
+            :placeholder="$t('input.catalog.form.agriculturalInputType')"
+            class="filter-select"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('common.all')" value="" />
+            <el-option
+              v-for="item in agriculturalInputTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
 
@@ -73,6 +90,16 @@
         </div>
       </div>
 
+      <!-- 合计统计展示 -->
+      <div v-if="summaryData.length > 0" class="summary-section">
+        <div class="summary-title">{{ $t('input.inventory.stock.summary.title') }}</div>
+        <div class="summary-content">
+          <span v-for="(item, index) in summaryData" :key="index" class="summary-item">
+            {{ getMaterialTypeText(item.material_type) }}:{{ $t('input.inventory.stock.summary.total') }}{{ item.total_quantity }}{{ item.unit }}
+          </span>
+        </div>
+      </div>
+
       <!-- PC端：数据表格 -->
       <div class="table-card pc-view">
         <el-table
@@ -82,6 +109,8 @@
           style="width: 100%"
         >
           <el-table-column prop="material_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
+          <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120" />
+          <el-table-column prop="agricultural_input_type" :label="$t('input.catalog.form.agriculturalInputType')" min-width="120" />
           <el-table-column prop="material_batch_id" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
@@ -185,18 +214,25 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getStockList } from '@/api/stock'
+import { getStockList, getStockSummary } from '@/api/stock'
 import { getWarehouseList } from '@/api/inventory'
+import { getInputList } from '@/api/input'
 
 const router = useRouter()
 const { t } = useI18n()
 
-const searchKeyword = ref('')
 const filterWarehouse = ref('')
+const filterMaterialType = ref('')
+const filterAgriculturalInputType = ref('')
 const filterStatus = ref('')
 const loading = ref(false)
 const tableData = ref([])
 const warehouseList = ref([])
+const currentUserOrganCode = ref('') // 当前用户部门ID
+const summaryData = ref([]) // 合计统计数据
+
+// 投入品品类选项（动态获取）
+const agriculturalInputTypeOptions = ref([])
 
 const pagination = reactive({
   page: 1,
@@ -224,15 +260,98 @@ const getStatusText = (status) => {
   return statusMap[status] || '-'
 }
 
+// 获取投入品类型文本
+const getMaterialTypeText = (type) => {
+  const typeMap = {
+    'seed': t('input.catalog.type.seed'),
+    'fertilizer': t('input.catalog.type.fertilizer'),
+    'pesticide': t('input.catalog.type.pesticide'),
+    'other': t('input.catalog.type.other')
+  }
+  return typeMap[type] || type
+}
+
+// 获取当前用户部门ID
+const getCurrentUserOrganCode = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    const userInfo = JSON.parse(userInfoStr)
+    const user = userInfo.user || userInfo
+    return user.ORGANCODE || ''
+  }
+  return ''
+}
+
+// 加载投入品品类选项
+const loadAgriculturalInputTypes = async () => {
+  try {
+    const res = await getInputList({
+      page: 1,
+      pageSize: 1000,
+      status: 'active'
+    })
+    if (res.code === 200 && res.data && res.data.list) {
+      // 提取所有不重复的agriculturalInputType值
+      const types = new Set()
+      res.data.list.forEach(item => {
+        if (item.agriculturalInputType) {
+          types.add(item.agriculturalInputType)
+        }
+      })
+      agriculturalInputTypeOptions.value = Array.from(types).map(type => ({
+        label: type,
+        value: type
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load agricultural input types:', error)
+    // 如果获取失败，使用默认选项
+    agriculturalInputTypeOptions.value = [
+      { label: '杀虫剂', value: '杀虫剂' },
+      { label: '杀菌剂', value: '杀菌剂' },
+      { label: '除草剂', value: '除草剂' },
+      { label: '复合肥', value: '复合肥' },
+      { label: '氮肥', value: '氮肥' },
+      { label: '磷肥', value: '磷肥' },
+      { label: '钾肥', value: '钾肥' },
+      { label: '玉米种子', value: '玉米种子' },
+      { label: '小麦种子', value: '小麦种子' },
+      { label: '水稻种子', value: '水稻种子' }
+    ]
+  }
+}
+
 // 加载仓库列表
 const loadWarehouses = async () => {
   try {
-    const res = await getWarehouseList({ page: 1, pageSize: 100 })
+    const res = await getWarehouseList({ 
+      page: 1, 
+      pageSize: 100,
+      organCode: currentUserOrganCode.value // 按部门过滤
+    })
     if (res.code === 200 && res.data) {
       warehouseList.value = res.data.list || []
     }
   } catch (error) {
     console.error('Failed to load warehouses:', error)
+  }
+}
+
+// 加载合计统计数据
+const loadSummaryData = async () => {
+  try {
+    const res = await getStockSummary({
+      warehouseId: filterWarehouse.value,
+      materialType: filterMaterialType.value,
+      agriculturalInputType: filterAgriculturalInputType.value,
+      organCode: currentUserOrganCode.value // 按部门过滤
+    })
+
+    if (res.code === 200 && res.data) {
+      summaryData.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load summary data:', error)
   }
 }
 
@@ -242,7 +361,9 @@ const loadData = async () => {
   try {
     const res = await getStockList({
       warehouseId: filterWarehouse.value,
-      materialBatchId: searchKeyword.value,
+      materialType: filterMaterialType.value,
+      agriculturalInputType: filterAgriculturalInputType.value,
+      organCode: currentUserOrganCode.value, // 按部门过滤
       page: pagination.page,
       pageSize: pagination.pageSize
     })
@@ -263,15 +384,18 @@ const loadData = async () => {
 const handleSearch = () => {
   pagination.page = 1
   loadData()
+  loadSummaryData()
 }
 
 // 重置
 const handleReset = () => {
-  searchKeyword.value = ''
   filterWarehouse.value = ''
+  filterMaterialType.value = ''
+  filterAgriculturalInputType.value = ''
   filterStatus.value = ''
   pagination.page = 1
   loadData()
+  loadSummaryData()
 }
 
 // 查看
@@ -291,8 +415,11 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  currentUserOrganCode.value = getCurrentUserOrganCode()
   loadWarehouses()
+  loadAgriculturalInputTypes()
   loadData()
+  loadSummaryData()
 })
 </script>
 
@@ -388,6 +515,36 @@ onMounted(() => {
 .action-left {
   display: flex;
   gap: 8px;
+}
+
+/* 合计统计 */
+.summary-section {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+}
+
+.summary-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.summary-item {
+  background: white;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #606266;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* PC端表格 */
@@ -587,6 +744,15 @@ onMounted(() => {
 
   .btn-text {
     display: none;
+  }
+  
+  .summary-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .summary-item {
+    width: 100%;
   }
 }
 

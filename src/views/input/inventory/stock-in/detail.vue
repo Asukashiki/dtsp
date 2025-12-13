@@ -71,7 +71,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
-              <span class="value">{{ detailData.apply_time }}</span>
+              <span class="value">{{ detailData.apply_time || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockIn.columns.inboundTime') }}:</span>
@@ -79,7 +79,7 @@
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockIn.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
+              <span class="value">{{ detailData.form_remark || '-' }}</span>
             </div>
           </div>
         </div>
@@ -117,13 +117,18 @@
           <div class="pc-view">
             <el-table :data="detailData.details || []" stripe style="width: 100%">
               <el-table-column type="index" label="#" width="60" />
-              <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.materialId')" width="150" />
-              <el-table-column prop="material_name" :label="$t('input.inventory.stockIn.materialName')" min-width="150" />
+              <el-table-column prop="material_name" :label="$t('input.inventory.stockIn.inputName')" min-width="150" />
+              <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.inputId')" width="150" />
+              <el-table-column prop="batch_no" :label="$t('input.inventory.stockIn.form.inboundBatch')" width="180" show-overflow-tooltip />
+              <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.form.productionBatch')" width="180" show-overflow-tooltip />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.inputType')" width="120" />
+              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockIn.form.agriculturalInputType')" width="120" />
+<!--              <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.productionBatch')" width="150" />-->
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockIn.specification')" width="120" />
               <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center" />
               <el-table-column prop="quantity" :label="$t('input.inventory.stockIn.columns.quantity')" width="100" align="center" />
               <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.expiryDate')" width="120" />
-              <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockIn.materialBatchId')" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="qr_code" :label="$t('input.inventory.stockIn.qrCode')" width="150" show-overflow-tooltip />
             </el-table>
           </div>
 
@@ -139,15 +144,35 @@
               </div>
               <div class="item-info">
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.materialId') }}:</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.inputId') }}:</span>
                   <span class="value">{{ item.material_id }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.specification') }}:</span>
-                  <span class="value">{{ item.spec_model }}</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.inboundBatch') }}:</span>
+                  <span class="value">{{ item.batch_no || '-' }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockIn.unit_of_measure') }}:</span>
+                  <span class="label">{{ $t('input.inventory.stockIn.productionBatch') }}:</span>
+                  <span class="value">{{ item.production_batch_no || '-' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.inputType') }}:</span>
+                  <span class="value">{{ item.material_type || '-' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.agriculturalInputType') }}:</span>
+                  <span class="value">{{ item.agricultural_input_type || '-' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.productionBatch') }}:</span>
+                  <span class="value">{{ item.production_batch_no || '-' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.specification') }}:</span>
+                  <span class="value">{{ item.spec_model || '-' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">{{ $t('input.inventory.stockIn.unit') }}:</span>
                   <span class="value">{{ item.unit_of_measure }}</span>
                 </div>
                 <div class="info-row">
@@ -156,11 +181,11 @@
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.expiryDate') }}:</span>
-                  <span class="value">{{ item.expiry_date }}</span>
+                  <span class="value">{{ item.expiry_date || '-' }}</span>
                 </div>
-                <div v-if="item.material_batch_id" class="info-row full-width">
-                  <span class="label">{{ $t('input.inventory.stockIn.materialBatchId') }}:</span>
-                  <span class="value">{{ item.material_batch_id }}</span>
+                <div v-if="item.qr_code" class="info-row full-width">
+                  <span class="label">{{ $t('input.inventory.stockIn.qrCode') }}:</span>
+                  <span class="value">{{ item.qr_code }}</span>
                 </div>
               </div>
             </div>

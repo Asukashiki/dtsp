@@ -688,7 +688,7 @@ export default {
         inboundBatch: '入库批次',
         productionBatch: '生产批次',
       inputType: '投入品类型',
-        agriculturalInputType: '农资类型',
+        agriculturalInputType: '投入品品类',
         variety: '品种',
       specification: '规格型号',
       unit: '计量单位',
@@ -731,6 +731,7 @@ export default {
       form: {
         stockInId: '入库单号',
         warehouseId: '入库仓库',
+        warehouseName: '仓库名称',
         batchNo: '批次号',
         supplierId: '供应商',
         type: '入库类型',
@@ -742,14 +743,29 @@ export default {
         createTime: '创建时间',
         items: '入库商品明细',
         inputId: '投入品',
+        inputName: '投入品名称',
         quantity: '入库数量',
         expiryDate: '过期日期',
         inputSku: 'SKU编码',
-        itemRemarks: '明细备注'
+        itemRemarks: '明细备注',
+        inboundBatch: '入库批次',
+        productionBatch: '生产批次',
+        inputType: '投入品类型',
+        agriculturalInputType: '投入品品类',
+        specification: '规格型号',
+        unit: '计量单位',
+        qrCode: '二维码',
+        qrCodeHint: '扫描二维码获取更多信息',
+        relatedOrderNo: '关联单号',
+        supplierName: '供应商名称',
+        supplierContact: '供应商联系人',
+        supplierPhone: '供应商电话',
+        remark: '备注'
       },
       placeholder: {
         warehouseId: '请选择入库仓库',
         warehouse: '请选择仓库',
+        warehouseName: '请选择仓库',
         supplierId: '请选择供应商',
         type: '请选择入库类型',
         operator: '请输入操作员',
@@ -775,7 +791,7 @@ export default {
           inboundBatch: '入库批次（系统自动生成）',
           productionBatch: '请输入生产批次（选填）',
         inputType: '投入品类型（自动填充）',
-          agriculturalInputType: '农资类型（自动填充）',
+          agriculturalInputType: '投入品品类（自动填充）',
           variety: '品种（自动填充）',
         specification: '请输入规格型号（选填）',
         unit: '请输入计量单位',
@@ -870,6 +886,7 @@ export default {
         completed: '已完成',
         cancelled: '已取消'
       },
+      auditInfo: '审核信息',
       form: {
         outboundOrderId: '出库单号',
         outboundBatchId: '出库批次号',
@@ -896,6 +913,7 @@ export default {
         inputId: '投入品',
         materialId: '物料',
         materialName: '物料名称',
+        inputName: '投入品名称',
         materialType: '物料类型',
         materialBatchId: '物料批次号',
         quantity: '出库数量',
@@ -906,7 +924,9 @@ export default {
         batchSplits: '批次拆分明细',
         inboundBatchId: '入库批次号',
         splitQuantity: '扣减数量',
-        remainingQuantity: '剩余库存'
+        remainingQuantity: '剩余库存',
+        inputCategory: '投入品品类',
+        variety: '品种'
       },
       placeholder: {
         warehouseId: '请选择出库仓库',
@@ -928,7 +948,9 @@ export default {
         specModel: '请输入规格型号(选填)',
         unitOfMeasure: '请输入计量单位(选填)',
         itemRemarks: '请输入明细备注',
-        auditRemark: '请输入审核意见'
+        auditRemark: '请输入审核意见',
+        inputCategory: '投入品品类（自动填充）',
+        variety: '品种（自动填充）'
       },
       rules: {
         warehouseIdRequired: '请选择出库仓库',
@@ -998,106 +1020,28 @@ export default {
       warning: '库存预警',
       summary: '汇总统计',
       logs: '库存变动日志',
-      viewLogs: '查看变动日志',
-      dashboard: '库存监控仪表盘',
-      dashboardSubtitle: '实时监控库存状态与预警信息',
-      metrics: {
-        totalStock: '总库存总量',
-        nearExpiryCount: '临期商品数量',
-        overCapacityWarehouses: '超容量仓库数',
-        pendingAlerts: '待处理预警数',
-        totalValue: '库存总价值',
-        warehouseUsage: '仓库使用率'
-      },
-      searchPlaceholder: '搜索投入品名称、批次号',
-      filterByWarehouse: '按仓库筛选',
-      filterByInput: '按投入品筛选',
-      filterByStatus: '按库存状态筛选',
-      filterByOperation: '按操作类型筛选',
       allWarehouses: '全部仓库',
-      allInputs: '全部投入品',
       allStatus: '全部状态',
-      allOperations: '全部操作',
-      status: {
-        normal: '正常',
-        active: '正常',
-        nearExpiry: '临期',
-        expired: '过期',
-        inactive: '停用'
-      },
-      operationType: {
-        inbound: '入库',
-        outbound: '出库'
-      },
-      warningType: {
-        all: '全部预警',
-        nearExpiry: '临期预警',
-        expired: '过期预警'
-      },
-      form: {
-        inventoryId: '库存记录ID',
-        inputId: '投入品',
-        inputName: '投入品名称',
-        batchNo: '批次号',
-        warehouseId: '仓库',
-        warehouseName: '仓库名称',
-        currentQuantity: '当前库存数量',
-        inDate: '入库日期',
-        expiredDate: '过期日期',
-        stockStatus: '库存状态',
-        daysToExpire: '距过期天数'
+      filterByWarehouse: '按仓库筛选',
+      filterByStatus: '按状态筛选',
+      summary: {
+        title: '库存合计',
+        total: '共计'
       },
       columns: {
         inputName: '投入品名称',
-        materialName: '投入品名称',
-        materialId: '投入品ID',
-        materialBatchId: '批次ID',
         batchNo: '批次号',
-        warehouseName: '仓库名称',
-        warehouse: '仓库',
-        quantity: '库存数量',
-        currentQuantity: '当前数量',
-        inboundQuantity: '累计入库',
-        outboundQuantity: '累计出库',
+        warehouseName: '仓库',
+        currentQuantity: '当前库存',
         inDate: '入库日期',
-        expiryDate: '过期日期',
         expiredDate: '过期日期',
         stockStatus: '库存状态',
-        status: '状态',
-        qrCode: '二维码',
-        createdAt: '创建时间',
-        updatedAt: '更新时间',
-        actions: '操作',
-        operationType: '操作类型',
-        changeQuantity: '变动数量',
-        beforeQuantity: '变动前',
-        afterQuantity: '变动后',
-        referenceOrderId: '关联单号',
-        operator: '操作人'
+        actions: '操作'
       },
-      summaryColumns: {
-        inputName: '投入品名称',
-        warehouseName: '仓库名称',
-        totalQuantity: '总库存',
-        normalQuantity: '正常库存',
-        nearExpiryQuantity: '临期库存',
-        expiredQuantity: '过期库存'
-      },
-      actions: {
-        view: '查看',
-        viewWarning: '查看预警',
-        viewSummary: '查看汇总',
-        exportData: '导出数据'
-      },
-      messages: {
-        noData: '暂无数据',
-        noWarning: '暂无预警信息'
-      },
-      tabs: {
-        list: '库存列表',
-        warning: '库存预警',
-        summaryByInput: '按投入品汇总',
-        summaryByWarehouse: '按仓库汇总'
+      status: {
+        normal: '正常',
+        nearExpiry: '临期',
+        expired: '过期'
       }
     }
   },
