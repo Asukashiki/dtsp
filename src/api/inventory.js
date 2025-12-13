@@ -24,6 +24,7 @@ export const getWarehouseList = (params = {}) => {
     requestParams.status = params.status
   }
   if (params.supplierId) requestParams.supplierId = params.supplierId
+  if (params.organCode) requestParams.organCode = params.organCode // 添加部门过滤
 
   return agricultureRequest({
     url: '/inventory/warehouse/list',
@@ -77,6 +78,7 @@ export const addWarehouse = (data) => {
     capacity: data.capacity,
     warehouseArea: data.warehouseArea,
     organName: data.organName,
+    organCode: data.organCode, // 添加部门ID
     contactPerson: data.contactPerson,
     contactPhone: data.contactPhone,
     siteCertificate: data.siteCertificate,
@@ -110,6 +112,7 @@ export const updateWarehouse = (data) => {
     capacity: data.capacity,
     warehouseArea: data.warehouseArea,
     organName: data.organName,
+    organCode: data.organCode, // 添加部门ID
     contactPerson: data.contactPerson,
     contactPhone: data.contactPhone,
     siteCertificate: data.siteCertificate,

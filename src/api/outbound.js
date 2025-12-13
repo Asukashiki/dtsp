@@ -15,6 +15,7 @@ import agricultureRequest from '../utils/agricultureRequest'
  * @param {String} params.outboundOrderId - 出库单ID（模糊查询）
  * @param {String} params.relatedOrderNo - 关联单号
  * @param {String} params.warehouseId - 仓库ID
+ * @param {String} params.organCode - 部门编码(权限过滤)
  */
 export const getOutboundOrderList = (params) => {
   return agricultureRequest({

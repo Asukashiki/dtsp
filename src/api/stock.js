@@ -8,18 +8,25 @@ import agricultureRequest from '../utils/agricultureRequest'
  * @param {string} params.warehouseId - 仓库ID
  * @param {string} params.materialId - 投入品ID
  * @param {string} params.materialBatchId - 投入品批次ID
+ * @param {string} params.organCode - 部门编码(权限过滤)
  * @param {number} params.page - 页码
  * @param {number} params.pageSize - 每页数量
  */
 export const getStockList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 20
+  }
+  
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.materialId) requestParams.materialId = params.materialId
+  if (params.materialBatchId) requestParams.materialBatchId = params.materialBatchId
+  if (params.organCode) requestParams.organCode = params.organCode
+  
   return agricultureRequest({
     url: '/inventory/stock/query',
     method: 'get',
-    params: {
-      page: params.page || 1,
-      pageSize: params.pageSize || 20,
-      warehouseId: params.warehouseId || '',
-    }
+    params: requestParams
   })
 }
 

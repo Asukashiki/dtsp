@@ -25,17 +25,17 @@
             <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockIn.columns.type')" prop="inboundType">
+            <el-form-item :label="$t('input.inventory.stockIn.form.type')" prop="inboundType">
               <el-select v-model="formData.inboundType" :placeholder="$t('input.inventory.stockIn.placeholder.type')" class="full-width">
                 <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
                 <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
                 <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.columns.warehouse')" prop="warehouseId">
+            <el-form-item :label="$t('input.inventory.stockIn.form.warehouseName')" prop="warehouseId">
               <el-select
                 v-model="formData.warehouseId"
-                :placeholder="$t('input.inventory.stockIn.placeholder.warehouse')"
+                :placeholder="$t('input.inventory.stockIn.placeholder.warehouseName')"
                 filterable
                 clearable
                 class="full-width"
@@ -49,7 +49,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.relatedOrderNo')" prop="relatedOrderNo">
+            <el-form-item :label="$t('input.inventory.stockIn.form.relatedOrderNo')" prop="relatedOrderNo">
               <el-select
                 v-model="formData.relatedOrderNo"
                 :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')"
@@ -67,19 +67,19 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.supplierName')" prop="supplierName">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierName')" prop="supplierName">
               <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.supplierContact')" prop="supplierContact">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierContact')" prop="supplierContact">
               <el-input v-model="formData.supplierContact" :placeholder="$t('input.inventory.stockIn.placeholder.supplierContact')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.supplierPhone')" prop="supplierPhone">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierPhone')" prop="supplierPhone">
               <el-input v-model="formData.supplierPhone" :placeholder="$t('input.inventory.stockIn.placeholder.supplierPhone')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.columns.operator')" prop="operator">
+            <el-form-item :label="$t('input.inventory.stockIn.form.operator')" prop="operator">
               <el-input v-model="formData.operator" :placeholder="$t('input.inventory.stockIn.placeholder.operator')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.remark')" prop="remark" class="full-width-item">
+            <el-form-item :label="$t('input.inventory.stockIn.form.remark')" prop="remark" class="full-width-item">
               <el-input v-model="formData.remark" :placeholder="$t('input.inventory.stockIn.placeholder.remark')" type="textarea" :rows="2" />
             </el-form-item>
           </div>
@@ -95,7 +95,7 @@
           <div class="items-list">
             <div v-for="(item, index) in formData.details" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item :label="$t('input.inventory.stockIn.inputName')" :prop="`details.${index}.inputId`" :rules="detailRules.inputId">
+                <el-form-item :label="$t('input.inventory.stockIn.form.inputName')" :prop="`details.${index}.inputId`" :rules="detailRules.inputId">
                   <el-select
                     v-model="item.inputId"
                     :placeholder="$t('input.inventory.stockIn.placeholder.inputName')"
@@ -107,43 +107,43 @@
                   >
                     <el-option
                       v-for="input in inputList"
-                      :key="input.input_id"
-                      :label="input.input_name"
-                      :value="input.input_id"
+                      :key="input.inputId"
+                      :label="input.inputName"
+                      :value="input.inputId"
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.inputId')" :prop="`details.${index}.inputCode`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.inputId')" :prop="`details.${index}.inputCode`">
                   <el-input v-model="item.inputCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputId')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.inboundBatch')" :prop="`details.${index}.batchNo`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.inboundBatch')" :prop="`details.${index}.batchNo`">
                   <el-input v-model="item.batchNo" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inboundBatch')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.productionBatch')" :prop="`details.${index}.productionBatchNo`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.productionBatch')" :prop="`details.${index}.productionBatchNo`">
                   <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.inputType')" :prop="`details.${index}.inputType`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.inputType')" :prop="`details.${index}.inputType`">
                   <el-input v-model="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
                   <el-input v-model="item.agriculturalInputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.variety')" :prop="`details.${index}.variety`">
+<!--                <el-form-item :label="$t('input.inventory.stockIn.form.variety')" :prop="`details.${index}.variety`">
                   <el-input v-model="item.variety" disabled :placeholder="$t('input.inventory.stockIn.placeholder.variety')" />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.specification')" :prop="`details.${index}.specification`">
+                </el-form-item>-->
+                <el-form-item :label="$t('input.inventory.stockIn.form.specification')" :prop="`details.${index}.specification`">
                   <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
+                <el-form-item :label="$t('input.inventory.stockIn.form.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
                   <el-input v-model="item.unit" :placeholder="$t('input.inventory.stockIn.placeholder.unit')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.columns.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
+                <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
                   <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.expiryDate')" :prop="`details.${index}.expiryDate`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`">
                   <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" value-format="YYYY-MM-DD" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.qrCode')" :prop="`details.${index}.qrCode`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.qrCode')" :prop="`details.${index}.qrCode`">
                   <el-input v-model="item.qrCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.qrCode')" />
                 </el-form-item>
               </div>
@@ -195,6 +195,20 @@ const distributionLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 const inboundOrderId = route.params.id
 
+// 当前用户部门ID
+const currentUserOrganCode = ref('')
+
+// 获取当前用户部门ID
+const getCurrentUserOrganCode = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    const userInfo = JSON.parse(userInfoStr)
+    const user = userInfo.user || userInfo
+    return user.ORGANCODE || ''
+  }
+  return ''
+}
+
 // 仓库列表
 const warehouseList = ref([])
 // 投入品列表
@@ -209,7 +223,8 @@ const loadWarehouseList = async () => {
     const res = await getWarehouseList({
       page: 1,
       pageSize: 1000,
-      status: '1' // 只获取启用的仓库
+      status: '1', // 只获取启用的仓库
+      organCode: currentUserOrganCode.value // 按部门过滤
     })
     if (res.code === 200) {
       warehouseList.value = res.data.list || []
@@ -279,11 +294,11 @@ const handleDistributionChange = async (distributionId) => {
       // 根据分发单明细创建入库明细
       for (const detail of details) {
         // 从投入品列表中查找对应的投入品信息
-        const input = inputList.value.find(i => i.input_id === detail.inputId)
+        const input = inputList.value.find(i => i.inputId === detail.inputId)
 
         formData.details.push({
           inputId: detail.inputId || '',
-          inputCode: input?.input_sku || '',
+          inputCode: input?.inputSku || '',
           batchNo: '', // 入库批次后端自动生成
           productionBatchNo: '', // 生产批次需手动填写
           inputType: input ? getInputTypeText(input.type) : '',
@@ -293,7 +308,7 @@ const handleDistributionChange = async (distributionId) => {
           unit: detail.unit || '',
           quantity: detail.required || detail.quantity || null,
           expiryDate: '',
-          qrCode: input?.qr_code || ''
+          qrCode: input?.qrCode || ''
         })
       }
 
@@ -317,13 +332,13 @@ const handleInputChange = async (item, index) => {
     return
   }
 
-  const selectedInput = inputList.value.find(input => input.input_id === item.inputId)
+  const selectedInput = inputList.value.find(input => input.inputId === item.inputId)
   if (selectedInput) {
-    item.inputCode = selectedInput.input_sku || ''
+    item.inputCode = selectedInput.inputSku || ''
     item.inputType = getInputTypeText(selectedInput.type)
-    item.agriculturalInputType = selectedInput.agricultural_input_type || ''
+    item.agriculturalInputType = selectedInput.agriculturalInputType || ''
     item.variety = selectedInput.variety || ''
-    item.qrCode = selectedInput.qr_code || ''
+    item.qrCode = selectedInput.qrCode || ''
   }
 }
 
@@ -343,10 +358,15 @@ const formData = reactive({
   warehouseId: '',
   relatedOrderNo: '',
   supplierName: '',
+  supplierType: '', // 添加供应商类型字段
+  supplierId: '', // 添加供应商ID字段
   supplierContact: '',
   supplierPhone: '',
+  inboundUser: '', // 添加入库用户字段
   operator: '',
+  applyTime: '', // 添加申请时间字段
   remark: '',
+  fremark: '', // 添加备用备注字段
   details: [
     {
       inputId: '',
@@ -424,10 +444,15 @@ const loadData = async () => {
       formData.warehouseId = data.warehouseId || data.warehouse_id
       formData.relatedOrderNo = data.relatedOrderNo || data.related_order_no || ''
       formData.supplierName = data.supplierName || data.supplier_name || ''
+      formData.supplierType = data.supplierType || data.supplier_type || ''
+      formData.supplierId = data.supplierId || data.supplier_id || ''
       formData.supplierContact = data.supplierContact || data.supplier_contact || ''
       formData.supplierPhone = data.supplierPhone || data.supplier_phone || ''
+      formData.inboundUser = data.inboundUser || data.inbound_user || ''
       formData.operator = data.operator || ''
+      formData.applyTime = data.applyTime || data.apply_time || ''
       formData.remark = data.remark || ''
+      formData.fremark = data.fremark || ''
 
       if (data.details && data.details.length > 0) {
         formData.details = data.details.map(item => ({
@@ -478,15 +503,20 @@ const handleSubmit = async () => {
       warehouseId: formData.warehouseId,
       relatedOrderNo: formData.relatedOrderNo,
       supplierName: formData.supplierName,
+      supplierType: formData.supplierType, // 添加供应商类型
+      supplierId: formData.supplierId, // 添加供应商ID
       supplierContact: formData.supplierContact,
       supplierPhone: formData.supplierPhone,
+      inboundUser: formData.inboundUser || formData.operator, // 添加入库用户，如果没有则使用操作员
       operator: formData.operator,
+      applyTime: formData.applyTime || new Date().toISOString().slice(0, 19).replace('T', ' '), // 添加申请时间，如果没有则使用当前时间
       remark: formData.remark,
+      fremark: formData.fremark, // 添加备用备注
       details: formData.details.map(item => {
-        const selectedInput = inputList.value.find(input => input.input_id === item.inputId)
+        const selectedInput = inputList.value.find(input => input.inputId === item.inputId)
         return {
           materialId: item.inputId,
-          materialName: selectedInput ? selectedInput.input_name : '',
+          materialName: selectedInput ? selectedInput.inputName : '',
           materialType: item.inputType,
           batchNo: item.batchNo,
           productionBatchNo: item.productionBatchNo, // 生产批次
@@ -514,10 +544,24 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
+  currentUserOrganCode.value = getCurrentUserOrganCode()
   await loadWarehouseList()
   await loadInputList()
   await loadDistributionList()
   await loadData()
+
+  // 只在新增模式下自动填充操作员和入库用户
+  if (!isEdit.value) {
+    // 获取用户信息并自动填充操作员和入库用户
+    const userInfoStr = localStorage.getItem('userInfo')
+    if (userInfoStr) {
+      const userInfo = JSON.parse(userInfoStr)
+      const user = userInfo.user || userInfo
+      console.log(user)
+      formData.operator = user.USERNAME || user.REALNAME || user.username || user.realName || ''
+      formData.inboundUser = formData.operator // 同时填充入库用户
+    }
+  }
 })
 </script>
 

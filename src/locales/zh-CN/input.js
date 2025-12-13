@@ -688,7 +688,7 @@ export default {
         inboundBatch: '入库批次',
         productionBatch: '生产批次',
       inputType: '投入品类型',
-        agriculturalInputType: '农资类型',
+        agriculturalInputType: '投入品品类',
         variety: '品种',
       specification: '规格型号',
       unit: '计量单位',
@@ -731,6 +731,7 @@ export default {
       form: {
         stockInId: '入库单号',
         warehouseId: '入库仓库',
+        warehouseName: '仓库名称',
         batchNo: '批次号',
         supplierId: '供应商',
         type: '入库类型',
@@ -742,14 +743,29 @@ export default {
         createTime: '创建时间',
         items: '入库商品明细',
         inputId: '投入品',
+        inputName: '投入品名称',
         quantity: '入库数量',
         expiryDate: '过期日期',
         inputSku: 'SKU编码',
-        itemRemarks: '明细备注'
+        itemRemarks: '明细备注',
+        inboundBatch: '入库批次',
+        productionBatch: '生产批次',
+        inputType: '投入品类型',
+        agriculturalInputType: '投入品品类',
+        specification: '规格型号',
+        unit: '计量单位',
+        qrCode: '二维码',
+        qrCodeHint: '扫描二维码获取更多信息',
+        relatedOrderNo: '关联单号',
+        supplierName: '供应商名称',
+        supplierContact: '供应商联系人',
+        supplierPhone: '供应商电话',
+        remark: '备注'
       },
       placeholder: {
         warehouseId: '请选择入库仓库',
         warehouse: '请选择仓库',
+        warehouseName: '请选择仓库',
         supplierId: '请选择供应商',
         type: '请选择入库类型',
         operator: '请输入操作员',
@@ -775,7 +791,7 @@ export default {
           inboundBatch: '入库批次（系统自动生成）',
           productionBatch: '请输入生产批次（选填）',
         inputType: '投入品类型（自动填充）',
-          agriculturalInputType: '农资类型（自动填充）',
+          agriculturalInputType: '投入品品类（自动填充）',
           variety: '品种（自动填充）',
         specification: '请输入规格型号（选填）',
         unit: '请输入计量单位',
@@ -870,6 +886,7 @@ export default {
         completed: '已完成',
         cancelled: '已取消'
       },
+      auditInfo: '审核信息',
       form: {
         outboundOrderId: '出库单号',
         outboundBatchId: '出库批次号',
@@ -896,6 +913,7 @@ export default {
         inputId: '投入品',
         materialId: '物料',
         materialName: '物料名称',
+        inputName: '投入品名称',
         materialType: '物料类型',
         materialBatchId: '物料批次号',
         quantity: '出库数量',
@@ -906,7 +924,9 @@ export default {
         batchSplits: '批次拆分明细',
         inboundBatchId: '入库批次号',
         splitQuantity: '扣减数量',
-        remainingQuantity: '剩余库存'
+        remainingQuantity: '剩余库存',
+        inputCategory: '投入品品类',
+        variety: '品种'
       },
       placeholder: {
         warehouseId: '请选择出库仓库',
@@ -928,7 +948,9 @@ export default {
         specModel: '请输入规格型号(选填)',
         unitOfMeasure: '请输入计量单位(选填)',
         itemRemarks: '请输入明细备注',
-        auditRemark: '请输入审核意见'
+        auditRemark: '请输入审核意见',
+        inputCategory: '投入品品类（自动填充）',
+        variety: '品种（自动填充）'
       },
       rules: {
         warehouseIdRequired: '请选择出库仓库',
@@ -1098,7 +1120,9 @@ export default {
         warning: '库存预警',
         summaryByInput: '按投入品汇总',
         summaryByWarehouse: '按仓库汇总'
-      }
+      },
+      unit: '件',
+      warning: '库存预警'
     }
   },
 

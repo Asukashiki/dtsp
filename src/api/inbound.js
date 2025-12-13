@@ -15,6 +15,7 @@ import agricultureRequest from '../utils/agricultureRequest'
  * @param {string} params.warehouseId - 仓库ID
  * @param {string} params.startDate - 开始日期
  * @param {string} params.endDate - 结束日期
+ * @param {string} params.organCode - 部门编码(权限过滤)
  */
 export const getInboundOrderList = (params) => {
   return agricultureRequest({
