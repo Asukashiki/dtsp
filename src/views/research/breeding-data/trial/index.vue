@@ -107,7 +107,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
-                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="240" fixed="right">
+                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
                   <template #default="{ row }">
                     <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" @archive="handleArchive" />
                   </template>

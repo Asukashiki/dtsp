@@ -86,6 +86,10 @@ export default {
     validation: {
       yearNotLessThanCurrent: '开展年份不能小于当前年份'
     },
+    // 提示
+    hint: {
+      yearNoPastSeasonLogic: '仅允许选择当年及未来年份；过去年份不可选'
+    },
   },
 
   // 地块及播种信息管理
@@ -180,6 +184,7 @@ export default {
   trial: {
     title: '试验基础信息管理',
     subtitle: '管理育种试验基础信息及关联地块',
+    subtitle1: '对已提交试验数据进行审核',
     list: '试验列表',
     add: '新增试验',
     edit: '编辑试验',

@@ -347,6 +347,7 @@ const handleSubmitAudit = async () => {
   ).then(async () => {
     submitLoading.value = true
     try {
+      console.log(formData,'formData')
       const submitData = { ...formData }
       if (submitData.year) {
         submitData.year = parseInt(submitData.year)
@@ -389,6 +390,8 @@ const generateTrialId = () => {
   // 生成6位流水号（这里暂时使用随机数，实际应该从后端获取最新的流水号）
   const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
   formData.trialId = `T_${cropType}_${year}_${serial}`
+
+  console.log(formData.trialId,'formData.trialId')
 }
 
 const goBack = () => {

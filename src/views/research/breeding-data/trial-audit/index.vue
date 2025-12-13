@@ -1,5 +1,20 @@
 <template>
   <div class="trial-audit-container">
+    <!-- 页面头部：与试验基础信息管理保持一致风格 -->
+    <div class="page-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <i class="ri-test-tube-line"></i>
+        </div>
+        <div class="header-content">
+          <h1 class="page-title">{{ t('research.trialBasicAudit.audit.title') }}</h1>
+          <p class="page-subtitle">{{ t('research.breedingData.trial.subtitle1') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content-wrapper">
     <el-card class="search-card">
       <el-form :model="queryParams" :inline="true" label-width="auto">
         <el-form-item :label="t('research.trialBasicAudit.audit.list.trialName')">
@@ -277,6 +292,7 @@
         @current-change="getList"
       />
     </el-card>
+    </div>
   </div>
 </template>
 
@@ -431,8 +447,9 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
+
 .trial-audit-container {
-  padding: 20px;
 
   .search-card {
     margin-bottom: 20px;

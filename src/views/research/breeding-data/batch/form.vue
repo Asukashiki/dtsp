@@ -62,7 +62,19 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.year')" prop="year">
-                    <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.batch.placeholder.year')" />
+                    <div class="w-full">
+                      <el-date-picker
+                        v-model="formData.year"
+                        type="year"
+                        value-format="YYYY"
+                        style="width: 100%"
+                        :placeholder="$t('research.breedingData.batch.placeholder.year')"
+                        :disabled-date="disablePastYears"
+                      />
+                      <div class="mt-1 text-xs text-gray-500">
+                        {{ $t('research.breedingData.batch.hint.yearNoPastSeasonLogic') }}
+                      </div>
+                    </div>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -180,6 +192,10 @@ const getInfo = async () => {
   if (!isEdit.value) {
     // 新增模式下设置默认状态为ongoing
     formData.status = 'ongoing'
+    // 新增模式默认年份为当前年份
+    if (!formData.year) {
+      formData.year = String(new Date().getFullYear())
+    }
     return
   }
   loading.value = true
@@ -252,6 +268,13 @@ const goBack = () => {
 watch(() => formData.year, () => {
   generateBatchId()
 })
+
+// 禁用过去年份（遵循日期逻辑：不允许早于当前年）
+const disablePastYears = (date) => {
+  if (!date) return false
+  const currentYear = new Date().getFullYear()
+  return date.getFullYear() < currentYear
+}
 
 onMounted(() => {
   getInfo()
