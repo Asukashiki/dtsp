@@ -24,6 +24,7 @@ export default {
   trialBasicAdd: 'Add Trial Information',
   trialBasicEdit: 'Edit Trial Information',
   trialBasicDetail: 'Trial Information Detail',
+  trialBasicAudit: 'Trial Basic Information Audit',
 
   agronomicTraitDataCollection: 'Agronomic Trait Data Collection',
   agronomicTraitDataAdd: 'Add Agronomic Trait Data',

@@ -232,6 +232,7 @@ export default {
       replications: 'Replications',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
+      status: 'Status',
       createTime: 'Created Time',
       actions: 'Actions',
     },

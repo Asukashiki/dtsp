@@ -225,6 +225,7 @@ export default {
       replications: '重复次数',
       cropType: '作物类型',
       varietyName: '品种名称',
+      status: '状态',
       createTime: '创建时间',
       actions: '操作',
     },

@@ -369,6 +369,19 @@ const routes = [
         component: () => import('../views/research/breeding-data/dataset-audit/review.vue'),
         meta: { title: '审核数据集', hideInMenu: true, requiresAuth: true }
       },
+      // 育种数据管理 - 试验基础信息管理审核
+      {
+        path: 'breeding-data/trial-audit',
+        name: 'TrialBasicAudit',
+        component: () => import('../views/research/breeding-data/trial-audit/index.vue'),
+        meta: { title: '试验基础信息管理审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trial-audit/review/:id',
+        name: 'TrialBasicAuditReview',
+        component: () => import('../views/research/breeding-data/trial-audit/review.vue'),
+        meta: { title: '审核试验', hideInMenu: true, requiresAuth: true }
+      },
       // 育种数据管理 - 育种许可数据录入
       {
         path: 'breeding-data/breeding-license',
