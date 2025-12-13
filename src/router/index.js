@@ -474,33 +474,6 @@ const routes = [
         component: () => import('../views/research/data-collection/environment-new-data/detail.vue'),
         meta: { title: '环境监测数据详情', hideInMenu: true, requiresAuth: true }
       },
-
-      // 环境/IoT数据采集
-      {
-        path: 'data-collection/environment-iot',
-        name: 'EnvironmentIotList',
-        component: () => import('../views/research/data-collection/environment-iot/index.vue'),
-        meta: { title: '环境/IoT数据', requiresAuth: true }
-      },
-      {
-        path: 'data-collection/environment-iot/add',
-        name: 'EnvironmentIotAdd',
-        component: () => import('../views/research/data-collection/environment-iot/form.vue'),
-        meta: { title: '新增环境数据', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'data-collection/environment-iot/edit/:id',
-        name: 'EnvironmentIotEdit',
-        component: () => import('../views/research/data-collection/environment-iot/form.vue'),
-        meta: { title: '编辑环境数据', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'data-collection/environment-iot/detail/:id',
-        name: 'EnvironmentIotDetail',
-        component: () => import('../views/research/data-collection/environment-iot/detail.vue'),
-        meta: { title: '环境数据详情', hideInMenu: true, requiresAuth: true }
-      },
-
       // ==================== 繁殖数据管理 ====================
       
       // OSE确认接收育种家种子
