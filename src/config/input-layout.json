@@ -30,23 +30,7 @@
         }
       ]
     },
-    {
-      "index": "registration-management",
-      "icon": "ri-file-list-3-line",
-      "titleKey": "input.menu.registrationManagement",
-      "children": [
-        {
-          "index": "/input/registration",
-          "icon": "ri-file-add-line",
-          "titleKey": "input.menu.registration"
-        },
-        {
-          "index": "/input/registration/approval",
-          "icon": "ri-file-check-line",
-          "titleKey": "input.menu.registrationApproval"
-        }
-      ]
-    },
+
        {
       "index": "input-management",
       "icon": "ri-box-3-line",
