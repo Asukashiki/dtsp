@@ -105,16 +105,16 @@
                   :label="$t('demandAudit.columns.farmerIdNumber')"
                   min-width="150"
                 />
-                <el-table-column
-                  prop="woreda"
-                  :label="$t('demandAudit.columns.woreda')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="kebele"
-                  :label="$t('demandAudit.columns.kebele')"
-                  min-width="120"
-                />
+<!--                <el-table-column-->
+<!--                  prop="woreda"-->
+<!--                  :label="$t('demandAudit.columns.woreda')"-->
+<!--                  min-width="120"-->
+<!--                />-->
+<!--                <el-table-column-->
+<!--                  prop="kebele"-->
+<!--                  :label="$t('demandAudit.columns.kebele')"-->
+<!--                  min-width="120"-->
+<!--                />-->
                 <!-- <el-table-column
                   prop="village"
                   :label="$t('demandAudit.columns.village')"
@@ -163,7 +163,7 @@
                 </el-table-column>
               </el-table>
               </div>
-              
+
             <!-- 移动端卡片 -->
             <div class="mobile-cards mobile-only">
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
@@ -295,16 +295,16 @@
                     :label="$t('demandAudit.columns.farmerIdNumber')"
                     min-width="150"
                   />
-                  <el-table-column
-                    prop="woreda"
-                    :label="$t('demandAudit.columns.woreda')"
-                    min-width="120"
-                  />
-                  <el-table-column
-                    prop="kebele"
-                    :label="$t('demandAudit.columns.kebele')"
-                    min-width="120"
-                  />
+<!--                  <el-table-column-->
+<!--                    prop="woreda"-->
+<!--                    :label="$t('demandAudit.columns.woreda')"-->
+<!--                    min-width="120"-->
+<!--                  />-->
+<!--                  <el-table-column-->
+<!--                    prop="kebele"-->
+<!--                    :label="$t('demandAudit.columns.kebele')"-->
+<!--                    min-width="120"-->
+<!--                  />-->
                   <el-table-column
                     prop="landArea"
                     :label="$t('demandAudit.columns.landArea')"
@@ -326,10 +326,10 @@
                           <i class="ri-eye-line"></i>
                           {{ $t('common.view') }}
                         </el-button>
-                        <el-button link type="danger" @click="handleReject(row)">
-                          <i class="ri-close-line"></i>
-                          {{ $t('demandAudit.actions.reject') }}
-                        </el-button>
+<!--                        <el-button link type="danger" @click="handleReject(row)">-->
+<!--                          <i class="ri-close-line"></i>-->
+<!--                          {{ $t('demandAudit.actions.reject') }}-->
+<!--                        </el-button>-->
                       </div>
                     </template>
                   </el-table-column>

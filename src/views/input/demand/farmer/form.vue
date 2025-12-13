@@ -277,6 +277,8 @@ const formData = reactive({
   woredaName: '',
   kebeleName: '',
   village: '',
+  daUserId: '',
+  daUserName: '',
   landArea: null,
   year: currentYear.toString(),
   inputItems: []
@@ -458,7 +460,9 @@ const handleSubmit = async () => {
       ElMessage.warning(t('farmerDemand.rules.itemsRequired'))
       return
     }
-
+    const user = JSON.parse(localStorage.getItem('userInfo')).user
+    formData.daUserId = user.ID;
+    formData.daUserName = user.NAME;
     // 处理提交数据
     const submitData = {
       ...formData,

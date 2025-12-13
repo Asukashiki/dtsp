@@ -1,8 +1,8 @@
 export default {
   // District Demand Aggregation Audit
-  title: 'District Demand Aggregation Audit',
-  subtitle: 'Review town-level submitted demand aggregation data',
-  listTitle: 'Town-level Aggregation Records List',
+  title: 'Zone Demand Aggregation Audit',
+  subtitle: 'Review woreda-level submitted demand aggregation data',
+  listTitle: 'woreda-level Aggregation Records List',
 
   // Actions
   actions: {

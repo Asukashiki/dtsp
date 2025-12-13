@@ -289,3 +289,114 @@ export default {
     },
   },
 }
+
+// 研发数据采集模块
+export const research = {
+  dataCollection: {
+    // 环境/IoT数据模块
+    environmentIot: {
+      title: '环境/IoT数据',
+      subtitle: '管理环境监测数据、IoT设备数据及气象站数据',
+      list: '环境数据列表',
+      detail: '环境数据详情',
+      dataInfo: '数据信息',
+
+      // 表单字段
+      form: {
+        envRecordId: '记录ID',
+        trialId: '试验ID',
+        trialName: '试验名称',
+        batchId: '育种批次ID',
+        batchName: '批次名称',
+        plotId: '地块ID',
+        plotName: '地块名称',
+        stationId: '气象站ID',
+        stationName: '气象站名称',
+        timestamp: '采集时间',
+        parameterCode: '参数代码',
+        parameterName: '参数名称',
+        value: '数值',
+        unit: '单位',
+        dataSource: '数据来源',
+        remark: '备注',
+        dateRange: '时间范围',
+      },
+
+      // 表单占位符
+      placeholder: {
+        trialId: '请输入试验ID',
+        batchId: '请输入育种批次ID',
+        plotId: '请输入地块ID（选填）',
+        stationId: '请输入气象站ID',
+        timestamp: '请选择数据采集时间',
+        parameterCode: '请选择参数类型',
+        value: '请输入数值',
+        unit: '请输入单位（如: mm, °C, %）',
+        remark: '请输入备注',
+      },
+
+      // 表单验证
+      rules: {
+        trialIdRequired: '请输入试验ID',
+        batchIdRequired: '请输入育种批次ID',
+        stationIdRequired: '请输入气象站ID',
+        timestampRequired: '请选择采集时间',
+        parameterCodeRequired: '请选择参数类型',
+        valueRequired: '请输入数值',
+      },
+
+      // 表格列
+      columns: {
+        envRecordId: '记录ID',
+        batchName: '批次名称',
+        plotName: '地块名称',
+        stationName: '气象站',
+        timestamp: '采集时间',
+        parameterName: '参数',
+        value: '数值',
+        unit: '单位',
+        dataSource: '数据来源',
+      },
+
+      // 环境参数
+      parameters: {
+        RAIN_DAILY: '日降雨量',
+        RAIN_MONTHLY: '月降雨量',
+        TMAX: '最高温度',
+        TMIN: '最低温度',
+        TEMP_AVG: '平均温度',
+        RH_AVG: '相对湿度',
+        SOLAR_RAD: '光照强度',
+        SOIL_MOISTURE: '土壤湿度',
+      },
+
+      // 数据来源
+      dataSource: {
+        IOT_SYSTEM: 'IoT系统',
+        CSV_IMPORT: 'CSV导入',
+        MANUAL: '手动录入',
+      },
+
+      // 操作
+      actions: {
+        importCsv: 'CSV导入',
+      },
+
+      // 上传
+      upload: {
+        dragText: '将文件拖到此处，或点击上传',
+        tip: '仅支持CSV文件',
+        selectFile: '请选择CSV文件',
+      },
+
+      // 提示信息
+      messages: {
+        deleteConfirm: '确定删除该环境数据吗？',
+        batchDeleteConfirm: '确定删除选中的 {count} 条环境数据吗？',
+        importSuccess: 'CSV数据导入成功',
+        importFailed: 'CSV数据导入失败',
+        validateFailed: '数据验证失败',
+      },
+    },
+  },
+}

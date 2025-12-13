@@ -118,12 +118,16 @@
                 <el-table-column type="index" :label="'#'" width="60" />
                 <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="120">
                   <template #default="{ row }">
-                    {{ getInputCategoryLabel(row.inputCategory) }}
+                    {{ getInputCategoryLabel(row.inputCategory) || row.inputCategory || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="inputType" :label="$t('farmerDemand.form.inputType')" min-width="120" />
-                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />
-                <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />
+                <el-table-column prop="inputType" :label="$t('farmerDemand.form.inputType')" min-width="120" >
+                  <template #default="{ row }">
+                    {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
+                  </template>
+                </el-table-column>
+<!--                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />-->
+<!--                <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />-->
                 <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
                 <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120" />
               </el-table>
@@ -172,6 +176,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmerDemandDetail } from '@/api/farmerDemand'
+import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
@@ -179,6 +184,24 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref({})
+
+// 清除字典缓存并加载
+clearDictCache('input_type')
+clearDictCache('input_category')
+clearDictCache('farmer_demand_status')
+
+
+const {
+  options: dictOptions,
+  loading: dictLoading
+} = useDict([
+  'input_type',
+  'input_category',
+  'farmer_demand_status'
+], {
+  immediate: true,
+  cache: true
+})
 
 // 状态选项（0: 草稿, 1: 已提交, 2: 已通过, 3: 驳回, 4: 已锁定）
 const statusOptions = computed(() => ({
@@ -195,6 +218,36 @@ const inputCategoryOptions = computed(() => ({
   fertilizer: t('farmerDemand.inputCategory.fertilizer'),
   pesticide: t('farmerDemand.inputCategory.pesticide')
 }))
+
+
+
+
+// 投入品大类标签
+const getInputCategoryLabel = (categoryValue) => {
+  if (!categoryValue) return '-'
+  const typeDict = dictOptions.value.input_type || []
+  const typeItem = typeDict.find(item => item.value === categoryValue)
+  if (typeItem) return typeItem.label
+
+  const categoryDict = dictOptions.value.input_category || []
+  const categoryItem = categoryDict.find(item => item.value === categoryValue)
+  if (categoryItem) return categoryItem.label
+
+  const legacyMap = {
+    seed: t('farmerDemand.inputCategory.seed'),
+    fertilizer: t('farmerDemand.inputCategory.fertilizer'),
+    pesticide: t('farmerDemand.inputCategory.pesticide')
+  }
+  return legacyMap[categoryValue] || categoryValue
+}
+
+// 投入品小类标签
+const getInputTypeLabel = (typeValue) => {
+  if (!typeValue) return '-'
+  const categoryDict = dictOptions.value.input_category || []
+  const categoryItem = categoryDict.find(item => item.value === typeValue)
+  return categoryItem ? categoryItem.label : typeValue
+}
 
 // 获取状态标签
 const getStatusLabel = (status) => {
@@ -214,9 +267,9 @@ const getStatusType = (status) => {
 }
 
 // 获取投入品类型标签
-const getInputCategoryLabel = (category) => {
-  return inputCategoryOptions.value[category] || category
-}
+// const getInputCategoryLabel = (category) => {
+//   return inputCategoryOptions.value[category] || category
+// }
 
 // 加载数据
 const loadData = async () => {

@@ -43,7 +43,7 @@
               /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('townAggregation.columns.sourceName')"
+                :label="$t('WoredaName')"
                 min-width="140"
               />
               <!-- <el-table-column
@@ -102,7 +102,7 @@
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="primary" @click="handleApprove(row)">
+                    <el-button link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
                       {{ $t('townAggregation.actions.approve') }}
                     </el-button>
@@ -255,22 +255,30 @@
           prop="inputCategory"
           :label="$t('townAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inputType"
           :label="$t('townAggregation.detailDialog.columns.inputType')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalQuantity"
           :label="$t('townAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-        <el-table-column
-          prop="totalCount"
-          :label="$t('townAggregation.detailDialog.columns.totalCount')"
-          min-width="120"
-        />
+<!--        <el-table-column-->
+<!--          prop="totalCount"-->
+<!--          :label="$t('townAggregation.detailDialog.columns.totalCount')"-->
+<!--          min-width="120"-->
+<!--        />-->
       </el-table>
 
       <!-- 分页 -->
@@ -310,7 +318,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateTownInputDemand, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const { t } = useI18n()
 
@@ -419,11 +429,11 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
-      // sourceCode: 'huangshan', 
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      // sourceCode: 'huangshan',
       status: '0',
       level: '1',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username, 
+      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
       // subQuantity: 0//农民数||村的数量||
     })
 
