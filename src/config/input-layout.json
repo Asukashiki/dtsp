@@ -77,6 +77,24 @@
       ]
     },
     {
+      "name": "投入品分配额度管理",
+      "index": "quota-allocation",
+      "icon": "ri-slice-line",
+      "titleKey": "allocation.menu.quotaAllocation",
+      "children": [
+        {
+          "index": "/input/allocation/zone",
+          "icon": "ri-community-line",
+          "titleKey": "allocation.menu.zoneAllocation"
+        },
+        {
+          "index": "/input/allocation/woreda",
+          "icon": "ri-community-line",
+          "titleKey": "allocation.menu.woredaAllocation"
+        }
+      ]
+    },
+    {
       "name": "投入品流通管理",
       "index": "input-circulation",
       "icon": "ri-truck-line",

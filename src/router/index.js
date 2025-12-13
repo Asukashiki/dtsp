@@ -1088,6 +1088,58 @@ const routes = [
         meta: { title: '配额详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // zone分配额度
+      {
+        path: 'allocation/zone',
+        name: 'ZoneAllocationList',
+        component: () => import('../views/input/allocation/zone/index.vue'),
+        meta: { title: 'Zone分配额度管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/add',
+        name: 'ZoneAllocationAdd',
+        component: () => import('../views/input/allocation/zone/form.vue'),
+        meta: { title: '新增分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/edit/:id',
+        name: 'ZoneAllocationEdit',
+        component: () => import('../views/input/allocation/zone/form.vue'),
+        meta: { title: '编辑分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/detail/:id',
+        name: 'ZoneAllocationDetail',
+        component: () => import('../views/input/allocation/zone/detail.vue'),
+        meta: { title: '分配额度详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // woreda分配额度
+      {
+        path: 'allocation/woreda',
+        name: 'WoredaAllocationList',
+        component: () => import('../views/input/allocation/woreda/index.vue'),
+        meta: { title: 'Woreda分配额度管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/add',
+        name: 'WoredaAllocationAdd',
+        component: () => import('../views/input/allocation/woreda/form.vue'),
+        meta: { title: '新增Woreda分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/edit/:id',
+        name: 'WoredaAllocationEdit',
+        component: () => import('../views/input/allocation/woreda/form.vue'),
+        meta: { title: '编辑Woreda分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/detail/:id',
+        name: 'WoredaAllocationDetail',
+        component: () => import('../views/input/allocation/woreda/detail.vue'),
+        meta: { title: 'Woreda分配额度详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // OSE分发种子到Union
       {
         path: 'input-circulation/ose-release',
