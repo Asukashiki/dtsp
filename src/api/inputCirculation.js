@@ -80,6 +80,17 @@ export const getOseReleaseDetail = (id) => {
 }
 
 /**
+ * 根据releaseId获取OSE分发单详情
+ * Get OSE release detail by releaseId
+ */
+export const getOseReleaseDetailByReleaseId = (releaseId) => {
+  return agricultureRequest({
+    url: `/invested/release/ose/detailByReleaseId/${releaseId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 删除OSE分发单
  * Delete OSE release
  */
@@ -172,6 +183,17 @@ export const editUnionRelease = (data) => {
 export const getUnionReleaseDetail = (id) => {
   return agricultureRequest({
     url: `/invested/release/union/detail/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 根据releaseId获取Union分发单详情
+ * Get Union release detail by releaseId
+ */
+export const getUnionReleaseDetailByReleaseId = (releaseId) => {
+  return agricultureRequest({
+    url: `/invested/release/union/detailByReleaseId/${releaseId}`,
     method: 'get'
   })
 }

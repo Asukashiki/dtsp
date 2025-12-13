@@ -41,15 +41,15 @@
     <el-card v-if="!isMobile" class="table-card">
       <el-table :data="releaseList" v-loading="loading" border @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" width="150" />
-        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" width="200" />
-        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" width="150" />
-        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" width="160" />
-        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" width="160" />
-        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="160" />
-        <el-table-column prop="releaseBy" :label="$t('inputCirculation.releaseBy')" width="160" />
-        <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" width="160" />
-        <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" />
+        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" />
+        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" min-width="150" />
+        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" min-width="160" />
+        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" min-width="160" />
+        <el-table-column prop="status" :label="$t('inputCirculation.status')" min-width="160" />
+        <el-table-column prop="releaseBy" :label="$t('inputCirculation.releaseBy')" min-width="160" />
+        <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" min-width="160" />
+        <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
             <el-button type="primary" link @click="handleEdit(scope.row)">{{ $t('common.edit') }}</el-button>

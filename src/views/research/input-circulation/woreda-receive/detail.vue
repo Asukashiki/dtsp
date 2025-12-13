@@ -22,33 +22,39 @@
       </el-descriptions>
     </el-card>
 
+    <el-card v-loading="demandLoading" class="main-card">
+      <h3>{{ $t('inputCirculation.demandSelectionTitle') }}</h3>
+      <el-table :data="demandList" border style="margin-top: 16px">
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
+      </el-table>
+    </el-card>
+
     <el-card v-loading="loading" class="main-card">
+      <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
       <el-table :data="detailData" border style="margin-top: 16px">
-        <el-table-column :label="$t('inputCirculation.type')" width="240">
-          <template #default="scope">
-          {{ scope.row.variety }}
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('inputCirculation.agriculturalInputType')" width="240">
-          <template #default="scope">
-           {{ scope.row.cropType }}
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('inputCirculation.quantity')" width="240">
-          <template #default="scope">
-            {{ scope.row.quantity }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('inputCirculation.unit')" width="150">
-          <template #default="scope">
-            {{ scope.row.unit }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('inputCirculation.unitPrice')" width="240">
-          <template #default="scope">
-            {{ scope.row.unitPrice }}
-          </template>
-        </el-table-column>
+        <el-table-column :label="$t('inputCirculation.quantity')" prop="quantity" min-width="120" />
+        <el-table-column :label="$t('inputCirculation.unit')" prop="unit" min-width="100" />
+        <el-table-column :label="$t('inputCirculation.unitPrice')" prop="unitPrice" min-width="120" />
       </el-table>
     </el-card>
   </div>
@@ -59,7 +65,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getWoredaReceiveDetail } from '@/api/inputCirculation'
+import { getWoredaReceiveDetail, getUnionReleaseDetailByReleaseId } from '@/api/inputCirculation'
+import { getTownAggregationDetail } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -67,6 +77,8 @@ const router = useRouter()
 const loading = ref(false)
 const mainData = ref({})
 const detailData = ref([])
+const demandList = ref([])
+const demandLoading = ref(false)
 
 const fetchDetail = async () => {
   loading.value = true
@@ -76,11 +88,36 @@ const fetchDetail = async () => {
       // 后端返回的数据结构：{ main: {...}, details: [...] }
       mainData.value = response.data?.main || {}
       detailData.value = response.data?.details || []
+      
+      // 加载需求列表 - 通过分发单获取 zoneId
+      if (mainData.value.releaseId) {
+        await loadDemandListByReleaseId(mainData.value.releaseId)
+      }
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
   } finally {
     loading.value = false
+  }
+}
+
+// 通过分发单ID加载需求列表
+const loadDemandListByReleaseId = async (releaseId) => {
+  demandLoading.value = true
+  try {
+    // 先获取分发单详情来获取 zoneId
+    const releaseResponse = await getUnionReleaseDetailByReleaseId(releaseId)
+    if (releaseResponse.code === 200 && releaseResponse.data?.main?.zoneId) {
+      const regionCode = releaseResponse.data.main.zoneId
+      const response = await getTownAggregationDetail({ sourceCode: regionCode })
+      if (response.code === 200) {
+        demandList.value = response.data || []
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load demand list:', error)
+  } finally {
+    demandLoading.value = false
   }
 }
 

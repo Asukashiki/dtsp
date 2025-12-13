@@ -193,7 +193,7 @@ export default {
   // Input Circulation Management
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
-  oseReleaseToUnion: 'OSE Release Seeds to Union',
+  oseReleaseToUnion: 'Release Seeds to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',

@@ -72,7 +72,7 @@
         </el-table-column>
         <el-table-column prop="status" :label="$t('inputCirculation.status')" width="160" />
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
-        <el-table-column :label="t('actions')" width="220" fixed="right">
+        <el-table-column :label="t('actions')" width="280" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleDetail(row.id)">{{ t('detail') }}</el-button>
             <el-button link type="primary" @click="handleEdit(row.id)">{{ t('edit') }}</el-button>

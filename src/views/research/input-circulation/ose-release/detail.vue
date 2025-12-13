@@ -18,17 +18,37 @@
 <!--        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ detailData.main?.releaseOrg }}</el-descriptions-item>-->
       </el-descriptions>
 
+      <h3 style="margin-top: 24px">{{ $t('inputCirculation.demandSelectionTitle') }}</h3>
+      <el-table :data="demandList" border v-loading="demandLoading">
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
+      </el-table>
+
       <h3 style="margin-top: 24px">{{ $t('inputCirculation.detailInfo') }}</h3>
       <el-table :data="detailData.details" border>
         <el-table-column type="index" width="50" />
-        <el-table-column prop="cropType" :label="$t('inputCirculation.cropType')" />
-        <el-table-column prop="variety" :label="$t('inputCirculation.variety')" />
-        <el-table-column prop="inputName" :label="$t('inputCirculation.inputId')" />
-        <el-table-column prop="required" :label="$t('inputCirculation.required')" />
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" />
         <el-table-column prop="unit" :label="$t('inputCirculation.unit')" />
         <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" />
-<!--        <el-table-column prop="releaseTime" :label="$t('inputCirculation.releaseTime')" />-->
       </el-table>
     </el-card>
   </div>
@@ -40,13 +60,18 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getOseReleaseDetail } from '@/api/inputCirculation'
-import {getInputDetail} from "../../../../api/input.js";
+import { getTownAggregationDetail } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({ main: {}, details: [] })
+const demandList = ref([])
+const demandLoading = ref(false)
 
 const fetchDetail = async () => {
   loading.value = true
@@ -54,18 +79,13 @@ const fetchDetail = async () => {
     const response = await getOseReleaseDetail(route.params.id)
     if (response.code === 200) {
       detailData.value = response.data || { main: {}, details: [] }
-      // 为每个detail项添加inputName属性
-      const details = detailData.value.details
-      for (let i = 0; i < details.length; i++) {
-        let detail = details[i]
-        if (detail.inputId) {
-          const inputInfo = await getInputInfo(detail.inputId)
-          console.log('inputInfo:', inputInfo)
-          if (inputInfo) {
-            detail.inputName = inputInfo.inputName || detail.inputId
-            console.log('detail:', detail)
-          }
-        }
+      console.log('OSE Release Detail main:', detailData.value.main)
+      // 加载需求列表 - 尝试多个字段
+      const regionCode = detailData.value.main?.zoneId || detailData.value.main?.zone_id
+      if (regionCode) {
+        await loadDemandList(regionCode)
+      } else {
+        console.warn('No zoneId found in main data')
       }
     }
   } catch (error) {
@@ -75,14 +95,18 @@ const fetchDetail = async () => {
   }
 }
 
-const getInputInfo = async (id) => {
+// 加载需求列表
+const loadDemandList = async (regionCode) => {
+  demandLoading.value = true
   try {
-    const response = await getInputDetail(id)
-    if (response.code === 200 && response.data) {
-      return response.data
+    const response = await getTownAggregationDetail({ sourceCode: regionCode })
+    if (response.code === 200) {
+      demandList.value = response.data || []
     }
   } catch (error) {
-    console.error('获取input信息失败:', error)
+    console.error('Failed to load demand list:', error)
+  } finally {
+    demandLoading.value = false
   }
 }
 

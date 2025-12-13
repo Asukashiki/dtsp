@@ -92,5 +92,6 @@ export default {
     },
     required: '该项必填',
     saveSuccess: '保存成功',
-    queryFailed: '获取详情失败'
+    queryFailed: '获取详情失败',
+    birthDate: '出生日期'
   }
