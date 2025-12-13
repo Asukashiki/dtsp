@@ -276,6 +276,7 @@ const filterStatus = ref('all')
 const loading = ref(false)
 const tableData = ref([])
 const warehouseList = ref([])
+const currentUserOrganCode = ref('') // 当前用户部门ID
 
 const pagination = reactive({
   page: 1,
@@ -330,13 +331,25 @@ const getStatusText = (status) => {
   return statusMap[status] || '-'
 }
 
+// 获取当前用户部门ID
+const getCurrentUserOrganCode = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    const userInfo = JSON.parse(userInfoStr)
+    const user = userInfo.user || userInfo
+    return user.ORGANCODE || ''
+  }
+  return ''
+}
+
 // 加载仓库列表
 const loadWarehouseList = async () => {
   try {
     const res = await getWarehouseList({
       page: 1,
       pageSize: 1000,
-      status: '1' // 只获取启用的仓库
+      status: '1', // 只获取启用的仓库
+      organCode: currentUserOrganCode.value // 按部门过滤
     })
     if (res.code === 200) {
       warehouseList.value = res.data.items || res.data.list || []
@@ -356,7 +369,8 @@ const loadData = async () => {
       outboundStatus: filterStatus.value,
       outboundType: filterType.value,
       outboundOrderId: searchKeyword.value,
-      warehouseId: filterWarehouse.value
+      warehouseId: filterWarehouse.value,
+      organCode: currentUserOrganCode.value // 按部门过滤
     })
 
     if (res.code === 200) {
@@ -502,6 +516,7 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  currentUserOrganCode.value = getCurrentUserOrganCode()
   loadWarehouseList()
   loadData()
 })

@@ -26,7 +26,7 @@
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('input.inventory.warehouse.form.warehouseCode')" prop="warehouseCode">
-              <el-input v-model="formData.warehouseCode" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseCode')" clearable />
+              <el-input v-model="formData.warehouseCode" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseCode')" readonly clearable />
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.warehouseName')" prop="warehouseName">
               <el-input v-model="formData.warehouseName" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseName')" clearable />
@@ -34,8 +34,8 @@
             <el-form-item :label="$t('input.inventory.warehouse.form.warehouseType')" prop="warehouseType">
               <el-select v-model="formData.warehouseType" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseType')" class="full-width">
                 <el-option :label="$t('input.inventory.warehouse.type.normal')" value="normal" />
-                <el-option :label="$t('input.inventory.warehouse.type.cold')" value="cold" />
-                <el-option :label="$t('input.inventory.warehouse.type.dangerous')" value="dangerous" />
+<!--                <el-option :label="$t('input.inventory.warehouse.type.cold')" value="cold" />
+                <el-option :label="$t('input.inventory.warehouse.type.dangerous')" value="dangerous" />-->
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.location')" prop="location" class="full-width-item">
@@ -51,6 +51,12 @@
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.organName')" prop="organName">
               <el-input v-model="formData.organName" :placeholder="$t('input.inventory.warehouse.placeholder.organName')" clearable />
+            </el-form-item>
+            <el-form-item :label="$t('input.inventory.warehouse.form.status')" prop="status">
+              <el-select v-model="formData.status" :placeholder="$t('input.inventory.warehouse.placeholder.status')" class="full-width">
+                <el-option :label="$t('input.inventory.warehouse.status.enabled')" value="1" />
+                <el-option :label="$t('input.inventory.warehouse.status.disabled')" value="0" />
+              </el-select>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.siteCertificate')" class="full-width-item">
               <el-upload
@@ -133,15 +139,17 @@ const warehouseId = computed(() => route.params.id)
 const formData = reactive({
   warehouseCode: '',
   warehouseName: '',
-  warehouseType: '',
+  warehouseType: 'normal', // 默认选中第一个选项
   location: '',
   capacity: null,
   warehouseArea: null,
   organName: '',
+  organCode: '', // 部门ID
   contactPerson: '',
   contactPhone: '',
   siteCertificate: '',
-  remark: ''
+  remark: '',
+  status: '1' // 默认启用
 })
 
 // 文件上传相关
@@ -237,10 +245,12 @@ const loadData = async () => {
         capacity: res.data.capacity,
         warehouseArea: res.data.warehouse_area || null,
         organName: res.data.organ_name || '',
+        organCode: res.data.organ_code || '',
         contactPerson: res.data.contact_person,
         contactPhone: res.data.contact_phone,
         siteCertificate: res.data.site_certificate || '',
-        remark: res.data.remark || ''
+        remark: res.data.remark || '',
+        status: res.data.status || '1'
       })
 
       // 如果有文件，设置文件列表
@@ -271,10 +281,12 @@ const handleSubmit = async () => {
       capacity: formData.capacity,
       warehouseArea: formData.warehouseArea || 0,
       organName: formData.organName,
+      organCode: formData.organCode,
       contactPerson: formData.contactPerson,
       contactPhone: formData.contactPhone,
       siteCertificate: formData.siteCertificate || '',
-      remark: formData.remark || ''
+      remark: formData.remark || '',
+      status: formData.status
     }
 
     if (isEdit.value) {
@@ -298,9 +310,44 @@ const handleSubmit = async () => {
   }
 }
 
+// 获取用户信息
+const getUserInfo = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  return userInfoStr ? JSON.parse(userInfoStr) : {}
+}
+
 onMounted(() => {
   loadData()
+  formData.warehouseCode = generateSku()
+
+  // 只在新增模式下自动填充部门名称
+  if (!isEdit.value) {
+    // 获取用户信息并自动填充部门名称
+
+    const userInfoStr = localStorage.getItem('userInfo')
+
+    if (userInfoStr) {
+      const userInfo = JSON.parse(userInfoStr)
+      const user = userInfo.user || userInfo
+      console.log(user);
+      formData.organName = user.ORGANNAME
+      formData.organCode = user.ORGANCODE // 同时填充部门ID
+    }
+    /*const user = getUserInfo()
+    if (user ) {
+      console.log('user', user)
+
+    }*/
+  }
 })
+
+// 仓库编号
+const generateSku = () => {
+  // 生成格式: ZZ-XM-XXXXXX (6位随机数字)
+  const randomNumber = Math.floor(100000 + Math.random() * 900000)
+    // 仓库编号格式: WH-YYYYMMDD-XXXXXX
+  return `WH-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomNumber}`
+}
 </script>
 
 <style scoped>

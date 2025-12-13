@@ -712,6 +712,7 @@ export default {
       form: {
         stockInId: 'Stock In Order Number',
         warehouseId: 'Stock In Warehouse',
+        warehouseName: 'Warehouse',
         batchNo: 'Batch Number',
         supplierId: 'Supplier',
         type: 'Stock In Type',
@@ -723,14 +724,29 @@ export default {
         createTime: 'Creation Time',
         items: 'Stock In Product Details',
         inputId: 'Input',
+        inputName: 'Input Name',
         quantity: 'Stock In Quantity',
         expiryDate: 'Expiry Date',
         inputSku: 'SKU Code',
-        itemRemarks: 'Item Remarks'
+        itemRemarks: 'Item Remarks',
+        inboundBatch: 'Inbound Batch',
+        productionBatch: 'Production Batch',
+        inputType: 'Input Type',
+        agriculturalInputType: 'Agricultural Input Type',
+        specification: 'Specification Model',
+        unit: 'Unit of Measurement',
+        qrCode: 'QR Code',
+        qrCodeHint: 'Scan QR code for more information',
+        relatedOrderNo: 'Related Order Number',
+        supplierName: 'Supplier Name',
+        supplierContact: 'Supplier Contact',
+        supplierPhone: 'Supplier Phone',
+        remark: 'Remark'
       },
       placeholder: {
         warehouseId: 'Select stock in warehouse',
         warehouse: 'Select warehouse',
+        warehouseName: 'Select warehouse',
         supplierId: 'Select supplier',
         type: 'Select stock in type',
         operator: 'Enter operator',
@@ -755,7 +771,10 @@ export default {
         inputType: 'Input type (auto-filled)',
         specification: 'Enter specification model (optional)',
         unit: 'Enter unit of measurement',
-        qrCode: 'QR code (auto-obtained)'
+        qrCode: 'QR code (auto-obtained)',
+        inboundBatch: 'Inbound batch (system auto-generated)',
+        productionBatch: 'Enter production batch (optional)',
+        agriculturalInputType: 'Agricultural input type (auto-filled)'
       },
       rules: {
         warehouseIdRequired: 'Please select stock in warehouse',
@@ -846,6 +865,7 @@ export default {
         completed: 'Completed',
         cancelled: 'Cancelled'
       },
+      auditInfo: 'Audit Information',
       form: {
         outboundOrderId: 'Stock Out Order Number',
         outboundBatchId: 'Stock Out Batch Number',
@@ -872,6 +892,7 @@ export default {
         inputId: 'Input',
         materialId: 'Material',
         materialName: 'Material Name',
+        inputName: 'Input Name',
         materialType: 'Material Type',
         materialBatchId: 'Material Batch Number',
         quantity: 'Stock Out Quantity',
@@ -882,7 +903,9 @@ export default {
         batchSplits: 'Batch Split Details',
         inboundBatchId: 'Stock In Batch Number',
         splitQuantity: 'Deduction Quantity',
-        remainingQuantity: 'Remaining Inventory'
+        remainingQuantity: 'Remaining Inventory',
+        inputCategory: 'Input Category',
+        variety: 'Variety'
       },
       placeholder: {
         warehouseId: 'Select stock out warehouse',
@@ -904,7 +927,9 @@ export default {
         specModel: 'Enter specification model (optional)',
         unitOfMeasure: 'Enter unit of measurement (optional)',
         itemRemarks: 'Enter item remarks',
-        auditRemark: 'Enter audit opinion'
+        auditRemark: 'Enter audit opinion',
+        inputCategory: 'Input category (auto-filled)',
+        variety: 'Variety (auto-filled)'
       },
       rules: {
         warehouseIdRequired: 'Please select stock out warehouse',
@@ -1074,7 +1099,9 @@ export default {
         warning: 'Inventory Alerts',
         summaryByInput: 'Summary by Input',
         summaryByWarehouse: 'Summary by Warehouse'
-      }
+      },
+      unit: 'units',
+      warning: 'Inventory Alerts'
     }
   },
 

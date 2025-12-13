@@ -253,6 +253,7 @@ const filterType = ref('')
 const filterStatus = ref('')
 const loading = ref(false)
 const tableData = ref([])
+const currentUserOrganCode = ref('') // 当前用户部门ID
 
 const pagination = reactive({
   page: 1,
@@ -284,6 +285,17 @@ const getProgressColor = (row) => {
   return '#67c23a'
 }
 
+// 获取当前用户部门ID
+const getCurrentUserOrganCode = () => {
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    const userInfo = JSON.parse(userInfoStr)
+    const user = userInfo.user || userInfo
+    return user.ORGANCODE || ''
+  }
+  return ''
+}
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -292,6 +304,7 @@ const loadData = async () => {
       warehouseName: searchKeyword.value,
       warehouseType: filterType.value,
       status: filterStatus.value,
+      organCode: currentUserOrganCode.value, // 按部门过滤
       page: pagination.page,
       pageSize: pagination.pageSize
     })
@@ -374,6 +387,7 @@ const handlePageChange = () => {
 }
 
 onMounted(() => {
+  currentUserOrganCode.value = getCurrentUserOrganCode()
   loadData()
 })
 </script>
