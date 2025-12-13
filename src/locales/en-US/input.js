@@ -62,6 +62,7 @@ export default {
     feedback: 'Information Feedback'
   },
 
+
   // 投入品目录管理
   catalog: {
     title: 'Input Catalog Management',
@@ -683,7 +684,12 @@ export default {
       inputName: 'Input Name',
       inputId: 'Input ID',
       inputBatchId: 'Input Batch ID',
+      inputBatch: '投入品批次',
+      inboundBatch: '入库批次',
+      productionBatch: '生产批次',
       inputType: 'Input Type',
+      agriculturalInputType: 'Agricultural Input Type',
+      variety: 'Variety',
       specification: 'Specification Model',
       unit: 'Unit of Measurement',
       expiryDate: 'Expiry Date',
@@ -691,6 +697,9 @@ export default {
       addMaterial: 'Add Material',
       addInput: 'Add Input',
       noMaterials: 'No material details',
+      noDistributionDetails: 'No distribution details',
+      distributionLoaded: 'Distribution details loaded successfully',
+      loadDistributionFailed: 'Failed to load distribution details',
       searchPlaceholder: 'Search by stock in order number, batch number',
       filterByWarehouse: 'Filter by Warehouse',
       filterBySupplier: 'Filter by Supplier',
@@ -762,7 +771,12 @@ export default {
         materialName: 'Enter material name',
         inputName: 'Select input name',
         inputBatchId: 'Enter input batch ID (optional)',
+         inputBatch: 'Please select input batch',
+          inboundBatch: 'Inbound batch (system generated)',
+          productionBatch: 'Please enter production batch (optional)',
         inputType: 'Input type (auto-filled)',
+        agriculturalInputType: 'Agricultural Input Type',
+          variety: 'Variety',
         specification: 'Enter specification model (optional)',
         unit: 'Enter unit of measurement',
         qrCode: 'QR code (auto-obtained)'
