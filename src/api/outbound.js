@@ -74,6 +74,7 @@ export const createOutboundOrder = (data) => {
       materialName: detail.materialName,
       materialType: detail.materialType,
       materialBatchId: detail.materialBatchId,
+      agriculturalInputType: detail.agriculturalInputType,
       quantity: detail.quantity,
       specModel: detail.specModel,
       unitOfMeasure: detail.unitOfMeasure

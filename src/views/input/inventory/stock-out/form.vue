@@ -328,7 +328,6 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
     materialList.value = []
     return
   }
-
   materialLoading.value = true
   try {
     // 通过库存API获取该仓库中有库存的投入品
@@ -343,28 +342,31 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
       const materialMap = new Map()
       res.data.items.forEach(item => {
         if (item.quantity > 0) {
-          const existingMaterial = materialMap.get(item.inputId)
+          // 使用material_id作为键，因为API返回的是material_id而不是inputId
+          const materialId = item.material_id;
+          const existingMaterial = materialMap.get(materialId)
           if (existingMaterial) {
             // 累加同一投入品的库存
             existingMaterial.available_quantity += item.quantity
             // 如果有批次号，优先使用第一个批次号
-            if (!existingMaterial.materialBatchId && item.materialBatchId) {
-              existingMaterial.materialBatchId = item.materialBatchId
+            if (!existingMaterial.materialBatchId && item.material_batch_id) {
+              existingMaterial.materialBatchId = item.material_batch_id
             }
             // 如果有农资类型和品种，优先使用第一个
-            if (!existingMaterial.agriculturalInputType && item.agriculturalInputType) {
-              existingMaterial.agriculturalInputType = item.agriculturalInputType
+            if (!existingMaterial.agriculturalInputType && item.agricultural_input_type) {
+              existingMaterial.agriculturalInputType = item.agricultural_input_type
             }
             if (!existingMaterial.variety && item.variety) {
               existingMaterial.variety = item.variety
             }
           } else {
-            materialMap.set(item.inputId, {
-              inputId: item.inputId,
-              inputName: item.inputName,
-              inputType: item.inputType || '',
-              materialBatchId: item.materialBatchId || '',
-              agriculturalInputType: item.agriculturalInputType || '',
+            materialMap.set(materialId, {
+              inputId: materialId, // 使用material_id作为inputId
+              inputName: item.material_name, // 使用material_name作为inputName
+              inputType: item.material_type || '', // 使用material_type作为inputType
+              materialBatchId: item.material_batch_id || '', // 使用material_batch_id
+              // 确保agriculturalInputType字段被正确设置
+              agriculturalInputType: item.agricultural_input_type || '',
               variety: item.variety || '',
               available_quantity: item.quantity
             })
@@ -380,7 +382,7 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
   } catch (error) {
     console.error('Failed to load material list by warehouse:', error)
     ElMessage.error(t('common.failed'))
-  } finally{
+  } finally {
     materialLoading.value = false
   }
 }
@@ -456,7 +458,12 @@ const loadInputList = async () => {
       status: 'active' // 只获取启用的投入品
     })
     if (res.code === 200) {
-      inputList.value = res.data.list || []
+      // 确保每个投入品都有agriculturalInputType字段
+      inputList.value = (res.data.list || []).map(item => ({
+        ...item,
+        // 确保agriculturalInputType字段存在，如果不存在则使用空字符串
+        agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type || ''
+      }))
     }
   } catch (error) {
     console.error('Failed to load input list:', error)
@@ -495,7 +502,6 @@ const handleDistributionChange = async (distributionId) => {
   if (!distributionId) {
     return
   }
-
   if (!formData.warehouse_id) {
    /* 请先选择出库仓库*/
     ElMessage.warning('Please select the outbound warehouse first')
@@ -610,7 +616,7 @@ const goBack = () => {
 }
 
 // 仓库变更时,清空所有明细的库存信息,并重新加载已选择投入品的库存
-const handleWarehouseChange = () => {
+const handleWarehouseChange = (warehouseId) => {
   // 清空所有明细的库存信息
   formData.details.forEach(detail => {
     detail.materialBatchId = ''
@@ -621,6 +627,9 @@ const handleWarehouseChange = () => {
       loadStockForMaterial(detail)
     }
   })
+
+  // 加载该仓库中有库存的投入品列表
+  loadMaterialListByWarehouse(warehouseId)
 }
 
 // 投入品变更时,自动填充投入品名称、类型、农资类型、品种
@@ -631,7 +640,8 @@ const handleMaterialChange = (index) => {
   if (selectedInput) {
     detail.inputName = selectedInput.inputName
     detail.inputType = getInputTypeText(selectedInput.type)
-    detail.agriculturalInputType = selectedInput.agriculturalInputType || ''
+    // 确保agriculturalInputType字段被正确设置
+    detail.agriculturalInputType = selectedInput.agriculturalInputType || selectedInput.agricultural_input_type || ''
     detail.variety = selectedInput.variety || ''
   } else {
     detail.inputName = ''
@@ -660,7 +670,7 @@ const loadStockForMaterial = async (detail) => {
   try {
     const res = await getStockList({
       warehouseId: formData.warehouse_id,
-      inputId: detail.inputId,
+      materialId: detail.inputId, // 使用materialId而不是inputId
       page: 1,
       pageSize: 1000
     })
@@ -669,19 +679,28 @@ const loadStockForMaterial = async (detail) => {
       // 计算总库存
       let totalQuantity = 0
       let materialBatchId = ''
+      let agriculturalInputType = '' // 用于存储农资类型
 
       res.data.items.forEach(item => {
         if (item.quantity > 0) {
           totalQuantity += item.quantity
-          // 使用第一个有库存的批次号
-          if (!materialBatchId && item.materialBatchId) {
-            materialBatchId = item.materialBatchId
+          // 使用第一个有库存的批次号，注意API返回的是material_batch_id
+          if (!materialBatchId && item.material_batch_id) {
+            materialBatchId = item.material_batch_id
+          }
+          // 如果还没有农资类型，则使用第一个有库存的农资类型
+          if (!agriculturalInputType && item.agricultural_input_type) {
+            agriculturalInputType = item.agricultural_input_type
           }
         }
       })
 
       detail.materialBatchId = materialBatchId
       detail.available_quantity = totalQuantity
+      // 设置农资类型
+      if (agriculturalInputType && !detail.agriculturalInputType) {
+        detail.agriculturalInputType = agriculturalInputType
+      }
     }
   } catch (error) {
     console.error('Failed to load stock for material:', error)
@@ -763,21 +782,21 @@ const handleSubmit = async () => {
         const insufficientItems = validateRes.data.insufficient_items || []
         if (insufficientItems.length > 0) {
           const itemList = insufficientItems.map(item =>
-            `${item.material_name}(需求：${item.required_quantity}，可用：${item.available_quantity}，缺少：${item.shortage})`
+            `${item.material_name}(Demand：${item.required_quantity}，Available：${item.available_quantity}，Lacking：${item.shortage})`
           ).join('<br/>')
 
           await ElMessageBox.confirm(
-            `<div>以下投入品库存不足：<br/>${itemList}<br/><br/>是否仍要提交出库单？</div>`,
+            `<div>The inventory of the following inputs is insufficient：<br/>${itemList}<br/><br/>Is it still necessary to submit the outbound order？</div>`,
             '库存不足警告',
             {
-              confirmButtonText: '仍要提交',
-              cancelButtonText: '返回修改',
+              confirmButtonText: 'Still need to be submitted',
+              cancelButtonText: 'Return to modify',
               type: 'warning',
               dangerouslyUseHTMLString: true
             }
           )
         } else {
-          ElMessage.error(validateRes.data.message || '库存校验失败')
+          ElMessage.error(validateRes.data.message || 'Inventory verification failed')
           submitLoading.value = false
           return
         }
@@ -791,13 +810,13 @@ const handleSubmit = async () => {
       console.error('Stock validation error:', validateError)
       // 校验失败不中断提交流程，继续提交
     }
-
+  debugger;
     // 转换为驼峰形式
     const data = {
       outboundType: formData.outbound_type,
       warehouseId: formData.warehouse_id,
       relatedOrderNo: formData.related_order_no || undefined,
-      outboundObjectId: formData.outbound_type === 1 ? 'CUSTOMER_DEFAULT' : formData.warehouse_id,
+      outboundObjectId: formData.outbound_type === 1 ? '' : formData.warehouse_id,
       outboundObjectName: formData.outbound_type === 1 ? 'Default account' : warehouseList.value.find(w => w.warehouse_id === formData.warehouse_id)?.warehouse_name || '',
       outboundUser: formData.outbound_user || undefined,
       outboundDept: formData.outbound_dept || undefined,

@@ -993,115 +993,35 @@ export default {
     // 库存查询
     stock: {
       title: 'Inventory Query',
-      subtitle: 'Real-time query of inventory information, alerts and summary statistics',
+      subtitle: 'Real-time inventory information, warnings and summary statistics',
       list: 'Inventory List',
-      detail: 'Inventory Details',
-      warning: 'Inventory Alerts',
+      detail: 'Inventory Detail',
+      warning: 'Inventory Warning',
       summary: 'Summary Statistics',
-      logs: 'Inventory Change Logs',
-      viewLogs: 'View Change Logs',
-      dashboard: 'Inventory Monitoring Dashboard',
-      dashboardSubtitle: 'Real-time monitoring of inventory status and alert information',
-      metrics: {
-        totalStock: 'Total Inventory Quantity',
-        nearExpiryCount: 'Near Expiry Product Count',
-        overCapacityWarehouses: 'Over Capacity Warehouse Count',
-        pendingAlerts: 'Pending Alert Count',
-        totalValue: 'Total Inventory Value',
-        warehouseUsage: 'Warehouse Usage Rate'
-      },
-      searchPlaceholder: 'Search by input name, batch number',
-      filterByWarehouse: 'Filter by Warehouse',
-      filterByInput: 'Filter by Input',
-      filterByStatus: 'Filter by Inventory Status',
-      filterByOperation: 'Filter by Operation Type',
+      logs: 'Inventory Logs',
       allWarehouses: 'All Warehouses',
-      allInputs: 'All Inputs',
       allStatus: 'All Status',
-      allOperations: 'All Operations',
-      status: {
-        normal: 'Normal',
-        active: 'Normal',
-        nearExpiry: 'Near Expiry',
-        expired: 'Expired',
-        inactive: 'Inactive'
-      },
-      operationType: {
-        inbound: 'Stock In',
-        outbound: 'Stock Out'
-      },
-      warningType: {
-        all: 'All Alerts',
-        nearExpiry: 'Near Expiry Alert',
-        expired: 'Expired Alert'
-      },
-      form: {
-        inventoryId: 'Inventory Record ID',
-        inputId: 'Input',
-        inputName: 'Input Name',
-        batchNo: 'Batch Number',
-        warehouseId: 'Warehouse',
-        warehouseName: 'Warehouse Name',
-        currentQuantity: 'Current Inventory Quantity',
-        inDate: 'Stock In Date',
-        expiredDate: 'Expiry Date',
-        stockStatus: 'Inventory Status',
-        daysToExpire: 'Days Until Expiry'
+      filterByWarehouse: 'Filter by Warehouse',
+      filterByStatus: 'Filter by Status',
+      summary: {
+        title: 'Inventory Summary',
+        total: 'Total'
       },
       columns: {
         inputName: 'Input Name',
-        materialName: 'Input Name',
-        materialId: 'Input ID',
-        materialBatchId: 'Batch ID',
-        batchNo: 'Batch Number',
-        warehouseName: 'Warehouse Name',
-        warehouse: 'Warehouse',
-        quantity: 'Inventory Quantity',
+        batchNo: 'Batch No',
+        warehouseName: 'Warehouse',
         currentQuantity: 'Current Quantity',
-        inboundQuantity: 'Total Stock In',
-        outboundQuantity: 'Total Stock Out',
-        inDate: 'Stock In Date',
-        expiryDate: 'Expiry Date',
+        inDate: 'Inbound Date',
         expiredDate: 'Expiry Date',
-        stockStatus: 'Inventory Status',
-        status: 'Status',
-        qrCode: 'QR Code',
-        createdAt: 'Creation Time',
-        updatedAt: 'Update Time',
-        actions: 'Actions',
-        operationType: 'Operation Type',
-        changeQuantity: 'Change Quantity',
-        beforeQuantity: 'Before Change',
-        afterQuantity: 'After Change',
-        referenceOrderId: 'Associated Order Number',
-        operator: 'Operator'
+        stockStatus: 'Stock Status',
+        actions: 'Actions'
       },
-      summaryColumns: {
-        inputName: 'Input Name',
-        warehouseName: 'Warehouse Name',
-        totalQuantity: 'Total Inventory',
-        normalQuantity: 'Normal Inventory',
-        nearExpiryQuantity: 'Near Expiry Inventory',
-        expiredQuantity: 'Expired Inventory'
-      },
-      actions: {
-        view: 'View',
-        viewWarning: 'View Alerts',
-        viewSummary: 'View Summary',
-        exportData: 'Export Data'
-      },
-      messages: {
-        noData: 'No data available',
-        noWarning: 'No alert information'
-      },
-      tabs: {
-        list: 'Inventory List',
-        warning: 'Inventory Alerts',
-        summaryByInput: 'Summary by Input',
-        summaryByWarehouse: 'Summary by Warehouse'
-      },
-      unit: 'units',
-      warning: 'Inventory Alerts'
+      status: {
+        normal: 'Normal',
+        nearExpiry: 'Near Expiry',
+        expired: 'Expired'
+      }
     }
   },
 
