@@ -21,6 +21,8 @@ export const getStockList = (params = {}) => {
   if (params.warehouseId) requestParams.warehouseId = params.warehouseId
   if (params.materialId) requestParams.materialId = params.materialId
   if (params.materialBatchId) requestParams.materialBatchId = params.materialBatchId
+  if (params.materialType) requestParams.materialType = params.materialType
+  if (params.agriculturalInputType) requestParams.agriculturalInputType = params.agriculturalInputType
   if (params.organCode) requestParams.organCode = params.organCode
   
   return agricultureRequest({
@@ -75,5 +77,28 @@ export const getStockDashboard = () => {
   return agricultureRequest({
     url: '/stock/dashboard',
     method: 'get'
+  })
+}
+
+/**
+ * 查询库存合计统计
+ * @param {Object} params - 查询参数
+ * @param {string} params.warehouseId - 仓库ID
+ * @param {string} params.materialType - 投入品类型
+ * @param {string} params.agriculturalInputType - 投入品品类
+ * @param {string} params.organCode - 部门编码(权限过滤)
+ */
+export const getStockSummary = (params = {}) => {
+  const requestParams = {}
+  
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.materialType) requestParams.materialType = params.materialType
+  if (params.agriculturalInputType) requestParams.agriculturalInputType = params.agriculturalInputType
+  if (params.organCode) requestParams.organCode = params.organCode
+  
+  return agricultureRequest({
+    url: '/inventory/stock/summary',
+    method: 'get',
+    params: requestParams
   })
 }

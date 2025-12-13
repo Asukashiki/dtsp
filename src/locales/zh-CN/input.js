@@ -1020,109 +1020,29 @@ export default {
       warning: '库存预警',
       summary: '汇总统计',
       logs: '库存变动日志',
-      viewLogs: '查看变动日志',
-      dashboard: '库存监控仪表盘',
-      dashboardSubtitle: '实时监控库存状态与预警信息',
-      metrics: {
-        totalStock: '总库存总量',
-        nearExpiryCount: '临期商品数量',
-        overCapacityWarehouses: '超容量仓库数',
-        pendingAlerts: '待处理预警数',
-        totalValue: '库存总价值',
-        warehouseUsage: '仓库使用率'
-      },
-      searchPlaceholder: '搜索投入品名称、批次号',
-      filterByWarehouse: '按仓库筛选',
-      filterByInput: '按投入品筛选',
-      filterByStatus: '按库存状态筛选',
-      filterByOperation: '按操作类型筛选',
       allWarehouses: '全部仓库',
-      allInputs: '全部投入品',
       allStatus: '全部状态',
-      allOperations: '全部操作',
-      status: {
-        normal: '正常',
-        active: '正常',
-        nearExpiry: '临期',
-        expired: '过期',
-        inactive: '停用'
-      },
-      operationType: {
-        inbound: '入库',
-        outbound: '出库'
-      },
-      warningType: {
-        all: '全部预警',
-        nearExpiry: '临期预警',
-        expired: '过期预警'
-      },
-      form: {
-        inventoryId: '库存记录ID',
-        inputId: '投入品',
-        inputName: '投入品名称',
-        batchNo: '批次号',
-        warehouseId: '仓库',
-        warehouseName: '仓库名称',
-        currentQuantity: '当前库存数量',
-        inDate: '入库日期',
-        expiredDate: '过期日期',
-        stockStatus: '库存状态',
-        daysToExpire: '距过期天数'
+      filterByWarehouse: '按仓库筛选',
+      filterByStatus: '按状态筛选',
+      summary: {
+        title: '库存合计',
+        total: '共计'
       },
       columns: {
         inputName: '投入品名称',
-        materialName: '投入品名称',
-        materialId: '投入品ID',
-        materialBatchId: '批次ID',
         batchNo: '批次号',
-        warehouseName: '仓库名称',
-        warehouse: '仓库',
-        quantity: '库存数量',
-        currentQuantity: '当前数量',
-        inboundQuantity: '累计入库',
-        outboundQuantity: '累计出库',
+        warehouseName: '仓库',
+        currentQuantity: '当前库存',
         inDate: '入库日期',
-        expiryDate: '过期日期',
         expiredDate: '过期日期',
         stockStatus: '库存状态',
-        status: '状态',
-        qrCode: '二维码',
-        createdAt: '创建时间',
-        updatedAt: '更新时间',
-        actions: '操作',
-        operationType: '操作类型',
-        changeQuantity: '变动数量',
-        beforeQuantity: '变动前',
-        afterQuantity: '变动后',
-        referenceOrderId: '关联单号',
-        operator: '操作人'
+        actions: '操作'
       },
-      summaryColumns: {
-        inputName: '投入品名称',
-        warehouseName: '仓库名称',
-        totalQuantity: '总库存',
-        normalQuantity: '正常库存',
-        nearExpiryQuantity: '临期库存',
-        expiredQuantity: '过期库存'
-      },
-      actions: {
-        view: '查看',
-        viewWarning: '查看预警',
-        viewSummary: '查看汇总',
-        exportData: '导出数据'
-      },
-      messages: {
-        noData: '暂无数据',
-        noWarning: '暂无预警信息'
-      },
-      tabs: {
-        list: '库存列表',
-        warning: '库存预警',
-        summaryByInput: '按投入品汇总',
-        summaryByWarehouse: '按仓库汇总'
-      },
-      unit: '件',
-      warning: '库存预警'
+      status: {
+        normal: '正常',
+        nearExpiry: '临期',
+        expired: '过期'
+      }
     }
   },
 
