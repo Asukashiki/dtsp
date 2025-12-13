@@ -43,7 +43,7 @@
               /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('districtAggregation.columns.sourceName')"
+                :label="$t('ZoneName')"
                 min-width="140"
               />
               <!-- <el-table-column
@@ -102,7 +102,7 @@
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'" link type="primary" @click="handleApprove(row)">
+                    <el-button link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
                       {{ $t('districtAggregation.actions.approve') }}
                     </el-button>
@@ -255,22 +255,30 @@
           prop="inputCategory"
           :label="$t('districtAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inputType"
           :label="$t('districtAggregation.detailDialog.columns.inputType')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalQuantity"
           :label="$t('districtAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-        <el-table-column
-          prop="totalCount"
-          :label="$t('districtAggregation.detailDialog.columns.totalCount')"
-          min-width="120"
-        />
+<!--        <el-table-column-->
+<!--          prop="totalCount"-->
+<!--          :label="$t('districtAggregation.detailDialog.columns.totalCount')"-->
+<!--          min-width="120"-->
+<!--        />-->
       </el-table>
 
       <!-- 分页 -->
@@ -310,7 +318,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateTownInputDemand, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const { t } = useI18n()
 

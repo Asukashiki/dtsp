@@ -59,7 +59,8 @@ export default {
     stockOut: 'Stock Out Management',
     stockQuery: 'Inventory Query',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
-    feedback: 'Information Feedback'
+    feedback: 'Information Feedback',
+    KebeleAudit: 'Kebele Demand Audit'
   },
 
 

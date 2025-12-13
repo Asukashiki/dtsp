@@ -1,7 +1,7 @@
 export default {
   // State Demand Aggregation
-  title: 'State Demand Aggregation',
-  subtitle: 'Manage and aggregate state-level district demand data',
+  title: 'Region Demand Aggregation',
+  subtitle: 'Manage and aggregate region-level zone demand data',
 
   // Actions
   actions: {

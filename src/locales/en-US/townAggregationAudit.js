@@ -1,7 +1,7 @@
 export default {
-  title: 'Town Demand Aggregation Audit',
-  subtitle: 'Review village demand aggregation summary data',
-  listTitle: 'Town Aggregation Audit List',
+  title: 'Woreda Demand Aggregation Audit',
+  subtitle: 'Review kebele demand aggregation summary data',
+  listTitle: 'Woreda Aggregation Audit List',
 
   columns: {
     sourceCode: 'Source Code',

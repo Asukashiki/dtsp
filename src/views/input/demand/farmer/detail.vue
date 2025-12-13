@@ -54,6 +54,11 @@
               <div class="label">{{ $t('farmerDemand.form.createdTime') }}</div>
               <div class="value">{{ detailData.createdTime || '-' }}</div>
             </div>
+
+            <div class="info-item">
+              <div class="label">{{ 'year' }}</div>
+              <div class="value">{{ detailData.year || '-' }}</div>
+            </div>
           </div>
         </div>
 
@@ -64,10 +69,10 @@
             <span>{{ $t('farmerDemand.detailSections.farmerInfo') }}</span>
           </div>
           <div class="info-grid">
-            <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.farmerId') }}</div>
-              <div class="value">{{ detailData.farmerId || '-' }}</div>
-            </div>
+<!--            <div class="info-item">-->
+<!--              <div class="label">{{ $t('farmerDemand.form.farmerId') }}</div>-->
+<!--              <div class="value">{{ detailData.farmerId || '-' }}</div>-->
+<!--            </div>-->
             <div class="info-item">
               <div class="label">{{ $t('farmerDemand.form.farmerName') }}</div>
               <div class="value">{{ detailData.farmerName || '-' }}</div>

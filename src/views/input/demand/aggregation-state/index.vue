@@ -43,7 +43,7 @@
               /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('stateAggregation.columns.sourceName')"
+                :label="$t('RegionName')"
                 min-width="140"
               />
               <!-- <el-table-column
@@ -254,22 +254,31 @@
                   prop="inputCategory"
                   :label="$t('stateAggregation.detailDialog.columns.inputCategory')"
                   min-width="150"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="inputType"
                   :label="$t('stateAggregation.detailDialog.columns.inputType')"
                   min-width="150"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_type', row.inputType) }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="totalQuantity"
                   :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
                   min-width="120"
-                />
-                <el-table-column
-                  prop="totalCount"
-                  :label="$t('stateAggregation.detailDialog.columns.totalCount')"
-                  min-width="120"
-                />
+                >
+                </el-table-column>
+<!--                <el-table-column-->
+<!--                  prop="totalCount"-->
+<!--                  :label="$t('stateAggregation.detailDialog.columns.totalCount')"-->
+<!--                  min-width="120"-->
+<!--                />-->
               </el-table>
               <el-empty
                 v-if="!row.subLoading && (!row.subDetailData || row.subDetailData.length === 0)"
@@ -280,7 +289,7 @@
         </el-table-column>
         <el-table-column
           prop="sourceName"
-          :label="$t('stateAggregation.columns.sourceName')"
+          :label="$t('zoneName')"
           min-width="150"
         />
         <el-table-column
@@ -332,7 +341,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, getTownAggregationDetail } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const { t } = useI18n()
 
