@@ -43,8 +43,8 @@ export default {
 
   // Release detail
   releaseDetailId: 'ID',
-  cropType: 'Crop Type',
-  variety: 'Variety',
+  type: 'Input Type',
+  agriculturalInputType: 'Agricultural Input Type',
   inputId: 'Input',
   inputName: 'Input Name',
   required: 'Required Quantity',
@@ -62,9 +62,9 @@ export default {
   deleteRelease: 'Delete Release',
 
   // Union receive confirm
-  confirmBy: 'Confirmed By',
-  confirmOrg: 'Confirm Organization',
-  confirmTime: 'Confirm Time',
+  confirmBy: 'Receive By',
+  confirmOrg: 'Receive Organization',
+  confirmTime: 'Receive Time',
   confirmReceive: 'Confirm Receive',
   receiveDetail: 'Receive Detail',
   unionName: 'Union Name',
@@ -72,6 +72,10 @@ export default {
   // Receive status
   pending: 'Pending',
   confirmed: 'Confirmed',
+
+  // Receive Detail
+  receiveId: 'Receive ID',
+  receiveName: 'Receive Name',
 
   // Messages
   confirmReceiveSuccess: 'Receive confirmed successfully',

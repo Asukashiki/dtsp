@@ -42,8 +42,8 @@ export default {
 
   // 分发明细
   releaseDetailId: '编号',
-  cropType: '作物种类',
-  variety: '品种',
+  type: '投入品类型',
+  agriculturalInputType: '投入品品类',
   inputId: '投入品',
   inputName: '投入品名称',
   required: '需求数量',
@@ -61,9 +61,9 @@ export default {
   deleteRelease: '删除分发单',
 
   // Union接收确认
-  confirmBy: '确认人',
-  confirmOrg: '确认机构',
-  confirmTime: '确认时间',
+  confirmBy: '接收人',
+  confirmOrg: '接收机构',
+  confirmTime: '接收时间',
   confirmReceive: '确认接收',
   receiveDetail: '接收详情',
   unionName: 'Union名称',
@@ -88,6 +88,10 @@ export default {
   // 接收状态
   pending: '待确认',
   confirmed: '已确认',
+
+  // Receive Detail
+  receiveId: '接收单编号',
+  receiveName: '接收单名称',
 
   // 提示信息
   confirmReceiveSuccess: '接收确认成功',

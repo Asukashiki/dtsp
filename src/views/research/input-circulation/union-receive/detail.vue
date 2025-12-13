@@ -4,19 +4,52 @@
       <template #content><span>{{ $t('inputCirculation.receiveDetail') }}</span></template>
     </el-page-header>
 
-    <el-card v-loading="loading" class="detail-card">
+    <el-card v-loading="loading" class="main-card">
       <el-descriptions :column="2" border>
-        <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ detailData.releaseId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ detailData.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetId')">{{ detailData.targetId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ detailData.targetPhone }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ detailData.releaseOrg }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ detailData.releaseDate }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.status')">{{ detailData.receiveStatus }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmBy')">{{ detailData.confirmBy || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">{{ detailData.confirmOrg || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmTime')">{{ detailData.confirmTime || '-' }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ mainData.releaseId }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ mainData.releaseName }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ mainData.releaseBy }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ mainData.targetPhone }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ mainData.releaseOrg }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ mainData.releaseDate }}</el-descriptions-item>
+
+        <el-descriptions-item :label="$t('inputCirculation.receiveId')">{{ mainData.releaseId }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.receiveName')">{{ mainData.releaseName }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.status')">{{ mainData.receiveStatus }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.confirmBy')">{{ mainData.confirmBy || '-' }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">{{ mainData.confirmOrg || '-' }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.confirmTime')">{{ mainData.confirmTime || '-' }}</el-descriptions-item>
       </el-descriptions>
+    </el-card>
+
+    <el-card v-loading="loading" class="main-card">
+      <el-table :data="detailData" border style="margin-top: 16px">
+        <el-table-column :label="$t('inputCirculation.type')" width="240">
+          <template #default="scope">
+            {{ scope.row.variety }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('inputCirculation.agriculturalInputType')" width="240">
+          <template #default="scope">
+            {{ scope.row.cropType }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('inputCirculation.quantity')" width="240">
+          <template #default="scope">
+            {{ scope.row.quantity }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('inputCirculation.unit')" width="150">
+          <template #default="scope">
+            {{ scope.row.unit }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('inputCirculation.unitPrice')" width="240">
+          <template #default="scope">
+            {{ scope.row.unitPrice }}
+          </template>
+        </el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>
@@ -32,7 +65,8 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
-const detailData = ref({})
+const mainData = ref({})
+const detailData = ref([])
 
 const fetchDetail = async () => {
   loading.value = true
@@ -40,7 +74,8 @@ const fetchDetail = async () => {
     const response = await getUnionReceiveDetail(route.params.id)
     if (response.code === 200) {
       // Union接收的后端直接返回对象
-      detailData.value = response.data || {}
+      mainData.value = response.data?.main || {}
+      detailData.value = response.data?.details || []
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
@@ -55,5 +90,5 @@ onMounted(() => fetchDetail())
 
 <style scoped>
 .union-receive-detail-container { padding: 20px; }
-.detail-card { margin-top: 20px; }
+.main-card { margin-top: 20px; }
 </style>
