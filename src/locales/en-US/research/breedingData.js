@@ -86,12 +86,17 @@ export default {
     validation: {
       yearNotLessThanCurrent: 'Year cannot be less than current year'
     },
+    // Hints
+    hint: {
+      yearNoPastSeasonLogic: 'Only current and future years are allowed; past years are disabled'
+    },
   },
 
   // Plot and Sowing Information Management
   plot: {
     title: 'Plot and Sowing Information ',
     subtitle: 'Manage trial plot information and sowing records',
+    subtitle1: 'Review the submitted test data',
     list: 'Plot Information List',
     add: 'Add Plot Information',
     edit: 'Edit Plot Information',
@@ -232,6 +237,7 @@ export default {
       replications: 'Replications',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
+      status: 'Status',
       createTime: 'Created Time',
       actions: 'Actions',
     },

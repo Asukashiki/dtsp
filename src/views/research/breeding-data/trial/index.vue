@@ -96,25 +96,20 @@
                 <el-table-column prop="trialId" :label="$t('research.breedingData.trial.columns.trialId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="batchId" :label="$t('research.breedingData.trial.columns.batchId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialName" :label="$t('research.breedingData.trial.columns.trialName')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="locationId" :label="$t('research.breedingData.trial.columns.locationId')" min-width="120" />
+                <el-table-column prop="locationId" show-overflow-tooltip :label="$t('research.breedingData.trial.columns.locationId')" min-width="120" />
                 <el-table-column prop="year" :label="$t('research.breedingData.trial.columns.year')" min-width="100" />
                 <el-table-column prop="season" :label="$t('research.breedingData.trial.columns.season')" min-width="100" />
                 <el-table-column prop="designType" :label="$t('research.breedingData.trial.columns.designType')" min-width="140" />
                 <el-table-column prop="replications" :label="$t('research.breedingData.trial.columns.replications')" min-width="100" />
-                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
-                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="200" fixed="right">
+                <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.status')" width="120" align="center">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                      </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                      </el-button>
-                    </div>
+                    <StatusTag :status="row.trialStatus || 'S0'" />
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
+                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
+                  <template #default="{ row }">
+                    <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" @archive="handleArchive" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -200,6 +195,15 @@
         </div>
       </div>
     </div>
+
+    <!-- 作废原因对话框 -->
+    <ReasonDialog
+      v-model="reasonDialogVisible"
+      :title="t('research.trialBasicAudit.action.cancelReason')"
+      :label="t('research.trialBasicAudit.form.cancelReason')"
+      :placeholder="t('research.trialBasicAudit.form.cancelReasonPlaceholder')"
+      @confirm="handleCancelConfirm"
+    />
   </div>
 </template>
 
@@ -209,6 +213,10 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicList, deleteTrialBasic, getBatchOptions } from '@/api/breedingData'
+import { submitTrial, cancelTrial, archiveTrial } from '@/api/research/trialBasicAudit'
+import StatusTag from './components/StatusTag.vue'
+import ActionButtons from './components/ActionButtons.vue'
+import ReasonDialog from './components/ReasonDialog.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -316,6 +324,68 @@ const handleBatchDelete = () => {
     ElMessage.success(t('research.breedingData.trial.deleteSuccess'))
     selectedIds.value = []
     getList()
+  }).catch(() => {})
+}
+
+// 提交审核
+const handleSubmit = async (row) => {
+  ElMessageBox.confirm(
+    t('research.trialBasicAudit.action.submitConfirm'),
+    t('common.warning'),
+    {
+      type: 'warning',
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel')
+    }
+  ).then(async () => {
+    try {
+      await submitTrial(row.trialId)
+      ElMessage.success(t('research.trialBasicAudit.action.submitSuccess'))
+      getList()
+    } catch (error) {
+      console.error('提交审核失败:', error)
+    }
+  }).catch(() => {})
+}
+
+// 作废
+const reasonDialogVisible = ref(false)
+const currentTrialId = ref('')
+
+const handleCancel = (row) => {
+  currentTrialId.value = row.trialId
+  reasonDialogVisible.value = true
+}
+
+const handleCancelConfirm = async (reason) => {
+  try {
+    await cancelTrial(currentTrialId.value, reason)
+    ElMessage.success(t('research.trialBasicAudit.action.cancelSuccess'))
+    reasonDialogVisible.value = false
+    getList()
+  } catch (error) {
+    console.error('作废失败:', error)
+  }
+}
+
+// 归档
+const handleArchive = async (row) => {
+  ElMessageBox.confirm(
+    t('research.trialBasicAudit.action.archiveConfirm'),
+    t('common.warning'),
+    {
+      type: 'warning',
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel')
+    }
+  ).then(async () => {
+    try {
+      await archiveTrial(row.trialId)
+      ElMessage.success(t('research.trialBasicAudit.action.archiveSuccess'))
+      getList()
+    } catch (error) {
+      console.error('归档失败:', error)
+    }
   }).catch(() => {})
 }
 
