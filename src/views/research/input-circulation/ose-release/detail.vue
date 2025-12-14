@@ -99,7 +99,8 @@ const fetchDetail = async () => {
 const loadDemandList = async (regionCode) => {
   demandLoading.value = true
   try {
-    const response = await getTownAggregationDetail({ sourceCode: regionCode })
+    const year = detailData.value.main?.releaseYear || detailData.value.main?.release_year || new Date().getFullYear().toString()
+    const response = await getTownAggregationDetail({ sourceCode: regionCode, year })
     if (response.code === 200) {
       demandList.value = response.data || []
     }

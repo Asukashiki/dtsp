@@ -528,7 +528,7 @@ const loadDistributionList = async () => {
     }
   } catch (error) {
     console.error('Failed to load distribution list:', error)
-    ElMessage.error('加载分发单列表失败')
+    ElMessage.error('Failed to load distribution list')
   } finally {
     distributionLoading.value = false
   }
@@ -537,7 +537,7 @@ const loadDistributionList = async () => {
 // 分发单下拉框获取焦点时，检查是否选择了仓库
 const handleDistributionFocus = () => {
   if (!formData.warehouse_id) {
-    ElMessage.warning('请先选择出库仓库')
+    ElMessage.warning('Please select the outbound warehouse first')
     return
   }
 }

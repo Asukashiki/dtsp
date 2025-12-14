@@ -95,7 +95,8 @@ const fetchDetail = async () => {
 const loadDemandList = async (farmerId) => {
   demandLoading.value = true
   try {
-    const response = await getFarmerDemandByFarmerId(farmerId)
+    const year = detailData.value.main?.releaseYear || detailData.value.main?.release_year || new Date().getFullYear().toString()
+    const response = await getFarmerDemandByFarmerId(farmerId, { year })
     if (response.code === 200) {
       demandList.value = response.data || []
     }

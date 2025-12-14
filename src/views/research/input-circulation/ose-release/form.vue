@@ -406,7 +406,7 @@ const handleDemandSelectionChange = (selection) => {
 // 处理年度变化 - 重新加载需求列表
 const handleYearChange = () => {
   if (formData.targetId) {
-    loadDemandList(formData.targetId)
+    loadDemandList(regionCode.value)
   }
 }
 
