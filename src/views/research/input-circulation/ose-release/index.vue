@@ -41,15 +41,22 @@
     <el-card v-if="!isMobile" class="table-card">
       <el-table :data="releaseList" v-loading="loading" border @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" width="150" />
-        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" width="200" />
-        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" width="150" />
-        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" width="160" />
-        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" width="160" />
-        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="160" />
-        <el-table-column prop="releaseBy" :label="$t('inputCirculation.releaseBy')" width="160" />
-        <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" width="160" />
-        <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" />
+        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" />
+        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" min-width="150" />
+        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" min-width="160" />
+        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" min-width="160" />
+        <el-table-column prop="status" :label="$t('inputCirculation.status')" min-width="120" />
+        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">
+          <template #default="scope">
+            <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
+              {{ getStockStatusText(scope.row.stockStatus) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="releaseBy" :label="$t('inputCirculation.releaseBy')" min-width="160" />
+        <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" min-width="160" />
+        <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
             <el-button type="primary" link @click="handleEdit(scope.row)">{{ $t('common.edit') }}</el-button>
@@ -98,7 +105,7 @@ import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getOseReleaseList, deleteOseRelease } from '@/api/inputCirculation'
+import { getOseReleaseList, deleteOseRelease, getReleaseStockStatus } from '@/api/inputCirculation'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -134,6 +141,8 @@ const handleQuery = async () => {
     if (response.code === 200) {
       releaseList.value = response.rows || []
       total.value = response.total || 0
+      // 加载出入库状态
+      await loadStockStatus()
     } else {
       ElMessage.error(response.msg || t('common.queryFailed'))
     }
@@ -142,6 +151,38 @@ const handleQuery = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 加载出入库状态
+const loadStockStatus = async () => {
+  if (releaseList.value.length === 0) return
+  const releaseIds = releaseList.value.map(item => item.releaseId).join(',')
+  try {
+    const response = await getReleaseStockStatus(releaseIds)
+    if (response.code === 200 && response.data) {
+      releaseList.value.forEach(item => {
+        item.stockStatus = response.data[item.releaseId] || 'notProcessed'
+      })
+    }
+  } catch (error) {
+    console.error('Failed to load stock status:', error)
+  }
+}
+
+// 获取出入库状态样式
+const getStockStatusTag = (status) => {
+  const map = {
+    notProcessed: 'info',
+    outPending: 'warning',
+    outCompleted: 'success',
+    notFound: 'danger'
+  }
+  return map[status] || 'info'
+}
+
+// 获取出入库状态文本
+const getStockStatusText = (status) => {
+  return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
 }
 
 // 重置查询

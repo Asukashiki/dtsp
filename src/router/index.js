@@ -147,6 +147,20 @@ const routes = [
         component: () => import('../views/research/breeding-data/batch/detail.vue'),
         meta: { title: '育种批次详情', hideInMenu: true, requiresAuth: true }
       },
+
+        {
+        path: 'breeding-data/batch/audit/:dataId',
+        name: 'BreedingBatchAudit',
+        component: () => import('../views/research/breeding-data/batch/form.vue'),
+        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/batch/approve',
+        name: 'BreedingBatchApprove',
+        component: () => import('../views/research/breeding-data/batch/approve.vue'),
+        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+      },
+
       
       // 地块及播种信息管理
       {
@@ -369,6 +383,19 @@ const routes = [
         component: () => import('../views/research/breeding-data/dataset-audit/review.vue'),
         meta: { title: '审核数据集', hideInMenu: true, requiresAuth: true }
       },
+      // 育种数据管理 - 试验基础信息管理审核
+      {
+        path: 'breeding-data/trial-audit',
+        name: 'TrialBasicAudit',
+        component: () => import('../views/research/breeding-data/trial-audit/index.vue'),
+        meta: { title: '试验基础信息管理审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trial-audit/review/:id',
+        name: 'TrialBasicAuditReview',
+        component: () => import('../views/research/breeding-data/trial-audit/review.vue'),
+        meta: { title: '审核试验', hideInMenu: true, requiresAuth: true }
+      },
       // 育种数据管理 - 育种许可数据录入
       {
         path: 'breeding-data/breeding-license',
@@ -461,7 +488,6 @@ const routes = [
         component: () => import('../views/research/data-collection/environment-new-data/detail.vue'),
         meta: { title: '环境监测数据详情', hideInMenu: true, requiresAuth: true }
       },
-
       // ==================== 繁殖数据管理 ====================
       
       // OSE确认接收育种家种子
@@ -1086,6 +1112,58 @@ const routes = [
         name: 'InputQuotaDetail',
         component: () => import('../views/research/input-circulation/quota/detail.vue'),
         meta: { title: '配额详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // zone分配额度
+      {
+        path: 'allocation/zone',
+        name: 'ZoneAllocationList',
+        component: () => import('../views/input/allocation/zone/index.vue'),
+        meta: { title: 'Zone分配额度管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/add',
+        name: 'ZoneAllocationAdd',
+        component: () => import('../views/input/allocation/zone/form.vue'),
+        meta: { title: '新增分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/edit/:id',
+        name: 'ZoneAllocationEdit',
+        component: () => import('../views/input/allocation/zone/form.vue'),
+        meta: { title: '编辑分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/zone/detail/:id',
+        name: 'ZoneAllocationDetail',
+        component: () => import('../views/input/allocation/zone/detail.vue'),
+        meta: { title: '分配额度详情', hideInMenu: true, requiresAuth: true }
+      },
+
+      // woreda分配额度
+      {
+        path: 'allocation/woreda',
+        name: 'WoredaAllocationList',
+        component: () => import('../views/input/allocation/woreda/index.vue'),
+        meta: { title: 'Woreda分配额度管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/add',
+        name: 'WoredaAllocationAdd',
+        component: () => import('../views/input/allocation/woreda/form.vue'),
+        meta: { title: '新增Woreda分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/edit/:id',
+        name: 'WoredaAllocationEdit',
+        component: () => import('../views/input/allocation/woreda/form.vue'),
+        meta: { title: '编辑Woreda分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/woreda/detail/:id',
+        name: 'WoredaAllocationDetail',
+        component: () => import('../views/input/allocation/woreda/detail.vue'),
+        meta: { title: 'Woreda分配额度详情', hideInMenu: true, requiresAuth: true }
       },
 
       // OSE分发种子到Union

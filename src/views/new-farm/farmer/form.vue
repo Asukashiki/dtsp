@@ -49,11 +49,11 @@
               </el-radio-group>
             </el-form-item>
 
-            <el-form-item :label="$t('newFarm.farmer.form.birthDate')" prop="birthday">
+            <el-form-item :label="$t('common.birthDate')" prop="birthday">
               <el-date-picker
                   v-model="formData.birthday"
               type="date"
-              :placeholder="$t('newFarm.farmer.placeholder.birthDate')"
+              :placeholder="$t('common.birthDate')"
               value-format="YYYY-MM-DD"
               style="width: 100%"
               />

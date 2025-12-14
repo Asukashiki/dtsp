@@ -35,6 +35,39 @@ export const useUserStore = defineStore('user', {
     hasUserInfo() {
       const userInfo = this._userInfo || getUserInfo() || {}
       return !!userInfo && Object.keys(userInfo).length > 0
+    },
+    // 获取用户角色列表
+    userRoles() {
+      const userInfo = this._userInfo || getUserInfo() || {}
+      const roleStr = userInfo.user?.LOGIN_ROLE_VALUE?.['SMART-AGR'] || ''
+      return roleStr.split(',').map(r => r.trim()).filter(r => r)
+    },
+    // 检查用户是否有指定角色
+    hasRole() {
+      return (roles) => {
+        if (!roles || roles.length === 0) return true
+        if (this.userRoles.includes('agri-admin')) return true // 超级管理员有所有权限
+        return roles.some(role => this.userRoles.includes(role))
+      }
+    },
+    // 检查用户是否有状态操作权限
+    hasStatusPermission() {
+      return (statusAction) => {
+        // 状态操作权限映射
+        const statusPermissions = {
+          'create': ['agri-admin', 'OARI', 'RC'], // 创建
+          'edit': ['agri-admin', 'OARI', 'RC'], // 编辑
+          'submit': ['agri-admin', 'OARI', 'RC'], // 提交审核
+          'approve': ['agri-admin', 'OARI'], // 审核通过
+          'reject': ['agri-admin', 'OARI'], // 审核驳回
+          'archive': ['agri-admin', 'OARI'], // 归档
+          'cancel': ['agri-admin', 'OARI'], // 作废
+          'view': ['agri-admin', 'OARI', 'RC', 'OSE', 'Union', 'Cooperative', 'OIA'] // 查看
+        }
+        
+        const requiredRoles = statusPermissions[statusAction] || []
+        return this.hasRole(requiredRoles)
+      }
     }
   },
 

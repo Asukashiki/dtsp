@@ -36,17 +36,17 @@
                 :label="$t('villageAggregation.columns.year')"
                 min-width="100"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="sourceCode"
                 :label="$t('villageAggregation.columns.sourceCode')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('villageAggregation.columns.sourceName')"
+                :label="$t('KebeleName')"
                 min-width="140"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="targetCode"
                 :label="$t('villageAggregation.columns.targetCode')"
                 min-width="140"
@@ -55,7 +55,7 @@
                 prop="targetName"
                 :label="$t('villageAggregation.columns.targetName')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="subQuantity"
                 :label="$t('villageAggregation.columns.subQuantity')"
@@ -102,7 +102,7 @@
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="primary" @click="handleApprove(row)">
+                    <el-button link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
                       {{ $t('villageAggregation.actions.approve') }}
                     </el-button>
@@ -142,22 +142,22 @@
                 </el-tag>
               </div>
               <div class="mobile-card-body">
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.sourceName') }}:</span>
+                  <span class="label">{{ $t('KebeleName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>
                 </div>
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.targetCode') }}:</span>
                   <span class="value">{{ item.targetCode }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.targetName') }}:</span>
                   <span class="value">{{ item.targetName }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
@@ -255,22 +255,30 @@
           prop="inputCategory"
           :label="$t('villageAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inputType"
           :label="$t('villageAggregation.detailDialog.columns.inputType')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalQuantity"
           :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-        <el-table-column
-          prop="totalCount"
-          :label="$t('villageAggregation.detailDialog.columns.totalCount')"
-          min-width="120"
-        />
+<!--        <el-table-column-->
+<!--          prop="totalCount"-->
+<!--          :label="$t('villageAggregation.detailDialog.columns.totalCount')"-->
+<!--          min-width="120"-->
+<!--        />-->
       </el-table>
 
       <!-- 分页 -->
@@ -311,6 +319,9 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateVillageInputDemand, getVillageAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
 import { getApprovedDemandPage } from '@/api/demandAudit'
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
 const router = useRouter()
 const { t } = useI18n()
@@ -414,11 +425,11 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode, 
-      // sourceCode: 'huangshan', 
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      // sourceCode: 'huangshan',
       status: '0',
       level: '0',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username, 
+      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
       // subQuantity: 0//农民数||村的数量||
     })
 

@@ -28,7 +28,7 @@
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.batchName')" prop="batchName">
-                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" />
+                    <el-input v-model="formData.batchName" :placeholder="$t('research.breedingData.batch.placeholder.batchName')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -38,61 +38,81 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.cropType')" prop="cropType">
-                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%" @change="handleCropTypeChange">
+                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%" @change="handleCropTypeChange" :disabled="isReadOnly">
                       <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
-                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" />
+                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" />
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
+
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.breedingMethod')" prop="breedingMethod">
-                    <el-select v-model="formData.breedingMethod" :placeholder="$t('research.breedingData.batch.placeholder.breedingMethod')" style="width: 100%">
+                    <el-select v-model="formData.breedingMethod" :placeholder="$t('research.breedingData.batch.placeholder.breedingMethod')" style="width: 100%" :disabled="isReadOnly">
                       <el-option v-for="item in breedingMethodOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.year')" prop="year">
-                    <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.batch.placeholder.year')" />
+                    <div class="w-full">
+                      <el-date-picker
+                        v-model="formData.year"
+                        type="year"
+                        value-format="YYYY"
+                        style="width: 100%"
+                        :placeholder="$t('research.breedingData.batch.placeholder.year')"
+                        :disabled-date="disablePastYears"
+                      />
+                      <div class="mt-1 text-xs text-gray-500">
+                        {{ $t('research.breedingData.batch.hint.yearNoPastSeasonLogic') }}
+                      </div>
+                    </div>
                   </el-form-item>
                 </el-col>
+
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.parentalSeedSource')" prop="parentalSeedSource">
-                    <el-input v-model="formData.parentalSeedSource" :placeholder="$t('research.breedingData.batch.placeholder.parentalSeedSource')" />
+                    <el-input v-model="formData.parentalSeedSource" :placeholder="$t('research.breedingData.batch.placeholder.parentalSeedSource')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.objective')" prop="objective">
-                    <el-input v-model="formData.objective" :placeholder="$t('research.breedingData.batch.placeholder.objective')" />
+                    <el-input v-model="formData.objective" :placeholder="$t('research.breedingData.batch.placeholder.objective')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
-                    <el-input v-model="formData.status" disabled style="width: 100%" />
+                    <el-input :value="getStatusLabel(formData.status)" disabled style="width: 100%" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
-                  <el-form-item :label="$t('research.breedingData.batch.form.remarks')">
-                    <el-input v-model="formData.remarks" type="textarea" :rows="3" :placeholder="$t('research.breedingData.batch.placeholder.remarks')" />
-                  </el-form-item>
-                </el-col>
+                    <el-form-item :label="$t('research.breedingData.batch.form.remarks')">
+                      <el-input v-model="formData.remarks" type="textarea" :rows="3" :placeholder="$t('research.breedingData.batch.placeholder.remarks')" :disabled="isReadOnly" />
+                    </el-form-item>
+                  </el-col>
               </el-row>
             </div>
           </div>
 
           <!-- 操作按钮 -->
           <div class="form-actions">
-            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+            <el-button 
+              v-for="button in getActionButtons()" 
+              :key="button.action"
+              :type="button.type" 
+              @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ button.label }}
+            </el-button>
           </div>
         </el-form>
       </div>
@@ -105,7 +125,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch } from '@/api/breedingData'
+import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -116,6 +136,8 @@ const loading = ref(false)
 const submitLoading = ref(false)
 
 const isEdit = computed(() => !!route.params.dataId)
+const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
+const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
 
 const formData = reactive({
   dataId: '',
@@ -128,7 +150,7 @@ const formData = reactive({
   year: '',
   parentalSeedSource: '',
   objective: '',
-  status: 'ongoing',
+  status: 'S0', // 默认草稿状态
   remarks: ''
 })
 
@@ -176,10 +198,135 @@ const breedingMethodOptions = [
   { label: 'wide_cross', value: 'wide_cross' }
 ]
 
+const getStatusLabel = (status) => {
+  const statusLabelMap = {
+    'S0': 'Draft',
+    'S1': 'Pending Approval',
+    'S2': 'Approved',
+    'S3': 'Rejected',
+    'S9': 'Archived',
+    'S10': 'Void'
+  }
+  return statusLabelMap[status] || status
+}
+
+const getActionButtons = () => {
+  const status = formData.status
+  const mode = pageMode.value
+  
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+  
+  // 审批模式
+  if (mode === 'audit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'success', label: 'approve', action: 'approve' },
+      { type: 'danger', label: 'reject', action: 'reject' }
+    ]
+  }
+  
+  // 查看模式（已审批/已归档/作废状态）
+  if (mode === 'view') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'archive', action: 'archive' },
+      { type: 'danger', label: 'cancelBatch', action: 'cancelBatch' }
+    ]
+  }
+  
+  // 默认按钮
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
+
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      goBack()
+      break
+    case 'save':
+      handleSubmit()
+      break
+    case 'submit':
+      handleSubmitForAudit()
+      break
+    case 'approve':
+      handleApprove()
+      break
+    case 'reject':
+      handleReject()
+      break
+    case 'archive':
+      handleArchive()
+      break
+    case 'cancelBatch':
+      handleCancelBatch()
+      break
+  }
+}
+
+const handleSubmitForAudit = async () => {
+  try {
+    await submitForAudit(formData.dataId)
+    ElMessage.success(t('research.breedingData.batch.submitForAuditSuccess'))
+    goBack()
+  } catch (error) {
+    ElMessage.error(t('research.breedingData.batch.submitForAuditError'))
+  }
+}
+
+const handleApprove = async () => {
+  try {
+    await approveBatch(formData.dataId)
+    ElMessage.success(t('research.breedingData.batch.approveSuccess'))
+    goBack()
+  } catch (error) {
+    ElMessage.error(t('research.breedingData.batch.approveError'))
+  }
+}
+
+const handleReject = async () => {
+  try {
+    await rejectBatch(formData.dataId)
+    ElMessage.success(t('research.breedingData.batch.rejectSuccess'))
+    goBack()
+  } catch (error) {
+    ElMessage.error(t('research.breedingData.batch.rejectError'))
+  }
+}
+
+const handleArchive = async () => {
+  try {
+    await archiveBatch(formData.dataId)
+    ElMessage.success(t('research.breedingData.batch.archiveSuccess'))
+    goBack()
+  } catch (error) {
+    ElMessage.error(t('research.breedingData.batch.archiveError'))
+  }
+}
+
+const handleCancelBatch = async () => {
+  try {
+    await cancelBatch(formData.id)
+    ElMessage.success(t('research.breedingData.batch.cancelSuccess'))
+    goBack()
+  } catch (error) {
+    ElMessage.error(t('research.breedingData.batch.cancelError'))
+  }
+}
+
 const getInfo = async () => {
   if (!isEdit.value) {
-    // 新增模式下设置默认状态为ongoing
-    formData.status = 'ongoing'
+    // 新增模式下设置默认状态为草稿
+    formData.status = 'S0'
     return
   }
   loading.value = true
@@ -190,7 +337,7 @@ const getInfo = async () => {
       formData.year = String(formData.year)
     }
   } catch (error) {
-    console.error('获取详情失败:', error)
+    console.error('Failed to fetch details:', error)
   } finally {
     loading.value = false
   }
@@ -216,7 +363,7 @@ const handleSubmit = async () => {
     }
     goBack()
   } catch (error) {
-    console.error('提交失败:', error)
+    console.error('Failed to submit:', error)
   } finally {
     submitLoading.value = false
   }
@@ -252,6 +399,13 @@ const goBack = () => {
 watch(() => formData.year, () => {
   generateBatchId()
 })
+
+// 禁用过去年份（遵循日期逻辑：不允许早于当前年）
+const disablePastYears = (date) => {
+  if (!date) return false
+  const currentYear = new Date().getFullYear()
+  return date.getFullYear() < currentYear
+}
 
 onMounted(() => {
   getInfo()

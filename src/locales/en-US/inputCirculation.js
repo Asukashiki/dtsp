@@ -24,15 +24,21 @@ export default {
   // Release related
   releaseId: 'Release ID',
   releaseName: 'Release Name',
-  worId: 'Woreda ID',
-  zoneId: 'Zone ID',
-  targetId: 'Target Organ',
-  targetAddress: 'Target Address',
-  targetContact: 'Target Contact',
-  targetPhone: 'Target Phone',
+  worId: 'Woreda',
+  zoneId: 'Zone',
+  targetId: 'Union',
+  targetAddress: 'Union Address',
+  targetContact: 'Union Contact',
+  targetPhone: 'Union Phone',
   releaseYear: 'Release Year',
   releaseDate: 'Release Date',
   status: 'Status',
+  stockStatus: 'Stock Status',
+  stockStatus_notProcessed: 'Not Stocked Out',
+  stockStatus_outPending: 'Out Pending',
+  stockStatus_outCompleted: 'Stocked Out',
+  stockStatus_notFound: 'Not Found',
+  stockInsufficient: 'Insufficient stock: available {available}, requested {requested}',
   releaseBy: 'Released By',
   auditDate: 'Audit Date',
   auditBy: 'Audited By',
@@ -43,17 +49,23 @@ export default {
 
   // Release detail
   releaseDetailId: 'ID',
-  cropType: 'Crop Type',
-  variety: 'Variety',
+  type: 'Input Type',
+  agriculturalInputType: 'Agricultural Input Type',
   inputId: 'Input',
   inputName: 'Input Name',
   required: 'Required Quantity',
   quantity: 'Quantity',
+  demandQuantity: 'Demand Quantity',
+  quantityExceedsDemand: 'Quantity exceeds demand limit',
   unitPrice: 'Unit Price',
   releaseTime: 'Release Time',
   detailInfo: 'Detail Information',
+  variety: 'Variety',
+  cropType: 'Crop Type',
+  demandSelectionTitle: 'Demand',
   basicInfo: 'Basic Information',
   addDetail: 'Add Detail',
+  totalPrice: 'Total Price',
 
   // Action buttons
   addRelease: 'Add Release',
@@ -62,9 +74,9 @@ export default {
   deleteRelease: 'Delete Release',
 
   // Union receive confirm
-  confirmBy: 'Confirmed By',
-  confirmOrg: 'Confirm Organization',
-  confirmTime: 'Confirm Time',
+  confirmBy: 'Receive By',
+  confirmOrg: 'Receive Organization',
+  confirmTime: 'Receive Time',
   confirmReceive: 'Confirm Receive',
   receiveDetail: 'Receive Detail',
   unionName: 'Union Name',
@@ -72,6 +84,10 @@ export default {
   // Receive status
   pending: 'Pending',
   confirmed: 'Confirmed',
+
+  // Receive Detail
+  receiveId: 'Receive ID',
+  receiveName: 'Receive Name',
 
   // Messages
   confirmReceiveSuccess: 'Receive confirmed successfully',
@@ -89,7 +105,7 @@ export default {
   // Menu items
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
-  oseReleaseToUnion: 'OSE Release Seeds to Union',
+  oseReleaseToUnion: 'Release Seeds to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',

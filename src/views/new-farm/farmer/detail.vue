@@ -47,7 +47,7 @@
               </span>
             </div>
             <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.birthDate') }}:</span>
+              <span class="label">{{ $t('common.birthDate') }}:</span>
               <span class="value">{{ detail.birthday || '-' }}</span>
             </div>
             <div class="info-item">

@@ -1,7 +1,7 @@
 export default {
   // Town Demand Aggregation
-  title: 'Town Demand Aggregation',
-  subtitle: 'Manage and aggregate town-level village demand data',
+  title: 'Woreda Demand Aggregation',
+  subtitle: 'Manage and aggregate woreda-level kebele demand data',
 
   // Actions
   actions: {

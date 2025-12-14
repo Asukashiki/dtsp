@@ -30,6 +30,10 @@ export default {
       breedingMethod: 'Breeding Method',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      description: 'Batch Description',
+      batchSize: 'Batch Size',
+      expectedEndDate: 'Expected End Date',
+      location: 'Location',
       pedigree: 'Pedigree',
       yearOfDevelopment: 'Year of Development',
       productPlace: 'Production Place',
@@ -54,6 +58,10 @@ export default {
       breedingMethod: 'Please select breeding method',
       parentalSeedSource: 'Please enter parental seed source',
       objective: 'Please enter objective',
+      description: 'Please enter batch description',
+      batchSize: 'Please enter batch size',
+      expectedEndDate: 'Please select expected end date',
+      location: 'Please enter location',
       pedigree: 'Please enter pedigree',
       yearOfDevelopment: 'Please select year of development',
       productPlace: 'Please enter production place',
@@ -73,6 +81,10 @@ export default {
       breedingMethod: 'Breeding Method',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      description: 'Batch Description',
+      batchSize: 'Batch Size',
+      expectedEndDate: 'Expected End Date',
+      location: 'Location',
       year: 'Year',
       status: 'Status',
       personInCharge: 'Person in Charge',
@@ -82,9 +94,40 @@ export default {
       actions: 'Actions',
     },
 
+    status: {
+      draft: 'Draft',
+      pendingApproval: 'Pending Approval',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      inProgress: 'In Progress',
+      paused: 'Paused',
+      terminated: 'Terminated',
+      completed: 'Completed',
+      archived: 'Archived',
+      cancelled: 'Cancelled',
+      exception: 'Exception',
+    },
+
+    actions: {
+      edit: 'Edit',
+      submit: 'Submit',
+    },
+
     // Validation rules
     validation: {
       yearNotLessThanCurrent: 'Year cannot be less than current year'
+    },
+    // Hints
+    hint: {
+      yearNoPastSeasonLogic: 'Only current and future years are allowed; past years are disabled'
+    },
+
+    // Tabs
+    tabs: {
+      myCreated: 'My Created',
+      pendingApproval: 'Pending Approval',
+      approved: 'Approved',
+      completed: 'Completed'
     },
   },
 
@@ -92,6 +135,7 @@ export default {
   plot: {
     title: 'Plot and Sowing Information ',
     subtitle: 'Manage trial plot information and sowing records',
+    subtitle1: 'Review the submitted test data',
     list: 'Plot Information List',
     add: 'Add Plot Information',
     edit: 'Edit Plot Information',
@@ -232,6 +276,7 @@ export default {
       replications: 'Replications',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
+      status: 'Status',
       createTime: 'Created Time',
       actions: 'Actions',
     },

@@ -40,15 +40,40 @@
 <!--        <el-form-item :label="$t('inputCirculation.releaseBy')">-->
 <!--          <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" />-->
 <!--        </el-form-item>-->
-        <el-form-item :label="$t('inputCirculation.auditBy')">
+        <!-- <el-form-item :label="$t('inputCirculation.auditBy')">
           <el-input v-model="formData.auditBy" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.auditDate')" prop="auditDate">
           <el-date-picker v-model="formData.auditDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" />
-        </el-form-item>
+        </el-form-item> -->
 <!--        <el-form-item :label="$t('inputCirculation.releaseOrg')">-->
 <!--          <el-input v-model="formData.releaseOrg" :placeholder="$t('common.pleaseInput')" />-->
 <!--        </el-form-item>-->
+
+        <h3>{{ $t('inputCirculation.demandSelectionTitle') }}</h3>
+        <el-table
+            :data="demandList"
+            border
+            style="margin-top: 16px; margin-bottom: 24px;"
+            :header-cell-style="{ textAlign: 'center' }"
+            :cell-style="{ textAlign: 'center' }"
+            v-loading="demandLoading"
+            @selection-change="handleDemandSelectionChange">
+          <el-table-column type="selection" width="55" />
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" prop="inputType" min-width="150">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_type', row.inputType) }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" prop="inputCategory" min-width="150">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_category', row.inputCategory) }}
+            </template>
+          </el-table-column>
+        
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
+          <!-- <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalCount')" prop="totalCount" min-width="120" /> -->
+        </el-table>
 
         <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
         <el-button type="primary" @click="addDetail" style="float: right;margin-bottom: 12px">{{ $t('inputCirculation.addDetail') }}</el-button>
@@ -57,58 +82,55 @@
             border
             style="margin-top: 16px;"
             :header-cell-style="{ textAlign: 'center' }"
-            :cell-style="{ textAlign: 'center' }">>
-          <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="100" />
-          <el-table-column :label="$t('inputCirculation.inputId')" width="360">
+            :cell-style="{ textAlign: 'center' }">
+          <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="80" />
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
             <template #default="scope">
-              <el-select v-model="scope.row.inputId"
+              <el-select v-model="scope.row.inputType"
                          :placeholder="$t('common.pleaseSelect')"
-                         filterable
-                         clearable
-                         @change="handleInputChange(scope.$index)"
+                         @change="handleInputTypeChange(scope.$index)"
                          style="width: 100%">
-                <el-option v-for="item in inputList" :key="item.inputId" :label="item.inputName" :value="item.inputId" />
+                <el-option v-for="item in seedTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </template>
           </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.variety')" width="120">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.variety" :placeholder="$t('common.pleaseInput')" readonly />
+              <el-select v-model="scope.row.inputCategory"
+                         :placeholder="$t('common.pleaseSelect')"
+                         :disabled="!scope.row.inputType"
+                         @change="handleInputCategoryChange(scope.$index)"
+                         style="width: 100%">
+                <el-option v-for="item in getFilteredCategories(scope.row.inputType)" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </template>
           </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.cropType')" width="150">
+          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="120">
             <template #default="scope">
-              <el-input v-model="scope.row.cropType" :placeholder="$t('common.pleaseInput')" readonly />
+              <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.required')" width="200">
+          <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
             <template #default="scope">
-              <el-input-number v-model="scope.row.required" :min="0" :precision="2" />
+              <el-input-number 
+                v-model="scope.row.quantity" 
+                :min="0" 
+                :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
+                :precision="2"
+                @change="validateQuantity(scope.$index)" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.quantity')" width="200">
-            <template #default="scope">
-              <el-input-number v-model="scope.row.quantity" :min="0" :precision="2" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unit')" width="120">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
             <template #default="scope">
               <el-input v-model="scope.row.unit" :placeholder="$t('common.pleaseInput')" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unitPrice')" width="200">
+          <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
             <template #default="scope">
               <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" />
             </template>
           </el-table-column>
-<!--          <el-table-column :label="$t('inputCirculation.releaseTime')" width="260">-->
-<!--            <template #default="scope">-->
-<!--              <el-date-picker v-model="scope.row.releaseTime" type="date" value-format="YYYY-MM-DD"/>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-          <el-table-column :label="$t('common.actions')" width="80" fixed="right">
+          <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
             <template #default="scope">
               <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
             </template>
@@ -129,19 +151,31 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getOseReleaseDetail, addOseRelease, editOseRelease } from '@/api/inputCirculation'
-import {getAllInputList} from "../../../../api/input.js";
-import {getUnionDetailByUnionId} from "../../../../api/union.js";
-import {getOrgansRegionByCode, listSubRegionByCode} from "../../../../api/application.js";
-import {getCurrentUserInfo} from "../../../../api/user.js";
+import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock } from '@/api/inputCirculation'
+import {getAllInputList} from "@/api/input.js";
+import {getUnionDetailByUnionId} from "@/api/union.js";
+import {getOrgansRegionByCode, listSubRegionByCode} from "@/api/application.js";
+import {getCurrentUserInfo} from "@/api/user.js";
+import {getTownAggregationDetail} from "@/api/villageAggregation.js";
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store/user'
+
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const formRef = ref(null)
 const isEdit = computed(() => !!route.params.id)
+
+// 只显示种子类型 (IN01)
+const seedTypeOptions = computed(() => {
+  if (!options.value.input_type) return []
+  return options.value.input_type.filter(item => item.value === 'IN01')
+})
 
 const formData = reactive({
   id: '',
@@ -152,7 +186,7 @@ const formData = reactive({
   targetContact: '',
   targetPhone: '',
   releaseYear: new Date().getFullYear().toString(),
-  releaseDate: '',
+  releaseDate: new Date().toISOString().split('T')[0],
   releaseBy: '',
   auditDate: '',
   auditBy: '',
@@ -164,6 +198,9 @@ const formData = reactive({
 const zoneList = ref([])
 const unionList = ref([])
 const inputList = ref([])
+const demandList = ref([])
+const demandLoading = ref(false)
+const selectedDemands = ref([])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -203,8 +240,11 @@ const getAllZoneList = async () => {
   }
 }
 
+const regionCode = ref('')
+
 const getAllUnionList = async (value) => {
   loading.value = true
+  regionCode.value = value
   try {
     const response = await getOrgansRegionByCode({regionCode: value})
     if (response.code === 200) {
@@ -253,6 +293,75 @@ const handleInputChange = (index) => {
   }
 }
 
+// 投入品类型变化处理
+const handleInputTypeChange = (index) => {
+  const detail = formData.details[index]
+  // 清空投入品类别
+  detail.inputCategory = ''
+  detail.quantity = 0
+}
+
+// 投入品类别变化处理
+const handleInputCategoryChange = (index) => {
+  const detail = formData.details[index]
+  // 获取需求数量作为默认值
+  const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  detail.quantity = 0
+  detail.maxQuantity = demandQty
+}
+
+// 根据投入品类型过滤投入品类别
+const getFilteredCategories = (inputType) => {
+  if (!inputType || !options.value.input_category) return []
+  // 根据 inputCategory 的前缀匹配 inputType
+  // 例如 IN01 对应 IN0101, IN0102, IN0103
+  return options.value.input_category.filter(item => item.value.startsWith(inputType))
+}
+
+// 获取需求数量
+const getDemandQuantity = (inputType, inputCategory) => {
+  if (!inputType || !inputCategory) return 0
+  const demand = demandList.value.find(d => d.inputType === inputType && d.inputCategory === inputCategory)
+  return demand ? demand.totalQuantity : 0
+}
+
+// 校验数量 - 同时检查需求量和库存
+const validateQuantity = async (index) => {
+  const detail = formData.details[index]
+  if (!detail.inputType) return
+  
+  // 校验需求量
+  const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  if (detail.quantity > maxQty) {
+    detail.quantity = maxQty
+    ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
+    return
+  }
+  
+  // 校验库存 - 计算表单中同类型的总数量
+  const totalFormQuantity = formData.details
+    .filter(d => d.inputType === detail.inputType && 
+                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
+    .reduce((sum, d) => sum + (d.quantity || 0), 0)
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (stockRes.code === 200 && stockRes.data) {
+      const available = stockRes.data.availableStock || 0
+      if (totalFormQuantity > available) {
+        // 超出可用库存，调整当前行数量
+        const excessQty = totalFormQuantity - available
+        const adjustedQty = Math.max(0, (detail.quantity || 0) - excessQty)
+        detail.quantity = adjustedQty
+        ElMessage.error(t('inputCirculation.stockInsufficient', { available, requested: totalFormQuantity }))
+      }
+    }
+  } catch (error) {
+    console.error('Failed to validate stock:', error)
+  }
+}
+
 const getUnionInfo = async (value) => {
   if (!value || value.length === 0) return
   loading.value = true
@@ -262,12 +371,33 @@ const getUnionInfo = async (value) => {
       formData.targetAddress = response.data.fullAddress
       formData.targetContact = response.data.operator
     }
+    // 加载需求列表
+    await loadDemandList(regionCode.value)
   } catch (error) {
     ElMessage.error(t('union.getUnionInfoFailed'))
-
   } finally {
     loading.value = false
   }
+}
+
+// 加载需求列表
+const loadDemandList = async (unionCode) => {
+  demandLoading.value = true
+  try {
+    const response = await getTownAggregationDetail({ sourceCode: unionCode })
+    if (response.code === 200) {
+      demandList.value = response.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load demand list:', error)
+  } finally {
+    demandLoading.value = false
+  }
+}
+
+// 处理需求选择变化
+const handleDemandSelectionChange = (selection) => {
+  selectedDemands.value = selection
 }
 
 const fetchDetail = async () => {
@@ -287,14 +417,12 @@ const fetchDetail = async () => {
 
 const addDetail = () => {
   formData.details.push({
-    cropType: '',
-    variety: '',
-    inputId: '',
-    required: 0,
+    inputType: '',
+    inputCategory: '',
     quantity: 0,
     unit: 'Kg',
     unitPrice: 0,
-    releaseTime: ''
+    maxQuantity: 0
   })
 }
 
@@ -307,12 +435,35 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (!valid) return
     loading.value = true
-    const submitData = { ...formData }
-    // 提取级联选择器的最后一级ID用于提交
-    if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
-      submitData.targetId = formData.targetId[formData.targetId.length - 1]
-    }
+    
     try {
+      // 库存校验
+      const quantityByType = {}
+      for (const detail of formData.details) {
+        const key = `${detail.inputType}_${detail.inputCategory || ''}`
+        if (!quantityByType[key]) {
+          quantityByType[key] = { inputType: detail.inputType, inputCategory: detail.inputCategory, quantity: 0 }
+        }
+        quantityByType[key].quantity += (detail.quantity || 0)
+      }
+      
+      for (const key of Object.keys(quantityByType)) {
+        const item = quantityByType[key]
+        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, userStore.userInfo.user.organCode)
+        if (stockRes.code === 200 && stockRes.data) {
+          const available = stockRes.data.availableStock || 0
+          if (item.quantity > available) {
+            ElMessage.error(t('inputCirculation.stockInsufficient', { available: available, requested: item.quantity }))
+            loading.value = false
+            return
+          }
+        }
+      }
+      
+      const submitData = { ...formData }
+      if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
+        submitData.targetId = formData.targetId[formData.targetId.length - 1]
+      }
       const apiFunc = isEdit.value ? editOseRelease : addOseRelease
       const response = await apiFunc(submitData)
       if (response.code === 200) {
@@ -322,6 +473,7 @@ const handleSubmit = async () => {
         ElMessage.error(response.msg || t('common.saveFailed'))
       }
     } catch (error) {
+      console.error('Failed to submit form:', error)
       ElMessage.error(t('common.saveFailed'))
     } finally {
       loading.value = false

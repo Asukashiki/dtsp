@@ -14,6 +14,8 @@ export default {
   breedingBatchEdit: '编辑育种批次',
   breedingBatchDetail: '育种批次详情',
 
+  breedingBatchApprove: '育种批次审核',
+
   plotInfoManagement: '地块及播种信息管理',
   plotInfoAdd: '新增地块信息',
   plotInfoEdit: '编辑地块信息',
@@ -23,6 +25,7 @@ export default {
   trialBasicAdd: '新增试验信息',
   trialBasicEdit: '编辑试验信息',
   trialBasicDetail: '试验信息详情',
+  trialBasicAudit: '试验基础信息管理审核',
 
   agronomicTraitDataCollection: '农艺性状数据采集',
   agronomicTraitDataAdd: '新增农艺性状数据',

@@ -184,8 +184,8 @@ export default {
   seed: {
     // Production Data Collection
     production: {
-      title: 'Breeder Seed Production Data',
-      subtitle: 'Record Breeder Seed production data to ensure seed propagation process is traceable',
+      title: 'Seed Production Data',
+      subtitle: 'Record Seed production data to ensure seed propagation process is traceable',
       list: 'Production Data List',
       add: 'Add Production Data',
       detail: 'Production Data Details',
@@ -260,8 +260,8 @@ export default {
 
     // Distribution Management
     distribution: {
-      title: 'Breeder Seed Distribution Data Management',
-      subtitle: 'Manage Breeder Seed distribution records, track seed flow to OSE',
+      title: 'Seed Distribution Data Management',
+      subtitle: 'Manage Seed distribution records, track seed flow to OSE',
       list: 'Distribution Data List',
       add: 'Add Distribution Data',
       detail: 'Distribution Data Details',

@@ -92,5 +92,6 @@ export default {
   },
   required: 'this item is required',
   saveSuccess: 'Save Success',
-  queryFailed: 'query Info failed'
+  queryFailed: 'query Info failed',
+  birthDate: 'Birth Date'
 }

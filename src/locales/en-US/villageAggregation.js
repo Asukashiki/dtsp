@@ -1,7 +1,7 @@
 export default {
   // Village Demand Aggregation
-  title: 'Village Demand Aggregation',
-  subtitle: 'Manage and aggregate village-level farmer demand data',
+  title: 'Kebele Demand Aggregation',
+  subtitle: 'Manage and aggregate kebele-level farmer demand data',
 
   // Actions
   actions: {

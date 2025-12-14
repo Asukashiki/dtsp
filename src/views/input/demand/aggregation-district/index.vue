@@ -36,17 +36,17 @@
                 :label="$t('districtAggregation.columns.year')"
                 min-width="100"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="sourceCode"
                 :label="$t('districtAggregation.columns.sourceCode')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('districtAggregation.columns.sourceName')"
+                :label="$t('ZoneName')"
                 min-width="140"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="targetCode"
                 :label="$t('districtAggregation.columns.targetCode')"
                 min-width="140"
@@ -55,7 +55,7 @@
                 prop="targetName"
                 :label="$t('districtAggregation.columns.targetName')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="subQuantity"
                 :label="$t('districtAggregation.columns.subQuantity')"
@@ -102,7 +102,7 @@
               >
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button v-if="row.status === '0'" link type="primary" @click="handleApprove(row)">
+                    <el-button link type="primary" @click="handleApprove(row)">
                       <i class="ri-file-list-3-line"></i>
                       {{ $t('districtAggregation.actions.approve') }}
                     </el-button>
@@ -142,22 +142,22 @@
                 </el-tag>
               </div>
               <div class="mobile-card-body">
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('districtAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('districtAggregation.columns.sourceName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>
                 </div>
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('districtAggregation.columns.targetCode') }}:</span>
                   <span class="value">{{ item.targetCode }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('districtAggregation.columns.targetName') }}:</span>
                   <span class="value">{{ item.targetName }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('districtAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
@@ -255,22 +255,30 @@
           prop="inputCategory"
           :label="$t('districtAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inputType"
           :label="$t('districtAggregation.detailDialog.columns.inputType')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalQuantity"
           :label="$t('districtAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-        <el-table-column
-          prop="totalCount"
-          :label="$t('districtAggregation.detailDialog.columns.totalCount')"
-          min-width="120"
-        />
+<!--        <el-table-column-->
+<!--          prop="totalCount"-->
+<!--          :label="$t('districtAggregation.detailDialog.columns.totalCount')"-->
+<!--          min-width="120"-->
+<!--        />-->
       </el-table>
 
       <!-- 分页 -->
@@ -310,7 +318,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateTownInputDemand, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const { t } = useI18n()
 
@@ -465,7 +475,8 @@ const handleSubmit = async (row) => {
     // 区级汇聚提交: 传递sourceCode和summaryId
     const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
-      summaryId: row.id
+      summaryId: row.id,
+      year: row.year
     })
 
     if (res.code === 200) {
@@ -512,7 +523,8 @@ const loadDetailData = async () => {
   try {
     // 区级汇聚明细: 只传递sourceCode
     const res = await getTownAggregationDetail({
-      sourceCode: currentDetailRow.value.sourceCode
+      sourceCode: currentDetailRow.value.sourceCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {

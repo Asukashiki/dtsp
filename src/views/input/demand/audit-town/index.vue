@@ -44,22 +44,22 @@
               >
                 <el-table-column
                   prop="sourceCode"
-                  :label="$t('townAggregationAudit.columns.sourceCode')"
+                  :label="$t('kebeleCode')"
                   min-width="140"
                 />
                 <el-table-column
                   prop="sourceName"
-                  :label="$t('townAggregationAudit.columns.sourceName')"
+                  :label="$t('kebeleName')"
                   min-width="140"
                 />
                 <el-table-column
                   prop="targetCode"
-                  :label="$t('townAggregationAudit.columns.targetCode')"
+                  :label="$t('woredaCode')"
                   min-width="140"
                 />
                 <el-table-column
                   prop="targetName"
-                  :label="$t('townAggregationAudit.columns.targetName')"
+                  :label="$t('woredaName')"
                   min-width="140"
                 />
                 <el-table-column
@@ -97,7 +97,7 @@
                         <i class="ri-check-line"></i>
                         {{ $t('demandAudit.actions.approve') }}
                       </el-button>
-                      <el-button v-if="row.status === '1'||row.status === '2'" link type="danger" @click="handleReject(row)">
+                      <el-button v-if="row.status === '0'" link type="danger" @click="handleReject(row)">
                         <i class="ri-close-line"></i>
                         {{ $t('demandAudit.actions.reject') }}
                       </el-button>
@@ -149,22 +149,30 @@
           prop="inputCategory"
           :label="$t('villageAggregation.detailDialog.columns.inputCategory')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_category', row.inputCategory) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inputType"
           :label="$t('villageAggregation.detailDialog.columns.inputType')"
           min-width="150"
-        />
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('input_type', row.inputType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalQuantity"
           :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-        <el-table-column
-          prop="totalCount"
-          :label="$t('villageAggregation.detailDialog.columns.totalCount')"
-          min-width="100"
-        />
+<!--        <el-table-column-->
+<!--          prop="totalCount"-->
+<!--          :label="$t('villageAggregation.detailDialog.columns.totalCount')"-->
+<!--          min-width="100"-->
+<!--        />-->
       </el-table>
 
       <el-empty
@@ -188,7 +196,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getVillageDemandSummaryMainList, getSummaryDetail, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()

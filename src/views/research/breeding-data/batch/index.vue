@@ -23,10 +23,6 @@
               <span>{{ $t('research.breedingData.batch.list') }}</span>
             </div>
             <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-                <i class="ri-delete-bin-line"></i>
-                {{ $t('common.batchDelete') }}
-              </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
                 {{ $t('research.breedingData.batch.add') }}
@@ -105,14 +101,14 @@
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
-                  <template #default="{ row }">
-                    {{ getCropTypeLabel(row.cropType) }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
+            <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
+              <template #default="{ row }">
+                {{ getCropTypeLabel(row.cropType) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
                 <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="120">
@@ -125,15 +121,15 @@
                 <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                      <el-button 
+                        v-for="button in getActionButtons(row)" 
+                        :key="button.action"
+                        link 
+                        :type="button.type" 
+                        @click="handleAction(row, button.action)">
+                        <i :class="button.icon"></i>{{ button.label }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                      </el-button>
+                     
                     </div>
                   </template>
                 </el-table-column>
@@ -195,11 +191,13 @@
                   </div>
                 </div>
                 <div class="mobile-card-footer">
-                  <el-button size="small" @click="handleView(item)">
-                    <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                  </el-button>
-                  <el-button size="small" type="primary" @click="handleEdit(item)">
-                    <i class="ri-edit-line"></i>{{ $t('common.edit') }}
+                  <el-button 
+                    v-for="button in getActionButtons(item)" 
+                    :key="button.action"
+                    size="small"
+                    :type="button.type === 'primary' ? 'primary' : ''" 
+                    @click="handleAction(item, button.action)">
+                    <i :class="button.icon"></i>{{ button.label }}
                   </el-button>
                   <el-button size="small" type="danger" @click="handleDelete(item)">
                     <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
@@ -228,17 +226,28 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getBreedingBatchList, deleteBreedingBatch } from '@/api/breedingData'
+import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/store'
+import {
+  getBreedingBatchList,
+  deleteBreedingBatch,
+  submitForAudit,
+  approveBatch,
+  rejectBatch,
+  archiveBatch,
+  cancelBatch
+} from '@/api/breedingData'
 
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
+const activeTab = ref('myCreated')
 
 const queryParams = reactive({
   pageNum: 1,
@@ -257,8 +266,12 @@ const cropTypeOptions = [
 ]
 
 const statusOptions = [
-  { label: 'Ongoing', value: 'ongoing' },
-  { label: 'Done', value: 'done' }
+  { label: t('research.breedingData.batch.status.draft'), value: 'S0' },
+  { label: t('research.breedingData.batch.status.pendingApproval'), value: 'S1' },
+  { label: t('research.breedingData.batch.status.approved'), value: 'S2' },
+  { label: t('research.breedingData.batch.status.rejected'), value: 'S3' },
+  { label: t('research.breedingData.batch.status.archived'), value: 'S9' },
+  { label: t('research.breedingData.batch.status.void'), value: 'S10' }
 ]
 
 const getList = async () => {
@@ -268,7 +281,7 @@ const getList = async () => {
     dataList.value = res.rows || []
     total.value = res.total || 0
   } catch (error) {
-    console.error('获取列表失败:', error)
+    console.error('Failed to fetch breeding batch list:', error)
   } finally {
     loading.value = false
   }
@@ -292,16 +305,24 @@ const handleReset = () => {
 
 const getStatusType = (status) => {
   const statusMap = {
-    'ongoing': 'warning',
-    'done': 'success'
+    'S0': 'info',      // 草稿 - 灰色
+    'S1': 'warning',   // 待审批 - 橙色
+    'S2': 'primary',   // 审核通过 - 蓝色
+    'S3': 'danger',    // 审核驳回 - 红色  
+    'S9': 'danger',    // 已作废 - 深红色
+    'S10': 'danger'    // 异常 - 深红色
   }
   return statusMap[status] || 'info'
 }
 
 const getStatusLabel = (status) => {
   const statusLabelMap = {
-    'ongoing': 'Ongoing',
-    'done': 'Done'
+    'S0': t('research.breedingData.batch.status.draft'),
+    'S1': t('research.breedingData.batch.status.pendingApproval'),
+    'S2': t('research.breedingData.batch.status.approved'),
+    'S3': t('research.breedingData.batch.status.rejected'),
+    'S9': t('research.breedingData.batch.status.archived'),
+    'S10': t('research.breedingData.batch.status.void')
   }
   return statusLabelMap[status] || status
 }
@@ -362,6 +383,196 @@ const handleBatchDelete = () => {
   }).catch(() => {})
 }
 
+const handleTabChange = (tabName) => {
+  // 根据标签页设置不同的查询参数
+  switch (tabName) {
+    case 'myCreated':
+      queryParams.status = '' // 我的创建显示所有状态
+      break
+    case 'pendingApproval':
+      queryParams.status = 'S1' // 待审批
+      break
+    case 'approved':
+      queryParams.status = 'S2' // 审核通过
+      break
+    case 'completed':
+      queryParams.status = 'S9' // 已归档
+      break
+  }
+  getList()
+}
+
+const getActionButtons = (row) => {
+  const status = row.status
+  const buttons = []
+  
+  // 根据状态显示不同的操作按钮，并检查用户权限
+  switch (status) {
+    case 'S0': // 草稿
+      if (userStore.hasStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: t('research.breedingData.batch.actions.edit'), icon: 'ri-edit-line' })
+      }
+      if (userStore.hasStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
+      }
+      break
+    case 'S1': // 待审批
+      if (userStore.hasStatusPermission('approve')) {
+        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      }
+      break
+    case 'S2': // 审核通过
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      if (userStore.hasStatusPermission('archive')) {
+        buttons.push({ type: 'success', action: 'archive', label: 'archive', icon: 'ri-archive-line' })
+      }
+      break
+    case 'S3': // 审核驳回
+      if (userStore.hasStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+      }
+      if (userStore.hasStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
+      }
+      break
+    case 'S9': // 已归档
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      break
+    case 'S10': // 已作废
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }) 
+      break
+  }
+  
+  return buttons
+}
+
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'audit':
+      handleAudit(row)
+      break
+    case 'submit':
+      handleSubmitForAudit(row)
+      break
+    case 'approve':
+      handleApprove(row)
+      break
+    case 'reject':
+      handleReject(row)
+      break
+    case 'archive':
+      handleArchive(row)
+      break
+    case 'cancelBatch':
+      handleCancelBatch(row)
+      break
+  }
+}
+
+const handleSubmitForAudit = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasStatusPermission('submit')) {
+      ElMessage.error('You do not have permission to submit for approval')
+      return
+    }
+ 
+    await ElMessageBox.confirm('Are you sure to submit for approval?', 'prompt', { type: 'warning' })
+    await submitForAudit(row.dataId)
+    ElMessage.success('Successfully submitted for approval')
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to submit for approval')
+    }
+  }
+}
+
+const handleApprove = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasStatusPermission('approve')) {
+      ElMessage.error('You do not have permission to approve')
+      return
+    }
+    await ElMessageBox.confirm('Are you sure to approve?', 'prompt', { type: 'warning' })
+    await approveBatch(row.dataId)
+    ElMessage.success('Successfully approved')
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to approve')
+    }
+  }
+}
+
+const handleReject = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasStatusPermission('reject')) {
+      ElMessage.error('You do not have permission to reject')
+      return
+    }
+    await ElMessageBox.confirm('Are you sure to reject?', 'prompt', { type: 'warning' })
+    await rejectBatch(row.dataId)
+    ElMessage.success('Successfully rejected')
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to reject')
+    }
+  }
+}
+
+const handleArchive = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasStatusPermission('archive')) {
+      ElMessage.error('You do not have permission to archive')
+      return
+    }
+    await ElMessageBox.confirm('Are you sure to archive?', 'prompt', { type: 'warning' })
+    await archiveBatch(row.dataId)
+    ElMessage.success('Successfully archived')
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to archive')
+    }
+  }
+}
+
+const handleCancelBatch = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasStatusPermission('cancel')) {
+      ElMessage.error('You do not have permission to cancel')
+      return
+    }
+    await ElMessageBox.confirm('Are you sure to cancel?', 'prompt', { type: 'warning' })
+    await cancelBatch(row.dataId)
+    ElMessage.success('Successfully cancelled')
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to cancel')
+    }
+  }
+}
+
+const handleAudit = (row) => {
+  router.push({
+    path: `/research/breeding-data/batch/audit/${row.dataId}`,
+    query: { mode: 'audit' }
+  })
+}
+
 onMounted(() => {
   getList()
 })
@@ -369,6 +580,18 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.status-tabs {
+  margin-bottom: 20px;
+  
+  :deep(.el-tabs__item) {
+    font-size: 14px;
+    
+    i {
+      margin-right: 4px;
+    }
+  }
+}
 
 .search-section {
   display: flex;

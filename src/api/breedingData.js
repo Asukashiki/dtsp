@@ -34,6 +34,32 @@ export function getBatchOptions() {
     return getBreedingBatchOptions()
 }
 
+// ============ 状态流转相关API ============
+// 提交审核
+export function submitForAudit(dataId) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/submitAudit`, method: 'post', data: { dataId } })
+}
+
+// 审核通过
+export function approveBatch(dataId, comment = '') {
+    return request({ url: `${API_BASE_URL}/breeding/batch/approve`, method: 'post', data: { dataId, comment } })
+}
+
+// 审核驳回
+export function rejectBatch(dataId, comment = '') {
+    return request({ url: `${API_BASE_URL}/breeding/batch/reject`, method: 'post', data: { dataId, comment } })
+}
+
+// 归档
+export function archiveBatch(dataId) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/archive`, method: 'post', data: { dataId } })
+}
+
+// 作废
+export function cancelBatch(dataId) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/cancel`, method: 'post', data: { dataId } })
+}
+
 // ============ 地块及播种信息管理 ============
 export function getPlotInfoList(params) {
     return request({ url: `${API_BASE_URL}/breeding/plot/list`, method: 'get', params })

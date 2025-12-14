@@ -80,6 +80,17 @@ export const getOseReleaseDetail = (id) => {
 }
 
 /**
+ * 根据releaseId获取OSE分发单详情
+ * Get OSE release detail by releaseId
+ */
+export const getOseReleaseDetailByReleaseId = (releaseId) => {
+  return agricultureRequest({
+    url: `/invested/release/ose/detailByReleaseId/${releaseId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 删除OSE分发单
  * Delete OSE release
  */
@@ -87,6 +98,34 @@ export const deleteOseRelease = (ids) => {
   return agricultureRequest({
     url: `/invested/release/ose/delete/${ids}`,
     method: 'delete'
+  })
+}
+
+/**
+ * 获取分发单出入库状态
+ * Get release stock status
+ * @param {string} releaseIds - 逗号分隔的分发单ID列表
+ */
+export const getReleaseStockStatus = (releaseIds) => {
+  return agricultureRequest({
+    url: '/invested/release/ose/stockStatus',
+    method: 'get',
+    params: { releaseIds }
+  })
+}
+
+/**
+ * 获取可用库存（仓库库存 - 未入库分发单数量）
+ * Get available stock (warehouse stock - pending release quantity)
+ * @param {string} inputType - 投入品类型
+ * @param {string} inputCategory - 投入品类别（可选）
+ * @param {string} organCode - 组织编码
+ */
+export const getAvailableStock = (inputType, inputCategory, organCode) => {
+  return agricultureRequest({
+    url: '/invested/release/ose/availableStock',
+    method: 'get',
+    params: { inputType, inputCategory, organCode }
   })
 }
 
@@ -172,6 +211,17 @@ export const editUnionRelease = (data) => {
 export const getUnionReleaseDetail = (id) => {
   return agricultureRequest({
     url: `/invested/release/union/detail/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 根据releaseId获取Union分发单详情
+ * Get Union release detail by releaseId
+ */
+export const getUnionReleaseDetailByReleaseId = (releaseId) => {
+  return agricultureRequest({
+    url: `/invested/release/union/detailByReleaseId/${releaseId}`,
     method: 'get'
   })
 }

@@ -19,14 +19,14 @@
 
     <el-card v-if="!isMobile" class="table-card">
       <el-table :data="receiveList" v-loading="loading" border>
-        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" width="150" />
-        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" width="200" />
-        <el-table-column prop="releaseOrg" :label="$t('inputCirculation.releaseOrg')" width="150" />
-        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" width="160" />
-        <el-table-column prop="receiveStatus" :label="$t('inputCirculation.status')" width="120" />
-        <el-table-column prop="confirmBy" :label="$t('inputCirculation.confirmBy')" width="120" />
-        <el-table-column prop="confirmTime" :label="$t('inputCirculation.confirmTime')" width="160" />
-        <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+        <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" />
+        <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" />
+        <el-table-column prop="releaseOrg" :label="$t('inputCirculation.releaseOrg')" min-width="150" />
+        <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" min-width="160" />
+        <el-table-column prop="receiveStatus" :label="$t('inputCirculation.status')" min-width="120" />
+        <el-table-column prop="confirmBy" :label="$t('inputCirculation.confirmBy')" min-width="120" />
+        <el-table-column prop="confirmTime" :label="$t('inputCirculation.confirmTime')" min-width="160" />
+        <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
             <el-button v-if="scope.row.receiveStatus === 'Pending'" type="success" link @click="handleConfirm(scope.row)">{{ $t('inputCirculation.confirmReceive') }}</el-button>

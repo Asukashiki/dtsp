@@ -32,6 +32,12 @@ export default {
   releaseYear: '分发年度',
   releaseDate: '分发日期',
   status: '状态',
+  stockStatus: '出入库状态',
+  stockStatus_notProcessed: '未出库',
+  stockStatus_outPending: '待出库',
+  stockStatus_outCompleted: '已出库',
+  stockStatus_notFound: '未找到',
+  stockInsufficient: '库存不足：可用库存 {available}，申请数量 {requested}',
   releaseBy: '分发人',
   auditDate: '审核日期',
   auditBy: '审核人',
@@ -42,15 +48,20 @@ export default {
 
   // 分发明细
   releaseDetailId: '编号',
-  cropType: '作物种类',
-  variety: '品种',
+  type: '投入品类型',
+  agriculturalInputType: '投入品品类',
   inputId: '投入品',
   inputName: '投入品名称',
   required: '需求数量',
   quantity: '分发数量',
+  demandQuantity: '需求数量',
+  quantityExceedsDemand: '分发数量不能超过需求数量',
   unitPrice: '单价',
   releaseTime: '分发时间',
   detailInfo: '明细信息',
+  variety: '品种',
+  cropType: '作物类型',
+  demandSelectionTitle: '选择需求',
   basicInfo: '基本信息',
   addDetail: '新增明细',
 
@@ -61,9 +72,9 @@ export default {
   deleteRelease: '删除分发单',
 
   // Union接收确认
-  confirmBy: '确认人',
-  confirmOrg: '确认机构',
-  confirmTime: '确认时间',
+  confirmBy: '接收人',
+  confirmOrg: '接收机构',
+  confirmTime: '接收时间',
   confirmReceive: '确认接收',
   receiveDetail: '接收详情',
   unionName: 'Union名称',
@@ -88,6 +99,10 @@ export default {
   // 接收状态
   pending: '待确认',
   confirmed: '已确认',
+
+  // Receive Detail
+  receiveId: '接收单编号',
+  receiveName: '接收单名称',
 
   // 提示信息
   confirmReceiveSuccess: '接收确认成功',

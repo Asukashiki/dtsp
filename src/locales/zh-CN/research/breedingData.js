@@ -30,6 +30,10 @@ export default {
       breedingMethod: '繁育方法',
       parentalSeedSource: '亲本种子来源',
       objective: '育种目标',
+      description: '批次描述',
+      batchSize: '批次大小',
+      expectedEndDate: '预期结束日期',
+      location: '位置',
       pedigree: '血统',
       yearOfDevelopment: '繁育年份',
       productPlace: '生产地',
@@ -54,6 +58,10 @@ export default {
       breedingMethod: '请选择繁育方法',
       parentalSeedSource: '请输入亲本种子来源',
       objective: '请输入育种目标',
+      description: '请输入批次描述',
+      batchSize: '请输入批次大小',
+      expectedEndDate: '请选择预期结束日期',
+      location: '请输入位置',
       pedigree: '请输入血统',
       yearOfDevelopment: '请选择繁育年份',
       productPlace: '请输入生产地',
@@ -73,6 +81,10 @@ export default {
       breedingMethod: '繁育方法',
       parentalSeedSource: '亲本种子来源',
       objective: '请输入育种目标',
+      description: '批次描述',
+      batchSize: '批次大小',
+      expectedEndDate: '预期结束日期',
+      location: '位置',
       year: '开展年份',
       status: '批次状态',
       personInCharge: '负责人',
@@ -82,9 +94,41 @@ export default {
       actions: '操作',
     },
 
+    status: {
+      draft: '草稿',
+      pendingApproval: '待审批',
+      approved: '审核通过',
+      rejected: '审核驳回',
+      inProgress: '进行中',
+      paused: '暂停',
+      terminated: '终止',
+      completed: '完成',
+      archived: '已归档',
+      cancelled: '已作废',
+      exception: '异常',
+    },
+
+    actions: {
+      edit: '编辑',
+      submit: '提交',
+    },
+
+
     // 验证规则
     validation: {
       yearNotLessThanCurrent: '开展年份不能小于当前年份'
+    },
+    // 提示
+    hint: {
+      yearNoPastSeasonLogic: '仅允许选择当年及未来年份；过去年份不可选'
+    },
+
+    // 标签页
+    tabs: {
+      myCreated: '我的创建',
+      pendingApproval: '待审批',
+      approved: '已审批',
+      completed: '已完结'
     },
   },
 
@@ -180,6 +224,7 @@ export default {
   trial: {
     title: '试验基础信息管理',
     subtitle: '管理育种试验基础信息及关联地块',
+    subtitle1: '对已提交试验数据进行审核',
     list: '试验列表',
     add: '新增试验',
     edit: '编辑试验',
@@ -225,6 +270,7 @@ export default {
       replications: '重复次数',
       cropType: '作物类型',
       varietyName: '品种名称',
+      status: '状态',
       createTime: '创建时间',
       actions: '操作',
     },

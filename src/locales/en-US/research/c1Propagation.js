@@ -1,10 +1,10 @@
 // C1种子繁殖申请国际化文件 - English
 export default {
   // Page titles
-  title: 'C1 Seed Propagation Application',
-  subtitle: 'Union/Cooperative applies for C1 seed propagation',
-  auditTitle: 'C1 Seed Propagation Audit',
-  auditSubtitle: 'OIA reviews C1 seed propagation applications',
+  title: 'Seed Propagation Application',
+  subtitle: 'Union/Cooperative applies for seed propagation',
+  auditTitle: 'Seed Propagation Audit',
+  auditSubtitle: 'OIA reviews seed propagation applications',
 
   // Actions
   add: 'Add Application',

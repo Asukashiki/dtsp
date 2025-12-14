@@ -30,23 +30,7 @@
         }
       ]
     },
-    {
-      "index": "registration-management",
-      "icon": "ri-file-list-3-line",
-      "titleKey": "input.menu.registrationManagement",
-      "children": [
-        {
-          "index": "/input/registration",
-          "icon": "ri-file-add-line",
-          "titleKey": "input.menu.registration"
-        },
-        {
-          "index": "/input/registration/approval",
-          "icon": "ri-file-check-line",
-          "titleKey": "input.menu.registrationApproval"
-        }
-      ]
-    },
+
        {
       "index": "input-management",
       "icon": "ri-box-3-line",
@@ -93,22 +77,20 @@
       ]
     },
     {
-      "name" : "投入品配额分配管理",
-      "index": "input-quota",
-      "icon": "ri-file-chart-2-line",
-      "titleKey": "quota.menu.inputQuota",
+      "name": "投入品分配额度管理",
+      "index": "quota-allocation",
+      "icon": "ri-slice-line",
+      "titleKey": "allocation.menu.quotaAllocation",
       "children": [
         {
-          "name" : "投入品年度配额管理",
-          "index": "/input/allocate/state-quota",
-          "icon": "ri-calendar-line",
-          "titleKey": "quota.stateQuota.title"
+          "index": "/input/allocation/zone",
+          "icon": "ri-community-line",
+          "titleKey": "allocation.menu.zoneAllocation"
         },
         {
-          "name" : "投入品配额分配管理",
-          "index": "/input/allocate/quota-allocation",
-          "icon": "ri-bike-line",
-          "titleKey": "quota.allocation.title"
+          "index": "/input/allocation/woreda",
+          "icon": "ri-community-line",
+          "titleKey": "allocation.menu.woredaAllocation"
         }
       ]
     },
@@ -118,11 +100,6 @@
       "icon": "ri-truck-line",
       "titleKey": "research.menu.inputCirculation",
       "children": [
-        {
-          "index": "/input/input-circulation/quota",
-          "icon": "ri-file-chart-line",
-          "titleKey": "research.menu.inputQuotaView"
-        },
         {
           "index": "/input/input-circulation/ose-release",
           "icon": "ri-share-forward-line",

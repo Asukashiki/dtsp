@@ -36,14 +36,14 @@
                 :label="$t('stateAggregation.columns.year')"
                 min-width="100"
               />
-              <el-table-column
+              <!-- <el-table-column
                 prop="sourceCode"
                 :label="$t('stateAggregation.columns.sourceCode')"
                 min-width="140"
-              />
+              /> -->
               <el-table-column
                 prop="sourceName"
-                :label="$t('stateAggregation.columns.sourceName')"
+                :label="$t('RegionName')"
                 min-width="140"
               />
               <!-- <el-table-column
@@ -62,7 +62,7 @@
                 min-width="140"
               >
                 <template #default="{ row }">
-                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
+                  {{ row.subQuantity }}
                 </template>
               </el-table-column>
               <!-- <el-table-column
@@ -134,10 +134,10 @@
                 </el-tag>
               </div>
               <div class="mobile-card-body">
-                <div class="mobile-card-row">
+                <!-- <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.sourceCode') }}:</span>
                   <span class="value">{{ item.sourceCode }}</span>
-                </div>
+                </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.sourceName') }}:</span>
                   <span class="value">{{ item.sourceName }}</span>
@@ -152,7 +152,7 @@
                 </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.subQuantity') }}:</span>
-                  <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
+                  <span class="value">{{  item.subQuantity  }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.creator') }}:</span>
@@ -230,31 +230,76 @@
       :title="$t('stateAggregation.detailDialog.title')"
       width="80%"
       top="5vh"
+      @closed="handleDialogClosed"
     >
       <el-table
+        ref="detailTableRef"
         v-loading="detailLoading"
         :data="detailData"
         stripe
         max-height="500px"
+        row-key="id"
+        @expand-change="handleExpandChange"
       >
+        <el-table-column type="expand">
+          <template #default="{ row }">
+            <div style="padding: 20px; background-color: #f5f7fa;">
+              <el-table
+                v-loading="row.subLoading"
+                :data="row.subDetailData || []"
+                stripe
+                border
+              >
+                <el-table-column
+                  prop="inputCategory"
+                  :label="$t('stateAggregation.detailDialog.columns.inputCategory')"
+                  min-width="150"
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="inputType"
+                  :label="$t('stateAggregation.detailDialog.columns.inputType')"
+                  min-width="150"
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_type', row.inputType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="totalQuantity"
+                  :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
+                  min-width="120"
+                >
+                </el-table-column>
+<!--                <el-table-column-->
+<!--                  prop="totalCount"-->
+<!--                  :label="$t('stateAggregation.detailDialog.columns.totalCount')"-->
+<!--                  min-width="120"-->
+<!--                />-->
+              </el-table>
+              <el-empty
+                v-if="!row.subLoading && (!row.subDetailData || row.subDetailData.length === 0)"
+                :description="$t('stateAggregation.detailDialog.noData')"
+              />
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="inputCategory"
-          :label="$t('stateAggregation.detailDialog.columns.inputCategory')"
+          prop="sourceName"
+          :label="$t('zoneName')"
           min-width="150"
         />
         <el-table-column
-          prop="inputType"
-          :label="$t('stateAggregation.detailDialog.columns.inputType')"
-          min-width="150"
-        />
-        <el-table-column
-          prop="totalQuantity"
-          :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
+          prop="year"
+          :label="$t('stateAggregation.columns.year')"
           min-width="120"
         />
         <el-table-column
-          prop="totalCount"
-          :label="$t('stateAggregation.detailDialog.columns.totalCount')"
+          prop="creator"
+          :label="$t('stateAggregation.columns.creator')"
           min-width="120"
         />
       </el-table>
@@ -296,7 +341,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, getTownAggregationDetail } from '@/api/villageAggregation'
+import { useDict } from '@/hooks/useDict'
 
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
 const { t } = useI18n()
 
@@ -329,6 +376,7 @@ const detailDialogVisible = ref(false)
 const detailLoading = ref(false)
 const detailData = ref([])
 const currentDetailRow = ref(null)
+const detailTableRef = ref(null)
 
 const detailPagination = reactive({
   currentPage: 1,
@@ -440,14 +488,17 @@ const loadDetailData = async () => {
 
   detailLoading.value = true
   try {
-    // 州级汇聚明细: 只传递sourceCode
-    const res = await getTownAggregationDetail({
-      sourceCode: currentDetailRow.value.sourceCode
+    // 州级汇聚明细: 查询目标为当前regionCode的区级汇聚数据
+    const res = await getVillageDemandSummaryMainList({
+      page: 1,
+      pageSize: 1000,
+      targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {
-      detailData.value = res.data || []
-      detailPagination.total = res.data?.length || 0
+      detailData.value = res.data?.list || []
+      detailPagination.total = res.data?.total || 0
     }
   } catch (error) {
     console.error('Failed to load detail data:', error)
@@ -455,6 +506,48 @@ const loadDetailData = async () => {
   } finally {
     detailLoading.value = false
   }
+}
+
+// 处理展开行变化
+const handleExpandChange = async (row, expandedRows) => {
+  // 如果行已经展开且没有加载过数据，则加载子明细
+  if (expandedRows.some(r => r.id === row.id) && !row.subDetailData) {
+    row.subLoading = true
+    try {
+      const res = await getTownAggregationDetail({
+        sourceCode: row.sourceCode,
+        year: row.year
+      })
+
+      if (res.code === 200) {
+        row.subDetailData = res.data || []
+      } else {
+        row.subDetailData = []
+      }
+    } catch (error) {
+      console.error('Failed to load sub detail data:', error)
+      ElMessage.error(t('stateAggregation.detailDialog.loadFailed'))
+      row.subDetailData = []
+    } finally {
+      row.subLoading = false
+    }
+  }
+}
+
+// 处理弹窗关闭
+const handleDialogClosed = () => {
+  // 收起所有展开行
+  if (detailTableRef.value) {
+    detailData.value.forEach(row => {
+      detailTableRef.value.toggleRowExpansion(row, false)
+    })
+  }
+
+  // 清空所有展开的子数据，下次打开时重新加载
+  detailData.value.forEach(row => {
+    delete row.subDetailData
+    delete row.subLoading
+  })
 }
 
 // 明细分页变化
