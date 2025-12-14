@@ -145,7 +145,8 @@ const getZoneOptions = async () => {
     const response = await getVillageDemandSummaryMainList({
       page: 1,
       pageSize: 100,
-      sourceCode: userStore.userInfo?.user?.REGION_CODE || ''
+      year: formData.year,
+      targetCode: userStore.userInfo?.user?.REGION_CODE || ''
     })
     if (response.code === 200) {
       // 将返回的list映射为zoneOptions需要的格式
@@ -188,7 +189,8 @@ const handleYearOrZoneChange = async () => {
   try {
     // 调用API获取需求数据
     const response = await getTownAggregationDetail({
-      sourceCode: formData.zone
+      sourceCode: formData.zone,
+      year: formData.year
     })
     
     if (response.code === 200 && response.data) {
