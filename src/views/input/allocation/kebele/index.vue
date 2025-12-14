@@ -1,5 +1,5 @@
 <template>
-  <div class="woreda-allocation-container">
+  <div class="kebele-allocation-container">
     <!-- 查询表单 -->
     <el-card class="search-card">
       <el-form :model="queryParams" :inline="true">
@@ -34,7 +34,7 @@
         <el-table-column type="selection" width="55" />
         <el-table-column prop="allocationName" :label="$t('allocation.allocationName')" min-width="200" />
         <el-table-column prop="year" :label="$t('allocation.year')" min-width="120" />
-        <el-table-column prop="zoneName" :label="$t('allocation.woreda')" min-width="150" />
+        <el-table-column prop="zoneName" :label="$t('allocation.kebele')" min-width="150" />
         <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
         <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
@@ -86,7 +86,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // 假设会有相应的API接口
-import { getWoredaAllocationList, deleteWoredaAllocation } from '@/api/allocation'
+import { getKebeleAllocationList, deleteKebeleAllocation } from '@/api/allocation'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -102,7 +102,7 @@ const queryParams = reactive({
   allocationName: '',
   year: '',
   zone: '',
-  level: 'woreda', // woreda level
+  level: 'kebele', // kebele level
   pageNum: 1,
   pageSize: 10
 })
@@ -126,7 +126,7 @@ const handleQuery = async () => {
   loading.value = true
   try {
     // 调用API获取列表数据
-    const response = await getWoredaAllocationList(queryParams)
+    const response = await getKebeleAllocationList(queryParams)
     if (response.code === 200) {
       allocationList.value = response.data.records || []
       total.value = response.data.total || 0
@@ -150,21 +150,21 @@ const handleReset = () => {
 }
 
 const handleAdd = () => {
-  router.push('/input/allocation/woreda/add')
+  router.push('/input/allocation/kebele/add')
 }
 
 const handleEdit = (row) => {
-  router.push(`/input/allocation/woreda/edit/${row.id}`)
+  router.push(`/input/allocation/kebele/edit/${row.id}`)
 }
 
 const handleView = (row) => {
-  router.push(`/input/allocation/woreda/detail/${row.id}`)
+  router.push(`/input/allocation/kebele/detail/${row.id}`)
 }
 
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' })
-    const response = await deleteWoredaAllocation(row.id)
+    const response = await deleteKebeleAllocation(row.id)
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       handleQuery()
@@ -182,7 +182,7 @@ const handleDeleteBatch = async () => {
   if (!selectedIds.value.length) return
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' })
-    const response = await deleteWoredaAllocation(selectedIds.value.join(','))
+    const response = await deleteKebeleAllocation(selectedIds.value.join(','))
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       handleQuery()
@@ -218,7 +218,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.woreda-allocation-container {
+.kebele-allocation-container {
   padding: 20px;
 }
 .search-card {

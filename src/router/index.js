@@ -1166,6 +1166,32 @@ const routes = [
         meta: { title: 'Woreda分配额度详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // kebele分配额度
+      {
+        path: 'allocation/kebele',
+        name: 'KebeleAllocationList',
+        component: () => import('../views/input/allocation/kebele/index.vue'),
+        meta: { title: 'Kebele分配额度管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/kebele/add',
+        name: 'KebeleAllocationAdd',
+        component: () => import('../views/input/allocation/kebele/form.vue'),
+        meta: { title: '新增Kebele分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/kebele/edit/:id',
+        name: 'KebeleAllocationEdit',
+        component: () => import('../views/input/allocation/kebele/form.vue'),
+        meta: { title: '编辑Kebele分配额度', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/kebele/detail/:id',
+        name: 'KebeleAllocationDetail',
+        component: () => import('../views/input/allocation/kebele/detail.vue'),
+        meta: { title: 'Kebele分配额度详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // OSE分发种子到Union
       {
         path: 'input-circulation/ose-release',
