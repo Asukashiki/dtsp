@@ -109,12 +109,24 @@
           style="width: 100%"
         >
           <el-table-column prop="material_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
-          <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120" />
-          <el-table-column prop="agricultural_input_type" :label="$t('input.catalog.form.agriculturalInputType')" min-width="120" />
+          <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_type', row.material_type) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="agricultural_input_type" :label="$t('input.catalog.form.agriculturalInputType')" min-width="120">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_category', row.agricultural_input_type) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="material_batch_id" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
-          <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120" />
+          <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="180">
+            <template #default="{ row }">
+              {{ formatDateTime(row.created_at) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="expiry_date" :label="$t('input.inventory.stock.columns.expiredDate')" width="140" />
           <el-table-column prop="status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
             <template #default="{ row }">
@@ -217,6 +229,9 @@ import { ElMessage } from 'element-plus'
 import { getStockList, getStockSummary } from '@/api/stock'
 import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
 const router = useRouter()
 const { t } = useI18n()
@@ -239,6 +254,19 @@ const pagination = reactive({
   pageSize: 10,
   total: 0
 })
+
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
 
 // 获取状态标签
 const getStatusTag = (status) => {

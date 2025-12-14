@@ -38,6 +38,14 @@
               <span class="value">{{ detailData.warehouse_name }}</span>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.inputType') }}:</span>
+              <span class="value">{{ getLabelByValue('input_type', detailData.material_type) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
+              <span class="value">{{ getLabelByValue('input_category', detailData.agricultural_input_type) }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stock.form.currentQuantity') }}:</span>
               <span class="value">{{ detailData.quantity }}</span>
             </div>
@@ -62,15 +70,21 @@
           </div>
         </div>
 
-        <!-- QR Code (if available) -->
+        <!-- QR Code / Traceability Info -->
         <div v-if="detailData.qr_code" class="detail-section">
           <div class="section-title">
             <i class="ri-qr-code-line"></i>
             {{ $t('input.inventory.stock.columns.qrCode') }}
           </div>
           <div class="qr-code-wrapper">
-            <img :src="detailData.qr_code" alt="QR Code" class="qr-code-image" />
-            <p class="qr-code-hint">{{ $t('input.inventory.stock.columns.qrCodeHint') }}</p>
+            <VueQrcode :value="detailData.qr_code" :size="200" level="M" class="qr-code-image" />
+            <!-- <p class="qr-code-hint">{{ $t('input.inventory.stock.columns.qrCodeHint') }}</p> -->
+            <div class="qr-info-grid">
+              <div v-for="(value, key) in parsedQrCode" :key="key" class="qr-info-item">
+                <span class="qr-label">{{ formatQrKey(key) }}:</span>
+                <span class="qr-value">{{ value }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -84,6 +98,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getInventoryDetail } from '@/api/inventory'
+import { useDict } from '@/hooks/useDict'
+import VueQrcode from 'vue-qrcode'
+
+const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
 const router = useRouter()
 const route = useRoute()
@@ -111,6 +129,29 @@ const getStatusText = (status) => {
     '2': t('input.inventory.stock.status.expired')
   }
   return statusMap[status] || '-'
+}
+
+// 解析QR码JSON
+import { computed } from 'vue'
+const parsedQrCode = computed(() => {
+  if (!detailData.value?.qr_code) return {}
+  try {
+    return JSON.parse(detailData.value.qr_code)
+  } catch (e) {
+    return { data: detailData.value.qr_code }
+  }
+})
+
+// 格式化QR码字段名
+const formatQrKey = (key) => {
+  const keyMap = {
+    materialId: t('input.inventory.stockIn.materialId'),
+    batchId: t('input.inventory.stockIn.batchId'),
+    warehouseId: t('input.inventory.warehouse.form.warehouseCode'),
+    expiryDate: t('input.inventory.stockIn.expiryDate'),
+    quantity: t('input.inventory.stock.form.currentQuantity')
+  }
+  return keyMap[key] || key
 }
 
 // 返回
@@ -243,11 +284,11 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  background: #f5f7fa;
+  border-radius: 8px;
 }
 
 .qr-code-image {
-  max-width: 200px;
-  height: auto;
   border: 1px solid #e4e7ed;
   border-radius: 8px;
   padding: 8px;
@@ -255,10 +296,39 @@ onMounted(() => {
 }
 
 .qr-code-hint {
-  margin-top: 12px;
-  font-size: 14px;
+  margin: 12px 0 16px;
+  font-size: 13px;
   color: #909399;
   text-align: center;
+}
+
+.qr-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.qr-info-item {
+  display: flex;
+  gap: 8px;
+}
+
+.qr-label {
+  font-size: 13px;
+  color: #909399;
+  flex-shrink: 0;
+}
+
+.qr-value {
+  font-size: 13px;
+  color: #303133;
+  font-weight: 500;
+  word-break: break-all;
 }
 
 /* 响应式设计 */

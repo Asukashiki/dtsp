@@ -110,7 +110,7 @@ export default {
       ingredientsInfo: 'Ingredients & Usage Information',
       inputName: 'Input Name',
       inputType: 'Input Type',
-      agriculturalInputType: 'Please select input category',
+      agriculturalInputType: 'Input Category',
       variety: 'Variety',
       inputSku: 'Unique Product Identifier/SKU',
       trademark: 'Trademark',
@@ -158,7 +158,7 @@ export default {
       inputNameRequired: 'Please enter input name',
       inputNameLength: 'Input name must be 2-100 characters',
       inputTypeRequired: 'Please select input type',
-      agriculturalInputTypeRequired: 'Please select input category',
+      agriculturalInputTypeRequired: 'Input Category',
       inputSkuRequired: 'Please enter unique product identifier',
       inputSkuLength: 'Product identifier must be 8-50 characters',
       trademarkRequired: 'Please enter trademark',
@@ -1032,6 +1032,18 @@ export default {
         title: 'Inventory Summary',
         total: 'Total'
       },
+      form: {
+        inputName: 'Input Name',
+        batchNo: 'Batch No',
+        warehouseName: 'Warehouse',
+        currentQuantity: 'Current Quantity',
+        inDate: 'Inbound Date',
+        expiredDate: 'Expiry Date',
+        stockStatus: 'Stock Status',
+        daysToExpire: 'Days to Expiry',
+        qrCode: 'QR Code',
+        qrCodeHint: 'Scan QR code for more information'
+      },
       columns: {
         inputName: 'Input Name',
         batchNo: 'Batch No',
@@ -1040,7 +1052,9 @@ export default {
         inDate: 'Inbound Date',
         expiredDate: 'Expiry Date',
         stockStatus: 'Stock Status',
-        actions: 'Actions'
+        actions: 'Actions',
+        qrCode: 'QR Code',
+        qrCodeHint: 'Scan QR code for traceability information'
       },
       status: {
         normal: 'Normal',
