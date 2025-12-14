@@ -349,7 +349,7 @@ const handleDistributionChange = async (distributionId) => {
         })
       }
 
-      ElMessage.success(t('input.inventory.stockIn.distributionLoaded'))
+      // ElMessage.success(t('input.inventory.stockIn.distributionLoaded'))
     }
   } catch (error) {
     console.error('Failed to load distribution detail:', error)
