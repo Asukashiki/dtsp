@@ -67,13 +67,13 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierName')" prop="supplierName">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierName')" prop="supplierName" class="hidden-field">
               <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierContact')" prop="supplierContact">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierContact')" prop="supplierContact" class="hidden-field">
               <el-input v-model="formData.supplierContact" :placeholder="$t('input.inventory.stockIn.placeholder.supplierContact')" clearable />
             </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierPhone')" prop="supplierPhone">
+            <el-form-item :label="$t('input.inventory.stockIn.form.supplierPhone')" prop="supplierPhone" class="hidden-field">
               <el-input v-model="formData.supplierPhone" :placeholder="$t('input.inventory.stockIn.placeholder.supplierPhone')" clearable />
             </el-form-item>
             <el-form-item :label="$t('input.inventory.stockIn.form.operator')" prop="operator">
@@ -123,10 +123,10 @@
                   <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.inputType')" :prop="`details.${index}.inputType`">
-                  <el-input v-model="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
+                  <el-input :value="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
-                  <el-input v-model="item.agriculturalInputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')" />
+                  <el-input :value="item.agriculturalInputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')" />
                 </el-form-item>
 <!--                <el-form-item :label="$t('input.inventory.stockIn.form.variety')" :prop="`details.${index}.variety`">
                   <el-input v-model="item.variety" disabled :placeholder="$t('input.inventory.stockIn.placeholder.variety')" />
@@ -140,10 +140,10 @@
                 <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
                   <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`" :rules="detailRules.expiryDate">
                   <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" value-format="YYYY-MM-DD" />
                 </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.qrCode')" :prop="`details.${index}.qrCode`">
+                <el-form-item :label="$t('input.inventory.stockIn.form.qrCode')" :prop="`details.${index}.qrCode`" class="hidden-field">
                   <el-input v-model="item.qrCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.qrCode')" />
                 </el-form-item>
               </div>
@@ -181,10 +181,47 @@ import { createInboundOrder, getInboundOrderDetail } from '@/api/inbound'
 import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
 import { getDistributionList, getDistributionDetail } from '@/api/distribution'
+import { useDict, clearDictCache } from '@/hooks/useDict'
+
+// 格式化日期时间，将ISO格式(2025-12-14T01:40:59)改为标准格式(2025-12-04 01:40:59)
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+
+  // 处理带时区信息的日期格式，如: 2025-12-14 11:00:27.000+08:00
+  if (dateTimeStr.includes('+') && dateTimeStr.includes('.')) {
+    // 提取日期部分和时间部分，去掉毫秒和时区信息
+    const datePart = dateTimeStr.split(' ')[0]
+    const timePart = dateTimeStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }
+
+  // 处理ISO格式日期，如: 2025-12-14T11:00:27
+  if (dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ')
+  }
+
+  return dateTimeStr
+}
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 清除字典缓存并初始化
+clearDictCache('input_type')
+clearDictCache('input_category')
+
+const {
+  options,
+  loading: dictLoading,
+  refresh: refreshDict
+} = useDict([
+  'input_type',
+  'input_category'
+], {
+  immediate: true,
+  cache: true
+})
 
 const formRef = ref(null)
 const submitLoading = ref(false)
@@ -302,7 +339,7 @@ const handleDistributionChange = async (distributionId) => {
           batchNo: '', // 入库批次后端自动生成
           productionBatchNo: '', // 生产批次需手动填写
           inputType: input ? getInputTypeText(input.type) : '',
-          agriculturalInputType: detail.cropType || '',
+          agriculturalInputType: getAgriculturalInputTypeText(detail.cropType),
           variety: detail.variety || '',
           specification: '',
           unit: detail.unit || '',
@@ -336,7 +373,7 @@ const handleInputChange = async (item, index) => {
   if (selectedInput) {
     item.inputCode = selectedInput.inputSku || ''
     item.inputType = getInputTypeText(selectedInput.type)
-    item.agriculturalInputType = selectedInput.agriculturalInputType || ''
+    item.agriculturalInputType = getAgriculturalInputTypeText(selectedInput.agriculturalInputType)
     item.variety = selectedInput.variety || ''
     item.qrCode = selectedInput.qrCode || ''
   }
@@ -344,13 +381,24 @@ const handleInputChange = async (item, index) => {
 
 // 获取投入品类型文本
 const getInputTypeText = (type) => {
-  const typeMap = {
-    'pesticide': t('input.catalog.type.pesticide'),
-    'fertilizer': t('input.catalog.type.fertilizer'),
-    'seed': t('input.catalog.type.seed'),
-    'other': t('input.catalog.type.other')
-  }
-  return typeMap[type] || type
+  // 如果是旧类型，先转换为新编码
+  if (type === 'seed') type = 'IN01'
+  if (type === 'fertilizer') type = 'IN02'
+  if (type === 'other') type = 'IN09'
+  if (type === 'pesticide') type = ''
+
+  // 从字典中获取标签
+  if (!type || !options.value.input_type) return '-'
+  const typeItem = options.value.input_type.find(item => item.value === type)
+  return typeItem ? typeItem.label : '-'
+}
+
+// 获取农业输入类型文本
+const getAgriculturalInputTypeText = (type) => {
+  // 从字典中获取标签
+  if (!type || !options.value.input_category) return '-'
+  const categoryItem = options.value.input_category.find(item => item.value === type)
+  return categoryItem ? categoryItem.label : '-'
 }
 
 const formData = reactive({
@@ -397,7 +445,8 @@ const detailRules = computed(() => ({
   quantity: [
     { required: true, message: t('input.inventory.stockIn.rules.quantityRequired'), trigger: 'blur' },
     { type: 'number', min: 0.01, message: t('input.inventory.stockIn.rules.quantityPositive'), trigger: 'blur' }
-  ]
+  ],
+  expiryDate: [{ required: true, message: t('input.inventory.stockIn.rules.expiryDateRequired'), trigger: 'change' }]
 }))
 
 // 返回
@@ -455,20 +504,25 @@ const loadData = async () => {
       formData.fremark = data.fremark || ''
 
       if (data.details && data.details.length > 0) {
-        formData.details = data.details.map(item => ({
-          inputId: item.inputId || item.input_id,
-          inputCode: item.inputCode || item.input_code || '',
-          batchNo: item.batchNo || item.batch_no || '',
-          productionBatchNo: item.productionBatchNo || item.production_batch_no || '',
-          inputType: item.inputType || item.input_type || '',
-          agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type || '',
-          variety: item.variety || '',
-          specification: item.specification || '',
-          unit: item.unit,
-          quantity: item.quantity,
-          expiryDate: item.expiryDate || item.expiry_date || '',
-          qrCode: item.qrCode || item.qr_code || ''
-        }))
+        formData.details = data.details.map(item => {
+          // 从投入品列表中查找对应的投入品信息
+          const input = inputList.value.find(i => i.inputId === (item.inputId || item.input_id))
+
+          return {
+            inputId: item.inputId || item.input_id,
+            inputCode: item.inputCode || item.input_code || '',
+            batchNo: item.batchNo || item.batch_no || '',
+            productionBatchNo: item.productionBatchNo || item.production_batch_no || '',
+            inputType: getInputTypeText(input ? input.type : (item.inputType || item.input_type)),
+            agriculturalInputType: getAgriculturalInputTypeText(item.agriculturalInputType || item.agricultural_input_type),
+            variety: item.variety || '',
+            specification: item.specification || '',
+            unit: item.unit,
+            quantity: item.quantity,
+            expiryDate: item.expiryDate || item.expiry_date || '',
+            qrCode: item.qrCode || item.qr_code || ''
+          }
+        })
       }
     }
   } catch (error) {
@@ -489,7 +543,7 @@ const handleSubmit = async () => {
 
     // 验证所有明细
     const hasEmptyDetail = formData.details.some(item =>
-      !item.inputId || !item.unit || !item.quantity
+      !item.inputId || !item.unit || !item.quantity || !item.expiryDate
     )
     if (hasEmptyDetail) {
       ElMessage.warning(t('input.inventory.stockIn.rules.detailsComplete'))
@@ -517,10 +571,10 @@ const handleSubmit = async () => {
         return {
           materialId: item.inputId,
           materialName: selectedInput ? selectedInput.inputName : '',
-          materialType: item.inputType,
+          materialType: selectedInput ? selectedInput.type : '', // 使用原始类型编码
           batchNo: item.batchNo,
           productionBatchNo: item.productionBatchNo, // 生产批次
-          agriculturalInputType: item.agriculturalInputType,
+          agriculturalInputType: selectedInput ? selectedInput.agriculturalInputType : '', // 使用原始农业输入类型编码
           variety: item.variety,
           specModel: item.specification,
           unitOfMeasure: item.unit,
@@ -545,6 +599,10 @@ const handleSubmit = async () => {
 
 onMounted(async () => {
   currentUserOrganCode.value = getCurrentUserOrganCode()
+
+  // 先刷新字典，确保字典数据加载完成
+  await refreshDict()
+
   await loadWarehouseList()
   await loadInputList()
   await loadDistributionList()
@@ -568,6 +626,11 @@ onMounted(async () => {
 <style scoped>
 .inbound-form-page {
   min-height: calc(100vh - 120px);
+}
+
+/* 隐藏字段样式 */
+.hidden-field {
+  display: none !important;
 }
 
 /* 页面头部 */

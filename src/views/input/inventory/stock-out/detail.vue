@@ -67,11 +67,11 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.createTime') }}:</span>
-              <span class="value">{{ detailData.created_at }}</span>
+              <span class="value">{{ formatDateTime(detailData.created_at) }}</span>
             </div>
             <div class="detail-item" v-if="detailData.outbound_time">
               <span class="label">{{ $t('input.inventory.stockOut.form.outboundTime') }}:</span>
-              <span class="value">{{ detailData.outbound_time }}</span>
+              <span class="value">{{ formatDateTime(detailData.outbound_time) }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockOut.form.remark') }}:</span>
@@ -93,7 +93,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.audit_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.audit_time) }}</span>
             </div>
           </div>
         </div>
@@ -211,6 +211,18 @@ const outboundOrderId = route.params.id
 // 批次拆分弹窗
 const batchSplitsDialogVisible = ref(false)
 const currentBatchSplits = ref([])
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+
+  // 处理ISO格式日期时间 (2025-12-14T01:40:59)
+  if (dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ')
+  }
+
+  return dateTimeStr
+}
 
 // 检查是否有批次拆分数据
 const hasBatchSplits = computed(() => {

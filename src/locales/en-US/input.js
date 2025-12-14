@@ -99,7 +99,7 @@ export default {
     form: {
       specificationModel: 'Specification Model',
       inputBizId:'Input ID',
-      unit: 'Unit of Measurement',
+      unit: 'measurement',
       referencePrice: 'Reference Price (Br)',
       isImport: 'Imported',
       imageUrl: 'Product Image URL',
@@ -110,7 +110,7 @@ export default {
       ingredientsInfo: 'Ingredients & Usage Information',
       inputName: 'Input Name',
       inputType: 'Input Type',
-      agriculturalInputType: 'Please select input category',
+      agriculturalInputType: 'Category',
       variety: 'Variety',
       inputSku: 'Unique Product Identifier/SKU',
       trademark: 'Trademark',
@@ -127,7 +127,7 @@ export default {
     // 表单占位符
     placeholder: {
       specificationModel: 'Enter specification model (max 100 characters)',
-      unit: 'Enter unit of measurement (e.g.: kg, L, bag, piece)',
+      unit: 'Enter measurement (e.g.: kg, L, bag, piece)',
       referencePrice: 'Enter reference price (≥ 0)',
       imageUrl: 'Enter product image URL (max 255 characters)',
       description: 'Enter product description (max 500 characters)',
@@ -136,7 +136,7 @@ export default {
       varietySource: 'Enter variety source (max 500 characters)',
       inputName: 'Enter input name (2-100 characters)',
       inputType: 'Select input type',
-      agriculturalInputType: 'Enter agricultural input category',
+      agriculturalInputType: 'Category',
       variety: 'Enter variety',
       inputSku: 'Enter unique product identifier', // 原"系统自动生成"改为手动输入提示
       trademark: 'Enter trademark',
@@ -158,7 +158,7 @@ export default {
       inputNameRequired: 'Please enter input name',
       inputNameLength: 'Input name must be 2-100 characters',
       inputTypeRequired: 'Please select input type',
-      agriculturalInputTypeRequired: 'Please select input category',
+      agriculturalInputTypeRequired: 'Please select Category',
       inputSkuRequired: 'Please enter unique product identifier',
       inputSkuLength: 'Product identifier must be 8-50 characters',
       trademarkRequired: 'Please enter trademark',
@@ -692,7 +692,7 @@ export default {
       agriculturalInputType: 'Agricultural Input Type',
       variety: 'Variety',
       specification: 'Specification Model',
-      unit: 'Unit of Measurement',
+      unit: 'measurement',
       expiryDate: 'Expiry Date',
       qrCode: 'QR Code',
       addMaterial: 'Add Material',
@@ -752,9 +752,9 @@ export default {
         inboundBatch: 'Inbound Batch',
         productionBatch: 'Production Batch',
         inputType: 'Input Type',
-        agriculturalInputType: 'Agricultural Input Type',
+        agriculturalInputType: 'Category',
         specification: 'Specification Model',
-        unit: 'Unit of Measurement',
+        unit: 'measurement',
         qrCode: 'QR Code',
         qrCodeHint: 'Scan QR code for more information',
         relatedOrderNo: 'Related Order Number',
@@ -795,11 +795,11 @@ export default {
         agriculturalInputType: 'Agricultural Input Type',
           variety: 'Variety',
         specification: 'Enter specification model (optional)',
-        unit: 'Enter unit of measurement',
+        unit: 'Enter measurement',
         qrCode: 'QR code (auto-obtained)',
         inboundBatch: 'Inbound batch (system auto-generated)',
         productionBatch: 'Enter production batch (optional)',
-        agriculturalInputType: 'Agricultural input type (auto-filled)'
+        agriculturalInputType: 'Category (auto-filled)'
       },
       rules: {
         warehouseIdRequired: 'Please select stock in warehouse',
@@ -817,7 +817,7 @@ export default {
         detailsComplete: 'Please complete all material detail information',
         materialIdRequired: 'Please enter material ID',
         materialNameRequired: 'Please enter material name',
-        unitRequired: 'Please enter unit of measurement'
+        unitRequired: 'Please enter measurement'
       },
       columns: {
         orderId: 'Stock In Order Number',
@@ -922,14 +922,14 @@ export default {
         materialBatchId: 'Material Batch Number',
         quantity: 'Stock Out Quantity',
         specModel: 'Specification Model',
-        unitOfMeasure: 'Unit of Measurement',
+        unitOfMeasure: 'measurement',
         availableQuantity: 'Available Inventory',
         itemRemarks: 'Item Remarks',
         batchSplits: 'Batch Split Details',
         inboundBatchId: 'Stock In Batch Number',
         splitQuantity: 'Deduction Quantity',
         remainingQuantity: 'Remaining Inventory',
-        inputCategory: 'Input Category',
+        inputCategory: 'Category',
         variety: 'Variety'
       },
       placeholder: {
@@ -950,10 +950,10 @@ export default {
         batchNo: 'Select batch number',
         quantity: 'Enter stock out quantity',
         specModel: 'Enter specification model (optional)',
-        unitOfMeasure: 'Enter unit of measurement (optional)',
+        unitOfMeasure: 'Enter measurement (optional)',
         itemRemarks: 'Enter item remarks',
         auditRemark: 'Enter audit opinion',
-        inputCategory: 'Input category (auto-filled)',
+        inputCategory: 'Category (auto-filled)',
         variety: 'Variety (auto-filled)'
       },
       rules: {
@@ -1040,12 +1040,28 @@ export default {
         inDate: 'Inbound Date',
         expiredDate: 'Expiry Date',
         stockStatus: 'Stock Status',
+        qrCode: 'QR Code',
+        qrCodeHint: 'Scan QR code for more information',
         actions: 'Actions'
       },
       status: {
         normal: 'Normal',
         nearExpiry: 'Near Expiry',
         expired: 'Expired'
+      },
+      form: {
+        inputName: 'Input Name',
+        batchNo: 'Batch No',
+        warehouseName: 'Warehouse Name',
+        currentQuantity: 'Current Quantity',
+        inDate: 'Inbound Date',
+        expiredDate: 'Expiry Date',
+        stockStatus: 'Stock Status',
+        daysToExpire: 'Days to Expire'
+      },
+      qrCode: {
+        title: 'QR Code',
+        hint: 'Scan QR code for more information'
       }
     }
   },

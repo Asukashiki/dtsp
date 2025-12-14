@@ -22,7 +22,7 @@ export default {
 
   columns: {
     source: 'Source',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     totalQuantity: 'Total Demand Quantity',
     submitTime: 'Submit Time',
@@ -33,7 +33,7 @@ export default {
     title: 'Approved Demand Aggregation',
     description: 'Aggregated statistics of approved input demand in current district',
     list: 'Aggregation List',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     totalQuantity: 'Total Demand Quantity',
   },

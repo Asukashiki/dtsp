@@ -102,6 +102,7 @@
           :label="$t('input.inventory.stockIn.columns.supplier')"
           width="150"
           show-overflow-tooltip
+          class-name="hidden-column"
         />
         <el-table-column
           prop="total_quantity"
@@ -133,12 +134,20 @@
           prop="apply_time"
           :label="$t('input.inventory.stockIn.columns.applyTime')"
           width="160"
-        />
+        >
+          <template #default="{ row }">
+            {{ formatDateTime(row.apply_time) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inbound_time"
           :label="$t('input.inventory.stockIn.columns.inboundTime')"
           width="160"
-        />
+        >
+          <template #default="{ row }">
+            {{ formatDateTime(row.inbound_time) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('common.actions')" fixed="right" width="250" align="right">
           <template #default="{ row }">
             <div class="action-buttons">
@@ -226,7 +235,7 @@
             <div class="info-row">
               <i class="ri-time-line"></i>
               <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
-              <span class="value">{{ item.apply_time }}</span>
+              <span class="value">{{ formatDateTime(item.apply_time) }}</span>
             </div>
           </div>
           <div class="card-actions" @click.stop>
@@ -295,6 +304,26 @@ const queryParams = reactive({
   inboundType: '',
   inboundOrderId: ''
 })
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+
+  // 处理带时区信息的日期格式，如: 2025-12-14 11:00:27.000+08:00
+  if (dateTimeStr.includes('+') && dateTimeStr.includes('.')) {
+    // 提取日期部分和时间部分，去掉毫秒和时区信息
+    const datePart = dateTimeStr.split(' ')[0]
+    const timePart = dateTimeStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }
+
+  // 处理ISO格式日期，如: 2025-12-14T11:00:27
+  if (dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ')
+  }
+
+  return dateTimeStr
+}
 
 // 获取当前用户部门ID
 const getCurrentUserOrganCode = () => {
@@ -413,27 +442,38 @@ const handleConfirm = async (row) => {
     cancelButtonText: t('common.cancel'),
     type: 'warning'
   }).then(async () => {
-    const res = await confirmInbound(row.inbound_order_id, {
-      inboundTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      operator: t('common.currentUser')
-    })
-    ElMessage.success(t('input.inventory.stockIn.confirmSuccess'))
-
-    // 显示批次号信息
-    if (res.data?.updated_stock) {
-      const batchInfo = res.data.updated_stock
-        .map(
-          (item) =>
-            `${t('input.inventory.stockIn.material')} ${item.material_id}: ${t('input.inventory.stockIn.batch')} ${item.batch_id}`
-        )
-        .join('\n')
-      ElMessageBox.alert(batchInfo, t('input.inventory.stockIn.batchInfo'), {
-        type: 'success'
+    try {
+      const res = await confirmInbound(row.inbound_order_id, {
+        inboundTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        operator: t('common.currentUser')
       })
-    }
+      ElMessage.success(t('input.inventory.stockIn.confirmSuccess'))
 
-    handleQuery()
-    loadPendingCount()
+      // 显示批次号信息
+      if (res.data?.updated_stock) {
+        const batchInfo = res.data.updated_stock
+          .map(
+            (item) =>
+              `${t('input.inventory.stockIn.material')} ${item.material_id}: ${t('input.inventory.stockIn.batch')} ${item.batch_id}`
+          )
+          .join('\n')
+        ElMessageBox.alert(batchInfo, t('input.inventory.stockIn.batchInfo'), {
+          type: 'success'
+        })
+      }
+
+      handleQuery()
+      loadPendingCount()
+    } catch (error) {
+      // 检查是否是仓库容量不足的错误
+      if (error.response?.data?.msg && error.response.data.msg.includes('The entry into the warehouse failed')) {
+        ElMessage.error(error.response.data.msg)
+      } else {
+        // 其他错误类型的通用处理
+        const errorMessage = error.response?.data?.msg || error.message || t('input.inventory.stockIn.confirmFailed')
+        ElMessage.error(errorMessage)
+      }
+    }
   })
 }
 
@@ -499,6 +539,11 @@ onMounted(() => {
 <style scoped>
 .inbound-list-page {
   min-height: calc(100vh - 120px);
+}
+
+/* 隐藏表格列 */
+:deep(.hidden-column) {
+  display: none !important;
 }
 
 /* 页面头部 */

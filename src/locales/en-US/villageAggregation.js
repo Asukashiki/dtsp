@@ -58,7 +58,7 @@ export default {
   detailDialog: {
     title: 'Aggregation Data Detail',
     columns: {
-      inputCategory: 'Input Category',
+      inputCategory: 'Category',
       inputType: 'Input Type',
       totalQuantity: 'Total Quantity',
       totalCount: 'Total Count',

@@ -23,7 +23,7 @@ export default {
   // Pending list columns (town level)
   columns: {
     source: 'Source',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     totalQuantity: 'Total Demand Quantity',
     submitTime: 'Submit Time',
@@ -35,7 +35,7 @@ export default {
     title: 'Approved Demand Aggregation',
     description: 'Aggregated statistics of approved input demand in current town',
     list: 'Aggregation List',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     totalQuantity: 'Total Demand Quantity',
   },
