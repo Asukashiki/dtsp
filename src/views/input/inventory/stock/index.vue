@@ -123,7 +123,7 @@
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
           <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120">
-            <template #default="{ row }">
+          <template #default="{ row }">
               {{ formatDateTime(row.created_at) }}
             </template>
           </el-table-column>
@@ -237,6 +237,7 @@ import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
+
 const router = useRouter()
 const { t } = useI18n()
 
@@ -270,6 +271,22 @@ const formatDateTime = (dateStr) => {
   const minutes = String(date.getMinutes()).padStart(2, '0')
   const seconds = String(date.getSeconds()).padStart(2, '0')
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理带时区和毫秒的日期格式 (如: "2025-12-14 11:00:27.000+08:00")
+/*  if (dateStr.includes('+') && dateStr.includes('.')) {
+    const datePart = dateStr.split(' ')[0]
+    const timePart = dateStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }*/
+
+  // 处理标准ISO格式 (如: "2025-12-14T01:40:59")
+  return dateStr.replace('T', ' ')
 }
 
 // 获取状态标签

@@ -1028,18 +1028,6 @@ export default {
         title: '库存合计',
         total: '共计'
       },
-      form: {
-        inputName: '投入品名称',
-        batchNo: '批次号',
-        warehouseName: '仓库名称',
-        currentQuantity: '当前库存',
-        inDate: '入库日期',
-        expiredDate: '过期日期',
-        stockStatus: '库存状态',
-        daysToExpire: '距过期天数',
-        qrCode: '二维码',
-        qrCodeHint: '扫描二维码获取更多信息'
-      },
       columns: {
         inputName: '投入品名称',
         batchNo: '批次号',

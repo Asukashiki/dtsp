@@ -267,10 +267,32 @@ import { getInputList } from '@/api/input'
 import { getDistributionList, getDistributionDetail } from '@/api/distribution'
 import { useDict, clearDictCache } from '@/hooks/useDict'
 
-// 格式化日期时间，将ISO格式(2025-12-14T01:40:59)改为标准格式(2025-12-04 01:40:59)
-const formatDateTime = (dateTimeStr) => {
-  if (!dateTimeStr) return '-'
-  return dateTimeStr.replace('T', ' ')
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理带时区和毫秒的日期格式 (如: "2025-12-14 11:00:27.000+08:00")
+/*  if (dateStr.includes('+') && dateStr.includes('.')) {
+    const datePart = dateStr.split(' ')[0]
+    const timePart = dateStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }*/
+
+  // 处理标准ISO格式 (如: "2025-12-14T01:40:59")
+  return dateStr.replace('T', ' ')
 }
 
 const router = useRouter()

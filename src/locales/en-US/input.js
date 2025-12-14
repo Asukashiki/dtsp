@@ -35,16 +35,6 @@ export default {
     demandManagement: 'Input Demand Management',
     farmerDemand: 'DA Farmer Demand Entry',
     demandAudit: 'Input Demand Audit',
-    villageAggregation: 'Kebele Demand Aggregation',
-    townAggregation: 'Woreda Demand Aggregation',
-    districtAggregation: 'Zone Demand Aggregation',
-    stateAggregation: 'Regional Demand Aggregation',
-    KebeleAudit: 'Kebele Demand Audit',
-    townAggregationAudit: 'Woreda Demand Aggregation Audit',
-    TownAudit: 'Woreda Demand Audit',
-    DistrictAudit: 'Zone Demand Audit',
-    districtAggregationAudit: 'Zone Demand Aggregation Audit',
-    StateAuditView: 'Regional Demand Audit View',
     supplierManagement: 'Supplier Management',
     supplierAuth: 'Supplier Authentication',
     supplierAuthApproval: 'Supplier Authentication Approval',
@@ -59,10 +49,8 @@ export default {
     stockOut: 'Stock Out Management',
     stockQuery: 'Inventory Query',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
-    feedback: 'Information Feedback',
-    KebeleAudit: 'Kebele Demand Audit'
+    feedback: 'Information Feedback'
   },
-
 
   // 投入品目录管理
   catalog: {
@@ -110,7 +98,7 @@ export default {
       ingredientsInfo: 'Ingredients & Usage Information',
       inputName: 'Input Name',
       inputType: 'Input Type',
-      agriculturalInputType: 'Input Category',
+      agriculturalInputType: 'Category',
       variety: 'Variety',
       inputSku: 'Unique Product Identifier/SKU',
       trademark: 'Trademark',
@@ -158,7 +146,7 @@ export default {
       inputNameRequired: 'Please enter input name',
       inputNameLength: 'Input name must be 2-100 characters',
       inputTypeRequired: 'Please select input type',
-      agriculturalInputTypeRequired: 'Input Category',
+      agriculturalInputTypeRequired: 'Please select Category',
       inputSkuRequired: 'Please enter unique product identifier',
       inputSkuLength: 'Product identifier must be 8-50 characters',
       trademarkRequired: 'Please enter trademark',
@@ -685,12 +673,7 @@ export default {
       inputName: 'Input Name',
       inputId: 'Input ID',
       inputBatchId: 'Input Batch ID',
-      inputBatch: '投入品批次',
-      inboundBatch: '入库批次',
-      productionBatch: '生产批次',
       inputType: 'Input Type',
-      agriculturalInputType: 'Agricultural Input Type',
-      variety: 'Variety',
       specification: 'Specification Model',
       unit: 'measurement',
       expiryDate: 'Expiry Date',
@@ -698,9 +681,6 @@ export default {
       addMaterial: 'Add Material',
       addInput: 'Add Input',
       noMaterials: 'No material details',
-      noDistributionDetails: 'No distribution details',
-      distributionLoaded: 'Distribution details loaded successfully',
-      loadDistributionFailed: 'Failed to load distribution details',
       searchPlaceholder: 'Search by stock in order number, batch number',
       filterByWarehouse: 'Filter by Warehouse',
       filterBySupplier: 'Filter by Supplier',
@@ -788,12 +768,7 @@ export default {
         materialName: 'Enter material name',
         inputName: 'Select input name',
         inputBatchId: 'Enter input batch ID (optional)',
-         inputBatch: 'Please select input batch',
-          inboundBatch: 'Inbound batch (system generated)',
-          productionBatch: 'Please enter production batch (optional)',
         inputType: 'Input type (auto-filled)',
-        agriculturalInputType: 'Agricultural Input Type',
-          variety: 'Variety',
         specification: 'Enter specification model (optional)',
         unit: 'Enter measurement',
         qrCode: 'QR code (auto-obtained)',
@@ -1032,18 +1007,6 @@ export default {
         title: 'Inventory Summary',
         total: 'Total'
       },
-      form: {
-        inputName: 'Input Name',
-        batchNo: 'Batch No',
-        warehouseName: 'Warehouse',
-        currentQuantity: 'Current Quantity',
-        inDate: 'Inbound Date',
-        expiredDate: 'Expiry Date',
-        stockStatus: 'Stock Status',
-        daysToExpire: 'Days to Expiry',
-        qrCode: 'QR Code',
-        qrCodeHint: 'Scan QR code for more information'
-      },
       columns: {
         inputName: 'Input Name',
         batchNo: 'Batch No',
@@ -1052,9 +1015,9 @@ export default {
         inDate: 'Inbound Date',
         expiredDate: 'Expiry Date',
         stockStatus: 'Stock Status',
-        actions: 'Actions',
         qrCode: 'QR Code',
-        qrCodeHint: 'Scan QR code for traceability information'
+        qrCodeHint: 'Scan QR code for more information',
+        actions: 'Actions'
       },
       status: {
         normal: 'Normal',
@@ -1082,7 +1045,6 @@ export default {
   dashboard: {
     title: 'Agricultural Input Supply Management Dashboard',
     subtitle: 'Real-time data monitoring and visual analysis',
-    dashboardSubtitle: 'Real-time monitoring of inventory status and warning information',
     lastUpdate: 'Last Updated',
     autoRefresh: 'Auto Refresh',
     fullscreen: 'Full Screen',
