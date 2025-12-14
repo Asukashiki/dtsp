@@ -492,7 +492,8 @@ const loadDetailData = async () => {
     const res = await getVillageDemandSummaryMainList({
       page: 1,
       pageSize: 1000,
-      targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {
@@ -514,7 +515,8 @@ const handleExpandChange = async (row, expandedRows) => {
     row.subLoading = true
     try {
       const res = await getTownAggregationDetail({
-        sourceCode: row.sourceCode
+        sourceCode: row.sourceCode,
+        year: row.year
       })
 
       if (res.code === 200) {
