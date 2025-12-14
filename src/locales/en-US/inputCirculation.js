@@ -8,7 +8,7 @@ export default {
   zone: 'Zone',
   inputType: 'Input Type',
   totalQuota: 'Total Quota',
-  unit: 'Unit',
+  unit: 'measurement',
   farmerId: 'Farmer ID',
   farmerPhone: 'Farmer Phone',
   farmerName: 'Farmer Name',

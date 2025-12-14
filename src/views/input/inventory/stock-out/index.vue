@@ -118,7 +118,11 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="created_at" :label="$t('input.inventory.stockOut.columns.createTime')" width="160" />
+          <el-table-column prop="created_at" :label="$t('input.inventory.stockOut.columns.createTime')" width="160">
+            <template #default="{ row }">
+              {{ formatDateTime(row.created_at) }}
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('input.inventory.stockOut.columns.actions')" width="280" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
@@ -188,7 +192,7 @@
               <div class="info-row">
                 <i class="ri-time-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.stockOut.columns.createTime') }}:</span>
-                <span class="info-value">{{ item.created_at }}</span>
+                <span class="info-value">{{ formatDateTime(item.created_at) }}</span>
               </div>
             </div>
 
@@ -292,6 +296,12 @@ const auditForm = reactive({
   audit_status: 'approved',
   remark: ''
 })
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+  return dateTimeStr.replace('T', ' ')
+}
 
 // 获取类型标签
 const getTypeTag = (type) => {

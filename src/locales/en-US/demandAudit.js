@@ -119,11 +119,11 @@ export default {
     createdTime: 'Created Time',
 
     // Input Items
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     variety: 'Variety',
     specification: 'Specification',
-    unit: 'Unit',
+    unit: 'measurement',
     quantity: 'Demand Quantity',
     noItems: 'No input items',
   },
@@ -176,7 +176,7 @@ export default {
     submitConfirm: 'Are you sure to submit aggregation data?',
     submitSuccess: 'Aggregation submitted successfully',
     submitFailed: 'Aggregation submission failed',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     totalQuantity: 'Total Quantity',
     totalCount: 'Total Items',
