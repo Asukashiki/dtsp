@@ -32,7 +32,7 @@
 <!--          <el-input v-model="formData.targetPhone" :placeholder="$t('common.pleaseInput')" />-->
 <!--        </el-form-item>-->
         <el-form-item :label="$t('inputCirculation.releaseYear')">
-          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" />
+          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" @change="handleYearChange" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
           <el-date-picker v-model="formData.releaseDate" type="date" value-format="YYYY-MM-DD" />
@@ -384,7 +384,10 @@ const getUnionInfo = async (value) => {
 const loadDemandList = async (unionCode) => {
   demandLoading.value = true
   try {
-    const response = await getTownAggregationDetail({ sourceCode: unionCode })
+    const response = await getTownAggregationDetail({ 
+      sourceCode: unionCode,
+      year: formData.releaseYear || new Date().getFullYear().toString()
+    })
     if (response.code === 200) {
       demandList.value = response.data || []
     }
@@ -398,6 +401,13 @@ const loadDemandList = async (unionCode) => {
 // 处理需求选择变化
 const handleDemandSelectionChange = (selection) => {
   selectedDemands.value = selection
+}
+
+// 处理年度变化 - 重新加载需求列表
+const handleYearChange = () => {
+  if (formData.targetId) {
+    loadDemandList(formData.targetId)
+  }
 }
 
 const fetchDetail = async () => {
