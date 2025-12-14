@@ -121,8 +121,16 @@
               <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.inputId')" width="150" />
               <el-table-column prop="batch_no" :label="$t('input.inventory.stockIn.form.inboundBatch')" width="180" show-overflow-tooltip />
               <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.form.productionBatch')" width="180" show-overflow-tooltip />
-              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.inputType')" width="120" />
-              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockIn.form.agriculturalInputType')" width="120" />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.inputType')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_type', scope.row.material_type) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockIn.form.agriculturalInputType')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_category', scope.row.agricultural_input_type) || scope.row.agricultural_input_type }}
+                </template>
+              </el-table-column>
 <!--              <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.productionBatch')" width="150" />-->
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockIn.specification')" width="120" />
               <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center" />
@@ -161,11 +169,11 @@
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.inputType') }}:</span>
-                  <span class="value">{{ item.material_type || '-' }}</span>
+                  <span class="value">{{ getLabelByValue('input_type', item.material_type) }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.agriculturalInputType') }}:</span>
-                  <span class="value">{{ item.agricultural_input_type || '-' }}</span>
+                  <span class="value">{{ getLabelByValue('input_category', item.agricultural_input_type) || item.agricultural_input_type }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.productionBatch') }}:</span>
@@ -206,10 +214,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getInboundOrderDetail } from '@/api/inbound'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 初始化字典
+const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category'])
 
 const loading = ref(false)
 const detailData = ref(null)
@@ -296,9 +308,23 @@ const goBack = () => {
 const loadData = async () => {
   loading.value = true
   try {
+    // 先加载字典数据
+    await loadAllDicts()
+
     const res = await getInboundOrderDetail(inboundOrderId)
     if (res.code === 200) {
       detailData.value = res.data
+
+      // 调试信息：检查字典数据是否正确加载
+      console.log('字典数据:', {
+        input_type: options.value.input_type,
+        input_category: options.value.input_category
+      })
+
+      // 调试信息：检查agricultural_input_type字段的值
+      if (res.data.details && res.data.details.length > 0) {
+        console.log('投入品品类值:', res.data.details[0].agricultural_input_type)
+      }
     }
   } catch (error) {
     console.error('Failed to load inbound order detail:', error)
