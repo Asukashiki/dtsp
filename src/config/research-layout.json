@@ -16,6 +16,12 @@
           "titleKey": "research.menu.breedingBatchManagement",
           "roles": ["agri-admin", "OARI"]
         },
+         {
+          "index": "/research/breeding-data/batch/approve",
+          "icon": "ri-calendar-line",
+          "titleKey": "research.menu.breedingBatchApprove", 
+          "roles": ["agri-admin", "OARI"]
+        },
         {
           "index": "/research/breeding-data/trial",
           "icon": "ri-test-tube-line",

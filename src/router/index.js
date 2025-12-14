@@ -147,6 +147,20 @@ const routes = [
         component: () => import('../views/research/breeding-data/batch/detail.vue'),
         meta: { title: '育种批次详情', hideInMenu: true, requiresAuth: true }
       },
+
+        {
+        path: 'breeding-data/batch/audit/:dataId',
+        name: 'BreedingBatchAudit',
+        component: () => import('../views/research/breeding-data/batch/form.vue'),
+        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/batch/approve',
+        name: 'BreedingBatchApprove',
+        component: () => import('../views/research/breeding-data/batch/approve.vue'),
+        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+      },
+
       
       // 地块及播种信息管理
       {
