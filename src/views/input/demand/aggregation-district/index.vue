@@ -475,7 +475,8 @@ const handleSubmit = async (row) => {
     // 区级汇聚提交: 传递sourceCode和summaryId
     const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
-      summaryId: row.id
+      summaryId: row.id,
+      year: row.year
     })
 
     if (res.code === 200) {
@@ -522,7 +523,8 @@ const loadDetailData = async () => {
   try {
     // 区级汇聚明细: 只传递sourceCode
     const res = await getTownAggregationDetail({
-      sourceCode: currentDetailRow.value.sourceCode
+      sourceCode: currentDetailRow.value.sourceCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {
