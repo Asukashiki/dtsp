@@ -15,6 +15,8 @@ export default {
   breedingBatchEdit: 'Edit Breeding Batch',
   breedingBatchDetail: 'Breeding Batch Detail',
 
+  breedingBatchApprove: 'Breeding Batch Approve',
+
   plotInfoManagement: 'Plot and Sowing Information ',
   plotInfoAdd: 'Add Plot Information',
   plotInfoEdit: 'Edit Plot Information',

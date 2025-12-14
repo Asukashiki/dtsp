@@ -14,6 +14,8 @@
         </div>
       </div>
 
+      
+
       <!-- 内容区域 -->
       <div class="content-wrapper">
         <div class="info-card">
@@ -22,13 +24,27 @@
               <i class="ri-file-list-3-line"></i>
               <span>{{ $t('research.breedingData.batch.list') }}</span>
             </div>
-            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                {{ $t('research.breedingData.batch.add') }}
-              </el-button>
-            </div>
+            
           </div>
+
+
+          <!-- 状态标签页 -->
+        <div class="status-tabs">
+          <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+
+            <el-tab-pane :label="$t('research.breedingData.batch.tabs.pendingApproval')" name="pendingApproval">
+              <template #label>
+                <span><i class="ri-time-line"></i> {{ $t('research.breedingData.batch.tabs.pendingApproval') }}</span>
+              </template>
+            </el-tab-pane>
+            <el-tab-pane :label="$t('research.breedingData.batch.tabs.approved')" name="approved">
+              <template #label>
+                <span><i class="ri-check-line"></i> {{ $t('research.breedingData.batch.tabs.approved') }}</span>
+              </template>
+            </el-tab-pane>
+
+          </el-tabs>
+        </div>
 
           <div class="card-body">
             <!-- 搜索筛选区 -->
@@ -73,17 +89,7 @@
                   class="search-input"
                 />
               </div>
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.status') }}:</label>
-                <el-select
-                  v-model="queryParams.status"
-                  :placeholder="$t('research.breedingData.batch.placeholder.status')"
-                  clearable
-                  class="filter-select"
-                >
-                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
+              
               <div class="search-actions">
                 <el-button type="primary" @click="handleQuery">
                   <i class="ri-search-line"></i>
@@ -129,7 +135,6 @@
                         @click="handleAction(row, button.action)">
                         <i :class="button.icon"></i>{{ button.label }}
                       </el-button>
-                     
                     </div>
                   </template>
                 </el-table-column>
@@ -199,9 +204,6 @@
                     @click="handleAction(item, button.action)">
                     <i :class="button.icon"></i>{{ button.label }}
                   </el-button>
-                  <el-button size="small" type="danger" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button>
                 </div>
               </div>
 
@@ -247,7 +249,7 @@ const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
-const activeTab = ref('myCreated')
+const activeTab = ref('pendingApproval')
 
 const queryParams = reactive({
   pageNum: 1,
@@ -281,7 +283,7 @@ const getList = async () => {
     dataList.value = res.rows || []
     total.value = res.total || 0
   } catch (error) {
-    console.error('Failed to fetch breeding batch list:', error)
+    console.error('Failed to fetch list:', error)
   } finally {
     loading.value = false
   }
@@ -308,7 +310,7 @@ const getStatusType = (status) => {
     'S0': 'info',      // 草稿 - 灰色
     'S1': 'warning',   // 待审批 - 橙色
     'S2': 'primary',   // 审核通过 - 蓝色
-    'S3': 'danger',    // 审核驳回 - 红色  
+    'S3': 'danger',    // 审核驳回 - 红色
     'S9': 'danger',    // 已作废 - 深红色
     'S10': 'danger'    // 异常 - 深红色
   }
@@ -383,12 +385,9 @@ const handleBatchDelete = () => {
   }).catch(() => {})
 }
 
-const handleTabChange = (tabName) => {
+const setQueryParamsByTab = (tabName) => {
   // 根据标签页设置不同的查询参数
   switch (tabName) {
-    case 'myCreated':
-      queryParams.status = '' // 我的创建显示所有状态
-      break
     case 'pendingApproval':
       queryParams.status = 'S1' // 待审批
       break
@@ -396,9 +395,13 @@ const handleTabChange = (tabName) => {
       queryParams.status = 'S2' // 审核通过
       break
     case 'completed':
-      queryParams.status = 'S9' // 已归档
+      queryParams.status = 'S8' // 已归档
       break
   }
+}
+
+const handleTabChange = (tabName) => {
+  setQueryParamsByTab(tabName)
   getList()
 }
 
@@ -410,15 +413,15 @@ const getActionButtons = (row) => {
   switch (status) {
     case 'S0': // 草稿
       if (userStore.hasStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('research.breedingData.batch.actions.edit'), icon: 'ri-edit-line' })
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       if (userStore.hasStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
       }
       break
     case 'S1': // 待审批
       if (userStore.hasStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
       }
       break
     case 'S2': // 审核通过
@@ -431,15 +434,12 @@ const getActionButtons = (row) => {
       if (userStore.hasStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
-      if (userStore.hasStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
-      }
       break
     case 'S9': // 已归档
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
     case 'S10': // 已作废
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }) 
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
   }
   
@@ -479,17 +479,16 @@ const handleSubmitForAudit = async (row) => {
   try {
     // 检查权限
     if (!userStore.hasStatusPermission('submit')) {
-      ElMessage.error('You do not have permission to submit for approval')
+      ElMessage.error('You do not have permission to submit for audit')
       return
     }
- 
-    await ElMessageBox.confirm('Are you sure to submit for approval?', 'prompt', { type: 'warning' })
+    await ElMessageBox.confirm('Are you sure to submit for review?', 'prompt', { type: 'warning' })
     await submitForAudit(row.dataId)
-    ElMessage.success('Successfully submitted for approval')
+    ElMessage.success('Successfully submitted for review')
     getList()
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('Failed to submit for approval')
+      ElMessage.error('Failed to submit for review')
     }
   }
 }
@@ -520,7 +519,7 @@ const handleReject = async (row) => {
       return
     }
     await ElMessageBox.confirm('Are you sure to reject?', 'prompt', { type: 'warning' })
-    await rejectBatch(row.dataId)
+    await rejectBatch(row.id)
     ElMessage.success('Successfully rejected')
     getList()
   } catch (error) {
@@ -574,6 +573,7 @@ const handleAudit = (row) => {
 }
 
 onMounted(() => {
+  setQueryParamsByTab(activeTab.value)
   getList()
 })
 </script>

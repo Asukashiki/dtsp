@@ -14,6 +14,8 @@ export default {
   breedingBatchEdit: '编辑育种批次',
   breedingBatchDetail: '育种批次详情',
 
+  breedingBatchApprove: '育种批次审核',
+
   plotInfoManagement: '地块及播种信息管理',
   plotInfoAdd: '新增地块信息',
   plotInfoEdit: '编辑地块信息',
