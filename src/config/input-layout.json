@@ -91,11 +91,6 @@
           "index": "/input/allocation/woreda",
           "icon": "ri-community-line",
           "titleKey": "allocation.menu.woredaAllocation"
-        },
-        {
-          "index": "/input/allocation/kebele",
-          "icon": "ri-community-line",
-          "titleKey": "allocation.menu.kebeleAllocation"
         }
       ]
     },
