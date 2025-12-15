@@ -113,3 +113,16 @@ export const aggregateTownInputDemand = (data) => {
     data,
   })
 }
+
+/**
+ * 发布全部任务
+ * @param {Object} params - 查询参数 { year }
+ * @returns {Promise}
+ */
+export const distributeTask = (params) => {
+  return request({
+    url: '/demand/input/summary/main/distributeTask',
+    method: 'get',
+    params,
+  })
+}
