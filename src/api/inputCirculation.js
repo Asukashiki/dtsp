@@ -333,3 +333,39 @@ export const deleteFarmerRelease = (ids) => {
     method: 'get'
   })
 }
+
+// ==================== 农民领用 Farmer Receive ====================
+
+/**
+ * 获取农民领用列表
+ * Get farmer receive list
+ */
+export const getFarmerReceiveList = (params) => {
+  return agricultureRequest({
+    url: '/invested/release/farmer/receive/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取农民领用详情
+ * Get farmer receive detail
+ */
+export const getFarmerReceiveDetail = (id) => {
+  return agricultureRequest({
+    url: `/invested/release/farmer/receive/detail/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 确认农民领用
+ * Confirm farmer receive
+ */
+export const confirmFarmerReceive = (id) => {
+  return agricultureRequest({
+    url: `/invested/release/farmer/receive/confirm/${id}`,
+    method: 'post'
+  })
+}

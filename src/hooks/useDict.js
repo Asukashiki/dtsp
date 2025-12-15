@@ -104,6 +104,7 @@ export function useDict(dictTypes, hookOptions = {}) {
       result[type] = data.map(item => ({
         label: getDictLabel(item, locale.value),
         value: item.dictValue,
+        actualValue: item.actualValue,  // 实际值
         raw: item  // 保留原始数据
       }))
     }
@@ -133,6 +134,18 @@ export function useDict(dictTypes, hookOptions = {}) {
   }
   
   /**
+   * 根据值获取实际值
+   * @param {String} dictType - 字典类型
+   * @param {String} value - 字典值
+   * @returns {String} - 实际值
+   */
+  function getActualValueByValue(dictType, value) {
+    const data = dictData.value[dictType] || []
+    const item = data.find(d => d.dictValue === String(value))
+    return item ? item.actualValue : value
+  }
+  
+  /**
    * 获取原始字典数据
    * @param {String} dictType - 字典类型
    * @returns {Array} - 原始数据列表
@@ -159,6 +172,7 @@ export function useDict(dictTypes, hookOptions = {}) {
     refresh,
     getOptions,
     getLabelByValue,
+    getActualValueByValue,
     getRawData
   }
 }
