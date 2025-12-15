@@ -206,7 +206,6 @@ const fetchAllData = async () => {
     const [
       overviewRes,
       suppliersRes,
-      warehouseRes,
       trendRes,
       distributionRes,
       warningsRes,
@@ -216,7 +215,6 @@ const fetchAllData = async () => {
     ] = await Promise.all([
       getOverview().catch(() => ({ code: -1 })),
       getTopSuppliers(10).catch(() => ({ code: -1 })),
-      getWarehouseStats().catch(() => ({ code: -1 })),
       getStockTrend(trendDays.value).catch(() => ({ code: -1 })),
       getInputTypeDistribution().catch(() => ({ code: -1 })),
       getWarnings(20).catch(() => ({ code: -1 })),
@@ -848,14 +846,14 @@ onBeforeUnmount(() => {
     class="dashboard-container"
   >
     <!-- 背景装饰 -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+    <div class="overflow-hidden fixed inset-0 pointer-events-none">
+      <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl bg-cyan-500/10"></div>
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl bg-blue-500/10"></div>
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-3xl"></div>
     </div>
 
     <!-- 网格背景 -->
-    <div class="fixed inset-0 pointer-events-none opacity-20">
+    <div class="fixed inset-0 opacity-20 pointer-events-none">
       <div class="w-full h-full" style="background-image: linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
     </div>
 
@@ -867,7 +865,7 @@ onBeforeUnmount(() => {
           <div class="header-left">
             <div class="header-icon">
               <div class="icon-box">
-                <i class="ri-dashboard-3-line text-xl text-white"></i>
+                <i class="text-xl text-white ri-dashboard-3-line"></i>
               </div>
               <div class="status-dot"></div>
             </div>
@@ -881,7 +879,7 @@ onBeforeUnmount(() => {
           <div class="header-right">
             <!-- 当前时间 -->
             <div class="time-box">
-              <i class="ri-time-line text-cyan-400"></i>
+              <i class="text-cyan-400 ri-time-line"></i>
               <span class="time-text">{{ currentTime }}</span>
             </div>
 
@@ -1083,24 +1081,24 @@ onBeforeUnmount(() => {
                   <h3>{{ t('input.dashboard.stockStatus.title') }}</h3>
                 </div>
               </div>
-              <div class="chart-body small flex items-center">
+              <div class="flex items-center chart-body small">
                 <div id="alertStatsChart" class="w-1/2 h-full"></div>
-                <div class="w-1/2 space-y-2 pr-2">
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>{{ t('input.dashboard.stockStatus.expired') }}</span>
-                    <span class="text-red-400 font-medium">{{ stockAlertStats.expired }}</span>
+                <div class="pr-2 space-y-2 w-1/2">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-red-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.expired') }}</span>
+                    <span class="font-medium text-red-400">{{ stockAlertStats.expired }}</span>
                   </div>
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>{{ t('input.dashboard.stockStatus.nearExpiry') }}</span>
-                    <span class="text-amber-400 font-medium">{{ stockAlertStats.nearExpiry }}</span>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-amber-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.nearExpiry') }}</span>
+                    <span class="font-medium text-amber-400">{{ stockAlertStats.nearExpiry }}</span>
                   </div>
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500"></span>{{ t('input.dashboard.stockStatus.lowStock') }}</span>
-                    <span class="text-violet-400 font-medium">{{ stockAlertStats.lowStock }}</span>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-violet-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.lowStock') }}</span>
+                    <span class="font-medium text-violet-400">{{ stockAlertStats.lowStock }}</span>
                   </div>
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span>{{ t('input.dashboard.stockStatus.normal') }}</span>
-                    <span class="text-green-400 font-medium">{{ stockAlertStats.normal }}</span>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-green-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.normal') }}</span>
+                    <span class="font-medium text-green-400">{{ stockAlertStats.normal }}</span>
                   </div>
                 </div>
               </div>
@@ -1188,7 +1186,7 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- 预警列表 -->
-          <div class="side-card flex-1">
+          <div class="flex-1 side-card">
             <div class="side-header">
               <div class="side-title">
                 <div class="title-icon red small">
@@ -1234,8 +1232,8 @@ onBeforeUnmount(() => {
       <!-- 底部状态栏 -->
       <footer class="dashboard-footer">
         <div class="footer-left">
-          <span><i class="ri-refresh-line text-cyan-400"></i>{{ t('input.dashboard.lastUpdate') }}: {{ lastUpdateTime }}</span>
-          <span class="hidden sm:flex"><i class="ri-timer-line text-yellow-400"></i>{{ t('input.dashboard.refreshInterval') }}: 30s</span>
+          <span><i class="text-cyan-400 ri-refresh-line"></i>{{ t('input.dashboard.lastUpdate') }}: {{ lastUpdateTime }}</span>
+          <span class="hidden sm:flex"><i class="text-yellow-400 ri-timer-line"></i>{{ t('input.dashboard.refreshInterval') }}: 30s</span>
         </div>
         <div class="footer-right">
           <span class="status-indicator">
