@@ -1,5 +1,5 @@
 <template>
-  <div class="union-receive-detail-container">
+  <div class="farmer-receive-detail-container">
     <el-page-header @back="handleBack" :title="$t('common.back')">
       <template #content><span>{{ $t('inputCirculation.receiveDetail') }}</span></template>
     </el-page-header>
@@ -7,18 +7,13 @@
     <el-card v-loading="loading" class="main-card">
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ mainData.releaseId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ mainData.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ mainData.releaseBy }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ mainData.targetPhone }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ mainData.releaseOrg }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.farmerName')">{{ mainData.farmerName }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.farmerId')">{{ mainData.farmerId }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.farmerPhone')">{{ mainData.farmerPhone }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.farmerAddress')">{{ mainData.farmerAddress }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ mainData.releaseDate }}</el-descriptions-item>
-
-        <el-descriptions-item :label="$t('inputCirculation.receiveId')">{{ mainData.releaseId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.receiveName')">{{ mainData.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.status')">{{ mainData.receiveStatus }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmBy')">{{ mainData.confirmBy || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">{{ mainData.confirmOrg || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmTime')">{{ mainData.confirmTime || '-' }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ mainData.releaseBy }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ mainData.releaseOrg }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
 
@@ -65,8 +60,8 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getWoredaReceiveDetail, getUnionReleaseDetailByReleaseId } from '@/api/inputCirculation'
-import { getTownAggregationDetail } from '@/api/villageAggregation'
+import { getFarmerReceiveDetail } from '@/api/inputCirculation'
+import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue } = useDict(['input_type', 'input_category'])
@@ -83,15 +78,14 @@ const demandLoading = ref(false)
 const fetchDetail = async () => {
   loading.value = true
   try {
-    const response = await getWoredaReceiveDetail(route.params.id)
+    const response = await getFarmerReceiveDetail(route.params.id)
     if (response.code === 200) {
-      // 后端返回的数据结构：{ main: {...}, details: [...] }
       mainData.value = response.data?.main || {}
       detailData.value = response.data?.details || []
       
-      // 加载需求列表 - 通过分发单获取 zoneId
-      if (mainData.value.releaseId) {
-        await loadDemandListByReleaseId(mainData.value.releaseId)
+      // 加载农民需求列表
+      if (mainData.value.farmerId) {
+        await loadDemandList(mainData.value.farmerId)
       }
     }
   } catch (error) {
@@ -101,21 +95,13 @@ const fetchDetail = async () => {
   }
 }
 
-// 通过分发单ID加载需求列表
-const loadDemandListByReleaseId = async (releaseId) => {
+const loadDemandList = async (farmerId) => {
   demandLoading.value = true
   try {
-    // 先获取分发单详情来获取 zoneId
-    const releaseResponse = await getUnionReleaseDetailByReleaseId(releaseId)
-    const releaseMain = releaseResponse.data?.main || {}
-    const regionCode = releaseMain.zoneId || releaseMain.zone_id
-    const year = releaseMain.releaseYear || releaseMain.release_year || new Date().getFullYear().toString()
-    
-    if (releaseResponse.code === 200 && regionCode) {
-      const response = await getTownAggregationDetail({ sourceCode: regionCode, year })
-      if (response.code === 200) {
-        demandList.value = response.data || []
-      }
+    const year = mainData.value.releaseYear || mainData.value.release_year || new Date().getFullYear().toString()
+    const response = await getFarmerDemandByFarmerId(farmerId, { year })
+    if (response.code === 200) {
+      demandList.value = response.data || []
     }
   } catch (error) {
     console.error('Failed to load demand list:', error)
@@ -129,6 +115,6 @@ onMounted(() => fetchDetail())
 </script>
 
 <style scoped>
-.union-receive-detail-container { padding: 20px; }
+.farmer-receive-detail-container { padding: 20px; }
 .main-card { margin-top: 20px; }
 </style>
