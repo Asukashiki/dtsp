@@ -27,7 +27,13 @@ export const getVillageDemandSummaryMainList = (params) => {
     params,
   })
 }
-
+export const getVillageDemandSummaryMainListSub = (params) => {
+  return request({
+    url: '/demand/input/summary/main/listSub',
+    method: 'get',
+    params,
+  })
+}
 /**
  * 农资需求村级汇聚统计提交
  * @param {Object} data - 汇聚参数 { sourceCode, sourceName, targetCode, targetName, year, demandSummaryId }

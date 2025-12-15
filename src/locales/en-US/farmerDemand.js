@@ -220,6 +220,7 @@ export default {
     updateFailed: 'Update failed, please retry',
     deleteFailed: 'Delete failed',
     noData: 'No data available',
+    farmerDemandExists: 'This farmer already has a demand record for the current year. Please check the existing record or select a different farmer.',
   },
 
   // Detail Page Sections

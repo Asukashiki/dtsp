@@ -11,8 +11,8 @@ export default {
   deleteSuccess: '删除成功',
   addSuccess: '新增成功',
   editSuccess: '编辑成功',
-  submit:'提交',
-  submitSuccess:'提交成功',
+  submit: '提交',
+  submitSuccess: '提交成功',
   submitConfirm: '确认提交该需求到村级审核吗?',
   submitFailed: '提交失败',
   batchSubmitConfirm: '确认提交选中的 {count} 条需求到村级审核吗?',
@@ -29,20 +29,20 @@ export default {
   allKebeles: '全部Kebele',
   allCategories: '全部类型',
 
-    cascader: {
-      pesticide: '农药',
-      insecticide: '杀虫剂',
-      fungicide: '杀菌剂',
-      herbicide: '除草剂',
-      seed: '种子',
-      coffee: '咖啡',
-      apple: '苹果',
-      wheat: '小麦',
-      fertilizer: '化肥',
-      nitrogen: '氮肥',
-      phosphorus: '磷肥',
-      potassium: '钾肥'
-    },
+  cascader: {
+    pesticide: '农药',
+    insecticide: '杀虫剂',
+    fungicide: '杀菌剂',
+    herbicide: '除草剂',
+    seed: '种子',
+    coffee: '咖啡',
+    apple: '苹果',
+    wheat: '小麦',
+    fertilizer: '化肥',
+    nitrogen: '氮肥',
+    phosphorus: '磷肥',
+    potassium: '钾肥'
+  },
   // 状态
   status: {
     draft: '草稿',
@@ -179,7 +179,7 @@ export default {
     delete: '删除',
     submit: '提交',
   },
-    submitForAudit: '提交审核',
+  submitForAudit: '提交审核',
 
   // 审核记录
   auditRecords: {
@@ -219,6 +219,7 @@ export default {
     updateFailed: '更新失败,请重试',
     deleteFailed: '删除失败',
     noData: '暂无数据',
+    farmerDemandExists: '该农民在当前年份已有需求记录，请查看已有记录或选择其他农民。',
   },
 
   // 详情页专用

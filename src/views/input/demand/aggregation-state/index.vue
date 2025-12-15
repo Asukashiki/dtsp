@@ -154,10 +154,10 @@
                   <span class="label">{{ $t('stateAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{  item.subQuantity  }}</span>
                 </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('stateAggregation.columns.creator') }}:</span>
-                  <span class="value">{{ item.creator }}</span>
-                </div>
+<!--                <div class="mobile-card-row">-->
+<!--                  <span class="label">{{ $t('stateAggregation.columns.creator') }}:</span>-->
+<!--                  <span class="value">{{ item.creator }}</span>-->
+<!--                </div>-->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.createTime') }}:</span>
                   <span class="value">{{ item.createTime }}</span>
@@ -462,12 +462,12 @@ const confirmAddYear = async () => {
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('stateAggregation.addYearDialog.failed'))
+      // ElMessage.error(res.msg || t('stateAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
-      console.error('Failed to add year:', error)
-      ElMessage.error(t('stateAggregation.addYearDialog.failed'))
+      // console.error('Failed to add year:', error)
+      // ElMessage.error(t('stateAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false
