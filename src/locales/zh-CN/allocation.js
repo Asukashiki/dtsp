@@ -4,7 +4,8 @@ export default {
     quotaAllocation: '投入品分配额度管理',
     zoneAllocation: 'Zone分配额度管理',
     woredaAllocation: 'Woreda分配额度管理',
-    kebeleAllocation: 'Kebele分配额度管理'
+    kebeleAllocation: 'Kebele分配额度管理',
+    farmerAllocation: '农民分配管理'
   },
 
   // 基本信息

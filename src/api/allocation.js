@@ -213,3 +213,84 @@ export function deleteKebeleAllocation(id) {
     data: { id }
   })
 }
+
+// ==================== Farmer Allocation Management ====================
+
+/**
+ * Get farmer allocation page list
+ * @param {Object} params - Query parameters
+ * @returns {Promise}
+ */
+export function getFarmerAllocationPage(params) {
+  return request({
+    url: '/api/allocation/farmer/page',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * Get farmer allocation detail
+ * @param {String} id - Allocation ID
+ * @returns {Promise}
+ */
+export function getFarmerAllocationDetail(id) {
+  return request({
+    url: '/api/allocation/farmer/detail',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/**
+ * Add farmer allocation
+ * @param {Object} data - Allocation data
+ * @returns {Promise}
+ */
+export function addFarmerAllocation(data) {
+  return request({
+    url: '/api/allocation/farmer/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * Update farmer allocation
+ * @param {Object} data - Allocation data
+ * @returns {Promise}
+ */
+export function editFarmerAllocation(data) {
+  return request({
+    url: '/api/allocation/farmer/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * Delete farmer allocation
+ * @param {String} id - Allocation ID
+ * @returns {Promise}
+ */
+export function deleteFarmerAllocation(id) {
+  return request({
+    url: '/api/allocation/farmer/delete',
+    method: 'post',
+    data: { id }
+  })
+}
+
+/**
+ * Get farmer demand data by farmer ID
+ * @param {String} farmerId - Farmer ID
+ * @param {Object} params - Additional parameters (e.g., year)
+ * @returns {Promise}
+ */
+export function getFarmerDemandByFarmerId(farmerId, params = {}) {
+  return request({
+    url: '/seed/demand/farmer/getByFarmerId',
+    method: 'get',
+    params: { farmerId, ...params }
+  })
+}

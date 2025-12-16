@@ -1192,6 +1192,32 @@ const routes = [
         meta: { title: 'Kebele分配额度详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // 农民分配管理
+      {
+        path: 'allocation/farmer',
+        name: 'FarmerAllocation',
+        component: () => import('../views/input/allocation/farmer/index.vue'),
+        meta: { title: '农民分配管理', requiresAuth: true }
+      },
+      {
+        path: 'allocation/farmer/add',
+        name: 'FarmerAllocationAdd',
+        component: () => import('../views/input/allocation/farmer/form.vue'),
+        meta: { title: '新增农民分配', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/farmer/edit/:id',
+        name: 'FarmerAllocationEdit',
+        component: () => import('../views/input/allocation/farmer/form.vue'),
+        meta: { title: '编辑农民分配', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'allocation/farmer/detail/:id',
+        name: 'FarmerAllocationDetail',
+        component: () => import('../views/input/allocation/farmer/detail.vue'),
+        meta: { title: '农民分配详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // OSE分发种子到Union
       {
         path: 'input-circulation/ose-release',
