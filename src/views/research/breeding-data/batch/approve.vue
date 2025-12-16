@@ -76,8 +76,9 @@
                   :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
                   clearable
                   class="filter-select"
+                  :loading="dictLoading"
                 >
-                  <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                  <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </div>
               <div class="search-item">
@@ -110,17 +111,17 @@
             <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
             <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
               <template #default="{ row }">
-                {{ getCropTypeLabel(row.cropType) }}
+                {{ getLabelByValue('crop_type', row.cropType) }}
               </template>
             </el-table-column>
             <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
-                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="120">
+                <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
                   <template #default="{ row }">
-                    <el-tag :type="getStatusType(row.status)" effect="plain">
-                      {{ getStatusLabel(row.status) }}
+                    <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
+                      {{ getLabelByValue('flow_status', row.workflowStatus) }}
                     </el-tag>
                   </template>
                 </el-table-column>
@@ -170,7 +171,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                    <span class="value">{{ getCropTypeLabel(item.cropType) }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
@@ -189,9 +190,9 @@
                     <span class="value">{{ item.year }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.status') }}:</span>
-                    <el-tag :type="getStatusType(item.status)" effect="plain" size="small">
-                      {{ getStatusLabel(item.status) }}
+                    <span class="label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</span>
+                    <el-tag :type="getWorkflowStatusType(item.workflowStatus)" effect="plain" size="small">
+                      {{ getLabelByValue('flow_status', item.workflowStatus) }}
                     </el-tag>
                   </div>
                 </div>
@@ -231,6 +232,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
+import { useDict } from '@/hooks/useDict'
 import {
   getBreedingBatchList,
   deleteBreedingBatch,
@@ -251,6 +253,12 @@ const total = ref(0)
 const selectedIds = ref([])
 const activeTab = ref('pendingApproval')
 
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type',
+  'flow_status'
+])
+
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
@@ -258,23 +266,8 @@ const queryParams = reactive({
   batchName: '',
   cropType: '',
   varietyName: '',
-  status: ''
+  workflowStatus: ''
 })
-
-const cropTypeOptions = [
-  { label: 'wheat', value: 'T01' },
-  { label: 'corn', value: 'T02' },
-  { label: 'teff', value: 'T03' }
-]
-
-const statusOptions = [
-  { label: t('research.breedingData.batch.status.draft'), value: 'S0' },
-  { label: t('research.breedingData.batch.status.pendingApproval'), value: 'S1' },
-  { label: t('research.breedingData.batch.status.approved'), value: 'S2' },
-  { label: t('research.breedingData.batch.status.rejected'), value: 'S3' },
-  { label: t('research.breedingData.batch.status.archived'), value: 'S9' },
-  { label: t('research.breedingData.batch.status.void'), value: 'S10' }
-]
 
 const getList = async () => {
   loading.value = true
@@ -301,12 +294,12 @@ const handleReset = () => {
   queryParams.batchName = ''
   queryParams.cropType = ''
   queryParams.varietyName = ''
-  queryParams.status = ''
+  queryParams.workflowStatus = ''
   getList()
 }
 
-const getStatusType = (status) => {
-  const statusMap = {
+const getWorkflowStatusType = (workflowStatus) => {
+  const workflowStatusMap = {
     'S0': 'info',      // 草稿 - 灰色
     'S1': 'warning',   // 待审批 - 橙色
     'S2': 'primary',   // 审核通过 - 蓝色
@@ -314,28 +307,7 @@ const getStatusType = (status) => {
     'S9': 'danger',    // 已作废 - 深红色
     'S10': 'danger'    // 异常 - 深红色
   }
-  return statusMap[status] || 'info'
-}
-
-const getStatusLabel = (status) => {
-  const statusLabelMap = {
-    'S0': t('research.breedingData.batch.status.draft'),
-    'S1': t('research.breedingData.batch.status.pendingApproval'),
-    'S2': t('research.breedingData.batch.status.approved'),
-    'S3': t('research.breedingData.batch.status.rejected'),
-    'S9': t('research.breedingData.batch.status.archived'),
-    'S10': t('research.breedingData.batch.status.void')
-  }
-  return statusLabelMap[status] || status
-}
-
-const getCropTypeLabel = (code) => {
-  const cropMap = {
-    'T01': 'wheat',
-    'T02': 'corn',
-    'T03': 'teff'
-  }
-  return cropMap[code] || code
+  return workflowStatusMap[workflowStatus] || 'info'
 }
 
 const handleSelectionChange = (selection) => {
@@ -389,13 +361,13 @@ const setQueryParamsByTab = (tabName) => {
   // 根据标签页设置不同的查询参数
   switch (tabName) {
     case 'pendingApproval':
-      queryParams.status = 'S1' // 待审批
+      queryParams.workflowStatus = 'S1' // 待审批
       break
     case 'approved':
-      queryParams.status = 'S2' // 审核通过
+      queryParams.workflowStatus = 'S2' // 审核通过
       break
     case 'completed':
-      queryParams.status = 'S8' // 已归档
+      queryParams.workflowStatus = 'S8' // 已归档
       break
   }
 }
@@ -406,32 +378,32 @@ const handleTabChange = (tabName) => {
 }
 
 const getActionButtons = (row) => {
-  const status = row.status
+  const workflowStatus = row.workflowStatus
   const buttons = []
   
   // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (status) {
+  switch (workflowStatus) {
     case 'S0': // 草稿
-      if (userStore.hasStatusPermission('edit')) {
+      if (userStore.hasWorkflowStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
-      if (userStore.hasStatusPermission('submit')) {
+      if (userStore.hasWorkflowStatusPermission('submit')) {
         buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
       }
       break
     case 'S1': // 待审批
-      if (userStore.hasStatusPermission('approve')) {
+      if (userStore.hasWorkflowStatusPermission('approve')) {
         buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
       }
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      if (userStore.hasStatusPermission('archive')) {
+      if (userStore.hasWorkflowStatusPermission('archive')) {
         buttons.push({ type: 'success', action: 'archive', label: 'archive', icon: 'ri-archive-line' })
       }
       break
     case 'S3': // 审核驳回
-      if (userStore.hasStatusPermission('edit')) {
+      if (userStore.hasWorkflowStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       break
@@ -478,7 +450,7 @@ const handleAction = (row, action) => {
 const handleSubmitForAudit = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('submit')) {
+    if (!userStore.hasWorkflowStatusPermission('submit')) {
       ElMessage.error('You do not have permission to submit for audit')
       return
     }
@@ -496,7 +468,7 @@ const handleSubmitForAudit = async (row) => {
 const handleApprove = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('approve')) {
+    if (!userStore.hasWorkflowStatusPermission('approve')) {
       ElMessage.error('You do not have permission to approve')
       return
     }
@@ -514,7 +486,7 @@ const handleApprove = async (row) => {
 const handleReject = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('reject')) {
+    if (!userStore.hasWorkflowStatusPermission('reject')) {
       ElMessage.error('You do not have permission to reject')
       return
     }
@@ -532,7 +504,7 @@ const handleReject = async (row) => {
 const handleArchive = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('archive')) {
+    if (!userStore.hasWorkflowStatusPermission('archive')) {
       ElMessage.error('You do not have permission to archive')
       return
     }
@@ -550,7 +522,7 @@ const handleArchive = async (row) => {
 const handleCancelBatch = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('cancel')) {
+    if (!userStore.hasWorkflowStatusPermission('cancel')) {
       ElMessage.error('You do not have permission to cancel')
       return
     }

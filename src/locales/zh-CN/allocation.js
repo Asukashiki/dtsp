@@ -3,7 +3,9 @@ export default {
   menu: {
     quotaAllocation: '投入品分配额度管理',
     zoneAllocation: 'Zone分配额度管理',
-    woredaAllocation: 'Woreda分配额度管理'
+    woredaAllocation: 'Woreda分配额度管理',
+    kebeleAllocation: 'Kebele分配额度管理',
+    farmerAllocation: '农民分配管理'
   },
 
   // 基本信息
@@ -12,6 +14,7 @@ export default {
   year: '年份',
   zone: 'Zone',
   woreda: 'Woreda',
+  kebele: 'Kebele',
   
   // 需求和配额
   demand: '需求',
@@ -27,6 +30,9 @@ export default {
   addWoredaAllocation: '新增Woreda分配额度',
   editWoredaAllocation: '编辑Woreda分配额度',
   woredaAllocationDetail: 'Woreda分配额度详情',
+  addKebeleAllocation: '新增Kebele分配额度',
+  editKebeleAllocation: '编辑Kebele分配额度',
+  kebeleAllocationDetail: 'Kebele分配额度详情',
   
   // 提示信息
   saveSuccess: '保存成功',
