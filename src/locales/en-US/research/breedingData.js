@@ -16,6 +16,14 @@ export default {
     form: {
       basicInfo: 'Batch Basic Information',
       identityInfo: 'Variety Identification Information',
+      metadataInfo: 'Metadata Information',
+      workflowInfo: 'Workflow Information',
+      approvalHistory: 'Approval History',
+      currentApproval: 'Current Approval',
+      approver: 'Approver',
+      approvalTime: 'Approval Time',
+      comment: 'Comment',
+      approvalComment: 'Approval Comment',
       batchName: 'Batch Name',
       batchId: 'Batch ID',
       batchTime: 'Batch Time',
@@ -24,12 +32,15 @@ export default {
       varietyName: 'Variety Name',
       year: 'Year',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
       species: 'Species',
       genus: 'Genus',
       family: 'Family',
       breedingMethod: 'Breeding Method',
+      germplasmSource: 'Germplasm Source',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      status: 'Status',
       description: 'Batch Description',
       batchSize: 'Batch Size',
       expectedEndDate: 'Expected End Date',
@@ -42,6 +53,41 @@ export default {
       startDate: 'Plan Start Date',
       endDate: 'Plan End Date',
       remarks: 'Remarks',
+      createBy: 'Created By',
+      createTime: 'Creation Time',
+      updateBy: 'Updated By',
+      updateTime: 'Update Time',
+    },
+
+    actions: {
+      submitForReview: 'Submit for Review',
+      edit: 'Edit',
+      submit: 'Submit',
+      approve: 'Approve',
+      reject: 'Reject',
+      archive: 'Archive',
+      cancel: 'Cancel'
+    },
+
+    prompt: 'Prompt',
+    warning: 'Warning',
+    confirmButton: 'Confirm',
+    cancelButton: 'Cancel',
+
+    confirm: {
+      submitForReview: 'Are you sure you want to submit for review?',
+      approve: 'Are you sure you want to approve?',
+      reject: 'Are you sure you want to reject?',
+      archive: 'Are you sure you want to archive?',
+      cancel: 'Are you sure you want to cancel? This action cannot be undone!'
+    },
+
+    success: {
+      submitForReview: 'Submit for review successfully',
+      approve: 'Approve successfully',
+      reject: 'Reject successfully',
+      archive: 'Archive successfully',
+      cancel: 'Cancel successfully'
     },
 
     placeholder: {
@@ -52,12 +98,15 @@ export default {
       varietyName: 'Please enter variety name',
       year: 'Please select year',
       status: 'Please select status',
+      workflowStatus: 'Please select workflow status',
       species: 'Please enter species',
       genus: 'Please enter genus',
       family: 'Please enter family',
       breedingMethod: 'Please select breeding method',
+      germplasmSource: 'Please select germplasm source',
       parentalSeedSource: 'Please enter parental seed source',
       objective: 'Please enter objective',
+      status: 'Please select status',
       description: 'Please enter batch description',
       batchSize: 'Please enter batch size',
       expectedEndDate: 'Please select expected end date',
@@ -70,6 +119,7 @@ export default {
       startDate: 'Please select plan start date',
       endDate: 'Please select plan end date',
       remarks: 'Please enter remarks (optional)',
+      approvalComment: 'Please enter approval comment',
     },
 
     columns: {
@@ -79,14 +129,17 @@ export default {
       varietyCode: 'Variety Code',
       varietyName: 'Variety Name',
       breedingMethod: 'Breeding Method',
+      germplasmSource: 'Germplasm Source',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      status: 'Status',
       description: 'Batch Description',
       batchSize: 'Batch Size',
       expectedEndDate: 'Expected End Date',
       location: 'Location',
       year: 'Year',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
       personInCharge: 'Person in Charge',
       startDate: 'Start Date',
       endDate: 'End Date',
@@ -94,7 +147,7 @@ export default {
       actions: 'Actions',
     },
 
-    status: {
+    workflowStatus: {
       draft: 'Draft',
       pendingApproval: 'Pending Approval',
       approved: 'Approved',
@@ -106,6 +159,11 @@ export default {
       archived: 'Archived',
       cancelled: 'Cancelled',
       exception: 'Exception',
+    },
+
+    status: {
+      Ongoing: 'Ongoing',
+      Finished: 'Finished',
     },
 
     actions: {
@@ -286,6 +344,7 @@ export default {
       varietyName: 'Variety Name',
       status: 'Status',
       auditStatus: 'Audit Status',
+      workflowStatus: 'Workflow Status',
       createTime: 'Created Time',
       actions: 'Actions',
     },

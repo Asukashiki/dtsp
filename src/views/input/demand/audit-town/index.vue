@@ -97,7 +97,7 @@
                         <i class="ri-check-line"></i>
                         {{ $t('demandAudit.actions.approve') }}
                       </el-button>
-                      <el-button v-if="row.status === '0'" link type="danger" @click="handleReject(row)">
+                      <el-button v-if="row.status === '1'" link type="danger" @click="handleReject(row)">
                         <i class="ri-close-line"></i>
                         {{ $t('demandAudit.actions.reject') }}
                       </el-button>
@@ -195,7 +195,13 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getVillageDemandSummaryMainList, getSummaryDetail, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import {
+  getVillageDemandSummaryMainList,
+  getSummaryDetail,
+  getTownAggregationDetail,
+  updateVillageDemandSummaryMain,
+  getVillageDemandSummaryMainListSub
+} from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
@@ -230,7 +236,7 @@ const loadData = async () => {
       targetCode: countyCode, // 县级regionCode
       year: yearParam.value
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
       tableData.value = res.data.list || []

@@ -3,7 +3,8 @@ export default {
   menu: {
     quotaAllocation: 'Input Allocation Quota Management',
     zoneAllocation: 'Zone Allocation Quota Management',
-    woredaAllocation: 'Woreda Allocation Quota Management'
+    woredaAllocation: 'Woreda Allocation Quota Management',
+    kebeleAllocation: 'Kebele Allocation Quota Management'
   },
 
   // Basic Information
@@ -12,6 +13,7 @@ export default {
   year: 'Year',
   zone: 'Zone',
   woreda: 'Woreda',
+  kebele: 'Kebele',
   
   // Demand and Quota
   demand: 'Demand',
@@ -27,6 +29,9 @@ export default {
   addWoredaAllocation: 'Add Woreda Allocation Quota',
   editWoredaAllocation: 'Edit Woreda Allocation Quota',
   woredaAllocationDetail: 'Woreda Allocation Quota Details',
+  addKebeleAllocation: 'Add Kebele Allocation Quota',
+  editKebeleAllocation: 'Edit Kebele Allocation Quota',
+  kebeleAllocationDetail: 'Kebele Allocation Quota Details',
   
   // Messages
   saveSuccess: 'Saved successfully',

@@ -102,6 +102,7 @@ const queryParams = reactive({
   allocationName: '',
   year: '',
   zone: '',
+  level: 'zone', // zone level
   pageNum: 1,
   pageSize: 10
 })

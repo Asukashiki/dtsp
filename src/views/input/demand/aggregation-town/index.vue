@@ -85,11 +85,11 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="creator"
-                :label="$t('townAggregation.columns.creator')"
-                min-width="120"
-              />
+<!--              <el-table-column-->
+<!--                prop="creator"-->
+<!--                :label="$t('townAggregation.columns.creator')"-->
+<!--                min-width="120"-->
+<!--              />-->
               <el-table-column
                 prop="createTime"
                 :label="$t('townAggregation.columns.createTime')"
@@ -162,10 +162,10 @@
                   <span class="label">{{ $t('townAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                 </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.creator') }}:</span>
-                  <span class="value">{{ item.creator }}</span>
-                </div>
+<!--                <div class="mobile-card-row">-->
+<!--                  <span class="label">{{ $t('townAggregation.columns.creator') }}:</span>-->
+<!--                  <span class="value">{{ item.creator }}</span>-->
+<!--                </div>-->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('townAggregation.columns.createTime') }}:</span>
                   <span class="value">{{ item.createTime }}</span>
@@ -442,12 +442,12 @@ const confirmAddYear = async () => {
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('townAggregation.addYearDialog.failed'))
+      // ElMessage.error(res.msg || t('townAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
-      console.error('Failed to add year:', error)
-      ElMessage.error(t('townAggregation.addYearDialog.failed'))
+      // console.error('Failed to add year:', error)
+      // ElMessage.error(t('townAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false

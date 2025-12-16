@@ -123,7 +123,7 @@ export default {
     inputType: 'Input Type',
     variety: 'Variety',
     specification: 'Specification',
-    unit: 'measurement',
+    unit: 'Unit',
     quantity: 'Demand Quantity',
     noItems: 'No input items',
   },

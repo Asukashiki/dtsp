@@ -6,8 +6,21 @@ export default {
   // Actions
   actions: {
     addYear: 'Add Year',
+    publishAll: 'Publish All',
     detail: 'Detail',
     view: 'View',
+  },
+
+  // Publish All Dialog
+  publishAllDialog: {
+    title: 'Publish All Tasks',
+    year: 'Select Year',
+    yearPlaceholder: 'Please select year',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    success: 'Tasks published successfully',
+    failed: 'Failed to publish tasks',
+    yearRequired: 'Please select a year',
   },
 
   // Table Columns

@@ -20,10 +20,11 @@ const { options, getLabelByValue, loading } = useDict([
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | `dictData` | `Ref<Object>` | 原始字典数据 `{ dictType: [...] }` |
-| `options` | `ComputedRef<Object>` | 响应式选项对象（推荐使用） |
+| `options` | `ComputedRef<Object>` | 响应式选项对象（推荐使用），每项包含 `label`、`value`、`actualValue`、`raw` |
 | `loading` | `Ref<Boolean>` | 加载状态 |
 | `getOptions(dictType)` | `Function` | 获取指定类型的选项列表 |
 | `getLabelByValue(dictType, value)` | `Function` | 根据值获取标签 |
+| `getActualValueByValue(dictType, value)` | `Function` | 根据值获取实际值 |
 | `getRawData(dictType)` | `Function` | 获取原始字典数据 |
 | `refresh()` | `Function` | 刷新字典（清除缓存重新加载） |
 
@@ -78,6 +79,24 @@ const { options, getOptions } = useDict(['crop_type', 'flow_status'])
 
 <script setup>
 const { getLabelByValue } = useDict(['flow_status'])
+</script>
+```
+
+### 获取实际值
+
+```vue
+<template>
+  <!-- 根据值显示对应的实际值 -->
+  <span>实际值: {{ getActualValueByValue('unit_type', row.unit) }}</span>
+  
+  <!-- 遍历获取实际值 -->
+  <div v-for="item in options.unit_type" :key="item.value">
+    {{ item.label }}: {{ item.actualValue }}
+  </div>
+</template>
+
+<script setup>
+const { options, getActualValueByValue } = useDict(['unit_type'])
 </script>
 ```
 

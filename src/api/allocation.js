@@ -146,3 +146,70 @@ export function deleteWoredaAllocation(id) {
     data: { id }
   })
 }
+
+// ==================== Kebele Allocation Management ====================
+
+/**
+ * Get kebele allocation page list
+ * @param {Object} params - Query parameters
+ * @returns {Promise}
+ */
+export function getKebeleAllocationList(params) {
+  return request({
+    url: '/api/allocation/kebele/page',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * Get kebele allocation detail
+ * @param {String} id - Allocation ID
+ * @returns {Promise}
+ */
+export function getKebeleAllocationDetail(id) {
+  return request({
+    url: '/api/allocation/kebele/detail',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/**
+ * Add kebele allocation
+ * @param {Object} data - Allocation data
+ * @returns {Promise}
+ */
+export function addKebeleAllocation(data) {
+  return request({
+    url: '/api/allocation/kebele/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * Update kebele allocation
+ * @param {Object} data - Allocation data
+ * @returns {Promise}
+ */
+export function editKebeleAllocation(data) {
+  return request({
+    url: '/api/allocation/kebele/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * Delete kebele allocation
+ * @param {String} id - Allocation ID
+ * @returns {Promise}
+ */
+export function deleteKebeleAllocation(id) {
+  return request({
+    url: '/api/allocation/kebele/delete',
+    method: 'post',
+    data: { id }
+  })
+}
