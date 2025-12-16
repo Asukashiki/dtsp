@@ -118,6 +118,38 @@
               <span class="value">{{ registrationData.createTime }}</span>
             </div>
           </div>
+
+          <!-- 证照图片区域 -->
+          <div class="certificate-section">
+            <div class="section-title">
+              <i class="ri-image-line"></i>
+              {{ $t('orgRegistration.form.certificateInfo') }}
+            </div>
+            <div class="certificate-grid">
+              <div class="certificate-item">
+                <div class="certificate-label">{{ $t('orgRegistration.form.businessLicenseUrl') }}</div>
+                <el-image
+                  v-if="businessLicensePreviewUrl"
+                  :src="businessLicensePreviewUrl"
+                  :preview-src-list="[businessLicensePreviewUrl]"
+                  fit="contain"
+                  style="width: 150px; height: 150px; border-radius: 8px; border: 1px solid #e8f5e9"
+                />
+                <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+              </div>
+              <div class="certificate-item">
+                <div class="certificate-label">{{ $t('orgRegistration.form.taxCertUrl') }}</div>
+                <el-image
+                  v-if="taxCertPreviewUrl"
+                  :src="taxCertPreviewUrl"
+                  :preview-src-list="[taxCertPreviewUrl]"
+                  fit="contain"
+                  style="width: 150px; height: 150px; border-radius: 8px; border: 1px solid #e8f5e9"
+                />
+                <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 审核操作 -->
@@ -167,6 +199,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getRegistrationDetail, auditRegistration } from '@/api/orgRegistration'
 import { useDict } from '@/hooks/useDict'
+import { getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
@@ -181,6 +214,10 @@ const { getLabelByValue } = useDict(['input_category'], {
   immediate: true,
   cache: true
 })
+
+// 证照图片预览 URL
+const businessLicensePreviewUrl = ref('')
+const taxCertPreviewUrl = ref('')
 
 // 获取投入品类型标签
 const getInputTypesLabel = (inputTypes) => {
@@ -217,6 +254,26 @@ const loadData = async () => {
     if (res.code === 200 && res.data) {
       registrationData.value = res.data.baseInfo || {}
       auditForm.registrationId = res.data.baseInfo?.id
+      
+      // 加载营业执照预览
+      if (res.data.baseInfo?.businessLicenseUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(res.data.baseInfo.businessLicenseUrl)
+          businessLicensePreviewUrl.value = previewRes.code === 200 ? previewRes.msg : ''
+        } catch (error) {
+          console.error('Failed to load business license preview:', error)
+        }
+      }
+      
+      // 加载税务证预览
+      if (res.data.baseInfo?.taxCertUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(res.data.baseInfo.taxCertUrl)
+          taxCertPreviewUrl.value = previewRes.code === 200 ? previewRes.msg : ''
+        } catch (error) {
+          console.error('Failed to load tax cert preview:', error)
+        }
+      }
     }
   } catch (error) {
     console.error('Load data failed:', error)
@@ -420,6 +477,45 @@ onMounted(() => {
 
 .mobile-only {
   display: none;
+}
+
+/* 证照图片区域 */
+.certificate-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e8f5e9;
+}
+
+.certificate-grid {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.certificate-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.certificate-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.no-image {
+  width: 150px;
+  height: 150px;
+  border: 1px dashed #dcdfe6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+  font-size: 14px;
+  background: #f5f7fa;
 }
 
 @media screen and (max-width: 768px) {

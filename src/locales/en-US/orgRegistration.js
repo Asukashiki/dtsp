@@ -181,5 +181,9 @@ export default {
   auditResultOptions: {
     approve: 'Approve',
     reject: 'Reject'
-  }
+  },
+
+  // 上传提示
+  uploadTip: 'Supports JPG, PNG formats, max 2MB',
+  uploadSizeLimit: 'File size cannot exceed 2MB'
 }

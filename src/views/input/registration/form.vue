@@ -21,6 +21,7 @@
           :model="formData"
           :rules="rules"
           :label-width="labelWidth"
+          :label-position="labelPosition"
           class="registration-form"
         >
           <!-- 基本信息 -->
@@ -96,7 +97,7 @@
                     v-loading="dictLoading"
                   >
                     <el-option
-                      v-for="item in options.input_category"
+                      v-for="item in options.input_type"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
@@ -176,12 +177,68 @@
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.businessLicenseUrl')" prop="businessLicenseUrl">
-                  <el-input v-model="formData.businessLicenseUrl" :placeholder="$t('orgRegistration.placeholder.businessLicenseUrl')" :disabled="isView"></el-input>
+                  <!-- 查看模式显示图片 -->
+                  <template v-if="isView">
+                    <el-image
+                      v-if="businessLicensePreviewUrl"
+                      :src="businessLicensePreviewUrl"
+                      :preview-src-list="[businessLicensePreviewUrl]"
+                      fit="contain"
+                      style="width: 120px; height: 120px; border-radius: 8px"
+                    />
+                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+                  </template>
+                  <!-- 编辑模式上传组件 -->
+                  <template v-else>
+                    <el-upload
+                      class="upload-demo"
+                      :http-request="handleBusinessLicenseUpload"
+                      :on-success="handleBusinessLicenseSuccess"
+                      :on-error="handleUploadError"
+                      :before-upload="beforeUpload"
+                      :file-list="businessLicenseFileList"
+                      list-type="picture-card"
+                      :limit="1"
+                      accept=".jpg,.jpeg,.png"
+                    >
+                      <i class="ri-upload-cloud-line"></i>
+                      <div class="upload-text">{{ $t('common.upload') }}</div>
+                    </el-upload>
+                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
+                  </template>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.taxCertUrl')" prop="taxCertUrl">
-                  <el-input v-model="formData.taxCertUrl" :placeholder="$t('orgRegistration.placeholder.taxCertUrl')" :disabled="isView"></el-input>
+                  <!-- 查看模式显示图片 -->
+                  <template v-if="isView">
+                    <el-image
+                      v-if="taxCertPreviewUrl"
+                      :src="taxCertPreviewUrl"
+                      :preview-src-list="[taxCertPreviewUrl]"
+                      fit="contain"
+                      style="width: 120px; height: 120px; border-radius: 8px"
+                    />
+                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+                  </template>
+                  <!-- 编辑模式上传组件 -->
+                  <template v-else>
+                    <el-upload
+                      class="upload-demo"
+                      :http-request="handleTaxCertUpload"
+                      :on-success="handleTaxCertSuccess"
+                      :on-error="handleUploadError"
+                      :before-upload="beforeUpload"
+                      :file-list="taxCertFileList"
+                      list-type="picture-card"
+                      :limit="1"
+                      accept=".jpg,.jpeg,.png"
+                    >
+                      <i class="ri-upload-cloud-line"></i>
+                      <div class="upload-text">{{ $t('common.upload') }}</div>
+                    </el-upload>
+                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
+                  </template>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -300,6 +357,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { submitRegistration, getRegistrationDetail, checkUsernameUnique, getRegionTree, buildRegionPath } from '@/api/orgRegistration'
 import { useDict } from '@/hooks/useDict'
+import { uploadFile, getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
@@ -308,7 +366,13 @@ const { t } = useI18n()
 // 响应式标签宽度
 const labelWidth = computed(() => {
   const isMobile = window.innerWidth <= 768
-  return isMobile ? '120px' : '180px'
+  return isMobile ? '120px' : '220px'
+})
+
+// 响应式标签位置（移动端在上方）
+const labelPosition = computed(() => {
+  const isMobile = window.innerWidth <= 768
+  return isMobile ? 'top' : 'right'
 })
 
 // 页面模式
@@ -334,13 +398,19 @@ const regionTreeLoading = ref(false)
 const regionCodePath = ref(null)
 
 // 初始化字典
-const { options, loading: dictLoading } = useDict(['input_category'], {
+const { options, loading: dictLoading } = useDict(['input_type'], {
   immediate: true,
   cache: true
 })
 
 // 投入品类型数组（用于多选）
 const inputTypesArray = ref([])
+
+// 文件上传相关
+const businessLicenseFileList = ref([])
+const taxCertFileList = ref([])
+const businessLicensePreviewUrl = ref('')
+const taxCertPreviewUrl = ref('')
 
 // 监听 inputTypesArray 变化，同步到 formData.inputTypes
 watch(inputTypesArray, (val) => {
@@ -392,7 +462,6 @@ const rules = reactive({
   licenseEnd: [{ required: true, message: t('orgRegistration.rules.licenseEndRequired'), trigger: 'change' }],
   inputTypes: [{ required: true, message: t('orgRegistration.rules.inputTypesRequired'), trigger: 'change' }],
   regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }],
-  businessLicenseUrl: [{ required: true, message: t('orgRegistration.rules.businessLicenseRequired'), trigger: 'blur' }],
   applyUsername: [{ required: true, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
   applyPassword: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' }],
   confirmPassword: [
@@ -426,6 +495,104 @@ const { regionCode, regionName } = buildRegionPath(regionTreeOptions.value, valu
   } else {
     formData.regionCode = ''
     formData.regionName = ''
+  }
+}
+
+// 上传前验证
+const beforeUpload = (file) => {
+  const isValidType = ['image/jpeg', 'image/png'].includes(file.type)
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isValidType) {
+    ElMessage.error(t('orgRegistration.uploadTip'))
+    return false
+  }
+  if (!isLt2M) {
+    ElMessage.error(t('orgRegistration.uploadSizeLimit'))
+    return false
+  }
+  return true
+}
+
+// 上传错误处理
+const handleUploadError = (error) => {
+  console.error('Upload failed:', error)
+  ElMessage.error(error?.message || t('common.uploadFailed'))
+}
+
+// 营业执照上传处理
+const handleBusinessLicenseUpload = async (options) => {
+  try {
+    const res = await uploadFile(options.file)
+    if (res.code === 200 && res.data) {
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.msg || t('common.uploadFailed')))
+    }
+  } catch (error) {
+    options.onError(error)
+  }
+}
+
+// 营业执照上传成功
+const handleBusinessLicenseSuccess = async (response) => {
+  if (response.code === 200 && response.data) {
+    formData.businessLicenseUrl = response.data.id
+    try {
+      const previewRes = await getFilePreviewUrl(response.data.id)
+      const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      businessLicensePreviewUrl.value = previewUrl
+      businessLicenseFileList.value = [{
+        name: response.data.originalFileName || 'license',
+        url: previewUrl,
+        uid: response.data.id
+      }]
+    } catch (error) {
+      console.error('Get preview URL failed:', error)
+      businessLicenseFileList.value = [{
+        name: response.data.originalFileName || 'license',
+        uid: response.data.id
+      }]
+    }
+    ElMessage.success(t('common.uploadSuccess'))
+  }
+}
+
+// 税务证上传处理
+const handleTaxCertUpload = async (options) => {
+  try {
+    const res = await uploadFile(options.file)
+    if (res.code === 200 && res.data) {
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.msg || t('common.uploadFailed')))
+    }
+  } catch (error) {
+    options.onError(error)
+  }
+}
+
+// 税务证上传成功
+const handleTaxCertSuccess = async (response) => {
+  if (response.code === 200 && response.data) {
+    formData.taxCertUrl = response.data.id
+    try {
+      const previewRes = await getFilePreviewUrl(response.data.id)
+      const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      taxCertPreviewUrl.value = previewUrl
+      taxCertFileList.value = [{
+        name: response.data.originalFileName || 'tax_cert',
+        url: previewUrl,
+        uid: response.data.id
+      }]
+    } catch (error) {
+      console.error('Get preview URL failed:', error)
+      taxCertFileList.value = [{
+        name: response.data.originalFileName || 'tax_cert',
+        uid: response.data.id
+      }]
+    }
+    ElMessage.success(t('common.uploadSuccess'))
   }
 }
 
@@ -471,6 +638,38 @@ const loadData = async () => {
       // 设置区域选择器的值
       if (baseInfo.regionCode) {
         regionCodePath.value = baseInfo.regionCode
+      }
+      
+      // 回显营业执照图片
+      if (baseInfo.businessLicenseUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(baseInfo.businessLicenseUrl)
+          const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+          businessLicensePreviewUrl.value = previewUrl
+          businessLicenseFileList.value = [{
+            name: 'Business License',
+            url: previewUrl,
+            uid: baseInfo.businessLicenseUrl
+          }]
+        } catch (error) {
+          console.error('Failed to load business license preview:', error)
+        }
+      }
+      
+      // 回显税务证图片
+      if (baseInfo.taxCertUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(baseInfo.taxCertUrl)
+          const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+          taxCertPreviewUrl.value = previewUrl
+          taxCertFileList.value = [{
+            name: 'Tax Certificate',
+            url: previewUrl,
+            uid: baseInfo.taxCertUrl
+          }]
+        } catch (error) {
+          console.error('Failed to load tax cert preview:', error)
+        }
       }
     }
   } catch (error) {
@@ -649,6 +848,34 @@ onMounted(() => {
 
 .text-danger {
   color: #f56c6c;
+}
+
+/* 上传组件 */
+.upload-demo :deep(.el-upload) {
+  width: 120px;
+  height: 120px;
+}
+
+.upload-demo :deep(.el-upload-list__item) {
+  width: 120px;
+  height: 120px;
+}
+
+.upload-text {
+  font-size: 12px;
+  color: #606266;
+  margin-top: 4px;
+}
+
+.upload-tip {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 8px;
+}
+
+.no-image {
+  color: #909399;
+  font-size: 14px;
 }
 
 /* 移动端适配 */

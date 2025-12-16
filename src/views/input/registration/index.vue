@@ -88,7 +88,7 @@
                 <el-table-column
                   prop="orgType"
                   :label="$t('orgRegistration.columns.orgType')"
-                  min-width="120"
+                  min-width="140"
                 >
                   <template #default="{ row }">
                     <el-tag :type="row.orgType === 'UNION' ? 'primary' : 'success'">

@@ -40,6 +40,7 @@ export default {
     preview: '预览',
     download: '下载',
     noFile: '文件不存在',
+    noImage: '暂无图片',
     loadFailed: '加载失败',
     saveFailed: '保存失败',
     submitFailed: '提交失败',
