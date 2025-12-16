@@ -159,7 +159,12 @@
                         :rules="rules.unit"
                     >
                       <el-select v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" style="width: 100%">
-                        <el-option label="kg" value="kg"></el-option>
+                        <el-option
+                            v-for="unitItem in options.agri_unit"
+                            :key="unitItem.value"
+                            :label="unitItem.label"
+                            :value="unitItem.value"
+                        ></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -230,11 +235,13 @@ clearDictCache('input_category')
 // 初始化字典
 const {
   options: dictOptions,
+  options,
   loading: dictLoading,
   refresh: refreshDict
 } = useDict([
   'input_type',
-  'input_category'
+  'input_category',
+  'agri_unit'
 ], {
   immediate: true,
   cache: true

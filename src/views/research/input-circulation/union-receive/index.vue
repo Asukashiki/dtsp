@@ -26,7 +26,7 @@
         <el-table-column prop="receiveStatus" :label="$t('inputCirculation.status')" min-width="120" />
         <el-table-column prop="confirmBy" :label="$t('inputCirculation.confirmBy')" min-width="120" />
         <el-table-column prop="confirmTime" :label="$t('inputCirculation.confirmTime')" min-width="160" />
-        <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
+        <el-table-column :label="$t('common.actions')" min-width="240" fixed="right">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
             <el-button v-if="scope.row.receiveStatus === 'Pending'" type="success" link @click="handleConfirm(scope.row)">{{ $t('inputCirculation.confirmReceive') }}</el-button>

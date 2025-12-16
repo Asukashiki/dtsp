@@ -738,32 +738,38 @@ const routes = [
       // 注册管理
       {
         path: 'registration',
-        name: 'Registration',
+        name: 'OrgRegistration',
         component: () => import('../views/input/registration/index.vue'),
         meta: { title: 'Union/Cooperative注册申请', requiresAuth: true }
       },
       {
         path: 'registration/add',
-        name: 'RegistrationAdd',
+        name: 'OrgRegistrationAdd',
         component: () => import('../views/input/registration/form.vue'),
         meta: { title: '新增注册申请', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/edit/:id',
-        name: 'RegistrationEdit',
+        name: 'OrgRegistrationEdit',
         component: () => import('../views/input/registration/form.vue'),
         meta: { title: '编辑注册申请', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/detail/:id',
-        name: 'RegistrationDetail',
-        component: () => import('../views/input/registration/detail.vue'),
+        name: 'OrgRegistrationDetail',
+        component: () => import('../views/input/registration/form.vue'),
         meta: { title: '注册申请详情', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'registration/audit/:id',
+        name: 'OrgRegistrationAudit',
+        component: () => import('../views/input/registration/audit.vue'),
+        meta: { title: '注册申请审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'registration/approval',
-        name: 'RegistrationApproval',
-        component: () => import('../views/input/registration/approval.vue'),
+        name: 'OrgRegistrationApproval',
+        component: () => import('../views/input/registration/approval-list.vue'),
         meta: { title: 'Union/Cooperative注册审核', requiresAuth: true }
       },
       // DA农民需求录入
