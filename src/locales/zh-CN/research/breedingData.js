@@ -16,6 +16,14 @@ export default {
     form: {
       basicInfo: '批次基本信息',
       identityInfo: '品种标识信息',
+      metadataInfo: '元数据信息',
+      workflowInfo: '工作流信息',
+      approvalHistory: '历史审批信息',
+      currentApproval: '本次审批',
+      approver: '审批人',
+      approvalTime: '审批时间',
+      comment: '审批意见',
+      approvalComment: '审批意见',
       batchName: '育种目标',
       batchId: '育种批次ID',
       batchTime: '批次时间',
@@ -42,6 +50,40 @@ export default {
       startDate: '计划起始时间',
       endDate: '计划结束时间',
       remarks: '备注',
+      createBy: '创建人',
+      createTime: '创建时间',
+      updateBy: '修改人',
+      updateTime: '修改时间'
+    },
+
+    actions: {
+      submitForReview: '提交审核',
+      edit: '编辑',
+      approve: '审核通过',
+      reject: '审核驳回',
+      archive: '归档',
+      cancel: '作废'
+    },
+
+    prompt: '提示',
+    warning: '警告',
+    confirmButton: '确认',
+    cancelButton: '取消',
+
+    confirm: {
+      submitForReview: '确定要提交审核吗？',
+      approve: '确定要审核通过吗？',
+      reject: '确定要审核驳回吗？',
+      archive: '确定要归档吗？',
+      cancel: '确定要作废吗？此操作不可撤销！'
+    },
+
+    success: {
+      submitForReview: '提交审核成功',
+      approve: '审核通过成功',
+      reject: '审核驳回成功',
+      archive: '归档成功',
+      cancel: '作废成功'
     },
 
     placeholder: {
@@ -70,6 +112,7 @@ export default {
       startDate: '请选择计划起始时间',
       endDate: '请选择计划结束时间',
       remarks: '请输入备注（选填）',
+      approvalComment: '请输入审批意见',
     },
 
     columns: {

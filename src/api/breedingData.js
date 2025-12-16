@@ -41,13 +41,13 @@ export function submitForAudit(dataId) {
 }
 
 // 审核通过
-export function approveBatch(dataId, comment = '') {
-    return request({ url: `${API_BASE_URL}/breeding/batch/approve`, method: 'post', data: { dataId, comment } })
+export function approveBatch(breedingBatchDTO) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/approve`, method: 'post', data: breedingBatchDTO })
 }
 
 // 审核驳回
-export function rejectBatch(dataId, comment = '') {
-    return request({ url: `${API_BASE_URL}/breeding/batch/reject`, method: 'post', data: { dataId, comment } })
+export function rejectBatch(breedingBatchDTO) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/reject`, method: 'post', data: breedingBatchDTO })
 }
 
 // 归档
