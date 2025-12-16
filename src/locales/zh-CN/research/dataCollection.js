@@ -681,6 +681,10 @@ export default {
       remark: '备注',
       createTime: '创建时间',
       createBy: '创建人',
+      updateBy: '修改人',
+      updateTime: '修改时间',
+      auditBy: '审核人',
+      auditTime: '审核时间',
     },
 
     // 检验类型选项
@@ -753,6 +757,8 @@ export default {
       scoreCode: '评分代码',
       scoreValue: '评分值',
       createTime: '创建时间',
+      status: '状态',
+      auditStatus: '审核状态',
       actions: '操作',
     },
   },

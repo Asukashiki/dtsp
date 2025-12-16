@@ -60,6 +60,27 @@
                   :value="item.plotId"
                 />
               </el-select>
+              <!-- 状态 -->
+              <el-select
+                v-model="searchForm.status"
+                :placeholder="$t('research.dataCollection.yieldData.columns.status')"
+                clearable
+                class="search-input"
+              >
+                <el-option :label="$t('common.all')" value="" />
+                <el-option label="submit" value="submit" />
+                <el-option label="approve" value="approve" />
+              </el-select>
+              <!-- 审核状态（字典 flow_status） -->
+              <el-select
+                v-model="searchForm.workflowStatus"
+                :placeholder="$t('research.dataCollection.yieldData.columns.auditStatus')"
+                clearable
+                class="search-input"
+              >
+                <el-option :label="$t('common.all')" value="" />
+                <el-option v-for="opt in options.flow_status || []" :key="opt.value" :label="opt.label" :value="opt.value" />
+              </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
                 {{ $t('common.search') }}
@@ -108,6 +129,23 @@
                   :label="$t('research.dataCollection.yieldData.columns.scoreValue')"
                   min-width="120"
                 />
+                <el-table-column
+                  prop="status"
+                  :label="$t('research.dataCollection.yieldData.columns.status')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag type="info">{{ mapStatus(row.status) }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  :label="$t('research.dataCollection.yieldData.columns.auditStatus')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   :label="$t('common.actions')"
                   fixed="right"
@@ -217,9 +255,19 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
 import { getPlotInfoList } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { options, getLabelByValue } = useDict(['flow_status'])
+
+// 将后端可能返回的 0/1 状态映射为 submit/approve，若已为英文状态则原样返回
+const mapStatus = (val) => {
+  if (val === '0' || val === 0) return 'submit'
+  if (val === '1' || val === 1) return 'approve'
+  if (val === 'submit' || val === 'approve') return val
+  return val || '-'
+}
 
 const loading = ref(false)
 const tableData = ref([])
@@ -239,7 +287,9 @@ const batchOptions = computed(() => {
 
 const searchForm = reactive({
   batchId: '',
-  plotId: ''
+  plotId: '',
+  status: '',
+  workflowStatus: ''
 })
 
 const pagination = reactive({
@@ -273,6 +323,8 @@ const handleSearch = async () => {
 const handleReset = () => {
   searchForm.batchId = ''
   searchForm.plotId = ''
+  searchForm.status = ''
+  searchForm.workflowStatus = ''
   pagination.currentPage = 1
   handleSearch()
 }

@@ -127,6 +127,7 @@ export default {
       varietyName: '品种名称',
       breedingMethod: '繁育方法',
       germplasmSource: '种质资源来源',
+      workflowStatus: '审核状态',
       parentalSeedSource: '亲本种子来源',
       objective: '请输入育种目标',
       status: '批次状态',
