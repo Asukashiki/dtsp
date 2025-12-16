@@ -87,18 +87,18 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="creator" label="Creator" min-width="120" />
-                <el-table-column prop="modifier" label="Modifier" min-width="120" />
-                <el-table-column prop="auditor" label="Auditor" min-width="120" />
-                <el-table-column prop="createTime" label="Created Time" min-width="160">
+                      <el-table-column prop="createTime" label="Created Time" min-width="160">
                   <template #default="{ row }">
                     {{ formatDateTime(row.createTime) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="updateTime" label="Modified Time" min-width="160">
+                <el-table-column prop="modifier" label="Modifier" min-width="120" />
+                 <el-table-column prop="updateTime" label="Modified Time" min-width="160">
                   <template #default="{ row }">
                     {{ formatDateTime(row.updateTime) }}
                   </template>
                 </el-table-column>
+                <el-table-column prop="auditor" label="Auditor" min-width="120" />
                 <el-table-column prop="auditedDatetime" label="Audited Time" min-width="160">
                   <template #default="{ row }">
                     {{ formatDateTime(row.auditedDatetime) }}

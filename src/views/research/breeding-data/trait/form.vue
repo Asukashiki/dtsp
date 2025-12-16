@@ -101,7 +101,14 @@
                 <!-- Unit -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Unit">
-                    <el-input v-model="formData.unit" placeholder="Enter unit (e.g., cm, kg, %)" />
+                    <el-select v-model="formData.unit" placeholder="Select unit" style="width: 100%" clearable>
+                      <el-option
+                        v-for="u in currentUnitOptions"
+                        :key="u"
+                        :label="u"
+                        :value="u"
+                      />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Observer ID (Farmer selection) -->
@@ -232,7 +239,6 @@ import { getAgronomicTraitInfo, addAgronomicTrait, editAgronomicTrait, getPlotOp
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getFarmerOptions } from '@/api/newFarm'
-import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -293,6 +299,33 @@ const rules = {
   observerId: [{ required: true, message: 'Please select Observer', trigger: 'change' }]
 }
 
+// Trait 对应 Unit 选项映射（根据评分标准整理）
+const unitDict = {
+  'Days to Emergence': ['Days'],
+  'Days to Heading': ['Days'],
+  'Days to Maturity': ['Days'],
+  'Plant Height': ['cm'],
+  'Tiller Count': ['Count'],
+  'Spike Length': ['cm'],
+  'Grain Yield': ['t/ha', 'kg/plot'],
+  'Thousand Grain Weight': ['g'],
+  'Grain Protein Content': ['%'],
+  'Lodging Resistance': ['1–9 scale'],
+  'Disease Resistance': ['%', '1–9 scale'],
+  'Flag Leaf Area': ['cm²', 'cm2'],
+  'Root Traits': ['1–9 scale', '%']
+}
+
+// 通用备选项（未命中具体映射时展示）
+const genericUnits = ['cm', 'g', 'Days', 'Count', '%', '1–9 scale', 't/ha', 'kg/plot']
+
+// 当前 Unit 选项（依赖所选 Trait Name）
+const currentUnitOptions = computed(() => {
+  const name = formData.traitName
+  if (name && unitDict[name]) return unitDict[name]
+  return genericUnits
+})
+
 // 获取当前日期和时间
 function getCurrentDate() {
   const now = new Date()
@@ -325,11 +358,17 @@ const loadFarmerOptions = async () => {
   }
 }
 
+
 // Trait 变更处理 - 自动填充 traitCode
 const handleTraitChange = (value) => {
   const selectedTrait = traitOptions.value.find(item => item.name === value)
   if (selectedTrait) {
     formData.traitCode = selectedTrait.code
+    // 当变更性状时，如当前 unit 为空或不在可选列表，自动选择第一个建议单位
+    const opts = unitDict[selectedTrait.name] || genericUnits
+    if (!formData.unit || !opts.includes(formData.unit)) {
+      formData.unit = opts[0] || ''
+    }
   }
 }
 
@@ -474,17 +513,9 @@ const goBack = () => router.push('/research/breeding-data/trait')
 
 onMounted(() => {
   loadPlotOptions()
+  // 仅加载农民选项供用户选择，不做自动设置
   loadFarmerOptions()
   getInfo()
-  
-  // 自动设置操作员ID为当前登录用户
-  const currentUser = getUserInfo()
-  if (currentUser && currentUser.user) {
-    // 如果是新增模式且 observerId 为空，则自动设置为当前用户
-    if (!isEdit.value && !formData.observerId) {
-      formData.observerId = currentUser.user.userId || ''
-    }
-  }
 })
 </script>
 

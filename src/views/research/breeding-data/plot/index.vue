@@ -112,10 +112,10 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="120" />
-                <el-table-column prop="modifiedName" :label="$t('research.breedingData.plot.columns.modifiedBy')" min-width="120" />
-                <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
                 <el-table-column prop="createTime" :label="$t('research.breedingData.plot.columns.createTime')" min-width="120" />
+                <el-table-column prop="modifiedName" :label="$t('research.breedingData.plot.columns.modifiedBy')" min-width="120" />
                 <el-table-column prop="updateTime" :label="$t('research.breedingData.plot.columns.updateTime')" min-width="120" />
+                <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
                 <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
                 <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
