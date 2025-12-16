@@ -93,6 +93,14 @@
                 </el-col>
 
                 <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.germplasmSource')" prop="germplasmSource">
+                    <el-select v-model="formData.germplasmSource" :placeholder="$t('research.breedingData.batch.placeholder.germplasmSource')" style="width: 100%" :disabled="isReadOnly">
+                      <el-option v-for="item in germplasmSourceOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.parentalSeedSource')" prop="parentalSeedSource">
                     <el-input v-model="formData.parentalSeedSource" :placeholder="$t('research.breedingData.batch.placeholder.parentalSeedSource')" :disabled="isReadOnly" />
                   </el-form-item>
@@ -100,6 +108,13 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.objective')" prop="objective">
                     <el-input v-model="formData.objective" :placeholder="$t('research.breedingData.batch.placeholder.objective')" :disabled="isReadOnly" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
+                    <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%" disabled>
+                      <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -161,7 +176,7 @@
             <div class="card-body">
               <!-- 审批意见输入框（仅在审批模式下显示） -->
               <div v-if="pageMode === 'audit'">
-                <el-form-item :label="$t('research.breedingData.batch.form.approvalComment')">
+                <el-form-item :label="$t('research.breedingData.batch.form.approvalComment')" prop="approvalComment">
                   <el-input 
                     v-model="formData.approvalComment" 
                     type="textarea" 
@@ -250,8 +265,10 @@ const formData = reactive({
   breedingMethod: '',
   batchName: '',
   year: '',
+  germplasmSource: '',
   parentalSeedSource: '',
   objective: '',
+  status: 'Ongoing', // 新增的状态字段，默认值为 Ongoing
   workflowStatus: 'S0', // 默认草稿状态
   remarks: '',
   // 元数据字段
@@ -289,8 +306,11 @@ const rules = {
     }
   ],
   workflowStatus: [{ required: true, message: t('research.breedingData.batch.placeholder.workflowStatus'), trigger: 'change' }],
+  germplasmSource: [{ required: true, message: t('research.breedingData.batch.placeholder.germplasmSource'), trigger: 'change' }],
   parentalSeedSource: [{ required: true, message: t('research.breedingData.batch.placeholder.parentalSeedSource'), trigger: 'blur' }],
-  objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }]
+  objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }],
+  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }],
+  approvalComment: [{ required: true, message: t('research.breedingData.batch.placeholder.approvalComment'), trigger: 'blur' }]
 }
 
 const breedingMethodOptions = [
@@ -299,6 +319,24 @@ const breedingMethodOptions = [
   { label: 'molecular', value: 'molecular' },
   { label: 'selection', value: 'selection' },
   { label: 'wide_cross', value: 'wide_cross' }
+]
+
+const germplasmSourceOptions = [
+  { label: 'Ethiopian', value: 'Ethiopian' },
+  { label: 'International Center for Agricultural Research in the Dry Areas (ICARDA)', value: 'ICARDA' },
+  { label: 'International Maize and Wheat Improvement Center (CIMMYT)', value: 'CIMMYT' },
+  { label: 'International Rice Research Institute (IRRI)', value: 'IRRI' },
+  { label: 'International Institute of Tropical Agriculture (IITA)', value: 'IITA' },
+  { label: 'World Bank', value: 'World Bank' },
+  { label: 'CGIAR', value: 'CGIAR' },
+  { label: 'FAO', value: 'FAO' },
+  { label: 'Local Research Center', value: 'Local Research Center' },
+  { label: 'Private Company', value: 'Private Company' }
+]
+
+const statusOptions = [
+  { label: 'Ongoing', value: 'Ongoing' },
+  { label: 'Finished', value: 'Finished' }
 ]
 
 const getActionButtons = () => {
@@ -375,6 +413,10 @@ const handleSubmitForAudit = async () => {
 }
 
 const handleApprove = async () => {
+  // 验证表单，特别是审批意见字段
+  const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+  if (!valid) return
+
   try {
     // 构造包含审批意见的完整DTO对象
     const breedingBatchDTO = {
@@ -393,6 +435,10 @@ const handleApprove = async () => {
 }
 
 const handleReject = async () => {
+  // 验证表单，特别是审批意见字段
+  const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+  if (!valid) return
+
   try {
     // 构造包含审批意见的完整DTO对象
     const breedingBatchDTO = {
@@ -433,7 +479,8 @@ const handleCancelBatch = async () => {
 const getInfo = async () => {
   if (!isEdit.value) {
     // 新增模式下设置默认状态为草稿
-    formData.status = 'S0'
+    formData.status='Ongoing'
+    formData.workflowsStatus = 'S0'
     
     // 设置创建人和创建时间的默认值
     if (userStore.userInfo && userStore.userInfo.user) {
