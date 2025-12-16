@@ -36,7 +36,7 @@ export default {
     plotInfo: 'Plot Information',
     stationInfo: 'Station Information',
     basicInfo: 'Basic Information',
-    measurementInfo: 'Measurement Information',
+    measurementInfo: 'Unit',
     envRecordId: 'Record ID',
     trialId: 'Trial ID',
     batchId: 'Batch ID',
