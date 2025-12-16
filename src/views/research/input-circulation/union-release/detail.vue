@@ -44,7 +44,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" />
-        <el-table-column prop="unit" :label="$t('inputCirculation.unit')" />
+        <el-table-column :label="$t('inputCirculation.unit')">
+          <template #default="{ row }">
+            {{ getLabelByValue('agri_unit', row.unit) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" />
       </el-table>
     </el-card>
@@ -60,7 +64,7 @@ import { getUnionReleaseDetail } from '@/api/inputCirculation'
 import { getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
-const { getLabelByValue } = useDict(['input_type', 'input_category'])
+const { getLabelByValue } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
