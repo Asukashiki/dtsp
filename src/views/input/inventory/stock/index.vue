@@ -91,11 +91,11 @@
       </div>
 
       <!-- 合计统计展示 -->
-      <div v-if="summaryData.length > 0" class="summary-section">
+      <div v-if="summaryData && summaryData.length > 0" class="summary-section">
         <div class="summary-title">{{ $t('input.inventory.stock.summary.title') }}</div>
         <div class="summary-content">
           <span v-for="(item, index) in summaryData" :key="index" class="summary-item">
-            {{ getMaterialTypeText(item.material_type) }}:{{ $t('input.inventory.stock.summary.total') }}{{ item.total_quantity }}{{ item.unit }}
+            {{ getMaterialTypeText(item.material_type) }}: {{ $t('input.inventory.stock.summary.total') }} {{ item.total_quantity }} {{ item.unit }}
           </span>
         </div>
       </div>
@@ -109,13 +109,29 @@
           style="width: 100%"
         >
           <el-table-column prop="material_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
-          <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120" />
-          <el-table-column prop="agricultural_input_type" :label="$t('input.catalog.form.agriculturalInputType')" min-width="120" />
+          <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_type', row.material_type) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="agricultural_input_type" :label="$t('input.catalog.form.agriculturalInputType')" min-width="120">
+            <template #default="{ row }">
+              {{ getLabelByValue('input_category', row.agricultural_input_type) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="material_batch_id" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
-          <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120" />
-          <el-table-column prop="expiry_date" :label="$t('input.inventory.stock.columns.expiredDate')" width="140" />
+          <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120">
+          <template #default="{ row }">
+              {{ formatDateTime(row.created_at) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="expiry_date" :label="$t('input.inventory.stock.columns.expiredDate')" width="140">
+            <template #default="{ row }">
+              {{ formatDate(row.expiry_date) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="getStatusTag(row.status)" size="small">
@@ -177,13 +193,13 @@
               <div class="info-row">
                 <i class="ri-calendar-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.stock.columns.inDate') }}:</span>
-                <span class="info-value">{{ item.in_date }}</span>
+                <span class="info-value">{{ formatDateTime(item.in_date) }}</span>
               </div>
 
               <div class="info-row">
                 <i class="ri-calendar-check-line info-icon"></i>
                 <span class="info-label">{{ $t('input.inventory.stock.columns.expiredDate') }}:</span>
-                <span class="info-value">{{ item.expired_date }}</span>
+                <span class="info-value">{{ formatDate(item.expired_date) }}</span>
               </div>
             </div>
           </div>
@@ -217,6 +233,10 @@ import { ElMessage } from 'element-plus'
 import { getStockList, getStockSummary } from '@/api/stock'
 import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+
 
 const router = useRouter()
 const { t } = useI18n()
@@ -239,6 +259,35 @@ const pagination = reactive({
   pageSize: 10,
   total: 0
 })
+
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理带时区和毫秒的日期格式 (如: "2025-12-14 11:00:27.000+08:00")
+/*  if (dateStr.includes('+') && dateStr.includes('.')) {
+    const datePart = dateStr.split(' ')[0]
+    const timePart = dateStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }*/
+
+  // 处理标准ISO格式 (如: "2025-12-14T01:40:59")
+  return dateStr.replace('T', ' ')
+}
 
 // 获取状态标签
 const getStatusTag = (status) => {
@@ -324,8 +373,8 @@ const loadAgriculturalInputTypes = async () => {
 // 加载仓库列表
 const loadWarehouses = async () => {
   try {
-    const res = await getWarehouseList({ 
-      page: 1, 
+    const res = await getWarehouseList({
+      page: 1,
       pageSize: 100,
       organCode: currentUserOrganCode.value // 按部门过滤
     })
@@ -349,9 +398,12 @@ const loadSummaryData = async () => {
 
     if (res.code === 200 && res.data) {
       summaryData.value = res.data
+    } else {
+      summaryData.value = []
     }
   } catch (error) {
     console.error('Failed to load summary data:', error)
+    summaryData.value = []
   }
 }
 
@@ -745,12 +797,12 @@ onMounted(() => {
   .btn-text {
     display: none;
   }
-  
+
   .summary-content {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .summary-item {
     width: 100%;
   }

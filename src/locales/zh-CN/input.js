@@ -1036,12 +1036,28 @@ export default {
         inDate: '入库日期',
         expiredDate: '过期日期',
         stockStatus: '库存状态',
+        qrCode: '二维码',
+        qrCodeHint: '扫描二维码获取更多信息',
         actions: '操作'
       },
       status: {
         normal: '正常',
         nearExpiry: '临期',
         expired: '过期'
+      },
+      form: {
+        inputName: '投入品名称',
+        batchNo: '批次号',
+        warehouseName: '仓库名称',
+        currentQuantity: '当前数量',
+        inDate: '入库日期',
+        expiredDate: '过期日期',
+        stockStatus: '库存状态',
+        daysToExpire: '距离过期天数'
+      },
+      qrCode: {
+        title: '二维码',
+        hint: '扫描二维码获取更多信息'
       }
     }
   },

@@ -53,15 +53,15 @@
               <span class="label">{{ $t('input.inventory.stockIn.relatedOrderNo') }}:</span>
               <span class="value">{{ detailData.related_order_no || '-' }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item hidden-field">
               <span class="label">{{ $t('input.inventory.stockIn.supplierName') }}:</span>
               <span class="value">{{ detailData.supplier_name || '-' }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item hidden-field">
               <span class="label">{{ $t('input.inventory.stockIn.supplierContact') }}:</span>
               <span class="value">{{ detailData.supplier_contact || '-' }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item hidden-field">
               <span class="label">{{ $t('input.inventory.stockIn.supplierPhone') }}:</span>
               <span class="value">{{ detailData.supplier_phone || '-' }}</span>
             </div>
@@ -71,11 +71,11 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
-              <span class="value">{{ detailData.apply_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.apply_time) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockIn.columns.inboundTime') }}:</span>
-              <span class="value">{{ detailData.inbound_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.inbound_time) }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockIn.remark') }}:</span>
@@ -97,7 +97,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockIn.auditTime') }}:</span>
-              <span class="value">{{ detailData.audit_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.audit_time) }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockIn.auditRemark') }}:</span>
@@ -121,14 +121,26 @@
               <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.inputId')" width="150" />
               <el-table-column prop="batch_no" :label="$t('input.inventory.stockIn.form.inboundBatch')" width="180" show-overflow-tooltip />
               <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.form.productionBatch')" width="180" show-overflow-tooltip />
-              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.inputType')" width="120" />
-              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockIn.form.agriculturalInputType')" width="120" />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.inputType')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_type', scope.row.material_type) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockIn.form.agriculturalInputType')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_category', scope.row.agricultural_input_type) || scope.row.agricultural_input_type }}
+                </template>
+              </el-table-column>
 <!--              <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.productionBatch')" width="150" />-->
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockIn.specification')" width="120" />
               <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center" />
               <el-table-column prop="quantity" :label="$t('input.inventory.stockIn.columns.quantity')" width="100" align="center" />
-              <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.expiryDate')" width="120" />
-              <el-table-column prop="qr_code" :label="$t('input.inventory.stockIn.qrCode')" width="150" show-overflow-tooltip />
+              <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.expiryDate')" width="120">
+                <template #default="scope">
+                  {{ formatDate(scope.row.expiry_date) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="qr_code" :label="$t('input.inventory.stockIn.qrCode')" width="150" show-overflow-tooltip class-name="hidden-column" />
             </el-table>
           </div>
 
@@ -157,11 +169,11 @@
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.inputType') }}:</span>
-                  <span class="value">{{ item.material_type || '-' }}</span>
+                  <span class="value">{{ getLabelByValue('input_type', item.material_type) }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.agriculturalInputType') }}:</span>
-                  <span class="value">{{ item.agricultural_input_type || '-' }}</span>
+                  <span class="value">{{ getLabelByValue('input_category', item.agricultural_input_type) || item.agricultural_input_type }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.productionBatch') }}:</span>
@@ -181,9 +193,9 @@
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.expiryDate') }}:</span>
-                  <span class="value">{{ item.expiry_date || '-' }}</span>
+                  <span class="value">{{ formatDate(item.expiry_date) }}</span>
                 </div>
-                <div v-if="item.qr_code" class="info-row full-width">
+                <div v-if="item.qr_code" class="info-row full-width hidden-field">
                   <span class="label">{{ $t('input.inventory.stockIn.qrCode') }}:</span>
                   <span class="value">{{ item.qr_code }}</span>
                 </div>
@@ -202,14 +214,50 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getInboundOrderDetail } from '@/api/inbound'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
+// 初始化字典
+const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category'])
+
 const loading = ref(false)
 const detailData = ref(null)
 const inboundOrderId = route.params.id
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+
+  // 处理带时区信息的日期格式，如: 2025-12-14 11:00:27.000+08:00
+  if (dateTimeStr.includes('+') && dateTimeStr.includes('.')) {
+    // 提取日期部分和时间部分，去掉毫秒和时区信息
+    const datePart = dateTimeStr.split(' ')[0]
+    const timePart = dateTimeStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }
+
+  // 处理ISO格式日期时间 (2025-12-14T01:40:59)
+  if (dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ')
+  }
+
+  return dateTimeStr
+}
+
+// 格式化日期（仅日期部分）
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理ISO格式日期 (2025-12-14T01:40:59)
+  if (dateStr.includes('T')) {
+    return dateStr.split('T')[0]
+  }
+
+  return dateStr
+}
 
 // 获取状态标签
 const getStatusTag = (status) => {
@@ -260,9 +308,23 @@ const goBack = () => {
 const loadData = async () => {
   loading.value = true
   try {
+    // 先加载字典数据
+    await loadAllDicts()
+
     const res = await getInboundOrderDetail(inboundOrderId)
     if (res.code === 200) {
       detailData.value = res.data
+
+      // 调试信息：检查字典数据是否正确加载
+      console.log('字典数据:', {
+        input_type: options.value.input_type,
+        input_category: options.value.input_category
+      })
+
+      // 调试信息：检查agricultural_input_type字段的值
+      if (res.data.details && res.data.details.length > 0) {
+        console.log('投入品品类值:', res.data.details[0].agricultural_input_type)
+      }
     }
   } catch (error) {
     console.error('Failed to load inbound order detail:', error)
@@ -280,6 +342,16 @@ onMounted(() => {
 <style scoped>
 .inbound-detail-page {
   min-height: calc(100vh - 120px);
+}
+
+/* 隐藏字段样式 */
+.hidden-field {
+  display: none !important;
+}
+
+/* 隐藏表格列 */
+:deep(.hidden-column) {
+  display: none !important;
 }
 
 /* 页面头部 */

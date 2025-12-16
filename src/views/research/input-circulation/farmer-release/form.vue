@@ -29,7 +29,7 @@
         </el-form-item>
 
         <el-form-item :label="$t('inputCirculation.releaseYear')">
-          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" style="width: 100%" />
+          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" style="width: 100%" @change="handleYearChange" />
         </el-form-item>
 
         <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
@@ -208,7 +208,9 @@ const loadDemandList = async (farmerId) => {
   if (!farmerId) return
   demandLoading.value = true
   try {
-    const response = await getFarmerDemandByFarmerId(farmerId)
+    const response = await getFarmerDemandByFarmerId(farmerId, {
+      year: formData.releaseYear || new Date().getFullYear().toString()
+    })
     if (response.code === 200) {
       demandList.value = response.data || []
     }
@@ -216,6 +218,13 @@ const loadDemandList = async (farmerId) => {
     console.error('Failed to load demand list:', error)
   } finally {
     demandLoading.value = false
+  }
+}
+
+// 处理年度变化 - 重新加载需求列表
+const handleYearChange = () => {
+  if (formData.farmerId) {
+    loadDemandList(formData.farmerId)
   }
 }
 

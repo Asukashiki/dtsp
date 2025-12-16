@@ -17,6 +17,10 @@
             <i class="ri-add-line"></i>
             {{ $t('stateAggregation.actions.addYear') }}
           </el-button>
+          <el-button type="success" size="large" @click="handlePublishAll">
+            <i class="ri-send-plane-line"></i>
+            {{ $t('stateAggregation.actions.publishAll') }}
+          </el-button>
         </div>
       </div>
 
@@ -154,10 +158,10 @@
                   <span class="label">{{ $t('stateAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{  item.subQuantity  }}</span>
                 </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('stateAggregation.columns.creator') }}:</span>
-                  <span class="value">{{ item.creator }}</span>
-                </div>
+<!--                <div class="mobile-card-row">-->
+<!--                  <span class="label">{{ $t('stateAggregation.columns.creator') }}:</span>-->
+<!--                  <span class="value">{{ item.creator }}</span>-->
+<!--                </div>-->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('stateAggregation.columns.createTime') }}:</span>
                   <span class="value">{{ item.createTime }}</span>
@@ -220,6 +224,33 @@
         </el-button>
         <el-button type="primary" @click="confirmAddYear" :loading="submitting">
           {{ $t('stateAggregation.addYearDialog.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 发布全部对话框 -->
+    <el-dialog
+      v-model="publishAllDialogVisible"
+      :title="$t('stateAggregation.publishAllDialog.title')"
+      width="600px"
+    >
+      <el-form :model="publishAllForm" :rules="publishAllRules" ref="publishAllFormRef" label-width="120px">
+        <el-form-item :label="$t('stateAggregation.publishAllDialog.year')" prop="year">
+          <el-date-picker
+            v-model="publishAllForm.year"
+            type="year"
+            :placeholder="$t('stateAggregation.publishAllDialog.yearPlaceholder')"
+            style="width: 100%"
+            value-format="YYYY"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="publishAllDialogVisible = false">
+          {{ $t('stateAggregation.publishAllDialog.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="confirmPublishAll" :loading="publishSubmitting">
+          {{ $t('stateAggregation.publishAllDialog.confirm') }}
         </el-button>
       </template>
     </el-dialog>
@@ -340,7 +371,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, getTownAggregationDetail } from '@/api/villageAggregation'
+import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, getTownAggregationDetail, distributeTask } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
@@ -368,6 +399,20 @@ const addYearForm = reactive({
 const addYearRules = reactive({
   year: [
     { required: true, message: t('stateAggregation.addYearDialog.yearRequired'), trigger: 'change' }
+  ]
+})
+
+// 发布全部对话框
+const publishAllDialogVisible = ref(false)
+const publishAllFormRef = ref(null)
+const publishSubmitting = ref(false)
+const publishAllForm = reactive({
+  year: ''
+})
+
+const publishAllRules = reactive({
+  year: [
+    { required: true, message: t('stateAggregation.publishAllDialog.yearRequired'), trigger: 'change' }
   ]
 })
 
@@ -441,6 +486,40 @@ const handleAddYear = () => {
   addYearDialogVisible.value = true
 }
 
+// 打开发布全部对话框
+const handlePublishAll = () => {
+  publishAllForm.year = ''
+  publishAllDialogVisible.value = true
+}
+
+// 确认发布全部
+const confirmPublishAll = async () => {
+  if (!publishAllFormRef.value) return
+
+  try {
+    await publishAllFormRef.value.validate()
+
+    publishSubmitting.value = true
+    const res = await distributeTask({
+      year: publishAllForm.year
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('stateAggregation.publishAllDialog.success'))
+      publishAllDialogVisible.value = false
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('stateAggregation.publishAllDialog.failed'))
+    }
+  } catch (error) {
+    if (error !== false) {
+      console.error('Failed to publish all:', error)
+    }
+  } finally {
+    publishSubmitting.value = false
+  }
+}
+
 // 确认新增年度
 const confirmAddYear = async () => {
   if (!addYearFormRef.value) return
@@ -462,12 +541,12 @@ const confirmAddYear = async () => {
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('stateAggregation.addYearDialog.failed'))
+      // ElMessage.error(res.msg || t('stateAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
-      console.error('Failed to add year:', error)
-      ElMessage.error(t('stateAggregation.addYearDialog.failed'))
+      // console.error('Failed to add year:', error)
+      // ElMessage.error(t('stateAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false
@@ -492,7 +571,8 @@ const loadDetailData = async () => {
     const res = await getVillageDemandSummaryMainList({
       page: 1,
       pageSize: 1000,
-      targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {
@@ -514,7 +594,8 @@ const handleExpandChange = async (row, expandedRows) => {
     row.subLoading = true
     try {
       const res = await getTownAggregationDetail({
-        sourceCode: row.sourceCode
+        sourceCode: row.sourceCode,
+        year: row.year
       })
 
       if (res.code === 200) {

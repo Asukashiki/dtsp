@@ -11,12 +11,6 @@
       "name": "农田管理",
       "children": [
         {
-          "index": "/input/da",
-          "icon": "ri-user-star-line",
-          "titleKey": "newFarm.menu.daManagement",
-          "name": "DA管理"
-        },
-        {
           "index": "/input/farmer",
           "icon": "ri-user-line",
           "titleKey": "newFarm.menu.farmerManagement",
@@ -124,6 +118,11 @@
           "index": "/input/input-circulation/farmer-release",
           "icon": "ri-user-received-line",
           "titleKey": "research.menu.woredaReleaseToFarmer"
+        },
+        {
+          "index": "/input/input-circulation/farmer-receive",
+          "icon": "ri-user-follow-line",
+          "titleKey": "research.menu.farmerReceive"
         }
       ]
     },

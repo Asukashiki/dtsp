@@ -345,8 +345,14 @@ onMounted(() => {
 const generateSku = () => {
   // 生成格式: ZZ-XM-XXXXXX (6位随机数字)
   const randomNumber = Math.floor(100000 + Math.random() * 900000)
-    // 仓库编号格式: WH-YYYYMMDD-XXXXXX
-  return `WH-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomNumber}`
+  // 获取当前日期并格式化为YYYYMMDD
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const dateStr = `${year}${month}${day}`
+  // 仓库编号格式: WH-YYYYMMDD-XXXXXX
+  return `WH-${dateStr}-${randomNumber}`
 }
 </script>
 

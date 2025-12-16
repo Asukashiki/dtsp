@@ -107,9 +107,12 @@ const loadDemandListByReleaseId = async (releaseId) => {
   try {
     // 先获取分发单详情来获取 zoneId
     const releaseResponse = await getOseReleaseDetailByReleaseId(releaseId)
-    if (releaseResponse.code === 200 && releaseResponse.data?.main?.zoneId) {
-      const regionCode = releaseResponse.data.main.zoneId
-      const response = await getTownAggregationDetail({ sourceCode: regionCode })
+    const releaseMain = releaseResponse.data?.main || {}
+    const regionCode = releaseMain.zoneId || releaseMain.zone_id
+    const year = releaseMain.releaseYear || releaseMain.release_year || new Date().getFullYear().toString()
+    
+    if (releaseResponse.code === 200 && regionCode) {
+      const response = await getTownAggregationDetail({ sourceCode: regionCode, year })
       if (response.code === 200) {
         demandList.value = response.data || []
       }

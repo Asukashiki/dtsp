@@ -126,7 +126,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.createTime') }}:</span>
-              <span class="value">{{ detailData.create_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.create_time) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.updatePeople') }}:</span>
@@ -134,7 +134,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.updateTime') }}:</span>
-              <span class="value">{{ detailData.update_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.update_time) }}</span>
             </div>
           </div>
         </div>
@@ -157,6 +157,26 @@ const { t } = useI18n()
 const loading = ref(false)
 const detailData = ref(null)
 const warehouseId = route.params.id
+
+// 格式化日期时间
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+
+  // 处理带时区信息的日期格式，如: 2025-12-14 11:00:27.000+08:00
+  if (dateTimeStr.includes('+') && dateTimeStr.includes('.')) {
+    // 提取日期部分和时间部分，去掉毫秒和时区信息
+    const datePart = dateTimeStr.split(' ')[0]
+    const timePart = dateTimeStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }
+
+  // 处理ISO格式日期，如: 2025-12-14T11:00:27
+  if (dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ')
+  }
+
+  return dateTimeStr
+}
 
 // 获取仓库类型标签
 const getTypeTag = (type) => {

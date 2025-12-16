@@ -29,7 +29,7 @@
           <el-input v-model="formData.targetContact" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.releaseYear')">
-          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" />
+          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" @change="handleYearChange" />
         </el-form-item>
         <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
           <el-date-picker v-model="formData.releaseDate" type="date" value-format="YYYY-MM-DD" />
@@ -245,7 +245,10 @@ const getAllCoorList = async (value) => {
 const loadDemandList = async (regionCode) => {
   demandLoading.value = true
   try {
-    const response = await getTownAggregationDetail({ sourceCode: regionCode })
+    const response = await getTownAggregationDetail({ 
+      sourceCode: regionCode,
+      year: formData.releaseYear || new Date().getFullYear().toString()
+    })
     if (response.code === 200) {
       demandList.value = response.data || []
     }
@@ -253,6 +256,13 @@ const loadDemandList = async (regionCode) => {
     console.error('Failed to load demand list:', error)
   } finally {
     demandLoading.value = false
+  }
+}
+
+// 处理年度变化 - 重新加载需求列表
+const handleYearChange = () => {
+  if (formData.zoneId) {
+    loadDemandList(formData.zoneId)
   }
 }
 

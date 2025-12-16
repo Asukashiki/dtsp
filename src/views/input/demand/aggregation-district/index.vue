@@ -85,11 +85,11 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="creator"
-                :label="$t('districtAggregation.columns.creator')"
-                min-width="120"
-              />
+<!--              <el-table-column-->
+<!--                prop="creator"-->
+<!--                :label="$t('districtAggregation.columns.creator')"-->
+<!--                min-width="120"-->
+<!--              />-->
               <el-table-column
                 prop="createTime"
                 :label="$t('districtAggregation.columns.createTime')"
@@ -438,12 +438,12 @@ const confirmAddYear = async () => {
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('districtAggregation.addYearDialog.failed'))
+      // ElMessage.error(res.msg || t('districtAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
-      console.error('Failed to add year:', error)
-      ElMessage.error(t('districtAggregation.addYearDialog.failed'))
+      // console.error('Failed to add year:', error)
+      // ElMessage.error(t('districtAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false
@@ -475,7 +475,8 @@ const handleSubmit = async (row) => {
     // 区级汇聚提交: 传递sourceCode和summaryId
     const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
-      summaryId: row.id
+      summaryId: row.id,
+      year: row.year
     })
 
     if (res.code === 200) {
@@ -522,7 +523,8 @@ const loadDetailData = async () => {
   try {
     // 区级汇聚明细: 只传递sourceCode
     const res = await getTownAggregationDetail({
-      sourceCode: currentDetailRow.value.sourceCode
+      sourceCode: currentDetailRow.value.sourceCode,
+      year: currentDetailRow.value.year
     })
 
     if (res.code === 200) {

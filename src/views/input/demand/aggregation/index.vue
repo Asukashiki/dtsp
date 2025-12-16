@@ -85,11 +85,11 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="creator"
-                :label="$t('villageAggregation.columns.creator')"
-                min-width="120"
-              />
+<!--              <el-table-column-->
+<!--                prop="creator"-->
+<!--                :label="$t('villageAggregation.columns.creator')"-->
+<!--                min-width="120"-->
+<!--            />-->
               <el-table-column
                 prop="createTime"
                 :label="$t('villageAggregation.columns.createTime')"
@@ -438,12 +438,12 @@ const confirmAddYear = async () => {
       addYearDialogVisible.value = false
       loadData()
     } else {
-      ElMessage.error(res.msg || t('villageAggregation.addYearDialog.failed'))
+      // ElMessage.error(res.msg || t('villageAggregation.addYearDialog.failed'))
     }
   } catch (error) {
     if (error !== false) {
-      console.error('Failed to add year:', error)
-      ElMessage.error(t('villageAggregation.addYearDialog.failed'))
+      // console.error('Failed to add year:', error)
+      // ElMessage.error(t('villageAggregation.addYearDialog.failed'))
     }
   } finally {
     submitting.value = false

@@ -131,21 +131,22 @@
                         :prop="`inputItems.${index}.cascadeValue`"
                         :rules="rules.cascadeValue"
                     >
-                      <el-cascader
-                          v-model="item.cascadeValue"
-                          :options="cascaderOptions"
-                          :placeholder="$t('farmerDemand.placeholder.inputCategory')"
-                          style="width: 100%"
-                          :props="{
-                          expandTrigger: 'click',
-                          label: 'label',
-                          value: 'value',
-                          checkStrictly: false,
-                          emitPath: true
-                        }"
-                          @change="(val) => handleCascaderChange(val, index)"
-                          v-loading="dictLoading"
-                      ></el-cascader>
+                      <div v-loading="dictLoading">
+                        <el-cascader
+                            v-model="item.cascadeValue"
+                            :options="cascaderOptions"
+                            :placeholder="$t('farmerDemand.placeholder.inputCategory')"
+                            style="width: 100%"
+                            :props="{
+                            expandTrigger: 'click',
+                            label: 'label',
+                            value: 'value',
+                            checkStrictly: false,
+                            emitPath: true
+                          }"
+                            @change="(val) => handleCascaderChange(val, index)"
+                        ></el-cascader>
+                      </div>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -157,7 +158,9 @@
                         :prop="`inputItems.${index}.unit`"
                         :rules="rules.unit"
                     >
-                      <el-input v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')"></el-input>
+                      <el-select v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" style="width: 100%">
+                        <el-option label="kg" value="kg"></el-option>
+                      </el-select>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="12">
@@ -487,10 +490,21 @@ const handleSubmit = async () => {
       ElMessage.success(isEdit.value ? t('farmerDemand.editSuccess') : t('farmerDemand.addSuccess'))
       router.push({ name: 'FarmerDemand' })
     } else {
-      ElMessage.error(res.msg || t('farmerDemand.messages.saveFailed'))
+      // 检测农民需求已存在的错误
+      if (res.msg && res.msg.includes('Farmer demand already exists')) {
+        ElMessage.warning(t('farmerDemand.messages.farmerDemandExists'))
+      } else {
+        ElMessage.error(res.msg || t('farmerDemand.messages.saveFailed'))
+      }
     }
   } catch (error) {
-    ElMessage.error(t('farmerDemand.messages.saveFailed'))
+    // 检测农民需求已存在的错误（来自异常）
+    const errorMsg = error?.response?.data?.msg || error?.message || ''
+    if (errorMsg.includes('Farmer demand already exists')) {
+      ElMessage.warning(t('farmerDemand.messages.farmerDemandExists'))
+    } else {
+      ElMessage.error(t('farmerDemand.messages.saveFailed'))
+    }
   } finally {
     submitting.value = false
   }

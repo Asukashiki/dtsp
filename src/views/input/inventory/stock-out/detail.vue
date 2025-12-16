@@ -67,11 +67,11 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.createTime') }}:</span>
-              <span class="value">{{ detailData.created_at }}</span>
+              <span class="value">{{ formatDateTime(detailData.created_at) }}</span>
             </div>
             <div class="detail-item" v-if="detailData.outbound_time">
               <span class="label">{{ $t('input.inventory.stockOut.form.outboundTime') }}:</span>
-              <span class="value">{{ detailData.outbound_time }}</span>
+              <span class="value">{{ formatDateTime(detailData.outbound_time) }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockOut.form.remark') }}:</span>
@@ -93,7 +93,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.stockOut.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.audit_time || '-' }}</span>
+              <span class="value">{{ formatDateTime(detailData.audit_time) }}</span>
             </div>
           </div>
         </div>
@@ -211,6 +211,34 @@ const outboundOrderId = route.params.id
 // 批次拆分弹窗
 const batchSplitsDialogVisible = ref(false)
 const currentBatchSplits = ref([])
+
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理带时区和毫秒的日期格式 (如: "2025-12-14 11:00:27.000+08:00")
+/*  if (dateStr.includes('+') && dateStr.includes('.')) {
+    const datePart = dateStr.split(' ')[0]
+    const timePart = dateStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }*/
+
+  // 处理标准ISO格式 (如: "2025-12-14T01:40:59")
+  return dateStr.replace('T', ' ')
+}
 
 // 检查是否有批次拆分数据
 const hasBatchSplits = computed(() => {

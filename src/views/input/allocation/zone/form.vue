@@ -103,12 +103,14 @@ import { ElMessage } from 'element-plus'
 import { getZoneAllocationDetail, addZoneAllocation, editZoneAllocation } from '@/api/allocation'
 import { getVillageDemandSummaryMainList, getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store/user'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const demandLoading = ref(false)
@@ -142,7 +144,8 @@ const getZoneOptions = async () => {
     const response = await getVillageDemandSummaryMainList({
       page: 1,
       pageSize: 100,
-      sourceCode: userStore.userInfo?.user?.REGION_CODE || ''
+      year: formData.year,
+      targetCode: userStore.userInfo?.user?.REGION_CODE || ''
     })
     if (response.code === 200) {
       // 将返回的list映射为zoneOptions需要的格式
@@ -152,6 +155,7 @@ const getZoneOptions = async () => {
       }))
     }
   } catch (error) {
+    console.error('Error fetching zone options:', error)
     ElMessage.error(t('common.queryFailed'))
   } finally {
     loading.value = false
@@ -185,7 +189,8 @@ const handleYearOrZoneChange = async () => {
   try {
     // 调用API获取需求数据
     const response = await getTownAggregationDetail({
-      sourceCode: formData.zone
+      sourceCode: formData.zone,
+      year: formData.year
     })
     
     if (response.code === 200 && response.data) {

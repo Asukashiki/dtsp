@@ -230,7 +230,7 @@ const loadData = async () => {
       targetCode: stateCode, // 州级regionCode
       year: yearParam.value
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
       tableData.value = res.data.list || []

@@ -86,11 +86,11 @@ export default {
 
     // Input Items
     inputItems: 'Input Items',
-    inputCategory: 'Input Category',
+    inputCategory: 'Category',
     inputType: 'Input Type',
     variety: 'Variety',
     specification: 'Specification',
-    unit: 'Unit',
+    unit: 'measurement',
     quantity: 'Demand Quantity',
     addItem: 'Add Input',
     removeItem: 'Remove',
@@ -111,11 +111,11 @@ export default {
     village: 'Please enter village',
     landArea: 'Please enter total land area',
     remark: 'Please enter remark',
-    inputCategory: 'Please select input category',
+    inputCategory: 'Please select Category',
     inputType: 'Please enter input type',
     variety: 'Please enter variety',
     specification: 'Please enter specification',
-    unit: 'Please enter unit',
+    unit: 'Please enter measurement',
     quantity: 'Please enter demand quantity',
   },
 
@@ -147,10 +147,10 @@ export default {
     villageRequired: 'Please enter village',
     landAreaPositive: 'Land area must be greater than 0',
     remarkLength: 'Remark max 500 characters',
-    inputCategoryRequired: 'Please select input category',
+    inputCategoryRequired: 'Please select Category',
     inputTypeRequired: 'Please enter input type',
     varietyRequired: 'Please enter variety',
-    unitRequired: 'Please enter unit',
+    unitRequired: 'Please enter measurement',
     quantityRequired: 'Please enter demand quantity',
     quantityPositive: 'Demand quantity must be greater than 0',
     itemsRequired: 'Please add at least one input item',
@@ -220,6 +220,7 @@ export default {
     updateFailed: 'Update failed, please retry',
     deleteFailed: 'Delete failed',
     noData: 'No data available',
+    farmerDemandExists: 'This farmer already has a demand record for the current year. Please check the existing record or select a different farmer.',
   },
 
   // Detail Page Sections

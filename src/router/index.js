@@ -1310,6 +1310,20 @@ const routes = [
         meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // 农民领用确认
+      {
+        path: 'input-circulation/farmer-receive',
+        name: 'FarmerReceiveList',
+        component: () => import('../views/research/input-circulation/farmer-receive/index.vue'),
+        meta: { title: 'Farmer Receive Confirmation', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/farmer-receive/detail/:id',
+        name: 'FarmerReceiveDetail',
+        component: () => import('../views/research/input-circulation/farmer-receive/detail.vue'),
+        meta: { title: '领用详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // 农田管理系统
       // ==================== DA管理 ====================
       {

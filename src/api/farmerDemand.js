@@ -55,10 +55,10 @@ export const submitForAudit = (ids) => {
 }
 
 // 根据farmerId获取农民需求
-export const getFarmerDemandByFarmerId = (farmerId) => {
+export const getFarmerDemandByFarmerId = (farmerId, params = {}) => {
   return request({
     url: '/seed/demand/farmer/getByFarmerId',
     method: 'get',
-    params: { farmerId }
+    params: { farmerId, ...params }
   })
 }

@@ -6,8 +6,21 @@ export default {
   // 操作按钮
   actions: {
     addYear: '新增年度',
+    publishAll: '发布全部',
     detail: '明细',
     view: '查看',
+  },
+
+  // 发布全部对话框
+  publishAllDialog: {
+    title: '发布全部任务',
+    year: '选择年度',
+    yearPlaceholder: '请选择年度',
+    confirm: '确认',
+    cancel: '取消',
+    success: '任务发布成功',
+    failed: '发布任务失败',
+    yearRequired: '请选择年度',
   },
 
   // 表格列

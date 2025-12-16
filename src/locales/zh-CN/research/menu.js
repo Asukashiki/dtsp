@@ -207,4 +207,5 @@ export default {
   unionReleaseToWoreda: 'Union分发投入品到Woreda',
   woredaReceiveConfirm: 'Woreda确认接收',
   woredaReleaseToFarmer: 'Woreda分发投入品到农民',
+  farmerReceive: '农民领用列表'
 }

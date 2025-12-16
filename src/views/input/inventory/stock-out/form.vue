@@ -137,7 +137,7 @@
                     <el-option
                       v-for="input in inputList"
                       :key="input.inputId"
-                      :label="`${input.inputName} (${input.inputId})`"
+                      :label="input.inputName"
                       :value="input.inputId"
                     />
                   </el-select>
@@ -201,8 +201,8 @@
                     :precision="2"
                     class="full-width"
                   />
-                  <span v-if="item.available_quantity > 0" class="available-hint">
-                    {{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.available_quantity }}
+                  <span v-if="item.available_quantity !== undefined" class="available-hint">
+                    {{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.available_quantity || 0 }}
                   </span>
                 </el-form-item>
 
@@ -265,9 +265,54 @@ import { getWarehouseList } from '@/api/inventory'
 import { getStockList } from '@/api/stock'
 import { getInputList } from '@/api/input'
 import { getDistributionList, getDistributionDetail } from '@/api/distribution'
+import { useDict, clearDictCache } from '@/hooks/useDict'
+
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// 格式化日期
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+
+  // 处理带时区和毫秒的日期格式 (如: "2025-12-14 11:00:27.000+08:00")
+/*  if (dateStr.includes('+') && dateStr.includes('.')) {
+    const datePart = dateStr.split(' ')[0]
+    const timePart = dateStr.split(' ')[1].split('.')[0]
+    return `${datePart} ${timePart}`
+  }*/
+
+  // 处理标准ISO格式 (如: "2025-12-14T01:40:59")
+  return dateStr.replace('T', ' ')
+}
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 清除字典缓存并初始化
+clearDictCache('input_type')
+clearDictCache('input_category')
+
+const {
+  options,
+  loading: dictLoading,
+  refresh: refreshDict
+} = useDict([
+  'input_type',
+  'input_category'
+], {
+  immediate: true,
+  cache: true
+})
 
 const formRef = ref(null)
 const submitLoading = ref(false)
@@ -354,7 +399,7 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
             }
             // 如果有农资类型和品种，优先使用第一个
             if (!existingMaterial.agriculturalInputType && item.agricultural_input_type) {
-              existingMaterial.agriculturalInputType = item.agricultural_input_type
+              existingMaterial.agriculturalInputType = getAgriculturalInputTypeText(item.agricultural_input_type)
             }
             if (!existingMaterial.variety && item.variety) {
               existingMaterial.variety = item.variety
@@ -365,8 +410,8 @@ const loadMaterialListByWarehouse = async (warehouseId) => {
               inputName: item.material_name, // 使用material_name作为inputName
               inputType: item.material_type || '', // 使用material_type作为inputType
               materialBatchId: item.material_batch_id || '', // 使用material_batch_id
-              // 确保agriculturalInputType字段被正确设置
-              agriculturalInputType: item.agricultural_input_type || '',
+              // 使用getAgriculturalInputTypeText函数处理农资类型
+              agriculturalInputType: getAgriculturalInputTypeText(item.agricultural_input_type || ''),
               variety: item.variety || '',
               available_quantity: item.quantity
             })
@@ -483,7 +528,7 @@ const loadDistributionList = async () => {
     }
   } catch (error) {
     console.error('Failed to load distribution list:', error)
-    ElMessage.error('加载分发单列表失败')
+    ElMessage.error('Failed to load distribution list')
   } finally {
     distributionLoading.value = false
   }
@@ -492,7 +537,7 @@ const loadDistributionList = async () => {
 // 分发单下拉框获取焦点时，检查是否选择了仓库
 const handleDistributionFocus = () => {
   if (!formData.warehouse_id) {
-    ElMessage.warning('请先选择出库仓库')
+    ElMessage.warning('Please select the outbound warehouse first')
     return
   }
 }
@@ -534,7 +579,6 @@ const handleDistributionChange = async (distributionId) => {
 
         console.log(materialList);
         console.log('detail.inputId:', detail.inputId, 'type:', typeof detail.inputId);
-
         // 使用更灵活的匹配方式，处理可能的类型不匹配问题
         const material = materialList.value.find(m => {
           // 确保两边都是字符串进行比较
@@ -556,8 +600,8 @@ const handleDistributionChange = async (distributionId) => {
           newDetails.push({
             inputId: detail.inputId || '', // 投入品ID
             inputName: material.inputName || '', // 投入品名称
-            inputType: material.inputType || '', // 投入品类型
-            agriculturalInputType: detail.cropType || '', // 农资类型（来自分发单的作物类型）
+            inputType: getInputTypeText(material.inputType || ''), // 使用getInputTypeText函数处理投入品类型
+            agriculturalInputType: getAgriculturalInputTypeText(detail.cropType || ''), // 使用getAgriculturalInputTypeText函数处理农资类型
             variety: detail.variety || '', // 品种
             materialBatchId: material.materialBatchId || '', // 物料批次号
             quantity: detail.required || detail.quantity || null, // 出库数量
@@ -640,8 +684,8 @@ const handleMaterialChange = (index) => {
   if (selectedInput) {
     detail.inputName = selectedInput.inputName
     detail.inputType = getInputTypeText(selectedInput.type)
-    // 确保agriculturalInputType字段被正确设置
-    detail.agriculturalInputType = selectedInput.agriculturalInputType || selectedInput.agricultural_input_type || ''
+    // 使用getAgriculturalInputTypeText函数处理农资类型
+    detail.agriculturalInputType = getAgriculturalInputTypeText(selectedInput.agriculturalInputType || selectedInput.agricultural_input_type)
     detail.variety = selectedInput.variety || ''
   } else {
     detail.inputName = ''
@@ -697,10 +741,14 @@ const loadStockForMaterial = async (detail) => {
 
       detail.materialBatchId = materialBatchId
       detail.available_quantity = totalQuantity
-      // 设置农资类型
+      // 使用getAgriculturalInputTypeText函数处理农资类型
       if (agriculturalInputType && !detail.agriculturalInputType) {
-        detail.agriculturalInputType = agriculturalInputType
+        detail.agriculturalInputType = getAgriculturalInputTypeText(agriculturalInputType)
       }
+    } else {
+      // 如果没有返回数据或数据为空，设置可用库存为0
+      detail.materialBatchId = ''
+      detail.available_quantity = 0
     }
   } catch (error) {
     console.error('Failed to load stock for material:', error)
@@ -711,13 +759,24 @@ const loadStockForMaterial = async (detail) => {
 
 // 获取投入品类型文本
 const getInputTypeText = (type) => {
-  const typeMap = {
-    'pesticide': t('input.catalog.type.pesticide'),
-    'fertilizer': t('input.catalog.type.fertilizer'),
-    'seed': t('input.catalog.type.seed'),
-    'other': t('input.catalog.type.other')
-  }
-  return typeMap[type] || type
+  // 如果是旧类型，先转换为新编码
+  if (type === 'seed') type = 'IN01'
+  if (type === 'fertilizer') type = 'IN02'
+  if (type === 'other') type = 'IN09'
+  if (type === 'pesticide') type = ''
+
+  // 从字典中获取标签
+  if (!type || !options.value.input_type) return '-'
+  const typeItem = options.value.input_type.find(item => item.value === type)
+  return typeItem ? typeItem.label : '-'
+}
+
+// 获取农业输入类型文本
+const getAgriculturalInputTypeText = (type) => {
+  // 从字典中获取标签
+  if (!type || !options.value.input_category) return '-'
+  const categoryItem = options.value.input_category.find(item => item.value === type)
+  return categoryItem ? categoryItem.label : '-'
 }
 
 // 添加明细
