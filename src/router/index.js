@@ -6,11 +6,23 @@ import farmLayoutConfig from '@/config/farm-layout.json'
 import inputLayoutConfig from '@/config/input-layout.json'
 import researchLayoutConfig from '@/config/research-layout.json'
 import newFarmLayoutConfig from '@/config/new-farm-layout.json'
+import systemLayoutConfig from '@/config/system-layout.json'
 
 // 外部登录系统URL - 在实际部署时配置正确的SSO地址
 const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
 // 当前系统的应用ID - 用于SSO系统识别来源
 const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
+
+// 路由白名单
+const routeWhitelist = [
+  // 首页相关
+  '/home',
+  '/user',
+  '/dataList',
+  '/print/seed/breeding-certification',
+  '/print/seed/c1-breeding-certificate',
+  '/notice',
+]
 
 const routes = [
   // OAuth2回调页面（不需要认证）
@@ -33,6 +45,19 @@ const routes = [
     name: 'C1BreedingCertificatePrint',
     component: () => import('../views/seed/c1-breeding-certificate/print.vue'),
     meta: { title: 'C1繁殖批次证书打印', hideInMenu: true, requiresAuth: true }
+  },
+  // 错误页面
+  {
+    path: '/401',
+    name: 'NoPermission',
+    component: () => import('../views/error/401.vue'),
+    meta: { title: '无权限', requiresAuth: false }
+  },
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: () => import('../views/error/404.vue'),
+    meta: { title: '页面未找到', requiresAuth: false }
   },
   {
     path: '/',
@@ -108,8 +133,14 @@ const routes = [
         path: 'dataList',
         name: 'DataList',
         component: () => import('../views/home/components/dataList.vue'),
-        meta: { title: '系统公告', hideInMenu: true, requiresAuth: true }
-      }
+        meta: { title: '系统公告', hideInMenu: true, requiresAuth: false }
+      },
+      // {
+      //   path: 'notice/:id',
+      //   name: 'NoticeDetail',
+      //   component: () => import('../views/home/components/NoticeDetail.vue'),
+      //   meta: { title: '公告详情', hideInMenu: true, requiresAuth: false }
+      // }
     ]
   },
   // 研究与开发管理系统
@@ -1498,6 +1529,71 @@ const routes = [
         name: 'NewFarmLandDetail',
         component: () => import('../views/new-farm/land/detail.vue'),
         meta: { title: '土地详情', hideInMenu: true, requiresAuth: true }
+      }
+    ]
+  },
+  // 登录页面（不需要认证）
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/login/index.vue'),
+    meta: { requiresAuth: false }
+  },
+  // 系统管理
+  {
+    path: '/system',
+    name: 'SystemManagement',
+    component: () => import('../layout/SystemLayout.vue'),
+    redirect: '/system/user',
+    meta: { requiresAuth: true, layoutConfig: systemLayoutConfig },
+    children: [
+      {
+        path: 'user',
+        name: 'SystemUser',
+        component: () => import('../views/system/user/index.vue'),
+        meta: { title: '用户管理', requiresAuth: true }
+      },
+      {
+        path: 'role',
+        name: 'SystemRole',
+        component: () => import('../views/system/role/index.vue'),
+        meta: { title: '角色管理', requiresAuth: true }
+      },
+      {
+        path: 'menu',
+        name: 'SystemMenu',
+        component: () => import('../views/system/menu/index.vue'),
+        meta: { title: '菜单管理', requiresAuth: true }
+      },
+      {
+        path: 'dept',
+        name: 'SystemDept',
+        component: () => import('../views/system/dept/index.vue'),
+        meta: { title: '部门管理', requiresAuth: true }
+      },
+      {
+        path: 'dict',
+        name: 'SystemDict',
+        component: () => import('../views/system/dict/index.vue'),
+        meta: { title: '字典管理', requiresAuth: true }
+      },
+      {
+        path: 'dict-data/:dictType',
+        name: 'SystemDictData',
+        component: () => import('../views/system/dict/data.vue'),
+        meta: { title: '字典数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'notice',
+        name: 'SystemNotice',
+        component: () => import('../views/system/notice/index.vue'),
+        meta: { title: '公告管理', requiresAuth: true }
+      },
+      {
+        path: 'config',
+        name: 'SystemConfig',
+        component: () => import('../views/system/config/index.vue'),
+        meta: { title: '参数配置', requiresAuth: true }
       }
     ]
   }

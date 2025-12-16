@@ -22,6 +22,10 @@ export default {
     success: '操作成功',
     failed: '操作失败',
     tips: '提示',
+    tip: '提示',
+    rootNode: '根节点',
+    collapseAll: '全部折叠',
+    expandAll: '全部展开',
     warning: '警告',
     addSuccess: '新增成功',
     updateSuccess: '更新成功',
@@ -88,10 +92,20 @@ export default {
       notFound: '请求的资源不存在',
       timeout: '请求超时，请检查网络连接',
       networkError: '网络错误，请检查您的网络连接',
-      operationFailed: '操作失败'
+      operationFailed: '操作失败',
+      noPermission: '无访问权限',
+      noPermissionDesc: '您没有权限访问该页面，请联系管理员。',
+      pageNotFound: '页面未找到',
+      pageNotFoundDesc: '您访问的页面不存在或已被删除。'
     },
     required: '该项必填',
     saveSuccess: '保存成功',
     queryFailed: '获取详情失败',
-    birthDate: '出生日期'
+    birthDate: '出生日期',
+    backToHome: '返回首页',
+    goBack: '返回上一页',
+    pageNotFound: '页面未找到',
+    pageNotFoundDesc: '您所查找的页面不存在或已被移除。',
+    noPermission: '无访问权限',
+    noPermissionDesc: '您没有权限访问此页面或执行此操作'
   }
