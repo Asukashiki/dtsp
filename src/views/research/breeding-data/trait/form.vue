@@ -48,7 +48,7 @@
                 <!-- Observation Date -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Observation Date" prop="observationDate">
-                    <el-date-picker v-model="formData.observationDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" placeholder="Select observation date" />
+                    <el-date-picker v-model="formData.observationDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" placeholder="Select observation date and time" />
                   </el-form-item>
                 </el-col>
                 <!-- Growth Stage -->
@@ -232,6 +232,7 @@ import { getAgronomicTraitInfo, addAgronomicTrait, editAgronomicTrait, getPlotOp
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getFarmerOptions } from '@/api/newFarm'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -292,13 +293,16 @@ const rules = {
   observerId: [{ required: true, message: 'Please select Observer', trigger: 'change' }]
 }
 
-// 获取当前日期
+// 获取当前日期和时间
 function getCurrentDate() {
   const now = new Date()
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
   const day = String(now.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 // 加载地块选项
@@ -472,6 +476,15 @@ onMounted(() => {
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
+  
+  // 自动设置操作员ID为当前登录用户
+  const currentUser = getUserInfo()
+  if (currentUser && currentUser.user) {
+    // 如果是新增模式且 observerId 为空，则自动设置为当前用户
+    if (!isEdit.value && !formData.observerId) {
+      formData.observerId = currentUser.user.userId || ''
+    }
+  }
 })
 </script>
 

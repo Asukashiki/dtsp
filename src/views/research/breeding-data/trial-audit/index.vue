@@ -110,7 +110,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" />
               </template>
             </el-table-column>
             <el-table-column
@@ -244,7 +244,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" />
               </template>
             </el-table-column>
             <el-table-column

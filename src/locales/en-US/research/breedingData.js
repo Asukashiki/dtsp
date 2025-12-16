@@ -196,6 +196,7 @@ export default {
       seedQuantity: 'Please enter seed quantity',
       sowingMethod: 'Please enter sowing method',
       sowingTime: 'Please select sowing time',
+      auditStatus: 'Please select audit status',
     },
 
     columns: {
@@ -208,7 +209,13 @@ export default {
         gpsLocation: 'GPS Location',
         season: 'Season',
         sowingCount: 'Sowing Records',
+        auditStatus: 'Audit Status',
+        createdBy: 'Created By',
+        modifiedBy: 'Modified By',
+        auditedBy: 'Audited By',
         createTime: 'Created Time',
+        updateTime: 'Update Time',
+        auditTime: 'Audit Time',
         actions: 'Actions',
     },
 
@@ -263,6 +270,7 @@ export default {
       replications: 'Please enter replications',
       cropType: 'Auto-filled from breeding batch',
       varietyName: 'Please enter variety name',
+      auditStatus: 'Please select audit status',
     },
 
     columns: {
@@ -277,6 +285,7 @@ export default {
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
       status: 'Status',
+      auditStatus: 'Audit Status',
       createTime: 'Created Time',
       actions: 'Actions',
     },
