@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-building-2-line"></i>
+            <i class="ri-checkbox-multiple-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('orgRegistration.title') }}</h1>
-            <p class="page-subtitle">{{ $t('orgRegistration.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('orgRegistration.audit.title') }}</h1>
+            <p class="page-subtitle">{{ $t('orgRegistration.audit.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -19,14 +19,8 @@
         <div class="info-card">
           <div class="card-header">
             <div class="card-title">
-              <i class="ri-list-check"></i>
-              <span>{{ $t('orgRegistration.list.title') }}</span>
-            </div>
-            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                {{ $t('common.add') }}
-              </el-button>
+              <i class="ri-file-list-3-line"></i>
+              <span>{{ $t('orgRegistration.audit.listTitle') }}</span>
             </div>
           </div>
 
@@ -115,6 +109,11 @@
                   min-width="130"
                 />
                 <el-table-column
+                  prop="createTime"
+                  :label="$t('orgRegistration.columns.createTime')"
+                  min-width="160"
+                />
+                <el-table-column
                   prop="auditStatus"
                   :label="$t('orgRegistration.columns.auditStatus')"
                   min-width="120"
@@ -125,11 +124,6 @@
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  prop="createTime"
-                  :label="$t('orgRegistration.columns.createTime')"
-                  min-width="160"
-                />
                 <el-table-column :label="$t('common.actions')" fixed="right" width="180">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -139,12 +133,12 @@
                       </el-button>
                       <el-button
                         link
-                        type="primary"
-                        @click="handleEdit(row)"
-                        v-if="row.auditStatus === 2"
+                        type="warning"
+                        @click="handleAudit(row)"
+                        v-if="row.auditStatus === 0"
                       >
-                        <i class="ri-edit-line"></i>
-                        {{ $t('orgRegistration.actions.resubmit') }}
+                        <i class="ri-checkbox-circle-line"></i>
+                        {{ $t('orgRegistration.actions.audit') }}
                       </el-button>
                     </div>
                   </template>
@@ -173,19 +167,11 @@
                     <i class="ri-building-2-line"></i>
                     <span>{{ item.orgName }}</span>
                   </div>
-                  <el-tag :type="getStatusType(item.auditStatus)" size="small">
-                    {{ getStatusLabel(item.auditStatus) }}
+                  <el-tag :type="item.orgType === 'UNION' ? 'primary' : 'success'" size="small">
+                    {{ $t(`orgRegistration.orgType.${item.orgType}`) }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('orgRegistration.columns.orgType') }}:</span>
-                    <span class="value">
-                      <el-tag :type="item.orgType === 'UNION' ? 'primary' : 'success'" size="small">
-                        {{ $t(`orgRegistration.orgType.${item.orgType}`) }}
-                      </el-tag>
-                    </span>
-                  </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('orgRegistration.columns.licenseNumber') }}:</span>
                     <span class="value">{{ item.licenseNumber }}</span>
@@ -208,11 +194,12 @@
                     {{ $t('orgRegistration.actions.view') }}
                   </el-button>
                   <el-button
+                    type="warning"
                     size="small"
-                    @click="handleEdit(item)"
-                    v-if="item.auditStatus === 2"
+                    @click="handleAudit(item)"
+                    v-if="item.auditStatus === 0"
                   >
-                    {{ $t('orgRegistration.actions.resubmit') }}
+                    {{ $t('orgRegistration.actions.audit') }}
                   </el-button>
                 </div>
               </div>
@@ -233,7 +220,7 @@
             </div>
 
             <!-- 空状态 -->
-            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('orgRegistration.list.noData')" />
+            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('orgRegistration.audit.noData')" />
           </div>
         </div>
       </div>
@@ -334,19 +321,14 @@ const handleReset = () => {
   handleSearch()
 }
 
-// 新增
-const handleAdd = () => {
-  router.push({ name: 'OrgRegistrationAdd' })
-}
-
 // 查看
 const handleView = (row) => {
   router.push({ name: 'OrgRegistrationDetail', params: { id: row.id } })
 }
 
-// 编辑（驳回后重新提交）
-const handleEdit = (row) => {
-  router.push({ name: 'OrgRegistrationEdit', params: { id: row.id } })
+// 审核
+const handleAudit = (row) => {
+  router.push({ name: 'OrgRegistrationAudit', params: { id: row.id } })
 }
 
 // 分页
@@ -383,7 +365,7 @@ onMounted(() => {
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+  box-shadow: 0 4px 12px rgba(230, 81, 0, 0.15);
 }
 
 .header-left {
@@ -439,14 +421,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  border-bottom: 1px solid #fff3e0;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
 }
 
 .card-title {
   font-size: 18px;
   font-weight: 600;
-  color: #009A44;
+  color: #e65100;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -454,11 +436,6 @@ onMounted(() => {
 
 .card-title i {
   font-size: 22px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
 }
 
 .card-body {
@@ -505,7 +482,7 @@ onMounted(() => {
   justify-content: center;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
+  border-top: 1px solid #fff3e0;
 }
 
 /* 移动端卡片列表 */
@@ -516,7 +493,7 @@ onMounted(() => {
 }
 
 .mobile-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #ffe0b2;
   border-radius: 12px;
   padding: 16px;
   background: white;
@@ -535,7 +512,7 @@ onMounted(() => {
   align-items: flex-start;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #fff3e0;
 }
 
 .mobile-card-title {
@@ -544,7 +521,7 @@ onMounted(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: #009A44;
+  color: #e65100;
   flex: 1;
 }
 
@@ -582,7 +559,7 @@ onMounted(() => {
   margin-top: 12px;
   flex-wrap: wrap;
   padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid #fff3e0;
 }
 
 .mobile-card-actions .el-button {
@@ -626,14 +603,6 @@ onMounted(() => {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
-  }
-
-  .header-actions {
-    width: 100%;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
   }
 
   .search-section {
