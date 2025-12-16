@@ -1269,7 +1269,7 @@ const routes = [
         path: 'input-circulation/union-release',
         name: 'UnionReleaseList',
         component: () => import('../views/research/input-circulation/union-release/index.vue'),
-        meta: { title: 'Union Distribution to Woreda', requiresAuth: true }
+        meta: { title: 'Union Distribution to Cooperative', requiresAuth: true }
       },
       {
         path: 'input-circulation/union-release/add',
@@ -1295,7 +1295,7 @@ const routes = [
         path: 'input-circulation/woreda-receive',
         name: 'WoredaReceiveList',
         component: () => import('../views/research/input-circulation/woreda-receive/index.vue'),
-        meta: { title: 'Woreda Receive Confirmation', requiresAuth: true }
+        meta: { title: 'Cooperative Receive Confirmation', requiresAuth: true }
       },
       {
         path: 'input-circulation/woreda-receive/confirm/:id',
@@ -1315,7 +1315,7 @@ const routes = [
         path: 'input-circulation/farmer-release',
         name: 'FarmerReleaseList',
         component: () => import('../views/research/input-circulation/farmer-release/index.vue'),
-        meta: { title: 'Woreda Distribution to Farmer', requiresAuth: true }
+        meta: { title: 'Cooperative Distribution to Farmer', requiresAuth: true }
       },
       {
         path: 'input-circulation/farmer-release/add',

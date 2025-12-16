@@ -120,17 +120,17 @@
         {
           "index": "/input/input-circulation/union-release",
           "icon": "ri-send-plane-line",
-          "titleKey": "research.menu.unionReleaseToWoreda"
+          "titleKey": "research.menu.unionReleaseToCooperative"
         },
         {
           "index": "/input/input-circulation/woreda-receive",
           "icon": "ri-check-double-line",
-          "titleKey": "research.menu.woredaReceiveConfirm"
+          "titleKey": "research.menu.cooperativeReceiveConfirm"
         },
         {
           "index": "/input/input-circulation/farmer-release",
           "icon": "ri-user-received-line",
-          "titleKey": "research.menu.woredaReleaseToFarmer"
+          "titleKey": "research.menu.cooperativeReleaseToFarmer"
         }
       ]
     },

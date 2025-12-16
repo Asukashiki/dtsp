@@ -107,9 +107,9 @@ export default {
   inputQuotaView: 'Input Quota View',
   oseReleaseToUnion: 'Release Seeds to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
-  unionReleaseToWoreda: 'Union Distribution to Woreda',
-  woredaReceiveConfirm: 'Woreda Receive Confirmation',
-  woredaReleaseToFarmer: 'Woreda Distribution to Farmer',
+  unionReleaseToCooperative: 'Union Distribution to Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',
+  cooperativeReleaseToFarmer: 'Cooperative Distribution to Farmer',
 
   //General
   timeRange: 'Time Range'
