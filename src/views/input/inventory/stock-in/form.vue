@@ -106,7 +106,7 @@
                     @change="handleInputChange(item, index)"
                   >
                     <el-option
-                      v-for="input in inputList"
+                      v-for="input in getFilteredInputs(item)"
                       :key="input.inputId"
                       :label="input.inputName"
                       :value="input.inputId"
@@ -123,10 +123,36 @@
                   <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.inputType')" :prop="`details.${index}.inputType`">
-                  <el-input :value="item.inputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputType')" />
+                  <el-select
+                    v-model="item.inputType"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.inputType')"
+                    class="full-width"
+                    @change="handleItemTypeChange(item, index)"
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="typeItem in options.input_type"
+                      :key="typeItem.value"
+                      :label="typeItem.label"
+                      :value="typeItem.value"
+                    />
+                  </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
-                  <el-input :value="item.agriculturalInputType" disabled :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')" />
+                  <el-select
+                    v-model="item.agriculturalInputType"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')"
+                    class="full-width"
+                    @change="handleItemCategoryChange(item, index)"
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="categoryItem in getFilteredCategories(item.inputType)"
+                      :key="categoryItem.value"
+                      :label="categoryItem.label"
+                      :value="categoryItem.value"
+                    />
+                  </el-select>
                 </el-form-item>
 <!--                <el-form-item :label="$t('input.inventory.stockIn.form.variety')" :prop="`details.${index}.variety`">
                   <el-input v-model="item.variety" disabled :placeholder="$t('input.inventory.stockIn.placeholder.variety')" />
@@ -330,22 +356,36 @@ const handleDistributionChange = async (distributionId) => {
 
       // 根据分发单明细创建入库明细
       for (const detail of details) {
-        // 从投入品列表中查找对应的投入品信息
-        const input = inputList.value.find(i => i.inputId === detail.inputId)
+        // 查找匹配的库存项（基于投入品类型和投入品品类）
+        // 注意：这里我们不再使用inputId进行匹配，而是使用投入品类型和品类
+        // 从后端返回的字段名为input_type和input_category
+        const inputType = detail.input_type || detail.inputType
+        const inputCategory = detail.input_category || detail.inputCategory
+
+        // 从投入品列表中查找第一个匹配投入品类型和品类的投入品作为默认值
+        let matchedInput = null
+        if (inputType && inputCategory) {
+          matchedInput = inputList.value.find(i =>
+            i.type === inputType && i.agriculturalInputType === inputCategory
+          )
+        }
+
+        // 获取数量字段（可能是required或quantity）
+        const quantity = detail.required || detail.quantity ||  0
 
         formData.details.push({
-          inputId: detail.inputId || '',
-          inputCode: input?.inputSku || '',
+          inputId: matchedInput ? matchedInput.inputId : '',
+          inputCode: matchedInput ? matchedInput.inputSku : '',
           batchNo: '', // 入库批次后端自动生成
           productionBatchNo: '', // 生产批次需手动填写
-          inputType: input ? getInputTypeText(input.type) : '',
-          agriculturalInputType: getAgriculturalInputTypeText(detail.cropType),
-          variety: detail.variety || '',
+          inputType: inputType || '', // 直接使用代码值（如 'IN01'）
+          agriculturalInputType: inputCategory || '', // 直接使用代码值（如 'IN01001'）
+          variety: detail.variety || detail.detail_variety || '',
           specification: '',
           unit: detail.unit || '',
-          quantity: detail.required || detail.quantity || null,
+          quantity: quantity,
           expiryDate: '',
-          qrCode: input?.qrCode || ''
+          qrCode: matchedInput ? matchedInput.qrCode : ''
         })
       }
 
@@ -361,8 +401,7 @@ const handleDistributionChange = async (distributionId) => {
 const handleInputChange = async (item, index) => {
   if (!item.inputId) {
     item.inputCode = ''
-    item.inputType = ''
-    item.agriculturalInputType = ''
+    // 不再清空类型和品类，保持用户选择
     item.variety = ''
     item.expiryDate = ''
     item.qrCode = ''
@@ -372,8 +411,13 @@ const handleInputChange = async (item, index) => {
   const selectedInput = inputList.value.find(input => input.inputId === item.inputId)
   if (selectedInput) {
     item.inputCode = selectedInput.inputSku || ''
-    item.inputType = getInputTypeText(selectedInput.type)
-    item.agriculturalInputType = getAgriculturalInputTypeText(selectedInput.agriculturalInputType)
+    // 如果用户没有手动选择类型和品类，则自动填充
+    if (!item.inputType) {
+      item.inputType = selectedInput.type || ''
+    }
+    if (!item.agriculturalInputType) {
+      item.agriculturalInputType = selectedInput.agriculturalInputType || ''
+    }
     item.variety = selectedInput.variety || ''
     item.qrCode = selectedInput.qrCode || ''
   }
@@ -399,6 +443,58 @@ const getAgriculturalInputTypeText = (type) => {
   if (!type || !options.value.input_category) return '-'
   const categoryItem = options.value.input_category.find(item => item.value === type)
   return categoryItem ? categoryItem.label : '-'
+}
+
+// 根据类型筛选品类选项
+const getFilteredCategories = (inputType) => {
+  const categoryList = options.value.input_category || []
+  if (!inputType) return []
+
+  if (inputType === 'IN01') {
+    return categoryList.filter(item => item.value.startsWith('IN01'))
+  } else if (inputType === 'IN02') {
+    return categoryList.filter(item => item.value.startsWith('IN02'))
+  }
+
+  return []
+}
+
+// 根据类型和品类筛选投入品列表
+const getFilteredInputs = (item) => {
+  let filteredList = inputList.value
+
+  // 如果选择了投入品类型，则筛选类型
+  if (item.inputType) {
+    filteredList = filteredList.filter(input => input.type === item.inputType)
+  }
+
+  // 如果选择了投入品品类，则进一步筛选品类
+  if (item.agriculturalInputType) {
+    filteredList = filteredList.filter(input => input.agriculturalInputType === item.agriculturalInputType)
+  }
+
+  return filteredList
+}
+
+// 处理投入品类型变化
+const handleItemTypeChange = (item, index) => {
+  // 清空品类和投入品名称
+  item.agriculturalInputType = ''
+  item.inputId = ''
+  item.inputCode = ''
+  item.variety = ''
+  item.expiryDate = ''
+  item.qrCode = ''
+}
+
+// 处理投入品品类变化
+const handleItemCategoryChange = (item, index) => {
+  // 清空投入品名称
+  item.inputId = ''
+  item.inputCode = ''
+  item.variety = ''
+  item.expiryDate = ''
+  item.qrCode = ''
 }
 
 const formData = reactive({
@@ -513,8 +609,8 @@ const loadData = async () => {
             inputCode: item.inputCode || item.input_code || '',
             batchNo: item.batchNo || item.batch_no || '',
             productionBatchNo: item.productionBatchNo || item.production_batch_no || '',
-            inputType: getInputTypeText(input ? input.type : (item.inputType || item.input_type)),
-            agriculturalInputType: getAgriculturalInputTypeText(item.agriculturalInputType || item.agricultural_input_type),
+            inputType: input ? input.type : (item.inputType || item.input_type || ''), // 使用代码值
+            agriculturalInputType: item.agriculturalInputType || item.agricultural_input_type || '', // 使用代码值
             variety: item.variety || '',
             specification: item.specification || '',
             unit: item.unit,
@@ -789,6 +885,45 @@ onMounted(async () => {
   }
 
   .item-fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .item-row {
+    padding: 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .el-button {
+    width: 100%;
+  }
+
+  .btn-text {
+    display: none;
+  }
+}
+</style>
+
+@media screen and (max-width: 480px) {
+  .page-header {
+    margin: -12px -12px 12px -12px;
+  }
+
+  .header-content {
+    padding: 0 12px;
+  }
+
+  .page-title {
+    font-size: 16px;
+  }
+
+  .form-wrapper {
+    padding: 12px;
+  }
+
+  .item-fields {
     grid-template-columns: 1fr;
   }
 
@@ -808,22 +943,3 @@ onMounted(async () => {
     display: none;
   }
 }
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 0 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .form-wrapper {
-    padding: 12px;
-  }
-}
-</style>
