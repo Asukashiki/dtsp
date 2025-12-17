@@ -84,6 +84,11 @@
           "index": "/input/demand/aggregation-state",
           "icon": "ri-building-4-line",
           "titleKey": "input.menu.stateAggregation"
+        },
+        {
+          "index": "/input/demand/demand-inquiry",
+          "icon": "ri-search-line",
+          "titleKey": "input.menu.demandInquiry"
         }
       ]
     },

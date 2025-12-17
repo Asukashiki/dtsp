@@ -12,12 +12,12 @@
             <p class="page-subtitle">{{ $t('districtAggregation.subtitle') }}</p>
           </div>
         </div>
-        <div class="header-right">
-          <el-button type="primary" size="large" @click="handleAddYear">
-            <i class="ri-add-line"></i>
-            {{ $t('districtAggregation.actions.addYear') }}
-          </el-button>
-        </div>
+<!--        <div class="header-right">-->
+<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
+<!--            <i class="ri-add-line"></i>-->
+<!--            {{ $t('districtAggregation.actions.addYear') }}-->
+<!--          </el-button>-->
+<!--        </div>-->
       </div>
 
       <!-- 内容区域 -->
@@ -61,9 +61,23 @@
                 :label="$t('districtAggregation.columns.subQuantity')"
                 min-width="140"
               >
-                <template #default="{ row }">
-                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
-                </template>
+              </el-table-column>
+              <el-table-column
+                  prop="submitQuantity"
+                  :label="$t('submitQuantity')"
+                  min-width="140"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="unsubmitQuantity"
+                  :label="$t('unsubmitQuantity')"
+                  min-width="140"
+              />
+              <el-table-column
+                  prop="auditQuantity"
+                  :label="$t('auditQuantity')"
+                  min-width="140"
+              >
               </el-table-column>
               <el-table-column
                 prop="status"
@@ -392,7 +406,8 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: '2'
     }
     const res = await getVillageDemandSummaryMainList(params)
 

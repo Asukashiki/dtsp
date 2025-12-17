@@ -29,6 +29,10 @@
               <span class="value">{{ data.breedBatchName }}</span>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.trialName') }}:</span>
+              <span class="value">{{ data.trialName }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.varietyName') }}:</span>
               <span class="value">{{ data.varietyName }}</span>
             </div>
@@ -57,10 +61,6 @@
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.inputSeedQuantity') }}:</span>
               <span class="value">{{ data.inputSeedQuantity }} kg</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.produceSeedQuantrity') }}:</span>
-              <span class="value">{{ data.produceSeedQuantrity }} kg</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.fromSeedLevel') }}:</span>

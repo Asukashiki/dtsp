@@ -87,6 +87,11 @@
                   :selectable="rowSelectable"
                 />
                 <el-table-column
+                  prop="year"
+                  :label="$t('Year')"
+                  min-width="120"
+                />
+                <el-table-column
                   prop="batchNo"
                   :label="$t('farmerDemand.columns.batchNo')"
                   min-width="150"

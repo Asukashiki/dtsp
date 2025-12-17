@@ -13,6 +13,40 @@ export default {
   addSuccess: '新增成功',
   editSuccess: '更新成功',
 
+  // Tabs
+  tabs: {
+    pendingApproval: '待审批',
+    approved: '已通过',
+  },
+
+  // Approval workflow
+  submitForAuditConfirm: '确定要提交审核吗？',
+  submitForAuditSuccess: '提交审核成功',
+  submitForAuditFailed: '提交审核失败',
+  approveConfirm: '确定要通过审核吗？',
+  approveSuccess: '审核通过成功',
+  approveFailed: '审核通过失败',
+  rejectConfirm: '确定要驳回吗？',
+  rejectSuccess: '驳回成功',
+  rejectFailed: '驳回失败',
+  
+  // Approval comments
+  approveCommentTitle: '审核意见',
+  approveCommentPrompt: '请输入审核通过的意见：',
+  approveCommentPlaceholder: '请输入审核意见...',
+  rejectCommentTitle: '驳回原因',
+  rejectCommentPrompt: '请输入驳回的原因：',
+  rejectCommentPlaceholder: '请输入驳回原因...',
+
+  // Batch operations
+  batchSubmitForAuditConfirm: '确定要批量提交 {count} 条记录审核吗？',
+  batchSubmitForAuditSuccess: '批量提交审核成功',
+  batchSubmitForAuditFailed: '批量提交审核失败',
+  batchApproveSuccess: '批量审核通过成功',
+  batchApproveFailed: '批量审核通过失败',
+  batchRejectSuccess: '批量驳回成功',
+  batchRejectFailed: '批量驳回失败',
+
   // Search & Filter
   searchPlaceholder: '搜索气象站ID',
   filterByParameter: '按参数筛选',
@@ -49,6 +83,7 @@ export default {
     source: '数据来源',
     remark: '备注',
     observerId: '观察员ID',
+    approvalComment: '审批意见',
   },
 
   // Form Placeholders
@@ -64,6 +99,7 @@ export default {
     unit: '请输入单位（如：mm、°C）',
     source: '请输入数据来源',
     remark: '请输入备注（可选）',
+    approvalComment: '请输入审批意见',
   },
 
   // Form Validation Rules
@@ -104,5 +140,10 @@ export default {
     auditTime: '审核时间',
     auditStatus: '审核状态',
     actions: '操作',
+  },
+
+  // Actions
+  actions: {
+    submit: '提交',
   },
 }
