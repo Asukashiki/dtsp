@@ -338,6 +338,7 @@ export default {
       },
 
       rules: {
+        distributeName: 'Please enter distribution name',
         oseId: 'Please select OSE Name',
         time: 'Please select distribution time',
         people: 'Please enter distribution operator name',

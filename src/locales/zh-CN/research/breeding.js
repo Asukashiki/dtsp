@@ -168,6 +168,7 @@ export default {
 
       // 表单验证
       rules: {
+        distributeName: '请输入分发名称',
         oseId: '请选择OSE名称',
         time: '请选择分发时间',
         people: '请输入分发操作人姓名',

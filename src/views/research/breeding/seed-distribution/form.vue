@@ -316,6 +316,9 @@ const formData = reactive({
 })
 
 const rules = computed(() => ({
+  distributeName: [
+    { required: true, message: t('research.breeding.seed.distribution.rules.distributeName'), trigger: 'blur' }
+  ],
   oseId: [
     { required: true, message: t('research.breeding.seed.distribution.rules.oseId'), trigger: 'change' }
   ],
