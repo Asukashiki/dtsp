@@ -81,6 +81,7 @@ export default {
   // 审核页
   audit: {
     title: '试验基础信息管理审核',
+    subtitle1: '对已提交试验数据进行审核',
     tabs: {
       pending: '待审核',
       audited: '已审核'

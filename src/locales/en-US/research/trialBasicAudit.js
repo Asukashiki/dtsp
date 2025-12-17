@@ -81,6 +81,7 @@ export default {
   // Audit Page
   audit: {
     title: 'Trial Information Audit',
+    subtitle1: 'Review the submitted test data',
     tabs: {
       pending: 'Pending Audit',
       audited: 'Audited'
