@@ -36,7 +36,7 @@ export default {
   stockStatus: 'Stock Status',
   stockStatus_notProcessed: 'Not Stocked Out',
   stockStatus_outPending: 'Out Pending',
-  stockStatus_outCompleted: 'Stocked Out',
+  stockStatus_outCompleted: 'Out of the warehouse',
   stockStatus_notFound: 'Not Found',
   stockInsufficient: 'Insufficient stock: available {available}, requested {requested}',
   releaseBy: 'Released By',
