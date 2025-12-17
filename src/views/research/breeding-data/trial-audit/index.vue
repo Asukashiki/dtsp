@@ -8,7 +8,7 @@
         </div>
         <div class="header-content">
           <h1 class="page-title">{{ t('research.trialBasicAudit.audit.title') }}</h1>
-          <p class="page-subtitle">{{ t('research.breedingData.trial.subtitle1') }}</p>
+          <p class="page-subtitle">{{ t('research.trialBasicAudit.audit.subtitle1') }}</p>
         </div>
       </div>
     </div>
