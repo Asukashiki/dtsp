@@ -342,6 +342,7 @@ import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getTrialBasicList, getTrialBasicInfo } from '@/api/breedingData'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -644,6 +645,27 @@ onMounted(() => {
   } else {
     // 新增模式：生成UUID作为样本编号
     formData.sampleId = generateUUID()
+
+    // 默认检测信息：检测人员、检测机构、检测日期
+    try {
+      const currentUser = getUserInfo()
+      const user = currentUser && currentUser.user ? currentUser.user : {}
+      if (!formData.testerName && user.name) {
+        formData.testerName = user.name
+      }
+      if (!formData.testOrganization && (user.organName || user.organ_name)) {
+        formData.testOrganization = user.organName || user.organ_name
+      }
+    } catch (e) {
+      // 忽略从本地获取用户信息的异常
+    }
+    if (!formData.testDate) {
+      const d = new Date()
+      const yyyy = d.getFullYear()
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
+      formData.testDate = `${yyyy}-${mm}-${dd}`
+    }
   }
 })
 </script>

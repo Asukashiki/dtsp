@@ -543,6 +543,7 @@ export default {
       healthTraceability: '健康与追溯',
       testingInfo: '检测信息',
       operatorInfo: '操作信息',
+      auditStatus: '审核状态',
 
       batchId: '育种批次ID',
       trialId: '试验ID',

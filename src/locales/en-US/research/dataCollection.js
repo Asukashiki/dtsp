@@ -508,6 +508,7 @@ export default {
       healthTraceability: 'Health & Traceability',
       testingInfo: 'Testing Information',
       operatorInfo: 'Operator Information',
+      auditStatus: 'Audit Status',
 
       batchId: 'Breeding Batch ID',
       trialId: 'Trial ID',
