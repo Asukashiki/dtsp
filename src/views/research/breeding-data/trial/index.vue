@@ -122,6 +122,11 @@
                     <StatusTag :status="row.trialStatus || row.workflowStatus || 'S0'" />
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('research.breedingData.trial.columns.status')" width="120" align="center">
+                  <template #default="{ row }">
+                    {{ getTrialStatusText(row) }}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
                 <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
                   <template #default="{ row }">
@@ -185,6 +190,10 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.auditStatus') }}:</span>
                     <span class="value">{{ item.trialStatus || item.workflowStatus }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.status') }}:</span>
+                    <span class="value">{{ getTrialStatusText(item) }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -421,6 +430,19 @@ onMounted(() => {
   loadBatchOptions()
   getList()
 })
+
+/**
+ * 显示用状态（业务映射）：
+ * - 审核通过(S2) => completed
+ * - 审核中(S1)   => Active
+ * 其他状态返回 "-"
+ */
+const getTrialStatusText = (row) => {
+  const s = row?.workflowStatus || row?.trialStatus
+  if (s === 'S2') return 'completed'
+  if (s === 'S1') return 'Active'
+  return '-'
+}
 </script>
 
 <style lang="scss" scoped>
