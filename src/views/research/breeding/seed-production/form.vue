@@ -98,6 +98,7 @@
                   :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
                   clearable
                   style="width: 100%"
+                  @change="handleSeedLevelChange"
                 >
                   <el-option label="Breeder" value="Breeder" />
                   <el-option label="Pre-Basic" value="Pre-Basic" />
@@ -110,9 +111,14 @@
                   :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
                   clearable
                   style="width: 100%"
+                  :disabled="!formData.fromSeedLevel"
                 >
-                  <el-option label="Pre-Basic" value="Pre-Basic" />
-                  <el-option label="Basic" value="Basic" />
+                  <el-option
+                    v-for="option in toSeedLevelOptions"
+                    :key="option.value"
+                    :label="option.label"
+                    :value="option.value"
+                  />
                 </el-select>
               </el-form-item>
             </div>
@@ -217,6 +223,9 @@ const formData = reactive({
   fromSeedLevel: '',
   toSeedLevel: ''
 })
+
+// 种子等级联动规则
+const toSeedLevelOptions = ref([])
 
 // 下拉选项
 const breedBatchList = ref([])
@@ -409,6 +418,21 @@ const handleLandChange = (landName) => {
     console.warn('Land not found:', landName)
     console.warn('Available lands:', landList.value.map(l => l.landName))
     formData.landId = ''
+  }
+}
+
+// 种子等级联动规则
+const handleSeedLevelChange = (value) => {
+  // 清空目标种子等级
+  formData.toSeedLevel = ''
+  
+  // 根据源种子等级设置目标种子等级可选值
+  if (value === 'Breeder') {
+    toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
+  } else if (value === 'Pre-Basic') {
+    toSeedLevelOptions.value = [{ label: 'Basic', value: 'Basic' }]
+  } else {
+    toSeedLevelOptions.value = []
   }
 }
 
