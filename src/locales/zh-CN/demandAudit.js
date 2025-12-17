@@ -77,6 +77,13 @@ export default {
     auditOpinionRequired: '请输入驳回原因',
   },
 
+  // 统一审核对话框
+  auditDialog: {
+    title: '审核',
+    auditOpinion: '审核意见',
+    auditOpinionPlaceholder: '请输入审核意见(选填)',
+  },
+
   lockBatchDialog: {
     title: '锁定批次',
     message: '锁定后批次数据将不可修改，确定要锁定该批次吗？',

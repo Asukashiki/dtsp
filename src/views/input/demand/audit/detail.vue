@@ -82,15 +82,15 @@
             </div>
             <div class="info-item">
               <div class="label">{{ $t('farmerDemand.form.zone') }}</div>
-              <div class="value">{{ detailData.zone || '-' }}</div>
+              <div class="value">{{ detailData.zoneName || '-' }}</div>
             </div>
             <div class="info-item">
               <div class="label">{{ $t('farmerDemand.form.woreda') }}</div>
-              <div class="value">{{ detailData.woreda || '-' }}</div>
+              <div class="value">{{ detailData.woredaName || '-' }}</div>
             </div>
             <div class="info-item">
               <div class="label">{{ $t('farmerDemand.form.kebele') }}</div>
-              <div class="value">{{ detailData.kebele || '-' }}</div>
+              <div class="value">{{ detailData.kebeleName || '-' }}</div>
             </div>
             <!-- <div class="info-item">
               <div class="label">{{ $t('farmerDemand.form.village') }}</div>

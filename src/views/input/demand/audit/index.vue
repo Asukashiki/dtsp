@@ -29,32 +29,32 @@
               <span>{{ $t('demandAudit.list') }}</span>
             </div>
             <div class="header-actions">
-              <el-button
-                type="primary"
-                @click="handleBatchApprove"
-                :disabled="selectedRows.length === 0"
-                v-if="activeTab === 'pending'"
-              >
-                <i class="ri-check-line"></i>
-                {{ $t('demandAudit.actions.batchApprove') }}
-              </el-button>
-              <el-button
-                type="danger"
-                @click="handleBatchReject"
-                :disabled="selectedRows.length === 0"
-                v-if="activeTab === 'pending'"
-              >
-                <i class="ri-close-line"></i>
-                {{ $t('demandAudit.actions.batchReject') }}
-              </el-button>
+<!--              <el-button-->
+<!--                type="primary"-->
+<!--                @click="handleBatchApprove"-->
+<!--                :disabled="selectedRows.length === 0"-->
+<!--                v-if="activeTab === 'pending'"-->
+<!--              >-->
+<!--                <i class="ri-check-line"></i>-->
+<!--                {{ $t('demandAudit.actions.batchApprove') }}-->
+<!--              </el-button>-->
+<!--              <el-button-->
+<!--                type="danger"-->
+<!--                @click="handleBatchReject"-->
+<!--                :disabled="selectedRows.length === 0"-->
+<!--                v-if="activeTab === 'pending'"-->
+<!--              >-->
+<!--                <i class="ri-close-line"></i>-->
+<!--                {{ $t('demandAudit.actions.batchReject') }}-->
+<!--              </el-button>-->
             </div>
           </div>
 
           <div class="card-body">
-            <el-tabs v-model="activeTab">
-              <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />
-              <el-tab-pane :label="$t('demandAudit.tabs.approved')" name="approved" />
-            </el-tabs>
+<!--            <el-tabs v-model="activeTab">-->
+<!--              <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />-->
+<!--              <el-tab-pane :label="$t('demandAudit.tabs.approved')" name="approved" />-->
+<!--            </el-tabs>-->
 
             <div v-if="activeTab === 'pending'">
               <!-- 搜索区域 -->
@@ -150,11 +150,11 @@
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="success" @click="handleApprove(row)">
+                      <el-button link type="success" v-if ="row.status === '1'"@click="handleApprove(row)">
                         <i class="ri-check-line"></i>
                         {{ $t('demandAudit.actions.approve') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleReject(row)">
+                      <el-button link type="danger" v-if ="row.status === '1'" @click="handleReject(row)">
                         <i class="ri-close-line"></i>
                         {{ $t('demandAudit.actions.reject') }}
                       </el-button>
@@ -411,58 +411,31 @@
       </div>
     </div>
 
-    <!-- 审核通过对话框 -->
+    <!-- 统一审核对话框 -->
     <el-dialog
-      v-model="approveDialogVisible"
-      :title="$t('demandAudit.approveDialog.title')"
+      v-model="auditDialogVisible"
+      :title="$t('demandAudit.auditDialog.title')"
       width="500px"
     >
-      <!-- <el-form :model="approveForm" label-width="100px">
-        <el-form-item :label="$t('demandAudit.approveDialog.remark')">
+      <el-form :model="auditForm" ref="auditFormRef" label-width="120px">
+        <el-form-item :label="$t('demandAudit.auditDialog.auditOpinion')">
           <el-input
-            v-model="approveForm.remark"
+            v-model="auditForm.auditOpinion"
             type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.approveDialog.remarkPlaceholder')"
+            :rows="4"
+            :placeholder="$t('demandAudit.auditDialog.auditOpinionPlaceholder')"
           />
         </el-form-item>
-      </el-form> -->
+      </el-form>
       <template #footer>
-        <el-button @click="approveDialogVisible = false">{{ $t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="confirmApprove" :loading="submitting">
-          {{ $t('common.confirm') }}
+        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button v-if="auditAction === 'reject'" type="danger" @click="handleAuditSubmit" :loading="submitting">
+          <i class="ri-close-line"></i>
+          {{ $t('demandAudit.actions.reject') }}
         </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 审核驳回对话框 -->
-    <el-dialog
-      v-model="rejectDialogVisible"
-      :title="$t('demandAudit.rejectDialog.title')"
-      width="500px"
-    >
-      <!-- <el-form :model="rejectForm" :rules="rejectRules" ref="rejectFormRef" label-width="100px">
-        <el-form-item :label="$t('demandAudit.rejectDialog.auditOpinion')" prop="auditOpinion">
-          <el-input
-            v-model="rejectForm.auditOpinion"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.auditOpinionPlaceholder')"
-          />
-        </el-form-item>
-        <el-form-item :label="$t('demandAudit.rejectDialog.remark')">
-          <el-input
-            v-model="rejectForm.remark"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('demandAudit.rejectDialog.remarkPlaceholder')"
-          />
-        </el-form-item>
-      </el-form> -->
-      <template #footer>
-        <el-button @click="rejectDialogVisible = false">{{ $t('common.cancel') }}</el-button>
-        <el-button type="danger" @click="confirmReject" :loading="submitting">
-          {{ $t('common.confirm') }}
+        <el-button v-if="auditAction === 'approve'" type="primary" @click="handleAuditSubmit" :loading="submitting">
+          <i class="ri-check-line"></i>
+          {{ $t('demandAudit.actions.approve') }}
         </el-button>
       </template>
     </el-dialog>
@@ -521,26 +494,13 @@ const getAuditLevelLabel = (level) => {
   return auditLevelOptions.value[level] || level
 }
 
-// 审核通过对话框
-const approveDialogVisible = ref(false)
-const approveForm = reactive({
+// 统一审核对话框
+const auditDialogVisible = ref(false)
+const auditFormRef = ref(null)
+const auditAction = ref('') // 'approve' or 'reject'
+const auditForm = reactive({
   ids: [],
-  remark: ''
-})
-
-// 审核驳回对话框
-const rejectDialogVisible = ref(false)
-const rejectForm = reactive({
-  ids: [],
-  auditOpinion: '',
-  remark: ''
-})
-
-const rejectFormRef = ref(null)
-const rejectRules = reactive({
-  auditOpinion: [
-    { required: true, message: t('demandAudit.rejectDialog.auditOpinionRequired'), trigger: 'blur' }
-  ]
+  auditOpinion: ''
 })
 
 // 加载待审核数据
@@ -641,11 +601,22 @@ const handleView = (row) => {
   router.push({ name: 'DemandAuditDetail', params: { id: row.id } })
 }
 
+// 打开审核对话框（单个记录）
+const openAuditDialog = (row, action) => {
+  auditForm.ids = [row.id]
+  auditForm.auditOpinion = ''
+  auditAction.value = action
+  auditDialogVisible.value = true
+}
+
 // 单个审核通过
 const handleApprove = (row) => {
-  approveForm.ids = [row.id]
-  approveForm.remark = ''
-  approveDialogVisible.value = true
+  openAuditDialog(row, 'approve')
+}
+
+// 单个审核驳回
+const handleReject = (row) => {
+  openAuditDialog(row, 'reject')
 }
 
 // 批量审核通过
@@ -654,54 +625,10 @@ const handleBatchApprove = () => {
     ElMessage.warning(t('demandAudit.messages.selectItems'))
     return
   }
-  approveForm.ids = selectedRows.value.map(row => row.id)
-  approveForm.remark = ''
-  approveDialogVisible.value = true
-}
-
-// 确认审核通过
-const confirmApprove = async () => {
-  try {
-    await ElMessageBox.confirm(
-      t('demandAudit.approveDialog.confirmMessage', { count: approveForm.ids.length }),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    )
-
-    submitting.value = true
-    const res = await approveDemand({
-      ids: approveForm.ids,
-      remark: approveForm.remark || undefined
-    })
-
-    if (res.code === 200) {
-      ElMessage.success(t('demandAudit.approveDialog.success'))
-      approveDialogVisible.value = false
-      selectedRows.value = []
-      loadData()
-    } else {
-      ElMessage.error(res.msg || t('demandAudit.messages.operationFailed'))
-    }
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('Failed to approve:', error)
-      ElMessage.error(t('demandAudit.messages.operationFailed'))
-    }
-  } finally {
-    submitting.value = false
-  }
-}
-
-// 单个审核驳回
-const handleReject = (row) => {
-  rejectForm.ids = [row.id]
-  rejectForm.auditOpinion = '1'
-  rejectForm.remark = ''
-  rejectDialogVisible.value = true
+  auditForm.ids = selectedRows.value.map(row => row.id)
+  auditForm.auditOpinion = ''
+  auditAction.value = 'approve'
+  auditDialogVisible.value = true
 }
 
 // 批量审核驳回
@@ -710,51 +637,55 @@ const handleBatchReject = () => {
     ElMessage.warning(t('demandAudit.messages.selectItems'))
     return
   }
-  rejectForm.ids = selectedRows.value.map(row => row.id)
-  rejectForm.auditOpinion = '1'
-  rejectForm.remark = ''
-  rejectDialogVisible.value = true
+  auditForm.ids = selectedRows.value.map(row => row.id)
+  auditForm.auditOpinion = ''
+  auditAction.value = 'reject'
+  auditDialogVisible.value = true
 }
 
+// 统一处理审核提交（不再弹出确认框，直接提交）
+const handleAuditSubmit = async () => {
+  const isApprove = auditAction.value === 'approve'
+  const successKey = isApprove ? 'demandAudit.approveDialog.success' : 'demandAudit.rejectDialog.success'
 
-// 确认审核驳回
-const confirmReject = async () => {
   try {
-    await ElMessageBox.confirm(
-      t('demandAudit.rejectDialog.confirmMessage', { count: rejectForm.ids.length }),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    )
-
     submitting.value = true
-    const res = await rejectDemand({
-      ids: rejectForm.ids,
-      auditOpinion: rejectForm.auditOpinion,
-      remark: rejectForm.remark || undefined
-    })
+
+    let res
+    if (isApprove) {
+      res = await approveDemand({
+        ids: auditForm.ids,
+        remark: auditForm.auditOpinion || undefined
+      })
+    } else {
+      res = await rejectDemand({
+        ids: auditForm.ids,
+        auditOpinion: auditForm.auditOpinion || '1',
+        remark: auditForm.auditOpinion || undefined
+      })
+    }
 
     if (res.code === 200) {
-      ElMessage.success(t('demandAudit.rejectDialog.success'))
-      rejectDialogVisible.value = false
+      ElMessage.success(t(successKey))
+      auditDialogVisible.value = false
       selectedRows.value = []
       loadData()
-      loadApprovedData()
+      if (!isApprove) {
+        loadApprovedData()
+      }
     } else {
       ElMessage.error(res.msg || t('demandAudit.messages.operationFailed'))
     }
   } catch (error) {
-    if (error !== 'cancel' && error !== false) {
-      console.error('Failed to reject:', error)
-      ElMessage.error(t('demandAudit.messages.operationFailed'))
-    }
+    console.error(`Failed to ${auditAction.value}:`, error)
+    ElMessage.error(t('demandAudit.messages.operationFailed'))
   } finally {
     submitting.value = false
   }
 }
+
+
+
 
 // 分页
 const handleSizeChange = () => {
