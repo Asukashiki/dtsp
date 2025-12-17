@@ -21,12 +21,12 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.breedSeedProduceBatchId') }}:</span>
-              <span class="value">{{ data.breedSeedProduceBatchId }}</span>
+              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchName') }}:</span>
+              <span class="value">{{ data.produceBatchName }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.breedBatchId') }}:</span>
-              <span class="value">{{ data.breedBatchId }}</span>
+              <span class="label">{{ $t('research.breeding.seed.production.form.breedBatchName') }}:</span>
+              <span class="value">{{ data.breedBatchName }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.varietyName') }}:</span>
@@ -63,13 +63,21 @@
               <span class="value">{{ data.produceSeedQuantrity }} kg</span>
             </div>
             <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.fromSeedLevel') }}:</span>
+              <span class="value">{{ data.fromSeedLevel }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.toSeedLevel') }}:</span>
+              <span class="value">{{ data.toSeedLevel }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.operatorName') }}:</span>
               <span class="value">{{ data.operatorName }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.produceStatus') }}:</span>
               <el-tag type="success">
-                {{ $t(`research.breeding.seed.production.status.${data.produceStatus}`) }}
+                {{ data.produceStatus }}
               </el-tag>
             </div>
             <div class="detail-item">

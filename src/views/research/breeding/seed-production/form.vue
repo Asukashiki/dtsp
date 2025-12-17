@@ -27,10 +27,19 @@
               {{ $t('research.breeding.seed.production.form.basicInfo') }}
             </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchId')" prop="breedBatchId">
+            <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
+              <el-input
+                v-model="formData.produceBatchName"
+                :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
+                clearable
+                style="width: 100%"
+              />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
               <el-select
-                v-model="formData.breedBatchId"
-                :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchId')"
+                v-model="formData.breedBatchName"
+                :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
                 filterable
                 clearable
                 style="width: 100%"
@@ -39,11 +48,11 @@
                 <el-option
                   v-for="batch in breedBatchList"
                   :key="batch.batchId"
-                  :label="batch.batchId"
+                  :label="batch.batchName"
                   :value="batch.batchId"
                 >
                   <div style="display: flex; justify-content: space-between;">
-                    <span>{{ batch.batchId }}</span>
+                    <span>{{ batch.batchName }}</span>
                     <el-tag type="success" size="small" effect="plain">
                       {{ batch.status }}
                     </el-tag>
@@ -58,6 +67,30 @@
                 disabled
                 :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
               />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
+              <el-select
+                v-model="formData.fromSeedLevel"
+                :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
+                clearable
+                style="width: 100%"
+              >
+                <el-option label="Breeder" value="Breeder" />
+                <el-option label="Pre-Basic" value="Pre-Basic" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
+              <el-select
+                v-model="formData.toSeedLevel"
+                :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
+                clearable
+                style="width: 100%"
+              >
+                <el-option label="Pre-Basic" value="Pre-Basic" />
+                <el-option label="Basic" value="Basic" />
+              </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
@@ -106,16 +139,6 @@
                 style="width: 100%"
               />
             </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.produceSeedQuantrity')" prop="produceSeedQuantrity">
-              <el-input-number
-                v-model="formData.produceSeedQuantrity"
-                :placeholder="$t('research.breeding.seed.production.placeholder.produceSeedQuantrity')"
-                :min="0"
-                :precision="2"
-                style="width: 100%"
-              />
-            </el-form-item>
           </div>
 
           <div class="form-actions">
@@ -136,7 +159,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getLandList } from '@/api/newFarm'
-import { getBatchOptions } from '@/api/breedingData'
+import { getBreedingBatchList } from '@/api/breedingData'
 
 const { t } = useI18n()
 
@@ -148,7 +171,9 @@ const submitting = ref(false)
 
 // 表单数据
 const formData = reactive({
+  produceBatchName: '',
   breedBatchId: '',
+  breedBatchName: '',
   varietyId: '',
   varietyName: '',
   cropType: '',
@@ -156,7 +181,8 @@ const formData = reactive({
   landId: '',
   landName: '',
   inputSeedQuantity: null,
-  produceSeedQuantrity: null
+  fromSeedLevel: '',
+  toSeedLevel: ''
 })
 
 // 下拉选项
@@ -172,6 +198,12 @@ const rules = computed(() => ({
   varietyName: [
     { required: true, message: t('research.breeding.seed.production.rules.varietyNameRequired'), trigger: 'change' }
   ],
+  fromSeedLevel: [
+    { required: true, message: t('research.breeding.seed.production.rules.fromSeedLevelRequired'), trigger: 'change' }
+  ],
+  toSeedLevel: [
+    { required: true, message: t('research.breeding.seed.production.rules.toSeedLevelRequired'), trigger: 'change' }
+  ],
   time: [
     { required: true, message: t('research.breeding.seed.production.rules.timeRequired'), trigger: 'change' }
   ],
@@ -181,28 +213,25 @@ const rules = computed(() => ({
   inputSeedQuantity: [
     { required: true, message: t('research.breeding.seed.production.rules.inputSeedQuantityRequired'), trigger: 'blur' },
     { type: 'number', min: 0.01, message: t('research.breeding.seed.production.rules.inputSeedQuantityMin'), trigger: 'blur' }
-  ],
-  produceSeedQuantrity: [
-    { required: true, message: t('research.breeding.seed.production.rules.produceSeedQuantrityRequired'), trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        if (value < formData.inputSeedQuantity) {
-          callback(new Error(t('research.breeding.seed.production.rules.produceSeedQuantrityMin')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
   ]
 }))
 
 // 加载批次选项
 const loadBatchOptions = async () => {
   try {
-    const res = await getBatchOptions()
-    // 仅显示状态为 done 的批次
-    breedBatchList.value = (res.data || []).filter(item => item.status === 'done')
+    // 参数
+    const params = {
+      pageNum: 1,
+      pageSize: 1000,
+      status: 'Finished'
+    }
+    const res = await getBreedingBatchList(params)
+    // 格式化数据用于下拉框：使用batchName作为标签，batchId作为值
+    breedBatchList.value = (res.rows || []).map(item => ({
+      ...item,
+      label: item.batchName,
+      value: item.batchId
+    }))
     console.log('Loaded batches:', breedBatchList.value.length, breedBatchList.value)
   } catch (error) {
     console.error('Failed to load batch options:', error)
@@ -256,6 +285,8 @@ const handleBatchChange = (batchId) => {
   console.log('Current breedBatchList:', breedBatchList.value)
 
   if (!batchId) {
+    formData.breedBatchId = ''
+    formData.breedBatchName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
@@ -267,16 +298,22 @@ const handleBatchChange = (batchId) => {
   console.log('Found batch:', selectedBatch)
 
   if (selectedBatch) {
+    formData.breedBatchId = selectedBatch.batchId || ''
+    formData.breedBatchName = selectedBatch.batchName || ''
     formData.varietyId = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
     formData.cropType = selectedBatch.cropType || ''
     console.log('Updated formData:', {
+      breedBatchId: formData.breedBatchId,
+      breedBatchName: formData.breedBatchName,
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType
     })
   } else {
     console.warn('Batch not found:', batchId)
+    formData.breedBatchId = ''
+    formData.breedBatchName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
@@ -331,7 +368,9 @@ const handleSubmit = async () => {
 
     // 提交数据，包含从接口读取的完整字段
     const submitData = {
+      produceBatchName: formData.produceBatchName,
       breedBatchId: formData.breedBatchId,
+      breedBatchName: formData.breedBatchName,
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType,
@@ -339,7 +378,8 @@ const handleSubmit = async () => {
       landId: formData.landId,
       landName: formData.landName,
       inputSeedQuantity: formData.inputSeedQuantity,
-      produceSeedQuantrity: formData.produceSeedQuantrity
+      fromSeedLevel: formData.fromSeedLevel,
+      toSeedLevel: formData.toSeedLevel
     }
 
     console.log('Submitting data:', submitData)

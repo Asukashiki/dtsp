@@ -37,6 +37,8 @@ export default {
         landName: '地块名称',
         inputSeedQuantity: '投入种子数量',
         produceSeedQuantrity: '产出种子数量',
+        fromSeedLevel: '种子等级来源',
+        toSeedLevel: '种子等级去向',
         operatorId: '操作人ID',
         operatorName: '操作人姓名',
         produceStatus: '生产状态',
@@ -48,6 +50,8 @@ export default {
       placeholder: {
         breedBatchId: '请选择育种批次ID',
         varietyName: '请选择品种名称',
+        fromSeedLevel: '请选择种子等级来源',
+        toSeedLevel: '请选择种子等级去向',
         time: '请选择生产时间',
         landName: '请选择地块名称',
         inputSeedQuantity: '请输入投入种子数量(kg)',
@@ -58,6 +62,8 @@ export default {
       rules: {
         breedBatchIdRequired: '请选择育种批次ID',
         varietyNameRequired: '请选择品种名称',
+        fromSeedLevelRequired: '请选择种子等级来源',
+        toSeedLevelRequired: '请选择种子等级去向',
         timeRequired: '请选择生产时间',
         landNameRequired: '请选择地块名称',
         inputSeedQuantityRequired: '请输入投入种子数量',
@@ -69,12 +75,16 @@ export default {
       // 列表列
       columns: {
         breedSeedProduceBatchId: '生产批次ID',
+        produceBatchName: '生产批次名称',
+        breedBatchName: '育种批次名称',
         varietyName: '品种名称',
         cropType: '作物类型',
         time: '生产时间',
         landName: '地块名称',
         inputSeedQuantity: '投入数量(kg)',
         produceSeedQuantrity: '产出数量(kg)',
+        fromSeedLevel: '种子等级来源',
+        toSeedLevel: '种子等级去向',
         operatorName: '操作人',
         produceStatus: '生产状态',
         createTime: '创建时间',
