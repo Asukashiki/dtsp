@@ -97,7 +97,7 @@ export default {
     form: {
       specificationModel: 'Specification Model',
       inputBizId:'Input ID',
-      unit: 'measurement',
+      unit: 'Unit',
       referencePrice: 'Reference Price (Br)',
       isImport: 'Imported',
       imageUrl: 'Product Image URL',
@@ -125,7 +125,7 @@ export default {
     // 表单占位符
     placeholder: {
       specificationModel: 'Enter specification model (max 100 characters)',
-      unit: 'Enter measurement (e.g.: kg, L, bag, piece)',
+      unit: 'Enter Unit (e.g.: kg, L, bag, piece)',
       referencePrice: 'Enter reference price (≥ 0)',
       imageUrl: 'Enter product image URL (max 255 characters)',
       description: 'Enter product description (max 500 characters)',
@@ -685,7 +685,7 @@ export default {
       inputBatchId: 'Input Batch ID',
       inputType: 'Input Type',
       specification: 'Specification Model',
-      unit: 'measurement',
+      unit: 'Unit',
       expiryDate: 'Expiry Date',
       qrCode: 'QR Code',
       addMaterial: 'Add Material',
@@ -744,7 +744,7 @@ export default {
         inputType: 'Input Type',
         agriculturalInputType: 'Category',
         specification: 'Specification Model',
-        unit: 'measurement',
+        unit: 'Unit',
         qrCode: 'QR Code',
         qrCodeHint: 'Scan QR code for more information',
         relatedOrderNo: 'Related Order Number',
@@ -780,7 +780,7 @@ export default {
         inputBatchId: 'Enter input batch ID (optional)',
         inputType: 'Input type (auto-filled)',
         specification: 'Enter specification model (optional)',
-        unit: 'Enter measurement',
+        unit: 'Enter Unit',
         qrCode: 'QR code (auto-obtained)',
         inboundBatch: 'Inbound batch (system auto-generated)',
         productionBatch: 'Enter production batch (optional)',
@@ -802,7 +802,7 @@ export default {
         detailsComplete: 'Please complete all material detail information',
         materialIdRequired: 'Please enter material ID',
         materialNameRequired: 'Please enter material name',
-        unitRequired: 'Please enter measurement'
+        unitRequired: 'Please enter Unit'
       },
       columns: {
         orderId: 'Stock In Order Number',
@@ -908,7 +908,7 @@ export default {
         materialBatchId: 'Material Batch Number',
         quantity: 'Stock Out Quantity',
         specModel: 'Specification Model',
-        unitOfMeasure: 'measurement',
+        unitOfMeasure: 'Unit',
         availableQuantity: 'Available Inventory',
         itemRemarks: 'Item Remarks',
         batchSplits: 'Batch Split Details',
@@ -936,7 +936,7 @@ export default {
         batchNo: 'Select batch number',
         quantity: 'Enter stock out quantity',
         specModel: 'Enter specification model (optional)',
-        unitOfMeasure: 'Enter measurement (optional)',
+        unitOfMeasure: 'Enter Unit (optional)',
         itemRemarks: 'Enter item remarks',
         auditRemark: 'Enter audit opinion',
         inputCategory: 'Category (auto-filled)',

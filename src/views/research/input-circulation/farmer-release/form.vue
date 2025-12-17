@@ -104,9 +104,11 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="120">
             <template #default="scope">
-              <el-input v-model="scope.row.unit" :placeholder="$t('common.pleaseInput')" />
+              <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
+                <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </template>
           </el-table-column>
 
@@ -150,7 +152,7 @@ import { useUserStore } from '@/store/user'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -347,7 +349,7 @@ const addDetail = () => {
     inputType: '',
     inputCategory: '',
     quantity: 0,
-    unit: 'kg',
+    unit: '',
     unitPrice: 0,
     totalPrice: 0,
     maxQuantity: null,

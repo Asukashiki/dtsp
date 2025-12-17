@@ -40,6 +40,7 @@ export default {
   preview: 'Preview',
   download: 'Download',
   noFile: 'File not found',
+  noImage: 'No image',
   loadFailed: 'Load failed',
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',

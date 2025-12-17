@@ -15,7 +15,7 @@
 
       <!-- 表单区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading || dictLoading">
           <!-- 批次基本信息 -->
           <div class="info-card">
             <div class="card-header">
@@ -38,8 +38,20 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.cropType')" prop="cropType">
-                    <el-select v-model="formData.cropType" :placeholder="$t('research.breedingData.batch.placeholder.cropType')" style="width: 100%" @change="handleCropTypeChange" :disabled="isReadOnly">
-                      <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-select 
+                      v-model="formData.cropType" 
+                      :placeholder="$t('research.breedingData.batch.placeholder.cropType')" 
+                      style="width: 100%" 
+                      @change="handleCropTypeChange" 
+                      :disabled="isReadOnly"
+                      v-loading="dictLoading"
+                    >
+                      <el-option 
+                        v-for="item in options.crop_type" 
+                        :key="item.value" 
+                        :label="item.label" 
+                        :value="item.value" 
+                      />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -71,11 +83,20 @@
                         style="width: 100%"
                         :placeholder="$t('research.breedingData.batch.placeholder.year')"
                         :disabled-date="disablePastYears"
+                        :disabled="isReadOnly"
                       />
                       <div class="mt-1 text-xs text-gray-500">
                         {{ $t('research.breedingData.batch.hint.yearNoPastSeasonLogic') }}
                       </div>
                     </div>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.germplasmSource')" prop="germplasmSource">
+                    <el-select v-model="formData.germplasmSource" :placeholder="$t('research.breedingData.batch.placeholder.germplasmSource')" style="width: 100%" :disabled="isReadOnly">
+                      <el-option v-for="item in germplasmSourceOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
 
@@ -91,7 +112,14 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.status')" prop="status">
-                    <el-input :value="getStatusLabel(formData.status)" disabled style="width: 100%" />
+                    <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%" disabled>
+                      <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.workflowStatus')" prop="workflowStatus">
+                    <el-input :value="getLabelByValue('flow_status', formData.workflowStatus)" disabled style="width: 100%" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
@@ -100,6 +128,73 @@
                     </el-form-item>
                   </el-col>
               </el-row>
+            </div>
+          </div>
+
+          <!-- 元数据信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.breedingData.batch.form.metadataInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.createBy')">
+                    <el-input v-model="formData.createBy" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.createTime')">
+                    <el-input v-model="formData.createTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.updateBy')">
+                    <el-input v-model="formData.updateBy" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.batch.form.updateTime')">
+                    <el-input v-model="formData.updateTime" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 工作流信息 -->
+          <div class="info-card" v-if="showWorkflowInfo">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-git-commit-line"></i>
+                <span>{{ $t('research.breedingData.batch.form.workflowInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 审批意见输入框（仅在审批模式下显示） -->
+              <div v-if="pageMode === 'audit'">
+                <el-form-item :label="$t('research.breedingData.batch.form.approvalComment')" prop="approvalComment">
+                  <el-input 
+                    v-model="formData.approvalComment" 
+                    type="textarea" 
+                    :rows="4" 
+                    :placeholder="$t('research.breedingData.batch.placeholder.approvalComment')" 
+                  />
+                </el-form-item>
+              </div>
+
+              <!-- 历史审批信息 -->
+              <div class="mb-4">
+                <h4 class="mb-3">{{ $t('research.breedingData.batch.form.approvalHistory') }}</h4>
+                <el-table :data="approvalHistory" border stripe>
+                  <el-table-column :label="$t('research.breedingData.batch.form.approver')" prop="approver" width="200" />
+                  <el-table-column :label="$t('research.breedingData.batch.form.approvalTime')" prop="approvalTime" width="250" />
+                  <el-table-column :label="$t('research.breedingData.batch.form.comment')" prop="comment" />
+                </el-table>
+              </div>
             </div>
           </div>
 
@@ -126,18 +221,40 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type',
+  'flow_status'
+])
+
 const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.dataId)
 const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
 const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
+
+// 控制工作流信息部分的显示：仅在非草稿和非新建状态下显示
+const showWorkflowInfo = computed(() => {
+  // 新建模式下不显示
+  if (!isEdit.value && pageMode.value === 'add') {
+    return false
+  }
+  // 草稿状态(S0)和作废状态(S10)不显示
+  return !['S0', 'S10'].includes(formData.workflowStatus)
+})
+
+// 审批历史记录
+const approvalHistory = ref([])
 
 const formData = reactive({
   dataId: '',
@@ -148,10 +265,19 @@ const formData = reactive({
   breedingMethod: '',
   batchName: '',
   year: '',
+  germplasmSource: '',
   parentalSeedSource: '',
   objective: '',
-  status: 'S0', // 默认草稿状态
-  remarks: ''
+  status: 'Ongoing', // 新增的状态字段，默认值为 Ongoing
+  workflowStatus: 'S0', // 默认草稿状态
+  remarks: '',
+  // 元数据字段
+  createBy: '',
+  createTime: '',
+  updateBy: '',
+  updateTime: '',
+  // 审批意见字段
+  approvalComment: ''
 })
 
 const rules = {
@@ -179,16 +305,13 @@ const rules = {
       trigger: 'change'
     }
   ],
-  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }],
+  workflowStatus: [{ required: true, message: t('research.breedingData.batch.placeholder.workflowStatus'), trigger: 'change' }],
+  germplasmSource: [{ required: true, message: t('research.breedingData.batch.placeholder.germplasmSource'), trigger: 'change' }],
   parentalSeedSource: [{ required: true, message: t('research.breedingData.batch.placeholder.parentalSeedSource'), trigger: 'blur' }],
-  objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }]
+  objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }],
+  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }],
+  approvalComment: [{ required: true, message: t('research.breedingData.batch.placeholder.approvalComment'), trigger: 'blur' }]
 }
-
-const cropTypeOptions = [
-  { label: 'wheat', value: 'T01' },
-  { label: 'corn', value: 'T02' },
-  { label: 'teff', value: 'T03' }
-]
 
 const breedingMethodOptions = [
   { label: 'hybridization', value: 'hybridization' },
@@ -198,20 +321,26 @@ const breedingMethodOptions = [
   { label: 'wide_cross', value: 'wide_cross' }
 ]
 
-const getStatusLabel = (status) => {
-  const statusLabelMap = {
-    'S0': 'Draft',
-    'S1': 'Pending Approval',
-    'S2': 'Approved',
-    'S3': 'Rejected',
-    'S9': 'Archived',
-    'S10': 'Void'
-  }
-  return statusLabelMap[status] || status
-}
+const germplasmSourceOptions = [
+  { label: 'Ethiopian', value: 'Ethiopian' },
+  { label: 'International Center for Agricultural Research in the Dry Areas (ICARDA)', value: 'ICARDA' },
+  { label: 'International Maize and Wheat Improvement Center (CIMMYT)', value: 'CIMMYT' },
+  { label: 'International Rice Research Institute (IRRI)', value: 'IRRI' },
+  { label: 'International Institute of Tropical Agriculture (IITA)', value: 'IITA' },
+  { label: 'World Bank', value: 'World Bank' },
+  { label: 'CGIAR', value: 'CGIAR' },
+  { label: 'FAO', value: 'FAO' },
+  { label: 'Local Research Center', value: 'Local Research Center' },
+  { label: 'Private Company', value: 'Private Company' }
+]
+
+const statusOptions = [
+  { label: 'Ongoing', value: 'Ongoing' },
+  { label: 'Finished', value: 'Finished' }
+]
 
 const getActionButtons = () => {
-  const status = formData.status
+  const workflowStatus = formData.workflowStatus
   const mode = pageMode.value
   
   // 新建/编辑模式
@@ -284,8 +413,20 @@ const handleSubmitForAudit = async () => {
 }
 
 const handleApprove = async () => {
+  // 验证表单，特别是审批意见字段
+  const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+  if (!valid) return
+
   try {
-    await approveBatch(formData.dataId)
+    // 构造包含审批意见的完整DTO对象
+    const breedingBatchDTO = {
+      ...formData,
+      approvalComment: formData.approvalComment ? {
+        comment: formData.approvalComment
+      } : null
+    };
+    
+    await approveBatch(breedingBatchDTO)
     ElMessage.success(t('research.breedingData.batch.approveSuccess'))
     goBack()
   } catch (error) {
@@ -294,8 +435,20 @@ const handleApprove = async () => {
 }
 
 const handleReject = async () => {
+  // 验证表单，特别是审批意见字段
+  const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+  if (!valid) return
+
   try {
-    await rejectBatch(formData.dataId)
+    // 构造包含审批意见的完整DTO对象
+    const breedingBatchDTO = {
+      ...formData,
+      approvalComment: formData.approvalComment ? {
+        comment: formData.approvalComment
+      } : null
+    };
+    
+    await rejectBatch(breedingBatchDTO)
     ElMessage.success(t('research.breedingData.batch.rejectSuccess'))
     goBack()
   } catch (error) {
@@ -326,16 +479,60 @@ const handleCancelBatch = async () => {
 const getInfo = async () => {
   if (!isEdit.value) {
     // 新增模式下设置默认状态为草稿
-    formData.status = 'S0'
+    formData.status='Ongoing'
+    formData.workflowsStatus = 'S0'
+    
+    // 设置创建人和创建时间的默认值
+    if (userStore.userInfo && userStore.userInfo.user) {
+      const user = userStore.userInfo.user
+      formData.createBy = user.name || ''
+    }
+    
+    // 设置创建时间为当前系统时间
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+    formData.createTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    
     return
   }
   loading.value = true
   try {
+    // 获取包含审批意见的详细信息
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
     if (formData.year) {
       formData.year = String(formData.year)
     }
+    
+    // 设置审批历史记录
+    if (res.data.approvalComments) {
+      approvalHistory.value = res.data.approvalComments.map(comment => ({
+        approver: comment.approverName,
+        approvalTime: comment.approvalTime,
+        comment: comment.comment
+      }))
+    }
+    
+    // 在编辑模式下更新修改人和修改时间
+    if (userStore.userInfo && userStore.userInfo.user) {
+      const user = userStore.userInfo.user
+      formData.updateBy = user.name || ''
+    }
+    
+    // 设置修改时间为当前系统时间
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+    formData.updateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
   } catch (error) {
     console.error('Failed to fetch details:', error)
   } finally {

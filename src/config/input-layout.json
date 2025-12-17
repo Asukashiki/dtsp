@@ -4,7 +4,24 @@
   "icon": "ri-database-2-line",
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "menus": [
-      {
+    {
+      "index": "registration-management",
+      "icon": "ri-building-2-line",
+      "titleKey": "input.menu.registrationManagement",
+      "children": [
+        {
+          "index": "/input/registration",
+          "icon": "ri-file-add-line",
+          "titleKey": "input.menu.registration"
+        },
+        {
+          "index": "/input/registration/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "input.menu.registrationApproval"
+        }
+      ]
+    },
+    {
       "index": "newFarmManagement",
       "icon": "ri-plant-line",
       "titleKey": "newFarm.moduleName",
@@ -85,6 +102,11 @@
           "index": "/input/allocation/woreda",
           "icon": "ri-community-line",
           "titleKey": "allocation.menu.woredaAllocation"
+        },
+        {
+          "index": "/input/allocation/farmer",
+          "icon": "ri-user-line",
+          "titleKey": "allocation.menu.farmerAllocation"
         }
       ]
     },
