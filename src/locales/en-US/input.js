@@ -28,6 +28,7 @@ export default {
 
   // 菜单导航
   menu: {
+    demandInquiry:'Demand Inquiry',
     dashboard: 'Data Overview',
     registrationManagement: 'Registration Management',
     registration: 'Union/Cooperative Registration Application',

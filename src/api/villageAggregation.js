@@ -22,7 +22,7 @@ export const createVillageDemandSummaryMain = (data) => {
  */
 export const getVillageDemandSummaryMainList = (params) => {
   return request({
-    url: '/demand/input/summary/main/list',
+    url: '/demand/input/summary/main/listOnly12',
     method: 'get',
     params,
   })

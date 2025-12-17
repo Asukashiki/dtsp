@@ -846,6 +846,13 @@ const routes = [
         component: () => import('../views/input/demand/aggregation-state/index.vue'),
         meta: { title: '州级需求汇聚', requiresAuth: true }
       },
+      // 需求查询
+      {
+        path: 'demand/demand-inquiry',
+        name: 'DemandInquiry',
+        component: () => import('../views/input/demand/demand-inquiry/index.vue'),
+        meta: { title: '需求查询', requiresAuth: true }
+      },
       // 州农业部查看
       {
         path: 'demand/audit-state',
