@@ -101,7 +101,7 @@
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.stockIn.auditRemark') }}:</span>
-              <span class="value">{{ detailData.audit_remark || '-' }}</span>
+              <span class="value">{{ detailData.remark || '-' }}</span>
             </div>
           </div>
         </div>

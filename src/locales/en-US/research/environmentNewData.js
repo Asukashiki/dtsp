@@ -48,6 +48,7 @@ export default {
     unit: 'Unit',
     source: 'Data Source',
     remark: 'Remarks',
+    observerId: 'Observer ID',
   },
 
   // Form Placeholders
@@ -98,6 +99,10 @@ export default {
     createBy: 'Created By',
     createTime: 'Created Time',
     updateTime: 'Updated Time',
+    updateBy: 'Updated By',
+    auditBy: 'Audited By',
+    auditTime: 'Audit Time',
+    auditStatus: 'Audit Status',
     actions: 'Actions',
   },
 }

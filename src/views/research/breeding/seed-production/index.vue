@@ -66,8 +66,14 @@
         <div class="table-card pc-view">
           <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
             <el-table-column
-              prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.production.columns.breedSeedProduceBatchId')"
+              prop="produceBatchName"
+              :label="$t('research.breeding.seed.production.columns.produceBatchName')"
+              width="210"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="breedBatchName"
+              :label="$t('research.breeding.seed.production.columns.breedBatchName')"
               width="200"
               show-overflow-tooltip
             />
@@ -104,15 +110,17 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="produceSeedQuantrity"
-              :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')"
-              width="190"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.produceSeedQuantrity }} kg
-              </template>
-            </el-table-column>
+              prop="fromSeedLevel"
+              :label="$t('research.breeding.seed.production.columns.fromSeedLevel')"
+              min-width="120"
+              align="center"
+            />
+            <el-table-column
+              prop="toSeedLevel"
+              :label="$t('research.breeding.seed.production.columns.toSeedLevel')"
+              min-width="120"
+              align="center"
+            />
             <el-table-column
               prop="operatorName"
               :label="$t('research.breeding.seed.production.columns.operatorName')"
@@ -126,7 +134,7 @@
             >
               <template #default="{ row }">
                 <el-tag type="success" size="small">
-                  {{ $t(`research.breeding.seed.production.status.${row.produceStatus}`) }}
+                  {{ row.produceStatus }}
                 </el-tag>
               </template>
             </el-table-column>
@@ -164,7 +172,7 @@
           <div class="card-list">
             <div
               v-for="item in filteredList"
-              :key="item.breedSeedProduceBatchId"
+              :key="item.produceBatchName"
               class="production-card"
               @click="handleView(item)"
             >
@@ -175,8 +183,8 @@
               <h3 class="card-title">{{ item.varietyName }}</h3>
               <div class="card-info">
                 <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.breedSeedProduceBatchId') }}</span>
-                  <span class="info-value">{{ item.breedSeedProduceBatchId }}</span>
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchName') }}</span>
+                  <span class="info-value">{{ item.produceBatchName }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.production.columns.time') }}</span>
@@ -189,6 +197,14 @@
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceSeedQuantrity') }}</span>
                   <span class="info-value">{{ item.produceSeedQuantrity }} kg</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.fromSeedLevel') }}</span>
+                  <span class="info-value">{{ item.fromSeedLevel }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.toSeedLevel') }}</span>
+                  <span class="info-value">{{ item.toSeedLevel }}</span>
                 </div>
               </div>
               <div class="card-footer">
@@ -356,7 +372,7 @@ const handleDelete = (row) => {
   )
     .then(async () => {
       try {
-        const res = await deleteBreedSeedProduce(row.breedSeedProduceBatchId)
+        const res = await deleteBreedSeedProduce(row.produceBatchId)
         if (res.code === 200) {
           ElMessage.success(t('research.breeding.seed.production.deleteSuccess'))
           loadData()

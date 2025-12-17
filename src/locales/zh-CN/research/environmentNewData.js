@@ -48,6 +48,7 @@ export default {
     unit: '单位',
     source: '数据来源',
     remark: '备注',
+    observerId: '观察员ID',
   },
 
   // Form Placeholders
@@ -98,6 +99,10 @@ export default {
     createBy: '创建人',
     createTime: '创建时间',
     updateTime: '更新时间',
+    updateBy: '修改人',
+    auditBy: '审核人',
+    auditTime: '审核时间',
+    auditStatus: '审核状态',
     actions: '操作',
   },
 }

@@ -37,13 +37,15 @@
             :placeholder="$t('input.catalog.form.inputType')"
             class="filter-select"
             clearable
-            @change="handleSearch"
+            @change="handleMaterialTypeFilterChange"
           >
             <el-option :label="$t('input.catalog.type.all')" value="" />
-            <el-option :label="$t('input.catalog.type.seed')" value="seed" />
-            <el-option :label="$t('input.catalog.type.fertilizer')" value="fertilizer" />
-            <el-option :label="$t('input.catalog.type.pesticide')" value="pesticide" />
-            <el-option :label="$t('input.catalog.type.other')" value="other" />
+            <el-option
+              v-for="item in materialTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -62,7 +64,7 @@
             />
           </el-select>
 
-          <el-select
+<!--          <el-select
             v-model="filterStatus"
             :placeholder="$t('input.inventory.stock.filterByStatus')"
             class="filter-select"
@@ -73,7 +75,7 @@
             <el-option :label="$t('input.inventory.stock.status.normal')" value="0" />
             <el-option :label="$t('input.inventory.stock.status.nearExpiry')" value="1" />
             <el-option :label="$t('input.inventory.stock.status.expired')" value="2" />
-          </el-select>
+          </el-select>-->
         </div>
 
         <div class="action-row">
@@ -87,16 +89,6 @@
               <span class="btn-text">{{ $t('common.reset') }}</span>
             </el-button>
           </div>
-        </div>
-      </div>
-
-      <!-- 合计统计展示 -->
-      <div v-if="summaryData && summaryData.length > 0" class="summary-section">
-        <div class="summary-title">{{ $t('input.inventory.stock.summary.title') }}</div>
-        <div class="summary-content">
-          <span v-for="(item, index) in summaryData" :key="index" class="summary-item">
-            {{ getMaterialTypeText(item.material_type) }}: {{ $t('input.inventory.stock.summary.total') }} {{ item.total_quantity }} {{ item.unit }}
-          </span>
         </div>
       </div>
 
@@ -132,13 +124,13 @@
               {{ formatDate(row.expiry_date) }}
             </template>
           </el-table-column>
-          <el-table-column prop="status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
+<!--          <el-table-column prop="status" :label="$t('input.inventory.stock.columns.stockStatus')" width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="getStatusTag(row.status)" size="small">
                 {{ getStatusText(row.status) }}
               </el-tag>
             </template>
-          </el-table-column>
+          </el-table-column>-->
           <el-table-column :label="$t('input.inventory.stock.columns.actions')" width="120" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
@@ -149,6 +141,11 @@
         </el-table>
 
         <div class="pagination-wrapper">
+          <div class="statistics-summary">
+            <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
+              ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ',    ' : '' }}
+            </span>
+          </div>
           <el-pagination
             v-model:current-page="pagination.page"
             v-model:page-size="pagination.pageSize"
@@ -210,6 +207,14 @@
           <p>{{ $t('home.noData') }}</p>
         </div>
 
+        <div class="mobile-statistics">
+          <div class="statistics-summary">
+            <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
+              ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ', ' : '' }}
+            </span>
+          </div>
+        </div>
+
         <div class="mobile-pagination">
           <el-pagination
             v-model:current-page="pagination.page"
@@ -250,8 +255,11 @@ const tableData = ref([])
 const warehouseList = ref([])
 const currentUserOrganCode = ref('') // 当前用户部门ID
 const summaryData = ref([]) // 合计统计数据
+const typeStatistics = ref([]) // 投入品类型统计数据
 
-// 投入品品类选项（动态获取）
+// 投入品类型选项（从库存中动态获取）
+const materialTypeOptions = ref([])
+// 投入品品类选项（从库存中动态获取）
 const agriculturalInputTypeOptions = ref([])
 
 const pagination = reactive({
@@ -331,42 +339,71 @@ const getCurrentUserOrganCode = () => {
   return ''
 }
 
-// 加载投入品品类选项
-const loadAgriculturalInputTypes = async () => {
+// 加载投入品类型选项（从库存中获取）
+const loadMaterialTypes = async () => {
   try {
-    const res = await getInputList({
+    const res = await getStockList({
       page: 1,
-      pageSize: 1000,
-      status: 'active'
-    })
-    if (res.code === 200 && res.data && res.data.list) {
-      // 提取所有不重复的agriculturalInputType值
+      pageSize: 10000,
+      organCode: currentUserOrganCode.value,
+      minQuantity: 0.01 // 只显示库存大于0的记录
+    });
+
+    if (res.code === 200 && res.data && res.data.items) {
+      // 提取所有不重复的materialType值
       const types = new Set()
-      res.data.list.forEach(item => {
-        if (item.agriculturalInputType) {
-          types.add(item.agriculturalInputType)
+      res.data.items.forEach(item => {
+        if (item.material_type) {
+          types.add(item.material_type)
         }
       })
-      agriculturalInputTypeOptions.value = Array.from(types).map(type => ({
-        label: type,
+
+      // 添加农药选项，确保即使库存中没有农药记录也能显示
+      //types.add('pesticide')
+
+      materialTypeOptions.value = Array.from(types).map(type => ({
+        label: getLabelByValue('input_type', type) || type,
         value: type
       }))
     }
   } catch (error) {
-    console.error('Failed to load agricultural input types:', error)
-    // 如果获取失败，使用默认选项
-    agriculturalInputTypeOptions.value = [
-      { label: '杀虫剂', value: '杀虫剂' },
-      { label: '杀菌剂', value: '杀菌剂' },
-      { label: '除草剂', value: '除草剂' },
-      { label: '复合肥', value: '复合肥' },
-      { label: '氮肥', value: '氮肥' },
-      { label: '磷肥', value: '磷肥' },
-      { label: '钾肥', value: '钾肥' },
-      { label: '玉米种子', value: '玉米种子' },
-      { label: '小麦种子', value: '小麦种子' },
-      { label: '水稻种子', value: '水稻种子' }
+    console.error('Failed to load material types from stock:', error)
+    // 即使加载失败，也提供基本的投入品类型选项
+    materialTypeOptions.value = [
+      { label: t('input.catalog.type.seed'), value: 'seed' },
+      { label: t('input.catalog.type.fertilizer'), value: 'fertilizer' },
+      { label: t('input.catalog.type.pesticide'), value: 'pesticide' },
+      { label: t('input.catalog.type.other'), value: 'other' }
     ]
+  }
+}
+
+// 加载投入品品类选项（从库存中获取）
+const loadAgriculturalInputTypes = async () => {
+  try {
+    const res = await getStockList({
+      page: 1,
+      pageSize: 10000,
+      materialType: filterMaterialType.value, // 根据当前选择的类型筛选
+      organCode: currentUserOrganCode.value,
+      minQuantity: 0.01 // 只显示库存大于0的记录
+    })
+    if (res.code === 200 && res.data && res.data.items) {
+      // 提取所有不重复的agriculturalInputType值
+      const types = new Set()
+      res.data.items.forEach(item => {
+        if (item.agricultural_input_type) {
+          types.add(item.agricultural_input_type)
+        }
+      })
+      agriculturalInputTypeOptions.value = Array.from(types).map(type => ({
+        label: getLabelByValue('input_category', type) || type,
+        value: type
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load agricultural input types from stock:', error)
+    agriculturalInputTypeOptions.value = []
   }
 }
 
@@ -398,13 +435,44 @@ const loadSummaryData = async () => {
 
     if (res.code === 200 && res.data) {
       summaryData.value = res.data
+      // 计算投入品类型统计
+      calculateTypeStatistics()
     } else {
       summaryData.value = []
+      typeStatistics.value = []
     }
   } catch (error) {
     console.error('Failed to load summary data:', error)
     summaryData.value = []
+    typeStatistics.value = []
   }
+}
+
+// 计算投入品类型统计
+const calculateTypeStatistics = () => {
+  if (!summaryData.value || summaryData.value.length === 0) {
+    typeStatistics.value = []
+    return
+  }
+
+  // 按投入品类型分组统计
+  const typeMap = new Map()
+  summaryData.value.forEach(item => {
+    const materialType = item.material_type
+    if (materialType) {
+      if (typeMap.has(materialType)) {
+        typeMap.set(materialType, typeMap.get(materialType) + Number(item.total_quantity || 0))
+      } else {
+        typeMap.set(materialType, Number(item.total_quantity || 0))
+      }
+    }
+  })
+
+  // 转换为数组格式
+  typeStatistics.value = Array.from(typeMap.entries()).map(([materialType, total]) => ({
+    materialType,
+    total: Math.round(total) // 四舍五入到整数
+  }))
 }
 
 // 加载数据
@@ -416,10 +484,10 @@ const loadData = async () => {
       materialType: filterMaterialType.value,
       agriculturalInputType: filterAgriculturalInputType.value,
       organCode: currentUserOrganCode.value, // 按部门过滤
+      minQuantity: 0.01, // 只显示库存大于0的记录
       page: pagination.page,
       pageSize: pagination.pageSize
     })
-
     if (res.code === 200 && res.data) {
       tableData.value = res.data.items || []
       pagination.total = res.data.total || 0
@@ -430,6 +498,16 @@ const loadData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 投入品类型筛选变化
+const handleMaterialTypeFilterChange = () => {
+  // 清空品类筛选
+  filterAgriculturalInputType.value = ''
+  // 重新加载品类选项
+  loadAgriculturalInputTypes()
+  // 触发搜索
+  handleSearch()
 }
 
 // 搜索
@@ -448,6 +526,8 @@ const handleReset = () => {
   pagination.page = 1
   loadData()
   loadSummaryData()
+  loadMaterialTypes()
+  loadAgriculturalInputTypes()
 }
 
 // 查看
@@ -469,6 +549,7 @@ const handlePageChange = () => {
 onMounted(() => {
   currentUserOrganCode.value = getCurrentUserOrganCode()
   loadWarehouses()
+  loadMaterialTypes()
   loadAgriculturalInputTypes()
   loadData()
   loadSummaryData()
@@ -607,7 +688,22 @@ onMounted(() => {
 .pagination-wrapper {
   margin-top: 16px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.statistics-summary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #606266;
+  flex-shrink: 0;
+}
+
+.stat-item {
+  white-space: nowrap;
 }
 
 /* 移动端默认隐藏 */
@@ -720,11 +816,16 @@ onMounted(() => {
   opacity: 0.5;
 }
 
+.mobile-statistics {
+  padding: 12px 0;
+  border-top: 1px solid #e4e7ed;
+  margin-top: 16px;
+}
+
 .mobile-pagination {
   display: flex;
   justify-content: center;
   padding: 16px 0;
-  margin-top: 16px;
 }
 
 /* ==================== 响应式设计 ==================== */
@@ -805,6 +906,16 @@ onMounted(() => {
 
   .summary-item {
     width: 100%;
+  }
+
+  .pagination-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statistics-summary {
+    flex-wrap: wrap;
+    font-size: 13px;
   }
 }
 

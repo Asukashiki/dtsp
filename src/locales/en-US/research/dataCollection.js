@@ -533,6 +533,10 @@ export default {
       remark: 'Remark',
       createTime: 'Created Time',
       createBy: 'Created By',
+      updateBy: 'Updated By',
+      updateTime: 'Updated Time',
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
     },
 
     placeholder: {
@@ -710,6 +714,8 @@ export default {
       scoreCode: 'Score Code',
       scoreValue: 'Score Value',
       createTime: 'Created Time',
+      status: 'Status',
+      auditStatus: 'Audit Status',
       actions: 'Actions',
     },
   },

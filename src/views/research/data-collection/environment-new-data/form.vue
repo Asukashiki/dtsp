@@ -97,6 +97,11 @@
               style="width: 100%"
             />
           </el-form-item>
+
+          <!-- Observer ID (disabled, default to current user id) -->
+          <el-form-item :label="$t('research.environmentNewData.form.observerId')">
+            <el-input v-model="formData.observerId" disabled />
+          </el-form-item>
         </div>
 
         <!-- 测量信息 -->
@@ -184,6 +189,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData } from '@/api/environment-new-data'
 import { getPlotInfoList } from '@/api/breedingData'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -208,7 +214,8 @@ const formData = reactive({
   value: null,
   unit: '',
   source: '',
-  remark: ''
+  remark: '',
+  observerId: ''
 })
 
 const rules = reactive({
@@ -318,6 +325,15 @@ const handleSubmit = async () => {
 onMounted(() => {
   loadPlotOptions()
   loadDetail()
+  // 设置 Observer ID 为当前登录用户（仅新增时，且为空时）
+  try {
+    const u = getUserInfo()
+    if (!isEdit.value && !formData.observerId && u && u.user && u.user.id) {
+      formData.observerId = u.user.id
+    }
+  } catch (e) {
+    // ignore
+  }
 })
 </script>
 

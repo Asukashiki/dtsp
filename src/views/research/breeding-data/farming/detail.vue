@@ -24,7 +24,7 @@
               <el-descriptions-item label="Plot ID">{{ detailData.plotId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Trial ID">{{ detailData.trialId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Batch ID">{{ detailData.batchId || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Activity Date">{{ detailData.activityDate || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Activity Date">{{ formatDateTime(detailData.activityDate) }}</el-descriptions-item>
               <el-descriptions-item label="Activity Type">{{ detailData.activityType || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Input Name">{{ detailData.inputName || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Quantity">{{ detailData.quantity ? `${detailData.quantity} ${detailData.unit || ''}` : '-' }}</el-descriptions-item>
@@ -47,6 +47,26 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+
+// 格式化日期时间为 'YYYY-MM-DD HH:mm:ss'
+const formatDateTime = (val) => {
+  if (!val) return '-'
+  if (typeof val === 'string') {
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) return val
+    // 纯日期字符串：保持原样返回（后端若未存时分秒，避免误导显示固定的 00:00:00）
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val
+  }
+  const d = new Date(val)
+  if (isNaN(d.getTime())) return val || '-'
+  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
+  const Y = d.getFullYear()
+  const M = pad(d.getMonth() + 1)
+  const D = pad(d.getDate())
+  const h = pad(d.getHours())
+  const m = pad(d.getMinutes())
+  const s = pad(d.getSeconds())
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+}
 
 const getInfo = async () => {
   loading.value = true

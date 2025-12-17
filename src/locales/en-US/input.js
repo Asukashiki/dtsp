@@ -874,7 +874,8 @@ export default {
       status: {
         pending: 'Pending Audit',
         completed: 'Completed',
-        cancelled: 'Cancelled'
+        cancelled: 'Cancelled',
+        rejected: 'Rejected'
       },
       auditInfo: 'Audit Information',
       form: {
