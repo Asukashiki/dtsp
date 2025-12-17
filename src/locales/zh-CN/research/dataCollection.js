@@ -740,6 +740,7 @@ export default {
       yieldQtPerHaRequired: '请输入产量',
       yieldQtPerHaMin: '产量必须大于0',
       moistureContentRange: '含水量范围为0-100',
+      recorderNameRequired: '请输入记录人员',
     },
 
     // 列表列

@@ -96,16 +96,19 @@
               <el-table v-loading="loading" :data="tableData" stripe>
                 <el-table-column
                   prop="batchId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.batchId')"
                   min-width="150"
                 />
                 <el-table-column
                   prop="trialId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.trialId')"
                   min-width="150"
                 />
                 <el-table-column
                   prop="plotId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.plotId')"
                   min-width="120"
                 />
