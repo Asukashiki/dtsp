@@ -45,6 +45,19 @@
                   :value="item.batchId"
                 />
               </el-select>
+              <el-select
+                v-model="searchForm.workflowStatus"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
+                clearable
+                class="search-input"
+              >
+                <el-option
+                  v-for="opt in options.flow_status"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value"
+                />
+              </el-select>
               <el-input
                 v-model="searchForm.sampleType"
                 :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleType')"
@@ -91,13 +104,25 @@
                   prop="batchId"
                   :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.dataCollection.laboratoryTest.form.trialId')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
+                  prop="workflowStatus"
+                  :label="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    <el-tag>{{ getLabelByValue('flow_status', row.workflowStatus) || '-' }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                 show-overflow-tooltip
                   prop="sampleId"
                   :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
                   min-width="120"
@@ -174,6 +199,36 @@
                   :label="$t('research.dataCollection.laboratoryTest.form.testDate')"
                   min-width="120"
                 />
+                <el-table-column
+                  prop="createdByName"
+                  :label="$t('common.createdBy')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="createdTime"
+                  :label="$t('common.createdTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  prop="updatedBy"
+                  :label="$t('common.updatedBy')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="updatedTime"
+                  :label="$t('common.updatedTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  prop="approveByName"
+                  :label="$t('common.approver')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="approveTime"
+                  :label="$t('common.approveTime')"
+                  min-width="160"
+                />
                 <el-table-column :label="$t('common.actions')" fixed="right" width="300">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -223,6 +278,12 @@
                     <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.auditStatus') }}:</span>
+                    <span class="value">
+                      {{ getLabelByValue('flow_status', item.workflowStatus) || '-' }}
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
                     <span class="value">{{ item.trialId }}</span>
                   </div>
@@ -265,6 +326,30 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
                     <span class="value">{{ item.testDate || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.createdBy') }}:</span>
+                    <span class="value">{{ item.createdByName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.createdTime') }}:</span>
+                    <span class="value">{{ item.createdTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.updatedBy') }}:</span>
+                    <span class="value">{{ item.updatedBy || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.updatedTime') }}:</span>
+                    <span class="value">{{ item.updatedTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.approver') }}:</span>
+                    <span class="value">{{ item.approveByName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.approveTime') }}:</span>
+                    <span class="value">{{ item.approveTime || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">
@@ -311,6 +396,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLabTestList, deleteLabTest } from '@/api/labTest'
 import { getBatchOptions } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -318,9 +404,12 @@ const { t } = useI18n()
 const loading = ref(false)
 const tableData = ref([])
 const batchOptions = ref([])
+// 字典：流程状态
+const { options, getLabelByValue } = useDict(['flow_status'])
 
 const searchForm = reactive({
   batchId: '',
+  workflowStatus: '',
   sampleType: '',
   passFailFlag: null,
   sampleId: ''
@@ -350,6 +439,7 @@ const loadData = async () => {
   try {
     const res = await getLabTestList({
       batchId: searchForm.batchId,
+      workflowStatus: searchForm.workflowStatus,
       sampleType: searchForm.sampleType,
       passFailFlag: searchForm.passFailFlag,
       sampleId: searchForm.sampleId,
@@ -377,6 +467,7 @@ const handleSearch = () => {
 // 重置
 const handleReset = () => {
   searchForm.batchId = ''
+  searchForm.workflowStatus = ''
   searchForm.sampleType = ''
   searchForm.passFailFlag = null
   searchForm.sampleId = ''
