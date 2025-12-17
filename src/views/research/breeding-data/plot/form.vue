@@ -182,7 +182,9 @@ const rules = {
 const loadTrialOptions = async () => {
   try {
     const res = await getTrialOptions()
-    trialOptions.value = res.data || []
+    trialOptions.value = (res.data || []).filter(item =>
+      item.workflowStatus === "S2"
+    )
   } catch (error) {
     console.error('Failed to load trial options:', error)
   }

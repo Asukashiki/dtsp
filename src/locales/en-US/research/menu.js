@@ -200,7 +200,9 @@ export default {
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',
-  woredaReleaseToFarmer: 'Woreda Distribution to Farmer',
+  unionReleaseToCooperative: 'Union Distribution to Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',
+  cooperativeReleaseToFarmer: 'Cooperative Distribution to Farmer',
   farmerReceive: 'Farmer Receive List'
 
 }

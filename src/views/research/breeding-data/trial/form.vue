@@ -239,7 +239,7 @@ const loadBatchOptions = async () => {
     const res = await getBatchOptions()
     // 仅显示已批准和进行中的批次
     batchOptions.value = (res.data || []).filter(item =>
-      item.status === "S2"
+      item.workflowStatus === "S2"
     )
   } catch (error) {
     console.error('获取批次选项失败:', error)

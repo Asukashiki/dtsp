@@ -28,6 +28,7 @@ export default {
 
   // 菜单导航
   menu: {
+    demandInquiry:'Demand Inquiry',
     dashboard: 'Data Overview',
     registrationManagement: 'Registration Management',
     registration: 'Union/Cooperative Registration Application',
@@ -873,7 +874,8 @@ export default {
       status: {
         pending: 'Pending Audit',
         completed: 'Completed',
-        cancelled: 'Cancelled'
+        cancelled: 'Cancelled',
+        rejected: 'Rejected'
       },
       auditInfo: 'Audit Information',
       form: {

@@ -219,7 +219,7 @@
             {{ $t('research.dataCollection.yieldData.form.operatorInfo') }}
           </div>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.recorderName')">
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.recorderName')" prop="recorderName">
             <el-input
               v-model="formData.recorderName"
               :placeholder="$t('research.dataCollection.yieldData.placeholder.recorderName')"
@@ -260,6 +260,7 @@ import { ElMessage } from 'element-plus'
 import { getYieldDataDetail, addYieldData, updateYieldData } from '@/api/yieldData'
 import { getPlotInfoList } from '@/api/breedingData'
 import { useUserStore } from '@/store'
+import { getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -271,6 +272,10 @@ const loading = ref(false)
 const plotLoading = ref(false)
 const plotOptions = ref([])
 const isEdit = computed(() => !!route.params.id)
+
+// 当前登录用户信息（用于默认记录人员）
+const currentUser = getUserInfo && typeof getUserInfo === 'function' ? getUserInfo() : null
+const defaultRecorderName = currentUser?.user?.name || ''
 
 const formData = reactive({
   id: null,
@@ -286,7 +291,7 @@ const formData = reactive({
   inspectionType: '',
   scoreCode: '',
   scoreValue: '',
-  recorderName: '',
+  recorderName: defaultRecorderName,
   remark: '',
   status: '0',
   createdBy: ''
@@ -317,6 +322,9 @@ const scoreCodeOptions = computed(() => [
 const rules = computed(() => ({
   plotId: [
     { required: true, message: t('research.dataCollection.yieldData.rules.plotIdRequired'), trigger: 'change' }
+  ],
+  recorderName: [
+    { required: true, message: t('research.dataCollection.yieldData.rules.recorderNameRequired'), trigger: 'blur' }
   ],
   harvestDate: [
     { required: true, message: t('research.dataCollection.yieldData.rules.harvestDateRequired'), trigger: 'change' }
@@ -425,6 +433,10 @@ onMounted(() => {
   loadPlotOptions()
   if (isEdit.value) {
     loadDetail()
+  }
+  // 兜底赋值：若无记录人员则设置为当前用户
+  if (!formData.recorderName && defaultRecorderName) {
+    formData.recorderName = defaultRecorderName
   }
 })
 </script>

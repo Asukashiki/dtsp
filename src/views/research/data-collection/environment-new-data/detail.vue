@@ -80,8 +80,20 @@
             <span class="value">{{ detailData.createTime || '-' }}</span>
           </div>
           <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.updateBy') }}</span>
+            <span class="value">{{ detailData.updateBy || '-' }}</span>
+          </div>
+          <div class="info-item">
             <span class="label">{{ $t('research.environmentNewData.columns.updateTime') }}</span>
             <span class="value">{{ detailData.updateTime || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.auditBy') }}</span>
+            <span class="value">{{ detailData.auditBy || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.auditTime') }}</span>
+            <span class="value">{{ detailData.auditTime || '-' }}</span>
           </div>
         </div>
       </div>
@@ -141,7 +153,10 @@ const detailData = reactive({
   remark: '',
   createBy: '',
   createTime: '',
-  updateTime: ''
+  updateTime: '',
+  updateBy: '',
+  auditBy: '',
+  auditTime: ''
 })
 
 // 获取参数类型标签

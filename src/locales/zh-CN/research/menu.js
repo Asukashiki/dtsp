@@ -206,6 +206,8 @@ export default {
   unionReceiveConfirm: 'Union确认接收',
   unionReleaseToWoreda: 'Union分发投入品到Woreda',
   woredaReceiveConfirm: 'Woreda确认接收',
-  woredaReleaseToFarmer: 'Woreda分发投入品到农民',
+  unionReleaseToCooperative: 'Union分发投入品到Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative确认接收',
+  cooperativeReleaseToFarmer: 'Cooperative分发投入品到农民',
   farmerReceive: '农民领用列表'
 }

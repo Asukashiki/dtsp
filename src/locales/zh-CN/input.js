@@ -28,6 +28,7 @@ export default {
 
     // 菜单导航
     menu: {
+      demandInquiry:'需求查询',
       dashboard: '数据概览',
       registrationManagement: '注册管理',
       registration: 'Union/Cooperative注册申请',
@@ -698,7 +699,7 @@ export default {
       addInput: '添加投入品',
       noMaterials: '暂无物料明细',
         noDistributionDetails: '该分发单暂无明细信息',
-        distributionLoaded: '分发单明细已成功加载',
+        distributionLoaded: 'The distribution list details have been successfully loaded',
         loadDistributionFailed: '加载分发单明细失败',
       searchPlaceholder: '搜索入库单号、批次号',
       filterByWarehouse: '按仓库筛选',
@@ -884,7 +885,8 @@ export default {
       status: {
         pending: '待审核',
         completed: '已完成',
-        cancelled: '已取消'
+        cancelled: '已取消',
+        rejected: '已拒绝'
       },
       auditInfo: '审核信息',
       form: {

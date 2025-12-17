@@ -2,7 +2,7 @@
   <el-card class="trial-card" shadow="hover" @click="handleClick">
     <div class="card-header">
       <div class="title">{{ trial.trialName }}</div>
-      <StatusTag :status="trial.trialStatus || 'S0'" />
+      <StatusTag :status="trial.trialStatus || trial.workflowStatus || 'S0'" />
     </div>
 
     <div class="card-content">
@@ -74,7 +74,7 @@ const formatDate = (date) => {
 
 // 操作按钮配置
 const actionButtons = computed(() => {
-  const status = props.trial.trialStatus || 'S0'
+  const status = props.trial.trialStatus || props.trial.workflowStatus || 'S0'
   const buttons = []
 
   if (status === 'S0' || status === 'S3') {

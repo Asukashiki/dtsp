@@ -24,6 +24,7 @@ export const getStockList = (params = {}) => {
   if (params.materialType) requestParams.materialType = params.materialType
   if (params.agriculturalInputType) requestParams.agriculturalInputType = params.agriculturalInputType
   if (params.organCode) requestParams.organCode = params.organCode
+  if (params.minQuantity !== undefined) requestParams.minQuantity = params.minQuantity
   
   return agricultureRequest({
     url: '/inventory/stock/query',
@@ -31,7 +32,6 @@ export const getStockList = (params = {}) => {
     params: requestParams
   })
 }
-
 /**
  * 查询库存变动日志
  * @param {Object} params - 查询参数

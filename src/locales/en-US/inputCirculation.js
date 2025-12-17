@@ -36,7 +36,7 @@ export default {
   stockStatus: 'Stock Status',
   stockStatus_notProcessed: 'Not Stocked Out',
   stockStatus_outPending: 'Out Pending',
-  stockStatus_outCompleted: 'Stocked Out',
+  stockStatus_outCompleted: 'Out of the warehouse',
   stockStatus_notFound: 'Not Found',
   stockInsufficient: 'Insufficient stock: available {available}, requested {requested}',
   releaseBy: 'Released By',
@@ -107,9 +107,9 @@ export default {
   inputQuotaView: 'Input Quota View',
   oseReleaseToUnion: 'Release Seeds to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
-  unionReleaseToWoreda: 'Union Distribution to Woreda',
-  woredaReceiveConfirm: 'Woreda Receive Confirmation',
-  woredaReleaseToFarmer: 'Woreda Distribution to Farmer',
+  unionReleaseToCooperative: 'Union Distribution to Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',
+  cooperativeReleaseToFarmer: 'Cooperative Distribution to Farmer',
 
   //General
   timeRange: 'Time Range'

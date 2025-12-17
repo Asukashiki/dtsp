@@ -68,6 +68,7 @@
             <el-option :label="$t('input.inventory.stockOut.status.pending')" value="pending" />
             <el-option :label="$t('input.inventory.stockOut.status.completed')" value="completed" />
             <el-option :label="$t('input.inventory.stockOut.status.cancelled')" value="cancelled" />
+            <el-option :label="$t('input.inventory.stockOut.status.rejected')" value="rejected" />
           </el-select>
         </div>
 
@@ -348,7 +349,8 @@ const getStatusTag = (status) => {
   const statusMap = {
     'pending': 'warning',
     'completed': 'success',
-    'cancelled': 'info'
+    'cancelled': 'info',
+    'rejected': 'danger'
   }
   return statusMap[status] || 'info'
 }
@@ -358,7 +360,8 @@ const getStatusText = (status) => {
   const statusMap = {
     'pending': t('input.inventory.stockOut.status.pending'),
     'completed': t('input.inventory.stockOut.status.completed'),
-    'cancelled': t('input.inventory.stockOut.status.cancelled')
+    'cancelled': t('input.inventory.stockOut.status.cancelled'),
+    'rejected': t('input.inventory.stockOut.status.rejected')
   }
   return statusMap[status] || '-'
 }
@@ -463,10 +466,17 @@ const handleAuditSubmit = async () => {
     const now = new Date()
     const auditTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
 
+    const userInfoStr = localStorage.getItem('userInfo')
+    let userInfo = 'user'
+    if (userInfoStr) {
+      userInfo = JSON.parse(userInfoStr)
+      const user = userInfo.user || userInfo
+      userInfo =  user.USERNAME || user.REALNAME || user.username || user.realName || ''
+    }
     // 转换为驼峰形式
     const res = await auditOutboundOrder(currentRow.value.outbound_order_id, {
       auditStatus: auditForm.audit_status,
-      auditUser: '当前用户', // TODO: 从用户信息获取
+      auditUser: userInfo,
       auditTime: auditTime,
       remark: auditForm.remark
     })
@@ -484,7 +494,10 @@ const handleAuditSubmit = async () => {
     }
   } catch (error) {
     console.error('Failed to audit outbound order:', error)
-    ElMessage.error(t('common.failed'))
+    // 直接显示后端返回的错误信息，不使用通用的"操作失败"提示
+    // 优先使用error.response.data.msg，其次是error.message，最后是默认提示
+    const errorMsg = error.response?.data?.msg || error.message || error.msg || t('common.failed')
+    ElMessage.error(errorMsg)
   } finally {
     auditLoading.value = false
   }
@@ -496,19 +509,30 @@ const handleConfirmOutbound = async (outboundOrderId) => {
     const now = new Date()
     const outboundTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
 
+    // 从用户信息获取操作员姓名
+    let operator = ''
+    const userInfoStr = localStorage.getItem('userInfo')
+    if (userInfoStr) {
+      const userInfo = JSON.parse(userInfoStr)
+      const user = userInfo.user || userInfo
+      operator = user.USERNAME || user.REALNAME || user.username || user.realName || ''
+    }
+
     // 转换为驼峰形式
     const res = await confirmOutbound(outboundOrderId, {
       outboundTime: outboundTime,
-      operator: '当前用户' // TODO: 从用户信息获取
+      operator: operator
     })
-
     if (res.code === 200) {
       ElMessage.success(t('input.inventory.stockOut.confirmSuccess'))
       loadData()
     }
   } catch (error) {
     console.error('Failed to confirm outbound:', error)
-    ElMessage.error(t('common.failed'))
+    // 直接显示后端返回的错误信息，不使用通用的"操作失败"提示
+    // 优先使用error.response.data.msg，其次是error.message，最后是默认提示
+    const errorMsg = error.response?.data?.msg || error.message || error.msg || t('common.failed')
+    ElMessage.error(errorMsg)
   }
 }
 
@@ -524,14 +548,26 @@ const handleCancel = (row) => {
     }
   ).then(async () => {
     try {
-      const res = await cancelOutboundOrder(row.outbound_order_id, '当前用户') // TODO: 从用户信息获取
+      // 从用户信息获取操作员姓名
+      let operator = '当前用户'
+      const userInfoStr = localStorage.getItem('userInfo')
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr)
+        const user = userInfo.user || userInfo
+        operator = user.USERNAME || user.REALNAME || user.username || user.realName || '当前用户'
+      }
+      
+      const res = await cancelOutboundOrder(row.outbound_order_id, operator)
       if (res.code === 200) {
         ElMessage.success(t('input.inventory.stockOut.cancelSuccess'))
         loadData()
       }
     } catch (error) {
       console.error('Failed to cancel outbound order:', error)
-      ElMessage.error(t('common.failed'))
+      // 直接显示后端返回的错误信息，不使用通用的"操作失败"提示
+      // 优先使用error.response.data.msg，其次是error.message，最后是默认提示
+      const errorMsg = error.response?.data?.msg || error.message || error.msg || t('common.failed')
+      ElMessage.error(errorMsg)
     }
   }).catch(() => {})
 }

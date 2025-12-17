@@ -110,7 +110,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" />
               </template>
             </el-table-column>
             <el-table-column
@@ -209,7 +209,7 @@
                 {{ formatDate(row.modifiedTime) }}
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="submitterName"
               :label="t('research.trialBasicAudit.audit.list.submitter')"
               width="120"
@@ -222,7 +222,7 @@
               <template #default="{ row }">
                 {{ formatDate(row.submitTime) }}
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               prop="auditorName"
               :label="t('research.trialBasicAudit.audit.list.auditor')"
@@ -244,7 +244,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" />
               </template>
             </el-table-column>
             <el-table-column
