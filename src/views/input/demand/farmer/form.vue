@@ -723,5 +723,7 @@ onMounted(async () => {
     font-size: 14px !important;
     padding: 8px 15px !important;
   }
+
+
 }
 </style>

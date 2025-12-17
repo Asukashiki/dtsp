@@ -12,12 +12,12 @@
             <p class="page-subtitle">{{ $t('villageAggregation.subtitle') }}</p>
           </div>
         </div>
-        <div class="header-right">
-          <el-button type="primary" size="large" @click="handleAddYear">
-            <i class="ri-add-line"></i>
-            {{ $t('villageAggregation.actions.addYear') }}
-          </el-button>
-        </div>
+<!--        <div class="header-right">-->
+<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
+<!--            <i class="ri-add-line"></i>-->
+<!--            {{ $t('villageAggregation.actions.addYear') }}-->
+<!--          </el-button>-->
+<!--        </div>-->
       </div>
 
       <!-- 内容区域 -->
@@ -61,9 +61,24 @@
                 :label="$t('villageAggregation.columns.subQuantity')"
                 min-width="140"
               >
-                <template #default="{ row }">
-                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
-                </template>
+              </el-table-column>
+              <el-table-column
+                  prop="submitQuantity"
+                  :label="$t('submitQuantity')"
+                  min-width="140"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="unsubmitQuantity"
+                  :label="$t('unsubmitQuantity')"
+                  min-width="140"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="auditQuantity"
+                  :label="$t('auditQuantity')"
+                  min-width="140"
+              >
               </el-table-column>
               <el-table-column
                 prop="status"
@@ -162,6 +177,7 @@
                   <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                 </div>
+
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
                   <span class="value">{{ item.creator }}</span>
@@ -387,7 +403,8 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: 0
       // sourceCode:'huangshan'
       // TODO: Add user context filters
       // sourceCode: 'KB001'

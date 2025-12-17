@@ -77,6 +77,13 @@ export default {
     auditOpinionRequired: 'Please enter rejection reason',
   },
 
+  // Unified Audit Dialog
+  auditDialog: {
+    title: 'Audit',
+    auditOpinion: 'Audit Opinion',
+    auditOpinionPlaceholder: 'Please enter audit opinion (optional)',
+  },
+
   lockBatchDialog: {
     title: 'Lock Batch',
     message: 'Once locked, batch data cannot be modified. Are you sure to lock this batch?',

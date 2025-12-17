@@ -13,10 +13,10 @@
           </div>
         </div>
         <div class="header-right">
-          <el-button type="primary" size="large" @click="handleAddYear">
-            <i class="ri-add-line"></i>
-            {{ $t('stateAggregation.actions.addYear') }}
-          </el-button>
+<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
+<!--            <i class="ri-add-line"></i>-->
+<!--            {{ $t('stateAggregation.actions.addYear') }}-->
+<!--          </el-button>-->
           <el-button type="success" size="large" @click="handlePublishAll">
             <i class="ri-send-plane-line"></i>
             {{ $t('stateAggregation.actions.publishAll') }}
@@ -65,10 +65,25 @@
                 :label="$t('stateAggregation.columns.subQuantity')"
                 min-width="140"
               >
-                <template #default="{ row }">
-                  {{ row.subQuantity }}
-                </template>
+
               </el-table-column>
+              <el-table-column
+                  prop="submitQuantity"
+                  :label="$t('submitQuantity')"
+                  min-width="140"
+              />
+                <el-table-column
+                    prop="unsubmitQuantity"
+                    :label="$t('unsubmitQuantity')"
+                    min-width="140"
+                >
+              </el-table-column>
+<!--              <el-table-column-->
+<!--                  prop="auditQuantity"-->
+<!--                  :label="$t('auditQuantity')"-->
+<!--                  min-width="140"-->
+<!--              >-->
+<!--              </el-table-column>-->
               <!-- <el-table-column
                 prop="status"
                 :label="$t('stateAggregation.columns.status')"
@@ -328,11 +343,11 @@
           :label="$t('stateAggregation.columns.year')"
           min-width="120"
         />
-        <el-table-column
-          prop="creator"
-          :label="$t('stateAggregation.columns.creator')"
-          min-width="120"
-        />
+<!--        <el-table-column-->
+<!--          prop="creator"-->
+<!--          :label="$t('stateAggregation.columns.creator')"-->
+<!--          min-width="120"-->
+<!--        />-->
       </el-table>
 
       <!-- 分页 -->
@@ -461,7 +476,8 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: '3'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
@@ -572,7 +588,8 @@ const loadDetailData = async () => {
       page: 1,
       pageSize: 1000,
       targetCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      year: currentDetailRow.value.year
+      year: currentDetailRow.value.year,
+      level: "3"
     })
 
     if (res.code === 200) {
