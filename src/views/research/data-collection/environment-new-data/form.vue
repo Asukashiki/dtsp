@@ -80,11 +80,21 @@
           </div>
 
           <el-form-item :label="$t('research.environmentNewData.form.stationId')" prop="stationId">
-            <el-input
+            <el-select
               v-model="formData.stationId"
               :placeholder="$t('research.environmentNewData.placeholder.stationId')"
-              maxlength="50"
-            />
+              filterable
+              clearable
+              style="width: 100%"
+              :loading="dictLoading"
+            >
+              <el-option
+                v-for="item in options.weather_station"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.timestamp')" prop="timestamp">
@@ -190,6 +200,7 @@ import { ElMessage } from 'element-plus'
 import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData } from '@/api/environment-new-data'
 import { getPlotInfoList } from '@/api/breedingData'
 import { getUserInfo } from '@/utils/auth'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
@@ -200,6 +211,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const plotLoading = ref(false)
 const plotOptions = ref([])
+const { options, loading: dictLoading } = useDict(['weather_station'])
 
 const isEdit = computed(() => !!route.params.envRecordId)
 
@@ -223,8 +235,7 @@ const rules = reactive({
     { required: true, message: t('research.environmentNewData.rules.plotIdRequired') || 'Please select a plot', trigger: 'change' }
   ],
   stationId: [
-    { required: true, message: t('research.environmentNewData.rules.stationIdRequired'), trigger: 'blur' },
-    { max: 50, message: t('research.environmentNewData.rules.stationIdLength'), trigger: 'blur' }
+    { required: true, message: t('research.environmentNewData.rules.stationIdRequired'), trigger: 'change' }
   ],
   timestamp: [
     { required: true, message: t('research.environmentNewData.rules.timestampRequired'), trigger: 'change' }

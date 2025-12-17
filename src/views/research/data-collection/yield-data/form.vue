@@ -170,12 +170,14 @@
             />
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionType')">
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionType')" prop="inspectionType">
             <el-select
               v-model="formData.inspectionType"
               :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionType')"
               clearable
+              filterable
               style="width: 100%"
+              @change="onInspectionTypeChange"
             >
               <el-option
                 v-for="item in inspectionTypeOptions"
@@ -186,29 +188,88 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreCode')">
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreCode')" prop="scoreCode">
             <el-select
               v-model="formData.scoreCode"
               :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreCode')"
+              :disabled="!formData.inspectionType"
               filterable
               clearable
               style="width: 100%"
+              @change="onScoreCodeChange"
             >
               <el-option
-                v-for="item in scoreCodeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="opt in scoreCodeOptions"
+                :key="opt.code"
+                :label="opt.label"
+                :value="opt.code"
               />
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreValue')">
-            <el-input
-              v-model="formData.scoreValue"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreValue')"
-              clearable
-            />
+          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreValue')" prop="scoreValue">
+            <!-- 数字类型（天 / cm / 计数） -->
+            <template v-if="currentCodeMeta && currentCodeMeta.type === 'number'">
+              <div class="input-with-unit">
+                <el-input-number
+                  v-model="formData.scoreValue"
+                  :min="0"
+                  :precision="currentCodeMeta.precision ?? 0"
+                  :controls="false"
+                  style="width: 100%"
+                />
+                <span class="unit-hint">{{ currentCodeMeta.unit || '' }}</span>
+              </div>
+            </template>
+
+            <!-- 百分比类型 -->
+            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'percent'">
+              <div class="input-with-unit">
+                <el-input-number
+                  v-model="formData.scoreValue"
+                  :min="0"
+                  :max="100"
+                  :precision="2"
+                  :controls="false"
+                  style="width: 100%"
+                />
+                <span class="unit-hint">%</span>
+              </div>
+            </template>
+
+            <!-- 等级分（1-5、1-9） -->
+            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'scale'">
+              <el-input-number
+                v-model="formData.scoreValue"
+                :min="currentCodeMeta.min || 1"
+                :max="currentCodeMeta.max || 5"
+                :controls="false"
+                style="width: 100%"
+              />
+            </template>
+
+            <!-- 分类（下拉） -->
+            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'category'">
+              <el-select
+                v-model="formData.scoreValue"
+                :placeholder="$t('common.pleaseSelect')"
+                filterable
+                clearable
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="c in (currentCodeMeta.options || [])"
+                  :key="c.value"
+                  :label="c.label"
+                  :value="c.value"
+                />
+              </el-select>
+            </template>
+
+            <!-- 未选择评分代码时的占位提示 -->
+            <template v-else>
+              <el-input v-model="dummy" disabled :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreValue')" />
+            </template>
           </el-form-item>
         </div>
 
@@ -290,38 +351,120 @@ const formData = reactive({
   inspectionDate: '',
   inspectionType: '',
   scoreCode: '',
-  scoreValue: '',
+  scoreValue: null,
   recorderName: defaultRecorderName,
   remark: '',
   status: '0',
   createdBy: ''
 })
 
-// 检验类型选项
-const inspectionTypeOptions = computed(() => [
-  { value: 'Disease', label: t('research.dataCollection.yieldData.inspectionTypes.disease') },
-  { value: 'Purity', label: t('research.dataCollection.yieldData.inspectionTypes.purity') },
-  { value: 'Pest', label: t('research.dataCollection.yieldData.inspectionTypes.pest') },
-  { value: 'Lodging', label: t('research.dataCollection.yieldData.inspectionTypes.lodging') },
-  { value: 'Moisture', label: t('research.dataCollection.yieldData.inspectionTypes.moisture') },
-  { value: 'Other', label: t('research.dataCollection.yieldData.inspectionTypes.other') }
-])
+// 本地静态映射（根据业务规则进行动态渲染）
+const INSPECTION_SCHEMA = {
+  'Germination / Early Establishment': [
+    { code: 'DTE', label: 'DTE', type: 'number', unit: 'Days', precision: 0 },
+    { code: 'Emergence %', label: 'Emergence %', type: 'percent' },
+    { code: 'Vigor Score', label: 'Vigor Score', type: 'scale', min: 1, max: 5 }
+  ],
+  'Vegetative Growth': [
+    { code: 'Plant Height', label: 'Plant Height', type: 'number', unit: 'cm', precision: 2 },
+    { code: 'Tillers', label: 'Tillers', type: 'number', unit: 'count', precision: 0 },
+    { code: 'Leaf Color', label: 'Leaf Color', type: 'scale', min: 1, max: 9 },
+    { code: 'Vigor', label: 'Vigor', type: 'scale', min: 1, max: 5 }
+  ],
+  'Disease Assessment': [
+    { code: 'Disease Severity', label: 'Disease Severity', type: 'scale', min: 1, max: 9 },
+    { code: 'Disease Incidence', label: 'Disease Incidence', type: 'percent' },
+    { code: 'Pest Damage', label: 'Pest Damage', type: 'scale', min: 1, max: 9 }
+  ],
+  'Reproductive Stage': [
+    { code: 'Days to Heading', label: 'Days to Heading', type: 'number', unit: 'Days', precision: 0 },
+    { code: 'Days to Anthesis', label: 'Days to Anthesis', type: 'number', unit: 'Days', precision: 0 },
+    { code: 'Panicle Traits', label: 'Panicle Traits', type: 'category', options: [
+      { label: 'Compact', value: 'compact' },
+      { label: 'Intermediate', value: 'intermediate' },
+      { label: 'Loose', value: 'loose' }
+    ] }
+  ],
+  'Maturity Inspection': [
+    { code: 'Days to Maturity', label: 'Days to Maturity', type: 'number', unit: 'Days', precision: 0 },
+    { code: 'Lodging Score', label: 'Lodging Score', type: 'scale', min: 1, max: 9 },
+    { code: 'Grain Filling', label: 'Grain Filling', type: 'scale', min: 1, max: 5 }
+  ],
+  'PVS (Participatory Variety Selection)': [
+    { code: 'Farmer Preference', label: 'Farmer Preference', type: 'scale', min: 1, max: 5 },
+    { code: 'Grain Color', label: 'Grain Color', type: 'category', options: [
+      { label: 'White', value: 'white' },
+      { label: 'Red', value: 'red' },
+      { label: 'Brown', value: 'brown' },
+      { label: 'Black', value: 'black' }
+    ] },
+    { code: 'Panicle Size', label: 'Panicle Size', type: 'category', options: [
+      { label: 'Small', value: 'small' },
+      { label: 'Medium', value: 'medium' },
+      { label: 'Large', value: 'large' }
+    ] },
+    { code: 'Acceptability', label: 'Acceptability', type: 'scale', min: 1, max: 5 }
+  ]
+}
 
-// 评分代码选项 (FK → TRAIT_MASTER)
-const scoreCodeOptions = computed(() => [
-  { value: 'YIELD', label: t('research.dataCollection.yieldData.scoreCodes.yield') },
-  { value: 'DISEASE_RES', label: t('research.dataCollection.yieldData.scoreCodes.diseaseRes') },
-  { value: 'PEST_RES', label: t('research.dataCollection.yieldData.scoreCodes.pestRes') },
-  { value: 'DROUGHT_TOL', label: t('research.dataCollection.yieldData.scoreCodes.droughtTol') },
-  { value: 'LODGING_RES', label: t('research.dataCollection.yieldData.scoreCodes.lodgingRes') },
-  { value: 'GRAIN_QUALITY', label: t('research.dataCollection.yieldData.scoreCodes.grainQuality') },
-  { value: 'MATURITY', label: t('research.dataCollection.yieldData.scoreCodes.maturity') },
-  { value: 'PLANT_HEIGHT', label: t('research.dataCollection.yieldData.scoreCodes.plantHeight') }
-])
+// 检验类型选项（来自本地映射）
+const inspectionTypeOptions = computed(() => Object.keys(INSPECTION_SCHEMA).map(k => ({ value: k, label: k })))
+
+// 评分代码选项（随所选检验类型变化）
+const scoreCodeOptions = computed(() => {
+  if (!formData.inspectionType) return []
+  return INSPECTION_SCHEMA[formData.inspectionType] || []
+})
+
+// 当前评分代码元数据
+const currentCodeMeta = computed(() => {
+  if (!formData.inspectionType || !formData.scoreCode) return null
+  return (INSPECTION_SCHEMA[formData.inspectionType] || []).find(c => c.code === formData.scoreCode) || null
+})
+
+// 选择变化处理
+const onInspectionTypeChange = () => {
+  formData.scoreCode = ''
+  formData.scoreValue = null
+}
+
+const onScoreCodeChange = () => {
+  formData.scoreValue = null
+}
+
+const validateScoreValue = (rule, value, callback) => {
+  const meta = currentCodeMeta.value
+  if (!meta) return callback(new Error(t('research.dataCollection.yieldData.pleaseSelectCodeFirst') || '请先选择评分代码'))
+  if (value === null || value === '' || value === undefined) return callback(new Error(t('common.required') || '必填项'))
+  if (meta.type === 'percent') {
+    if (typeof value !== 'number' || value < 0 || value > 100) return callback(new Error(t('research.dataCollection.yieldData.percentRange') || '百分比范围为 0 - 100'))
+  }
+  if (meta.type === 'scale') {
+    const min = meta.min ?? 1
+    const max = meta.max ?? 5
+    if (typeof value !== 'number' || value < min || value > max) return callback(new Error((t('research.dataCollection.yieldData.scaleRange') || '评分范围为') + ` ${min}-${max}`))
+  }
+  if (meta.type === 'number') {
+    if (typeof value !== 'number' || value < 0) return callback(new Error(t('research.dataCollection.yieldData.numberNonNegative') || '请输入非负数字'))
+  }
+  if (meta.type === 'category') {
+    if (!value) return callback(new Error(t('common.required') || '必填项'))
+  }
+  callback()
+}
 
 const rules = computed(() => ({
   plotId: [
     { required: true, message: t('research.dataCollection.yieldData.rules.plotIdRequired'), trigger: 'change' }
+  ],
+  inspectionType: [
+    { required: true, message: t('research.dataCollection.yieldData.rules.inspectionTypeRequired') || '请选择检验类型', trigger: 'change' }
+  ],
+  scoreCode: [
+    { required: true, message: t('research.dataCollection.yieldData.rules.scoreCodeRequired') || '请选择评分代码', trigger: 'change' }
+  ],
+  scoreValue: [
+    { validator: validateScoreValue, trigger: ['blur', 'change'] }
   ],
   recorderName: [
     { required: true, message: t('research.dataCollection.yieldData.rules.recorderNameRequired'), trigger: 'blur' }
@@ -342,6 +485,8 @@ const rules = computed(() => ({
     { type: 'number', min: 0.01, message: t('research.dataCollection.yieldData.rules.yieldQtPerHaMin'), trigger: 'blur' }
   ]
 }))
+
+const dummy = ref('')
 
 // 加载地块选项
 const loadPlotOptions = async () => {
