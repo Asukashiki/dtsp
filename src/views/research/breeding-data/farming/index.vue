@@ -43,6 +43,17 @@
                 <span class="search-label">Activity Date:</span>
                 <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" />
               </div>
+              <div class="search-item">
+                <span class="search-label">Audit Status:</span>
+                <el-select v-model="queryParams.auditStatus" placeholder="Please select Audit Status" clearable class="filter-select">
+                  <el-option
+                    v-for="dict in dictOptions.flow_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </div>
               <div class="search-actions">
                 <el-button type="primary" @click="handleQuery">
                   <i class="ri-search-line"></i>{{ $t('common.search') }}
@@ -60,11 +71,39 @@
                 <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="activityDate" label="Activity Date" min-width="120" />
+                <el-table-column prop="activityDate" label="Activity Date" min-width="160">
+                  <template #default="{ row }">
+                    {{ formatDateTime(row.activityDate) }}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="activityType" label="Activity Type" min-width="120" />
                 <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="quantity" label="Quantity" min-width="100" />
                 <el-table-column prop="unit" label="Unit" min-width="80" />
+                <!-- 新增的审计字段 -->
+                <el-table-column prop="auditStatus" label="Audit Status" min-width="120">
+                  <template #default="{ row }">
+                    <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
+                  </template>
+                </el-table-column>
+                <el-table-column prop="creator" label="Creator" min-width="120" />
+                      <el-table-column prop="createTime" label="Created Time" min-width="160">
+                  <template #default="{ row }">
+                    {{ formatDateTime(row.createTime) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="modifier" label="Modifier" min-width="120" />
+                 <el-table-column prop="updateTime" label="Modified Time" min-width="160">
+                  <template #default="{ row }">
+                    {{ formatDateTime(row.updateTime) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="auditor" label="Auditor" min-width="120" />
+                <el-table-column prop="auditedDatetime" label="Audited Time" min-width="160">
+                  <template #default="{ row }">
+                    {{ formatDateTime(row.auditedDatetime) }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -82,25 +121,33 @@
             </div>
 
             <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
-                <div class="mobile-card-header">
-                  <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                  <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ item.activityDate }}</span></div>
+                <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
+                  <div class="mobile-card-header">
+                    <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+                    <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ formatDateTime(item.activityDate) }}</span></div>
+                  </div>
+                  <div class="mobile-card-body">
+                    <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Trial ID:</span><span class="value">{{ item.trialId }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Batch ID:</span><span class="value">{{ item.batchId }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
+                    <!-- 新增的审计字段 -->
+                    <div class="mobile-card-row"><span class="label">Audit Status:</span><span class="value"><dict-tag :options="dictOptions.flow_status" :value="item.auditStatus" /></span></div>
+                    <div class="mobile-card-row"><span class="label">Creator:</span><span class="value">{{ item.creator }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Modifier:</span><span class="value">{{ item.modifier }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Auditor:</span><span class="value">{{ item.auditor }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Created Time:</span><span class="value">{{ formatDateTime(item.createTime) }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Modified Time:</span><span class="value">{{ formatDateTime(item.updateTime) }}</span></div>
+                    <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
+                  </div>
+                  <div class="mobile-card-footer">
+                    <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+                    <el-button size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(item)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
+                  </div>
                 </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">Trial ID:</span><span class="value">{{ item.trialId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">Batch ID:</span><span class="value">{{ item.batchId }}</span></div>
-                  <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
-                  <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
-                </div>
-                <div class="mobile-card-footer">
-                  <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                  <el-button size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                  <el-button size="small" type="danger" @click="handleDelete(item)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
-                </div>
-              </div>
               <div class="pagination-wrapper">
                 <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :total="total" layout="prev, pager, next" small @current-change="getList" />
               </div>
@@ -118,6 +165,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -127,14 +175,38 @@ const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const plotOptions = ref([])
+const { options: dictOptions } = useDict('flow_status')
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
   plotId: '',
   activityType: '',
-  activityDate: ''
+  activityDate: '',
+  auditStatus: ''
 })
+
+// 格式化日期时间为 'YYYY-MM-DD HH:mm:ss'
+const formatDateTime = (val) => {
+  if (!val) return '-'
+  // 若已是符合格式的字符串，直接返回
+  if (typeof val === 'string') {
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) return val
+    // 纯日期字符串：保持原样返回（后端若未存时分秒，避免误导显示固定的 00:00:00）
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val
+  }
+  // 其它情况（时间戳、ISO、Date对象）按本地时区格式化
+  const d = new Date(val)
+  if (isNaN(d.getTime())) return val || '-'
+  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
+  const Y = d.getFullYear()
+  const M = pad(d.getMonth() + 1)
+  const D = pad(d.getDate())
+  const h = pad(d.getHours())
+  const m = pad(d.getMinutes())
+  const s = pad(d.getSeconds())
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+}
 
 const activityTypeOptions = [
   { label: 'Fertilizer', value: 'fertilizer' },
@@ -176,6 +248,7 @@ const handleReset = () => {
   queryParams.plotId = ''
   queryParams.activityType = ''
   queryParams.activityDate = ''
+  queryParams.auditStatus = ''
   queryParams.pageNum = 1
   getList()
 }

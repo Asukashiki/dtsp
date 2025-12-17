@@ -68,6 +68,22 @@
                   class="search-input"
                 />
               </div>
+              <div class="search-item">
+                <span class="search-label">{{ $t('research.breedingData.plot.columns.auditStatus') }}:</span>
+                <el-select
+                  v-model="queryParams.auditStatus"
+                  :placeholder="$t('research.breedingData.trial.placeholder.auditStatus')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option
+                    v-for="dict in dictOptions.flow_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </div>
               <div class="search-actions">
                 <el-button type="primary" @click="handleQuery">
                   <i class="ri-search-line"></i>Search
@@ -90,6 +106,17 @@
                 <el-table-column prop="columnNo" label="Column No" min-width="110" />
                 <el-table-column prop="varietyCode" label="Variety Code" min-width="130" show-overflow-tooltip />
                 <el-table-column prop="sowingDate" label="Sowing Date" min-width="120" />
+                <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
+                  <template #default="{ row }">
+                    <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="120" />
+                <el-table-column prop="createTime" :label="$t('research.breedingData.plot.columns.createTime')" min-width="120" />
+                <el-table-column prop="modifiedName" :label="$t('research.breedingData.plot.columns.modifiedBy')" min-width="120" />
+                <el-table-column prop="updateTime" :label="$t('research.breedingData.plot.columns.updateTime')" min-width="120" />
+                <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
+                <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
                 <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -151,6 +178,36 @@
                     <span class="label">Sowing Date:</span>
                     <span class="value">{{ item.sowingDate }}</span>
                   </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.auditStatus') }}:</span>
+                    <span class="value">
+                      <dict-tag :options="dictOptions.flow_status" :value="item.auditStatus" />
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.createdBy') }}:</span>
+                    <span class="value">{{ item.createdName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.modifiedBy') }}:</span>
+                    <span class="value">{{ item.modifiedName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.auditedBy') }}:</span>
+                    <span class="value">{{ item.auditedName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.updateTime') }}:</span>
+                    <span class="value">{{ item.updateTime }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.plot.columns.auditTime') }}:</span>
+                    <span class="value">{{ item.auditTime }}</span>
+                  </div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)">
@@ -189,6 +246,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getPlotInfoList, deletePlotInfo, getBatchOptions } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -198,13 +256,15 @@ const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const batchOptions = ref([])
+const { options: dictOptions  } = useDict('flow_status')
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
   trialId: '',
   batchId: '',
-  varietyCode: ''
+  varietyCode: '',
+  auditStatus: ''
 })
 
 const getList = async () => {
@@ -240,6 +300,7 @@ const handleReset = () => {
   queryParams.trialId = ''
   queryParams.batchId = ''
   queryParams.varietyCode = ''
+  queryParams.auditStatus = ''
   getList()
 }
 

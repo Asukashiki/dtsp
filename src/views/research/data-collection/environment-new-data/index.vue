@@ -61,6 +61,23 @@
               :value="item.batchId"
             />
           </el-select>
+
+          <!-- Audit Status -->
+          <el-select
+            v-model="searchForm.workflowStatus"
+            :placeholder="$t('research.environmentNewData.columns.auditStatus')"
+            class="filter-select"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('common.all')" value="" />
+            <el-option
+              v-for="opt in options.flow_status || []"
+              :key="opt.value"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
         </div>
 
         <div class="action-row">
@@ -103,6 +120,11 @@
           <el-table-column prop="unit" :label="$t('research.environmentNewData.columns.unit')" min-width="80" align="center" />
           <el-table-column prop="timestamp" :label="$t('research.environmentNewData.columns.timestamp')" min-width="160" align="center" />
           <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
+          <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
+            <template #default="{ row }">
+              <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="200" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
@@ -209,9 +231,11 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getEnvironmentNewDataPage, deleteEnvironmentNewData } from '@/api/environment-new-data'
 import { getBreedingBatchList } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { options, getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
 const tableData = ref([])
@@ -220,7 +244,8 @@ const batchOptions = ref([])
 const searchForm = reactive({
   stationId: '',
   parameterCode: '',
-  batchId: ''
+  batchId: '',
+  workflowStatus: ''
 })
 
 const pagination = reactive({
@@ -300,6 +325,7 @@ const handleReset = () => {
   searchForm.stationId = ''
   searchForm.parameterCode = ''
   searchForm.batchId = ''
+  searchForm.workflowStatus = ''
   pagination.pageNum = 1
   loadData()
 }

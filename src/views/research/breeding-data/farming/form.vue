@@ -65,10 +65,10 @@
                   <el-form-item label="Activity Date" prop="activityDate">
                     <el-date-picker
                       v-model="formData.activityDate"
-                      type="date"
-                      value-format="YYYY-MM-DD"
+                      type="datetime"
+                      value-format="YYYY-MM-DD HH:mm:ss"
                       style="width: 100%"
-                      placeholder="Select activity date"
+                      placeholder="Select activity date and time"
                     />
                   </el-form-item>
                 </el-col>
@@ -123,7 +123,7 @@
                         v-for="item in farmerOptions"
                         :key="item.farmerId"
                         :label="`${item.farmerName} (${item.farmerId})`"
-                        :value="item.farmerId"
+                        :value="String(item.farmerId)"
                       >
                         <div style="display: flex; justify-content: space-between;">
                           <span>{{ item.farmerName }}</span>
@@ -160,12 +160,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
 import { getFarmerOptions } from '@/api/newFarm'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -184,7 +185,7 @@ const formData = reactive({
   plotId: '',
   trialId: '',
   batchId: '',
-  activityDate: new Date().toISOString().split('T')[0], // 默认当前日期
+  activityDate: null, // 初始化为null，后续在onMounted中设置默认值
   activityType: '',
   inputName: '',
   quantity: null,
@@ -200,6 +201,26 @@ const rules = {
   operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }]
 }
 
+// 将日期对象格式化为 'YYYY-MM-DD HH:mm:ss'
+const formatNow = () => {
+  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
+  const d = new Date()
+  const Y = d.getFullYear()
+  const M = pad(d.getMonth() + 1)
+  const D = pad(d.getDate())
+  const h = pad(d.getHours())
+  const m = pad(d.getMinutes())
+  const s = pad(d.getSeconds())
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+}
+
+// 解析当前用户的可用操作员ID，优先 farmerId，其次 userId/id
+const resolveOperatorId = () => {
+  const ui = getUserInfo() || {}
+  const candidate = ui.farmerId ?? ui.userId ?? ui.id ?? ui?.user?.userId ?? ui?.user?.id
+  return candidate != null && candidate !== '' ? String(candidate) : ''
+}
+
 const loadPlotOptions = async () => {
   try {
     const res = await getPlotOptions()
@@ -213,6 +234,21 @@ const loadFarmerOptions = async () => {
   try {
     const res = await getFarmerOptions()
     farmerOptions.value = res.data || []
+
+    // 确保当前用户在选项中，以便默认值能正确显示
+    const opId = resolveOperatorId()
+    if (opId) {
+      const exists = farmerOptions.value.some((x) => String(x.farmerId) === String(opId))
+      if (!exists) {
+        const ui = getUserInfo() || {}
+        const displayName = ui?.user?.name || ''
+        farmerOptions.value.unshift({ farmerId: opId, farmerName: displayName || String(opId) })
+      }
+      // 若为新建且尚未设置，赋默认值
+      if (!isEdit.value && !formData.operatorId) {
+        formData.operatorId = String(opId)
+      }
+    }
   } catch (error) {
     console.error('Failed to load farmer options:', error)
   }
@@ -228,7 +264,16 @@ const handlePlotChange = (plotId) => {
 }
 
 const getInfo = async () => {
-  if (!isEdit.value) return
+  if (!isEdit.value) {
+    // 新建模式下确保activityDate有默认值
+    formData.activityDate = formatNow()
+    // 新建模式下默认操作员为当前用户
+    if (!formData.operatorId) {
+      const opId = resolveOperatorId()
+      if (opId) formData.operatorId = opId
+    }
+    return
+  }
   loading.value = true
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
@@ -247,6 +292,14 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
+    
+    // 自动设置操作员ID为登录用户
+    if (!submitData.operatorId) {
+      const userInfo = getUserInfo()
+      if (userInfo && userInfo.userId) {
+        submitData.operatorId = userInfo.userId
+      }
+    }
 
     if (isEdit.value) {
       await editFarmingRecord(submitData)
@@ -271,6 +324,21 @@ onMounted(() => {
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
+  
+  // 确保新建模式下activityDate有默认值
+  if (!isEdit.value) {
+    // 延迟设置默认值，确保组件已挂载
+    nextTick(() => {
+      if (!formData.activityDate) {
+        formData.activityDate = formatNow()
+      }
+      // 兜底：若未设置操作员则默认当前用户
+      if (!formData.operatorId) {
+        const opId = resolveOperatorId()
+        if (opId) formData.operatorId = opId
+      }
+    })
+  }
 })
 </script>
 

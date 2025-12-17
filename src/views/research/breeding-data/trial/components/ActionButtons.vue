@@ -80,8 +80,8 @@ const emit = defineEmits(['edit', 'view', 'submit', 'cancel', 'archive'])
 
 const { t } = useI18n()
 
-// 根据状态显示不同按钮
-const status = computed(() => props.trial.trialStatus || 'S0')
+// 根据状态显示不同按钮（兼容 workflowStatus 字段）
+const status = computed(() => props.trial.trialStatus || props.trial.workflowStatus || 'S0')
 
 const showEdit = computed(() => status.value === 'S0' || status.value === 'S3')
 const showView = computed(() => status.value === 'S1' || status.value === 'S9' || status.value === 'S10')

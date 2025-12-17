@@ -77,6 +77,22 @@
                   <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </div>
+              <div class="search-item">
+                <label class="search-label">{{ $t('research.breedingData.trial.columns.auditStatus') }}:</label>
+                <el-select
+                  v-model="queryParams.auditStatus"
+                  :placeholder="$t('research.breedingData.trial.placeholder.auditStatus')"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option 
+                    v-for="item in dictOptions.flow_status" 
+                    :key="item.value" 
+                    :label="item.label" 
+                    :value="item.value" 
+                  />
+                </el-select>
+              </div>
               <div class="search-actions">
                 <el-button type="primary" @click="handleQuery">
                   <i class="ri-search-line"></i>
@@ -101,9 +117,14 @@
                 <el-table-column prop="season" :label="$t('research.breedingData.trial.columns.season')" min-width="100" />
                 <el-table-column prop="designType" :label="$t('research.breedingData.trial.columns.designType')" min-width="140" />
                 <el-table-column prop="replications" :label="$t('research.breedingData.trial.columns.replications')" min-width="100" />
-                <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.status')" width="120" align="center">
+                <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.auditStatus')" width="120" align="center">
                   <template #default="{ row }">
-                    <StatusTag :status="row.trialStatus || 'S0'" />
+                    <StatusTag :status="row.trialStatus || row.workflowStatus || 'S0'" />
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.breedingData.trial.columns.status')" width="120" align="center">
+                  <template #default="{ row }">
+                    {{ getTrialStatusText(row) }}
                   </template>
                 </el-table-column>
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
@@ -166,6 +187,14 @@
                     <span class="label">{{ $t('research.breedingData.trial.columns.replications') }}:</span>
                     <span class="value">{{ item.replications }}</span>
                   </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.auditStatus') }}:</span>
+                    <span class="value">{{ item.trialStatus || item.workflowStatus }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.status') }}:</span>
+                    <span class="value">{{ getTrialStatusText(item) }}</span>
+                  </div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)">
@@ -214,12 +243,18 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicList, deleteTrialBasic, getBatchOptions } from '@/api/breedingData'
 import { submitTrial, cancelTrial, archiveTrial } from '@/api/research/trialBasicAudit'
+import { useDict } from '@/hooks/useDict'
 import StatusTag from './components/StatusTag.vue'
 import ActionButtons from './components/ActionButtons.vue'
 import ReasonDialog from './components/ReasonDialog.vue'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 获取审核状态字典数据
+const { options: dictOptions } = useDict(['flow_status'], {
+  
+})
 
 const loading = ref(false)
 const dataList = ref([])
@@ -233,7 +268,8 @@ const queryParams = reactive({
   trialId: '',
   batchId: '',
   trialName: '',
-  season: ''
+  season: '',
+  auditStatus: ''
 })
 
 const seasonOptions = [
@@ -277,6 +313,7 @@ const handleReset = () => {
   queryParams.batchId = ''
   queryParams.trialName = ''
   queryParams.season = ''
+  queryParams.auditStatus = ''
   getList()
 }
 
@@ -393,6 +430,19 @@ onMounted(() => {
   loadBatchOptions()
   getList()
 })
+
+/**
+ * 显示用状态（业务映射）：
+ * - 审核通过(S2) => completed
+ * - 审核中(S1)   => Active
+ * 其他状态返回 "-"
+ */
+const getTrialStatusText = (row) => {
+  const s = row?.workflowStatus || row?.trialStatus
+  if (s === 'S2') return 'completed'
+  if (s === 'S1') return 'Active'
+  return '-'
+}
 </script>
 
 <style lang="scss" scoped>

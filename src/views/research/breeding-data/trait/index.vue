@@ -49,6 +49,34 @@
                 </el-select>
               </div>
               <div class="search-item">
+                <span class="search-label">Status:</span>
+                <el-select
+                  v-model="queryParams.status"
+                  placeholder="Select Status"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option label="submit" value="submit" />
+                  <el-option label="approve" value="approve" />
+                </el-select>
+              </div>
+              <div class="search-item">
+                <span class="search-label">Workflow:</span>
+                <el-select
+                  v-model="queryParams.workflowStatus"
+                  placeholder="Select Workflow Status"
+                  clearable
+                  class="filter-select"
+                >
+                  <el-option
+                    v-for="opt in options.flow_status || []"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </el-select>
+              </div>
+              <div class="search-item">
                 <span class="search-label">Trial ID:</span>
                 <el-select
                   v-model="queryParams.trialId"
@@ -94,6 +122,18 @@
                 <el-table-column prop="traitName" label="Trait Name" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="traitValue" label="Trait Value" min-width="100" />
                 <el-table-column prop="unit" label="Unit" min-width="80" />
+                <el-table-column prop="status" label="Status" min-width="120" />
+                <el-table-column label="Audit Status" min-width="140">
+                  <template #default="{ row }">
+                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createBy" label="Create By" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createTime" label="Create Time" min-width="160" />
+                <el-table-column prop="updateBy" label="Update By" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="updateTime" label="Update Time" min-width="160" />
+                <el-table-column prop="auditBy" label="Audit By" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="auditTime" label="Audit Time" min-width="160" />
                 <el-table-column :label="$t('research.breedingData.trait.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -159,6 +199,14 @@
                     <span class="label">Trait Value:</span>
                     <span class="value">{{ item.traitValue }} {{ item.unit }}</span>
                   </div>
+                  <div class="mobile-card-row">
+                    <span class="label">Status:</span>
+                    <span class="value">{{ item.status }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">Workflow:</span>
+                    <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus) || item.workflowStatus }}</span>
+                  </div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)">
@@ -197,9 +245,11 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getAgronomicTraitList, deleteAgronomicTrait, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { options, getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
 const dataList = ref([])
@@ -213,13 +263,42 @@ const queryParams = reactive({
   pageSize: 10,
   batchId: '',
   trialId: '',
-  observationDate: ''
+  observationDate: '',
+  status: '',
+  workflowStatus: '',
+  createBy: '',
+  updateBy: '',
+  auditBy: '',
+  createTimeRange: [],
+  updateTimeRange: [],
+  auditTimeRange: []
 })
+
+// 列表查询参数构建（将时间范围拆分为 begin/end 字段）
+const buildListParams = () => {
+  const p = { ...queryParams }
+  if (Array.isArray(p.createTimeRange) && p.createTimeRange.length === 2) {
+    p.createTimeBegin = p.createTimeRange[0]
+    p.createTimeEnd = p.createTimeRange[1]
+  }
+  if (Array.isArray(p.updateTimeRange) && p.updateTimeRange.length === 2) {
+    p.updateTimeBegin = p.updateTimeRange[0]
+    p.updateTimeEnd = p.updateTimeRange[1]
+  }
+  if (Array.isArray(p.auditTimeRange) && p.auditTimeRange.length === 2) {
+    p.auditTimeBegin = p.auditTimeRange[0]
+    p.auditTimeEnd = p.auditTimeRange[1]
+  }
+  delete p.createTimeRange
+  delete p.updateTimeRange
+  delete p.auditTimeRange
+  return p
+}
 
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getAgronomicTraitList(queryParams)
+    const res = await getAgronomicTraitList(buildListParams())
     dataList.value = res.rows || []
     total.value = res.total || 0
   } catch (error) {
@@ -258,6 +337,14 @@ const handleReset = () => {
   queryParams.batchId = ''
   queryParams.trialId = ''
   queryParams.observationDate = ''
+  queryParams.status = ''
+  queryParams.workflowStatus = ''
+  queryParams.createBy = ''
+  queryParams.updateBy = ''
+  queryParams.auditBy = ''
+  queryParams.createTimeRange = []
+  queryParams.updateTimeRange = []
+  queryParams.auditTimeRange = []
   getList()
 }
 
