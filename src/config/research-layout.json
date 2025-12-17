@@ -59,6 +59,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/data-collection/environment-new-data/approve",
+          "icon": "ri-cloud-line",
+          "titleKey": "research.menu.environmentNewDataApprove",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/breeding-data/field-inspection",
           "icon": "ri-bar-chart-box-line",
           "titleKey": "research.menu.fieldInspection",

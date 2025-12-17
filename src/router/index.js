@@ -488,6 +488,18 @@ const routes = [
         component: () => import('../views/research/data-collection/environment-new-data/detail.vue'),
         meta: { title: '环境监测数据详情', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'data-collection/environment-new-data/approve',
+        name: 'EnvironmentNewDataApprove',
+        component: () => import('../views/research/data-collection/environment-new-data/approve.vue'),
+        meta: { title: '环境监测数据审批', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/environment-new-data/audit/:envRecordId',
+        name: 'EnvironmentNewDataAudit',
+        component: () => import('../views/research/data-collection/environment-new-data/form.vue'),
+        meta: { title: '环境监测数据审核', hideInMenu: true, requiresAuth: true }
+      },
       // ==================== 繁殖数据管理 ====================
       
       // OSE确认接收育种家种子

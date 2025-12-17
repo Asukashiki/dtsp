@@ -81,7 +81,8 @@ export default {
   environmentNewData: 'Environment Monitoring Data',
   environmentNewDataAdd: 'Add Environment Data',
   environmentNewDataEdit: 'Edit Environment Data',
-  environmentNewDataDetail: 'Environment Data Detail',
+  environmentNewDataDetail: 'Environment Monitoring Data Detail',
+  environmentNewDataApprove: 'Environment Monitoring Data Approval',
 
   oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
   oseReceiveConfirmAdd: 'Add Receipt Confirmation',

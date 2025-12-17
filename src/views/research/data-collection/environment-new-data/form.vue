@@ -59,7 +59,7 @@
             <el-input
               v-model="formData.batchId"
               :placeholder="$t('research.environmentNewData.placeholder.batchId')"
-              disabled
+              :disabled="isReadOnly"
             />
           </el-form-item>
 
@@ -67,7 +67,7 @@
             <el-input
               v-model="formData.trialId"
               :placeholder="$t('research.environmentNewData.placeholder.trialId')"
-              disabled
+              :disabled="isReadOnly"
             />
           </el-form-item>
         </div>
@@ -84,6 +84,7 @@
               v-model="formData.stationId"
               :placeholder="$t('research.environmentNewData.placeholder.stationId')"
               maxlength="50"
+              :disabled="isReadOnly"
             />
           </el-form-item>
 
@@ -95,6 +96,7 @@
               format="YYYY-MM-DD HH:mm"
               value-format="YYYY-MM-DD HH:mm"
               style="width: 100%"
+              :disabled="isReadOnly"
             />
           </el-form-item>
 
@@ -116,6 +118,7 @@
               v-model="formData.parameterCode"
               :placeholder="$t('research.environmentNewData.placeholder.parameterCode')"
               style="width: 100%"
+              :disabled="isReadOnly"
             >
               <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
               <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
@@ -134,6 +137,7 @@
                 :precision="2"
                 :controls="false"
                 style="width: 100%"
+                :disabled="isReadOnly"
               />
               <span class="unit-hint">{{ formData.unit || '-' }}</span>
             </div>
@@ -144,6 +148,7 @@
               v-model="formData.unit"
               :placeholder="$t('research.environmentNewData.placeholder.unit')"
               maxlength="20"
+              :disabled="isReadOnly"
             />
           </el-form-item>
 
@@ -152,6 +157,7 @@
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
               maxlength="100"
+              :disabled="isReadOnly"
             />
           </el-form-item>
 
@@ -163,20 +169,40 @@
               :placeholder="$t('research.environmentNewData.placeholder.remark')"
               maxlength="500"
               show-word-limit
+              :disabled="isReadOnly"
+            />
+          </el-form-item>
+        </div>
+
+        <!-- 审批意见 (仅在审批模式下显示) -->
+        <div v-if="pageMode === 'audit'" class="form-section">
+          <div class="section-title">
+            <i class="ri-discuss-line"></i>
+            {{ $t('research.environmentNewData.form.approvalComment') }}
+          </div>
+
+          <el-form-item :label="$t('research.environmentNewData.form.approvalComment')" prop="approvalComment">
+            <el-input 
+              v-model="formData.approvalComment" 
+              type="textarea" 
+              :rows="4" 
+              :placeholder="$t('research.environmentNewData.placeholder.approvalComment')" 
+              :disabled="isReadOnly"
             />
           </el-form-item>
         </div>
 
         <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="handleCancel">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            <i class="ri-save-line"></i>
-            {{ $t('common.save') }}
-          </el-button>
-        </div>
+          <div class="form-actions">
+            <el-button 
+              v-for="button in getActionButtons()" 
+              :key="button.action"
+              :type="button.type" 
+              @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ button.label }}
+            </el-button>
+          </div>
       </el-form>
     </div>
   </div>
@@ -187,21 +213,65 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData } from '@/api/environment-new-data'
+import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData, approveEnvironmentNewData, rejectEnvironmentNewData } from '@/api/environment-new-data'
 import { getPlotInfoList } from '@/api/breedingData'
 import { getUserInfo } from '@/utils/auth'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const formRef = ref(null)
+
+/**
+ * 根据工作流状态获取操作按钮
+ */
+const getActionButtons = () => {
+  const workflowStatus = formData.workflowStatus
+  const mode = pageMode.value
+  
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+  
+  // 审批模式
+  if (mode === 'audit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'success', label: 'approve', action: 'approve' },
+      { type: 'danger', label: 'reject', action: 'reject' }
+    ]
+  }
+  
+  // 查看模式（已审批/已归档/作废状态）
+  if (mode === 'view') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'archive', action: 'archive' },
+      { type: 'danger', label: 'cancelBatch', action: 'cancelBatch' }
+    ]
+  }
+  
+  // 默认按钮
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
 const loading = ref(false)
 const submitting = ref(false)
 const plotLoading = ref(false)
 const plotOptions = ref([])
 
 const isEdit = computed(() => !!route.params.envRecordId)
+const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
+const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
 
 const formData = reactive({
   envRecordId: '',
@@ -215,7 +285,8 @@ const formData = reactive({
   unit: '',
   source: '',
   remark: '',
-  observerId: ''
+  observerId: '',
+  workflowStatus: ''// 添加审批意见字段
 })
 
 const rules = reactive({
@@ -293,6 +364,28 @@ const handleCancel = () => {
   router.back()
 }
 
+/**
+ * 处理不同按钮操作
+ */
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      handleCancel()
+      break
+    case 'save':
+      handleSubmit()
+      break
+    case 'approve':
+      handleApprove()
+      break
+    case 'reject':
+      handleReject()
+      break
+    default:
+      console.warn(`Unknown action: ${action}`)
+  }
+}
+
 // 提交
 const handleSubmit = async () => {
   try {
@@ -319,6 +412,46 @@ const handleSubmit = async () => {
     }
   } finally {
     submitting.value = false
+  }
+}
+
+// 审核通过
+const handleApprove = async () => {
+  try {
+    // 验证表单，特别是审批意见字段
+    const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+    if (!valid) return
+
+    const res = await approveEnvironmentNewData(formData.envRecordId, formData.approvalComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.approveSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(t('research.environmentNewData.approveFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to approve:', error)
+    ElMessage.error(t('research.environmentNewData.approveFailed'))
+  }
+}
+
+// 驳回
+const handleReject = async () => {
+  try {
+    // 验证表单，特别是审批意见字段
+    const valid = await formRef.value.validateField('approvalComment').catch(() => false)
+    if (!valid) return
+
+    const res = await rejectEnvironmentNewData(formData.envRecordId, formData.approvalComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.rejectSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(t('research.environmentNewData.rejectFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to reject:', error)
+    ElMessage.error(t('research.environmentNewData.rejectFailed'))
   }
 }
 

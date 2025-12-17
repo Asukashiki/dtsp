@@ -81,6 +81,7 @@ export default {
   environmentNewDataAdd: '新增环境监测数据',
   environmentNewDataEdit: '编辑环境监测数据',
   environmentNewDataDetail: '环境监测数据详情',
+  environmentNewDataApprove: '环境监测数据审批',
 
   oseReceiveConfirm: 'OSE确认接收育种家种子',
   oseReceiveConfirmAdd: '新增接收确认',
