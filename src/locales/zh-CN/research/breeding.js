@@ -29,6 +29,7 @@ export default {
         productionInfo: '生产信息',
         breedSeedProduceBatchId: '种子生产批次ID',
         breedBatchId: '育种批次ID',
+        trialName: '试验名称',
         varietyId: '品种ID',
         varietyName: '品种名称',
         cropType: '作物类型',
@@ -49,6 +50,7 @@ export default {
       // 表单占位符
       placeholder: {
         breedBatchId: '请选择育种批次ID',
+        trialName: '请选择试验名称',
         varietyName: '请选择品种名称',
         fromSeedLevel: '请选择种子等级来源',
         toSeedLevel: '请选择种子等级去向',

@@ -27,100 +27,126 @@
               {{ $t('research.breeding.seed.production.form.basicInfo') }}
             </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
-              <el-input
-                v-model="formData.produceBatchName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
-                clearable
-                style="width: 100%"
-              />
-            </el-form-item>
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
+                <el-input
+                  v-model="formData.produceBatchName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
+                  clearable
+                  style="width: 100%"
+                />
+              </el-form-item>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
-              <el-select
-                v-model="formData.breedBatchName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
-                filterable
-                clearable
-                style="width: 100%"
-                @change="handleBatchChange"
-              >
-                <el-option
-                  v-for="batch in breedBatchList"
-                  :key="batch.batchId"
-                  :label="batch.batchName"
-                  :value="batch.batchId"
+              <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
+                <el-select
+                  v-model="formData.breedBatchName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleBatchChange"
                 >
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>{{ batch.batchName }}</span>
-                    <el-tag type="success" size="small" effect="plain">
-                      {{ batch.status }}
-                    </el-tag>
-                  </div>
-                </el-option>
-              </el-select>
-            </el-form-item>
+                  <el-option
+                    v-for="batch in breedBatchList"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  >
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>{{ batch.batchName }}</span>
+                      <el-tag type="success" size="small" effect="plain">
+                        {{ batch.status }}
+                      </el-tag>
+                    </div>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
-              <el-input
-                v-model="formData.varietyName"
-                disabled
-                :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.trialName')" prop="trialName">
               <el-select
-                v-model="formData.fromSeedLevel"
-                :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
-                clearable
-                style="width: 100%"
-              >
-                <el-option label="Breeder" value="Breeder" />
-                <el-option label="Pre-Basic" value="Pre-Basic" />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
-              <el-select
-                v-model="formData.toSeedLevel"
-                :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
-                clearable
-                style="width: 100%"
-              >
-                <el-option label="Pre-Basic" value="Pre-Basic" />
-                <el-option label="Basic" value="Basic" />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
-              <el-date-picker
-                v-model="formData.time"
-                type="datetime"
-                :placeholder="$t('research.breeding.seed.production.placeholder.time')"
-                format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
-              <el-select
-                v-model="formData.landName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                v-model="formData.trialId"
+                :placeholder="$t('research.breeding.seed.production.placeholder.trialName')"
                 filterable
                 clearable
                 style="width: 100%"
-                @change="handleLandChange"
+                @change="handleTrialChange"
               >
                 <el-option
-                  v-for="land in landList"
-                  :key="land.landId"
-                  :label="land.landName"
-                  :value="land.landName"
+                  v-for="trial in trialList"
+                  :key="trial.trialId"
+                  :label="trial.trialName"
+                  :value="trial.trialId"
                 />
               </el-select>
             </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
+                <el-input
+                  v-model="formData.varietyName"
+                  disabled
+                  :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
+                />
+              </el-form-item>
+            </div>
+
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
+                <el-select
+                  v-model="formData.fromSeedLevel"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option label="Breeder" value="Breeder" />
+                  <el-option label="Pre-Basic" value="Pre-Basic" />
+                </el-select>
+              </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
+                <el-select
+                  v-model="formData.toSeedLevel"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option label="Pre-Basic" value="Pre-Basic" />
+                  <el-option label="Basic" value="Basic" />
+                </el-select>
+              </el-form-item>
+            </div>
+
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
+                <el-date-picker
+                  v-model="formData.time"
+                  type="datetime"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.time')"
+                  format="YYYY-MM-DD HH:mm:ss"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  style="width: 100%"
+                />
+              </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
+                <el-select
+                  v-model="formData.landName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleLandChange"
+                >
+                  <el-option
+                    v-for="land in landList"
+                    :key="land.landId"
+                    :label="land.landName"
+                    :value="land.landName"
+                  />
+                </el-select>
+              </el-form-item>
+            </div>
           </div>
 
           <!-- 生产信息 -->
@@ -130,15 +156,20 @@
               {{ $t('research.breeding.seed.production.form.productionInfo') }}
             </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
-              <el-input-number
-                v-model="formData.inputSeedQuantity"
-                :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
-                :min="0"
-                :precision="2"
-                style="width: 100%"
-              />
-            </el-form-item>
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
+                <el-input-number
+                  v-model="formData.inputSeedQuantity"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
+                  :min="0"
+                  :precision="2"
+                  style="width: 100%"
+                />
+              </el-form-item>
+              
+              <!-- 占位元素，保持布局一致性 -->
+              <div></div>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -159,7 +190,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getLandList } from '@/api/newFarm'
-import { getBreedingBatchList } from '@/api/breedingData'
+import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
 
 const { t } = useI18n()
 
@@ -174,6 +205,8 @@ const formData = reactive({
   produceBatchName: '',
   breedBatchId: '',
   breedBatchName: '',
+  trialId: '',
+  trialName: '',
   varietyId: '',
   varietyName: '',
   cropType: '',
@@ -189,6 +222,7 @@ const formData = reactive({
 const breedBatchList = ref([])
 const varietyList = ref([])
 const landList = ref([])
+const trialList = ref([])
 
 // 表单验证规则
 const rules = computed(() => ({
@@ -279,6 +313,27 @@ const loadLandList = async () => {
   }
 }
 
+// 加载实验数据
+const loadTrialData = async (batchId) => {
+  try {
+    const params = {
+      pageNum: 1,
+      pageSize: 1000,
+      batchId: batchId
+    }
+    const res = await getTrialBasicList(params)
+    // 格式化数据用于下拉框：使用trialName作为标签，trialId作为值
+    trialList.value = (res.rows || []).map(item => ({
+      ...item,
+      label: item.trialName,
+      value: item.trialId
+    }))
+    console.log('Loaded trial data:', trialList.value.length, trialList.value)
+  } catch (error) {
+    console.error('Failed to load trial options:', error)
+  }
+}
+
 // 批次选择变化时，自动填充品种信息和作物类型
 const handleBatchChange = (batchId) => {
   console.log('handleBatchChange called with:', batchId)
@@ -287,9 +342,12 @@ const handleBatchChange = (batchId) => {
   if (!batchId) {
     formData.breedBatchId = ''
     formData.breedBatchName = ''
+    formData.trialId = ''
+    formData.trialName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
+    trialList.value = []
     console.log('Cleared batch related fields')
     return
   }
@@ -303,6 +361,10 @@ const handleBatchChange = (batchId) => {
     formData.varietyId = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
     formData.cropType = selectedBatch.cropType || ''
+    
+    // 加载实验数据
+    loadTrialData(selectedBatch.batchId)
+    
     console.log('Updated formData:', {
       breedBatchId: formData.breedBatchId,
       breedBatchName: formData.breedBatchName,
@@ -314,9 +376,12 @@ const handleBatchChange = (batchId) => {
     console.warn('Batch not found:', batchId)
     formData.breedBatchId = ''
     formData.breedBatchName = ''
+    formData.trialId = ''
+    formData.trialName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
+    trialList.value = []
   }
 }
 
@@ -347,6 +412,36 @@ const handleLandChange = (landName) => {
   }
 }
 
+// 试验选择变化时，根据试验ID查找并记录试验名称
+const handleTrialChange = (trialId) => {
+  console.log('handleTrialChange called with:', trialId)
+  console.log('Current trialList:', trialList.value)
+
+  if (!trialId) {
+    formData.trialId = ''
+    formData.trialName = ''
+    console.log('Cleared trial fields')
+    return
+  }
+
+  const selected = trialList.value.find(item => item.trialId === trialId)
+  console.log('Found trial:', selected)
+
+  if (selected) {
+    formData.trialId = selected.trialId
+    formData.trialName = selected.trialName
+    console.log('Updated formData:', {
+      trialId: formData.trialId,
+      trialName: formData.trialName
+    })
+  } else {
+    console.warn('Trial not found:', trialId)
+    console.warn('Available trials:', trialList.value.map(t => t.trialName))
+    formData.trialId = ''
+    formData.trialName = ''
+  }
+}
+
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -371,6 +466,8 @@ const handleSubmit = async () => {
       produceBatchName: formData.produceBatchName,
       breedBatchId: formData.breedBatchId,
       breedBatchName: formData.breedBatchName,
+      trialId: formData.trialId,
+      trialName: formData.trialName,
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType,
@@ -468,6 +565,18 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+/* 两列布局 */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-row > .el-form-item {
+  flex: 1;
+  margin-bottom: 0;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -488,6 +597,12 @@ onMounted(() => {
 
   .form-actions button {
     width: 100%;
+  }
+  
+  /* 移动端单列布局 */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
   }
 }
 </style>
