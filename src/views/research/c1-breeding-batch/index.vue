@@ -111,7 +111,6 @@
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id, row.auditStatus === 'approved')">{{ $t('common.view') }}</el-button>
               <el-button v-if="row.auditStatus !== 'approved'" link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
-              <el-button v-if="row.auditStatus !== 'approved'" link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
               <el-tag v-if="row.auditStatus === 'approved'" type="success" size="small" style="margin-left: 8px;">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
             </template>
           </el-table-column>

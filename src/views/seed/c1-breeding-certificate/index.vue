@@ -117,6 +117,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="startDate" :label="$t('seed.c1Certificate.columns.startDate')" width="120" align="center" />
+          <el-table-column prop="auditor" :label="$t('seed.c1Certificate.columns.auditor')" width="120" align="center" />
+          <el-table-column prop="auditorOrgName" :label="$t('seed.c1Certificate.columns.auditorOrg')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="auditTime" :label="$t('seed.c1Certificate.columns.auditTime')" width="160" align="center" />
           <el-table-column prop="printCount" :label="$t('seed.c1Certificate.columns.printCount')" width="100" align="center">
             <template #default="{ row }">
@@ -245,6 +247,14 @@
             <div class="info-row">
               <span class="label">{{ $t('seed.c1Certificate.columns.startDate') }}:</span>
               <span class="value">{{ item.startDate }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ $t('seed.c1Certificate.columns.auditor') }}:</span>
+              <span class="value">{{ item.auditor || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ $t('seed.c1Certificate.columns.auditorOrg') }}:</span>
+              <span class="value">{{ item.auditorOrgName || '-' }}</span>
             </div>
             <div class="info-row">
               <span class="label">{{ $t('seed.c1Certificate.columns.auditTime') }}:</span>

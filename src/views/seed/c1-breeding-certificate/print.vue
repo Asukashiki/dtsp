@@ -115,6 +115,10 @@
                 <span class="cert-value">{{ batchData.auditor || '-' }}</span>
               </div>
               <div class="cert-row">
+                <span class="cert-label">Certifying Agency:</span>
+                <span class="cert-value">{{ batchData.auditorOrgName || '-' }}</span>
+              </div>
+              <div class="cert-row">
                 <span class="cert-label">Audit Time:</span>
                 <span class="cert-value">{{ batchData.auditTime || '-' }}</span>
               </div>

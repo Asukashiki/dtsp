@@ -120,6 +120,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="recordDate" :label="$t('seed.breedingCertification.columns.recordDate')" width="120" align="center" />
+          <el-table-column prop="auditor" :label="$t('seed.breedingCertification.auditor')" width="120" align="center" />
+          <el-table-column prop="auditorOrgName" :label="$t('seed.breedingCertification.auditorOrg')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="auditTime" :label="$t('seed.breedingCertification.auditTime')" width="160" align="center" />
           <el-table-column prop="printCount" :label="$t('seed.breedingCertification.printCount')" width="100" align="center">
             <template #default="{ row }">
@@ -251,6 +253,14 @@
             <div class="info-row">
               <span class="label">{{ $t('seed.breedingCertification.columns.recordDate') }}:</span>
               <span class="value">{{ item.recordDate }}</span>
+            </div>
+            <div class="info-row" v-if="item.auditor">
+              <span class="label">{{ $t('seed.breedingCertification.auditor') }}:</span>
+              <span class="value">{{ item.auditor }}</span>
+            </div>
+            <div class="info-row" v-if="item.auditorOrgName">
+              <span class="label">{{ $t('seed.breedingCertification.auditorOrg') }}:</span>
+              <span class="value">{{ item.auditorOrgName }}</span>
             </div>
             <div class="info-row">
               <span class="label">{{ $t('seed.breedingCertification.auditTime') }}:</span>

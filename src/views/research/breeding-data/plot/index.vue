@@ -23,10 +23,6 @@
               <span>{{ $t('research.breedingData.plot.list') }}</span>
             </div>
             <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-                <i class="ri-delete-bin-line"></i>
-                {{ $t('common.batchDelete') }}
-              </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
                 {{ $t('research.breedingData.plot.add') }}
@@ -125,9 +121,6 @@
                       </el-button>
                       <el-button link type="primary" @click="handleEdit(row)">
                         <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
                       </el-button>
                     </div>
                   </template>

@@ -269,6 +269,13 @@ export default {
       completed: '已完成',
       terminated: '已终止',
     },
+    error: {
+      noTrackingRecord: '该批次暂无跟踪记录，请先添加跟踪记录',
+      invalidTrackingResult: '跟踪记录结论异常，请确保所有跟踪记录结果为正常',
+      noTestRecord: '该批次暂无检测记录，请先添加检测记录',
+      invalidTestResult: '检测记录结论不合格，请确保所有检测记录结果为合格',
+      validationFailed: '数据校验失败，请稍后重试',
+    },
   },
 
   // C1繁殖批次证书颁发
@@ -283,6 +290,8 @@ export default {
       cropType: '作物类型',
       orgName: '机构名称',
       startDate: '开始日期',
+      auditor: '审核人',
+      auditorOrg: '认证机构',
       auditTime: '审核时间',
       printCount: '打印次数',
       lastPrintTime: '最后打印时间',
