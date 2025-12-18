@@ -3,7 +3,7 @@ export default {
   systemName: '研究与开发管理系统',
   systemDesc: '品种管理、育种管理及种子信息服务',
   backToHome: '返回首页',
-  
+
   breedingDataManagement: '育种数据管理',
   propagationDataManagement: '繁殖数据管理',
   seedInstitutionManagement: '种子机构管理',
@@ -88,10 +88,10 @@ export default {
   oseReceiveConfirmEdit: '编辑接收确认',
   oseReceiveConfirmDetail: '接收确认详情',
 
-  propagationBatchCollection: 'OSE繁殖批次信息采集',
-  propagationBatchAdd: '新增繁殖批次',
-  propagationBatchEdit: '编辑繁殖批次',
-  propagationBatchDetail: '繁殖批次详情',
+  propagationBatchCollection: '种子扩繁批次信息采集',
+  propagationBatchAdd: '新增种子扩繁批次',
+  propagationBatchEdit: '编辑种子扩繁批次',
+  propagationBatchDetail: '种子扩繁批次详情',
 
   propagationTrackingCollection: '繁殖跟踪信息采集',
   propagationTrackingAdd: '新增跟踪信息',
@@ -159,10 +159,10 @@ export default {
   breedingManagement: '育种管理',
   breedingPlan: '育种计划管理',
   breedingMaterial: '育种材料登记',
-  breedingModule: '繁殖信息管理',
-  breedingBatch: '繁殖批次信息采集',
-  breedingTracking: '繁殖跟踪信息采集',
-  breedingTest: '繁殖检测信息采集',
+  breedingModule: '种子扩繁批次信息管理',
+  breedingBatch: '种子扩繁批次信息采集',
+  breedingTracking: '种子扩繁跟踪信息采集',
+  breedingTest: '种子扩繁检测信息采集',
   breedingTracking: '育种跟踪管理',
   breedingSeed: '繁殖种子管理',
   breedingCertification: '繁殖种子认证申请',
