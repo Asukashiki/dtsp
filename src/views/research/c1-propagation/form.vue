@@ -32,6 +32,7 @@
                 v-model="formData.applicantOrgType"
                 :placeholder="$t('research.c1Propagation.placeholder.applicantOrgType')"
                 style="width: 100%"
+                @change="handleOrgTypeChange"
               >
                 <el-option :label="$t('research.c1Propagation.orgType.union')" value="union" />
                 <el-option :label="$t('research.c1Propagation.orgType.cooperative')" value="cooperative" />
@@ -131,6 +132,38 @@
                 :placeholder="$t('research.c1Propagation.placeholder.applyDescription')"
               />
             </el-form-item>
+
+            <el-form-item :label="$t('research.c1Propagation.form.demandQuantity')" prop="demandQuantity">
+              <el-input-number
+                v-model="formData.demandQuantity"
+                :placeholder="$t('research.c1Propagation.placeholder.demandQuantity')"
+                controls-position="right"
+                style="width: 100%"
+                :min="1"
+              />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1Propagation.form.fromSeedType')" prop="fromSeedType">
+              <el-select
+                v-model="formData.fromSeedType"
+                :placeholder="$t('research.c1Propagation.placeholder.fromSeedType')"
+                style="width: 100%"
+              >
+                <el-option label="BreederSeed" value="BreederSeed" />
+                <el-option label="OriginalSeed" value="OriginalSeed" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1Propagation.form.toSeedType')" prop="toSeedType">
+              <el-select
+                v-model="formData.toSeedType"
+                :placeholder="$t('research.c1Propagation.placeholder.toSeedType')"
+                style="width: 100%"
+              >
+                <el-option label="OriginalSeed" value="OriginalSeed" />
+                <el-option label="C1" value="C1" />
+              </el-select>
+            </el-form-item>
           </div>
 
           <div class="form-actions">
@@ -185,7 +218,10 @@ const formData = reactive({
   varietyCode: '',
   species: '',
   applyDate: '',
-  applyDescription: ''
+  applyDescription: '',
+  demandQuantity: null,
+  fromSeedType: '',
+  toSeedType: ''
 })
 
 // 作物类型映射
@@ -219,6 +255,15 @@ const rules = computed(() => ({
   ],
   varietyName: [
     { required: true, message: t('research.c1Propagation.rules.varietyNameRequired'), trigger: 'blur' }
+  ],
+  demandQuantity: [
+    { required: true, message: t('research.c1Propagation.rules.demandQuantityRequired'), trigger: 'blur' }
+  ],
+  fromSeedType: [
+    { required: true, message: t('research.c1Propagation.rules.fromSeedTypeRequired'), trigger: 'change' }
+  ],
+  toSeedType: [
+    { required: true, message: t('research.c1Propagation.rules.toSeedTypeRequired'), trigger: 'change' }
   ]
 }))
 
@@ -278,7 +323,7 @@ const handleSubmit = async () => {
     submitting.value = true
 
     const submitData = { ...formData }
-    
+
     let res
     if (props.isEdit) {
       res = await updateC1Propagation(submitData)
@@ -299,6 +344,19 @@ const handleSubmit = async () => {
     }
   } finally {
     submitting.value = false
+  }
+}
+
+// 机构类型变更时自动填充机构名称
+const handleOrgTypeChange = (value) => {
+  if (value === 'union') {
+    //formData.applicantOrgName = 'Default Union'
+    formData.applicantOrgName = ''
+  } else if (value === 'cooperative') {
+    //formData.applicantOrgName = 'Default cooperative'
+    formData.applicantOrgName = ''
+  } else {
+    formData.applicantOrgName = ''
   }
 }
 

@@ -104,7 +104,7 @@ export default {
   c1PropagationBatchEdit: 'Edit Propagation Batch',
   c1PropagationBatchDetail: 'Propagation Batch Detail',
 
-  seedCertificationApplication: 'Seed Certification Application',
+  seedCertificationApplication: 'Seed Multiplication Application Audit',
   seedCertificationApplicationAdd: 'Add Certification Application',
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',

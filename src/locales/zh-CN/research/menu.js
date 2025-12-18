@@ -103,17 +103,17 @@ export default {
   c1PropagationBatchEdit: '编辑繁殖批次',
   c1PropagationBatchDetail: '繁殖批次详情',
 
-  seedCertificationApplication: '繁殖种子认证申请',
+  seedCertificationApplication: '繁殖种子认证申请审核',
   seedCertificationApplicationAdd: '新增认证申请',
   seedCertificationApplicationEdit: '编辑认证申请',
   seedCertificationApplicationDetail: '认证申请详情',
 
-  c1SeedPropagationApplication: 'C1种子繁殖申请',
+  c1SeedPropagationApplication: '种子繁殖申请',
   c1SeedPropagationApplicationAdd: '新增繁殖申请',
   c1SeedPropagationApplicationEdit: '编辑繁殖申请',
   c1SeedPropagationApplicationDetail: '繁殖申请详情',
 
-  c1SeedPropagationApplicationAudit: 'C1种子繁殖申请审核',
+  c1SeedPropagationApplicationAudit: '种子繁殖申请审核',
   c1SeedPropagationApplicationAuditDetail: '审核申请详情',
 
   c1BatchAudit: 'C1繁殖批次审核',
