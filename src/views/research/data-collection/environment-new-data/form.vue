@@ -153,12 +153,22 @@
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.unit')" prop="unit">
-            <el-input
+            <el-select
               v-model="formData.unit"
               :placeholder="$t('research.environmentNewData.placeholder.unit')"
-              maxlength="20"
+              style="width: 100%"
               :disabled="isReadOnly"
-            />
+              filterable
+              allow-create
+              default-first-option
+            >
+              <el-option
+                v-for="item in unitOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.source')" prop="source">
@@ -299,6 +309,10 @@ const formData = reactive({
   observerId: '',
   workflowStatus: ''// 添加审批意见字段
 })
+
+const unitOptions = ref([
+  { value: '°C', label: '°C' },
+])
 
 const rules = reactive({
   plotId: [
