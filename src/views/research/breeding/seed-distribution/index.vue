@@ -111,7 +111,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <el-tag type="success" size="small">{{ $t(`research.breeding.seed.distribution.status.${row.distributeStatus}`) }}</el-tag>
+                <el-tag type="success" size="small">{{ row.distributeStatus }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column
