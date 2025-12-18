@@ -151,17 +151,17 @@ import { useUserStore } from '@/store/user'
 // Stage与Score的映射关系
 const stageScoreMap = {
   'PURITY': [
-    { label: 'Purity (品种纯度)', value: 'PURITY' },
-    { label: 'Insect Damage (虫害率)', value: 'INSECT_DAMAGE' },
-    { label: 'Disease (病害率)', value: 'DISEASE' }
+    { label: 'Purity', value: 'PURITY' },
+    { label: 'Insect Damage', value: 'INSECT_DAMAGE' },
+    { label: 'Disease', value: 'DISEASE' }
   ],
   'VEGETATIVE': [
-    { label: 'Plant Height (株高)', value: 'PLANT_HEIGHT' },
-    { label: 'Vigor (长势评分)', value: 'VIGOR' }
+    { label: 'Plant Height', value: 'PLANT_HEIGHT' },
+    { label: 'Vigor', value: 'VIGOR' }
   ],
   'HARVEST': [
-    { label: 'Yield (实测产量)', value: 'YIELD' },
-    { label: 'Moisture (水分含量)', value: 'MOISTURE' }
+    { label: 'Yield', value: 'YIELD' },
+    { label: 'Moisture', value: 'MOISTURE' }
   ],
   'LAND_PREPARATION': [],
   'PLANTING': [],
