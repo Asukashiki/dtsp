@@ -676,6 +676,30 @@ const routes = [
         meta: { title: '繁殖机构注册', requiresAuth: true }
       },
       {
+        path: 'institution/registration/add',
+        name: 'RegistrationAdd',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '新增机构注册', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/registration/edit/:id',
+        name: 'RegistrationEdit',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '编辑机构注册', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/registration/detail/:id',
+        name: 'RegistrationDetail',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '机构注册详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/approval/audit/:id',
+        name: 'RegistrationAudit',
+        component: () => import('../views/research/institution/registration/audit.vue'),
+        meta: { title: '机构注册审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'institution/approval',
         name: 'InstitutionApproval',
         component: () => import('../views/research/institution/registration/approval.vue'),

@@ -5,11 +5,11 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-file-check-line"></i>
+            <i class="ri-checkbox-multiple-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('registration.approval.title') }}</h1>
-            <p class="page-subtitle">{{ $t('registration.approval.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('orgRegistration.audit.title') }}</h1>
+            <p class="page-subtitle">{{ $t('orgRegistration.audit.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -19,8 +19,8 @@
         <div class="info-card">
           <div class="card-header">
             <div class="card-title">
-              <i class="ri-file-list-line"></i>
-              <span>{{ $t('registration.approval.list') }}</span>
+              <i class="ri-file-list-3-line"></i>
+              <span>{{ $t('orgRegistration.audit.listTitle') }}</span>
             </div>
           </div>
 
@@ -28,8 +28,8 @@
             <!-- 搜索区域 -->
             <div class="search-section">
               <el-input
-                v-model="searchForm.enterpriseName"
-                :placeholder="$t('registration.approval.searchPlaceholder')"
+                v-model="searchForm.keyword"
+                :placeholder="$t('orgRegistration.list.searchPlaceholder')"
                 clearable
                 class="search-input"
               >
@@ -40,13 +40,25 @@
 
               <el-select
                 v-model="searchForm.orgType"
-                :placeholder="$t('registration.approval.filterByOrgType')"
+                :placeholder="$t('orgRegistration.list.filterByType')"
                 clearable
-                class="search-input"
+                class="search-select"
               >
-                <el-option value="" :label="$t('registration.application.allOrgTypes')"></el-option>
-                <el-option value="union" :label="$t('registration.application.orgType.union')"></el-option>
-                <el-option value="cooperative" :label="$t('registration.application.orgType.cooperative')"></el-option>
+                <el-option value="" :label="$t('orgRegistration.list.allTypes')"></el-option>
+                <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
+                <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
+              </el-select>
+
+              <el-select
+                v-model="searchForm.auditStatus"
+                :placeholder="$t('orgRegistration.list.filterByStatus')"
+                clearable
+                class="search-select"
+              >
+                <el-option value="" :label="$t('orgRegistration.list.allStatus')"></el-option>
+                <el-option :value="0" :label="$t('orgRegistration.status.pending')"></el-option>
+                <el-option :value="1" :label="$t('orgRegistration.status.approved')"></el-option>
+                <el-option :value="2" :label="$t('orgRegistration.status.rejected')"></el-option>
               </el-select>
 
               <el-button type="primary" @click="handleSearch">
@@ -63,66 +75,70 @@
             <div class="table-wrapper pc-only">
               <el-table v-loading="loading" :data="tableData" stripe>
                 <el-table-column
-                  prop="enterpriseName"
-                  :label="$t('registration.application.columns.enterpriseName')"
-                  min-width="200"
-                  show-overflow-tooltip
+                  prop="orgName"
+                  :label="$t('orgRegistration.columns.orgName')"
+                  min-width="180"
                 />
                 <el-table-column
                   prop="orgType"
-                  :label="$t('registration.application.columns.orgType')"
-                  min-width="150"
+                  :label="$t('orgRegistration.columns.orgType')"
+                  min-width="120"
                 >
                   <template #default="{ row }">
-                    <el-tag :type="row.orgType === 'union' ? 'success' : 'info'">
-                      {{ $t(`registration.application.orgType.${row.orgType}`) }}
+                    <el-tag :type="row.orgType === 'UNION' ? 'primary' : 'success'">
+                      {{ $t(`orgRegistration.orgType.${row.orgType}`) }}
                     </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="inputTypes"
-                  :label="$t('registration.application.columns.inputTypes')"
+                  prop="licenseNumber"
+                  :label="$t('orgRegistration.columns.licenseNumber')"
                   min-width="150"
+                />
+                <el-table-column
+                  :label="$t('orgRegistration.columns.regionCode')"
+                  min-width="200"
                 >
                   <template #default="{ row }">
-                    {{ formatInputTypes(row.inputTypes) }}
+                    <span class="region-path">{{ formatRegionName(row.regionName) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="seedEnterpriseLicenseNumber"
-                  :label="$t('registration.application.columns.seedEnterpriseLicenseNumber')"
-                  min-width="180"
-                  show-overflow-tooltip
+                  prop="applyUsername"
+                  :label="$t('orgRegistration.columns.applyUsername')"
+                  min-width="130"
                 />
                 <el-table-column
-                  prop="zone"
-                  :label="$t('registration.application.columns.zone')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="woreda"
-                  :label="$t('registration.application.columns.woreda')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="createdTime"
-                  :label="$t('registration.application.columns.createdTime')"
+                  prop="createTime"
+                  :label="$t('orgRegistration.columns.createTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="220">
+                <el-table-column
+                  prop="auditStatus"
+                  :label="$t('orgRegistration.columns.auditStatus')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.auditStatus)">
+                      {{ getStatusLabel(row.auditStatus) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('common.actions')" fixed="right" width="180">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
                         <i class="ri-eye-line"></i>
-                        {{ $t('common.view') }}
+                        {{ $t('orgRegistration.actions.view') }}
                       </el-button>
-                      <el-button link type="success" @click="handleApprove(row)">
-                        <i class="ri-check-line"></i>
-                        {{ $t('registration.approval.approve') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleReject(row)">
-                        <i class="ri-close-line"></i>
-                        {{ $t('registration.approval.reject') }}
+                      <el-button
+                        link
+                        type="warning"
+                        @click="handleAudit(row)"
+                        v-if="row.auditStatus === 0"
+                      >
+                        <i class="ri-checkbox-circle-line"></i>
+                        {{ $t('orgRegistration.actions.audit') }}
                       </el-button>
                     </div>
                   </template>
@@ -148,44 +164,42 @@
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
-                    <i class="ri-building-line"></i>
-                    <span>{{ item.enterpriseName }}</span>
+                    <i class="ri-building-2-line"></i>
+                    <span>{{ item.orgName }}</span>
                   </div>
-                  <el-tag :type="item.orgType === 'union' ? 'success' : 'info'" size="small">
-                    {{ $t(`registration.application.orgType.${item.orgType}`) }}
+                  <el-tag :type="item.orgType === 'UNION' ? 'primary' : 'success'" size="small">
+                    {{ $t(`orgRegistration.orgType.${item.orgType}`) }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('registration.application.columns.inputTypes') }}:</span>
-                    <span class="value">{{ formatInputTypes(item.inputTypes) }}</span>
+                    <span class="label">{{ $t('orgRegistration.columns.licenseNumber') }}:</span>
+                    <span class="value">{{ item.licenseNumber }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('registration.application.columns.seedEnterpriseLicenseNumber') }}:</span>
-                    <span class="value">{{ item.seedEnterpriseLicenseNumber }}</span>
+                    <span class="label">{{ $t('orgRegistration.columns.regionCode') }}:</span>
+                    <span class="value">{{ formatRegionName(item.regionName) }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('registration.application.columns.zone') }}:</span>
-                    <span class="value">{{ item.zone || '-' }}</span>
+                    <span class="label">{{ $t('orgRegistration.columns.applyUsername') }}:</span>
+                    <span class="value">{{ item.applyUsername }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('registration.application.columns.woreda') }}:</span>
-                    <span class="value">{{ item.woreda }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('registration.application.columns.createdTime') }}:</span>
-                    <span class="value">{{ item.createdTime }}</span>
+                    <span class="label">{{ $t('orgRegistration.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-actions">
                   <el-button type="primary" size="small" @click="handleView(item)">
-                    {{ $t('common.view') }}
+                    {{ $t('orgRegistration.actions.view') }}
                   </el-button>
-                  <el-button type="success" size="small" @click="handleApprove(item)">
-                    {{ $t('registration.approval.approve') }}
-                  </el-button>
-                  <el-button type="danger" size="small" @click="handleReject(item)">
-                    {{ $t('registration.approval.reject') }}
+                  <el-button
+                    type="warning"
+                    size="small"
+                    @click="handleAudit(item)"
+                    v-if="item.auditStatus === 0"
+                  >
+                    {{ $t('orgRegistration.actions.audit') }}
                   </el-button>
                 </div>
               </div>
@@ -206,71 +220,31 @@
             </div>
 
             <!-- 空状态 -->
-            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('registration.application.messages.noData')" />
+            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('orgRegistration.audit.noData')" />
           </div>
         </div>
       </div>
     </div>
-
-    <!-- 审核对话框 -->
-    <el-dialog
-      v-model="auditDialogVisible"
-      :title="auditType === 'approve' ? $t('registration.approval.approve') : $t('registration.approval.reject')"
-      width="600px"
-    >
-      <el-form ref="auditFormRef" :model="auditForm" :rules="auditRules" label-width="120px">
-        <el-form-item :label="$t('registration.approval.form.auditOpinion')" prop="auditOpinion">
-          <el-input
-            v-model="auditForm.auditOpinion"
-            type="textarea"
-            :rows="4"
-            :placeholder="$t('registration.approval.placeholder.auditOpinion')"
-            maxlength="1000"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item :label="$t('registration.approval.form.remark')" prop="remark">
-          <el-input
-            v-model="auditForm.remark"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('registration.approval.placeholder.remark')"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleAuditSubmit">
-          {{ $t('common.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getRegistrationAuditPage, approveRegistration, rejectRegistration } from '@/api/registration'
+import { ElMessage } from 'element-plus'
+import { getRegistrationList } from '@/api/breedingOrgRegistration'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
-const submitting = ref(false)
 const tableData = ref([])
-const auditDialogVisible = ref(false)
-const auditFormRef = ref(null)
-const auditType = ref('approve')
-const currentRow = ref(null)
 
 const searchForm = reactive({
-  enterpriseName: '',
-  orgType: ''
+  keyword: '',
+  orgType: '',
+  auditStatus: ''
 })
 
 const pagination = reactive({
@@ -279,37 +253,55 @@ const pagination = reactive({
   total: 0
 })
 
-const auditForm = reactive({
-  auditOpinion: '',
-  remark: ''
-})
+// 获取状态标签
+const getStatusLabel = (status) => {
+  const statusMap = {
+    0: t('orgRegistration.status.pending'),
+    1: t('orgRegistration.status.approved'),
+    2: t('orgRegistration.status.rejected')
+  }
+  return statusMap[status] || status
+}
 
-// 审核表单验证规则
-const auditRules = computed(() => ({
-  auditOpinion: auditType.value === 'reject' ? [
-    { required: true, message: t('registration.approval.rules.auditOpinionRequired'), trigger: 'blur' }
-  ] : []
-}))
+// 获取状态类型
+const getStatusType = (status) => {
+  const typeMap = {
+    0: 'warning',
+    1: 'success',
+    2: 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
+// 格式化区域名称（将 # 分隔转为 > 分隔，只显示最后两级）
+const formatRegionName = (regionName) => {
+  if (!regionName) return '-'
+  const parts = regionName.split('#')
+  // 只显示最后两级，避免过长
+  if (parts.length > 2) {
+    return parts.slice(-2).join(' > ')
+  }
+  return parts.join(' > ')
+}
 
 // 加载数据
 const loadData = async () => {
   loading.value = true
   try {
-    const params = {
-      pageNum: pagination.currentPage,
+    const res = await getRegistrationList({
+      page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      enterpriseName: searchForm.enterpriseName || undefined,
-      orgType: searchForm.orgType || undefined
-    }
-
-    const res = await getRegistrationAuditPage(params)
+      orgName: searchForm.keyword,
+      orgType: searchForm.orgType,
+      auditStatus: searchForm.auditStatus !== '' ? searchForm.auditStatus : undefined
+    })
     if (res.code === 200) {
-      tableData.value = res.data?.records || []
+      tableData.value = res.data?.list || []
       pagination.total = res.data?.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)
-    ElMessage.error(t('common.loadFailed'))
+    ElMessage.error(t('orgRegistration.messages.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -323,8 +315,9 @@ const handleSearch = () => {
 
 // 重置
 const handleReset = () => {
-  searchForm.enterpriseName = ''
+  searchForm.keyword = ''
   searchForm.orgType = ''
+  searchForm.auditStatus = ''
   handleSearch()
 }
 
@@ -333,65 +326,9 @@ const handleView = (row) => {
   router.push({ name: 'RegistrationDetail', params: { id: row.id } })
 }
 
-// 通过
-const handleApprove = async (row) => {
-  currentRow.value = row
-  auditType.value = 'approve'
-  auditForm.auditOpinion = ''
-  auditForm.remark = ''
-  auditDialogVisible.value = true
-}
-
-// 驳回
-const handleReject = (row) => {
-  currentRow.value = row
-  auditType.value = 'reject'
-  auditForm.auditOpinion = ''
-  auditForm.remark = ''
-  auditDialogVisible.value = true
-}
-
-// 提交审核
-const handleAuditSubmit = async () => {
-  try {
-    const valid = await auditFormRef.value.validate()
-    if (!valid) return
-
-    const confirmMsg = auditType.value === 'approve'
-      ? t('registration.approval.messages.approveConfirm')
-      : t('registration.approval.messages.rejectConfirm')
-
-    await ElMessageBox.confirm(confirmMsg, t('common.warning'), {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    })
-
-    submitting.value = true
-
-    const res = auditType.value === 'approve'
-      ? await approveRegistration(currentRow.value.id, currentRow.value.version, auditForm.remark)
-      : await rejectRegistration(currentRow.value.id, currentRow.value.version, auditForm.auditOpinion, auditForm.remark)
-
-    if (res.code === 200) {
-      ElMessage.success(
-        auditType.value === 'approve'
-          ? t('registration.approval.approveSuccess')
-          : t('registration.approval.rejectSuccess')
-      )
-      auditDialogVisible.value = false
-      loadData()
-    } else {
-      ElMessage.error(res.msg || t('common.operationFailed'))
-    }
-  } catch (error) {
-    if (error !== 'cancel' && error !== false) {
-      console.error('Failed to audit:', error)
-      ElMessage.error(t('common.operationFailed'))
-    }
-  } finally {
-    submitting.value = false
-  }
+// 审核
+const handleAudit = (row) => {
+  router.push({ name: 'RegistrationAudit', params: { id: row.id } })
 }
 
 // 分页
@@ -402,13 +339,6 @@ const handleSizeChange = () => {
 
 const handleCurrentChange = () => {
   loadData()
-}
-
-// 格式化投入品类型
-const formatInputTypes = (types) => {
-  if (!types) return '-'
-  const typeArray = typeof types === 'string' ? types.split(',') : types
-  return typeArray.map(type => t(`registration.application.inputType.${type}`)).join(', ')
 }
 
 // 初始化
@@ -435,7 +365,7 @@ onMounted(() => {
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+  box-shadow: 0 4px 12px rgba(230, 81, 0, 0.15);
 }
 
 .header-left {
@@ -491,14 +421,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  border-bottom: 1px solid #fff3e0;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
 }
 
 .card-title {
   font-size: 18px;
   font-weight: 600;
-  color: #009A44;
+  color: #e65100;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -517,14 +447,18 @@ onMounted(() => {
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
 }
 
 .search-input {
   flex: 1;
-  min-width: 200px;
-  max-width: 300px;
+  flex-shrink: 0;
+}
+
+.search-select {
+  flex: 1;
+  flex-shrink: 0;
 }
 
 .search-section .el-button {
@@ -548,7 +482,7 @@ onMounted(() => {
   justify-content: center;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
+  border-top: 1px solid #fff3e0;
 }
 
 /* 移动端卡片列表 */
@@ -559,7 +493,7 @@ onMounted(() => {
 }
 
 .mobile-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #ffe0b2;
   border-radius: 12px;
   padding: 16px;
   background: white;
@@ -578,7 +512,7 @@ onMounted(() => {
   align-items: flex-start;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #fff3e0;
 }
 
 .mobile-card-title {
@@ -587,7 +521,7 @@ onMounted(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: #009A44;
+  color: #e65100;
   flex: 1;
 }
 
@@ -606,8 +540,6 @@ onMounted(() => {
   display: flex;
   font-size: 14px;
   line-height: 1.6;
-  align-items: center;
-  gap: 8px;
 }
 
 .mobile-card-row .label {
@@ -625,14 +557,13 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
   flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid #fff3e0;
 }
 
 .mobile-card-actions .el-button {
   flex: 1;
-  min-width: calc(33.33% - 6px);
 }
 
 /* 响应式 */
@@ -668,25 +599,32 @@ onMounted(() => {
     font-size: 14px;
   }
 
-  .content-wrapper {
-    border-radius: 12px;
-  }
-
   .card-header {
-    padding: 16px;
-  }
-
-  .card-body {
-    padding: 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
   }
 
   .search-section {
-    flex-direction: column;
+    /* 保持横向排列 */
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .search-input {
-    width: 100%;
-    max-width: 100%;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .search-select {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 100px;
+  }
+
+  .search-section .el-button {
+    flex: 0 0 auto;
+    padding: 8px 12px;
   }
 
   .pc-only {
@@ -695,10 +633,6 @@ onMounted(() => {
 
   .mobile-only {
     display: block;
-  }
-
-  :deep(.el-dialog) {
-    width: 90% !important;
   }
 }
 </style>

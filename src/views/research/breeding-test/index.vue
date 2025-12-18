@@ -60,10 +60,20 @@
       <el-table :data="tableData" stripe border>
         <el-table-column prop="testId" :label="$t('research.breeding.breedingTest.form.testId')" width="150" />
         <el-table-column prop="trackingId" :label="$t('research.breeding.breedingTest.form.trackingId')" width="150" />
+        <el-table-column prop="seedClass" :label="$t('research.c1BreedingBatch.test.seedClass')" width="100" />
+        <el-table-column prop="lotId" :label="$t('research.c1BreedingBatch.test.lotId')" width="140" />
+        <el-table-column prop="testType" :label="$t('research.c1BreedingBatch.test.testType')" width="120" />
         <el-table-column prop="cropTypeName" :label="$t('research.breeding.breedingTest.form.cropType')" width="100" />
         <el-table-column prop="germinationRate" :label="$t('research.breeding.breedingTest.form.germinationRate')" width="120" />
         <el-table-column prop="testDate" :label="$t('research.breeding.breedingTest.form.testDate')" width="120">
           <template #default="{ row }">{{ formatDate(row.testDate) }}</template>
+        </el-table-column>
+        <el-table-column :label="$t('research.c1BreedingBatch.test.passStatus')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'">
+              {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passTrue') : $t('research.c1BreedingBatch.test.passFalse') }}
+            </el-tag>
+          </template>
         </el-table-column>
         <el-table-column :label="$t('research.breeding.breedingTest.form.testResult')" width="100">
           <template #default="{ row }">

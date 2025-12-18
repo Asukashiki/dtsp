@@ -41,9 +41,9 @@
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">
               <el-select v-model="formData.breedingLevel" :placeholder="$t('research.breeding.breedingBatch.form.breedingLevelPlaceholder')" class="full-width">
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.original')" value="01" />
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.foundation')" value="02" />
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.certified')" value="03" />
+                <el-option label="Basic" value="Basic" />
+                <el-option label="C1" value="C1" />
+                <el-option label="C2" value="C2" />
               </el-select>
             </el-form-item>
 
@@ -63,6 +63,10 @@
             <el-form-item :label="$t('research.breeding.breedingBatch.form.expectedYield')" prop="expectedYield">
               <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.breeding.breedingBatch.form.expectedYieldPlaceholder')" type="number" clearable />
             </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.quantityToMultiply')">
+              <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
+            </el-form-item>
           </div>
         </div>
 
@@ -78,7 +82,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgName')" prop="orgName">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" disabled />
             </el-form-item>
           </div>
         </div>
@@ -111,12 +115,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
 
 const formRef = ref(null)
 const loading = ref(false)
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -127,6 +133,7 @@ const formData = ref({
   parentSeedSource: '',
   startDate: '',
   expectedYield: '',
+  quantityToMultiply: '',
   orgId: '',
   orgName: '',
   remark: ''
@@ -142,6 +149,11 @@ const rules = {
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充组织信息
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
+  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   if (isEdit.value) {
     await loadDetail()
   }
