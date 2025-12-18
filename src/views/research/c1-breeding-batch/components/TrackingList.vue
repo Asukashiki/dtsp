@@ -95,7 +95,7 @@
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.tracking.inspectionValue')">
-            <el-input v-model="formData.inspectionValue" :placeholder="t('common.pleaseEnter')">
+            <el-input v-model="formData.inspectionValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur">
               <template #append>{{ currentUnit }}</template>
             </el-input>
           </el-form-item>
@@ -142,10 +142,10 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking } from '@/api/c1BreedingBatch'
+import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking, checkRule } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
 
 // Stage与Score的映射关系
@@ -305,6 +305,26 @@ const handleSubmit = async () => {
 }
 const getResultText = (result) => ({ '01': t('research.c1BreedingBatch.tracking.resultNormal'), '02': t('research.c1BreedingBatch.tracking.resultAbnormal'), '03': t('research.c1BreedingBatch.tracking.resultObserving') }[result] || result)
 const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': 'warning' }[result] || 'info')
+
+// 失焦时检查规则
+const checkRuleOnBlur = async () => {
+  const newValue = formData.value.inspectionValue
+  // 只有当score是Plant Height时才进行检查
+  if (formData.value.score === 'PLANT_HEIGHT' && newValue) {
+    try {
+      // 调用checkRule接口，传入Plant Height作为dictCode，inspectionValue作为value
+      const response = await checkRule('PLANT_HEIGHT', parseFloat(newValue))
+      if (response.code === 200) {
+        // 根据返回结果自动设置Tracking Result
+        // true表示正常(01)，false表示异常(02)
+        formData.value.trackingResult = response.data ? '01' : '02'
+      }
+    } catch (error) {
+      console.error('检查规则失败:', error)
+      ElMessage.error(t('common.error.operationFailed'))
+    }
+  }
+}
 </script>
 <style scoped lang="scss">
 .tracking-list-component {
