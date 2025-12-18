@@ -24,7 +24,7 @@ const getDefaultLocale = () => {
 const i18n = createI18n({
   legacy: false, // 使用 Composition API 模式
   locale: getDefaultLocale(),
-  fallbackLocale: 'zh-CN',
+  fallbackLocale: 'en-US',
   messages,
   globalInjection: true, // 全局注入 $t 函数
 })

@@ -1,6 +1,6 @@
 // 育种管理国际化文件
 export default {
-  title: 'Multiplication Batch Information',
+  title: 'Seed Multiplication Batch Information',
   subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
 
   // Shared crop types
