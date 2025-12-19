@@ -44,6 +44,7 @@
               clearable
               style="width: 100%"
               :loading="plotLoading"
+              :disabled="isReadOnly || isAuditMode"
               @change="handlePlotChange"
             >
               <el-option
@@ -59,7 +60,7 @@
             <el-input
               v-model="formData.batchId"
               :placeholder="$t('research.environmentNewData.placeholder.batchId')"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
 
@@ -67,7 +68,7 @@
             <el-input
               v-model="formData.trialId"
               :placeholder="$t('research.environmentNewData.placeholder.trialId')"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
         </div>
@@ -87,6 +88,7 @@
               clearable
               style="width: 100%"
               :loading="dictLoading"
+              :disabled="isReadOnly || isAuditMode"
             >
               <el-option
                 v-for="item in options.weather_station"
@@ -105,7 +107,7 @@
               format="YYYY-MM-DD HH:mm"
               value-format="YYYY-MM-DD HH:mm"
               style="width: 100%"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
 
@@ -127,7 +129,7 @@
               v-model="formData.parameterCode"
               :placeholder="$t('research.environmentNewData.placeholder.parameterCode')"
               style="width: 100%"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
               @change="handleParameterCodeChange"
             >
               <el-option
@@ -152,7 +154,7 @@
                 :precision="2"
                 :controls="false"
                 style="width: 100%"
-                :disabled="isReadOnly"
+                :disabled="isReadOnly || isAuditMode"
               />
               <span class="unit-hint">{{ formData.unit || '-' }}</span>
             </div>
@@ -172,7 +174,7 @@
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
               maxlength="100"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
 
@@ -184,7 +186,7 @@
               :placeholder="$t('research.environmentNewData.placeholder.remark')"
               maxlength="500"
               show-word-limit
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
         </div>
@@ -288,7 +290,8 @@ const { options, loading: dictLoading, getActualValueByValue } = useDict(['weath
 
 const isEdit = computed(() => !!route.params.envRecordId)
 const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
-const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
+const isReadOnly = computed(() => pageMode.value === 'view')
+const isAuditMode = computed(() => pageMode.value === 'audit')
 
 const formData = reactive({
   envRecordId: '',
