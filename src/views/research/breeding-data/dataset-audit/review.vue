@@ -331,56 +331,32 @@
                   size="small"
                   style="width: 100%; margin-top: 12px"
                   :empty-text="$t('common.noData')"
+                  @row-click="handleAgronomicView"
               >
-                <el-table-column prop="traitRecordId" :label="$t('research.datasetAudit.table.agronomic.traitRecordId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetAudit.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetAudit.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetAudit.table.common.plotId')" min-width="100" />
-                <el-table-column prop="observationDate" :label="$t('research.datasetAudit.table.agronomic.observationDate')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.observationDate || '-' }}
+                <!-- 选择列（可选，和前者保持一致） -->
+                <el-table-column type="selection" width="50" />
+                <!-- 主记录核心字段列 -->
+                <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
+                <!-- 生长周期：字典解析 -->
+                <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="growthStage" :label="$t('research.datasetAudit.table.agronomic.growthStage')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.growthStage || '-' }}
+                <!-- 性状数量：success标签展示 -->
+                <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="traitName" :label="$t('research.datasetAudit.table.agronomic.traitName')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.traitName || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="traitValue" :label="$t('research.datasetAudit.table.agronomic.traitValue')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.traitValue || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="unit" :label="$t('research.datasetAudit.table.common.unit')" min-width="80">
-                  <template #default="scope">
-                    {{ scope.row.unit || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="observerId" :label="$t('research.datasetAudit.table.agronomic.observerId')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.observerId || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="plantHeightCm" :label="$t('research.datasetAudit.table.agronomic.plantHeightCm')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.plantHeightCm || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="tillerCount" :label="$t('research.datasetAudit.table.agronomic.tillerCount')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.tillerCount || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remarks" :label="$t('research.datasetAudit.table.common.remarks')" min-width="150">
-                  <template #default="scope">
-                    {{ scope.row.remarks || '-' }}
-                  </template>
-                </el-table-column>
+                <!-- 创建人、创建时间 -->
+                <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
+                <!-- 备注列（新增） -->
                 <el-table-column :label="$t('research.datasetAudit.table.common.remark')" min-width="180">
                   <template #default="scope">
                     {{ scope.row.remark || '-' }}
@@ -728,31 +704,36 @@
 </template>
 
 <script setup>
+// ========== 第一步：所有import放在最顶部 ==========
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useDict } from '@/hooks/useDict' // 移到import区域，只加一次
+
 import { getDatasetById } from '@/api/dataset'
 import { getAuditByDatasetId, performAudit } from '@/api/datasetAudit'
-import { getAgronomicTraitList, getFarmingRecordList, getPlotInfoList, getEnvironmentDataList } from '@/api/breedingData'
+import { getAgronomicTraitList,getTraitRecordList, getFarmingRecordList, getPlotInfoList, getEnvironmentDataList } from '@/api/breedingData'
 import { getLabTestList } from '@/api/labTest'
 import { getYieldDataList } from '@/api/yieldData'
 import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 
+// ========== 第二步：初始化路由、i18n、字典 ==========
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-
+const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status'])
+// ========== 第三步：数据Ref声明（删除重复的agronomicTraitList） ==========
 const loading = ref(false)
 const submitting = ref(false)
 const detailData = ref(null)
 const auditFormRef = ref(null)
 const activeTab = ref('plotInfo') // 默认激活第一个Tab
 
-// 数据列表 Ref
+// 数据列表 Ref（原有声明，仅新增 agronomicDetailList）
 const plotInfoList = ref([])           // 地块及播种信息
 const farmingRecordList = ref([])     // 农事记录
-const agronomicTraitList = ref([])    // 农艺性状
+const agronomicTraitList = ref([])    // 农艺性状（原有，保留）
 const environmentDataList = ref([])   // 环境监测数据
 const labTestList = ref([])           // 实验室测试数据
 const yieldDataList = ref([])         // 田间检查/产量数据
@@ -822,7 +803,7 @@ const loadAllDataLists = async (trialId) => {
         console.error(t('research.datasetAudit.log.loadFarmingFailed'), err)
         return { rows: [], total: 0 }
       }),
-      getAgronomicTraitList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getTraitRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
         console.error(t('research.datasetAudit.log.loadAgronomicFailed'), err)
         return { rows: [], total: 0 }
       }),
@@ -849,10 +830,12 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
+    // 找到 agronomicTraitList.value 赋值的位置，替换为以下代码
     agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
+    // ========== 新增：提取性状明细列表 ==========
     environmentDataList.value = (environmentDataRes?.rows || environmentDataRes?.data?.rows || []).map(item => ({
       ...item,
       remark: item.remark || ''
@@ -899,12 +882,12 @@ const loadAllDataLists = async (trialId) => {
           }))
         }
 
-        // 农艺性状备注回显
+        // 农艺性状备注回显（新增）
         if (agronomicRemarks) {
-          const agronomicRemarkMap = new Map(agronomicRemarks.map(r => [r.traitRecordId, r.remark]))
+          const agronomicRemarkMap = new Map(agronomicRemarks.map(r => [r.recordId, r.remark]))
           agronomicTraitList.value = agronomicTraitList.value.map(item => ({
             ...item,
-            remark: agronomicRemarkMap.get(item.traitRecordId) || item.remark
+            remark: agronomicRemarkMap.get(item.recordId) || item.remark
           }))
         }
 
@@ -968,7 +951,7 @@ const loadStatisticsData = async (trialId) => {
       }),
 
       // 2. 田间数据（农艺性状数据）
-      getAgronomicTraitList({
+      getTraitRecordList({
         pageNum: 1,
         pageSize: 9999,
         trialId: trialId
@@ -1194,6 +1177,15 @@ const handleReject = async () => {
     }
   } finally {
     submitting.value = false
+  }
+}
+
+// 农艺性状主记录查看跳转
+const handleAgronomicView = (row) => {
+  if (row.recordId) {
+    router.push(`/research/breeding-data/trait/detail/${row.recordId}`)
+  } else {
+    ElMessage.warning(t('common.noRecordId'))
   }
 }
 
@@ -1554,8 +1546,7 @@ onMounted(() => {
     border-radius: 8px;
   }
 
-  .section-title {
-    font-size: 15px;
+  .section-title {    font-size: 15px;
     margin-bottom: 16px;
     padding-bottom: 10px;
   }
@@ -1600,29 +1591,7 @@ onMounted(() => {
   }
 
   .statistics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 12px;
-  }
-
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .stat-icon i {
-    font-size: 20px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-  }
-
-  .stat-value {
-    font-size: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 
   .audit-actions {
@@ -1704,6 +1673,11 @@ onMounted(() => {
 
   .detail-item .value.highlight {
     font-size: 14px;
+  }
+
+  .statistics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .stat-card {

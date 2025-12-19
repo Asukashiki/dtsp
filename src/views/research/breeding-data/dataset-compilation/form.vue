@@ -385,7 +385,7 @@
               </el-table>
             </el-tab-pane>
 
-            <!-- 农艺性状数据采集 -->
+            <!-- 农艺性状数据采集（与审核页面保持一致） -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.agronomic')" name="agronomic">
               <el-table
                   :data="agronomicTraitList"
@@ -395,56 +395,30 @@
                   style="width: 100%; margin-top: 12px"
                   :empty-text="''"
               >
-                <el-table-column prop="traitRecordId" :label="$t('research.datasetCompilation.table.agronomic.traitRecordId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="observationDate" :label="$t('research.datasetCompilation.table.agronomic.observationDate')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.observationDate || '-' }}
+                <!-- 选择列 -->
+                <el-table-column type="selection" width="50" />
+                <!-- 主记录核心字段列 -->
+                <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
+                <!-- 生长周期：字典解析 -->
+                <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="growthStage" :label="$t('research.datasetCompilation.table.agronomic.growthStage')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.growthStage || '-' }}
+                <!-- 性状数量：success标签展示 -->
+                <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="traitName" :label="$t('research.datasetCompilation.table.agronomic.traitName')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.traitName || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="traitValue" :label="$t('research.datasetCompilation.table.agronomic.traitValue')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.traitValue || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.common.unit')" min-width="80">
-                  <template #default="scope">
-                    {{ scope.row.unit || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="observerId" :label="$t('research.datasetCompilation.table.agronomic.observerId')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.observerId || '-' }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="plantHeightCm" :label="$t('research.datasetCompilation.table.agronomic.plantHeightCm')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.plantHeightCm || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="tillerCount" :label="$t('research.datasetCompilation.table.agronomic.tillerCount')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.tillerCount || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')" min-width="150">
-                  <template #default="scope">
-                    {{ scope.row.remarks || '-' }}
-                  </template>
-                </el-table-column>
-                <!-- 备注列 -->
+                <!-- 创建人、创建时间 -->
+                <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
+                <!-- 备注列（保留输入功能） -->
                 <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
                   <template #default="scope">
                     <el-input
@@ -718,10 +692,12 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { useDict } from '@/hooks/useDict' // 新增字典hook
 import { getDatasetById, addDataset, updateDataset } from '@/api/dataset'
 import {
-  getTrialBasicList, getTrialBasicInfo, getAgronomicTraitList,
-  getPlotInfoList, getFarmingRecordList, getEnvironmentDataList
+  getTrialBasicList, getTrialBasicInfo,
+  getPlotInfoList, getFarmingRecordList, getEnvironmentDataList,
+  getTraitRecordList // 替换原有的getAgronomicTraitList
 } from '@/api/breedingData'
 import { getLabTestList } from '@/api/labTest'
 import { getYieldDataList } from '@/api/yieldData'
@@ -732,6 +708,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
+const { getLabelByValue } = useDict(['growth_cycle']) // 新增字典解析
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -918,7 +895,7 @@ const loadStatisticsData = async (trialId) => {
         console.error('获取农事记录失败:', err)
         return { rows: [], total: 0 }
       }),
-      getAgronomicTraitList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getTraitRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => { // 替换为getTraitRecordList
         console.error('获取农艺性状数据失败:', err)
         return { rows: [], total: 0 }
       }),
@@ -993,12 +970,12 @@ const loadStatisticsData = async (trialId) => {
         }))
       }
 
-      // 农艺性状备注回显
+      // 农艺性状备注回显（适配新的recordId字段）
       if (agronomicRemarks) {
-        const agronomicRemarkMap = new Map(agronomicRemarks.map(r => [r.traitRecordId, r.remark]))
+        const agronomicRemarkMap = new Map(agronomicRemarks.map(r => [r.recordId, r.remark]))
         agronomicTraitList.value = agronomicTraitList.value.map(item => ({
           ...item,
-          remark: agronomicRemarkMap.get(item.traitRecordId) || item.remark
+          remark: agronomicRemarkMap.get(item.recordId) || item.remark
         }))
       }
 
@@ -1112,7 +1089,7 @@ const handleSubmit = () => {
     if (!valid) return
     loading.value = true
     try {
-      // 收集各模块行级备注
+      // 收集各模块行级备注（适配农艺性状的recordId）
       const moduleRemarks = {
         plotRemarks: plotInfoList.value.map(item => ({
           plotId: item.plotId,
@@ -1123,7 +1100,7 @@ const handleSubmit = () => {
           remark: item.remark.trim()
         })).filter(item => item.remark),
         agronomicRemarks: agronomicTraitList.value.map(item => ({
-          traitRecordId: item.traitRecordId,
+          recordId: item.recordId, // 改为recordId
           remark: item.remark.trim()
         })).filter(item => item.remark),
         environmentRemarks: environmentDataList.value.map(item => ({

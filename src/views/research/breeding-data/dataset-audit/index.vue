@@ -420,17 +420,22 @@ const loadDataList = async () => {
     const res = await getAuditList(searchParams)
     if (res.code === 200) {
       const originalList = res.data.list || [];
-      const filteredList = originalList.filter(item => item.datasetStatus === "approved");
+      const filteredList = originalList.filter(item =>
+          item.datasetStatus === "approved" || item.datasetStatus === "submitted"
+      );
+
+
       dataList.value = filteredList;
       total.value = filteredList.length;
     } else {
       ElMessage.error(res.msg || t('common.loadFailed'));
     }
-  } catch (error) {
-    console.error('Failed to load audit list:', error)
-    ElMessage.error(t('common.loadFailed'))
-  } finally {
-    loading.value = false
+  } catch (error) { // 补充catch捕获请求异常，避免loading一直转圈
+    console.error('加载数据列表失败：', error);
+    ElMessage.error(t('common.loadFailed'));
+    loading.value = false;
+  } finally { // 无论成功失败，都关闭loading
+    loading.value = false;
   }
 }
 
