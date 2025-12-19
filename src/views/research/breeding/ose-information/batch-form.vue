@@ -59,6 +59,7 @@
 
             <el-form-item label="Multiplication Level" prop="breedingLevel">
               <el-select v-model="formData.breedingLevel" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Pre-Basic" value="Pre-Basic" />
                 <el-option label="Basic" value="Basic" />
                 <el-option label="C1" value="C1" />
                 <el-option label="C2" value="C2" />
@@ -103,11 +104,11 @@
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgId')" prop="orgId">
-              <el-input v-model="formData.orgId" :placeholder="$t('research.breeding.breedingBatch.form.orgIdPlaceholder')" clearable />
+              <el-input v-model="formData.orgId" :placeholder="$t('research.breeding.breedingBatch.form.orgIdPlaceholder')" clearable disabled />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgName')" prop="orgName">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable disabled />
             </el-form-item>
           </div>
         </div>
