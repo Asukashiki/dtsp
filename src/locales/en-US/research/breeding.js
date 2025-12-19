@@ -515,6 +515,8 @@ export default {
 
         totalDistributeQuantity: 'Total Distribution Quantity',
         produceBatchId: 'Production Batch ID',
+        // Add alias key used by pages
+        breedSeedProduceBatchId: 'Batch ID',
         varietyName: 'Variety Name',
         cropType: 'Crop Type',
         distributeQuantity: 'Distribution Quantity',
@@ -539,6 +541,10 @@ export default {
         confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
         createTime: 'Created Time',
+        // Add missing columns used by list views
+        breedSeedProduceBatchId: 'Batch ID',
+        seedType: 'Seed Type',
+        varietyName: 'Variety Name',
         actions: 'Actions',
       },
 

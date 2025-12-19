@@ -43,17 +43,25 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
-              <el-input v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" readonly />
+              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
+                <el-option
+                  v-for="item in options.crop_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyName')" prop="varietyName">
               <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" readonly />
             </el-form-item>
 
-            <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">
-              <el-select v-model="formData.breedingLevel" :placeholder="$t('research.breeding.breedingBatch.form.breedingLevelPlaceholder')" class="full-width">
-                <el-option label="Pre-basic" value="pre-basic" />
-                <el-option label="Basic" value="basic" />
+            <el-form-item label="Multiplication Level" prop="breedingLevel">
+              <el-select v-model="formData.breedingLevel" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Basic" value="Basic" />
+                <el-option label="C1" value="C1" />
+                <el-option label="C2" value="C2" />
               </el-select>
             </el-form-item>
 
@@ -133,6 +141,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { useDict } from '@/hooks/useDict'
+import { getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -140,6 +150,7 @@ const route = useRoute()
 const formRef = ref(null)
 const loading = ref(false)
 const breedSeedProduceList = ref([])
+const { options } = useDict(['crop_type'])
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -216,6 +227,11 @@ const handleParentSeedSourceChange = (value) => {
 
 // 初始化
 onMounted(async () => {
+  // 默认填充机构信息
+  const currentUser = getUserInfo()?.user || {}
+  formData.value.orgName = currentUser.organName || currentUser.ORGAN_NAME || formData.value.orgName
+  formData.value.orgId = currentUser.organCode || currentUser.ORGAN_CODE || formData.value.orgId
+
   await loadBreedSeedProduceList()
   if (isEdit.value) {
     await loadDetail()
