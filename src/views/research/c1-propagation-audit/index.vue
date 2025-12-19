@@ -105,6 +105,16 @@
               show-overflow-tooltip
             />
             <el-table-column
+              prop="authId"
+              :label="$t('research.c1Propagation.columns.authId')"
+              min-width="140"
+              show-overflow-tooltip
+            >
+              <template #default="{ row }">
+                {{ row.authId || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
               prop="cropType"
               :label="$t('research.c1Propagation.columns.cropType')"
               min-width="160"
@@ -191,6 +201,7 @@
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
                 <el-tag type="info" size="small">{{ item.cropType }}</el-tag>
+                <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
               <div class="card-info">

@@ -39,6 +39,10 @@
               <span class="label">{{ $t('research.c1Propagation.form.applicantOrgId') }}:</span>
               <span class="value">{{ data.applicantOrgId }}</span>
             </div>
+            <div class="detail-item" v-if="data.authId">
+              <span class="label">{{ $t('research.c1Propagation.columns.authId') }}:</span>
+              <span class="value">{{ data.authId }}</span>
+            </div>
           </div>
         </div>
 

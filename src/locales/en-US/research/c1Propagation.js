@@ -102,6 +102,7 @@ export default {
   // Table columns
   columns: {
     applicantOrgName: 'Organization Name',
+    authId: 'Auth ID',
     cropType: 'Crop Type',
     varietyName: 'Variety Name',
     applyDate: 'Application Date',
