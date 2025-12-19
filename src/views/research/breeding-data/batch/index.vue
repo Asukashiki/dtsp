@@ -403,26 +403,42 @@ const getActionButtons = (row) => {
   switch (workflowStatus) {
     case 'S0': // 草稿
       if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('research.breedingData.batch.actions.edit'), icon: 'ri-edit-line' })
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submit'), icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S1': // 待审批
       if (userStore.hasWorkflowStatusPermission('approve')) {
         buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      }
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      }
       break
     case 'S3': // 审核驳回
       if (userStore.hasWorkflowStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submit'), icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S9': // 已归档
