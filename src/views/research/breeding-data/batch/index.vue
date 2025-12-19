@@ -113,6 +113,13 @@
             <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
+                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="100">
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.status)" effect="plain">
+                      {{ row.status }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
                   <template #default="{ row }">
                     <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
@@ -309,6 +316,15 @@ const getWorkflowStatusType = (workflowStatus) => {
     'S10': 'danger'    // 异常 - 深红色
   }
   return workflowStatusMap[workflowStatus] || 'info'
+}
+
+// 批次状态类型映射
+const getStatusType = (status) => {
+  const statusMap = {
+    'Ongoing': 'info',   // 进行中 - 蓝色
+    'Finished': 'success'   // 已完成 - 绿色
+  }
+  return statusMap[status] || 'info'
 }
 
 
