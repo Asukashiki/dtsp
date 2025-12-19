@@ -108,7 +108,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgName')" prop="orgName">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable disabled />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable />
             </el-form-item>
           </div>
         </div>
@@ -266,7 +266,8 @@ const handleSubmit = async () => {
       loading.value = true
       try {
         const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
-        const response = isEdit.value ? await updateBreedingBatchPage(data) : await addBreedingBatchPage(data)
+        const aData = {...data, objective: formData.value.objective || '1'} 
+        const response = isEdit.value ? await updateBreedingBatchPage(aData) : await addBreedingBatchPage(aData)
 
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? 'Update successful' : 'Add successful')
