@@ -310,20 +310,19 @@ const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': '
 const checkRuleOnBlur = async () => {
   const newValue = formData.value.inspectionValue
   // 只有当score是Plant Height时才进行检查
-  if (formData.value.score === 'PLANT_HEIGHT' && newValue) {
-    try {
-      // 调用checkRule接口，传入Plant Height作为dictCode，inspectionValue作为value
-      const response = await checkRule('PLANT_HEIGHT', parseFloat(newValue))
-      if (response.code === 200) {
-        // 根据返回结果自动设置Tracking Result
-        // true表示正常(01)，false表示异常(02)
-        formData.value.trackingResult = response.data ? '01' : '02'
-      }
-    } catch (error) {
-      console.error('检查规则失败:', error)
-      ElMessage.error(t('common.error.operationFailed'))
+  try {
+    // 调用checkRule接口，传入Plant Height作为dictCode，inspectionValue作为value
+    const response = await checkRule(formData.value.score, parseFloat(newValue))
+    if (response.code === 200) {
+      // 根据返回结果自动设置Tracking Result
+      // true表示正常(01)，false表示异常(02)
+      formData.value.trackingResult = response.data ? '01' : '02'
     }
+  } catch (error) {
+    console.error('检查规则失败:', error)
+    ElMessage.error(t('common.error.operationFailed'))
   }
+
 }
 </script>
 <style scoped lang="scss">
