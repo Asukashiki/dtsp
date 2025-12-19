@@ -95,7 +95,7 @@
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.tracking.inspectionValue')">
-            <el-input v-model="formData.inspectionValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur">
+            <el-input v-model="formData.inspectionValue" :placeholder="t('common.pleaseEnter')">
               <template #append>{{ currentUnit }}</template>
             </el-input>
           </el-form-item>

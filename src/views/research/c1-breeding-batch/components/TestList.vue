@@ -99,7 +99,7 @@
  
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testValue')">
-            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur" />
+            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.unit')">
