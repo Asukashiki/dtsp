@@ -60,7 +60,7 @@
               <el-option
                 v-for="dataset in datasetList"
                 :key="dataset.id"
-                :label="`${dataset.datasetCode} - ${dataset.batchName}`"
+                :label="`${dataset.datasetCode}`"
                 :value="dataset.id"
               />
             </el-select>
