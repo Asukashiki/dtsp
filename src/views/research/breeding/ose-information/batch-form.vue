@@ -81,8 +81,8 @@
               <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.breeding.breedingBatch.form.expectedYieldPlaceholder')" type="number" clearable />
             </el-form-item>
 
-            <el-form-item :label="$t('research.breeding.breedingBatch.form.actualYield')" prop="actualYield">
-              <el-input v-model.number="formData.actualYield" :placeholder="$t('research.breeding.breedingBatch.form.actualYieldPlaceholder')" type="number" clearable />
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.toMultiplyQuantity')" prop="toMultiplyQuantity">
+              <el-input v-model.number="formData.toMultiplyQuantity" :placeholder="$t('research.breeding.breedingBatch.form.toMultiplyQuantityPlaceholder')" type="number" clearable />
             </el-form-item>
           </div>
         </div>
@@ -151,7 +151,7 @@ const formData = ref({
   startDate: '',
   endDate: '',
   expectedYield: '',
-  actualYield: '',
+  toMultiplyQuantity: '',
   orgId: '',
   orgName: '',
   remark: ''
@@ -162,7 +162,8 @@ const rules = {
   cropType: [{ required: true, message: 'Crop type is required', trigger: 'blur' }],
   varietyName: [{ required: true, message: 'Variety name is required', trigger: 'blur' }],
   breedingLevel: [{ required: true, message: 'Breeding level is required', trigger: 'change' }],
-  startDate: [{ required: true, message: '  ate is required', trigger: 'change' }]
+  startDate: [{ required: true, message: 'Start date is required', trigger: 'change' }],
+  toMultiplyQuantity: [{ required: true, message: 'Quantity to multiply is required', trigger: 'blur' }]
 }
 
 // 加载育种家种子生产列表

@@ -68,6 +68,46 @@
               </el-select>
             </el-form-item>
 
+            <!-- 标准化测试字段 -->
+            <el-form-item :label="$t('research.c1BreedingBatch.test.seedClass')" prop="seedClass">
+              <el-select v-model="formData.seedClass" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Pre-Basic" value="Pre-Basic" />
+                <el-option label="Basic" value="Basic" />
+                <el-option label="C1" value="C1" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.test.lotId')">
+              <el-input v-model="formData.lotId" :placeholder="$t('common.pleaseEnter')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.test.testType')">
+              <el-select v-model="formData.testType" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Germination" value="GERMINATION" />
+                <el-option label="Purity" value="PURITY" />
+                <el-option label="Moisture" value="MOISTURE" />
+                <el-option label="Seed Health" value="SEED_HEALTH" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.test.unit')">
+              <el-select v-model="formData.unit" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="%" value="%" />
+                <el-option label="kg" value="kg" />
+                <el-option label="g" value="g" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.test.passStatus')">
+              <el-switch 
+                v-model="formData.passStatus" 
+                active-value="TRUE" 
+                inactive-value="FALSE"
+                :active-text="$t('research.c1BreedingBatch.test.passTrue')"
+                :inactive-text="$t('research.c1BreedingBatch.test.passFalse')"
+              />
+            </el-form-item>
+
             <el-form-item :label="$t('research.breeding.breedingTest.form.testReportUrl')" prop="testReportUrl">
               <el-input v-model="formData.testReportUrl" :placeholder="$t('research.breeding.breedingTest.form.testReportUrlPlaceholder')" clearable />
             </el-form-item>
@@ -127,12 +167,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingTestPageDetail, addBreedingTestPage, updateBreedingTestPage } from '@/api/breeding'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
 
 const formRef = ref(null)
 const loading = ref(false)
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -144,6 +186,11 @@ const formData = ref({
   testOrg: '',
   testPerson: '',
   testResult: '',
+  seedClass: '',
+  lotId: '',
+  testType: '',
+  unit: '',
+  passStatus: 'FALSE',
   testReportUrl: '',
   germinationRate: '',
   purity: '',
@@ -162,6 +209,10 @@ const rules = {
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充测试机构
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.testOrg = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   if (isEdit.value) {
     await loadDetail()
   }

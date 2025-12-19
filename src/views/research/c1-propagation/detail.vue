@@ -73,6 +73,18 @@
               <span class="label">{{ $t('research.c1Propagation.form.applyDate') }}:</span>
               <span class="value">{{ data.applyDate }}</span>
             </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
+              <span class="value">{{ data.demandQuantity || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>
+              <span class="value">{{ data.fromSeedType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.toSeedType') }}:</span>
+              <span class="value">{{ data.toSeedType || '-' }}</span>
+            </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.c1Propagation.form.applyDescription') }}:</span>
               <span class="value">{{ data.applyDescription || '-' }}</span>
