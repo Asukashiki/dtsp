@@ -156,15 +156,6 @@
                         <i class="ri-send-plane-line"></i>
                         {{ $t('research.datasetCompilation.actions.submit') }}
                       </el-button>
-                      <el-button
-                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
-                        link
-                        type="danger"
-                        @click="handleDelete(row)"
-                      >
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
-                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -253,14 +244,7 @@
                   >
                     {{ $t('research.datasetCompilation.actions.submit') }}
                   </el-button>
-                  <el-button
-                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
-                    type="danger"
-                    size="small"
-                    @click="handleDelete(item)"
-                  >
-                    {{ $t('common.delete') }}
-                  </el-button>
+
                 </div>
               </div>
 
