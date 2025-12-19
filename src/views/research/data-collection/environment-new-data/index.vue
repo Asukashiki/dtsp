@@ -37,12 +37,12 @@
             @change="handleSearch"
           >
             <el-option :label="$t('research.environmentNewData.allParameters')" value="" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.TMIN')" value="TMIN" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.HUMIDITY')" value="HUMIDITY" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.WIND_SPEED')" value="WIND_SPEED" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.SOLAR_RAD')" value="SOLAR_RAD" />
+            <el-option
+              v-for="item in options.env_parameter_code || []"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -239,7 +239,7 @@ import { useUserStore } from '@/store'
 const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
-const { options, getLabelByValue } = useDict(['flow_status'])
+const { options, getLabelByValue } = useDict(['flow_status', 'env_parameter_code'])
 
 const loading = ref(false)
 const tableData = ref([])
@@ -284,17 +284,9 @@ const getParameterTag = (code) => {
   return tagMap[code] || ''
 }
 
-// 获取参数名称
+// 获取参数名称（使用字典）
 const getParameterName = (code) => {
-  const codeMap = {
-    'RAIN_DAILY': t('research.environmentNewData.parameterCode.RAIN_DAILY'),
-    'TMAX': t('research.environmentNewData.parameterCode.TMAX'),
-    'TMIN': t('research.environmentNewData.parameterCode.TMIN'),
-    'HUMIDITY': t('research.environmentNewData.parameterCode.HUMIDITY'),
-    'WIND_SPEED': t('research.environmentNewData.parameterCode.WIND_SPEED'),
-    'SOLAR_RAD': t('research.environmentNewData.parameterCode.SOLAR_RAD')
-  }
-  return codeMap[code] || code || '-'
+  return getLabelByValue('env_parameter_code', code) || code || '-'
 }
 
 // 获取操作按钮

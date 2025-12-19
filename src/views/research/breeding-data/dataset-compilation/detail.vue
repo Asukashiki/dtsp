@@ -10,13 +10,13 @@
           </el-button>
         </div>
         <div class="header-center">
-                    <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
+          <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
         </div>
         <div class="header-right">
           <el-button
-            v-if="detailData && (detailData.datasetStatus === 'draft' || detailData.datasetStatus === 'rejected')"
-            type="primary"
-            @click="handleEdit"
+              v-if="detailData && (detailData.datasetStatus === 'draft' || detailData.datasetStatus === 'rejected')"
+              type="primary"
+              @click="handleEdit"
           >
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
@@ -53,18 +53,18 @@
               <span class="label">{{ $t('research.datasetCompilation.form.batchId') }}:</span>
               <span class="value">{{ detailData.batchId || '-' }}</span>
             </div>
-            <!-- <div class="detail-item">
+            <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.versionNo') }}:</span>
               <span class="value">{{ detailData.versionNo || '1.0' }}</span>
-            </div> -->
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.recordCount') }}:</span>
               <span class="value">{{ detailData.recordCount || 0 }}</span>
             </div>
-            <!-- <div class="detail-item">
+            <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.batchName') }}:</span>
               <span class="value">{{ detailData.batchName || '-' }}</span>
-            </div> -->
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.cropType') }}:</span>
               <span class="value">{{ detailData.cropType || '-' }}</span>
@@ -111,7 +111,27 @@
               </div>
               <div class="stat-content">
                 <div class="stat-label">{{ $t('research.datasetCompilation.form.trialCount') }}</div>
-                <div class="stat-value">{{ detailData.trialCount || 0 }}</div>
+                <div class="stat-value">{{ detailData.trialCount || 1 }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="ri-map-line"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.plotCount') }}</div>
+                <div class="stat-value">{{ plotInfoList.length }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="ri-calendar-todo-line"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.farmingCount') }}</div>
+                <div class="stat-value">{{ farmingRecordList.length }}</div>
               </div>
             </div>
 
@@ -120,18 +140,28 @@
                 <i class="ri-plant-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.fieldDataCount') }}</div>
-                <div class="stat-value">{{ detailData.fieldDataCount || 0 }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.agronomicCount') }}</div>
+                <div class="stat-value">{{ agronomicTraitList.length }}</div>
               </div>
             </div>
 
             <div class="stat-card">
               <div class="stat-icon">
-                <i class="ri-temp-hot-line"></i>
+                <i class="ri-cloud-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.envDataCount') }}</div>
-                <div class="stat-value">{{ detailData.envDataCount || 0 }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.envCount') }}</div>
+                <div class="stat-value">{{ environmentDataList.length }}</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="ri-scissors-line"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.yieldCount') }}</div>
+                <div class="stat-value">{{ yieldDataList.length }}</div>
               </div>
             </div>
 
@@ -140,8 +170,8 @@
                 <i class="ri-test-tube-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.labTestCount') }}</div>
-                <div class="stat-value">{{ detailData.labTestCount || 0 }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
+                <div class="stat-value">{{ labTestList.length }}</div>
               </div>
             </div>
 
@@ -150,11 +180,418 @@
                 <i class="ri-bar-chart-box-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.yieldDataCount') }}</div>
-                <div class="stat-value">{{ detailData.yieldDataCount || 0 }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
+                <div class="stat-value">
+                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length + environmentDataList.length + yieldDataList.length + labTestList.length }}
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- 数据详情Tab页 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-data-line"></i>
+            {{ $t('research.datasetCompilation.form.dataDetails') }}
+          </div>
+          <el-tabs v-model="activeTab" type="card" style="margin-top: 12px">
+            <!-- 地块及播种信息Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.plot')" name="plotInfo">
+              <el-table
+                  :data="plotInfoList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.plot.plotId')" min-width="120" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="replicationNo" :label="$t('research.datasetCompilation.table.plot.replicationNo')" min-width="100" />
+                <el-table-column prop="rowNo" :label="$t('research.datasetCompilation.table.plot.rowNo')" min-width="80" />
+                <el-table-column prop="columnNo" :label="$t('research.datasetCompilation.table.plot.columnNo')" min-width="80" />
+                <el-table-column prop="varietyCode" :label="$t('research.datasetCompilation.table.plot.varietyCode')" min-width="100" />
+                <el-table-column prop="sowingDate" :label="$t('research.datasetCompilation.table.plot.sowingDate')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.sowingDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="seedQuantity" :label="$t('research.datasetCompilation.table.plot.seedQuantity')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.seedQuantity || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="sowingMethod" :label="$t('research.datasetCompilation.table.plot.sowingMethod')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.sowingMethod || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.plot.plotAreaM2')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.plotAreaM2 || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="gpsLat" :label="$t('research.datasetCompilation.table.plot.gpsLat')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.gpsLat || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="gpsLong" :label="$t('research.datasetCompilation.table.plot.gpsLong')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.gpsLong || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="region" :label="$t('research.datasetCompilation.table.plot.region')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.region || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <!-- 农事记录数据Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.farming')" name="farmingRecord">
+              <el-table
+                  :data="farmingRecordList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="farmingRecordId" :label="$t('research.datasetCompilation.table.farming.farmingRecordId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
+                <el-table-column prop="activityDate" :label="$t('research.datasetCompilation.table.farming.activityDate')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.activityDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="activityType" :label="$t('research.datasetCompilation.table.farming.activityType')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.activityType || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inputName" :label="$t('research.datasetCompilation.table.farming.inputName')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.inputName || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="quantity" :label="$t('research.datasetCompilation.table.common.quantity')" min-width="80">
+                  <template #default="scope">
+                    {{ scope.row.quantity || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.common.unit')" min-width="80">
+                  <template #default="scope">
+                    {{ scope.row.unit || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="operatorId" :label="$t('research.datasetCompilation.table.farming.operatorId')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.operatorId || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="operationDesc" :label="$t('research.datasetCompilation.table.farming.operationDesc')" min-width="150">
+                  <template #default="scope">
+                    {{ scope.row.operationDesc || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <!-- 农艺性状数据Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.agronomic')" name="agronomicTrait">
+              <el-table
+                  :data="agronomicTraitList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="traitRecordId" :label="$t('research.datasetCompilation.table.agronomic.traitRecordId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
+                <el-table-column prop="observationDate" :label="$t('research.datasetCompilation.table.agronomic.observationDate')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.observationDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="growthStage" :label="$t('research.datasetCompilation.table.agronomic.growthStage')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.growthStage || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="traitName" :label="$t('research.datasetCompilation.table.agronomic.traitName')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.traitName || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="traitValue" :label="$t('research.datasetCompilation.table.agronomic.traitValue')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.traitValue || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.common.unit')" min-width="80">
+                  <template #default="scope">
+                    {{ scope.row.unit || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="observerId" :label="$t('research.datasetCompilation.table.agronomic.observerId')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.observerId || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="plantHeightCm" :label="$t('research.datasetCompilation.table.agronomic.plantHeightCm')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.plantHeightCm || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="tillerCount" :label="$t('research.datasetCompilation.table.agronomic.tillerCount')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.tillerCount || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')" min-width="150">
+                  <template #default="scope">
+                    {{ scope.row.remarks || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <!-- 环境监测数据Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.environment')" name="environmentData">
+              <el-table
+                  :data="environmentDataList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="envRecordId" :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
+                <el-table-column prop="collectTime" :label="$t('research.datasetCompilation.table.environment.collectTime')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.collectTime || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="dataType" :label="$t('research.datasetCompilation.table.environment.dataType')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.dataType || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="soilPh" :label="$t('research.datasetCompilation.table.environment.soilPh')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.soilPh || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="soilTemperature" :label="$t('research.datasetCompilation.table.environment.soilTemperature')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.soilTemperature || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="soilMoisture" :label="$t('research.datasetCompilation.table.environment.soilMoisture')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.soilMoisture || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="airTemperature" :label="$t('research.datasetCompilation.table.environment.airTemperature')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.airTemperature || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="airHumidity" :label="$t('research.datasetCompilation.table.environment.airHumidity')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.airHumidity || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="rainfall" :label="$t('research.datasetCompilation.table.environment.rainfall')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.rainfall || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')" min-width="150">
+                  <template #default="scope">
+                    {{ scope.row.remarks || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <!-- 田间检查数据Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.yield')" name="yieldData">
+              <el-table
+                  :data="yieldDataList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.yield.inspectionId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
+                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.yield.plotAreaM2')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.plotAreaM2 || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inspectionDate" :label="$t('research.datasetCompilation.table.yield.inspectionDate')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.inspectionDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inspectionType" :label="$t('research.datasetCompilation.table.yield.inspectionType')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.inspectionType || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="grainWeightKg" :label="$t('research.datasetCompilation.table.yield.grainWeightKg')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.grainWeightKg || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="yieldQtPerHa" :label="$t('research.datasetCompilation.table.yield.yieldQtPerHa')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.yieldQtPerHa || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="moistureContent" :label="$t('research.datasetCompilation.table.yield.moistureContent')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.moistureContent || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="scoreValue" :label="$t('research.datasetCompilation.table.yield.scoreValue')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.scoreValue || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="harvestDate" :label="$t('research.datasetCompilation.table.yield.harvestDate')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.harvestDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="recorderName" :label="$t('research.datasetCompilation.table.yield.recorderName')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.recorderName || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createdTime" :label="$t('research.datasetCompilation.table.common.createdTime')" min-width="150">
+                  <template #default="scope">
+                    {{ scope.row.createdTime || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <!-- 实验室测试数据Tab -->
+            <el-tab-pane :label="$t('research.datasetCompilation.tab.lab')" name="labTest">
+              <el-table
+                  :data="labTestList"
+                  border
+                  stripe
+                  size="small"
+                  style="width: 100%; margin-top: 12px"
+                  :empty-text="$t('common.noData')"
+              >
+                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.lab.testId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
+                <el-table-column prop="sampleId" :label="$t('research.datasetCompilation.table.lab.sampleId')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.sampleId || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="sampleType" :label="$t('research.datasetCompilation.table.lab.sampleType')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.sampleType || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="germinationRate" :label="$t('research.datasetCompilation.table.lab.germinationRate')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.germinationRate || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="purityPercent" :label="$t('research.datasetCompilation.table.lab.purityPercent')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.purityPercent || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="moistureContentPercent" :label="$t('research.datasetCompilation.table.lab.moistureContentPercent')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.moistureContentPercent || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="proteinPercent" :label="$t('research.datasetCompilation.table.lab.proteinPercent')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.proteinPercent || 0 }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="testDate" :label="$t('research.datasetCompilation.table.lab.testDate')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.testDate || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="testOrganization" :label="$t('research.datasetCompilation.table.lab.testOrganization')" min-width="120">
+                  <template #default="scope">
+                    {{ scope.row.testOrganization || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="testerName" :label="$t('research.datasetCompilation.table.lab.testerName')" min-width="100">
+                  <template #default="scope">
+                    {{ scope.row.testerName || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="passFailFlag" :label="$t('research.datasetCompilation.table.lab.passFailFlag')" min-width="100">
+                  <template #default="scope">
+                    <el-tag :type="scope.row.passFailFlag === 'pass' ? 'success' : 'danger'">
+                      {{ scope.row.passFailFlag === 'pass' ? $t('research.datasetCompilation.table.lab.pass') : (scope.row.passFailFlag === 'fail' ? $t('research.datasetCompilation.table.lab.fail') : '-') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
+                  <template #default="scope">
+                    {{ scope.row.remark || '-' }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
         </div>
 
         <!-- 提交信息 -->
@@ -220,6 +657,10 @@
               <span class="label">{{ $t('research.datasetCompilation.form.updatedTime') }}:</span>
               <span class="value">{{ detailData.updatedTime }}</span>
             </div>
+            <div v-if="detailData.updatedBy" class="detail-item">
+              <span class="label">{{ $t('research.datasetCompilation.form.updatedBy') }}:</span>
+              <span class="value">{{ detailData.updatedBy || '-' }}</span>
+            </div>
           </div>
         </div>
       </template>
@@ -233,6 +674,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getDatasetById } from '@/api/dataset'
+import {
+  getPlotInfoList, getFarmingRecordList, getAgronomicTraitList,
+  getEnvironmentDataList
+} from '@/api/breedingData'
+import { getLabTestList } from '@/api/labTest'
+import { getYieldDataList } from '@/api/yieldData'
 
 const route = useRoute()
 const router = useRouter()
@@ -240,6 +687,15 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
+const activeTab = ref('plotInfo') // 默认激活第一个Tab
+
+// 数据列表 Ref
+const plotInfoList = ref([])           // 地块及播种信息
+const farmingRecordList = ref([])     // 农事记录
+const agronomicTraitList = ref([])    // 农艺性状
+const environmentDataList = ref([])   // 环境监测数据
+const labTestList = ref([])           // 实验室测试数据
+const yieldDataList = ref([])         // 田间检查/产量数据
 
 // 获取状态类型
 const getStatusType = (status) => {
@@ -269,6 +725,149 @@ const getStatusLabel = (status) => {
   return labelMap[statusLower] || status
 }
 
+// 加载所有数据列表
+const loadAllDataLists = async (trialId) => {
+  if (!trialId) return
+
+  try {
+    console.log('开始加载详情数据列表，trialId:', trialId)
+    // 批量请求所有数据接口
+    const [
+      plotRes, farmingRes, agronomicRes, environmentDataRes,
+      labRes, yieldRes
+    ] = await Promise.all([
+      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取地块及播种信息失败:', err)
+        return { rows: [], total: 0 }
+      }),
+      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取农事记录失败:', err)
+        return { rows: [], total: 0 }
+      }),
+      getAgronomicTraitList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取农艺性状数据失败:', err)
+        return { rows: [], total: 0 }
+      }),
+      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取环境监测数据失败:', err)
+        return { rows: [], total: 0 }
+      }),
+      getLabTestList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取实验室测试数据失败:', err)
+        return ({ data: { list: [], total: 0 } })
+      }),
+      getYieldDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+        console.error('获取产量数据失败:', err)
+        return ({ msg: "操作失败", code: 500, data: [] })
+      })
+    ])
+
+    // 赋值数据列表 + 初始化备注字段
+    plotInfoList.value = (plotRes?.rows || plotRes?.data?.rows || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+    farmingRecordList.value = (farmingRes?.rows || farmingRes?.data?.rows || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+    environmentDataList.value = (environmentDataRes?.rows || environmentDataRes?.data?.rows || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+    labTestList.value = (labRes?.data?.list || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+    yieldDataList.value = (yieldRes?.data || []).map(item => ({
+      ...item,
+      remark: item.remark || ''
+    }))
+
+    // 修正：添加分号，修复语法错误
+    console.log('详情数据列表加载完成:', {
+      plotInfoList: plotInfoList.value,
+      farmingRecordList: farmingRecordList.value,
+      agronomicTraitList: agronomicTraitList.value,
+      environmentDataList: environmentDataList.value,
+      labTestList: labTestList.value,
+      yieldDataList: yieldDataList.value
+    });
+
+    // 解析存储的模块备注并回显
+    if (detailData.value?.moduleRowRemarks && typeof detailData.value.moduleRowRemarks === 'string') {
+      try {
+        const moduleRemarks = JSON.parse(detailData.value.moduleRowRemarks)
+        const { plotRemarks, farmingRemarks, agronomicRemarks, environmentRemarks, yieldRemarks, labTestRemarks } = moduleRemarks
+
+        // 地块备注回显
+        if (plotRemarks) {
+          const plotRemarkMap = new Map(plotRemarks.map(r => [r.plotId, r.remark]))
+          plotInfoList.value = plotInfoList.value.map(item => ({
+            ...item,
+            remark: plotRemarkMap.get(item.plotId) || item.remark
+          }))
+        }
+
+        // 农事记录备注回显
+        if (farmingRemarks) {
+          const farmingRemarkMap = new Map(farmingRemarks.map(r => [r.farmingRecordId, r.remark]))
+          farmingRecordList.value = farmingRecordList.value.map(item => ({
+            ...item,
+            remark: farmingRemarkMap.get(item.farmingRecordId) || item.remark
+          }))
+        }
+
+        // 农艺性状备注回显
+        if (agronomicRemarks) {
+          const agronomicRemarkMap = new Map(agronomicRemarks.map(r => [r.traitRecordId, r.remark]))
+          agronomicTraitList.value = agronomicTraitList.value.map(item => ({
+            ...item,
+            remark: agronomicRemarkMap.get(item.traitRecordId) || item.remark
+          }))
+        }
+
+        // 环境监测备注回显
+        if (environmentRemarks) {
+          const environmentRemarkMap = new Map(environmentRemarks.map(r => [r.envRecordId, r.remark]))
+          environmentDataList.value = environmentDataList.value.map(item => ({
+            ...item,
+            remark: environmentRemarkMap.get(item.envRecordId) || item.remark
+          }))
+        }
+
+        // 田间检查备注回显
+        if (yieldRemarks) {
+          const yieldRemarkMap = new Map(yieldRemarks.map(r => [r.id, r.remark]))
+          yieldDataList.value = yieldDataList.value.map(item => ({
+            ...item,
+            remark: yieldRemarkMap.get(item.id) || item.remark
+          }))
+        }
+
+        // 实验室测试备注回显
+        if (labTestRemarks) {
+          const labTestRemarkMap = new Map(labTestRemarks.map(r => [r.id, r.remark]))
+          labTestList.value = labTestList.value.map(item => ({
+            ...item,
+            remark: labTestRemarkMap.get(item.id) || item.remark
+          }))
+        }
+      } catch (parseError) {
+        console.error('解析模块备注失败:', parseError)
+      }
+    }
+
+  } catch (error) {
+    console.error('加载数据列表失败:', error)
+    ElMessage.warning(t('research.datasetCompilation.message.statisticsFailed'))
+  }
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   loading.value = true
@@ -276,6 +875,10 @@ const loadDetail = async () => {
     const res = await getDatasetById(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
+      // 加载所有数据列表
+      if (res.data.trialId) {
+        await loadAllDataLists(res.data.trialId)
+      }
     } else {
       ElMessage.error(t('common.loadFailed'))
       goBack()
@@ -465,6 +1068,52 @@ onMounted(() => {
   line-height: 1;
 }
 
+/* ========== Tab 页样式优化 ========== */
+.dataset-detail-container :deep(.el-tabs) {
+  --el-tabs-header-text-color: #6b7280;
+  --el-tabs-active-text-color: #009A44;
+  --el-tabs-border-color: #e5e7eb;
+  --el-tabs-card-header-background: #f9fafb;
+}
+
+.dataset-detail-container :deep(.el-tabs__header) {
+  margin-bottom: 16px;
+}
+
+.dataset-detail-container :deep(.el-tabs__item) {
+  padding: 0 20px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.dataset-detail-container :deep(.el-tabs__item.is-active) {
+  background-color: #f0fdf4;
+  border-color: #009A44;
+}
+
+.dataset-detail-container ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+  border-bottom-color: #009A44;
+}
+
+.dataset-detail-container :deep(.el-tabs__ink-bar) {
+  height: 3px;
+  background-color: #009A44;
+}
+
+/* 表格样式适配 */
+.dataset-detail-container :deep(.el-table) {
+  --el-table-header-text-color: #009A44;
+  --el-table-row-hover-bg-color: #f0fdf4;
+}
+
+.dataset-detail-container :deep(.el-table th) {
+  background-color: #f8fff9 !important;
+}
+
+.dataset-detail-container :deep(.el-table td) {
+  border-color: #e8f5ec;
+}
+
 /* ==================== 响应式设计 ==================== */
 @media screen and (max-width: 1024px) {
   .page-header {
@@ -620,6 +1269,33 @@ onMounted(() => {
 
   .stat-value {
     font-size: 20px;
+  }
+
+  /* Tab 页移动端适配 */
+  .dataset-detail-container :deep(.el-tabs__nav) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dataset-detail-container :deep(.el-tabs__item) {
+    padding: 0 16px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /* 表格移动端适配 */
+  .dataset-detail-container :deep(.el-table) {
+    font-size: 12px;
+  }
+
+  .dataset-detail-container :deep(.el-table th) {
+    padding: 8px 4px;
+  }
+
+  .dataset-detail-container :deep(.el-table td) {
+    padding: 8px 4px;
   }
 }
 
