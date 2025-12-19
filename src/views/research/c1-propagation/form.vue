@@ -34,8 +34,9 @@
                 style="width: 100%"
                 @change="handleOrgTypeChange"
               >
-                <el-option :label="$t('research.c1Propagation.orgType.union')" value="union" />
-                <el-option :label="$t('research.c1Propagation.orgType.cooperative')" value="cooperative" />
+                <el-option label="Union" value="union" />
+                <el-option label="OSE" value="ose" />
+                <el-option label="Private Multiplier" value="privateMultiplier" />
               </el-select>
             </el-form-item>
 
@@ -184,6 +185,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addC1Propagation, updateC1Propagation } from '@/api/c1Propagation'
 import { getBreedingBatchPageList } from '@/api/breeding'
+import { getUserInfo } from '@/utils/auth'
 
 const { t } = useI18n()
 
@@ -347,16 +349,15 @@ const handleSubmit = async () => {
   }
 }
 
-// 机构类型变更时自动填充机构名称
+// 机构类型变更时自动填充机构名称与ID（使用当前登录用户信息）
 const handleOrgTypeChange = (value) => {
-  if (value === 'union') {
-    //formData.applicantOrgName = 'Default Union'
-    formData.applicantOrgName = ''
-  } else if (value === 'cooperative') {
-    //formData.applicantOrgName = 'Default cooperative'
-    formData.applicantOrgName = ''
+  const currentUser = getUserInfo()
+  if (currentUser && currentUser.user) {
+    formData.applicantOrgName = currentUser.user.organName || ''
+    formData.applicantOrgId = currentUser.user.organCode || ''
   } else {
     formData.applicantOrgName = ''
+    formData.applicantOrgId = ''
   }
 }
 

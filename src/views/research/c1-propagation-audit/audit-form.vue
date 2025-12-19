@@ -90,6 +90,7 @@
             <el-form-item :label="$t('research.c1Propagation.form.auditOrg')">
               <el-input
                 v-model="formData.auditOrg"
+                :disabled="true"
                 placeholder="OIA"
               />
             </el-form-item>
@@ -108,10 +109,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { auditC1Propagation } from '@/api/c1Propagation'
+import { getUserInfo } from '@/utils/auth'
 
 const { t } = useI18n()
 
@@ -132,7 +134,7 @@ const submitting = ref(false)
 const formData = reactive({
   auditResult: '',
   auditOpinion: '',
-  auditOrg: 'OIA'
+  auditOrg: ''
 })
 
 // 表单验证规则
@@ -144,6 +146,14 @@ const rules = computed(() => ({
     { required: true, message: t('research.c1Propagation.rules.auditOpinionRequired'), trigger: 'blur' }
   ]
 }))
+
+// 默认值：从当前登录用户信息中获取审核机构
+onMounted(() => {
+  const currentUser = getUserInfo()
+  if (currentUser && currentUser.user) {
+    formData.auditOrg = currentUser.user.organName || ''
+  }
+})
 
 // 提交审核
 const handleSubmit = async () => {
