@@ -130,10 +130,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentNewDataDetail } from '@/api/environment-new-data'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const { getLabelByValue } = useDict(['env_parameter_code'])
 
 const loading = ref(false)
 const detailData = reactive({
@@ -172,17 +174,9 @@ const getParameterTag = (code) => {
   return tagMap[code] || ''
 }
 
-// 获取参数名称
+// 获取参数名称（使用字典）
 const getParameterName = (code) => {
-  const codeMap = {
-    'RAIN_DAILY': t('research.environmentNewData.parameterCode.RAIN_DAILY'),
-    'TMAX': t('research.environmentNewData.parameterCode.TMAX'),
-    'TMIN': t('research.environmentNewData.parameterCode.TMIN'),
-    'HUMIDITY': t('research.environmentNewData.parameterCode.HUMIDITY'),
-    'WIND_SPEED': t('research.environmentNewData.parameterCode.WIND_SPEED'),
-    'SOLAR_RAD': t('research.environmentNewData.parameterCode.SOLAR_RAD')
-  }
-  return codeMap[code] || code || '-'
+  return getLabelByValue('env_parameter_code', code) || code || '-'
 }
 
 // 加载详情
