@@ -26,24 +26,25 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <!-- 1. Trial ID -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.trialId')">
-                    <el-input v-model="formData.trialId" disabled :placeholder="'T_{cropType}_{year}_000001'" />
-                  </el-form-item>
-                </el-col>
                 <!-- 2. Trial Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.trialName')" prop="trialName">
                     <el-input v-model="formData.trialName" :placeholder="$t('research.breedingData.trial.placeholder.trialName')" />
                   </el-form-item>
                 </el-col>
-                <!-- 3. Batch Id -->
+                <!-- 1. Trial ID -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Batch Id" prop="batchId">
+                  <el-form-item :label="$t('research.breedingData.trial.form.trialId')">
+                    <el-input v-model="formData.trialId" disabled :placeholder="'T_{cropType}_{year}_000001'" />
+                  </el-form-item>
+                </el-col>
+
+                <!-- 3. Batch Name -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.trial.form.batchName')" prop="batchId">
                     <el-select
                       v-model="formData.batchId"
-                      placeholder="Please select Batch Id"
+                      :placeholder="$t('research.breedingData.trial.placeholder.batchName')"
                       filterable
                       style="width: 100%"
                       @change="handleBatchChange"
@@ -51,11 +52,11 @@
                       <el-option
                         v-for="item in batchOptions"
                         :key="item.batchId"
-                        :label="item.batchId"
+                        :label="item.batchName"
                         :value="item.batchId"
                       >
                         <div style="display: flex; justify-content: space-between;">
-                          <span>{{ item.batchId }}</span>
+                          <span>{{ item.batchName }}</span>
                           <!-- <el-tag :type="getStatusType(item.status)" size="small" effect="plain">
                             {{ item.status }}
                           </el-tag> -->
@@ -67,13 +68,17 @@
                 <!-- 4. Crop Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.cropType')" prop="cropType">
-                    <el-input v-model="formData.cropType" disabled :placeholder="$t('research.breedingData.trial.placeholder.cropType')" />
+                    <el-input 
+                      v-model="cropTypeDisplay" 
+                      disabled 
+                      :placeholder="$t('research.breedingData.trial.placeholder.cropType')" 
+                    />
                   </el-form-item>
                 </el-col>
                 <!-- 5. Variety Code -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Variety Code">
-                    <el-input v-model="formData.varietyCode" disabled placeholder="Auto-filled from Batch Id" />
+                    <el-input v-model="formData.varietyCode" disabled :placeholder="$t('research.breedingData.trial.placeholder.autoFilledFromBatch')" />
                   </el-form-item>
                 </el-col>
                 <!-- 6. Variety Name -->
@@ -173,6 +178,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicInfo, addTrialBasic, editTrialBasic, getBatchOptions, getLocationMasterOptions } from '@/api/breedingData'
 import { submitTrial } from '@/api/research/trialBasicAudit'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
@@ -184,7 +190,10 @@ const saveLoading = ref(false)
 const submitLoading = ref(false)
 const batchOptions = ref([])
 const locationOptions = ref([])
-
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type'
+])
 const isEdit = computed(() => !!route.params.trialId)
 
 const formData = reactive({
@@ -209,8 +218,14 @@ const canSubmit = computed(() => {
   return status === 'S0' || status === 'S3'
 })
 
+// 作物类型显示值（字典回显）
+const cropTypeDisplay = computed(() => {
+  if (!formData.cropType) return ''
+  return getLabelByValue('crop_type', formData.cropType) || formData.cropType
+})
+
 const rules = {
-  batchId: [{ required: true, message: t('research.breedingData.trial.placeholder.batchId'), trigger: 'change' }],
+  batchId: [{ required: true, message: t('research.breedingData.trial.placeholder.batchName'), trigger: 'change' }],
   trialName: [{ required: true, message: t('research.breedingData.trial.placeholder.trialName'), trigger: 'blur' }],
   locationId: [{ required: true, message: t('research.breedingData.trial.placeholder.locationId'), trigger: 'blur' }],
   season: [{ required: true, message: t('research.breedingData.trial.placeholder.season'), trigger: 'change' }],

@@ -36,9 +36,9 @@
               >
                 <el-option
                   v-for="item in breedSeedProduceList"
-                  :key="item.breedSeedProduceBatchId"
-                  :label="`${item.varietyName} - ${item.breedBatchId} (${item.produceSeedQuantrity} kg)`"
-                  :value="item.breedSeedProduceBatchId"
+                  :key="item.produceBatchId"
+                  :label="`${item.varietyName}`"
+                  :value="item.produceBatchId"
                 />
               </el-select>
             </el-form-item>
@@ -184,22 +184,33 @@ const loadBreedSeedProduceList = async () => {
 
 // 处理Parent Seed Source变化
 const handleParentSeedSourceChange = (value) => {
+  console.log('Parent seed source changed:', value)
+  
   if (!value) {
     // 如果清空选择，则清空cropType和varietyName
     formData.value.cropType = ''
     formData.value.varietyName = ''
+    console.log('Cleared cropType and varietyName')
     return
   }
 
-  // 根据选中的breedSeedProduceBatchId查找对应的数据
+  // 根据选中的produceBatchId查找对应的数据
   const selectedItem = breedSeedProduceList.value.find(
-    item => item.breedSeedProduceBatchId === value
+    item => item.produceBatchId === value
   )
+  
+  console.log('Selected item:', selectedItem)
 
   if (selectedItem) {
     // 自动填充cropType和varietyName
-    formData.value.cropType = selectedItem.cropType
-    formData.value.varietyName = selectedItem.varietyName
+    formData.value.cropType = selectedItem.cropType || ''
+    formData.value.varietyName = selectedItem.varietyName || ''
+    console.log('Updated formData:', {
+      cropType: formData.value.cropType,
+      varietyName: formData.value.varietyName
+    })
+  } else {
+    console.warn('No matching item found for value:', value)
   }
 }
 
