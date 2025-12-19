@@ -1,7 +1,7 @@
 // 育种管理国际化文件
 export default {
   title: 'Seed Multiplication Batch Information',
-  subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
+  subtitle: 'Integrated management of seed multiplication batches, tracking records, and testing information',
 
   // Shared crop types
   cropType: {
@@ -60,6 +60,7 @@ export default {
       endDate: 'End Date',
       expectedYield: 'Expected Yield',
       actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'To Multiply Quantity',
       orgId: 'Organization ID',
       orgName: 'Organization Name',
     },
@@ -95,6 +96,7 @@ export default {
       completeDate: 'Completion Date',
       expectedYield: 'Expected Yield',
       actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'To Multiply Quantity',
       fieldInspectionScore: 'Field Inspection Score',
       gpsLongitude: 'GPS Longitude',
       gpsLatitude: 'GPS Latitude',
@@ -391,6 +393,9 @@ export default {
         distributed: 'Distributed',
         已分发: 'Distributed',
         DISTRIBUTED: 'Distributed',
+        Distributed: 'Distributed',
+        received: 'Received',
+        Received: 'Received',
       },
 
       actions: {
@@ -502,7 +507,7 @@ export default {
         oseId: 'OSE ID',
         oseName: 'OSE Name',
         confirmTime: 'Confirmation Time',
-        confirmPeople: 'Confirmation Operator',
+        confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
         remark: 'Additional Notes',
         createTime: 'Created Time',
@@ -517,13 +522,13 @@ export default {
 
       placeholder: {
         confirmTime: 'Please select confirmation time',
-        confirmPeople: 'Please enter confirmation operator name',
+        confirmPeople: 'Please enter operator name',
         remark: 'Additional notes (optional)',
       },
 
       rules: {
         confirmTime: 'Please select confirmation time',
-        confirmPeople: 'Please enter confirmation operator name',
+        confirmPeople: 'Please enter operator name',
       },
 
       columns: {
@@ -531,7 +536,7 @@ export default {
         oseName: 'OSE Name',
         totalDistributeQuantity: 'Total Distribution Quantity (kg)',
         confirmTime: 'Confirmation Time',
-        confirmPeople: 'Confirmation Operator',
+        confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
         createTime: 'Created Time',
         actions: 'Actions',
@@ -771,10 +776,10 @@ export default {
     },
   },
 
-  // Breeding Batch Information Collection
+  // Seed Multiplication Batch Information Collection
   breedingBatch: {
-    title: 'Breeding Batch Information Collection',
-    subtitle: 'Record breeding batch basic information and yield data',
+    title: 'Seed Multiplication Batch Information Collection',
+    subtitle: 'Record seed multiplication batch basic information and yield data',
     list: 'Breeding Batch List',
     add: 'Add Breeding Batch',
     edit: 'Edit Breeding Batch',
@@ -830,7 +835,7 @@ export default {
       startDate: 'Start Date',
       endDate: 'Completion Date',
       expectedYield: 'Expected Yield',
-      actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'Quantity to Multiply',
       orgId: 'Organization ID',
       orgName: 'Organization Name',
       remark: 'Remark',
@@ -843,7 +848,7 @@ export default {
       startDatePlaceholder: 'Please select start date',
       endDatePlaceholder: 'Please select completion date',
       expectedYieldPlaceholder: 'Please enter expected yield',
-      actualYieldPlaceholder: 'Please enter actual yield',
+      toMultiplyQuantityPlaceholder: 'Please enter quantity to multiply',
       orgIdPlaceholder: 'Please enter organization ID',
       orgNamePlaceholder: 'Please enter organization name',
       remarkPlaceholder: 'Please enter remark information',

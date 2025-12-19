@@ -125,10 +125,10 @@
                   </span>
                 </div>
                 <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.actualYield') }}</span>
+                  <span class="label">{{ $t('research.breeding.batch.form.toMultiplyQuantity') }}</span>
                   <span class="value metric">
-                    <span class="number">{{ batchInfo.actualYield || '-' }}</span>
-                    <span class="unit" v-if="batchInfo.actualYield">kg</span>
+                    <span class="number">{{ batchInfo.toMultiplyQuantity || '-' }}</span>
+                    <span class="unit" v-if="batchInfo.toMultiplyQuantity">kg</span>
                   </span>
                 </div>
               </div>

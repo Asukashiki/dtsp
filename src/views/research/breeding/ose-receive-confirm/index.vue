@@ -93,6 +93,27 @@
             <div class="table-wrapper pc-only">
               <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
                 <el-table-column prop="oseName" :label="$t('research.breeding.seed.receiveConfirm.columns.oseName')" min-width="150" />
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId')" width="200">
+                  <template #default="{ row }">
+                    <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
+                      {{ item.breedSeedProduceBatchId }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.seedType')" width="150">
+                  <template #default="{ row }">
+                    <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
+                      {{ item.seedType }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.varietyName')" width="150">
+                  <template #default="{ row }">
+                    <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
+                      {{ item.varietyName }}
+                    </div>
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.totalDistributeQuantity')" width="280">
                   <template #default="{ row }">
                     {{ row.distributeDetail?.totalDistributeQuantity || 0 }} kg
@@ -151,6 +172,18 @@
                 <div class="card-row">
                   <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.oseName') }}:</span>
                   <span class="value">{{ item.oseName }}</span>
+                </div>
+                <div class="card-row" v-for="(detailItem, index) in item.distributeDetail?.detailList" :key="index">
+                  <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId') }}:</span>
+                  <span class="value">{{ detailItem.breedSeedProduceBatchId }}</span>
+                </div>
+                <div class="card-row" v-for="(detailItem, index) in item.distributeDetail?.detailList" :key="index">
+                  <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.seedType') }}:</span>
+                  <span class="value">{{ detailItem.seedType }}</span>
+                </div>
+                <div class="card-row" v-for="(detailItem, index) in item.distributeDetail?.detailList" :key="index">
+                  <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.varietyName') }}:</span>
+                  <span class="value">{{ detailItem.varietyName }}</span>
                 </div>
                 <div class="card-row">
                   <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.totalDistributeQuantity') }}:</span>
@@ -231,7 +264,25 @@ const filteredList = computed(() => {
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    list = list.filter(item => item.oseName?.toLowerCase().includes(query))
+    list = list.filter(item => {
+      // 检查OSE名称
+      if (item.oseName?.toLowerCase().includes(query)) {
+        return true
+      }
+      
+      // 检查分发明细中的字段
+      if (item.distributeDetail?.detailList) {
+        return item.distributeDetail.detailList.some(detail => {
+          return (
+            detail.breedSeedProduceBatchId?.toLowerCase().includes(query) ||
+            detail.seedType?.toLowerCase().includes(query) ||
+            detail.varietyName?.toLowerCase().includes(query)
+          )
+        })
+      }
+      
+      return false
+    })
   }
 
   if (filterStatus.value) {

@@ -47,6 +47,9 @@ export default {
     applyDate: 'Application Date',
     applyDescription: 'Application Description',
     applyStatus: 'Application Status',
+    demandQuantity: 'Demand Quantity',
+    fromSeedType: 'From Seed Type',
+    toSeedType: 'To Seed Type',
 
     // Audit fields
     auditResult: 'Audit Result',
@@ -75,7 +78,10 @@ export default {
     applyDate: 'Please select application date',
     applyDescription: 'Please enter application description',
     auditResult: 'Please select audit result',
-    auditOpinion: 'Please enter audit opinion'
+    auditOpinion: 'Please enter audit opinion',
+    demandQuantity: 'Please enter demand quantity',
+    fromSeedType: 'Please select from seed type',
+    toSeedType: 'Please select to seed type'
   },
 
   // Validation rules
@@ -87,7 +93,10 @@ export default {
     cropTypeRequired: 'Please select crop type',
     varietyNameRequired: 'Please enter variety name',
     auditResultRequired: 'Please select audit result',
-    auditOpinionRequired: 'Please enter audit opinion'
+    auditOpinionRequired: 'Please enter audit opinion',
+    demandQuantityRequired: 'Please enter demand quantity',
+    fromSeedTypeRequired: 'Please select from seed type',
+    toSeedTypeRequired: 'Please select to seed type'
   },
 
   // Table columns
