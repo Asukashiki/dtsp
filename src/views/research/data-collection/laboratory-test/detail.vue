@@ -57,6 +57,44 @@
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleCondition') }}:</span>
               <el-tag>{{ detailData.sampleCondition }}</el-tag>
             </div>
+            <!-- <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.plotId') || '地块编号' }}:</span>
+              <span class="value">{{ detailData.plotId || '-' }}</span>
+            </div> -->
+          </div>
+        </div>
+
+        <!-- 实验参数信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-flask-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.paramInfo') || '实验参数' }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleType') }}:</span>
+              <span class="value">{{ detailData.sampleType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labParameter') }}:</span>
+              <span class="value">{{ detailData.labParameter || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围' }}:</span>
+              <span class="value">{{ expectedRangeText }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.resultValue') }}:</span>
+              <span class="value">{{ detailData.resultValue || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.passFailFlag') }}:</span>
+              <span class="value">
+                <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
+                  {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
+                </el-tag>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -143,7 +181,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -156,6 +194,36 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
+
+const PARAM_RULES = {
+  'pH': { key: 'pH', type: 'range', min: 5.5, max: 7.5 },
+  'moisture': { key: 'moisture', type: 'lt', max: 13, unit: '%' },
+  'protein': { key: 'protein', type: 'percent', unit: '%' },
+  'EC': { key: 'EC', type: 'number', unit: 'mS/cm' },
+  'mycotoxin': { key: 'mycotoxin', type: 'number', unit: 'PPM' },
+  'NPK': { key: 'NPK', type: 'text' }
+}
+
+const expectedRangeText = computed(() => {
+  if (!detailData.value) return '-'
+  const rule = PARAM_RULES[detailData.value.labParameter]
+  if (!rule) return '-'
+  if (rule.type === 'range') return `${rule.min} - ${rule.max}`
+  if (rule.type === 'lt') return `< ${rule.max}${rule.unit || ''}`
+  return '-'
+})
+
+const passFlag = computed(() => {
+  if (!detailData.value) return null
+  const rule = PARAM_RULES[detailData.value.labParameter]
+  const raw = detailData.value.resultValue
+  if (!rule || raw === undefined || raw === null || raw === '') return null
+  const v = Number(raw)
+  if (isNaN(v)) return null
+  if (rule.type === 'range') return v >= rule.min && v <= rule.max
+  if (rule.type === 'lt') return v < rule.max
+  return null
+})
 
 // 加载详情数据
 const loadDetail = async () => {

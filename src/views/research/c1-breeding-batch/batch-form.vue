@@ -98,8 +98,8 @@
               <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.c1BreedingBatch.placeholder.expectedYield')" type="number" clearable />
             </el-form-item>
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.actualYield')">
-              <el-input v-model.number="formData.actualYield" :placeholder="$t('research.c1BreedingBatch.placeholder.actualYield')" type="number" clearable />
+            <el-form-item :label="$t('research.c1BreedingBatch.form.quantityToMultiply')">
+              <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
             </el-form-item>
 
 
@@ -119,12 +119,13 @@
             <el-form-item :label="$t('research.c1BreedingBatch.form.orgType')">
               <el-select v-model="formData.orgType" :placeholder="$t('common.pleaseSelect')" class="full-width">
                 <el-option label="Union" value="union" />
+                <el-option label="OSE" value="ose" />
                 <el-option label="Cooperative" value="cooperative" />
               </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.orgName')">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" clearable />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" disabled />
             </el-form-item>
           </div>
         </div>
@@ -158,6 +159,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, addC1BreedingBatch, updateC1BreedingBatch, getApprovedPropagations } from '@/api/c1BreedingBatch'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
@@ -166,6 +168,7 @@ const { t } = useI18n()
 const formRef = ref(null)
 const loading = ref(false)
 const propagationList = ref([])
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -181,6 +184,7 @@ const formData = ref({
   endDate: '',
   expectedYield: '',
   actualYield: '',
+  quantityToMultiply: '',
   plantingArea: '',
   orgId: '',
   orgName: '',
@@ -198,6 +202,11 @@ const rules = computed(() => ({
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充组织信息
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
+  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   await loadPropagations()
   if (isEdit.value) {
     await loadDetail()

@@ -1,8 +1,8 @@
 // 育种管理国际化文件
 export default {
-    // 繁殖信息管理（统一模块）
-  title: '繁殖信息管理',
-  subtitle: '繁殖批次、跟踪记录、检测信息一体化管理',
+    // 种子扩繁批次信息管理（统一模块）
+  title: '种子扩繁批次信息管理',
+  subtitle: '种子扩繁批次、跟踪记录、检测信息一体化管理',
   // 育种家种子模块 Breeder Seed Module
   seed: {
     // 生产数据采集
@@ -27,8 +27,9 @@ export default {
       form: {
         basicInfo: '基础信息',
         productionInfo: '生产信息',
-        breedSeedProduceBatchId: '种子生产批次ID',
+        produceBatchId: '种子生产批次ID',
         breedBatchId: '育种批次ID',
+        trialName: '试验名称',
         varietyId: '品种ID',
         varietyName: '品种名称',
         cropType: '作物类型',
@@ -49,6 +50,7 @@ export default {
       // 表单占位符
       placeholder: {
         breedBatchId: '请选择育种批次ID',
+        trialName: '请选择试验名称',
         varietyName: '请选择品种名称',
         fromSeedLevel: '请选择种子等级来源',
         toSeedLevel: '请选择种子等级去向',
@@ -74,7 +76,7 @@ export default {
 
       // 列表列
       columns: {
-        breedSeedProduceBatchId: '生产批次ID',
+        produceBatchId: '生产批次ID',
         produceBatchName: '生产批次名称',
         breedBatchName: '育种批次名称',
         varietyName: '品种名称',
@@ -123,11 +125,14 @@ export default {
         distributionInfo: '分发信息',
         detailList: '分发明细',
         distributeId: '分发ID',
-        oseId: 'OSE ID',
+        oseId: 'OSE名称',
         oseName: 'OSE名称',
         time: '分发时间',
         people: '分发操作人',
         organ: '种子机构名称',
+        distributeName: '分发名称',
+        fromSeedLevel: '种子等级来源',
+        toSeedLevel: '种子等级去向',
         remark: '备注',
         totalDistributeQuantity: '分发总数量',
         distributeStatus: '分发状态',
@@ -135,7 +140,9 @@ export default {
         updateTime: '更新时间',
 
         // 分发明细
-        breedSeedProduceBatchId: '生产批次ID',
+        produceBatchId: '生产批次ID',
+        breedBatchName: '育种批次名称',
+        parentalSeedSource: '亲本种子来源',
         varietyName: '品种名称',
         cropType: '作物类型',
         distributeQuantity: '分发数量',
@@ -144,23 +151,32 @@ export default {
 
       // 表单占位符
       placeholder: {
-        oseId: '请选择OSE',
+        oseId: '请选择OSE名称',
         time: '请选择分发时间',
         people: '请输入分发操作人姓名',
         organ: '请输入种子机构名称',
+        distributeName: '请输入分发名称',
+        fromSeedLevel: '请选择种子等级来源',
+        toSeedLevel: '请选择种子等级去向',
         remark: '备注信息(选填)',
-        breedSeedProduceBatchId: '请选择生产批次',
+        produceBatchId: '请选择生产批次',
+        breedBatchName: '请选择育种批次名称',
+        parentalSeedSource: '请选择亲本种子来源',
+        varietyName: '请选择品种名称',
         distributeQuantity: '请输入分发数量(kg)',
       },
 
       // 表单验证
       rules: {
-        oseId: '请选择OSE',
+        distributeName: '请输入分发名称',
+        oseId: '请选择OSE名称',
         time: '请选择分发时间',
         people: '请输入分发操作人姓名',
         organ: '请输入种子机构名称',
+        fromSeedLevelRequired: '请选择种子等级来源',
+        toSeedLevelRequired: '请选择种子等级去向',
         detailListRequired: '请至少添加一条分发明细',
-        breedSeedProduceBatchId: '请选择生产批次',
+        produceBatchId: '请选择生产批次',
         distributeQuantity: '请输入分发数量',
         distributeQuantityMin: '分发数量必须大于0',
         distributeQuantityMax: '分发数量不能超过生产批次剩余可分发量',
@@ -177,7 +193,10 @@ export default {
       detailColumns: {
         varietyName: '品种名称',
         cropType: '作物类型',
-        breedSeedProduceBatchId: '生产批次ID',
+        produceBatchId: '生产批次ID',
+        produceBatchName: '生产批次名称',
+        breedBatchName: '育种批次名称',
+        parentalSeedSource: '亲本种子来源',
         distributeQuantity: '分发数量(kg)',
         produceBatchRemaining: '批次剩余量(kg)',
         createTime: '创建时间',
@@ -190,6 +209,9 @@ export default {
         time: '分发时间',
         people: '分发操作人',
         organ: '种子机构',
+        distributeName: '分发名称',
+        fromSeedLevel: '种子等级来源',
+        toSeedLevel: '种子等级去向',
         totalDistributeQuantity: '分发总数量(kg)',
         distributeStatus: '分发状态',
         createTime: '创建时间',
@@ -201,6 +223,8 @@ export default {
         distributed: '已分发',
         已分发: '已分发',
         DISTRIBUTED: '已分发',
+        received: '已接收',
+        Received: '已接收',
       },
 
       // 操作
@@ -309,7 +333,7 @@ export default {
       confirmSuccess: '确认成功',
 
       // 搜索筛选
-      searchPlaceholder: '搜索OSE名称、品种名称',
+      searchPlaceholder: '搜索OSE名称、品种名称、种子ID、种子类型',
       filterByStatus: '按接收状态筛选',
       filterByCrop: '按作物类型筛选',
       filterByDate: '按时间筛选',
@@ -328,7 +352,7 @@ export default {
         oseId: 'OSE ID',
         oseName: 'OSE名称',
         confirmTime: '确认时间',
-        confirmPeople: '确认操作人',
+        confirmPeople: '操作人姓名',
         receiveStatus: '接收状态',
         remark: '补充说明',
         createTime: '创建时间',
@@ -336,7 +360,9 @@ export default {
 
         // 分发明细
         totalDistributeQuantity: '分发总数量',
-        breedSeedProduceBatchId: '生产批次ID',
+        produceBatchId: '生产批次ID',
+        breedSeedProduceBatchId: '种子ID',
+        seedType: '种子类型',
         varietyName: '品种名称',
         cropType: '作物类型',
         distributeQuantity: '分发数量',
@@ -345,23 +371,26 @@ export default {
       // 表单占位符
       placeholder: {
         confirmTime: '请选择确认时间',
-        confirmPeople: '请输入确认操作人姓名',
+        confirmPeople: '请输入操作人姓名',
         remark: '补充说明(选填)',
       },
 
       // 表单验证
       rules: {
         confirmTime: '请选择确认时间',
-        confirmPeople: '请输入确认操作人姓名',
+        confirmPeople: '请输入操作人姓名',
       },
 
       // 列表列
       columns: {
         receiveConfirmId: '接收确认ID',
         oseName: 'OSE名称',
+        breedSeedProduceBatchId: '种子ID',
+        seedType: '种子类型',
+        varietyName: '品种名称',
         totalDistributeQuantity: '分发总数量(kg)',
         confirmTime: '确认时间',
-        confirmPeople: '确认操作人',
+        confirmPeople: '操作人姓名',
         receiveStatus: '接收状态',
         createTime: '创建时间',
         actions: '操作',
@@ -663,6 +692,7 @@ export default {
       endDate: '完成日期',
       expectedYield: '预期产量',
       actualYield: '实际产量',
+      toMultiplyQuantity: '待扩繁数量',
       orgId: '机构ID',
       orgName: '机构名称',
     },
@@ -698,6 +728,7 @@ export default {
       completeDate: '完成日期',
       expectedYield: '预期产量',
       actualYield: '实际产量',
+      toMultiplyQuantity: '待扩繁数量',
       fieldInspectionScore: '田间检验得分',
       gpsLongitude: 'GPS经度',
       gpsLatitude: 'GPS纬度',
@@ -784,10 +815,10 @@ export default {
     operationError: '操作失败',
   },
 
-  // 繁殖批次信息采集
+  // 种子扩繁批次信息采集
   breedingBatch: {
-    title: '繁殖批次信息采集',
-    subtitle: '记录繁殖批次基本信息和产量数据',
+    title: '种子扩繁批次信息采集',
+    subtitle: '记录种子扩繁批次基本信息和产量数据',
     list: '繁殖批次列表',
     add: '新增繁殖批次',
     edit: '编辑繁殖批次',
@@ -843,7 +874,7 @@ export default {
       startDate: '开始日期',
       endDate: '完成日期',
       expectedYield: '预期产量',
-      actualYield: '实际产量',
+      toMultiplyQuantity: '待扩繁数量',
       orgId: '机构ID',
       orgName: '机构名称',
       remark: '备注',
@@ -856,7 +887,7 @@ export default {
       startDatePlaceholder: '请选择开始日期',
       endDatePlaceholder: '请选择完成日期',
       expectedYieldPlaceholder: '请输入预期产量',
-      actualYieldPlaceholder: '请输入实际产量',
+      toMultiplyQuantityPlaceholder: '请输入待扩繁数量',
       orgIdPlaceholder: '请输入机构ID',
       orgNamePlaceholder: '请输入机构名称',
       remarkPlaceholder: '请输入备注信息',

@@ -57,6 +57,13 @@ export default {
     createTime: '创建时间',
     updateBy: '更新人',
     updateTime: '更新时间',
+    // 兼容组件直接使用的别名
+    createdBy: '创建人',
+    createdTime: '创建时间',
+    updatedBy: '更新人',
+    updatedTime: '更新时间',
+    approver: '审核人',
+    approveTime: '审核时间',
     auditInfo: '审计信息',
     registrationInfo: '登记信息',
     index: '序号',

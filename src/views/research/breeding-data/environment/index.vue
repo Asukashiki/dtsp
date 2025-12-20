@@ -16,9 +16,6 @@
           <div class="card-header">
             <div class="card-title"><i class="ri-file-list-3-line"></i><span>{{ $t('research.breedingData.environment.list') }}</span></div>
             <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-                <i class="ri-delete-bin-line"></i>{{ $t('common.batchDelete') }}
-              </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>{{ $t('research.breedingData.environment.add') }}
               </el-button>
@@ -56,7 +53,6 @@
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
                       <el-button link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                      <el-button link type="danger" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
                     </div>
                   </template>
                 </el-table-column>

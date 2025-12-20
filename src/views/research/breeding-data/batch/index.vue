@@ -113,6 +113,13 @@
             <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
+                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="100">
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.status)" effect="plain">
+                      {{ row.status }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
                   <template #default="{ row }">
                     <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
@@ -311,6 +318,15 @@ const getWorkflowStatusType = (workflowStatus) => {
   return workflowStatusMap[workflowStatus] || 'info'
 }
 
+// 批次状态类型映射
+const getStatusType = (status) => {
+  const statusMap = {
+    'Ongoing': 'info',   // 进行中 - 蓝色
+    'Finished': 'success'   // 已完成 - 绿色
+  }
+  return statusMap[status] || 'info'
+}
+
 
 
 const handleSelectionChange = (selection) => {
@@ -387,26 +403,42 @@ const getActionButtons = (row) => {
   switch (workflowStatus) {
     case 'S0': // 草稿
       if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('research.breedingData.batch.actions.edit'), icon: 'ri-edit-line' })
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submit'), icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S1': // 待审批
       if (userStore.hasWorkflowStatusPermission('approve')) {
         buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      }
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      }
       break
     case 'S3': // 审核驳回
       if (userStore.hasWorkflowStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submit'), icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S9': // 已归档

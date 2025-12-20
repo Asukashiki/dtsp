@@ -1,6 +1,6 @@
 export default {
   // 页面标题
-  title: 'C1 Breeding Batch Management',
+  title: 'Seed Multiplication Information',
   subtitle: 'Manage C1 seed propagation batch information',
 
   // 操作
@@ -35,6 +35,8 @@ export default {
     expectedYield: 'Expected Yield (kg)',
     actualYield: 'Actual Yield (kg)',
     plantingArea: 'Planting Area (ha)',
+    quantityToMultiply: 'Quantity to Multiply (kg)',
+    multiplicationLevel: 'Multiplication Level',
     batchStatus: 'Batch Status',
     orgId: 'Organization ID',
     orgName: 'Organization Name',
@@ -143,7 +145,12 @@ export default {
     description: 'Description',
     resultNormal: 'Normal',
     resultAbnormal: 'Abnormal',
-    resultObserving: 'Observing'
+    resultObserving: 'Observing',
+    seedClass: 'Seed Class',
+    lotId: 'Lot ID',
+    stage: 'Inspection Stage',
+    score: 'Score',
+    inspectionValue: 'Inspection Value'
   },
 
   // 检测记录
@@ -162,6 +169,13 @@ export default {
     description: 'Description',
     resultPass: 'Pass',
     resultFail: 'Fail',
-    resultRetest: 'Pending Retest'
+    resultRetest: 'Pending Retest',
+    seedClass: 'Seed Class',
+    lotId: 'Lot ID',
+    testType: 'Test Type',
+    unit: 'Unit',
+    passStatus: 'Pass Status',
+    passTrue: 'Passed',
+    passFalse: 'Failed'
   }
 }

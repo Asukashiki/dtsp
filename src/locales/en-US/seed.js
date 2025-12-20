@@ -194,7 +194,7 @@ export default {
     auditComment: 'Audit Comment',
     auditTime: 'Audit Time',
     auditor: 'Auditor',
-    auditorOrg: 'Audit Organization',
+    auditorOrg: 'Certifying Agency',
     approve: 'Approve',
     reject: 'Reject',
     auditSuccess: 'Audit completed successfully',
@@ -235,7 +235,7 @@ export default {
 
   // C1 Breeding Batch Audit
   c1BatchAudit: {
-    title: 'Breeding Batch Audit',
+    title: 'Breeding Seed Audit',
     subtitle: 'Review pending breeding batches',
     searchPlaceholder: 'Search batch ID, variety name, organization',
     filterByCrop: 'Filter by crop type',
@@ -269,6 +269,13 @@ export default {
       completed: 'Completed',
       terminated: 'Terminated',
     },
+    error: {
+      noTrackingRecord: 'No tracking records found for this batch, please add tracking records first',
+      invalidTrackingResult: 'Tracking result is abnormal, please ensure all tracking records have normal status',
+      noTestRecord: 'No test records found for this batch, please add test records first',
+      invalidTestResult: 'Test result is not qualified, please ensure all test records have passed status',
+      validationFailed: 'Data validation failed, please try again later',
+    },
   },
 
   // C1 Breeding Batch Certificate
@@ -283,6 +290,8 @@ export default {
       cropType: 'Crop Type',
       orgName: 'Organization',
       startDate: 'Start Date',
+      auditor: 'Auditor',
+      auditorOrg: 'Certifying Agency',
       auditTime: 'Audit Time',
       printCount: 'Print Count',
       lastPrintTime: 'Last Print Time',

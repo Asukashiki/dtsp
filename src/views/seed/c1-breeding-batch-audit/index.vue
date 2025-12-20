@@ -236,7 +236,9 @@ import { ElMessage } from 'element-plus'
 import {
   getC1BreedingBatchList,
   approveC1Batch,
-  rejectC1Batch
+  rejectC1Batch,
+  getC1TrackingList,
+  getC1TestList
 } from '@/api/c1BreedingBatch'
 
 const router = useRouter()
@@ -354,6 +356,14 @@ const handleAuditSubmit = async () => {
   try {
     await auditFormRef.value.validate()
 
+    // 只有在审核通过时才需要校验跟踪记录和检测记录
+    if (auditForm.result === 'approved') {
+      const isValid = await validateBatchData(currentAuditRow.value.batchId)
+      if (!isValid) {
+        return
+      }
+    }
+
     auditSubmitting.value = true
 
     const data = {
@@ -377,6 +387,57 @@ const handleAuditSubmit = async () => {
     console.error('Audit validation failed:', error)
   } finally {
     auditSubmitting.value = false
+  }
+}
+
+// 校验批次数据：跟踪记录和检测记录
+const validateBatchData = async (batchId) => {
+  try {
+    // 获取跟踪记录列表
+    const trackingRes = await getC1TrackingList({
+      batchId: batchId,
+      pageNum: 1,
+      pageSize: 1000
+    })
+
+    // 获取检测记录列表
+    const testRes = await getC1TestList({
+      batchId: batchId,
+      pageNum: 1,
+      pageSize: 1000
+    })
+
+    // 校验跟踪记录
+    if (!trackingRes.data || trackingRes.data.total === 0) {
+      ElMessage.error(t('seed.c1BatchAudit.error.noTrackingRecord'))
+      return false
+    }
+
+    // 校验每条记录的 trackingResult 是否为 '01'
+    const hasInvalidTracking = trackingRes.data.records.some(item => item.trackingResult !== '01')
+    if (hasInvalidTracking) {
+      ElMessage.error(t('seed.c1BatchAudit.error.invalidTrackingResult'))
+      return false
+    }
+
+    // 校验检测记录
+    if (!testRes.data || testRes.data.total === 0) {
+      ElMessage.error(t('seed.c1BatchAudit.error.noTestRecord'))
+      return false
+    }
+
+    // 校验每条记录的 testResult 是否为 '01'
+    const hasInvalidTest = testRes.data.records.some(item => item.testResult !== '01')
+    if (hasInvalidTest) {
+      ElMessage.error(t('seed.c1BatchAudit.error.invalidTestResult'))
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('Data validation error:', error)
+    ElMessage.error(t('seed.c1BatchAudit.error.validationFailed'))
+    return false
   }
 }
 

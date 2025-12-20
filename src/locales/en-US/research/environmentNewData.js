@@ -13,6 +13,49 @@ export default {
   addSuccess: 'Added successfully',
   editSuccess: 'Updated successfully',
 
+  // Tabs
+  tabs: {
+    pendingApproval: 'Pending Approval',
+    approved: 'Approved',
+  },
+
+  // Approval workflow
+  submitForAuditConfirm: 'Are you sure you want to submit for audit?',
+  submitForAuditSuccess: 'Successfully submitted for audit',
+  submitForAuditFailed: 'Failed to submit for audit',
+  approveConfirm: 'Are you sure you want to approve?',
+  approveSuccess: 'Successfully approved',
+  approveFailed: 'Failed to approve',
+  rejectConfirm: 'Are you sure you want to reject?',
+  rejectSuccess: 'Successfully rejected',
+  rejectFailed: 'Failed to reject',
+  
+  // Approval comments
+  approveCommentTitle: 'Approval Comment',
+  approveCommentPrompt: 'Please enter approval comment:',
+  approveCommentPlaceholder: 'Please enter approval comment...',
+  rejectCommentTitle: 'Rejection Reason',
+  rejectCommentPrompt: 'Please enter rejection reason:',
+  rejectCommentPlaceholder: 'Please enter rejection reason...',
+
+  // Batch operations
+  batchSubmitForAuditConfirm: 'Are you sure you want to submit {count} records for audit?',
+  batchSubmitForAuditSuccess: 'Successfully submitted records for audit',
+  batchSubmitForAuditFailed: 'Failed to submit records for audit',
+  batchApproveSuccess: 'Successfully approved records',
+  batchApproveFailed: 'Failed to approve records',
+  batchRejectSuccess: 'Successfully rejected records',
+  batchRejectFailed: 'Failed to reject records',
+
+  // Batch operations
+  batchSubmitForAuditConfirm: 'Are you sure you want to submit {count} records for audit?',
+  batchSubmitForAuditSuccess: 'Successfully submitted records for audit',
+  batchSubmitForAuditFailed: 'Failed to submit records for audit',
+  batchApproveSuccess: 'Successfully approved records',
+  batchApproveFailed: 'Failed to approve records',
+  batchRejectSuccess: 'Successfully rejected records',
+  batchRejectFailed: 'Failed to reject records',
+
   // Search & Filter
   searchPlaceholder: 'Search station ID',
   filterByParameter: 'Filter by parameter',
@@ -49,6 +92,7 @@ export default {
     source: 'Data Source',
     remark: 'Remarks',
     observerId: 'Observer ID',
+    approvalComment: 'Approval Comment',
   },
 
   // Form Placeholders
@@ -64,6 +108,7 @@ export default {
     unit: 'Please enter unit (e.g., mm, °C)',
     source: 'Please enter data source',
     remark: 'Please enter remarks (optional)',
+    approvalComment: 'Please enter approval comment',
   },
 
   // Form Validation Rules
@@ -104,5 +149,10 @@ export default {
     auditTime: 'Audit Time',
     auditStatus: 'Audit Status',
     actions: 'Actions',
+  },
+
+  // Actions
+  actions: {
+    submit: 'Submit',
   },
 }

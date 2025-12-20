@@ -86,6 +86,10 @@
         >
           <el-table-column prop="trackingId" :label="$t('research.breeding.breedingTracking.columns.trackingId')" width="180" fixed="left" />
           <el-table-column prop="batchId" :label="$t('research.breeding.breedingTracking.columns.batchId')" width="180" />
+          <el-table-column prop="seedClass" :label="$t('research.c1BreedingBatch.tracking.seedClass')" width="100" align="center" />
+          <el-table-column prop="lotId" :label="$t('research.c1BreedingBatch.tracking.lotId')" width="140" />
+          <el-table-column prop="stage" :label="$t('research.c1BreedingBatch.tracking.stage')" width="120" align="center" />
+          <el-table-column prop="inspectionValue" :label="$t('research.c1BreedingBatch.tracking.inspectionValue')" width="100" align="center" />
           <el-table-column prop="stageNameText" :label="$t('research.breeding.breedingTracking.columns.stageName')" min-width="140" align="center" />
           <el-table-column prop="location" :label="$t('research.breeding.breedingTracking.columns.location')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="trackingResultName" :label="$t('research.breeding.breedingTracking.columns.result')" min-width="120" align="center">

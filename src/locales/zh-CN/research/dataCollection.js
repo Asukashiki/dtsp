@@ -537,15 +537,18 @@ export default {
     form: {
       basicInfo: '基础信息',
       sampleInfo: '样本信息',
+      paramInfo: '实验参数',
       testInfo: '测试信息',
       testData: '测试数据',
       qualityInfo: '质量信息',
       healthTraceability: '健康与追溯',
       testingInfo: '检测信息',
       operatorInfo: '操作信息',
+      auditStatus: '审核状态',
 
       batchId: '育种批次ID',
       trialId: '试验ID',
+      plotId: '地块编号',
       testDate: '检测日期',
       sampleId: '样本编号',
       sampleCondition: '样本状态',
@@ -563,6 +566,7 @@ export default {
       testerName: '检测人员',
       sampleType: '样本类型',
       labParameter: '实验参数',
+      expectedRange: '预期范围',
       resultValue: '实验结果值',
       passFailFlag: '实验结果标识',
       remark: '备注',
@@ -575,6 +579,7 @@ export default {
       batchId: '请选择育种批次',
       batchIdAuto: '将根据试验ID自动填充',
       trialId: '请选择试验',
+      plotId: '请选择地块编号',
       testDate: '请选择检测日期',
       sampleId: '请输入样本编号',
       sampleStatus: '请输入样本状态',
@@ -599,6 +604,7 @@ export default {
     rules: {
       batchIdRequired: '请选择育种批次',
       trialIdRequired: '请选择试验',
+      plotIdRequired: '请选择地块编号',
       testDateRequired: '请选择检测日期',
       testOrganizationRequired: '请输入检测机构',
       testerNameRequired: '请输入检测人员',
@@ -741,7 +747,16 @@ export default {
       yieldQtPerHaMin: '产量必须大于0',
       moistureContentRange: '含水量范围为0-100',
       recorderNameRequired: '请输入记录人员',
+      // 动态检验字段
+      inspectionTypeRequired: '请选择检验类型',
+      scoreCodeRequired: '请选择评分代码',
     },
+
+    // 动态提示文案（用于表单内自定义校验消息）
+    pleaseSelectCodeFirst: '请先选择评分代码',
+    percentRange: '百分比范围为 0 - 100',
+    scaleRange: '评分范围为 {min}-{max}',
+    numberNonNegative: '请输入非负数字',
 
     // 列表列
     columns: {

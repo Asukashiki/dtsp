@@ -8,7 +8,7 @@
         </div>
         <div class="header-content">
           <h1 class="page-title">{{ t('research.trialBasicAudit.audit.title') }}</h1>
-          <p class="page-subtitle">{{ t('research.breedingData.trial.subtitle1') }}</p>
+          <p class="page-subtitle">{{ t('research.trialBasicAudit.audit.subtitle1') }}</p>
         </div>
       </div>
     </div>
@@ -65,10 +65,13 @@
               show-overflow-tooltip
             />
             <el-table-column
-              prop="cropType"
               :label="t('research.trialBasicAudit.list.cropType')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="t('research.trialBasicAudit.list.varietyName')"
@@ -171,10 +174,13 @@
               show-overflow-tooltip
             />
             <el-table-column
-              prop="cropType"
               :label="t('research.trialBasicAudit.list.cropType')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="t('research.trialBasicAudit.list.varietyName')"
@@ -306,6 +312,7 @@ import { getAuditList } from '@/api/research/trialBasicAudit'
 import StatusTag from '../trial/components/StatusTag.vue'
 import AuditCard from './components/AuditCard.vue'
 import { useResponsive } from '@/hooks/useResponsive'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -316,7 +323,10 @@ const loading = ref(false)
 const activeTab = ref('S1')
 const auditList = ref([])
 const total = ref(0)
-
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type'
+])
 const queryParams = reactive({
   auditStatus: 'S1',
   trialName: '',

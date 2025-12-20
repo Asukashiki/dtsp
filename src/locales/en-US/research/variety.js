@@ -1,6 +1,7 @@
 // 品种管理国际化文件
 export default {
   // Variety Registration
+  cropType: 'Crop Type',
   registration: {
     title: 'Variety Registration',
     subtitle: 'Record seed variety basic information and submit registration application',

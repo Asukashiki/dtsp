@@ -66,7 +66,7 @@ export default {
       approve: 'Approve',
       reject: 'Reject',
       archive: 'Archive',
-      cancel: 'Cancel'
+      void: 'Void'
     },
 
     prompt: 'Prompt',
@@ -305,6 +305,7 @@ export default {
       basicInfo: 'Trial Basic Information',
       trialId: 'Trial ID',
       batchId: 'Breeding Batch',
+      batchName: 'Breeding Batch Name',
       trialName: 'Trial Name',
       locationId: 'Location ID',
       gpsLocation: 'GPS Location',

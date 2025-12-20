@@ -195,7 +195,6 @@ const menuList = computed(() => {
     // 过滤子菜单
     const filteredChildren = menu.children
       ? menu.children
-          .filter(child => hasPermission(child.roles))
           .map(child => ({
             ...child,
             title: t(child.titleKey)

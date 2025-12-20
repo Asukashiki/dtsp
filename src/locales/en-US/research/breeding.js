@@ -1,7 +1,7 @@
 // 育种管理国际化文件
 export default {
-  title: 'Multiplication Batch Information',
-  subtitle: 'Integrated management of breeding batches, tracking records, and testing information',
+  title: 'Seed Multiplication Batch Information',
+  subtitle: 'Integrated management of seed multiplication batches, tracking records, and testing information',
 
   // Shared crop types
   cropType: {
@@ -60,6 +60,7 @@ export default {
       endDate: 'End Date',
       expectedYield: 'Expected Yield',
       actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'To Multiply Quantity',
       orgId: 'Organization ID',
       orgName: 'Organization Name',
     },
@@ -95,6 +96,7 @@ export default {
       completeDate: 'Completion Date',
       expectedYield: 'Expected Yield',
       actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'To Multiply Quantity',
       fieldInspectionScore: 'Field Inspection Score',
       gpsLongitude: 'GPS Longitude',
       gpsLatitude: 'GPS Latitude',
@@ -204,8 +206,8 @@ export default {
         productionInfo: 'Production Information',
         produceBatchId: 'Production Batch ID',
         produceBatchName: 'Production Batch Name',
-        breedBatchId: 'Breeding Batch ID',
         breedBatchName: 'Breeding Batch Name',
+        trialName: 'Trial Name',
         varietyId: 'Variety ID',
         varietyName: 'Variety Name',
         cropType: 'Crop Type',
@@ -228,6 +230,7 @@ export default {
         produceBatchName: 'Please select production batch name',
         breedBatchId: 'Please select breeding batch ID',
         breedBatchName: 'Please select breeding batch name',
+        trialName: 'Please select trial name',
         varietyName: 'Please select variety name',
         fromSeedLevel: 'Please select from seed level',
         toSeedLevel: 'Please select to seed level',
@@ -251,7 +254,7 @@ export default {
       },
 
       columns: {
-        breedSeedProduceBatchId: 'Production Batch ID',
+        produceBatchId: 'Production Batch ID',
         produceBatchName: 'Production Batch Name',
         breedBatchName: 'Breeding Batch Name',
         varietyName: 'Variety Name',
@@ -297,18 +300,23 @@ export default {
         distributionInfo: 'Distribution Information',
         detailList: 'Distribution Details',
         distributeId: 'Distribution ID',
-        oseId: 'OSE ID',
+        oseId: 'OSE Name',
         oseName: 'OSE Name',
         time: 'Distribution Time',
         people: 'Distribution Operator',
         organ: 'Seed Organization Name',
+        distributeName: 'Distribution Name',
+        fromSeedLevel: 'From Seed Level',
+        toSeedLevel: 'To Seed Level',
         remark: 'Remark',
         totalDistributeQuantity: 'Total Distribution Quantity',
         distributeStatus: 'Distribution Status',
         createTime: 'Created Time',
         updateTime: 'Updated Time',
 
-        breedSeedProduceBatchId: 'Production Batch ID',
+        produceBatchId: 'Production Batch ID',
+        breedBatchName: 'Breeding Batch Name',
+        parentalSeedSource: 'Parental Seed Source',
         varietyName: 'Variety Name',
         cropType: 'Crop Type',
         distributeQuantity: 'Distribution Quantity',
@@ -316,22 +324,31 @@ export default {
       },
 
       placeholder: {
-        oseId: 'Please select OSE',
+        oseId: 'Please select OSE Name',
         time: 'Please select distribution time',
         people: 'Please enter distribution operator name',
         organ: 'Please enter seed organization name',
+        distributeName: 'Please enter distribution name',
+        fromSeedLevel: 'Please select from seed level',
+        toSeedLevel: 'Please select to seed level',
         remark: 'Remark (optional)',
-        breedSeedProduceBatchId: 'Please select production batch',
+        produceBatchId: 'Please select production batch',
+        breedBatchName: 'Please select breeding batch name',
+        parentalSeedSource: 'Please select parental seed source',
+        varietyName: 'Please select variety name',
         distributeQuantity: 'Please enter distribution quantity (kg)',
       },
 
       rules: {
-        oseId: 'Please select OSE',
+        distributeName: 'Please enter distribution name',
+        oseId: 'Please select OSE Name',
         time: 'Please select distribution time',
         people: 'Please enter distribution operator name',
         organ: 'Please enter seed organization name',
+        fromSeedLevelRequired: 'Please select from seed level',
+        toSeedLevelRequired: 'Please select to seed level',
         detailListRequired: 'Please add at least one distribution detail',
-        breedSeedProduceBatchId: 'Please select production batch',
+        produceBatchId: 'Please select production batch',
         distributeQuantity: 'Please enter distribution quantity',
         distributeQuantityMin: 'Distribution quantity must be greater than 0',
         distributeQuantityMax: 'Distribution quantity cannot exceed production batch remaining quantity',
@@ -348,7 +365,10 @@ export default {
       detailColumns: {
         varietyName: 'Variety Name',
         cropType: 'Crop Type',
-        breedSeedProduceBatchId: 'Production Batch ID',
+        produceBatchId: 'Production Batch ID',
+        produceBatchName: 'Production Batch Name',
+        breedBatchName: 'Breeding Batch Name',
+        parentalSeedSource: 'Parental Seed Source',
         distributeQuantity: 'Distribution Quantity (kg)',
         produceBatchRemaining: 'Batch Remaining Quantity (kg)',
         createTime: 'Created Time',
@@ -360,6 +380,9 @@ export default {
         time: 'Distribution Time',
         people: 'Distribution Operator',
         organ: 'Seed Organization',
+        distributeName: 'Distribution Name',
+        fromSeedLevel: 'From Seed Level',
+        toSeedLevel: 'To Seed Level',
         totalDistributeQuantity: 'Total Distribution Quantity (kg)',
         distributeStatus: 'Distribution Status',
         createTime: 'Created Time',
@@ -370,6 +393,9 @@ export default {
         distributed: 'Distributed',
         已分发: 'Distributed',
         DISTRIBUTED: 'Distributed',
+        Distributed: 'Distributed',
+        received: 'Received',
+        Received: 'Received',
       },
 
       actions: {
@@ -481,14 +507,16 @@ export default {
         oseId: 'OSE ID',
         oseName: 'OSE Name',
         confirmTime: 'Confirmation Time',
-        confirmPeople: 'Confirmation Operator',
+        confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
         remark: 'Additional Notes',
         createTime: 'Created Time',
         updateTime: 'Updated Time',
 
         totalDistributeQuantity: 'Total Distribution Quantity',
-        breedSeedProduceBatchId: 'Production Batch ID',
+        produceBatchId: 'Production Batch ID',
+        // Add alias key used by pages
+        breedSeedProduceBatchId: 'Batch ID',
         varietyName: 'Variety Name',
         cropType: 'Crop Type',
         distributeQuantity: 'Distribution Quantity',
@@ -496,13 +524,13 @@ export default {
 
       placeholder: {
         confirmTime: 'Please select confirmation time',
-        confirmPeople: 'Please enter confirmation operator name',
+        confirmPeople: 'Please enter operator name',
         remark: 'Additional notes (optional)',
       },
 
       rules: {
         confirmTime: 'Please select confirmation time',
-        confirmPeople: 'Please enter confirmation operator name',
+        confirmPeople: 'Please enter operator name',
       },
 
       columns: {
@@ -510,9 +538,13 @@ export default {
         oseName: 'OSE Name',
         totalDistributeQuantity: 'Total Distribution Quantity (kg)',
         confirmTime: 'Confirmation Time',
-        confirmPeople: 'Confirmation Operator',
+        confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
         createTime: 'Created Time',
+        // Add missing columns used by list views
+        breedSeedProduceBatchId: 'Batch ID',
+        seedType: 'Seed Type',
+        varietyName: 'Variety Name',
         actions: 'Actions',
       },
 
@@ -750,10 +782,10 @@ export default {
     },
   },
 
-  // Breeding Batch Information Collection
+  // Seed Multiplication Batch Information Collection
   breedingBatch: {
-    title: 'Breeding Batch Information Collection',
-    subtitle: 'Record breeding batch basic information and yield data',
+    title: 'Seed Multiplication Batch Information Collection',
+    subtitle: 'Record seed multiplication batch basic information and yield data',
     list: 'Breeding Batch List',
     add: 'Add Breeding Batch',
     edit: 'Edit Breeding Batch',
@@ -809,7 +841,7 @@ export default {
       startDate: 'Start Date',
       endDate: 'Completion Date',
       expectedYield: 'Expected Yield',
-      actualYield: 'Actual Yield',
+      toMultiplyQuantity: 'Quantity to Multiply',
       orgId: 'Organization ID',
       orgName: 'Organization Name',
       remark: 'Remark',
@@ -822,7 +854,7 @@ export default {
       startDatePlaceholder: 'Please select start date',
       endDatePlaceholder: 'Please select completion date',
       expectedYieldPlaceholder: 'Please enter expected yield',
-      actualYieldPlaceholder: 'Please enter actual yield',
+      toMultiplyQuantityPlaceholder: 'Please enter quantity to multiply',
       orgIdPlaceholder: 'Please enter organization ID',
       orgNamePlaceholder: 'Please enter organization name',
       remarkPlaceholder: 'Please enter remark information',

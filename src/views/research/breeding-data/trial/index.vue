@@ -23,10 +23,10 @@
               <span>{{ $t('research.breedingData.trial.list') }}</span>
             </div>
             <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
+              <!-- <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
                 <i class="ri-delete-bin-line"></i>
                 {{ $t('common.batchDelete') }}
-              </el-button>
+              </el-button> -->
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
                 {{ $t('research.breedingData.trial.add') }}

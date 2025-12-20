@@ -35,6 +35,8 @@ export default {
     expectedYield: '预期产量 (kg)',
     actualYield: '实际产量 (kg)',
     plantingArea: '种植面积 (公顷)',
+    quantityToMultiply: '待繁殖数量 (kg)',
+    multiplicationLevel: '繁殖级别',
     batchStatus: '批次状态',
     orgId: '机构ID',
     orgName: '机构名称',
@@ -143,7 +145,12 @@ export default {
     description: '跟踪描述',
     resultNormal: '正常',
     resultAbnormal: '异常',
-    resultObserving: '观察中'
+    resultObserving: '观察中',
+    seedClass: '种子级别',
+    lotId: '批次号',
+    stage: '检测阶段',
+    score: '评分项',
+    inspectionValue: '检测值'
   },
 
   // 检测记录
@@ -162,7 +169,14 @@ export default {
     description: '检测描述',
     resultPass: '合格',
     resultFail: '不合格',
-    resultRetest: '待复检'
+    resultRetest: '待复检',
+    seedClass: '种子级别',
+    lotId: '批次号',
+    testType: '测试类型',
+    unit: '单位',
+    passStatus: '是否通过',
+    passTrue: '通过',
+    passFalse: '未通过'
   }
 }
 

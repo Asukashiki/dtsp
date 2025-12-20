@@ -103,28 +103,76 @@
             />
           </el-form-item>
 
+          <!-- 关联地块（用于报表关联样本）
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.plotId') || '地块编号'" prop="plotId">
+            <el-select
+              v-model="formData.plotId"
+              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.plotId') || '请选择地块'"
+              filterable
+              clearable
+              style="width: 100%"
+              :loading="plotLoading"
+            >
+              <el-option v-for="p in plotOptions" :key="p.plotId" :label="p.plotId" :value="p.plotId" />
+            </el-select>
+          </el-form-item> -->
+
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleType')" prop="sampleType">
-            <el-input
+            <el-select
               v-model="formData.sampleType"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleType')"
+              filterable
               clearable
-            />
+              style="width: 100%"
+              @change="onSampleTypeChange"
+            >
+              <el-option v-for="opt in sampleTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labParameter')" prop="labParameter">
-            <el-input
+            <el-select
               v-model="formData.labParameter"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.labParameter')"
+              :disabled="!formData.sampleType"
+              filterable
               clearable
-            />
+              style="width: 100%"
+              @change="onLabParameterChange"
+            >
+              <el-option v-for="param in labParameterOptions" :key="param.value" :label="param.label" :value="param.value" />
+            </el-select>
           </el-form-item>
 
+          <!-- 新增：预期范围（自动填充，只读） -->
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围'">
+            <el-input :model-value="expectedRangeText" disabled readonly />
+          </el-form-item>
+
+          <!-- 实验结果值（随参数动态渲染） -->
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.resultValue')" prop="resultValue">
-            <el-input
-              v-model="formData.resultValue"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.resultValue')"
-              clearable
-            />
+            <!-- pH：0-14，精度1 -->
+            <template v-if="currentParamRule && currentParamRule.key === 'pH'">
+              <el-input-number v-model="formData.resultValue" :min="0" :max="14" :precision="1" :controls="false" style="width: 100%" />
+            </template>
+            <!-- 含百分比的参数（moisture、protein） -->
+            <template v-else-if="currentParamRule && currentParamRule.unit === '%'">
+              <div class="input-with-unit">
+                <el-input-number v-model="formData.resultValue" :min="0" :max="100" :precision="2" :controls="false" style="width: 100%" />
+                <span class="unit-hint">%</span>
+              </div>
+            </template>
+            <!-- EC，默认 0-100 -->
+            <template v-else-if="currentParamRule && currentParamRule.key === 'EC'">
+              <div class="input-with-unit">
+                <el-input-number v-model="formData.resultValue" :min="0" :precision="2" :controls="false" style="width: 100%" />
+                <span class="unit-hint">mS/cm</span>
+              </div>
+            </template>
+            <!-- 其他（如 NPK、mycotoxin），先用文本输入兜底 -->
+            <template v-else>
+              <el-input v-model="formData.resultValue" :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.resultValue')" clearable />
+            </template>
           </el-form-item>
 
           <!-- 实验结果标识（自动计算，只读） -->
@@ -342,6 +390,8 @@ import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getTrialBasicList, getTrialBasicInfo } from '@/api/breedingData'
+import { getUserInfo } from '@/utils/auth'
+import { getPlotInfoList } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
@@ -353,6 +403,8 @@ const isEdit = computed(() => !!route.params.id)
 
 // 下拉选项数据
 const trialOptions = ref([])
+const plotOptions = ref([])
+const plotLoading = ref(false)
 
 // 生成UUID的函数
 const generateUUID = () => {
@@ -372,6 +424,7 @@ const formData = reactive({
   labParameter: '',  // 新增：实验参数
   resultValue: '',  // 新增：实验结果值
   passFailFlag: null,  // 新增：实验结果标识
+  plotId: '', // 关联地块ID
   germinationRate: null,
   purityPercent: null,
   moistureContentPercent: null,
@@ -399,6 +452,60 @@ const passFailFlagDisplay = computed(() => {
   return ''
 })
 
+// 样本类型/参数/预期范围映射
+const sampleTypeOptions = [
+  { value: 'soil', label: 'Soil' },
+  { value: 'grain', label: 'Grain' },
+  { value: 'leaf_tissue', label: 'Leaf Tissue' },
+  { value: 'water', label: 'Water' },
+  { value: 'nutrient_analysis', label: 'Nutrient Analysis' }
+]
+
+const SAMPLE_SCHEMA = {
+  soil: ['pH', 'NPK', 'moisture', 'EC', 'mycotoxin'],
+  grain: ['moisture', 'protein', 'mycotoxin', 'EC', 'pH'],
+  leaf_tissue: ['NPK', 'moisture', 'protein', 'EC', 'pH'],
+  water: ['pH', 'EC', 'mycotoxin'],
+  nutrient_analysis: ['NPK', 'protein', 'moisture', 'EC', 'pH']
+}
+
+const PARAM_RULES = {
+  'pH': { key: 'pH', type: 'range', min: 5.5, max: 7.5 },
+  'moisture': { key: 'moisture', type: 'lt', max: 13, unit: '%' },
+  'protein': { key: 'protein', type: 'percent', unit: '%' },
+  'EC': { key: 'EC', type: 'number', unit: 'mS/cm' },
+  'mycotoxin': { key: 'mycotoxin', type: 'number', unit: 'PPM' },
+  'NPK': { key: 'NPK', type: 'text' }
+}
+
+const labParameterOptions = computed(() => {
+  const list = SAMPLE_SCHEMA[formData.sampleType] || []
+  return list.map(k => ({ value: k, label: k }))
+})
+
+const currentParamRule = computed(() => {
+  return PARAM_RULES[formData.labParameter] || null
+})
+
+const expectedRangeText = computed(() => {
+  const r = currentParamRule.value
+  if (!r) return '-'
+  if (r.type === 'range') return `${r.min} - ${r.max}`
+  if (r.type === 'lt') return `< ${r.max}${r.unit || ''}`
+  return '-'
+})
+
+const onSampleTypeChange = () => {
+  formData.labParameter = ''
+  formData.resultValue = ''
+  formData.passFailFlag = null
+}
+
+const onLabParameterChange = () => {
+  formData.resultValue = ''
+  formData.passFailFlag = null
+}
+
 const rules = computed(() => ({
   batchId: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.batchIdRequired'), trigger: 'blur' }
@@ -406,11 +513,35 @@ const rules = computed(() => ({
   trialId: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.trialIdRequired'), trigger: 'blur' }
   ],
+  plotId: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.plotIdRequired') || '请选择地块', trigger: 'change' }
+  ],
   sampleId: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleIdRequired'), trigger: 'blur' }
   ],
   sampleCondition: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleConditionRequired'), trigger: 'blur' }
+  ],
+  sampleType: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleTypeRequired') || '请选择样本类型', trigger: 'change' }
+  ],
+  labParameter: [
+    { required: true, message: t('research.dataCollection.laboratoryTest.rules.labParameterRequired') || '请选择实验参数', trigger: 'change' }
+  ],
+  resultValue: [
+    { validator: (rule, value, cb) => {
+      const r = currentParamRule.value
+      if (!r) return cb()
+      if (r.key === 'pH') {
+        const v = Number(value)
+        if (isNaN(v) || v < 0 || v > 14) return cb(new Error('pH范围 0-14'))
+      }
+      if (r.unit === '%') {
+        const v = Number(value)
+        if (isNaN(v) || v < 0 || v > 100) return cb(new Error('百分比范围 0-100'))
+      }
+      cb()
+    }, trigger: ['blur','change'] }
   ],
   germinationRate: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.germinationRateRequired'), trigger: 'blur' }
@@ -441,19 +572,30 @@ const rules = computed(() => ({
   ]
 }))
 
-// 监听实验参数和实验结果值的变化，自动计算Pass/Fail
+// 监听参数与结果，基于规则计算 Pass/Fail
 watch(
   () => [formData.labParameter, formData.resultValue],
-  ([labParameter, resultValue]) => {
-    if (labParameter && resultValue) {
-      const paramValue = parseFloat(labParameter)
-      const testValue = parseFloat(resultValue)
-
-      if (!isNaN(paramValue) && !isNaN(testValue)) {
-        // 如果实验结果值高于实验参数，显示Pass；否则显示Fail
-        formData.passFailFlag = testValue >= paramValue ? 'true' : 'false'
-      }
+  () => {
+    const r = currentParamRule.value
+    if (!r) {
+      formData.passFailFlag = null
+      return
     }
+    const v = Number(formData.resultValue)
+    if (formData.resultValue === '' || formData.resultValue === null || isNaN(v)) {
+      formData.passFailFlag = null
+      return
+    }
+    if (r.type === 'range') {
+      formData.passFailFlag = (v >= r.min && v <= r.max) ? 'true' : 'false'
+      return
+    }
+    if (r.type === 'lt') {
+      formData.passFailFlag = (v < r.max) ? 'true' : 'false'
+      return
+    }
+    // 其他类型不生成通过/失败标识
+    formData.passFailFlag = null
   }
 )
 
@@ -637,6 +779,21 @@ const goBack = () => {
 onMounted(() => {
   // 加载试验选项
   loadTrialOptions()
+  // 加载地块选项
+  const loadPlots = async () => {
+    plotLoading.value = true
+    try {
+      const res = await getPlotInfoList({ pageNum: 1, pageSize: 1000 })
+      if (res.code === 200) {
+        plotOptions.value = res.rows || []
+      }
+    } catch (e) {
+      console.error('Failed to load plot options:', e)
+    } finally {
+      plotLoading.value = false
+    }
+  }
+  loadPlots()
 
   if (isEdit.value) {
     // 编辑模式：加载详情
@@ -644,6 +801,27 @@ onMounted(() => {
   } else {
     // 新增模式：生成UUID作为样本编号
     formData.sampleId = generateUUID()
+
+    // 默认检测信息：检测人员、检测机构、检测日期
+    try {
+      const currentUser = getUserInfo()
+      const user = currentUser && currentUser.user ? currentUser.user : {}
+      if (!formData.testerName && user.name) {
+        formData.testerName = user.name
+      }
+      if (!formData.testOrganization && (user.organName || user.organ_name)) {
+        formData.testOrganization = user.organName || user.organ_name
+      }
+    } catch (e) {
+      // 忽略从本地获取用户信息的异常
+    }
+    if (!formData.testDate) {
+      const d = new Date()
+      const yyyy = d.getFullYear()
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
+      formData.testDate = `${yyyy}-${mm}-${dd}`
+    }
   }
 })
 </script>

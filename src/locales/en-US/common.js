@@ -57,6 +57,13 @@ export default {
   createTime: 'Created Time',
   updateBy: 'Updated By',
   updateTime: 'Updated Time',
+  // Aliases to match components usage
+  createdBy: 'Created By',
+  createdTime: 'Created Time',
+  updatedBy: 'Updated By',
+  updatedTime: 'Updated Time',
+  approver: 'Approver',
+  approveTime: 'Approve Time',
   auditInfo: 'Audit Information',
   registrationInfo: 'Registration Information',
   index: 'No.',

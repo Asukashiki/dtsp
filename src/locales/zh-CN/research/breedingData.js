@@ -163,6 +163,7 @@ export default {
     actions: {
       edit: '编辑',
       submit: '提交',
+      cancel: '作废',
     },
 
 
@@ -292,7 +293,7 @@ export default {
     form: {
       basicInfo: '试验基本信息',
       trialId: '试验ID',
-      batchId: '育种批次',
+      batchName: '育种批次名称',
       trialName: '试验名称',
       locationId: '研究中心编号',
       gpsLocation: 'GPS位置',
@@ -306,7 +307,7 @@ export default {
 
       placeholder: {
       trialId: '系统自动生成',
-      batchId: '请选择育种批次（仅显示已批准/进行中）',
+      batchName: '请选择育种批次名称（仅显示已批准/进行中）',
       trialName: '请输入试验名称',
       locationId: '请输入研究中心编号',
       gpsLocation: '请输入GPS位置（格式：经度,纬度）',
@@ -317,6 +318,7 @@ export default {
       cropType: '从育种批次自动获取',
       varietyName: '请输入品种名称',
       auditStatus: '请选择审核状态',
+      autoFilledFromBatch: '从育种批次自动获取',
     },
 
     columns: {

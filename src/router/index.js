@@ -488,6 +488,18 @@ const routes = [
         component: () => import('../views/research/data-collection/environment-new-data/detail.vue'),
         meta: { title: '环境监测数据详情', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'data-collection/environment-new-data/approve',
+        name: 'EnvironmentNewDataApprove',
+        component: () => import('../views/research/data-collection/environment-new-data/approve.vue'),
+        meta: { title: '环境监测数据审批', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'data-collection/environment-new-data/audit/:envRecordId',
+        name: 'EnvironmentNewDataAudit',
+        component: () => import('../views/research/data-collection/environment-new-data/form.vue'),
+        meta: { title: '环境监测数据审核', hideInMenu: true, requiresAuth: true }
+      },
       // ==================== 繁殖数据管理 ====================
       
       // OSE确认接收育种家种子
@@ -498,38 +510,38 @@ const routes = [
         meta: { title: 'OSE确认接收育种家种子', requiresAuth: true }
       },
       
-      // 繁殖批次信息采集
+      // 种子扩繁批次信息采集
       {
         path: 'breeding',
         name: 'BreedingModule',
         component: () => import('../views/research/breeding/ose-information/index.vue'),
-        meta: { title: '繁殖批次信息采集', requiresAuth: true }
+        meta: { title: '种子扩繁批次信息采集', requiresAuth: true }
       },
       {
         path: 'breeding/batch/add',
         name: 'PropagationBatchAdd',
         component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
-        meta: { title: '新增繁殖批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: '新增种子扩繁批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/batch/edit/:id',
         name: 'PropagationBatchEdit',
         component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
-        meta: { title: '编辑繁殖批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: '编辑种子扩繁批次', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/detail/:id',
         name: 'BreedingDetail',
         component: () => import('../views/research/breeding/ose-information/detail.vue'),
-        meta: { title: '繁殖批次详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: '种子扩繁批次详情', hideInMenu: true, requiresAuth: true }
       },
       
-      // 繁殖跟踪信息采集
+      // 种子扩繁跟踪信息采集
       {
         path: 'breeding/tracking',
         name: 'BreedingTracking',
         component: () => import('../views/research/breeding-tracking/index.vue'),
-        meta: { title: '繁殖跟踪信息采集', requiresAuth: true }
+        meta: { title: '种子扩繁跟踪信息采集', requiresAuth: true }
       },
       
       // 繁殖种子认证申请
@@ -662,6 +674,30 @@ const routes = [
         name: 'InstitutionRegistration',
         component: () => import('../views/research/institution/registration/index.vue'),
         meta: { title: '繁殖机构注册', requiresAuth: true }
+      },
+      {
+        path: 'institution/registration/add',
+        name: 'RegistrationAdd',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '新增机构注册', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/registration/edit/:id',
+        name: 'RegistrationEdit',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '编辑机构注册', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/registration/detail/:id',
+        name: 'RegistrationDetail',
+        component: () => import('../views/research/institution/registration/form.vue'),
+        meta: { title: '机构注册详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'institution/approval/audit/:id',
+        name: 'RegistrationAudit',
+        component: () => import('../views/research/institution/registration/audit.vue'),
+        meta: { title: '机构注册审核', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/approval',

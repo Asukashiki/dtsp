@@ -1,5 +1,6 @@
-// 育种数据集编制国际化文件
+// 育种数据集编制国际化文件 (完整版本)
 export default {
+  // 基础标题/操作
   title: '育种数据集编制',
   subtitle: '汇总育种批次数据,提交审核',
   list: '数据集列表',
@@ -33,6 +34,7 @@ export default {
 
   // 表单字段
   form: {
+    dataDetails:'数据细节',
     basicInfo: '基础信息',
     datasetCode: '数据集编号',
     trialId: '试验ID',
@@ -70,8 +72,20 @@ export default {
     createdBy: '创建人',
     createdByName: '创建人姓名',
     updatedTime: '更新时间',
+    updatedBy: '更新人', // 补充缺失的key
     operatorInfo: '操作信息',
     remark: '备注',
+    // 统计信息子项（对应页面统计卡片）
+    statistics: {
+      trialCount: '试验记录数',
+      plotCount: '地块与播种信息数',
+      farmingCount: '农事记录数据数',
+      agronomicCount: '农艺性状数据数',
+      envCount: '环境监测数据数',
+      yieldCount: '田间检查数据数',
+      labCount: '实验室测试数据数',
+      totalCount: '总数据条数' // 补充缺失的总数据统计key
+    }
   },
 
   // 表单占位符
@@ -89,6 +103,8 @@ export default {
     recordCountAutoCalculate: '记录数量自动计算（田间数据 + 环境数据 + 实验室测试 + 产量数据）',
     status: '请选择状态',
     remark: '请输入备注(选填)',
+    // 表格备注输入框占位符
+    remarkInput: '请输入备注'
   },
 
   // 表单验证
@@ -130,6 +146,115 @@ export default {
     delete: '删除',
   },
 
+  // 提示框文案（tooltip）
+  tooltip: {
+    batchIdAuto: '批次ID将根据试验ID自动填充',
+    compiledByAuto: '自动获取当前登录用户',
+    cropTypeAuto: '作物类型从试验信息自动获取',
+    varietyNameAuto: '品种名称从试验信息自动获取'
+  },
+
+  // Tab页标题
+  tab: {
+    plot: '地块与播种信息',
+    farming: '农事记录数据采集',
+    agronomic: '农艺性状数据采集',
+    environment: '环境监测数据',
+    yield: '田间检查数据采集',
+    lab: '实验室测试数据采集'
+  },
+
+  // 表格列文案
+  table: {
+    // 通用列
+    common: {
+      batchId: '批次ID',
+      trialId: '试验ID',
+      plotId: '地块ID',
+      quantity: '数量',
+      unit: '单位',
+      remark: '备注',
+      remarks: '备注信息',
+      createdTime: '创建时间'
+    },
+    // 地块与播种信息列
+    plot: {
+      plotId: '地块ID',
+      replicationNo: '重复组编号',
+      rowNo: '行号',
+      columnNo: '列号',
+      varietyCode: '品种编码',
+      sowingDate: '播种日期',
+      seedQuantity: '种子数量(kg)',
+      sowingMethod: '播种方式',
+      plotAreaM2: '地块面积(㎡)',
+      gpsLat: 'GPS纬度',
+      gpsLong: 'GPS经度',
+      region: '地区'
+    },
+    // 农事记录数据列
+    farming: {
+      farmingRecordId: '农事记录ID',
+      activityDate: '活动日期',
+      activityType: '活动类型',
+      inputName: '投入品名称',
+      operatorId: '操作人ID',
+      operationDesc: '操作描述'
+    },
+    // 农艺性状数据列
+    agronomic: {
+      traitRecordId: '性状记录ID',
+      observationDate: '观测日期',
+      growthStage: '生育期',
+      traitName: '性状名称',
+      traitValue: '性状值',
+      observerId: '观测人ID',
+      plantHeightCm: '株高(cm)',
+      tillerCount: '分叶数'
+    },
+    // 环境监测数据列
+    environment: {
+      envRecordId: '环境记录ID',
+      collectTime: '采集时间',
+      dataType: '数据类型',
+      soilPh: '土壤pH值',
+      soilTemperature: '土壤温度(℃)',
+      soilMoisture: '土壤湿度(%)',
+      airTemperature: '空气温度(℃)',
+      airHumidity: '空气湿度(%)',
+      rainfall: '降雨量(mm)'
+    },
+    // 田间检查数据列
+    yield: {
+      inspectionId: '检查ID',
+      plotAreaM2: '地块面积(㎡)',
+      inspectionDate: '检查日期',
+      inspectionType: '检查类型',
+      grainWeightKg: '籽粒重量(kg)',
+      yieldQtPerHa: '产量(qt/ha)',
+      moistureContent: '含水率(%)',
+      scoreValue: '评分值',
+      harvestDate: '收获日期',
+      recorderName: '记录人'
+    },
+    // 实验室测试数据列
+    lab: {
+      testId: '测试ID',
+      sampleId: '样品ID',
+      sampleType: '样品类型',
+      germinationRate: '发芽率(%)',
+      purityPercent: '纯度(%)',
+      moistureContentPercent: '含水率(%)',
+      proteinPercent: '蛋白质含量(%)',
+      testDate: '测试日期',
+      testOrganization: '测试机构',
+      testerName: '测试人',
+      passFailFlag: '合格标识',
+      pass: '合格',
+      fail: '不合格'
+    }
+  },
+
   // 提示信息
   message: {
     noLabTest: '至少需要一条实验室检测记录才能提交',
@@ -141,5 +266,15 @@ export default {
     cannotEditApproved: '该数据集已审核通过,不可修改',
     statisticsLoaded: '统计数据已自动加载',
     statisticsFailed: '获取统计数据失败',
+    getTrialInfoFailed: '获取试验信息失败，请手动填写',
+    loadFailed: '加载失败' // 补充通用加载失败提示
   },
+
+  // 通用公共文案（组件中用到的common前缀key）
+  common: {
+    back: '返回',
+    noData: '暂无数据',
+    edit: '编辑',
+    loadFailed: '加载失败'
+  }
 }

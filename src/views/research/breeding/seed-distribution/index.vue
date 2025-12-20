@@ -64,11 +64,11 @@
 
         <!-- PC端表格 -->
         <div class="table-card pc-view">
-          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading" scrollbar-always-on>
             <el-table-column
-              prop="distributeId"
-              :label="$t('research.breeding.seed.distribution.columns.distributeId')"
-              width="150"
+              prop="distributeName"
+              :label="$t('research.breeding.seed.distribution.columns.distributeName')"
+              min-width="150"
               show-overflow-tooltip
             />
             <el-table-column
@@ -78,18 +78,20 @@
               show-overflow-tooltip
             />
             <el-table-column
+              prop="fromSeedLevel"
+              :label="$t('research.breeding.seed.distribution.columns.fromSeedLevel')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="toSeedLevel"
+              :label="$t('research.breeding.seed.distribution.columns.toSeedLevel')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <el-table-column
               prop="time"
               :label="$t('research.breeding.seed.distribution.columns.time')"
-              min-width="150"
-            />
-            <el-table-column
-              prop="people"
-              :label="$t('research.breeding.seed.distribution.columns.people')"
-              width="120"
-            />
-            <el-table-column
-              prop="organ"
-              :label="$t('research.breeding.seed.distribution.columns.organ')"
               min-width="150"
             />
             <el-table-column
@@ -109,7 +111,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <el-tag type="success" size="small">{{ $t(`research.breeding.seed.distribution.status.${row.distributeStatus}`) }}</el-tag>
+                <el-tag type="success" size="small">{{ row.distributeStatus }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column
@@ -151,18 +153,22 @@
               @click="handleView(item)"
             >
               <div class="card-header">
-                <el-tag type="success" size="small">{{ item.oseName }}</el-tag>
+                <el-tag type="success" size="small">{{ item.distributeName }}</el-tag>
                 <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.distribution.status.${item.distributeStatus}`) }}</el-tag>
               </div>
-              <h3 class="card-title">{{ item.organ }}</h3>
+              <h3 class="card-title">{{ item.oseName }}</h3>
               <div class="card-info">
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.fromSeedLevel') }}</span>
+                  <span class="info-value">{{ item.fromSeedLevel }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.toSeedLevel') }}</span>
+                  <span class="info-value">{{ item.toSeedLevel }}</span>
+                </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.time') }}</span>
                   <span class="info-value">{{ item.time }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.people') }}</span>
-                  <span class="info-value">{{ item.people }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.totalDistributeQuantity') }}</span>
@@ -246,7 +252,12 @@ const filteredList = computed(() => {
   let list = dataList.value
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    list = list.filter(item => item.oseName?.toLowerCase().includes(query))
+    list = list.filter(item => 
+      item.distributeName?.toLowerCase().includes(query) ||
+      item.oseName?.toLowerCase().includes(query) ||
+      item.fromSeedLevel?.toLowerCase().includes(query) ||
+      item.toSeedLevel?.toLowerCase().includes(query)
+    )
   }
   return list
 })

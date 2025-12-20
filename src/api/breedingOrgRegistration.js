@@ -1,7 +1,7 @@
 import request from '@/utils/agricultureRequest'
 
 /**
- * 机构注册管理 API
+ * 繁殖机构注册管理 API
  */
 
 /**
@@ -10,7 +10,7 @@ import request from '@/utils/agricultureRequest'
  */
 export function submitRegistration(data) {
   return request({
-    url: '/input/org-registration/submit',
+    url: '/seed/breeding-org-registration/submit',
     method: 'post',
     data
   })
@@ -22,7 +22,7 @@ export function submitRegistration(data) {
  */
 export function auditRegistration(data) {
   return request({
-    url: '/input/org-registration/audit',
+    url: '/seed/breeding-org-registration/audit',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export function auditRegistration(data) {
  */
 export function getRegistrationList(params) {
   return request({
-    url: '/input/org-registration/list',
+    url: '/seed/breeding-org-registration/list',
     method: 'get',
     params
   })
@@ -46,7 +46,7 @@ export function getRegistrationList(params) {
  */
 export function getRegistrationDetail(id) {
   return request({
-    url: '/input/org-registration/detail',
+    url: '/seed/breeding-org-registration/detail',
     method: 'get',
     params: { id }
   })
@@ -59,7 +59,7 @@ export function getRegistrationDetail(id) {
  */
 export function checkUsernameUnique(username, excludeId) {
   return request({
-    url: '/input/org-registration/checkUsername',
+    url: '/seed/breeding-org-registration/checkUsername',
     method: 'get',
     params: { username, excludeId }
   })

@@ -502,15 +502,18 @@ export default {
     form: {
       basicInfo: 'Basic Information',
       sampleInfo: 'Sample Information',
+      paramInfo: 'Parameter Information',
       testInfo: 'Test Information',
       testData: 'Test Data',
       qualityInfo: 'Quality Information',
       healthTraceability: 'Health & Traceability',
       testingInfo: 'Testing Information',
       operatorInfo: 'Operator Information',
+      auditStatus: 'Audit Status',
 
       batchId: 'Breeding Batch ID',
       trialId: 'Trial ID',
+      plotId: 'Plot ID',
       testDate: 'Test Date',
       sampleId: 'Sample ID',
       sampleCondition: 'Sample Condition',
@@ -528,6 +531,7 @@ export default {
       testerName: 'Tester Name',
       sampleType: 'Sample Type',
       labParameter: 'Lab Parameter',
+      expectedRange: 'Expected Range',
       resultValue: 'Result Value',
       passFailFlag: 'Pass/Fail Flag',
       remark: 'Remark',
@@ -543,6 +547,7 @@ export default {
       batchId: 'Please select breeding batch',
       batchIdAuto: 'Auto-filled based on trial ID',
       trialId: 'Please select trial',
+      plotId: 'Please select plot ID',
       testDate: 'Please select test date',
       sampleId: 'Please enter sample ID',
       sampleStatus: 'Please enter sample status',
@@ -566,6 +571,7 @@ export default {
     rules: {
       batchIdRequired: 'Please select breeding batch',
       trialIdRequired: 'Please select trial',
+      plotIdRequired: 'Please select plot ID',
       testDateRequired: 'Please select test date',
       testOrganizationRequired: 'Please enter test organization',
       testerNameRequired: 'Please enter tester name',
@@ -698,7 +704,16 @@ export default {
       yieldQtPerHaRequired: 'Please enter yield',
       yieldQtPerHaMin: 'Yield must be greater than 0',
       moistureContentRange: 'Moisture content must be between 0-100',
+      // dynamic fields
+      inspectionTypeRequired: 'Please select inspection type',
+      scoreCodeRequired: 'Please select score code',
     },
+
+    // dynamic messages (used by custom validators)
+    pleaseSelectCodeFirst: 'Please select score code first',
+    percentRange: 'Percentage must be between 0 - 100',
+    scaleRange: 'Score must be between {min}-{max}',
+    numberNonNegative: 'Please enter a non-negative number',
 
     columns: {
       batchId: 'Batch ID',

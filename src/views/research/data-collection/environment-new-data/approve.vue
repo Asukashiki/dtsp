@@ -13,6 +13,22 @@
 
     <!-- 内容区域 -->
     <div class="content-wrapper">
+      <!-- 状态标签页 -->
+      <div class="status-tabs">
+        <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+          <el-tab-pane :label="$t('research.environmentNewData.tabs.pendingApproval')" name="pendingApproval">
+            <template #label>
+              <span><i class="ri-time-line"></i> {{ $t('research.environmentNewData.tabs.pendingApproval') }}</span>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('research.environmentNewData.tabs.approved')" name="approved">
+            <template #label>
+              <span><i class="ri-check-line"></i> {{ $t('research.environmentNewData.tabs.approved') }}</span>
+            </template>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+
       <!-- 搜索和筛选栏 -->
       <div class="search-bar">
         <div class="search-row">
@@ -37,12 +53,12 @@
             @change="handleSearch"
           >
             <el-option :label="$t('research.environmentNewData.allParameters')" value="" />
-            <el-option
-              v-for="item in options.env_parameter_code || []"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
+            <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
+            <el-option :label="$t('research.environmentNewData.parameterCode.TMIN')" value="TMIN" />
+            <el-option :label="$t('research.environmentNewData.parameterCode.HUMIDITY')" value="HUMIDITY" />
+            <el-option :label="$t('research.environmentNewData.parameterCode.WIND_SPEED')" value="WIND_SPEED" />
+            <el-option :label="$t('research.environmentNewData.parameterCode.SOLAR_RAD')" value="SOLAR_RAD" />
           </el-select>
 
           <el-select
@@ -92,6 +108,24 @@
             </el-button>
           </div>
           <div class="action-right">
+            <el-dropdown v-if="selectedIds.length > 0" @command="handleBatchAction">
+              <el-button type="primary">
+                {{ $t('common.batchOperation') }}<i class="ri-arrow-down-s-line"></i>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-if="activeTab === 'pendingApproval'" command="batchSubmit">
+                    {{ $t('submit') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="activeTab === 'pendingApproval'" command="batchApprove">
+                    {{ $t('approve') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="activeTab === 'pendingApproval'" command="batchReject">
+                    {{ $t('reject') }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
               <span class="btn-text">{{ $t('research.environmentNewData.add') }}</span>
@@ -107,7 +141,9 @@
           :data="tableData"
           stripe
           style="width: 100%"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection" width="55" />
           <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" fixed="left" />
           <el-table-column prop="parameterCode" :label="$t('research.environmentNewData.columns.parameterCode')" min-width="140" align="center">
             <template #default="{ row }">
@@ -122,20 +158,24 @@
           <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
           <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
             <template #default="{ row }">
-              <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+              <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
+                {{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="200" fixed="right">
             <template #default="{ row }">
-              <el-button 
-                v-for="button in getActionButtons(row)" 
-                :key="button.action"
-                link 
-                :type="button.type" 
-                @click="handleAction(row, button.action)">
-                <i :class="button.icon"></i>
-                {{ button.label }}
-              </el-button>
+              <div class="action-buttons">
+                <el-button 
+                  v-for="button in getActionButtons(row)" 
+                  :key="button.action"
+                  link 
+                  :type="button.type" 
+                  @click="handleAction(row, button.action)">
+                  <i :class="button.icon"></i>{{ button.label }}
+                </el-button>
+                <!-- Always show delete button for all statuses -->
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -158,6 +198,11 @@
         <div class="card-list">
           <div v-for="item in tableData" :key="item.envRecordId" class="data-card" @click="handleView(item)">
             <div class="card-header">
+              <el-checkbox 
+                v-model="item.checked" 
+                @change="(val) => handleMobileSelect(val, item)"
+                @click.stop
+              />
               <div class="data-info">
                 <h3 class="station-name">{{ item.stationId }}</h3>
                 <span class="timestamp">{{ item.timestamp }}</span>
@@ -186,6 +231,13 @@
                 <span class="info-label">{{ $t('research.environmentNewData.columns.source') }}:</span>
                 <span class="info-value">{{ item.source || '-' }}</span>
               </div>
+              <div class="info-row">
+                <i class="ri-flag-line info-icon"></i>
+                <span class="info-label">{{ $t('research.environmentNewData.columns.auditStatus') }}:</span>
+                <el-tag :type="getWorkflowStatusType(item.workflowStatus)" effect="plain" size="small">
+                  {{ getLabelByValue('flow_status', item.workflowStatus) || item.workflowStatus || '-' }}
+                </el-tag>
+              </div>
             </div>
 
             <div class="card-footer" @click.stop>
@@ -195,8 +247,9 @@
                 size="small"
                 :type="button.type === 'primary' ? 'primary' : ''" 
                 @click="handleAction(item, button.action)">
-                <i :class="button.icon"></i> {{ button.label }}
+                <i :class="button.icon"></i>{{ button.label }}
               </el-button>
+              <!-- Always show delete button for all statuses -->
             </div>
           </div>
         </div>
@@ -231,7 +284,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getEnvironmentNewDataPage, deleteEnvironmentNewData, submitEnvironmentNewDataForAudit } from '@/api/environment-new-data'
+import { getEnvironmentNewDataPage, deleteEnvironmentNewData, submitEnvironmentNewDataForAudit, approveEnvironmentNewData, rejectEnvironmentNewData, batchSubmitEnvironmentNewDataForAudit, batchApproveEnvironmentNewData, batchRejectEnvironmentNewData } from '@/api/environment-new-data'
 import { getBreedingBatchList } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
@@ -239,11 +292,20 @@ import { useUserStore } from '@/store'
 const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
-const { options, getLabelByValue } = useDict(['flow_status', 'env_parameter_code'])
+const { options, getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
 const tableData = ref([])
 const batchOptions = ref([])
+const activeTab = ref('pendingApproval')
+const selectedIds = ref([])
+
+const searchForm = reactive({
+  stationId: '',
+  parameterCode: '',
+  batchId: '',
+  workflowStatus: ''
+})
 
 // 获取工作流状态标签类型
 const getWorkflowStatusType = (workflowStatus) => {
@@ -258,12 +320,335 @@ const getWorkflowStatusType = (workflowStatus) => {
   return workflowStatusMap[workflowStatus] || 'info'
 }
 
-const searchForm = reactive({
-  stationId: '',
-  parameterCode: '',
-  batchId: '',
-  workflowStatus: ''
-})
+// 处理选择变化
+const handleSelectionChange = (selection) => {
+  selectedIds.value = selection.map(item => item.envRecordId)
+}
+
+// 设置查询参数根据标签页
+const setQueryParamsByTab = (tabName) => {
+  // 根据标签页设置不同的查询参数
+  switch (tabName) {
+    case 'pendingApproval':
+      searchForm.workflowStatus = 'S1' // 待审批
+      break
+    case 'approved':
+      searchForm.workflowStatus = 'S2' // 审核通过
+      break
+    default:
+      searchForm.workflowStatus = ''
+  }
+}
+
+const getActionButtons = (row) => {
+  const workflowStatus = row.workflowStatus
+  const buttons = []
+  
+  // 根据状态显示不同的操作按钮，并检查用户权限
+  switch (workflowStatus) {
+    case 'S0': // 草稿
+      if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+      }
+      if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      break
+    case 'S1': // 待审批
+      if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('approve')) {
+        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
+      }
+      break
+    case 'S2': // 审核通过
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      break
+    case 'S3': // 审核驳回
+      if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+      }
+      break
+    case 'S9': // 已作废
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      break
+    case 'S10': // 异常
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      break
+  }
+  
+  return buttons
+}
+
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'audit':
+      handleAudit(row)
+      break
+    case 'submit':
+      handleSubmitForAudit(row)
+      break
+    case 'approve':
+      handleApprove(row)
+      break
+    case 'reject':
+      handleReject(row)
+      break
+  }
+}
+
+const handleAudit = (row) => {
+  // Navigate to the audit page
+  router.push({
+    path: `/research/data-collection/environment-new-data/audit/${row.envRecordId}`,
+    query: { mode: 'audit' }
+  })
+}
+
+const handleSubmitForAudit = async (row) => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('submit')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+    
+    await ElMessageBox.confirm(
+      t('research.environmentNewData.submitForAuditConfirm'),
+      t('common.prompt'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    
+    // Call API to submit for audit
+    const res = await submitEnvironmentNewDataForAudit(row.envRecordId)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.submitForAuditSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.submitForAuditFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.submitForAuditFailed'))
+    }
+  }
+}
+
+const handleApprove = async (row) => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('approve')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+    
+    // 显示审核意见输入框
+    const { value: auditComment } = await ElMessageBox.prompt(
+      t('research.environmentNewData.approveCommentPrompt'),
+      t('research.environmentNewData.approveCommentTitle'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputPlaceholder: t('research.environmentNewData.approveCommentPlaceholder'),
+        inputType: 'textarea',
+        inputRows: 4
+      }
+    )
+    
+    // Call API to approve with audit comment
+    const res = await approveEnvironmentNewData(row.envRecordId, auditComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.approveSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.approveFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.approveFailed'))
+    }
+  }
+}
+
+const handleReject = async (row) => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('reject')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+    
+    // 显示审核意见输入框
+    const { value: auditComment } = await ElMessageBox.prompt(
+      t('research.environmentNewData.rejectCommentPrompt'),
+      t('research.environmentNewData.rejectCommentTitle'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputPlaceholder: t('research.environmentNewData.rejectCommentPlaceholder'),
+        inputType: 'textarea',
+        inputRows: 4
+      }
+    )
+    
+    // Call API to reject with audit comment
+    const res = await rejectEnvironmentNewData(row.envRecordId, auditComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.rejectSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.rejectFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.rejectFailed'))
+    }
+  }
+}
+
+// 批量操作处理函数
+const handleBatchAction = async (command) => {
+  if (selectedIds.value.length === 0) {
+    ElMessage.warning(t('common.pleaseSelectData'))
+    return
+  }
+
+  try {
+    switch (command) {
+      case 'batchSubmit':
+        await handleBatchSubmit()
+        break
+      case 'batchApprove':
+        await handleBatchApprove()
+        break
+      case 'batchReject':
+        await handleBatchReject()
+        break
+    }
+  } catch (error) {
+    console.error('Batch operation failed:', error)
+    ElMessage.error(t('common.operationFailed'))
+  }
+}
+
+// 批量提交审核
+const handleBatchSubmit = async () => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('submit')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+
+    await ElMessageBox.confirm(
+      t('research.environmentNewData.batchSubmitForAuditConfirm', { count: selectedIds.value.length }),
+      t('common.prompt'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    // Call API to batch submit for audit
+    const res = await batchSubmitEnvironmentNewDataForAudit(selectedIds.value)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.batchSubmitForAuditSuccess'))
+      selectedIds.value = []
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.batchSubmitForAuditFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.batchSubmitForAuditFailed'))
+    }
+  }
+}
+
+// 批量审核通过
+const handleBatchApprove = async () => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('approve')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+
+    // 显示审核意见输入框
+    const { value: auditComment } = await ElMessageBox.prompt(
+      t('research.environmentNewData.approveCommentPrompt'),
+      t('research.environmentNewData.approveCommentTitle'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputPlaceholder: t('research.environmentNewData.approveCommentPlaceholder'),
+        inputType: 'textarea',
+        inputRows: 4
+      }
+    )
+
+    // Call API to batch approve with audit comment
+    const res = await batchApproveEnvironmentNewData(selectedIds.value, auditComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.batchApproveSuccess'))
+      selectedIds.value = []
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.batchApproveFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.batchApproveFailed'))
+    }
+  }
+}
+
+// 批量驳回
+const handleBatchReject = async () => {
+  try {
+    // 检查权限
+    if (userStore.hasWorkflowStatusPermission && !userStore.hasWorkflowStatusPermission('reject')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+
+    // 显示审核意见输入框
+    const { value: auditComment } = await ElMessageBox.prompt(
+      t('research.environmentNewData.rejectCommentPrompt'),
+      t('research.environmentNewData.rejectCommentTitle'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputPlaceholder: t('research.environmentNewData.rejectCommentPlaceholder'),
+        inputType: 'textarea',
+        inputRows: 4
+      }
+    )
+
+    // Call API to batch reject with audit comment
+    const res = await batchRejectEnvironmentNewData(selectedIds.value, auditComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.batchRejectSuccess'))
+      selectedIds.value = []
+      loadData()
+    } else {
+      ElMessage.error(t('research.environmentNewData.batchRejectFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('research.environmentNewData.batchRejectFailed'))
+    }
+  }
+}
 
 const pagination = reactive({
   pageNum: 1,
@@ -284,51 +669,17 @@ const getParameterTag = (code) => {
   return tagMap[code] || ''
 }
 
-// 获取参数名称（使用字典）
+// 获取参数名称
 const getParameterName = (code) => {
-  return getLabelByValue('env_parameter_code', code) || code || '-'
-}
-
-// 获取操作按钮
-const getActionButtons = (row) => {
-  const workflowStatus = row.workflowStatus
-  const buttons = []
-  
-  // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (workflowStatus) {
-    case 'S0': // 草稿
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
-      }
-      break
-    case 'S1': // 待审批
-      if (userStore.hasWorkflowStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      }
-      break
-    case 'S2': // 审核通过
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
-    case 'S3': // 审核驳回
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
-      }
-      break
-    case 'S9': // 已归档
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
-    case 'S10': // 已作废
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
+  const codeMap = {
+    'RAIN_DAILY': t('research.environmentNewData.parameterCode.RAIN_DAILY'),
+    'TMAX': t('research.environmentNewData.parameterCode.TMAX'),
+    'TMIN': t('research.environmentNewData.parameterCode.TMIN'),
+    'HUMIDITY': t('research.environmentNewData.parameterCode.HUMIDITY'),
+    'WIND_SPEED': t('research.environmentNewData.parameterCode.WIND_SPEED'),
+    'SOLAR_RAD': t('research.environmentNewData.parameterCode.SOLAR_RAD')
   }
-  
-  return buttons
+  return codeMap[code] || code || '-'
 }
 
 // 加载数据
@@ -420,52 +771,6 @@ const handleDelete = (row) => {
   }).catch(() => {})
 }
 
-// 处理操作按钮点击
-const handleAction = (row, action) => {
-  switch (action) {
-    case 'view':
-      handleView(row)
-      break
-    case 'edit':
-      handleEdit(row)
-      break
-    case 'submit':
-      handleSubmitForAudit(row)
-      break
-  }
-}
-
-// 提交审核
-const handleSubmitForAudit = async (row) => {
-  try {
-    // 检查权限
-    if (!userStore.hasWorkflowStatusPermission('submit')) {
-      ElMessage.error(t('common.noPermission'))
-      return
-    }
-
-    await ElMessageBox.confirm(
-      t('research.environmentNewData.submitForAuditConfirm'),
-      t('common.prompt'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    )
-    const res = await submitEnvironmentNewDataForAudit(row.envRecordId)
-    if (res.code === 200) {
-      ElMessage.success(t('research.environmentNewData.submitForAuditSuccess'))
-      loadData()
-    }
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('Failed to submit for audit:', error)
-      ElMessage.error(t('research.environmentNewData.submitForAuditFailed'))
-    }
-  }
-}
-
 // 切换每页条数
 const handleSizeChange = () => {
   pagination.pageNum = 1
@@ -473,11 +778,29 @@ const handleSizeChange = () => {
 }
 
 // 切换页码
+const handleTabChange = (tabName) => {
+  setQueryParamsByTab(tabName)
+  pagination.pageNum = 1
+  loadData()
+}
+
 const handlePageChange = () => {
   loadData()
 }
 
+// 处理移动端选择
+const handleMobileSelect = (val, item) => {
+  if (val) {
+    if (!selectedIds.value.includes(item.envRecordId)) {
+      selectedIds.value.push(item.envRecordId)
+    }
+  } else {
+    selectedIds.value = selectedIds.value.filter(id => id !== item.envRecordId)
+  }
+}
+
 onMounted(() => {
+  setQueryParamsByTab(activeTab.value)
   loadBatchOptions()
   loadData()
 })
