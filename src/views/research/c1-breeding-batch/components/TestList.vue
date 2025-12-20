@@ -22,8 +22,20 @@
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="testId" :label="t('research.c1BreedingBatch.test.testId')" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="seedClass" :label="t('research.c1BreedingBatch.test.seedClass')" min-width="100" align="center" />
+        <el-table-column prop="lotId" :label="t('research.c1BreedingBatch.test.lotId')" min-width="140" show-overflow-tooltip />
+        <el-table-column prop="testType" :label="t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
         <el-table-column prop="testItem" :label="t('research.c1BreedingBatch.test.testItem')" min-width="140" show-overflow-tooltip />
         <el-table-column prop="testDate" :label="t('research.c1BreedingBatch.test.testDate')" min-width="120" align="center" />
+        <el-table-column prop="testValue" :label="t('research.c1BreedingBatch.test.testValue')" min-width="100" align="center" />
+        <el-table-column prop="unit" :label="t('research.c1BreedingBatch.test.unit')" min-width="80" align="center" />
+        <el-table-column prop="passStatus" :label="t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
+              {{ row.passStatus === 'TRUE' ? t('research.c1BreedingBatch.test.passTrue') : t('research.c1BreedingBatch.test.passFalse') }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="testResult" :label="t('research.c1BreedingBatch.test.testResult')" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getResultTagType(row.testResult)" size="small">
@@ -52,6 +64,27 @@
 
       <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="test-form">
         <div class="form-grid">
+          <el-form-item :label="t('research.c1BreedingBatch.test.seedClass')" prop="seedClass">
+            <el-select v-model="formData.seedClass" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="Pre-Basic" value="Pre-Basic" />
+              <el-option label="Basic" value="Basic" />
+              <el-option label="C1" value="C1" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.lotId')">
+            <el-input v-model="formData.lotId" disabled />
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.testType')">
+            <el-select v-model="formData.testType" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="Germination" value="GERMINATION" />
+              <el-option label="Purity" value="PURITY" />
+              <el-option label="Moisture" value="MOISTURE" />
+              <el-option label="Seed Health" value="SEED_HEALTH" />
+            </el-select>
+          </el-form-item>
+
           <el-form-item :label="t('research.c1BreedingBatch.test.testItem')" prop="testItem">
             <el-input v-model="formData.testItem" :placeholder="t('common.pleaseEnter')" />
           </el-form-item>
@@ -64,6 +97,24 @@
             <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" />
           </el-form-item>
 
+          <el-form-item :label="t('research.c1BreedingBatch.test.unit')">
+            <el-select v-model="formData.unit" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="%" value="%" />
+              <el-option label="kg" value="kg" />
+              <el-option label="g" value="g" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.passStatus')">
+            <el-switch 
+              v-model="formData.passStatus" 
+              active-value="TRUE" 
+              inactive-value="FALSE"
+              :active-text="t('research.c1BreedingBatch.test.passTrue')"
+              :inactive-text="t('research.c1BreedingBatch.test.passFalse')"
+            />
+          </el-form-item>
+
           <el-form-item :label="t('research.c1BreedingBatch.test.testResult')" prop="testResult">
             <el-select v-model="formData.testResult" :placeholder="t('common.pleaseSelect')" class="full-width">
               <el-option :label="t('research.c1BreedingBatch.test.resultPass')" value="01" />
@@ -73,11 +124,11 @@
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.tester')">
-            <el-input v-model="formData.tester" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.tester" :placeholder="t('common.pleaseEnter')" disabled />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testOrg')">
-            <el-input v-model="formData.testOrg" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.testOrg" :placeholder="t('common.pleaseEnter')" disabled />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.description')" class="full-width-item">
@@ -99,6 +150,7 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test } from '@/api/c1BreedingBatch'
+import { useUserStore } from '@/store/user'
 
 const props = defineProps({
   batchId: { type: String, required: true },
@@ -107,6 +159,7 @@ const props = defineProps({
 
 const emit = defineEmits(['refresh'])
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -117,9 +170,14 @@ const editingId = ref(null)
 const formRef = ref(null)
 
 const formData = ref({
+  seedClass: '',
+  lotId: '',
+  testType: '',
   testItem: '',
   testDate: '',
   testValue: '',
+  unit: '',
+  passStatus: 'FALSE',
   testResult: '',
   testDesc: '',
   tester: '',
@@ -151,7 +209,13 @@ const loadList = async () => {
 const handleAdd = () => {
   isEdit.value = false
   editingId.value = null
-  formData.value = { testItem: '', testDate: '', testValue: '', testResult: '', testDesc: '', tester: '', testOrg: '' }
+  // 从用户信息自动填充检测员和检测机构
+  const userInfo = userStore.userInfo?.user || {}
+  const testerName = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
+  const testOrgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  // 自动生成lotId，直接使用批次号
+  const lotId = props.batchId || ''
+  formData.value = { seedClass: '', lotId: lotId, testType: '', testItem: '', testDate: '', testValue: '', unit: '%', passStatus: 'FALSE', testResult: '', testDesc: '', tester: testerName, testOrg: testOrgName }
   currentView.value = 'form'
 }
 
@@ -240,7 +304,6 @@ const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': '
   }
 
   .test-form {
-    max-width: 800px;
 
     .form-grid {
       display: grid;
