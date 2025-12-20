@@ -48,6 +48,8 @@ export default {
     action: '操作',
     days: '天',
     audit: '审核',
+    approve: '通过',
+    reject: '驳回',
     update: '更新',
     remarks: '备注',
     refresh: '刷新',

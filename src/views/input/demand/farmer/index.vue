@@ -146,7 +146,7 @@
                   :label="$t('farmerDemand.columns.createdTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="320">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="380">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -405,6 +405,11 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push({ name: 'FarmerDemandEdit', params: { id: row.id } })
+}
+
+// 审批
+const handleApprove = (row) => {
+  router.push({ name: 'FarmerDemandApprove', params: { id: row.id } })
 }
 
 // 判断行是否可选择（只有草稿(0)和驳回(3)状态可以提交审核）
