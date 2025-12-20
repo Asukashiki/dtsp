@@ -61,7 +61,7 @@
               <el-select v-model="formData.seedClass" :placeholder="$t('common.pleaseSelect')" class="full-width">
                 <el-option label="Basic" value="Basic" />
                 <el-option label="C1" value="C1" />
-                <el-option label="C2" value="C2" />
+                <!-- <el-option label="C2" value="C2" /> -->
               </el-select>
             </el-form-item>
 
