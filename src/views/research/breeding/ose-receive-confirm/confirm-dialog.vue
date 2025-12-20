@@ -29,15 +29,32 @@
           :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
           min-width="140"
         >
+
           <template #default="{ row }">
             {{ row.cropType || '-' }}
           </template>
         </el-table-column>
         <el-table-column
+            prop="seedType"
+            :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
+            min-width="140"
+        >
+
+          <template #default="{ row }">
+            {{ row.seedType || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="breedSeedProduceBatchId"
-          :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+          :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')"
           min-width="220"
           show-overflow-tooltip
+        />
+        <el-table-column
+            prop="produceBatchName"
+            :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+            min-width="220"
+            show-overflow-tooltip
         />
         <el-table-column
           prop="distributeQuantity"

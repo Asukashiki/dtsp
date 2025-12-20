@@ -512,6 +512,8 @@ export default {
         remark: 'Additional Notes',
         createTime: 'Created Time',
         updateTime: 'Updated Time',
+        breedSeedProduceBatchId: 'Production Batch ID',
+        seedType: 'Seed Type',
 
         totalDistributeQuantity: 'Total Distribution Quantity',
         produceBatchId: 'Production Batch ID',
@@ -536,6 +538,10 @@ export default {
       columns: {
         receiveConfirmId: 'Receive Confirmation ID',
         oseName: 'OSE Name',
+        seedId: 'Seed ID',
+        breedSeedProduceBatchId: 'Production Batch ID',
+        varietyName: 'Variety Name',
+        seedType: 'Seed Type',
         totalDistributeQuantity: 'Total Distribution Quantity (kg)',
         confirmTime: 'Confirmation Time',
         confirmPeople: 'Operator Name',
@@ -836,7 +842,7 @@ export default {
       batchId: 'Batch ID',
       varietyName: 'Variety Name',
       cropType: 'Crop Type',
-      breedingLevel: 'Breeding Level',
+      breedingLevel: 'Multiplication  Level',
       parentSeedSource: 'Parent Seed Source',
       startDate: 'Start Date',
       endDate: 'Completion Date',
