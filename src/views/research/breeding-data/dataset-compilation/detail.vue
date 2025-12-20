@@ -105,16 +105,19 @@
             {{ $t('research.datasetCompilation.form.statisticsInfo') }}
           </div>
           <div class="statistics-grid">
-            <div class="stat-card">
+
+             <div class="stat-card">
               <div class="stat-icon">
-                <i class="ri-flask-line"></i>
+                <i class="ri-bar-chart-box-line"></i>
               </div>
               <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.trialCount') }}</div>
-                <div class="stat-value">{{ detailData.trialCount || 1 }}</div>
+                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
+                <div class="stat-value">
+                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length + environmentDataList.length + yieldDataList.length + labTestList.length }}
+                </div>
               </div>
             </div>
-
+            
             <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-map-line"></i>
@@ -172,18 +175,6 @@
               <div class="stat-content">
                 <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
                 <div class="stat-value">{{ labTestList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-bar-chart-box-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
-                <div class="stat-value">
-                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length + environmentDataList.length + yieldDataList.length + labTestList.length }}
-                </div>
               </div>
             </div>
           </div>
