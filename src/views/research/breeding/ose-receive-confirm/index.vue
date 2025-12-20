@@ -92,14 +92,21 @@
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
-                <el-table-column prop="oseName" :label="$t('research.breeding.seed.receiveConfirm.columns.oseName')" min-width="150" />
-                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId')" width="200">
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')" width="200">
                   <template #default="{ row }">
                     <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
                       {{ item.breedSeedProduceBatchId }}
                     </div>
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId')" width="200">
+                  <template #default="{ row }">
+                    <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
+                      {{ item.produceBatchName }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oseName" :label="$t('research.breeding.seed.receiveConfirm.columns.oseName')" min-width="150" />
                 <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.seedType')" width="150">
                   <template #default="{ row }">
                     <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
@@ -269,7 +276,7 @@ const filteredList = computed(() => {
       if (item.oseName?.toLowerCase().includes(query)) {
         return true
       }
-      
+
       // 检查分发明细中的字段
       if (item.distributeDetail?.detailList) {
         return item.distributeDetail.detailList.some(detail => {
@@ -280,7 +287,7 @@ const filteredList = computed(() => {
           )
         })
       }
-      
+
       return false
     })
   }

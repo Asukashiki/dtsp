@@ -73,7 +73,7 @@
                   <span class="value">{{ batchInfo.batchId }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.breedingLevel') }}</span>
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.breedingLevel') }}</span>
                   <span class="value">
                     <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
                   </span>

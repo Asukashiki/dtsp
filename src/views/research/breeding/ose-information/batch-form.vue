@@ -52,12 +52,13 @@
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">
               <el-select v-model="formData.breedingLevel" :placeholder="$t('research.breeding.breedingBatch.form.breedingLevelPlaceholder')" class="full-width">
-                <el-option label="Pre-basic" value="pre-basic" />
-                <el-option label="Basic" value="basic" />
+                <el-option label="OriginalSeed" value="OriginalSeed" />
+                <el-option label="C1" value="C1" />
+                <el-option label="C2" value="C2" />
               </el-select>
             </el-form-item>
 
-            
+
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.startDate')" prop="startDate">
               <el-date-picker
