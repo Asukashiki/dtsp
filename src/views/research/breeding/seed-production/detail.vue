@@ -21,6 +21,10 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchId') }}:</span>
+              <span class="value">{{ data.produceBatchId }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchName') }}:</span>
               <span class="value">{{ data.produceBatchName }}</span>
             </div>
