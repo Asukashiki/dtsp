@@ -190,6 +190,11 @@ export function deleteFarmingRecord(farmingIds) {
     return request({ url: `${API_BASE_URL}/breeding/farming/remove`, method: 'get', params: { farmingIds } })
 }
 
+export function getIrrigationCount() {
+    return request({ url: `${API_BASE_URL}/breeding/farming/irrigationCount`, method: 'get' })
+}
+
+
 // ============ 环境属性数据 ============
 export function getEnvironmentDataList(params) {
     return request({ url: `${API_BASE_URL}/breeding/environment/list`, method: 'get', params })

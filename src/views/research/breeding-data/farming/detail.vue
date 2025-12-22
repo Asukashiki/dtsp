@@ -33,6 +33,23 @@
             </el-descriptions>
           </div>
         </div>
+
+        <!-- Audit Information -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title"><i class="ri-file-info-line"></i><span>Audit Information</span></div>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="Creator">{{ detailData.creator || detailData.createBy || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Created Time">{{ formatDateTime(detailData.createTime) }}</el-descriptions-item>
+              <el-descriptions-item label="Modifier">{{ detailData.modifier || detailData.updateBy || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Modified Time">{{ formatDateTime(detailData.updateTime) }}</el-descriptions-item>
+              <el-descriptions-item label="Auditor">{{ detailData.auditor || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audited Time">{{ formatDateTime(detailData.auditedDatetime) }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
       </div>
     </div>
   </div>

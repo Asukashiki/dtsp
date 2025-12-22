@@ -127,7 +127,8 @@
                     {{ getTrialStatusText(row) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
+                <el-table-column prop="createdName" :label="$t('research.breedingData.trial.columns.createdName')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createTime" :label="$t('research.breedingData.trial.columns.createTime')" min-width="160" show-overflow-tooltip />
                 <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
                   <template #default="{ row }">
                     <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" @archive="handleArchive" />
@@ -194,6 +195,14 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.status') }}:</span>
                     <span class="value">{{ getTrialStatusText(item) }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.createdName') }}:</span>
+                    <span class="value">{{ item.createdName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.breedingData.trial.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">

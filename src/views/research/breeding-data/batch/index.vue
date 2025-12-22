@@ -208,9 +208,9 @@
                     @click="handleAction(item, button.action)">
                     <i :class="button.icon"></i>{{ button.label }}
                   </el-button>
-                  <el-button size="small" type="danger" @click="handleDelete(item)">
+                  <!-- <el-button size="small" type="danger" @click="handleDelete(item)">
                     <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button>
+                  </el-button> -->
                 </div>
               </div>
 
