@@ -62,10 +62,6 @@
               <span class="value">{{ detailData.recordCount || 0 }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.batchName') }}:</span>
-              <span class="value">{{ detailData.batchName || '-' }}</span>
-            </div>
-            <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.cropType') }}:</span>
               <span class="value">{{ detailData.cropType || '-' }}</span>
             </div>

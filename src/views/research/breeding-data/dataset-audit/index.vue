@@ -28,42 +28,35 @@
             <!-- 搜索区域 -->
             <div class="search-section">
               <el-input
-                v-model="searchParams.keyword"
-                :placeholder="$t('research.datasetAudit.searchPlaceholder')"
-                clearable
-                class="search-input"
+                  v-model="searchParams.keyword"
+                  :placeholder="$t('research.datasetAudit.searchPlaceholder')"
+                  clearable
+                  class="search-input"
               >
                 <template #prefix>
                   <i class="ri-search-line"></i>
                 </template>
               </el-input>
               <el-select
-                v-model="searchParams.auditStatus"
-                :placeholder="$t('research.datasetAudit.filterByAuditStatus')"
-                clearable
-                class="search-select"
+                  v-model="searchParams.auditStatus"
+                  :placeholder="$t('research.datasetAudit.filterByAuditStatus')"
+                  clearable
+                  class="search-select"
               >
-                <el-option :label="$t('research.datasetAudit.allAuditStatus')" value="" />
-                <el-option
-                  v-for="(label, key) in $t('research.datasetAudit.auditStatus')"
-                  :key="key"
-                  :label="label"
-                  :value="key"
-                />
+                <el-option :label="$t('research.datasetAudit.auditStatus.pending')" value="pending" />
+                <el-option :label="$t('research.datasetAudit.auditStatus.approved')" value="approved" />
               </el-select>
               <el-select
-                v-model="searchParams.datasetStatus"
-                :placeholder="$t('research.datasetAudit.filterByDatasetStatus')"
-                clearable
-                class="search-select"
+                  v-model="searchParams.datasetStatus"
+                  :placeholder="$t('research.datasetAudit.filterByDatasetStatus')"
+                  clearable
+                  class="search-select"
               >
-                <el-option :label="$t('research.datasetAudit.allDatasetStatus')" value="" />
-                <el-option
-                  v-for="(label, key) in $t('research.datasetAudit.datasetStatus')"
-                  :key="key"
-                  :label="label"
-                  :value="key"
-                />
+                <el-option :label="$t('research.datasetCompilation.status.draft')" value="draft" />
+                <el-option :label="$t('research.datasetCompilation.status.submitted')" value="submitted" />
+                <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
+                <el-option :label="$t('research.datasetCompilation.status.approved')" value="approved" />
+                <el-option :label="$t('research.datasetCompilation.status.rejected')" value="rejected" />
               </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
@@ -79,74 +72,74 @@
             <div class="table-wrapper pc-only">
               <el-table v-loading="loading" :data="dataList" stripe>
                 <el-table-column
-                  prop="id"
-                  :label="$t('research.datasetAudit.columns.auditId')"
-                  min-width="120"
-                  show-overflow-tooltip
+                    prop="id"
+                    :label="$t('research.datasetAudit.columns.auditId')"
+                    min-width="120"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="datasetId"
-                  :label="$t('research.datasetAudit.columns.datasetId')"
-                  min-width="120"
-                  show-overflow-tooltip
+                    prop="datasetId"
+                    :label="$t('research.datasetAudit.columns.datasetId')"
+                    min-width="120"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="datasetCode"
-                  :label="$t('research.datasetAudit.columns.datasetCode')"
-                  min-width="150"
-                  show-overflow-tooltip
+                    prop="datasetCode"
+                    :label="$t('research.datasetAudit.columns.datasetCode')"
+                    min-width="150"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="auditorId"
-                  :label="$t('research.datasetAudit.columns.reviewerId')"
-                  min-width="120"
-                  show-overflow-tooltip
+                    prop="auditorId"
+                    :label="$t('research.datasetAudit.columns.reviewerId')"
+                    min-width="120"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="trialId"
-                  :label="$t('research.datasetAudit.columns.trialId')"
-                  min-width="120"
-                  show-overflow-tooltip
+                    prop="trialId"
+                    :label="$t('research.datasetAudit.columns.trialId')"
+                    min-width="120"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="batchId"
-                  :label="$t('research.datasetAudit.columns.batchId')"
-                  min-width="150"
-                  show-overflow-tooltip
+                    prop="batchId"
+                    :label="$t('research.datasetAudit.columns.batchId')"
+                    min-width="150"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="versionNo"
-                  :label="$t('research.datasetAudit.columns.versionNo')"
-                  min-width="100"
+                    prop="versionNo"
+                    :label="$t('research.datasetAudit.columns.versionNo')"
+                    min-width="100"
                 />
                 <el-table-column
-                  prop="varietyName"
-                  :label="$t('research.datasetAudit.columns.varietyName')"
-                  min-width="120"
+                    prop="varietyName"
+                    :label="$t('research.datasetAudit.columns.varietyName')"
+                    min-width="120"
                 />
                 <el-table-column
-                  prop="recordCount"
-                  :label="$t('research.datasetAudit.columns.recordCount')"
-                  min-width="100"
-                  align="center"
+                    prop="recordCount"
+                    :label="$t('research.datasetAudit.columns.recordCount')"
+                    min-width="100"
+                    align="center"
                 />
                 <el-table-column
-                  prop="labTestCount"
-                  :label="$t('research.datasetAudit.columns.labTestCount')"
-                  min-width="100"
-                  align="center"
+                    prop="labTestCount"
+                    :label="$t('research.datasetAudit.columns.labTestCount')"
+                    min-width="100"
+                    align="center"
                 />
                 <el-table-column
-                  prop="yieldDataCount"
-                  :label="$t('research.datasetAudit.columns.yieldDataCount')"
-                  min-width="100"
-                  align="center"
+                    prop="yieldDataCount"
+                    :label="$t('research.datasetAudit.columns.yieldDataCount')"
+                    min-width="100"
+                    align="center"
                 />
                 <el-table-column
-                  prop="datasetStatus"
-                  :label="$t('research.datasetAudit.columns.datasetStatus')"
-                  min-width="110"
-                  align="center"
+                    prop="datasetStatus"
+                    :label="$t('research.datasetAudit.columns.datasetStatus')"
+                    min-width="110"
+                    align="center"
                 >
                   <template #default="{ row }">
                     <el-tag :type="getDatasetStatusType(row.datasetStatus)">
@@ -155,10 +148,10 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="auditStatus"
-                  :label="$t('research.datasetAudit.columns.auditStatus')"
-                  min-width="110"
-                  align="center"
+                    prop="auditStatus"
+                    :label="$t('research.datasetAudit.columns.auditStatus')"
+                    min-width="110"
+                    align="center"
                 >
                   <template #default="{ row }">
                     <el-tag :type="getAuditStatusType(row.auditStatus)">
@@ -167,40 +160,41 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="auditorName"
-                  :label="$t('research.datasetAudit.columns.auditorName')"
-                  min-width="100"
-                  show-overflow-tooltip
+                    prop="auditorName"
+                    :label="$t('research.datasetAudit.columns.auditorName')"
+                    min-width="100"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="auditTime"
-                  :label="$t('research.datasetAudit.columns.auditTime')"
-                  min-width="150"
+                    prop="auditTime"
+                    :label="$t('research.datasetAudit.columns.auditTime')"
+                    min-width="150"
                 />
                 <el-table-column
-                  prop="auditOpinion"
-                  :label="$t('research.datasetAudit.columns.auditOpinion')"
-                  min-width="150"
-                  show-overflow-tooltip
+                    prop="auditOpinion"
+                    :label="$t('research.datasetAudit.columns.auditOpinion')"
+                    min-width="150"
+                    show-overflow-tooltip
                 />
                 <el-table-column
-                  prop="lockedFlag"
-                  :label="$t('research.datasetAudit.columns.lockedFlag')"
-                  min-width="100"
-                  align="center"
+                    prop="lockedFlag"
+                    :label="$t('research.datasetAudit.columns.lockedFlag')"
+                    min-width="100"
+                    align="center"
                 >
                   <template #default="{ row }">
                     <el-tag v-if="row.lockedFlag !== null && row.lockedFlag !== undefined" :type="row.lockedFlag === 1 ? 'danger' : 'success'" size="small">
-                      <i :class="row.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                      <i class="ri-lock-line" v-if="row.lockedFlag === 1"></i>
+                      <i class="ri-lock-unlock-line" v-else></i>
                       {{ row.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
                     </el-tag>
                     <span v-else>-</span>
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="submitTime"
-                  :label="$t('research.datasetAudit.columns.submitTime')"
-                  min-width="150"
+                    prop="submitTime"
+                    :label="$t('research.datasetAudit.columns.submitTime')"
+                    min-width="150"
                 />
                 <el-table-column :label="$t('common.actions')" fixed="right" width="250">
                   <template #default="{ row }">
@@ -210,10 +204,10 @@
                         {{ $t('common.view') }}
                       </el-button>
                       <el-button
-                        v-if="row.auditStatus === 'pending'"
-                        link
-                        type="success"
-                        @click="handleAudit(row)"
+                          v-if="row.auditStatus === 'pending'"
+                          link
+                          type="success"
+                          @click="handleAudit(row)"
                       >
                         <i class="ri-check-line"></i>
                         {{ $t('research.datasetAudit.actions.audit') }}
@@ -226,13 +220,13 @@
               <!-- 分页 -->
               <div class="pagination-wrapper">
                 <el-pagination
-                  v-model:current-page="searchParams.pageNum"
-                  v-model:page-size="searchParams.pageSize"
-                  :total="total"
-                  :page-sizes="[10, 20, 50, 100]"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  @size-change="handleSearch"
-                  @current-change="handleSearch"
+                    v-model:current-page="searchParams.pageNum"
+                    v-model:page-size="searchParams.pageSize"
+                    :total="total"
+                    :page-sizes="[10, 20, 50, 100]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleSearch"
+                    @current-change="handleSearch"
                 />
               </div>
             </div>
@@ -322,7 +316,8 @@
                     <span class="label">{{ $t('research.datasetAudit.columns.lockedFlag') }}:</span>
                     <span class="value">
                       <el-tag v-if="item.lockedFlag !== null && item.lockedFlag !== undefined" :type="item.lockedFlag === 1 ? 'danger' : 'success'" size="small">
-                        <i :class="item.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                        <i class="ri-lock-line" v-if="item.lockedFlag === 1"></i>
+                        <i class="ri-lock-unlock-line" v-else></i>
                         {{ item.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
                       </el-tag>
                       <span v-else>-</span>
@@ -334,10 +329,10 @@
                     {{ $t('common.view') }}
                   </el-button>
                   <el-button
-                    v-if="item.auditStatus === 'pending'"
-                    type="success"
-                    size="small"
-                    @click="handleAudit(item)"
+                      v-if="item.auditStatus === 'pending'"
+                      type="success"
+                      size="small"
+                      @click="handleAudit(item)"
                   >
                     {{ $t('research.datasetAudit.actions.audit') }}
                   </el-button>
@@ -347,14 +342,14 @@
               <!-- 移动端分页 -->
               <div class="pagination-wrapper mobile-pagination">
                 <el-pagination
-                  v-model:current-page="searchParams.pageNum"
-                  v-model:page-size="searchParams.pageSize"
-                  :page-sizes="[10, 20, 50]"
-                  :total="total"
-                  layout="total, prev, pager, next"
-                  small
-                  @size-change="handleSearch"
-                  @current-change="handleSearch"
+                    v-model:current-page="searchParams.pageNum"
+                    v-model:page-size="searchParams.pageSize"
+                    :page-sizes="[10, 20, 50]"
+                    :total="total"
+                    layout="total, prev, pager, next"
+                    small
+                    @size-change="handleSearch"
+                    @current-change="handleSearch"
                 />
               </div>
             </div>
@@ -390,7 +385,6 @@ const searchParams = reactive({
   datasetStatus: ''
 })
 
-// 获取数据集状态类型
 const getDatasetStatusType = (status) => {
   const typeMap = {
     draft: '',
@@ -402,7 +396,6 @@ const getDatasetStatusType = (status) => {
   return typeMap[status] || ''
 }
 
-// 获取审核状态类型
 const getAuditStatusType = (status) => {
   const typeMap = {
     pending: 'warning',
@@ -413,39 +406,52 @@ const getAuditStatusType = (status) => {
   return typeMap[status] || ''
 }
 
-// 加载数据列表
 const loadDataList = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getAuditList(searchParams)
+    const res = await getAuditList(searchParams);
     if (res.code === 200) {
       const originalList = res.data.list || [];
-      const filteredList = originalList.filter(item =>
-          item.datasetStatus === "approved" || item.datasetStatus === "submitted"
-      );
+      let filteredList = originalList;
 
+      const keyword = searchParams.keyword.trim().toLowerCase();
+      if (keyword) {
+        filteredList = filteredList.filter(item => {
+          const varietyName = (item.varietyName || '').toLowerCase();
+          return varietyName.includes(keyword);
+        });
+      }
+
+      if (searchParams.datasetStatus) {
+        filteredList = filteredList.filter(item =>
+            item.datasetStatus === searchParams.datasetStatus
+        );
+      }
+
+      if (searchParams.auditStatus) {
+        filteredList = filteredList.filter(item =>
+            item.auditStatus === searchParams.auditStatus
+        );
+      }
 
       dataList.value = filteredList;
-      total.value = filteredList.length;
+      total.value = res.data.total || 0;
     } else {
       ElMessage.error(res.msg || t('common.loadFailed'));
     }
-  } catch (error) { // 补充catch捕获请求异常，避免loading一直转圈
+  } catch (error) {
     console.error('加载数据列表失败：', error);
     ElMessage.error(t('common.loadFailed'));
-    loading.value = false;
-  } finally { // 无论成功失败，都关闭loading
+  } finally {
     loading.value = false;
   }
-}
+};
 
-// 搜索
 const handleSearch = () => {
   searchParams.pageNum = 1
   loadDataList()
 }
 
-// 重置
 const handleReset = () => {
   searchParams.keyword = ''
   searchParams.auditStatus = ''
@@ -453,7 +459,6 @@ const handleReset = () => {
   handleSearch()
 }
 
-// 查看详情
 const handleView = (row) => {
   router.push({
     name: 'DatasetAuditReview',
@@ -461,7 +466,6 @@ const handleView = (row) => {
   })
 }
 
-// 审核
 const handleAudit = (row) => {
   router.push({
     name: 'DatasetAuditReview',
@@ -469,14 +473,12 @@ const handleAudit = (row) => {
   })
 }
 
-// 初始化
 onMounted(() => {
   loadDataList()
 })
 </script>
 
 <style scoped>
-/* 页面容器 */
 .page-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
@@ -487,7 +489,6 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-/* 页面头部 */
 .page-header {
   background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   border-radius: 16px;
@@ -531,7 +532,6 @@ onMounted(() => {
   margin: 0;
 }
 
-/* 内容区域 */
 .content-wrapper {
   background: white;
   border-radius: 16px;
@@ -539,7 +539,6 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* 卡片 */
 .info-card {
   background: white;
 }
@@ -570,7 +569,6 @@ onMounted(() => {
   padding: 24px;
 }
 
-/* 搜索区域 */
 .search-section {
   display: flex;
   gap: 12px;
@@ -593,7 +591,6 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-/* 表格 */
 .table-wrapper {
   margin-top: 16px;
 }
@@ -604,7 +601,6 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
-/* 分页 */
 .pagination-wrapper {
   display: flex;
   justify-content: center;
@@ -613,7 +609,6 @@ onMounted(() => {
   border-top: 1px solid #e8f5e9;
 }
 
-/* 移动端卡片列表 */
 .mobile-card-list {
   display: flex;
   flex-direction: column;
@@ -693,7 +688,6 @@ onMounted(() => {
   flex: 1;
 }
 
-/* 响应式 */
 .pc-only {
   display: block;
 }

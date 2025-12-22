@@ -97,22 +97,27 @@
                 <el-table-column prop="plotId" label="Plot ID" min-width="180" show-overflow-tooltip />
                 <el-table-column prop="trialId" label="Trial ID" min-width="160" show-overflow-tooltip />
                 <el-table-column prop="batchId" label="Batch ID" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="replicationNo" label="Replication No" min-width="120" />
-                <el-table-column prop="rowNo" label="Row No" min-width="100" />
-                <el-table-column prop="columnNo" label="Column No" min-width="110" />
-                <el-table-column prop="varietyCode" label="Variety Code" min-width="130" show-overflow-tooltip />
-                <el-table-column prop="sowingDate" label="Sowing Date" min-width="120" />
-                <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
+                <el-table-column prop="replicationNo" label="Replication No" min-width="160" />
+                <el-table-column prop="rowNo" label="Row No" min-width="140" />
+                <el-table-column prop="columnNo" label="Column No" min-width="140" />
+                <el-table-column prop="irrigationCount" label="Irrigation Count" min-width="160">
+                  <template #default="{ row }">
+                    {{ getIrrigationCountForPlot(row.plotId) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="varietyCode" label="Variety Code" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="sowingDate" label="Sowing Date" min-width="160" />
+                <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="160">
                   <template #default="{ row }">
                     <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
                   </template>
                 </el-table-column>
-                <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="120" />
-                <el-table-column prop="createTime" :label="$t('research.breedingData.plot.columns.createTime')" min-width="120" />
-                <el-table-column prop="modifiedName" :label="$t('research.breedingData.plot.columns.modifiedBy')" min-width="120" />
-                <el-table-column prop="updateTime" :label="$t('research.breedingData.plot.columns.updateTime')" min-width="120" />
-                <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
-                <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
+                <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="160" />
+                <el-table-column prop="createTime" :label="$t('research.breedingData.plot.columns.createTime')" min-width="160" />
+                <el-table-column prop="modifiedName" :label="$t('research.breedingData.plot.columns.modifiedBy')" min-width="160" />
+                <el-table-column prop="updateTime" :label="$t('research.breedingData.plot.columns.updateTime')" min-width="160" />
+                <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="160" />
+                <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="160" />
                 <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -238,7 +243,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getPlotInfoList, deletePlotInfo, getBatchOptions } from '@/api/breedingData'
+import { getPlotInfoList, deletePlotInfo, getBatchOptions, getIrrigationCount } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -249,6 +254,7 @@ const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const batchOptions = ref([])
+const irrigationCountMap = ref({})
 const { options: dictOptions  } = useDict('flow_status')
 
 const queryParams = reactive({
@@ -266,11 +272,26 @@ const getList = async () => {
     const res = await getPlotInfoList(queryParams)
     dataList.value = res.rows || []
     total.value = res.total || 0
+    // 获取灌溉次数统计
+    await loadIrrigationCount()
   } catch (error) {
     console.error('获取列表失败:', error)
   } finally {
     loading.value = false
   }
+}
+
+const loadIrrigationCount = async () => {
+  try {
+    const res = await getIrrigationCount()
+    irrigationCountMap.value = res.data || {}
+  } catch (error) {
+    console.error('获取灌溉次数失败:', error)
+  }
+}
+
+const getIrrigationCountForPlot = (plotId) => {
+  return irrigationCountMap.value[plotId] || 0
 }
 
 const loadBatchOptions = async () => {

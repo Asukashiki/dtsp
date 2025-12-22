@@ -137,6 +137,50 @@
             </div>
           </div>
 
+          <!-- Audit Information (仅编辑模式显示) -->
+          <div class="info-card" v-if="isEdit">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-info-line"></i>
+                <span>Audit Information</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.createdBy')">
+                    <el-input v-model="formData.createdName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.createTime')">
+                    <el-input v-model="formData.createTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.modifiedBy')">
+                    <el-input v-model="formData.modifiedName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.updateTime')">
+                    <el-input v-model="formData.updateTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.auditedBy')">
+                    <el-input v-model="formData.auditedName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.auditTime')">
+                    <el-input v-model="formData.auditTime" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>

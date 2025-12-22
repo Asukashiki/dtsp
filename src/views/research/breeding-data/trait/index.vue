@@ -36,10 +36,10 @@
               <div class="search-item">
                 <span class="search-label">{{ $t('trait.batchId') }}:</span>
                 <el-select
-                  v-model="queryParams.batchId"
-                  :placeholder="$t('common.pleaseSelect')"
-                  clearable
-                  class="filter-select"
+                    v-model="queryParams.batchId"
+                    :placeholder="$t('common.pleaseSelect')"
+                    clearable
+                    class="filter-select"
                 >
                   <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
                 </el-select>
@@ -47,10 +47,10 @@
               <div class="search-item">
                 <span class="search-label">{{ $t('trait.trialId') }}:</span>
                 <el-select
-                  v-model="queryParams.trialId"
-                  :placeholder="$t('common.pleaseSelect')"
-                  clearable
-                  class="filter-select"
+                    v-model="queryParams.trialId"
+                    :placeholder="$t('common.pleaseSelect')"
+                    clearable
+                    class="filter-select"
                 >
                   <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
                 </el-select>
@@ -58,10 +58,10 @@
               <div class="search-item">
                 <span class="search-label">{{ $t('trait.growthStage') }}:</span>
                 <el-select
-                  v-model="queryParams.growthStage"
-                  :placeholder="$t('common.pleaseSelect')"
-                  clearable
-                  class="filter-select"
+                    v-model="queryParams.growthStage"
+                    :placeholder="$t('common.pleaseSelect')"
+                    clearable
+                    class="filter-select"
                 >
                   <el-option v-for="item in options.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
@@ -69,16 +69,16 @@
               <div class="search-item">
                 <span class="search-label">{{ $t('trait.columns.workflowStatus') }}:</span>
                 <el-select
-                  v-model="queryParams.workflowStatus"
-                  :placeholder="$t('common.pleaseSelect')"
-                  clearable
-                  class="filter-select"
+                    v-model="queryParams.workflowStatus"
+                    :placeholder="$t('common.pleaseSelect')"
+                    clearable
+                    class="filter-select"
                 >
                   <el-option
-                    v-for="opt in options.flow_status || []"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
+                      v-for="opt in options.flow_status || []"
+                      :key="opt.value"
+                      :label="opt.label"
+                      :value="opt.value"
                   />
                 </el-select>
               </div>
@@ -118,7 +118,7 @@
                 </el-table-column>
                 <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
-                <el-table-column :label="$t('trait.columns.actions')" width="200" fixed="right">
+                <el-table-column :label="$t('trait.columns.actions')" width="280" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -127,6 +127,15 @@
                       <el-button link type="primary" @click="handleEdit(row)">
                         <i class="ri-edit-line"></i>{{ $t('common.edit') }}
                       </el-button>
+                      <!-- 新增：发起审核按钮（仅草稿/驳回状态可见） -->
+                      <el-button
+                          v-if="row.status === 'draft' || row.status === 'rejected'"
+                          link
+                          type="success"
+                          @click="handleSubmitAudit(row)"
+                      >
+                        <i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}
+                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -134,13 +143,13 @@
 
               <div class="pagination-wrapper">
                 <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
-                  :page-sizes="[10, 20, 50]"
-                  :total="total"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  @size-change="getList"
-                  @current-change="getList"
+                    v-model:current-page="queryParams.pageNum"
+                    v-model:page-size="queryParams.pageSize"
+                    :page-sizes="[10, 20, 50]"
+                    :total="total"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="getList"
+                    @current-change="getList"
                 />
               </div>
             </div>
@@ -181,6 +190,15 @@
                   <el-button size="small" type="primary" @click="handleEdit(item)">
                     <i class="ri-edit-line"></i>{{ $t('common.edit') }}
                   </el-button>
+                  <!-- 新增：发起审核按钮（仅草稿/驳回状态可见） -->
+                  <el-button
+                      v-if="item.workflowStatus === 'draft' || item.workflowStatus === 'rejected'"
+                      size="small"
+                      type="success"
+                      @click="handleSubmitAudit(item)"
+                  >
+                    <i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}
+                  </el-button>
                   <el-button size="small" type="danger" @click="handleDelete(item)">
                     <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
                   </el-button>
@@ -189,12 +207,12 @@
 
               <div class="pagination-wrapper">
                 <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
-                  :total="total"
-                  layout="prev, pager, next"
-                  small
-                  @current-change="getList"
+                    v-model:current-page="queryParams.pageNum"
+                    v-model:page-size="queryParams.pageSize"
+                    :total="total"
+                    layout="prev, pager, next"
+                    small
+                    @current-change="getList"
                 />
               </div>
             </div>
@@ -210,7 +228,13 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTraitRecordList, deleteTraitRecord, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import {
+  getTraitRecordList,
+  deleteTraitRecord,
+  getBatchOptions,
+  getTrialOptions,
+  submitTraitRecordAudit
+} from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -237,10 +261,13 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await getTraitRecordList(queryParams)
-    dataList.value = res.rows || []
-    total.value = res.total || 0
+    // 兼容后端返回格式，和数据集页面保持一致
+    debugger;
+    dataList.value = res.data?.list || res.rows || []
+    total.value = res.data?.total || res.total || 0
   } catch (error) {
     console.error('获取列表失败:', error)
+    ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -326,6 +353,36 @@ const handleBatchDelete = () => {
   }).catch(() => {})
 }
 
+// 新增：发起性状审核方法（仿照数据集页面逻辑）
+const handleSubmitAudit = async (row) => {
+  try {
+    // 弹窗确认提交
+    await ElMessageBox.confirm(
+        t('trait.submitAuditConfirm'),
+        t('common.warning'),
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'warning'
+        }
+    )
+    // 调用审核接口
+    const res = await submitTraitRecordAudit(row.recordId)
+    if (res.code === 200) {
+      ElMessage.success(t('trait.submitAuditSuccess'))
+      getList() // 刷新列表
+    } else {
+      ElMessage.error(res.msg || t('common.submitFailed'))
+    }
+  } catch (error) {
+    // 取消操作不提示错误
+    if (error !== 'cancel') {
+      console.error('提交审核失败:', error)
+      ElMessage.error(t('common.submitFailed'))
+    }
+  }
+}
+
 onMounted(() => {
   loadBatchOptions()
   loadTrialOptions()
@@ -368,6 +425,12 @@ onMounted(() => {
   }
 }
 
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 768px) {
   .search-section {
     .search-item {
@@ -391,6 +454,86 @@ onMounted(() => {
         flex: 1;
       }
     }
+  }
+
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mobile-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .mobile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .mobile-card-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #009A44;
+    font-weight: 600;
+  }
+
+  .mobile-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-card-row {
+    display: flex;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .mobile-card-row .label {
+    color: #666;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .mobile-card-footer {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .mobile-card-footer .el-button {
+    flex: 1;
+    min-width: 70px;
+  }
+}
+
+.pc-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .pc-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
   }
 }
 </style>

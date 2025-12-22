@@ -153,6 +153,48 @@
                     <el-input-number v-model="formData.replications" :min="1" :max="10" :placeholder="$t('research.breedingData.trial.placeholder.replications')" style="width: 100%" />
                   </el-form-item>
                 </el-col>
+                
+                <!-- 以下字段仅在编辑模式下显示 -->
+                <template v-if="isEdit">
+                  <!-- 创建人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.createdName')">
+                      <el-input v-model="formData.createdName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 创建时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.createTime')">
+                      <el-input v-model="formData.createTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                  
+                  <!-- 修改人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.modifiedName')">
+                      <el-input v-model="formData.modifiedName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 修改时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.updateTime')">
+                      <el-input v-model="formData.updateTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                  
+                  <!-- 审核人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.approvedName')">
+                      <el-input v-model="formData.approvedName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 审核时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.approvedTime')">
+                      <el-input v-model="formData.approvedTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                </template>
               </el-row>
             </div>
           </div>
