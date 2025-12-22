@@ -240,3 +240,28 @@ export function deleteLocationMaster(locationIds) {
 export function getLocationMasterOptions() {
     return request({ url: `${API_BASE_URL}/seed/locationMaster/list`, method: 'post', data: {} })
 }
+// ============ 农艺性状审核 ============
+// 查询农艺性状审核列表
+export function getAgronomicTraitAuditList(data) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/list`, method: 'post', data })
+}
+
+// 根据审核记录ID查询农艺性状审核详情
+export function getAgronomicTraitAuditById(auditId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/getById/${auditId}`, method: 'get' })
+}
+
+// 根据农艺性状ID查询审核详情
+export function getAgronomicTraitAuditByTraitId(traitId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/getByTraitId/${traitId}`, method: 'get' })
+}
+
+// 执行农艺性状审核（通过/驳回/需要修订）
+export function performAgronomicTraitAudit(data) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/perform`, method: 'post', data })
+}
+
+// 查询农艺性状审核历史记录
+export function submitTraitRecordAudit(traitId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/history/${traitId}`, method: 'get' })
+}
