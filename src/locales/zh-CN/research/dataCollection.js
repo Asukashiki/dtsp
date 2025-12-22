@@ -778,4 +778,84 @@ export default {
       actions: '操作',
     },
   },
+
+  // 田间检验数据采集审核
+  fieldInspectionAudit: {
+    title: '田间检验数据采集审核',
+    subtitle: '对田间检验数据进行审核操作',
+    list: '待审核田间检验数据列表',
+    audit: '审核',
+    
+    // 搜索筛选
+    searchPlaceholder: '搜索育种批次ID、地块编号',
+    filterByBatch: '按育种批次筛选',
+    allBatches: '全部批次',
+    
+    // 表单字段
+    form: {
+      basicInfo: '基础信息',
+      plotInfo: '地块信息',
+      inspectionInfo: '检验信息',
+      auditInfo: '审核信息',
+      systemInfo: '系统信息',
+      batchId: '育种批次ID',
+      trialId: '试验ID',
+      plotId: '地块编号',
+      inspectionDate: '检验日期',
+      inspectionType: '检验类型',
+      scoreCode: '评分代码',
+      scoreValue: '评分值',
+      auditComment: '审核意见',
+      auditor: '审核人',
+      auditDepartment: '审核部门',
+      approvalTime: '审批时间',
+    },
+    
+    // 表单占位符
+    placeholder: {
+      batchId: '请选择育种批次',
+      plotId: '请选择地块编号',
+      auditComment: '请输入审核意见',
+      auditor: '请输入审核人',
+      auditDepartment: '请输入审核部门',
+      approvalTime: '请选择审批时间',
+      inspectionDate: '请选择检验日期',
+    },
+    
+    // 表单验证
+    rules: {
+      auditCommentRequired: '审核意见为必填项',
+    },
+    
+    // 操作按钮
+    approve: '同意',
+    reject: '不同意',
+    back: '返回',
+    view: '查看',
+    audit: '审核',
+    
+    // 确认提示
+    confirmApprove: '确定同意该审核吗？',
+    confirmReject: '确定不同意该审核吗？',
+    
+    // 操作结果
+    approveSuccess: '审核已通过',
+    rejectSuccess: '审核已退回',
+
+    // 作废相关
+    void: '作废',
+    voidReason: '作废原因',
+    confirmVoid: '确定作废该审核吗？',
+    voidSuccess: '作废成功',
+
+    // 表单占位符
+    placeholder: {
+      voidReason: '请输入作废原因',
+    },
+
+    // 表单验证
+    rules: {
+      voidReasonRequired: '作废原因为必填项',
+    },
+  },
 };

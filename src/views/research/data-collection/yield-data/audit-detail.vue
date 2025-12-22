@@ -10,12 +10,12 @@
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('research.dataCollection.yieldData.detail') }}</h1>
+          <h1 class="page-title">{{ $t('research.dataCollection.fieldInspectionAudit.detail') }}</h1>
         </div>
         <div class="header-right">
-          <el-button type="primary" @click="handleEdit">
-            <i class="ri-edit-line"></i>
-            {{ $t('common.edit') }}
+          <el-button type="warning" @click="handleAudit">
+            <i class="ri-file-check-line"></i>
+            {{ $t('common.audit') }}
           </el-button>
         </div>
       </div>
@@ -39,10 +39,6 @@
               <span class="label">{{ $t('research.dataCollection.yieldData.form.trialId') }}:</span>
               <span class="value">{{ detailData.trialId }}</span>
             </div>
-            <!-- <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.harvestDate') }}:</span>
-              <span class="value">{{ detailData.harvestDate }}</span>
-            </div> -->
           </div>
         </div>
 
@@ -57,42 +53,8 @@
               <span class="label">{{ $t('research.dataCollection.yieldData.form.plotId') }}:</span>
               <span class="value">{{ detailData.plotId }}</span>
             </div>
-            <!-- <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.plotAreaM2') }}:</span>
-              <span class="value">{{ detailData.plotAreaM2 }} m²</span>
-            </div> -->
           </div>
         </div>
-
-        <!-- 产量信息 -->
-        <!-- <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-box-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.yieldInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.grainWeightKg') }}:</span>
-              <span class="value">{{ detailData.grainWeightKg }} kg</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.yieldQtPerHa') }}:</span>
-              <span class="value highlight">{{ detailData.yieldQtPerHa }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.moistureContent') }}:</span>
-              <span class="value">{{ detailData.moistureContent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.recorderName') }}:</span>
-              <span class="value">{{ detailData.recorderName || '-' }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
-            </div>
-          </div>
-        </div> -->
 
         <!-- 检验信息 -->
         <div class="detail-section">
@@ -181,7 +143,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getYieldDataDetail } from '@/api/yieldData'
+import { getFieldInspectionAuditInfo } from '@/api/fieldInspectionAudit'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -196,7 +158,7 @@ const detailData = ref(null)
 const loadDetail = async () => {
   loading.value = true
   try {
-    const res = await getYieldDataDetail(route.params.id)
+    const res = await getFieldInspectionAuditInfo(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
     } else {
@@ -212,12 +174,14 @@ const loadDetail = async () => {
   }
 }
 
+// 返回列表
 const handleBack = () => {
-  router.back()
+  router.push('/research/breeding-data/field-inspection-audit')
 }
 
-const handleEdit = () => {
-  router.push({ name: 'FieldInspectionEdit', params: { id: route.params.id } })
+// 前往审核
+const handleAudit = () => {
+  router.push(`/research/breeding-data/field-inspection/audit/${route.params.id}`)
 }
 
 onMounted(() => {
@@ -225,30 +189,48 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss' as *;
+
 .yield-data-detail-container {
   min-height: calc(100vh - 120px);
 }
 
-/* 页面头部 */
+/* 页面头部 - 使用项目统一的渐变绿色主题 */
 .page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, $primary-green 0%, #00b350 100%);
+  padding: 24px 32px;
   margin: -24px -24px 24px -24px;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
-.header-left,
-.header-right {
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: 1;
+
+  .el-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+  }
 }
 
 .header-center {
@@ -260,165 +242,169 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 600;
   margin: 0;
-  color: #1f2937;
+  color: white;
 }
 
-/* 详情区域 */
+.header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+
+  .el-button {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: $primary-green;
+    font-weight: 500;
+
+    &:hover {
+      background: white;
+      color: $primary-green;
+    }
+  }
+}
+
+/* 详情区域 - 使用卡片式设计 */
 .detail-wrapper {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* 详情分节 */
 .detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .section-title {
   font-size: 16px;
   font-weight: 600;
-  color: #009A44;
+  color: $primary-green;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
+  border-bottom: 2px solid $primary-green;
   display: flex;
   align-items: center;
   gap: 8px;
+
+  i {
+    font-size: 20px;
+  }
 }
 
-.section-title i {
-  font-size: 20px;
-}
-
-/* 详情网格 */
+/* 详情网格布局 */
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
 }
 
 .detail-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-}
+  padding: 12px 16px;
+  background: $color-bg-light;
+  border-radius: 8px;
+  border: 1px solid $color-border-lighter;
+  transition: all 0.3s ease;
 
-.detail-item.full-width {
-  grid-column: 1 / -1;
-  flex-direction: column;
-}
+  &:hover {
+    background: rgba($primary-green, 0.05);
+    border-color: $primary-green;
+  }
 
-.detail-item .label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 160px;
-  flex-shrink: 0;
-}
+  &.full-width {
+    grid-column: 1 / -1;
+  }
 
-.detail-item.full-width .label {
-  min-width: auto;
-  margin-bottom: 8px;
-}
+  .label {
+    font-weight: 600;
+    color: $color-text-regular;
+    min-width: 140px;
+    flex-shrink: 0;
+    line-height: 1.5;
+  }
 
-.detail-item .value {
-  color: #1f2937;
-  flex: 1;
-}
-
-.detail-item .value.highlight {
-  color: #009A44;
-  font-weight: 600;
-  font-size: 16px;
+  .value {
+    flex: 1;
+    color: $color-text-primary;
+    line-height: 1.5;
+    word-break: break-word;
+  }
 }
 
 /* ==================== 响应式设计 ==================== */
 @media screen and (max-width: 1024px) {
   .page-header {
-    margin: -16px -16px 16px -16px;
+    padding: 20px 24px;
   }
 
   .header-content {
-    padding: 16px;
+    gap: 12px;
   }
 
-  .detail-section {
+  .page-title {
+    font-size: 18px;
+  }
+
+  .detail-wrapper {
     padding: 20px 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-item .label {
+    min-width: 120px;
   }
 }
 
 @media screen and (max-width: 768px) {
   .page-header {
-    margin: -12px -12px 12px -12px;
+    padding: 16px 20px;
+    margin: -16px -16px 16px -16px;
   }
 
   .header-content {
-    padding: 12px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .header-left,
-  .header-center,
   .header-right {
-    flex: auto;
-  }
-
-  .header-left {
-    order: 1;
+    width: 100%;
   }
 
   .header-center {
-    order: 2;
     width: 100%;
-    margin-top: 8px;
     text-align: left;
   }
 
   .header-right {
-    order: 3;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 50;
-  }
-
-  .header-right .el-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    padding: 0;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border: none;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-right .el-button i {
-    font-size: 24px;
-    margin-right: 0;
-  }
-
-  .header-right .el-button span {
-    display: none;
-  }
-
-  .header-left .el-button {
-    font-size: 14px;
+    justify-content: flex-start;
   }
 
   .page-title {
     font-size: 16px;
   }
 
-  .detail-section {
+  .detail-wrapper {
     padding: 16px 12px;
-    margin-bottom: 12px;
     border-radius: 8px;
+  }
+
+  .detail-section {
+    margin-bottom: 24px;
   }
 
   .section-title {
@@ -431,69 +417,40 @@ onMounted(() => {
     font-size: 18px;
   }
 
-  /* 单列布局 */
   .detail-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 10px;
   }
 
   .detail-item {
+    padding: 10px 12px;
     flex-direction: column;
     gap: 6px;
-    padding: 12px;
-    background: rgba(0, 154, 68, 0.02);
-    border-radius: 8px;
-    border-left: 3px solid #009A44;
-  }
 
-  .detail-item.full-width {
-    grid-column: auto;
-  }
+    .label {
+      min-width: auto;
+      font-size: 14px;
+      color: $color-text-secondary;
+    }
 
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 15px;
+    .value {
+      font-size: 14px;
+    }
   }
 }
 
 @media screen and (max-width: 480px) {
   .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
+    padding: 12px 16px;
+    margin: -12px -12px 12px -12px;
   }
 
   .page-title {
     font-size: 15px;
   }
 
-  .header-right .el-button {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .header-right .el-button i {
-    font-size: 20px;
-  }
-
-  .detail-section {
+  .detail-wrapper {
     padding: 12px 8px;
-    margin-bottom: 8px;
   }
 
   .section-title {
@@ -502,24 +459,8 @@ onMounted(() => {
     padding-bottom: 8px;
   }
 
-  .detail-grid {
-    gap: 12px;
-  }
-
   .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 14px;
+    padding: 8px 10px;
   }
 }
 </style>

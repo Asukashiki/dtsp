@@ -317,6 +317,24 @@ const routes = [
         component: () => import('../views/research/data-collection/yield-data/detail.vue'),
         meta: { title: '田间检验数据详情', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'breeding-data/field-inspection/audit/:id',
+        name: 'FieldInspectionAudit',
+        component: () => import('../views/research/data-collection/yield-data/audit.vue'),
+        meta: { title: '田间检验数据审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/audit-detail/:id',
+        name: 'FieldInspectionAuditDetail',
+        component: () => import('../views/research/data-collection/yield-data/audit-detail.vue'),
+        meta: { title: '田间检验数据审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection-audit',
+        name: 'FieldInspectionAuditList',
+        component: () => import('../views/research/data-collection/yield-data/audit-list.vue'),
+        meta: { title: '田间检验数据采集审核', requiresAuth: true }
+      },
       
       // 实验室测试数据采集
       {
@@ -1676,4 +1694,4 @@ function redirectToLogin(fullPath, userStore) {
   userStore.logoutAndRedirect(1000)
 }
 
-export default router 
+export default router

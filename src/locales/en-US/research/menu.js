@@ -47,6 +47,7 @@ export default {
   fieldInspectionAdd: 'Add Field Inspection',
   fieldInspectionEdit: 'Edit Field Inspection',
   fieldInspectionDetail: 'Field Inspection Detail',
+  fieldInspectionAudit: 'Field Inspection Data Collection Audit',
 
   laboratoryTest: 'Laboratory Test Data Collection',
   laboratoryTestAdd: 'Add Laboratory Test',
