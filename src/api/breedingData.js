@@ -3,6 +3,11 @@ import request from '@/utils/agricultureRequest'
 // 根据环境判断使用的 API 基础 URL
 const API_BASE_URL = import.meta.env.DEV ? import.meta.env.VITE_APP_LOCAL_TEST_API_URL : ''
 
+// 根据用户ID获取用户信息
+export function getUserInfoById(userId) {
+    return request({ url: `/ucif/account/getUserInfo`, method: 'get', params: { userId } })
+}
+
 // ============ 育种批次管理 ============
 export function getBreedingBatchList(params) {
     return request({ url: `${API_BASE_URL}/breeding/batch/list`, method: 'get', params })
@@ -138,6 +143,32 @@ export function deleteAgronomicTrait(traitIds) {
     return request({ url: `${API_BASE_URL}/breeding/trait/remove`, method: 'get', params: { traitIds } })
 }
 
+// ============ 农艺性状记录（一对多模式） ============
+export function getTraitRecordList(params) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/list`, method: 'get', params })
+}
+
+export function getTraitRecordInfo(recordId) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/getInfo`, method: 'get', params: { recordId } })
+}
+
+export function addTraitRecord(data) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/add`, method: 'post', data })
+}
+
+export function editTraitRecord(data) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/edit`, method: 'post', data })
+}
+
+export function deleteTraitRecord(recordIds) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/remove`, method: 'get', params: { recordIds } })
+}
+
+export function generateTraitRecordId(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/generateId`, method: 'get', params: { plotId } })
+}
+
+
 // ============ 农事记录 ============
 export function getFarmingRecordList(params) {
     return request({ url: `${API_BASE_URL}/breeding/farming/list`, method: 'get', params })
@@ -158,6 +189,11 @@ export function editFarmingRecord(data) {
 export function deleteFarmingRecord(farmingIds) {
     return request({ url: `${API_BASE_URL}/breeding/farming/remove`, method: 'get', params: { farmingIds } })
 }
+
+export function getIrrigationCount() {
+    return request({ url: `${API_BASE_URL}/breeding/farming/irrigationCount`, method: 'get' })
+}
+
 
 // ============ 环境属性数据 ============
 export function getEnvironmentDataList(params) {
@@ -203,4 +239,29 @@ export function deleteLocationMaster(locationIds) {
 
 export function getLocationMasterOptions() {
     return request({ url: `${API_BASE_URL}/seed/locationMaster/list`, method: 'post', data: {} })
+}
+// ============ 农艺性状审核 ============
+// 查询农艺性状审核列表
+export function getAgronomicTraitAuditList(data) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/list`, method: 'post', data })
+}
+
+// 根据审核记录ID查询农艺性状审核详情
+export function getAgronomicTraitAuditById(auditId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/getById/${auditId}`, method: 'get' })
+}
+
+// 根据农艺性状ID查询审核详情
+export function getAgronomicTraitAuditByTraitId(traitId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/getByTraitId/${traitId}`, method: 'get' })
+}
+
+// 执行农艺性状审核（通过/驳回/需要修订）
+export function performAgronomicTraitAudit(data) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/perform`, method: 'post', data })
+}
+
+// 查询农艺性状审核历史记录
+export function submitTraitRecordAudit(traitId) {
+    return request({ url: `${API_BASE_URL}/breeding/trait/audit/history/${traitId}`, method: 'get' })
 }

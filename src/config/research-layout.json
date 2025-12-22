@@ -53,6 +53,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/trait-audit",
+          "icon": "ri-leaf-line",
+          "titleKey": "research.menu.agronomicTraitDataAudit",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/data-collection/environment-new-data",
           "icon": "ri-cloud-line",
           "titleKey": "research.menu.environmentNewData",

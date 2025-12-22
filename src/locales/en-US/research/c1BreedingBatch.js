@@ -1,6 +1,6 @@
 export default {
   // 页面标题
-  title: 'C1 Breeding Batch Management',
+  title: 'Seed Multiplication Information',
   subtitle: 'Manage C1 seed propagation batch information',
 
   // 操作

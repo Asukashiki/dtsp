@@ -44,6 +44,7 @@
               clearable
               style="width: 100%"
               :loading="plotLoading"
+              :disabled="isReadOnly || isAuditMode"
               @change="handlePlotChange"
             >
               <el-option
@@ -59,7 +60,7 @@
             <el-input
               v-model="formData.batchId"
               :placeholder="$t('research.environmentNewData.placeholder.batchId')"
-              :disabled="isReadOnly"
+              disabled
             />
           </el-form-item>
 
@@ -67,7 +68,7 @@
             <el-input
               v-model="formData.trialId"
               :placeholder="$t('research.environmentNewData.placeholder.trialId')"
-              :disabled="isReadOnly"
+              disabled
             />
           </el-form-item>
         </div>
@@ -87,6 +88,7 @@
               clearable
               style="width: 100%"
               :loading="dictLoading"
+              :disabled="isReadOnly || isAuditMode"
             >
               <el-option
                 v-for="item in options.weather_station"
@@ -105,7 +107,7 @@
               format="YYYY-MM-DD HH:mm"
               value-format="YYYY-MM-DD HH:mm"
               style="width: 100%"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
 
@@ -127,14 +129,20 @@
               v-model="formData.parameterCode"
               :placeholder="$t('research.environmentNewData.placeholder.parameterCode')"
               style="width: 100%"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
+              @change="handleParameterCodeChange"
             >
-              <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.TMIN')" value="TMIN" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.HUMIDITY')" value="HUMIDITY" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.WIND_SPEED')" value="WIND_SPEED" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.SOLAR_RAD')" value="SOLAR_RAD" />
+              <el-option
+                v-for="item in options.env_parameter_code || []"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+                <div style="display: flex; justify-content: space-between;">
+                  <span>{{ item.label }}</span>
+                  <span style="color: #8492a6; font-size: 12px;">{{ item.actualValue }}</span>
+                </div>
+              </el-option>
             </el-select>
           </el-form-item>
 
@@ -146,18 +154,18 @@
                 :precision="2"
                 :controls="false"
                 style="width: 100%"
-                :disabled="isReadOnly"
+                :disabled="isReadOnly || isAuditMode"
               />
               <span class="unit-hint">{{ formData.unit || '-' }}</span>
             </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.unit')" prop="unit">
-            <el-input
+            <el-select
               v-model="formData.unit"
               :placeholder="$t('research.environmentNewData.placeholder.unit')"
               maxlength="20"
-              :disabled="isReadOnly"
+              disabled
             />
           </el-form-item>
 
@@ -166,7 +174,7 @@
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
               maxlength="100"
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
 
@@ -178,7 +186,7 @@
               :placeholder="$t('research.environmentNewData.placeholder.remark')"
               maxlength="500"
               show-word-limit
-              :disabled="isReadOnly"
+              :disabled="isReadOnly || isAuditMode"
             />
           </el-form-item>
         </div>
@@ -278,11 +286,12 @@ const loading = ref(false)
 const submitting = ref(false)
 const plotLoading = ref(false)
 const plotOptions = ref([])
-const { options, loading: dictLoading } = useDict(['weather_station'])
+const { options, loading: dictLoading, getActualValueByValue } = useDict(['weather_station', 'env_parameter_code'])
 
 const isEdit = computed(() => !!route.params.envRecordId)
 const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
-const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
+const isReadOnly = computed(() => pageMode.value === 'view')
+const isAuditMode = computed(() => pageMode.value === 'audit')
 
 const formData = reactive({
   envRecordId: '',
@@ -299,6 +308,10 @@ const formData = reactive({
   observerId: '',
   workflowStatus: ''// 添加审批意见字段
 })
+
+const unitOptions = ref([
+  { value: '°C', label: '°C' },
+])
 
 const rules = reactive({
   plotId: [
@@ -349,6 +362,17 @@ const handlePlotChange = (plotId) => {
     formData.batchId = selectedPlot.batchId || ''
     formData.trialId = selectedPlot.trialId || ''
   }
+}
+
+// 参数代码选择变化时，自动填充单位
+const handleParameterCodeChange = (parameterCode) => {
+  if (!parameterCode) {
+    formData.unit = ''
+    return
+  }
+  // 从字典的 actualValue 获取单位
+  const unit = getActualValueByValue('env_parameter_code', parameterCode)
+  formData.unit = unit || ''
 }
 
 // 加载详情数据

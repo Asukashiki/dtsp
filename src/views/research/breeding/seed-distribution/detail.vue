@@ -57,7 +57,7 @@
           <div class="info-item">
             <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeStatus') }}:</span>
             <span class="info-value">
-              <el-tag type="success" size="small">{{ $t(`research.breeding.seed.distribution.status.${data.distributeStatus}`) }}</el-tag>
+              <el-tag type="success" size="small">{{ data.distributeStatus }}</el-tag>
             </span>
           </div>
           <div class="info-item full-width" v-if="data.remark">

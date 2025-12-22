@@ -17,46 +17,11 @@
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
           </el-button>
-          <el-button type="primary" @click="handleEdit"
-            v-if="detailData.status === 'draft' || detailData.status === 'rejected'">
-            <i class="ri-edit-line"></i>
-            {{ $t('common.edit') }}
-          </el-button>
         </div>
       </div>
 
       <!-- 内容区域 -->
       <div class="content-wrapper" v-loading="loading">
-        <!-- 基本信息 -->
-        <div class="info-section">
-          <div class="section-header">
-            <i class="ri-information-line"></i>
-            <span>{{ $t('farmerDemand.detailSections.basicInfo') }}</span>
-          </div>
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.batchNo') }}</div>
-              <div class="value">{{ detailData.batchNo || '-' }}</div>
-            </div>
-            <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.status') }}</div>
-              <div class="value">
-                <el-tag :type="getStatusType(detailData.status)">
-                  {{ detailData.statusName || getStatusLabel(detailData.status) }}
-                </el-tag>
-              </div>
-            </div>
-            <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.daUserName') }}</div>
-              <div class="value">{{ detailData.daUserName || '-' }}</div>
-            </div>
-            <div class="info-item">
-              <div class="label">{{ $t('farmerDemand.form.createdTime') }}</div>
-              <div class="value">{{ detailData.createdTime || '-' }}</div>
-            </div>
-          </div>
-        </div>
-
         <!-- 农民信息 -->
         <div class="info-section">
           <div class="section-header">
@@ -126,10 +91,34 @@
                     {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
                   </template>
                 </el-table-column>
-<!--                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="120" />-->
-<!--                <el-table-column prop="specification" :label="$t('farmerDemand.form.specification')" min-width="120" />-->
-                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100" />
-                <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120" />
+                <el-table-column prop="season" :label="$t('farmerDemand.form.season')" width="120">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('agri_season', row.season) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="cropLand" :label="$t('farmerDemand.form.cropLand')" width="140">
+                  <template #default="{ row }">
+                    {{ row.cropLand || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="180">
+                  <template #default="{ row }">
+                    <el-input-number
+                      v-if="detailData.status === '1'"
+                      v-model="row.quantity"
+                      :min="0"
+                      :precision="2"
+                      :controls="false"
+                      style="width: 100%"
+                    />
+                    <span v-else>{{ row.quantity || '-' }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="fertilizerAmount" :label="$t('maximum allowable quantity')" width="140">
+                  <template #default="{ row }">
+                    {{ row.fertilizerAmount || '-' }}
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
             <div class="items-cards mobile-only">
@@ -142,28 +131,58 @@
                   </div>
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.inputType') }}:</span>
-                    <span class="value">{{ item.inputType }}</span>
+                    <span class="value">{{ getInputTypeLabel(item.inputType) }}</span>
                   </div>
                   <div class="item-row">
-                    <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
-                    <span class="value">{{ item.variety }}</span>
-                  </div>
-                  <div class="item-row" v-if="item.specification">
-                    <span class="label">{{ $t('farmerDemand.form.specification') }}:</span>
-                    <span class="value">{{ item.specification }}</span>
+                    <span class="label">{{ $t('farmerDemand.form.season') }}:</span>
+                    <span class="value">{{ getLabelByValue('agri_season', item.season) }}</span>
                   </div>
                   <div class="item-row">
-                    <span class="label">{{ $t('farmerDemand.form.unit') }}:</span>
-                    <span class="value">{{ item.unit }}</span>
+                    <span class="label">{{ $t('farmerDemand.form.cropLand') }}:</span>
+                    <span class="value">{{ item.cropLand }}</span>
                   </div>
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.quantity') }}:</span>
-                    <span class="value">{{ item.quantity }}</span>
+                    <el-input-number
+                      v-if="detailData.status === '1'"
+                      v-model="item.quantity"
+                      :min="0"
+                      :precision="2"
+                      :controls="false"
+                      style="width: 100%"
+                    />
+                    <span v-else class="value">{{ item.quantity }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('maximum allowable quantity') }}:</span>
+                    <span class="value">{{ item.fertilizerAmount }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </template>
+        </div>
+
+        <!-- 审核操作区域 -->
+        <div class="audit-actions" v-if="detailData.status === '1'">
+          <el-button
+            type="success"
+            size="large"
+            @click="handleApprove"
+            :loading="approveLoading"
+          >
+            <i class="ri-check-line"></i>
+            {{ $t('approve') }}
+          </el-button>
+          <el-button
+            type="danger"
+            size="large"
+            @click="handleReject"
+            :loading="rejectLoading"
+          >
+            <i class="ri-close-line"></i>
+            {{ $t('reject') }}
+          </el-button>
         </div>
       </div>
     </div>
@@ -174,8 +193,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { getFarmerDemandDetail } from '@/api/farmerDemand'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {getFarmerDemandDetail, updateAuditFarmerDemand, updateFarmerDemand} from '@/api/farmerDemand'
+import { approveDemand, rejectDemand } from '@/api/demandAudit'
 import { useDict, clearDictCache } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -183,12 +203,17 @@ const route = useRoute()
 const { t } = useI18n()
 
 const loading = ref(false)
+const approveLoading = ref(false)
+const rejectLoading = ref(false)
 const detailData = ref({})
+const originalData = ref({}) // 保存原始数据用于对比
 
 // 清除字典缓存并加载
 clearDictCache('input_type')
 clearDictCache('input_category')
 clearDictCache('farmer_demand_status')
+
+const { getLabelByValue, options } = useDict(['agri_season', 'agri_unit'])
 
 
 const {
@@ -218,7 +243,6 @@ const inputCategoryOptions = computed(() => ({
   fertilizer: t('farmerDemand.inputCategory.fertilizer'),
   pesticide: t('farmerDemand.inputCategory.pesticide')
 }))
-
 
 
 
@@ -278,6 +302,8 @@ const loadData = async () => {
     const res = await getFarmerDemandDetail(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
+      // 深拷贝保存原始数据
+      originalData.value = JSON.parse(JSON.stringify(res.data))
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -295,6 +321,133 @@ const handleBack = () => {
 // 编辑
 const handleEdit = () => {
   router.push({ name: 'FarmerDemandEdit', params: { id: route.params.id } })
+}
+
+// 审核通过
+const handleApprove = async () => {
+  try {
+    // 先校验 Demand Quantity 不能超过 maximum allowable quantity
+    if (detailData.value.inputItems && detailData.value.inputItems.length > 0) {
+      for (let i = 0; i < detailData.value.inputItems.length; i++) {
+        const item = detailData.value.inputItems[i]
+        if (item.fertilizerAmount && item.quantity > item.fertilizerAmount) {
+          ElMessage.warning(
+            t('farmerDemand.audit.quantityExceedsMax', {
+              index: i + 1,
+              quantity: item.quantity,
+              max: item.fertilizerAmount
+            })
+          )
+          return
+        }
+      }
+    }
+
+    await ElMessageBox.confirm(
+      t('farmerDemand.audit.approveConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    approveLoading.value = true
+
+    // 检查是否修改了 quantity
+    let quantityChanged = false
+    if (detailData.value.inputItems && originalData.value.inputItems) {
+      for (let i = 0; i < detailData.value.inputItems.length; i++) {
+        const currentItem = detailData.value.inputItems[i]
+        const originalItem = originalData.value.inputItems[i]
+        if (currentItem.quantity !== originalItem.quantity) {
+          quantityChanged = true
+          break
+        }
+      }
+    }
+
+    // 如果 quantity 有变化，先更新
+    if (quantityChanged) {
+      const updateRes = await updateAuditFarmerDemand({
+        id: detailData.value.id,
+        farmerId: detailData.value.farmerId,
+        farmerName: detailData.value.farmerName,
+        year: detailData.value.year,
+        inputItems: detailData.value.inputItems,
+        remark: detailData.value.remark,
+        status: '2'
+      })
+
+      if (updateRes.code !== 200) {
+        ElMessage.error(updateRes.message || t('common.updateFailed'))
+        approveLoading.value = false
+        return
+      }
+    }
+
+    // 执行审核通过
+    const res = await approveDemand({
+      ids: [route.params.id]
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('farmerDemand.audit.approveSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(res.message || t('farmerDemand.audit.approveFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Approve failed:', error)
+      ElMessage.error(t('farmerDemand.audit.approveFailed'))
+    }
+  } finally {
+    approveLoading.value = false
+  }
+}
+
+// 审核拒绝
+const handleReject = async () => {
+  try {
+    const { value: auditOpinion } = await ElMessageBox.prompt(
+      t('farmerDemand.audit.rejectReason'),
+      t('common.reject'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputPlaceholder: t('farmerDemand.audit.rejectReasonPlaceholder'),
+        inputType: 'textarea',
+        inputValidator: (value) => {
+          if (!value || !value.trim()) {
+            return t('farmerDemand.audit.rejectReasonRequired')
+          }
+          return true
+        }
+      }
+    )
+
+    rejectLoading.value = true
+    const res = await rejectDemand({
+      ids: [route.params.id],
+      auditOpinion: auditOpinion.trim()
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('farmerDemand.audit.rejectSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(res.message || t('farmerDemand.audit.rejectFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Reject failed:', error)
+      ElMessage.error(t('farmerDemand.audit.rejectFailed'))
+    }
+  } finally {
+    rejectLoading.value = false
+  }
 }
 
 // 初始化
@@ -382,8 +535,22 @@ onMounted(() => {
 
 .info-section:last-child {
   border-bottom: none;
-  margin-bottom: 0;
+  margin-bottom: 32px;
   padding-bottom: 0;
+}
+
+.audit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 2px solid #e8f5e9;
+}
+
+.audit-actions .el-button {
+  min-width: 140px;
+  font-size: 16px;
+  padding: 12px 32px;
 }
 
 .section-header {

@@ -66,7 +66,7 @@ export default {
       approve: 'Approve',
       reject: 'Reject',
       archive: 'Archive',
-      cancel: 'Cancel'
+      void: 'Void'
     },
 
     prompt: 'Prompt',
@@ -305,6 +305,7 @@ export default {
       basicInfo: 'Trial Basic Information',
       trialId: 'Trial ID',
       batchId: 'Breeding Batch',
+      batchName: 'Breeding Batch Name',
       trialName: 'Trial Name',
       locationId: 'Location ID',
       gpsLocation: 'GPS Location',
@@ -314,6 +315,15 @@ export default {
       replications: 'Replications',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
+      createdBy: 'Created By',
+      createdName: 'Created By',
+      createTime: 'Created Time',
+      modifiedBy: 'Modified By',
+      modifiedName: 'Modified By',
+      updateTime: 'Update Time',
+      approvedBy: 'Approved By',
+      approvedName: 'Approved By',
+      approvedTime: 'Approved Time',
     },
 
     placeholder: {
@@ -345,7 +355,12 @@ export default {
       status: 'Status',
       auditStatus: 'Audit Status',
       workflowStatus: 'Workflow Status',
+      createdName: 'Created By',
       createTime: 'Created Time',
+      modifiedName: 'Modified By',
+      updateTime: 'Update Time',
+      approvedName: 'Approved By',
+      approvedTime: 'Approved Time',
       actions: 'Actions',
     },
 

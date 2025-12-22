@@ -18,6 +18,16 @@ export const updateFarmerDemand = (data) => {
   })
 }
 
+
+export const updateAuditFarmerDemand = (data) => {
+  return request({
+    url: '/seed/demand/farmer/updateAudit',
+    method: 'post',
+    data
+  })
+}
+
+
 // 农民需求详情
 export const getFarmerDemandDetail = (id) => {
   return request({

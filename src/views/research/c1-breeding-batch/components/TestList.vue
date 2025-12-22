@@ -86,12 +86,17 @@
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testItem')" prop="testItem">
-            <el-input v-model="formData.testItem" :placeholder="t('common.pleaseEnter')" />
+            <el-select v-model="formData.testItem" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option 
+                v-for="item in testItemOptions" 
+                :key="item.value" 
+                :label="item.label" 
+                :value="item.value" 
+              />
+            </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('research.c1BreedingBatch.test.testDate')" prop="testDate">
-            <el-date-picker v-model="formData.testDate" type="date" :placeholder="t('common.pleaseSelect')" value-format="YYYY-MM-DD" style="width: 100%" />
-          </el-form-item>
+ 
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testValue')">
             <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" />
@@ -105,22 +110,16 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('research.c1BreedingBatch.test.passStatus')">
-            <el-switch 
-              v-model="formData.passStatus" 
-              active-value="TRUE" 
-              inactive-value="FALSE"
-              :active-text="t('research.c1BreedingBatch.test.passTrue')"
-              :inactive-text="t('research.c1BreedingBatch.test.passFalse')"
-            />
-          </el-form-item>
-
           <el-form-item :label="t('research.c1BreedingBatch.test.testResult')" prop="testResult">
             <el-select v-model="formData.testResult" :placeholder="t('common.pleaseSelect')" class="full-width">
               <el-option :label="t('research.c1BreedingBatch.test.resultPass')" value="01" />
               <el-option :label="t('research.c1BreedingBatch.test.resultFail')" value="02" />
               <el-option :label="t('research.c1BreedingBatch.test.resultRetest')" value="03" />
             </el-select>
+          </el-form-item>
+
+         <el-form-item :label="t('research.c1BreedingBatch.test.testDate')" prop="testDate">
+            <el-date-picker v-model="formData.testDate" type="date" :placeholder="t('common.pleaseSelect')" value-format="YYYY-MM-DD" style="width: 100%" />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.tester')">
@@ -146,10 +145,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test } from '@/api/c1BreedingBatch'
+import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test, checkRule } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
 
 const props = defineProps({
@@ -160,6 +159,24 @@ const props = defineProps({
 const emit = defineEmits(['refresh'])
 const { t } = useI18n()
 const userStore = useUserStore()
+
+// TestType与TestItem的映射关系
+const testTypeItemMap = {
+  'GERMINATION': [
+    { label: 'DTE', value: 'DTE' },
+    { label: 'Emergence', value: 'Emergence' },
+    { label: 'Vigor Score', value: 'Vigor Score' }
+  ],
+  'PURITY': [
+    { label: 'Purity', value: 'PURITY' }
+  ],
+  'MOISTURE': [
+    { label: 'Moisture', value: 'MOISTURE' }
+  ],
+  'SEED_HEALTH': [
+    { label: 'Health Test', value: 'HEALTH_TEST' }
+  ]
+}
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -182,6 +199,12 @@ const formData = ref({
   testDesc: '',
   tester: '',
   testOrg: ''
+})
+
+// 根据testType获取可选的testItem选项
+const testItemOptions = computed(() => {
+  const testType = formData.value.testType
+  return testTypeItemMap[testType] || []
 })
 
 const rules = {
@@ -232,6 +255,27 @@ const handleEdit = async (row) => {
 const handleBack = () => {
   currentView.value = 'list'
   editingId.value = null
+}
+
+// 失焦时检查规则
+const checkRuleOnBlur = async () => {
+  const newValue = formData.value.testValue
+  const testItem = formData.value.testItem
+  // 只有当testValue和testItem都有值时才进行检查
+  if (newValue && testItem) {
+    try {
+      // 调用checkRule接口，传入testItem作为dictCode，testValue作为value
+      const response = await checkRule(testItem, parseFloat(newValue))
+      if (response.code === 200) {
+        // 根据返回结果自动设置Test Result
+        // true表示正常(01)，false表示异常(02)
+        formData.value.testResult = response.data ? '01' : '02'
+      }
+    } catch (error) {
+      console.error('检查规则失败:', error)
+      ElMessage.error(t('common.error.operationFailed'))
+    }
+  }
 }
 
 const handleDelete = (id) => {

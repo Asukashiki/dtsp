@@ -66,6 +66,12 @@
         <div class="table-card pc-view">
           <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
             <el-table-column
+              prop="produceBatchId"
+              :label="$t('research.breeding.seed.production.columns.produceBatchId')"
+              width="260"
+              show-overflow-tooltip
+            />
+            <el-table-column
               prop="produceBatchName"
               :label="$t('research.breeding.seed.production.columns.produceBatchName')"
               width="210"
@@ -182,6 +188,10 @@
               </div>
               <h3 class="card-title">{{ item.varietyName }}</h3>
               <div class="card-info">
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchId') }}</span>
+                  <span class="info-value">{{ item.produceBatchId }}</span>
+                </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchName') }}</span>
                   <span class="info-value">{{ item.produceBatchName }}</span>

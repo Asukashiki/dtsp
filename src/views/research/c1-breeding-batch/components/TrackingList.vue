@@ -65,7 +65,7 @@
               <el-option label="Pre-Basic" value="Pre-Basic" />
               <el-option label="Basic" value="Basic" />
               <el-option label="C1" value="C1" />
-              <el-option label="C2" value="C2" />
+              <!-- <el-option label="C2" value="C2" /> -->
             </el-select>
           </el-form-item>
 
@@ -142,26 +142,26 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking } from '@/api/c1BreedingBatch'
+import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking, checkRule } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
 
 // Stage与Score的映射关系
 const stageScoreMap = {
   'PURITY': [
-    { label: 'Purity (品种纯度)', value: 'PURITY' },
-    { label: 'Insect Damage (虫害率)', value: 'INSECT_DAMAGE' },
-    { label: 'Disease (病害率)', value: 'DISEASE' }
+    { label: 'Purity', value: 'PURITY' },
+    { label: 'Insect Damage', value: 'INSECT_DAMAGE' },
+    { label: 'Disease', value: 'DISEASE' }
   ],
   'VEGETATIVE': [
-    { label: 'Plant Height (株高)', value: 'PLANT_HEIGHT' },
-    { label: 'Vigor (长势评分)', value: 'VIGOR' }
+    { label: 'Plant Height', value: 'PLANT_HEIGHT' },
+    { label: 'Vigor', value: 'VIGOR' }
   ],
   'HARVEST': [
-    { label: 'Yield (实测产量)', value: 'YIELD' },
-    { label: 'Moisture (水分含量)', value: 'MOISTURE' }
+    { label: 'Yield', value: 'YIELD' },
+    { label: 'Moisture', value: 'MOISTURE' }
   ],
   'LAND_PREPARATION': [],
   'PLANTING': [],
@@ -305,6 +305,25 @@ const handleSubmit = async () => {
 }
 const getResultText = (result) => ({ '01': t('research.c1BreedingBatch.tracking.resultNormal'), '02': t('research.c1BreedingBatch.tracking.resultAbnormal'), '03': t('research.c1BreedingBatch.tracking.resultObserving') }[result] || result)
 const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': 'warning' }[result] || 'info')
+
+// 失焦时检查规则
+const checkRuleOnBlur = async () => {
+  const newValue = formData.value.inspectionValue
+  // 只有当score是Plant Height时才进行检查
+  try {
+    // 调用checkRule接口，传入Plant Height作为dictCode，inspectionValue作为value
+    const response = await checkRule(formData.value.score, parseFloat(newValue))
+    if (response.code === 200) {
+      // 根据返回结果自动设置Tracking Result
+      // true表示正常(01)，false表示异常(02)
+      formData.value.trackingResult = response.data ? '01' : '02'
+    }
+  } catch (error) {
+    console.error('检查规则失败:', error)
+    ElMessage.error(t('common.error.operationFailed'))
+  }
+
+}
 </script>
 <style scoped lang="scss">
 .tracking-list-component {

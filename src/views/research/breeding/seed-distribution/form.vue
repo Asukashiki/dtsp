@@ -95,7 +95,7 @@
                 style="width: 100%"
                 @change="handleSeedLevelChange"
               >
-                <el-option label="Breeder" value="Breeder" />
+                <el-option label="Basic" value="Basic" />
                 <el-option label="Pre-Basic" value="Pre-Basic" />
               </el-select>
             </el-form-item>
@@ -411,8 +411,8 @@ const handleSeedLevelChange = (value) => {
   formData.toSeedLevel = ''
   
   // 根据源种子等级设置目标种子等级可选值
-  if (value === 'Breeder') {
-    toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
+  if (value === 'Basic') {
+    toSeedLevelOptions.value = [{ label: 'C1', value: 'C1' }]
   } else if (value === 'Pre-Basic') {
     toSeedLevelOptions.value = [{ label: 'Basic', value: 'Basic' }]
   } else {

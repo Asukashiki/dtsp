@@ -102,6 +102,7 @@ export default {
   // 表格列
   columns: {
     applicantOrgName: '组织名称',
+    authId: '授权ID',
     cropType: '作物种类',
     varietyName: '品种名称',
     applyDate: '申请日期',

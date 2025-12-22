@@ -48,6 +48,8 @@ export default {
   action: 'Action',
   days: 'days',
   audit: 'Audit',
+  approve: 'Approve',
+  reject: 'Reject',
   update: 'Update',
   remarks: 'Remarks',
   refresh: 'Refresh',

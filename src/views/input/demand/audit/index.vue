@@ -150,14 +150,14 @@
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="success" v-if ="row.status === '1'"@click="handleApprove(row)">
-                        <i class="ri-check-line"></i>
-                        {{ $t('demandAudit.actions.approve') }}
-                      </el-button>
-                      <el-button link type="danger" v-if ="row.status === '1'" @click="handleReject(row)">
-                        <i class="ri-close-line"></i>
-                        {{ $t('demandAudit.actions.reject') }}
-                      </el-button>
+<!--                      <el-button link type="success" v-if ="row.status === '1'"@click="handleApprove(row)">-->
+<!--                        <i class="ri-check-line"></i>-->
+<!--                        {{ $t('demandAudit.actions.approve') }}-->
+<!--                      </el-button>-->
+<!--                      <el-button link type="danger" v-if ="row.status === '1'" @click="handleReject(row)">-->
+<!--                        <i class="ri-close-line"></i>-->
+<!--                        {{ $t('demandAudit.actions.reject') }}-->
+<!--                      </el-button>-->
                     </div>
                   </template>
                 </el-table-column>

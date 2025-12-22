@@ -5,121 +5,64 @@
         <div class="header-left">
           <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
           <div class="header-content">
-            <h1 class="page-title">{{ isEdit ? $t('research.breedingData.trait.edit') : $t('research.breedingData.trait.add') }}</h1>
+            <h1 class="page-title">{{ isEdit ? $t('trait.edit') : $t('trait.add') }}</h1>
           </div>
         </div>
       </div>
 
       <div class="content-wrapper">
         <el-form ref="formRef" :model="formData" :rules="rules" label-width="160px" v-loading="loading">
-          <!-- Basic Information -->
+          <!-- 基本信息 -->
           <div class="info-card">
             <div class="card-header">
-              <div class="card-title"><i class="ri-information-line"></i><span>Basic Information</span></div>
+              <div class="card-title"><i class="ri-information-line"></i><span>{{ $t('trait.cards.basicInfo') }}</span></div>
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <!-- Trait Record ID (read-only, auto-generated) -->
+                <!-- 记录ID (只读，自动生成) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Trait Record ID">
-                    <el-input v-model="formData.traitRecordId" disabled placeholder="{plot_id}-T{record_no}" />
+                  <el-form-item :label="$t('trait.recordId')">
+                    <el-input v-model="formData.recordId" disabled :placeholder="$t('common.autoGenerate')" />
                   </el-form-item>
                 </el-col>
-                <!-- Plot ID -->
+                <!-- 地块ID -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Plot ID" prop="plotId">
-                    <el-select v-model="formData.plotId" placeholder="Please select Plot ID" filterable style="width: 100%" @change="handlePlotChange">
+                  <el-form-item :label="$t('trait.plotId')" prop="plotId">
+                    <el-select v-model="formData.plotId" :placeholder="$t('trait.selectPlot')" filterable style="width: 100%" @change="handlePlotChange">
                       <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- Trial ID (read-only, auto-filled from Plot) -->
+                <!-- 试验ID (只读，自动填充) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Trial ID">
-                    <el-input v-model="formData.trialId" disabled placeholder="Auto-filled from Plot ID" />
+                  <el-form-item :label="$t('trait.trialId')">
+                    <el-input v-model="formData.trialId" disabled :placeholder="$t('common.autoFill')" />
                   </el-form-item>
                 </el-col>
-                <!-- Batch ID (read-only, auto-filled from Plot) -->
+                <!-- 批次ID (只读，自动填充) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Batch ID">
-                    <el-input v-model="formData.batchId" disabled placeholder="Auto-filled from Plot ID" />
+                  <el-form-item :label="$t('trait.batchId')">
+                    <el-input v-model="formData.batchId" disabled :placeholder="$t('common.autoFill')" />
                   </el-form-item>
                 </el-col>
-                <!-- Observation Date -->
+                <!-- 观测日期 -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Observation Date" prop="observationDate">
-                    <el-date-picker v-model="formData.observationDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" placeholder="Select observation date and time" />
+                  <el-form-item :label="$t('trait.observationDate')" prop="observationDate">
+                    <el-date-picker v-model="formData.observationDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" :placeholder="$t('common.pleaseSelect')" />
                   </el-form-item>
                 </el-col>
-                <!-- Growth Stage -->
+                <!-- 生长阶段 -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Growth Stage" prop="growthStage">
-                    <el-select v-model="formData.growthStage" placeholder="Please select Growth Stage" style="width: 100%">
-                      <el-option label="Germination" value="germination" />
-                      <el-option label="Seedling" value="seedling" />
-                      <el-option label="Tillering" value="tillering" />
-                      <el-option label="Stem Elongation" value="stem_elongation" />
-                      <el-option label="Booting" value="booting" />
-                      <el-option label="Heading" value="heading" />
-                      <el-option label="Flowering" value="flowering" />
-                      <el-option label="Milk" value="milk" />
-                      <el-option label="Dough" value="dough" />
-                      <el-option label="Maturity" value="maturity" />
+                  <el-form-item :label="$t('trait.growthStage')" prop="growthStage">
+                    <el-select v-model="formData.growthStage" :placeholder="$t('trait.selectGrowthStage')" style="width: 100%">
+                      <el-option v-for="item in dictOptions.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- Trait Name -->
+                <!-- 观测员 -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Trait Name" prop="traitName">
-                    <el-select
-                      v-model="formData.traitName"
-                      placeholder="Please select trait name"
-                      filterable
-                      style="width: 100%"
-                      @change="handleTraitChange"
-                    >
-                      <el-option
-                        v-for="item in traitOptions"
-                        :key="item.code"
-                        :label="`${item.name} (${item.code})`"
-                        :value="item.name"
-                      >
-                        <div style="display: flex; justify-content: space-between;">
-                          <span>{{ item.name }}</span>
-                          <span style="color: #8492a6; font-size: 13px;">{{ item.code }}</span>
-                        </div>
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <!-- Trait Value -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Trait Value" prop="traitValue">
-                    <el-input-number v-model="formData.traitValue" :precision="2" style="width: 100%" placeholder="Enter trait value" />
-                  </el-form-item>
-                </el-col>
-                <!-- Unit -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Unit">
-                    <el-select v-model="formData.unit" placeholder="Select unit" style="width: 100%" clearable>
-                      <el-option
-                        v-for="u in currentUnitOptions"
-                        :key="u"
-                        :label="u"
-                        :value="u"
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <!-- Observer ID (Farmer selection) -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Observer ID" prop="observerId">
-                    <el-select
-                      v-model="formData.observerId"
-                      placeholder="Please select observer"
-                      filterable
-                      style="width: 100%"
-                    >
+                  <el-form-item :label="$t('trait.observerId')" prop="observerId">
+                    <el-select v-model="formData.observerId" :placeholder="$t('trait.selectObserver')" filterable style="width: 100%">
                       <el-option
                         v-for="item in farmerOptions"
                         :key="item.farmerId"
@@ -134,71 +77,9 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- Morphological -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-ruler-line"></i><span>{{ $t('research.breedingData.trait.form.morphological') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
+                <!-- 照片上传 -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.plantHeightCm')">
-                    <el-input-number v-model="formData.plantHeightCm" :min="0" :precision="2" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.tillerCount')">
-                    <el-input-number v-model="formData.tillerCount" :min="0" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.spikeLengthCm')">
-                    <el-input-number v-model="formData.spikeLengthCm" :min="0" :precision="2" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- Growth Period -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-calendar-line"></i><span>{{ $t('research.breedingData.trait.form.growthPeriod') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.daysToEmergence')">
-                    <el-input-number v-model="formData.daysToEmergence" :min="0" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.daysToTillering')">
-                    <el-input-number v-model="formData.daysToTillering" :min="0" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trait.form.daysToHeading')">
-                    <el-input-number v-model="formData.daysToHeading" :min="0" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- Photo Information -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title"><i class="ri-image-line"></i><span>{{ $t('research.breedingData.trait.form.photoInfo') }}</span></div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24">
-                  <el-form-item :label="$t('research.breedingData.trait.form.photoUrl')">
+                  <el-form-item :label="$t('trait.photoUrl')">
                     <el-upload
                       class="photo-upload"
                       :http-request="handleUploadPhoto"
@@ -216,7 +97,101 @@
                     </el-upload>
                   </el-form-item>
                 </el-col>
+                <!-- 备注 -->
+                <el-col :xs="24">
+                  <el-form-item :label="$t('trait.remarks')">
+                    <el-input v-model="formData.remarks" type="textarea" :rows="3" :placeholder="$t('common.pleaseEnter')" />
+                  </el-form-item>
+                </el-col>
               </el-row>
+            </div>
+          </div>
+
+          <!-- 性状明细 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title"><i class="ri-list-check"></i><span>{{ $t('trait.cards.traitDetails') }}</span></div>
+              <div class="header-actions">
+                <el-button type="primary" @click="handleAddTrait">
+                  <i class="ri-add-line"></i>{{ $t('trait.addTrait') }}
+                </el-button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- PC端表格 -->
+              <div class="pc-only">
+                <el-table :data="detailList" border stripe v-if="detailList.length > 0">
+                  <el-table-column type="index" label="#" width="60" align="center" />
+                  <el-table-column :label="$t('trait.traitName')" min-width="200">
+                    <template #default="{ row }">
+                      <el-select v-model="row.traitCode" :placeholder="$t('trait.selectTrait')" filterable @change="handleTraitChange(row)" style="width: 100%">
+                        <el-option
+                          v-for="item in dictOptions.agronomic_trait_name || []"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        >
+                          <div style="display: flex; justify-content: space-between;">
+                            <span>{{ item.label }}</span>
+                            <span style="color: #8492a6; font-size: 12px;">{{ item.actualValue }}</span>
+                          </div>
+                        </el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('trait.traitValue')" min-width="150">
+                    <template #default="{ row }">
+                      <el-input-number v-model="row.traitValue" :precision="2" :controls="false" style="width: 100%" :placeholder="$t('trait.enterValue')" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('trait.unit')" min-width="120">
+                    <template #default="{ row }">
+                      <el-input v-model="row.unit" disabled style="width: 100%" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('common.actions')" width="160" align="center">
+                    <template #default="{ $index }">
+                      <el-button link type="danger" @click="handleRemoveTrait($index)">
+                        <i class="ri-delete-bin-line"></i>{{ $t('trait.removeTrait') }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <el-empty v-else :description="$t('trait.noTraits')" />
+              </div>
+
+              <!-- 移动端卡片 -->
+              <div class="mobile-only">
+                <div v-if="detailList.length > 0" class="trait-card-list">
+                  <div v-for="(item, index) in detailList" :key="index" class="trait-card">
+                    <div class="trait-card-header">
+                      <span class="trait-number">#{{ index + 1 }}</span>
+                      <el-button link type="danger" size="small" @click="handleRemoveTrait(index)">
+                        <i class="ri-delete-bin-line"></i>{{ $t('trait.removeTrait') }}
+                      </el-button>
+                    </div>
+                    <div class="trait-card-body">
+                      <el-form-item :label="$t('trait.traitName')">
+                        <el-select v-model="item.traitCode" :placeholder="$t('trait.selectTrait')" filterable @change="handleTraitChange(item)" style="width: 100%">
+                          <el-option
+                            v-for="option in dictOptions.agronomic_trait_name || []"
+                            :key="option.value"
+                            :label="option.label"
+                            :value="option.value"
+                          />
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item :label="$t('trait.traitValue')">
+                        <el-input-number v-model="item.traitValue" :precision="2" :controls="false" style="width: 100%" :placeholder="$t('trait.enterValue')" />
+                      </el-form-item>
+                      <el-form-item :label="$t('trait.unit')">
+                        <el-input v-model="item.unit" disabled style="width: 100%" />
+                      </el-form-item>
+                    </div>
+                  </div>
+                </div>
+                <el-empty v-else :description="$t('trait.noTraits')" />
+              </div>
             </div>
           </div>
 
@@ -235,14 +210,18 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getAgronomicTraitInfo, addAgronomicTrait, editAgronomicTrait, getPlotOptions } from '@/api/breedingData'
+import { getTraitRecordInfo, addTraitRecord, editTraitRecord, getPlotOptions } from '@/api/breedingData'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getFarmerOptions } from '@/api/newFarm'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用字典获取性状选项和生长阶段
+const { options: dictOptions, getActualValueByValue } = useDict(['agronomic_trait_name', 'growth_cycle'])
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -250,84 +229,32 @@ const submitLoading = ref(false)
 const plotOptions = ref([])
 const farmerOptions = ref([])
 const photoFileList = ref([])
-
-// Trait options with code and name
-const traitOptions = ref([
-  { code: 'PH', name: 'Plant Height' },
-  { code: 'TC', name: 'Tiller Count' },
-  { code: 'SL', name: 'Spike Length' },
-  { code: 'GY', name: 'Grain Yield' },
-  { code: 'TGW', name: 'Thousand Grain Weight' },
-  { code: 'GPC', name: 'Grain Protein Content' },
-  { code: 'LD', name: 'Lodging Resistance' },
-  { code: 'DR', name: 'Disease Resistance' },
-  { code: 'DM', name: 'Days to Maturity' },
-  { code: 'DH', name: 'Days to Heading' },
-  { code: 'FLA', name: 'Flag Leaf Area' },
-  { code: 'RT', name: 'Root Traits' }
-])
+const detailList = ref([])
 
 const isEdit = computed(() => !!route.params.traitId)
 
 const formData = reactive({
-  traitRecordId: '',
+  recordId: '',
   plotId: '',
   trialId: '',
   batchId: '',
-  observationDate: getCurrentDate(),
+  observationDate: getCurrentDateTime(),
   growthStage: '',
-  traitCode: '',
-  traitName: '',
-  traitValue: null,
-  unit: '',
   observerId: '',
-  plantHeightCm: null,
-  tillerCount: null,
-  spikeLengthCm: null,
-  daysToEmergence: null,
-  daysToTillering: null,
-  daysToHeading: null,
-  photoUrl: ''
+  photoUrl: '',
+  remarks: '',
+  status: 'draft'
 })
 
 const rules = {
-  plotId: [{ required: true, message: 'Please select Plot ID', trigger: 'change' }],
-  observationDate: [{ required: true, message: 'Please select Observation Date', trigger: 'change' }],
-  growthStage: [{ required: true, message: 'Please select Growth Stage', trigger: 'change' }],
-  traitName: [{ required: true, message: 'Please select Trait Name', trigger: 'change' }],
-  traitValue: [{ required: true, message: 'Please enter Trait Value', trigger: 'blur' }],
-  observerId: [{ required: true, message: 'Please select Observer', trigger: 'change' }]
+  plotId: [{ required: true, message: t('trait.selectPlot'), trigger: 'change' }],
+  observationDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
+  growthStage: [{ required: true, message: t('trait.selectGrowthStage'), trigger: 'change' }],
+  observerId: [{ required: true, message: t('trait.selectObserver'), trigger: 'change' }]
 }
 
-// Trait 对应 Unit 选项映射（根据评分标准整理）
-const unitDict = {
-  'Days to Emergence': ['Days'],
-  'Days to Heading': ['Days'],
-  'Days to Maturity': ['Days'],
-  'Plant Height': ['cm'],
-  'Tiller Count': ['Count'],
-  'Spike Length': ['cm'],
-  'Grain Yield': ['t/ha', 'kg/plot'],
-  'Thousand Grain Weight': ['g'],
-  'Grain Protein Content': ['%'],
-  'Lodging Resistance': ['1–9 scale'],
-  'Disease Resistance': ['%', '1–9 scale'],
-  'Flag Leaf Area': ['cm²', 'cm2'],
-  'Root Traits': ['1–9 scale', '%']
-}
-
-// 通用备选项（未命中具体映射时展示）
-const genericUnits = ['cm', 'g', 'Days', 'Count', '%', '1–9 scale', 't/ha', 'kg/plot']
-
-// 当前 Unit 选项（依赖所选 Trait Name）
-const currentUnitOptions = computed(() => {
-  const name = formData.traitName
-  if (name && unitDict[name]) return unitDict[name]
-  return genericUnits
-})
-
-// 获取当前日期和时间
-function getCurrentDate() {
+// 获取当前日期时间
+function getCurrentDateTime() {
   const now = new Date()
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
@@ -358,42 +285,46 @@ const loadFarmerOptions = async () => {
   }
 }
 
-
-// Trait 变更处理 - 自动填充 traitCode
-const handleTraitChange = (value) => {
-  const selectedTrait = traitOptions.value.find(item => item.name === value)
-  if (selectedTrait) {
-    formData.traitCode = selectedTrait.code
-    // 当变更性状时，如当前 unit 为空或不在可选列表，自动选择第一个建议单位
-    const opts = unitDict[selectedTrait.name] || genericUnits
-    if (!formData.unit || !opts.includes(formData.unit)) {
-      formData.unit = opts[0] || ''
-    }
-  }
-}
-
-// 地块变更处理 - 自动填充 trial_id 和 batch_id
+// 地块变更处理 - 自动填充试验ID和批次ID
 const handlePlotChange = (plotId) => {
   const selectedPlot = plotOptions.value.find(item => item.plotId === plotId)
   if (selectedPlot) {
     formData.trialId = selectedPlot.trialId || ''
     formData.batchId = selectedPlot.batchId || ''
-    // 生成 trait_record_id
-    generateTraitRecordId()
+    // 生成记录ID（前端预览，后端会重新生成）
+    formData.recordId = `${plotId}-TR***`
   } else {
     formData.trialId = ''
     formData.batchId = ''
-    formData.traitRecordId = ''
+    formData.recordId = ''
   }
 }
 
-// 生成 trait_record_id: {plot_id}-T{record_no}
-const generateTraitRecordId = () => {
-  if (!formData.plotId) return
-  // 这里的 record_no 应该由后端生成，前端显示格式
-  // 临时使用时间戳作为示例
-  const recordNo = String(Date.now()).slice(-6)
-  formData.traitRecordId = `${formData.plotId}-T${recordNo}`
+// 添加性状行
+const handleAddTrait = () => {
+  detailList.value.push({
+    traitCode: '',
+    traitName: '',
+    traitValue: null,
+    unit: '',
+    sortOrder: detailList.value.length + 1
+  })
+}
+
+// 性状选择变更 - 自动填充单位（traitCode 是字典值，traitName 不再单独保存）
+const handleTraitChange = (row) => {
+  const selectedOption = dictOptions.value.agronomic_trait_name?.find(
+    opt => opt.value === row.traitCode
+  )
+  if (selectedOption) {
+    // traitCode 已是字典值，显示时使用 getLabelByValue 获取国际化标签
+    row.unit = selectedOption.actualValue // 单位从 actualValue 获取
+  }
+}
+
+// 移除性状行
+const handleRemoveTrait = (index) => {
+  detailList.value.splice(index, 1)
 }
 
 // 照片上传处理
@@ -419,13 +350,13 @@ const handleUploadPhoto = async (options) => {
       photoFileList.value = [fileObj]
       formData.photoUrl = dataId
 
-      ElMessage.success(t('common.uploadSuccess'))
+      ElMessage.success(t('trait.uploadSuccess'))
     } else {
-      ElMessage.error(res.msg || t('common.uploadFailed'))
+      ElMessage.error(res.msg || t('trait.uploadFailed'))
     }
   } catch (error) {
     console.error('Upload error:', error)
-    ElMessage.error(t('common.uploadFailed'))
+    ElMessage.error(t('trait.uploadFailed'))
   }
 }
 
@@ -463,16 +394,40 @@ const handlePreviewPhoto = async (file) => {
 
 const getInfo = async () => {
   if (!isEdit.value) return
+  
+  // 同时支持params和query两种方式获取traitId（路由参数名为traitId）
+  const recordId = route.params.traitId || route.query.traitId
+  
+  if (!recordId) {
+    console.error('No traitId found in route params or query')
+    ElMessage.error('Missing record ID parameter')
+    return
+  }
+  
+  console.log('Loading trait record for edit, recordId:', recordId)
+  
   loading.value = true
   try {
-    const res = await getAgronomicTraitInfo(route.params.traitId)
+    const res = await getTraitRecordInfo(recordId)
     Object.assign(formData, res.data)
+
+    // 处理明细列表
+    if (res.data.detailList && res.data.detailList.length > 0) {
+      detailList.value = res.data.detailList.map(detail => ({
+        detailId: detail.detailId,
+        traitCode: detail.traitCode,
+        traitName: detail.traitName,
+        traitValue: detail.traitValue,
+        unit: detail.unit,
+        sortOrder: detail.sortOrder
+      }))
+    }
 
     // 处理照片
     if (res.data.photoUrl) {
       const fileId = res.data.photoUrl
       photoFileList.value = [{
-        name: t('research.breedingData.trait.form.photoUrl'),
+        name: t('trait.photoUrl'),
         url: fileId,
         dataId: fileId,
         fileId: fileId,
@@ -480,7 +435,7 @@ const getInfo = async () => {
       }]
     }
   } catch (error) {
-    console.error('Failed to load trait info:', error)
+    console.error('Failed to load record info:', error)
   } finally {
     loading.value = false
   }
@@ -490,16 +445,34 @@ const handleSubmit = async () => {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
+  // 验证至少有一条性状数据
+  if (detailList.value.length === 0) {
+    ElMessage.warning(t('trait.addAtLeastOneTrait'))
+    return
+  }
+
+  // 验证每条性状数据完整性
+  for (let i = 0; i < detailList.value.length; i++) {
+    const detail = detailList.value[i]
+    if (!detail.traitCode || detail.traitValue === null || detail.traitValue === '') {
+      ElMessage.warning(`${t('trait.traitDetails')} ${i + 1}: ${t('common.pleaseComplete')}`)
+      return
+    }
+  }
+
   submitLoading.value = true
   try {
-    const submitData = { ...formData }
+    const submitData = {
+      ...formData,
+      detailList: detailList.value
+    }
 
     if (isEdit.value) {
-      await editAgronomicTrait(submitData)
-      ElMessage.success('Trait updated successfully')
+      await editTraitRecord(submitData)
+      ElMessage.success(t('trait.editSuccess'))
     } else {
-      await addAgronomicTrait(submitData)
-      ElMessage.success('Trait added successfully')
+      await addTraitRecord(submitData)
+      ElMessage.success(t('trait.addSuccess'))
     }
     goBack()
   } catch (error) {
@@ -513,7 +486,6 @@ const goBack = () => router.push('/research/breeding-data/trait')
 
 onMounted(() => {
   loadPlotOptions()
-  // 仅加载农民选项供用户选择，不做自动设置
   loadFarmerOptions()
   getInfo()
 })
@@ -541,22 +513,48 @@ onMounted(() => {
   margin-top: 8px;
 }
 
-:deep(.el-upload-list__item) {
-  transition: all 0.3s;
-  cursor: pointer;
+// 移动端性状卡片
+.trait-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-:deep(.el-upload-list__item:hover) {
-  background-color: #f5f7fa;
+.trait-card {
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f9fafb;
+
+  .trait-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e4e7ed;
+
+    .trait-number {
+      font-weight: 600;
+      color: #009A44;
+      font-size: 16px;
+    }
+  }
+
+  .trait-card-body {
+    :deep(.el-form-item) {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
-:deep(.el-upload-list__item-name) {
-  color: #009A44;
-  text-decoration: none;
-}
-
-:deep(.el-upload-list__item-name:hover) {
-  color: #007a36;
-  text-decoration: underline;
+@media (max-width: 768px) {
+  .card-body {
+    padding: 16px;
+  }
 }
 </style>

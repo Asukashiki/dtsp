@@ -47,7 +47,6 @@
                 clearable
                 class="search-select"
               >
-                <el-option :label="$t('research.datasetCompilation.allStatus')" value="" />
                 <el-option :label="$t('research.datasetCompilation.status.draft')" value="draft" />
                 <el-option :label="$t('research.datasetCompilation.status.submitted')" value="submitted" />
                 <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
@@ -156,15 +155,6 @@
                         <i class="ri-send-plane-line"></i>
                         {{ $t('research.datasetCompilation.actions.submit') }}
                       </el-button>
-                      <el-button
-                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
-                        link
-                        type="danger"
-                        @click="handleDelete(row)"
-                      >
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
-                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -190,7 +180,7 @@
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
                     <i class="ri-database-2-line"></i>
-                    <span>{{ item.batchName }}</span>
+                    <span>{{ item.varietyName }}</span>
                   </div>
                   <el-tag :type="getStatusType(item.datasetStatus)" size="small">
                     {{ getStatusLabel(item.datasetStatus) }}
@@ -253,14 +243,7 @@
                   >
                     {{ $t('research.datasetCompilation.actions.submit') }}
                   </el-button>
-                  <el-button
-                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
-                    type="danger"
-                    size="small"
-                    @click="handleDelete(item)"
-                  >
-                    {{ $t('common.delete') }}
-                  </el-button>
+
                 </div>
               </div>
 
@@ -317,7 +300,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getDatasetList({
-      batchName: searchForm.keyword,
+      varietyName: searchForm.keyword,
       datasetStatus: searchForm.datasetStatus,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize

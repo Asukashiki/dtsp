@@ -184,3 +184,12 @@ export const recordC1BatchPrint = (id) => {
     method: 'post'
   })
 }
+
+// 检查规则是否满足条件
+export const checkRule = (dictCode, value) => {
+  return agricultureRequest({
+    url: `/seed/rulesInfo/checkRule`,
+    method: 'get',
+    params: { dictCode, value }
+  })
+}

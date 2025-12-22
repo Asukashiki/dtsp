@@ -31,6 +31,7 @@
               <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Irrigation Count">{{ irrigationCount }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -48,6 +49,23 @@
             </el-descriptions>
           </div>
         </div>
+
+        <!-- Audit Information -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title"><i class="ri-file-info-line"></i><span>Audit Information</span></div>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.createdBy')">{{ detailData.createdName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.createTime')">{{ detailData.createTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.modifiedBy')">{{ detailData.modifiedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.updateTime')">{{ detailData.updateTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.auditedBy')">{{ detailData.auditedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.plot.columns.auditTime')">{{ detailData.auditTime || '-' }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -56,20 +74,33 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getPlotInfo } from '@/api/breedingData'
+import { getPlotInfo, getIrrigationCount } from '@/api/breedingData'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+const irrigationCount = ref(0)
 
 const getInfo = async () => {
   loading.value = true
   try {
     const res = await getPlotInfo(route.params.plotId)
     detailData.value = res.data || {}
+    // 获取灌溉次数
+    await loadIrrigationCount()
   } finally {
     loading.value = false
+  }
+}
+
+const loadIrrigationCount = async () => {
+  try {
+    const res = await getIrrigationCount()
+    const countMap = res.data || {}
+    irrigationCount.value = countMap[route.params.plotId] || 0
+  } catch (error) {
+    console.error('获取灌溉次数失败:', error)
   }
 }
 

@@ -36,25 +36,33 @@
               >
                 <el-option
                   v-for="item in breedSeedProduceList"
-                  :key="item.breedSeedProduceBatchId"
-                  :label="`${item.varietyName} - ${item.breedBatchId} (${item.produceSeedQuantrity} kg)`"
-                  :value="item.breedSeedProduceBatchId"
+                  :key="item.produceBatchId"
+                  :label="`${item.varietyName}`"
+                  :value="item.produceBatchId"
                 />
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
-              <el-input v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" readonly />
+              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
+                <el-option
+                  v-for="item in options.crop_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyName')" prop="varietyName">
               <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" readonly />
             </el-form-item>
 
-            <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">
-              <el-select v-model="formData.breedingLevel" :placeholder="$t('research.breeding.breedingBatch.form.breedingLevelPlaceholder')" class="full-width">
-                <el-option label="OriginalSeed" value="OriginalSeed" />
+            <el-form-item label="Multiplication Level" prop="breedingLevel">
+              <el-select v-model="formData.breedingLevel" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Pre-Basic" value="Pre-Basic" />
+                <el-option label="Basic" value="Basic" />
                 <el-option label="C1" value="C1" />
-                <el-option label="C2" value="C2" />
+                <!-- <el-option label="C2" value="C2" /> -->
               </el-select>
             </el-form-item>
 
@@ -96,7 +104,7 @@
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgId')" prop="orgId">
-              <el-input v-model="formData.orgId" :placeholder="$t('research.breeding.breedingBatch.form.orgIdPlaceholder')" clearable />
+              <el-input v-model="formData.orgId" :placeholder="$t('research.breeding.breedingBatch.form.orgIdPlaceholder')" clearable disabled />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgName')" prop="orgName">
@@ -134,6 +142,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { useDict } from '@/hooks/useDict'
+import { getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -141,6 +151,7 @@ const route = useRoute()
 const formRef = ref(null)
 const loading = ref(false)
 const breedSeedProduceList = ref([])
+const { options } = useDict(['crop_type'])
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -185,27 +196,43 @@ const loadBreedSeedProduceList = async () => {
 
 // 处理Parent Seed Source变化
 const handleParentSeedSourceChange = (value) => {
+  console.log('Parent seed source changed:', value)
+  
   if (!value) {
     // 如果清空选择，则清空cropType和varietyName
     formData.value.cropType = ''
     formData.value.varietyName = ''
+    console.log('Cleared cropType and varietyName')
     return
   }
 
-  // 根据选中的breedSeedProduceBatchId查找对应的数据
+  // 根据选中的produceBatchId查找对应的数据
   const selectedItem = breedSeedProduceList.value.find(
-    item => item.breedSeedProduceBatchId === value
+    item => item.produceBatchId === value
   )
+  
+  console.log('Selected item:', selectedItem)
 
   if (selectedItem) {
     // 自动填充cropType和varietyName
-    formData.value.cropType = selectedItem.cropType
-    formData.value.varietyName = selectedItem.varietyName
+    formData.value.cropType = selectedItem.cropType || ''
+    formData.value.varietyName = selectedItem.varietyName || ''
+    console.log('Updated formData:', {
+      cropType: formData.value.cropType,
+      varietyName: formData.value.varietyName
+    })
+  } else {
+    console.warn('No matching item found for value:', value)
   }
 }
 
 // 初始化
 onMounted(async () => {
+  // 默认填充机构信息
+  const currentUser = getUserInfo()?.user || {}
+  formData.value.orgName = currentUser.organName || currentUser.ORGAN_NAME || formData.value.orgName
+  formData.value.orgId = currentUser.organCode || currentUser.ORGAN_CODE || formData.value.orgId
+
   await loadBreedSeedProduceList()
   if (isEdit.value) {
     await loadDetail()
@@ -239,7 +266,8 @@ const handleSubmit = async () => {
       loading.value = true
       try {
         const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
-        const response = isEdit.value ? await updateBreedingBatchPage(data) : await addBreedingBatchPage(data)
+        const aData = {...data, objective: formData.value.objective || '1'} 
+        const response = isEdit.value ? await updateBreedingBatchPage(aData) : await addBreedingBatchPage(aData)
 
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? 'Update successful' : 'Add successful')

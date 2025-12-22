@@ -36,7 +36,15 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Trial ID" prop="trialId">
                     <el-select v-model="formData.trialId" placeholder="Please select Trial ID" filterable style="width: 100%" @change="handleTrialChange">
-                      <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
+                      <el-option 
+                        v-for="item in trialOptions" 
+                        :key="item.trialId" 
+                        :label="`${item.trialName} (${item.trialId})`" 
+                        :value="item.trialId"
+                      >
+                        <span style="float: left">{{ item.trialName }}</span>
+                        <span style="float: right; color: #8492a6; font-size: 13px; margin-left: 20px;">{{ item.trialId }}</span>
+                      </el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -123,6 +131,50 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Sowing Time">
                     <el-date-picker v-model="formData.sowingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" placeholder="Select sowing time" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- Audit Information (仅编辑模式显示) -->
+          <div class="info-card" v-if="isEdit">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-info-line"></i>
+                <span>Audit Information</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.createdBy')">
+                    <el-input v-model="formData.createdName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.createTime')">
+                    <el-input v-model="formData.createTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.modifiedBy')">
+                    <el-input v-model="formData.modifiedName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.updateTime')">
+                    <el-input v-model="formData.updateTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.auditedBy')">
+                    <el-input v-model="formData.auditedName" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingData.plot.columns.auditTime')">
+                    <el-input v-model="formData.auditTime" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>

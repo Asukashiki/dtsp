@@ -16,9 +16,6 @@
           <div class="card-header">
             <div class="card-title"><i class="ri-file-list-3-line"></i><span>{{ $t('research.breedingData.farming.list') }}</span></div>
             <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-                <i class="ri-delete-bin-line"></i>{{ $t('common.batchDelete') }}
-              </el-button>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>{{ $t('research.breedingData.farming.add') }}
               </el-button>
@@ -67,7 +64,7 @@
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
-                <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="180" show-overflow-tooltip />
                 <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
@@ -76,12 +73,12 @@
                     {{ formatDateTime(row.activityDate) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="activityType" label="Activity Type" min-width="120" />
+                <el-table-column prop="activityType" label="Activity Type" min-width="160" />
                 <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="quantity" label="Quantity" min-width="100" />
+                <el-table-column prop="quantity" label="Quantity" min-width="160" />
                 <el-table-column prop="unit" label="Unit" min-width="80" />
                 <!-- 新增的审计字段 -->
-                <el-table-column prop="auditStatus" label="Audit Status" min-width="120">
+                <el-table-column prop="auditStatus" label="Audit Status" min-width="160">
                   <template #default="{ row }">
                     <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
                   </template>
@@ -109,7 +106,6 @@
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
                       <el-button link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                      <el-button link type="danger" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
                     </div>
                   </template>
                 </el-table-column>
