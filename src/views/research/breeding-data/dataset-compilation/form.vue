@@ -162,7 +162,7 @@
         <div v-if="isEdit" class="form-section">
           <div class="section-title">
             <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetCompilation.form.statisticsInfoTitle') }}
+            {{ $t('research.datasetCompilation.form.statisticsInfo') }}
           </div>
           <div class="statistics-grid">
             <div class="stat-card">

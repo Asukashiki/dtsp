@@ -17,7 +17,7 @@ export default {
   submitConfirm: '确定提交该数据集吗?',
 
   // 搜索筛选
-  searchPlaceholder: '搜索批次ID、批次名称、品种名称',
+  searchPlaceholder: '搜索品种名称',
   filterByCrop: '按作物类型筛选',
   filterByStatus: '按数据集状态筛选',
   allCrops: '全部作物',
