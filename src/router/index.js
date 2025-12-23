@@ -187,7 +187,15 @@ const routes = [
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
+      // 地块及播种信息管理审核
+      {
+        path: 'breeding-data/plot-audit',
+        name: 'PlotAuditList',
+        component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
+        meta: { title: '地块及播种信息管理审核', requiresAuth: true }
+      },
+
       // 试验基础信息管理
       {
         path: 'breeding-data/trial',

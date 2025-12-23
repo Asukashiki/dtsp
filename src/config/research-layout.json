@@ -41,6 +41,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/plot-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.plotInfoAudit",
+          "roles": ["agri-admin", "OARI"]
+        },
+        {
           "index": "/research/breeding-data/farming",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.farmingRecordDataCollection",

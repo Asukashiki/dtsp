@@ -20,6 +20,7 @@ export default {
   plotInfoAdd: '新增地块信息',
   plotInfoEdit: '编辑地块信息',
   plotInfoDetail: '地块信息详情',
+  plotInfoAudit: '地块及播种信息管理审核',
 
   trialBasicManagement: '试验基础信息管理',
   trialBasicAdd: '新增试验信息',

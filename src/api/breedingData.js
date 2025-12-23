@@ -97,6 +97,39 @@ export function getPlotOptions(batchId, trialId) {
     return request({ url: `${API_BASE_URL}/breeding/plot/options`, method: 'get', params })
 }
 
+// ============ 地块审核相关API ============
+export function submitPlotAudit(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/submitAudit`, method: 'post', data: { plotId } })
+}
+
+export function approvePlot(data) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/approve`, method: 'post', data })
+}
+
+export function rejectPlot(data) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/reject`, method: 'post', data })
+}
+
+export function archivePlot(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/archive`, method: 'post', data: { plotId } })
+}
+
+export function cancelPlot(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/cancel`, method: 'post', data: { plotId } })
+}
+
+export function getPlotAuditHistory(plotId) {
+    return request({ url: `${API_BASE_URL}/breeding/plot/audit/history`, method: 'get', params: { plotId } })
+}
+
+export function cancelPlotAuditRecord(payload) {
+    // 兼容传入 plotId 或包含多个候选ID的对象
+    const data = (payload && typeof payload === 'object')
+        ? payload
+        : { plotId: payload }
+    return request({ url: `${API_BASE_URL}/breeding/plot/cancelAuditRecord`, method: 'post', data })
+}
+
 // ============ 试验基础信息管理 ============
 export function getTrialBasicList(params) {
     return request({ url: `${API_BASE_URL}/breeding/trial/list`, method: 'get', params })

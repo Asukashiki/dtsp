@@ -101,10 +101,16 @@
                 <el-table-column prop="rowNo" label="Row No" min-width="100" />
                 <el-table-column prop="columnNo" label="Column No" min-width="110" />
                 <el-table-column prop="varietyCode" label="Variety Code" min-width="130" show-overflow-tooltip />
-                <el-table-column prop="sowingDate" label="Sowing Date" min-width="120" />
+                <el-table-column prop="sowingTime" label="Sowing Date" min-width="140">
+                  <template #default="{ row }">
+                    {{ formatDateTime(row.sowingTime) }}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
                   <template #default="{ row }">
-                    <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
+                    <el-tag :type="row.auditStatus === 'S2' ? 'success' : row.auditStatus === 'S1' ? 'warning' : ''">
+                      {{ getLabelByValue('flow_status', row.auditStatus) }}
+                    </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="120" />
@@ -113,15 +119,55 @@
                 <el-table-column prop="updateTime" :label="$t('research.breedingData.plot.columns.updateTime')" min-width="120" />
                 <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
                 <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
-                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="200" fixed="right">
+                <el-table-column prop="auditOpinion" :label="$t('research.breedingData.plot.auditOpinion')" min-width="150" show-overflow-tooltip />
+                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="280" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                      </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
+                      <!-- S0草稿: 编辑、作废、提交审核 -->
+                      <template v-if="row.auditStatus === 'S0'">
+                        <el-button link type="primary" @click="handleEdit(row)">
+                          <i class="ri-edit-line"></i>{{ $t('common.edit') }}
+                        </el-button>
+                        <el-button link type="danger" @click="handleCancel(row)">
+                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
+                        </el-button>
+                        <el-button link type="success" @click="handleSubmitAudit(row)">
+                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submitAudit') }}
+                        </el-button>
+                      </template>
+                      <!-- S1待审批: 查看 -->
+                      <template v-else-if="row.auditStatus === 'S1'">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                        </el-button>
+                      </template>
+                      <!-- S2已审批: 查看、归档 -->
+                      <template v-else-if="row.auditStatus === 'S2'">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                        </el-button>
+                        <el-button link type="warning" @click="handleArchive(row)">
+                          <i class="ri-archive-line"></i>{{ $t('research.breedingData.plot.archive') }}
+                        </el-button>
+                      </template>
+                      <!-- S3已退回: 编辑、作废、重新提交 -->
+                      <template v-else-if="row.auditStatus === 'S3'">
+                        <el-button link type="primary" @click="handleEdit(row)">
+                          <i class="ri-edit-line"></i>{{ $t('common.edit') }}
+                        </el-button>
+                        <el-button link type="danger" @click="handleCancel(row)">
+                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
+                        </el-button>
+                        <el-button link type="success" @click="handleSubmitAudit(row)">
+                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submitAudit') }}
+                        </el-button>
+                      </template>
+                      <!-- S9已归档/S10作废: 查看 -->
+                      <template v-else>
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                        </el-button>
+                      </template>
                     </div>
                   </template>
                 </el-table-column>
@@ -169,12 +215,14 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">Sowing Date:</span>
-                    <span class="value">{{ item.sowingDate }}</span>
+                    <span class="value">{{ formatDateTime(item.sowingTime) }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.plot.columns.auditStatus') }}:</span>
                     <span class="value">
-                      <dict-tag :options="dictOptions.flow_status" :value="item.auditStatus" />
+                      <el-tag :type="item.auditStatus === 'S2' ? 'success' : item.auditStatus === 'S1' ? 'warning' : ''">
+                        {{ getLabelByValue('flow_status', String(item.auditStatus).toUpperCase()) }}
+                      </el-tag>
                     </span>
                   </div>
                   <div class="mobile-card-row">
@@ -200,6 +248,10 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.plot.columns.auditTime') }}:</span>
                     <span class="value">{{ item.auditTime }}</span>
+                  </div>
+                  <div class="mobile-card-row" v-if="item.auditOpinion">
+                    <span class="label">{{ $t('research.breedingData.plot.auditOpinion') }}:</span>
+                    <span class="value">{{ item.auditOpinion }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -238,7 +290,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getPlotInfoList, deletePlotInfo, getBatchOptions } from '@/api/breedingData'
+import { getPlotInfoList, deletePlotInfo, getBatchOptions, submitPlotAudit, archivePlot, cancelPlot } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -249,7 +301,7 @@ const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const batchOptions = ref([])
-const { options: dictOptions  } = useDict('flow_status')
+const { options: dictOptions, getLabelByValue  } = useDict('flow_status')
 
 const queryParams = reactive({
   pageNum: 1,
@@ -259,6 +311,25 @@ const queryParams = reactive({
   varietyCode: '',
   auditStatus: ''
 })
+
+// 格式化日期时间为 'YYYY-MM-DD HH:mm:ss'
+const formatDateTime = (val) => {
+  if (!val) return '-'
+  if (typeof val === 'string') {
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) return val
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val
+  }
+  const d = new Date(val)
+  if (isNaN(d.getTime())) return val || '-'
+  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
+  const Y = d.getFullYear()
+  const M = pad(d.getMonth() + 1)
+  const D = pad(d.getDate())
+  const h = pad(d.getHours())
+  const m = pad(d.getMinutes())
+  const s = pad(d.getSeconds())
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+}
 
 const getList = async () => {
   loading.value = true
@@ -342,6 +413,51 @@ const handleBatchDelete = () => {
     selectedIds.value = []
     getList()
   }).catch(() => {})
+}
+
+const handleSubmitAudit = async (row) => {
+  try {
+    await ElMessageBox.confirm(t('research.breedingData.plot.submitConfirm'), t('common.confirm'), {
+      type: 'warning'
+    })
+    await submitPlotAudit(row.plotId)
+    ElMessage.success(t('research.breedingData.plot.submitSuccess'))
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('common.operationFailed'))
+    }
+  }
+}
+
+const handleArchive = async (row) => {
+  try {
+    await ElMessageBox.confirm(t('research.breedingData.plot.archiveConfirm'), t('common.confirm'), {
+      type: 'warning'
+    })
+    await archivePlot(row.plotId)
+    ElMessage.success(t('research.breedingData.plot.archiveSuccess'))
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('common.operationFailed'))
+    }
+  }
+}
+
+const handleCancel = async (row) => {
+  try {
+    await ElMessageBox.confirm(t('research.breedingData.plot.cancelConfirm'), t('common.confirm'), {
+      type: 'warning'
+    })
+    await cancelPlot(row.plotId)
+    ElMessage.success(t('research.breedingData.plot.cancelSuccess'))
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('common.operationFailed'))
+    }
+  }
 }
 
 onMounted(() => {

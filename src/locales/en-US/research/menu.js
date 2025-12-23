@@ -21,6 +21,7 @@ export default {
   plotInfoAdd: 'Add Plot Information',
   plotInfoEdit: 'Edit Plot Information',
   plotInfoDetail: 'Plot Information Detail',
+  plotInfoAudit: 'Plot and Sowing Information Audit',
 
   trialBasicManagement: 'Trial Basic Information',
   trialBasicAdd: 'Add Trial Information',
