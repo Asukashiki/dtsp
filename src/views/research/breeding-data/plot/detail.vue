@@ -51,18 +51,18 @@
         </div>
 
         <!-- Audit Information -->
-        <div class="info-card">
+        <div class="info-card" v-if="detailData.auditStatus && detailData.auditStatus !== 'S0'">
           <div class="card-header">
-            <div class="card-title"><i class="ri-file-info-line"></i><span>Audit Information</span></div>
+            <div class="card-title"><i class="ri-file-check-line"></i><span>Audit Information</span></div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.createdBy')">{{ detailData.createdName || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.createTime')">{{ detailData.createTime || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.modifiedBy')">{{ detailData.modifiedName || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.updateTime')">{{ detailData.updateTime || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.auditedBy')">{{ detailData.auditedName || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.plot.columns.auditTime')">{{ detailData.auditTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audit Status">
+                <dict-tag :options="dictOptions.flow_status" :value="detailData.auditStatus" />
+              </el-descriptions-item>
+              <el-descriptions-item label="Audited By">{{ detailData.auditedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audit Time">{{ detailData.auditTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audit Opinion" :span="2">{{ detailData.auditOpinion || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -74,13 +74,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getPlotInfo, getIrrigationCount } from '@/api/breedingData'
+import { getPlotInfo } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
-const irrigationCount = ref(0)
+const { options: dictOptions } = useDict('flow_status')
 
 const getInfo = async () => {
   loading.value = true

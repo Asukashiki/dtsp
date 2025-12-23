@@ -41,7 +41,7 @@
       :link="link"
       @click="handleCancel"
     >
-      {{ t('research.trialBasicAudit.action.cancel') }}
+      {{ t('research.trialBasicAudit.action.void') }}
     </el-button>
 
     <!-- 归档 -->

@@ -139,8 +139,8 @@
             <h4 class="card-title">{{ item.varietyName }}</h4>
             <div class="card-info">
               <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.produceBatchId') }}:</span>
-                <span class="value">{{ item.produceBatchId }}</span>
+                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeDetailId') }}:</span>
+                <span class="value">{{ item.distributeDetailId }}</span>
               </div>
               <div class="info-row">
                 <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.produceBatchName') }}:</span>

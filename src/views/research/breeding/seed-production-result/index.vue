@@ -64,9 +64,9 @@
                 <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">
                   {{ $t('common.view') }}
                 </el-button>
-                <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">
+                <!-- <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">
                   {{ $t('common.delete') }}
-                </el-button>
+                </el-button> -->
               </template>
             </el-table-column>
           </el-table>

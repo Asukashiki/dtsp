@@ -113,6 +113,20 @@ export const getVarietyPublicDetail = (publishId) => {
   })
 }
 
+
+/**
+ * 根据品种名称查询关联的推广内容
+ * @param {String} varietyName - 品种名称
+ * @returns {Promise}
+ */
+export const getPromotionByVariety = (varietyName) => {
+  return request({
+    url: `${API_BASE_URL}/seed/promotion/by-variety`,
+    method: 'get',
+    params: { varietyName }
+  })
+}
+
 /**
  * 记录查询行为
  * @param {Object} data - 记录数据

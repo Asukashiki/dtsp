@@ -77,9 +77,13 @@ export default {
 
   // 详情页
   detail: {
+    title: '推广详情',
     basicInfo: '基础信息',
     videoPreview: '视频预览',
     statistics: '统计信息',
+    relatedVarieties: '关联品种',
+    noVideo: '暂无视频',
+    viewVarietyDetail: '查看品种详情',
   },
 
   // 卡片展示（移动端）

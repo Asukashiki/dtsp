@@ -839,7 +839,7 @@ import {
   getVillageDemandSummaryMainList,
   getTownAggregationDetail,
   distributeTask,
-  getVillageAggregationDetail
+  getVillageAggregationDetail, getZoneAggregationDetail
 } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
@@ -996,7 +996,7 @@ const handleDetail = async (row) => {
   detailLoading.value = true
 
   try {
-    const res = await getTownAggregationDetail({
+    const res = await getZoneAggregationDetail({
       sourceCode: row.sourceCode,
       year: row.year
     })

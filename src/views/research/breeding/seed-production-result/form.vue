@@ -43,14 +43,9 @@
                     :label="batch.produceBatchName"
                     :value="batch.produceBatchId"
                   >
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                      <div>
-                        <span>{{ batch.produceBatchName }}</span>
-                        <span style="color: #909399; font-size: 13px; margin-left: 8px;">(ID: {{ batch.produceBatchId }})</span>
-                      </div>
-                      <el-tag :type="batch.produceStatus === 'Finished' ? 'success' : 'warning'" size="small">
-                        {{ batch.produceStatus }}
-                      </el-tag>
+                    <div style="display: flex; align-items: center;">
+                      <span>{{ batch.produceBatchName }}</span>
+                      <span style="color: #909399; font-size: 13px; margin-left: 8px;">(ID: {{ batch.produceBatchId }})</span>
                     </div>
                   </el-option>
                 </el-select>
@@ -181,8 +176,8 @@ const loadBatches = async () => {
   try {
     const res = await getBreedSeedProduceList({ pageNum: 1, pageSize: 1000 })
     if (res.code === 200) {
-      // Allow selecting any batch, but maybe highlight On-Going ones
-      batchList.value = res.rows || []
+      // Filter out batches with produceStatus === 'Finished'
+      batchList.value = (res.rows || []).filter(batch => batch.produceStatus !== 'Finished')
     }
   } catch (error) {
     console.error('Failed to load batches:', error)
