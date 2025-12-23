@@ -5,10 +5,10 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-bar-chart-box-line"></i>
+            <i class="ri-file-check-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.menu.fieldInspection') }}</h1>
+            <h1 class="page-title">{{ $t('research.menu.fieldInspectionAudit') }}</h1>
           </div>
         </div>
       </div>
@@ -19,12 +19,8 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.dataCollection.yieldData.list') }}</span>
+              <span>{{ $t('research.dataCollection.fieldInspectionAudit.list') }}</span>
             </div>
-            <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
-              {{ $t('research.dataCollection.yieldData.add') }}
-            </el-button>
           </div>
 
           <div class="card-body">
@@ -37,12 +33,13 @@
                 clearable
                 class="search-input"
                 :loading="plotLoading"
+                @change="handleSearch"
               >
                 <el-option
                   v-for="item in batchOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.value || item.batchId"
+                  :label="item.label || item.batchId"
+                  :value="item.value || item.batchId"
                 />
               </el-select>
               <el-select
@@ -52,12 +49,13 @@
                 clearable
                 class="search-input"
                 :loading="plotLoading"
+                @change="handleSearch"
               >
                 <el-option
                   v-for="item in plotOptions"
-                  :key="item.plotId"
-                  :label="item.plotId"
-                  :value="item.plotId"
+                  :key="item.value || item.plotId"
+                  :label="item.label || item.plotId"
+                  :value="item.value || item.plotId"
                 />
               </el-select>
               <!-- 状态 -->
@@ -66,6 +64,7 @@
                 :placeholder="$t('research.dataCollection.yieldData.columns.status')"
                 clearable
                 class="search-input"
+                @change="handleSearch"
               >
                 <el-option :label="$t('common.all')" value="" />
                 <el-option label="submit" value="submit" />
@@ -77,6 +76,7 @@
                 :placeholder="$t('research.dataCollection.yieldData.columns.auditStatus')"
                 clearable
                 class="search-input"
+                @change="handleSearch"
               >
                 <el-option :label="$t('common.all')" value="" />
                 <el-option v-for="opt in options.flow_status || []" :key="opt.value" :label="opt.label" :value="opt.value" />
@@ -152,7 +152,7 @@
                 <el-table-column
                   :label="$t('common.actions')"
                   fixed="right"
-                  width="300"
+                  width="200"
                 >
                   <template #default="{ row }">
                     <div class="action-buttons">
@@ -160,9 +160,14 @@
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
-                        <i class="ri-edit-line"></i>
-                        {{ $t('common.edit') }}
+                      <el-button
+                        v-if="row.workflowStatus !== 'S10'"
+                        link
+                        :type="row.workflowStatus === 'S2' ? 'danger' : 'warning'"
+                        @click="handleAudit(row)"
+                      >
+                        <i :class="row.workflowStatus === 'S2' ? 'ri-close-circle-line' : 'ri-file-check-line'"></i>
+                        {{ row.workflowStatus === 'S2' ? $t('research.dataCollection.fieldInspectionAudit.void') : $t('common.audit') }}
                       </el-button>
                     </div>
                   </template>
@@ -188,15 +193,26 @@
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
-                    <i class="ri-bar-chart-box-line"></i>
+                    <i class="ri-file-check-line"></i>
                     <span>{{ item.plotId }}</span>
+                  </div>
+                  <div class="mobile-card-actions">
+                    <el-button link type="primary" @click="handleView(item)">
+                      <i class="ri-eye-line"></i>
+                      {{ $t('common.view') }}
+                    </el-button>
+                    <el-button
+                      v-if="item.workflowStatus !== 'S10'"
+                      link
+                      :type="item.workflowStatus === 'S2' ? 'danger' : 'warning'"
+                      @click="handleAudit(item)"
+                    >
+                      <i :class="item.workflowStatus === 'S2' ? 'ri-close-circle-line' : 'ri-file-check-line'"></i>
+                      {{ item.workflowStatus === 'S2' ? $t('research.dataCollection.fieldInspectionAudit.void') : $t('common.audit') }}
+                    </el-button>
                   </div>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.batchId') }}:</span>
-                    <span class="value">{{ item.batchId }}</span>
-                  </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.dataCollection.yieldData.columns.inspectionDate') }}:</span>
                     <span class="value">{{ item.inspectionDate || '-' }}</span>
@@ -209,34 +225,29 @@
                     <span class="label">{{ $t('research.dataCollection.yieldData.columns.scoreValue') }}:</span>
                     <span class="value">{{ item.scoreValue || '-' }}</span>
                   </div>
-                </div>
-                <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
-                    {{ $t('common.view') }}
-                  </el-button>
-                  <el-button size="small" @click="handleEdit(item)">
-                    {{ $t('common.edit') }}
-                  </el-button>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.status') }}:</span>
+                    <span class="value">{{ mapStatus(item.status) || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.yieldData.columns.auditStatus') }}:</span>
+                    <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus) || item.workflowStatus || '-' }}</span>
+                  </div>
                 </div>
               </div>
-
+              
               <!-- 移动端分页 -->
-              <div class="pagination-wrapper mobile-pagination">
+              <div class="mobile-pagination-wrapper">
                 <el-pagination
+                  small
+                  layout="prev, pager, next"
                   v-model:current-page="pagination.currentPage"
                   v-model:page-size="pagination.pageSize"
-                  :page-sizes="[10, 20, 50]"
                   :total="pagination.total"
-                  layout="total, prev, pager, next"
-                  small
-                  @size-change="handleSizeChange"
                   @current-change="handleCurrentChange"
                 />
               </div>
             </div>
-
-            <!-- 空状态 -->
-            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('home.noData')" />
           </div>
         </div>
       </div>
@@ -249,8 +260,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
-import { getPlotInfoList } from '@/api/breedingData'
+import { getFieldInspectionAuditList, getPlotSelectList, getBatchSelectList, voidFieldInspection } from '@/api/fieldInspectionAudit'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -269,23 +279,13 @@ const loading = ref(false)
 const tableData = ref([])
 const plotLoading = ref(false)
 const plotOptions = ref([])
-
-// 从地块选项中提取唯一的批次ID
-const batchOptions = computed(() => {
-  const batchSet = new Set()
-  plotOptions.value.forEach(item => {
-    if (item.batchId) {
-      batchSet.add(item.batchId)
-    }
-  })
-  return Array.from(batchSet).map(batchId => ({ value: batchId, label: batchId }))
-})
+const batchOptions = ref([])
 
 const searchForm = reactive({
   batchId: '',
   plotId: '',
   status: '',
-  workflowStatus: ''
+  workflowStatus: '' // 默认查询所有状态
 })
 
 const pagination = reactive({
@@ -298,14 +298,50 @@ const pagination = reactive({
 const handleSearch = async () => {
   loading.value = true
   try {
-    const res = await getYieldDataList({
-      ...searchForm,
+    // 构建查询参数
+    const params = {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
-    })
+    }
+
+    // 只添加非空的搜索条件
+    if (searchForm.batchId) {
+      params.batchId = searchForm.batchId
+    }
+    if (searchForm.plotId) {
+      params.plotId = searchForm.plotId
+    }
+    if (searchForm.status) {
+      params.status = searchForm.status
+    }
+    // workflowStatus为空字符串时，后端会查询所有状态
+    // 如果有值，则按该值筛选
+    if (searchForm.workflowStatus !== '') {
+      params.workflowStatus = searchForm.workflowStatus
+    }
+    
+    const res = await getFieldInspectionAuditList(params)
     if (res.code === 200) {
-      tableData.value = res.data?.list || res.data || []
-      pagination.total = res.data?.total || res.total || 0
+      // 处理BaseController.getDataTable()返回的TableDataInfo格式
+      if (res.rows && res.total !== undefined) {
+        // 直接分页格式
+        tableData.value = res.rows || []
+        pagination.total = res.total || 0
+      } else if (res.data && res.data.rows && res.data.total !== undefined) {
+        // TableDataInfo标准格式：{code: 200, data: {rows: [], total: 100}}
+        tableData.value = res.data.rows || []
+        pagination.total = res.data.total || 0
+      } else if (res.data) {
+        // 其他嵌套data格式
+        tableData.value = res.data.list || res.data || []
+        pagination.total = res.data.total || res.total || 0
+      } else {
+        // 直接返回数据列表
+        tableData.value = res || []
+        pagination.total = Array.isArray(res) ? res.length : 0
+      }
+    } else {
+      ElMessage.error(res.msg || '查询失败')
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -320,7 +356,7 @@ const handleReset = () => {
   searchForm.batchId = ''
   searchForm.plotId = ''
   searchForm.status = ''
-  searchForm.workflowStatus = ''
+  searchForm.workflowStatus = '' // 默认查询所有状态
   pagination.currentPage = 1
   handleSearch()
 }
@@ -335,48 +371,67 @@ const handleCurrentChange = () => {
   handleSearch()
 }
 
-// 新增
-const handleAdd = () => {
-  router.push({ name: 'FieldInspectionAdd' })
-}
-
-// 审核
-const handleAudit = (row) => {
-  router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
-}
-
-// 查看
+// 查看详情
 const handleView = (row) => {
-  router.push({ name: 'FieldInspectionDetail', params: { id: row.id } })
+  router.push({ name: 'FieldInspectionAuditDetail', params: { id: row.id } })
 }
 
-// 编辑
-const handleEdit = (row) => {
-  router.push({ name: 'FieldInspectionEdit', params: { id: row.id } })
-}
+// 审核或作废
+const handleAudit = async (row) => {
+  // 如果状态是S2（审核通过），则执行作废操作
+  if (row.workflowStatus === 'S2') {
+    try {
+      await ElMessageBox.confirm(
+        t('research.dataCollection.fieldInspectionAudit.confirmVoid'),
+        t('common.confirm'),
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'warning'
+        }
+      )
 
-// 删除
-const handleDelete = async (row) => {
-  try {
-    await ElMessageBox.confirm(
-      t('research.dataCollection.yieldData.deleteConfirm'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
+      // 弹出输入框让用户输入作废原因
+      const { value: reason } = await ElMessageBox.prompt(
+        t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
+        t('research.dataCollection.fieldInspectionAudit.voidReason'),
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          inputType: 'textarea',
+          inputPlaceholder: t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
+          inputValidator: (value) => {
+            if (!value || value.trim() === '') {
+              return t('research.dataCollection.fieldInspectionAudit.rules.voidReasonRequired')
+            }
+            return true
+          }
+        }
+      )
+
+      // 调用作废接口
+      const submitData = {
+        id: row.id,
+        remark: reason
       }
-    )
-    const res = await deleteYieldData([row.id])
-    if (res.code === 200) {
-      ElMessage.success(t('research.dataCollection.yieldData.deleteSuccess'))
-      handleSearch()
+
+      const res = await voidFieldInspection(submitData)
+      if (res.code === 200) {
+        ElMessage.success(t('research.dataCollection.fieldInspectionAudit.voidSuccess'))
+        // 刷新列表
+        handleSearch()
+      } else {
+        ElMessage.error(res.msg || t('common.operationFailed'))
+      }
+    } catch (error) {
+      if (error !== 'cancel' && error !== 'close') {
+        console.error('Failed to void:', error)
+        ElMessage.error(t('common.operationFailed'))
+      }
     }
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('Failed to delete:', error)
-      ElMessage.error(t('common.deleteFailed'))
-    }
+  } else {
+    // 其他状态（S1待审核、S3驳回、S10作废）跳转到审核页面
+    router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
   }
 }
 
@@ -384,9 +439,9 @@ const handleDelete = async (row) => {
 const loadPlotOptions = async () => {
   plotLoading.value = true
   try {
-    const res = await getPlotInfoList({ pageNum: 1, pageSize: 1000 })
+    const res = await getPlotSelectList()
     if (res.code === 200) {
-      plotOptions.value = res.rows || []
+      plotOptions.value = res.data || []
     }
   } catch (error) {
     console.error('Failed to load plot options:', error)
@@ -395,8 +450,21 @@ const loadPlotOptions = async () => {
   }
 }
 
+// 加载批次选项
+const loadBatchOptions = async () => {
+  try {
+    const res = await getBatchSelectList()
+    if (res.code === 200) {
+      batchOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load batch options:', error)
+  }
+}
+
 onMounted(() => {
   loadPlotOptions()
+  loadBatchOptions()
   handleSearch()
 })
 </script>
@@ -607,6 +675,14 @@ onMounted(() => {
 
 .mobile-card-actions .el-button {
   flex: 1;
+}
+
+.mobile-card-header .mobile-card-actions {
+  display: flex;
+  gap: 8px;
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 /* 响应式 */

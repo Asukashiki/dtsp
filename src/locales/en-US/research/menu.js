@@ -21,6 +21,7 @@ export default {
   plotInfoAdd: 'Add Plot Information',
   plotInfoEdit: 'Edit Plot Information',
   plotInfoDetail: 'Plot Information Detail',
+  plotInfoAudit: 'Plot and Sowing Information Audit',
 
   trialBasicManagement: 'Trial Basic Information',
   trialBasicAdd: 'Add Trial Information',
@@ -48,13 +49,16 @@ export default {
   fieldInspectionAdd: 'Add Field Inspection',
   fieldInspectionEdit: 'Edit Field Inspection',
   fieldInspectionDetail: 'Field Inspection Detail',
+  fieldInspectionAudit: 'Field Inspection Data Collection Audit',
 
   laboratoryTest: 'Laboratory Test Data Collection',
   laboratoryTestAdd: 'Add Laboratory Test',
   laboratoryTestEdit: 'Edit Laboratory Test',
   laboratoryTestDetail: 'Laboratory Test Detail',
+  laboratoryTestAudit: 'Laboratory Test Data Audit',
 
   breederSeedProduction: 'Seed Production Data',
+  breederSeedProductionResult: 'Production Data Collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',

@@ -50,6 +50,8 @@ export default {
   selectTrait: '请选择性状',
   enterValue: '请输入性状值',
   addAtLeastOneTrait: '请至少添加一条性状数据',
+  invalidConfirm: '确定要作废该性状记录吗？', // 补充：作废确认提示
+  submitAuditConfirm: '确定要提交该性状记录进行审核吗？',
   
   // 表格列名
   columns: {
@@ -73,12 +75,17 @@ export default {
     traitDetails: '性状明细',
     photoInfo: '照片信息'
   },
-  
+  // 操作按钮文字（补充：代码中用到的按钮文案）
+  invalid: '作废', // 补充：作废按钮
+  submitAudit: '发起审核', // 补充：发起审核按钮
   // 消息提示
   deleteConfirm: '确定要删除选中的记录吗？',
   deleteSuccess: '删除成功',
   addSuccess: '添加成功',
   editSuccess: '编辑成功',
   uploadSuccess: '上传成功',
-  uploadFailed: '上传失败'
+  uploadFailed: '上传失败',
+  invalidSuccess: '性状记录作废成功', // 补充：作废成功提示
+  invalidFailed: '性状记录作废失败', // 补充：作废失败提示
+  submitAuditSuccess: '性状记录提交审核成功' // 补充：提交审核成功提示
 }

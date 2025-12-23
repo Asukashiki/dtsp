@@ -41,6 +41,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/plot-audit",
+          "icon": "ri-pass-pending-line",
+          "titleKey": "research.menu.plotInfoAudit",
+          "roles": ["agri-admin", "OARI"]
+        },
+        {
           "index": "/research/breeding-data/farming",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.farmingRecordDataCollection",
@@ -77,10 +83,22 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/field-inspection-audit",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.fieldInspectionAudit",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/breeding-data/laboratory-test",
           "icon": "ri-flask-line",
           "titleKey": "research.menu.laboratoryTest",
           "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding-data/laboratory-test-audit",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.laboratoryTestAudit",
+          "roles": ["agri-admin", "OARI"]
         },
         {
           "index": "/research/breeding-data/dataset-compilation",
@@ -111,6 +129,12 @@
           "index": "/research/breeding/seed-production",
           "icon": "ri-seedling-line",
           "titleKey": "research.menu.breederSeedProduction",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding/seed-production-result",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProductionResult",
           "roles": ["agri-admin", "RC"]
         },
         {

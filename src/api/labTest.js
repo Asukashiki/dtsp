@@ -7,7 +7,7 @@ import request from '../utils/agricultureRequest'
  */
 export const getLabTestList = (data) => {
   return request({
-    url: '/seed/lab-test/list',
+    url: '/seed/laboratory/test/list',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export const getLabTestList = (data) => {
  */
 export const getLabTestDetail = (id) => {
   return request({
-    url: `/seed/lab-test/${id}`,
+    url: `/seed/laboratory/test/${id}`,
     method: 'get'
   })
 }
@@ -32,7 +32,7 @@ export const getLabTestDetail = (id) => {
  */
 export const addLabTest = (data) => {
   return request({
-    url: '/seed/lab-test/add',
+    url: '/seed/laboratory/test/add',
     method: 'post',
     data
   })
@@ -45,7 +45,7 @@ export const addLabTest = (data) => {
  */
 export const updateLabTest = (data) => {
   return request({
-    url: '/seed/lab-test/edit',
+    url: '/seed/laboratory/test/edit',
     method: 'post',
     data
   })
@@ -58,8 +58,99 @@ export const updateLabTest = (data) => {
  */
 export const deleteLabTest = (ids) => {
   return request({
-    url: '/seed/lab-test/delete',
+    url: '/seed/laboratory/test/delete',
     method: 'post',
     data: ids
+  })
+}
+
+/**
+ * 提交审核
+ * @param {Object} data 包含dataId
+ * @returns Promise
+ */
+export const submitLabTest = (data) => {
+  return request({
+    url: '/seed/laboratory/test/submit',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 审核通过
+ * @param {Object} data 包含dataId和auditOpinion
+ * @returns Promise
+ */
+export const approveLabTest = (data) => {
+  return request({
+    url: '/seed/laboratory/test/approve',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 审核退回
+ * @param {Object} data 包含dataId和auditOpinion
+ * @returns Promise
+ */
+export const rejectLabTest = (data) => {
+  return request({
+    url: '/seed/laboratory/test/reject',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 归档
+ * @param {Object} data 包含dataId
+ * @returns Promise
+ */
+export const archiveLabTest = (data) => {
+  return request({
+    url: '/seed/laboratory/test/archive',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 作废数据
+ * @param {Object} data 包含dataId
+ * @returns Promise
+ */
+export const cancelLabTest = (data) => {
+  return request({
+    url: '/seed/laboratory/test/cancel',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 作废审核记录
+ * @param {Object} data 包含dataId
+ * @returns Promise
+ */
+export const cancelLabTestAudit = (data) => {
+  return request({
+    url: '/seed/laboratory/test/audit/cancel',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询审核列表
+ * @param {Object} data 查询条件
+ * @returns Promise
+ */
+export const getLabTestAuditList = (data) => {
+  return request({
+    url: '/seed/laboratory/test/audit/list',
+    method: 'post',
+    data
   })
 }
