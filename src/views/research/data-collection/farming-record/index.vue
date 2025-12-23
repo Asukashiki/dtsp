@@ -146,12 +146,15 @@
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>
+                {{ $t('common.view') }}
               </el-button>
               <el-button link type="primary" @click="handleEdit(row)">
                 <i class="ri-edit-line"></i>
+                {{ $t('common.edit') }}
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)">
                 <i class="ri-delete-bin-line"></i>
+                {{ $t('common.delete') }}
               </el-button>
             </template>
           </el-table-column>

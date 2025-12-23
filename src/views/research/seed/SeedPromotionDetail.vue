@@ -88,6 +88,7 @@
           <div class="stat-card">
             <div class="stat-icon">
               <i class="ri-eye-line"></i>
+              {{ $t('common.view') }}
             </div>
             <div class="stat-content">
               <div class="stat-label">{{ $t('research.seedPromotion.columns.visitCount') }}</div>

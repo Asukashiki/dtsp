@@ -135,6 +135,7 @@
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>
+                {{ $t('common.view') }}
               </el-button>
             </template>
           </el-table-column>
