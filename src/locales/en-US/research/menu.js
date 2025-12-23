@@ -29,6 +29,7 @@ export default {
   trialBasicAudit: 'Trial Basic Information Audit',
 
   agronomicTraitDataCollection: 'Agronomic Trait Data Collection',
+  agronomicTraitDataAudit: 'Agronomic Trait Data Audit',
   agronomicTraitDataAdd: 'Add Agronomic Trait Data',
   agronomicTraitDataEdit: 'Edit Agronomic Trait Data',
   agronomicTraitDataDetail: 'Agronomic Trait Data Detail',
@@ -186,6 +187,7 @@ export default {
   agronomicData: 'Agronomic Data Collection',
   farmingRecord: 'Farming Record Collection',
   environmentData: 'Environment & Soil Data Collection',
+
   farmerData: 'Farmer & Plot Data Collection',
   labData: 'Laboratory Test Data Collection',
   yieldData: 'Yield Data Collection',
