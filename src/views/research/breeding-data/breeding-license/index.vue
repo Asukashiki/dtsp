@@ -70,16 +70,20 @@
                   :label="$t('research.breedingLicense.columns.licenseNo')"
                   min-width="150"
                 />
-                <el-table-column
+                <!-- <el-table-column
                   prop="batchName"
                   :label="$t('research.breedingLicense.columns.batchName')"
                   min-width="150"
-                />
+                /> -->
                 <el-table-column
                   prop="cropType"
                   :label="$t('research.breedingLicense.columns.cropType')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('crop_type', row.cropType) || row.cropType }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="varietyName"
                   :label="$t('research.breedingLicense.columns.varietyName')"
@@ -153,13 +157,13 @@
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row">
+                  <!-- <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.batchName') }}:</span>
                     <span class="value">{{ item.batchName }}</span>
-                  </div>
+                  </div> -->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.varietyName') }}:</span>
@@ -217,9 +221,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLicenseList, deleteLicense } from '@/api/breedingLicense'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 字典数据
+const { options, getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
 
 const loading = ref(false)
 const licenseList = ref([])
@@ -234,7 +242,7 @@ const queryParams = reactive({
   approvalDateEnd: ''
 })
 
-// 获取状态类型
+// 获取状态类型 - 使用字典
 const getStatusType = (status) => {
   const typeMap = {
     valid: 'success',
@@ -244,9 +252,9 @@ const getStatusType = (status) => {
   return typeMap[status] || 'info'
 }
 
-// 获取状态文本
+// 获取状态文本 - 使用字典
 const getStatusText = (status) => {
-  return t(`research.breedingLicense.status.${status}`) || status
+  return getLabelByValue('license_status', status) || status
 }
 
 // 加载数据

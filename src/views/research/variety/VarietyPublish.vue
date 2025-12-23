@@ -46,7 +46,11 @@
         <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="publishNo" :label="$t('research.variety.publish.columns.publishNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.publish.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" min-width="120" />
+          <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" min-width="120">
+            <template #default="{ row }">
+              {{ getLabelByValue('crop_type', row.cropType) || row.cropType }}
+            </template>
+          </el-table-column>
           <el-table-column prop="publishTime" :label="$t('research.variety.publish.columns.approvalDate')" min-width="120" />
           <el-table-column prop="publishDate" :label="$t('research.variety.publish.columns.publishDate')" min-width="120">
             <template #default="{ row }">
@@ -111,7 +115,7 @@
           <div class="card-body">
             <div class="card-row">
               <span class="label">{{ $t('research.variety.publish.columns.cropType') }}:</span>
-              <span class="value">{{ item.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.variety.publish.columns.publishDept') }}:</span>
@@ -180,7 +184,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.registration.form.cropType') }}</span>
-              <span class="value">{{ currentVariety.cropType || '-' }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', currentVariety.cropType) || currentVariety.cropType || '-' }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.approvalDate') }}</span>
@@ -376,10 +380,14 @@ import {
   publishVariety,
   unpublishVariety
 } from '@/api/enterprise'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
 const userStore = useUserStore()
 const formRef = ref(null)
+
+// 字典数据
+const { options, getLabelByValue } = useDict(['crop_type', 'publish_status'])
 
 // 视图控制
 const showDetail = ref(false)

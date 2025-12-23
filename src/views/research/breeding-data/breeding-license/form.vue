@@ -105,7 +105,7 @@
               v-model="formData.approvalOrg"
               :placeholder="$t('research.breedingLicense.placeholder.approvalOrg')"
               clearable
-            />
+              />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.approvalDate')" prop="approvalDate">
