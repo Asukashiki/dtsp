@@ -188,6 +188,14 @@ const routes = [
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // 地块及播种信息管理审核
+      {
+        path: 'breeding-data/plot-audit',
+        name: 'PlotAuditList',
+        component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
+        meta: { title: '地块及播种信息管理审核', requiresAuth: true }
+      },
+
       // 试验基础信息管理
       {
         path: 'breeding-data/trial',
@@ -227,6 +235,12 @@ const routes = [
         name: 'AgronomicTraitDataAudit',
         component: () => import('../views/research/breeding-data/trait-audit/index.vue'),
         meta: { title: '农艺性状数据审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trait-audit/review/:traitId',
+        name: 'AgronomicTraitDataAuditReview',
+        component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
+        meta: { title: '农艺性状数据审核页面', requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/add',
@@ -389,6 +403,14 @@ const routes = [
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // 实验室测试数据采集审核
+      {
+        path: 'breeding-data/laboratory-test-audit',
+        name: 'BreedingLabTestAudit',
+        component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
+        meta: { title: '实验室测试数据采集审核', requiresAuth: true }
+      },
+
       // Breeder seed生产数据采集
       // 育种数据管理 - 育种数据集编制
       {
@@ -472,6 +494,12 @@ const routes = [
         name: 'SeedProduction',
         component: () => import('../views/research/breeding/seed-production/index.vue'),
         meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/seed-production-result',
+        name: 'SeedProductionResult',
+        component: () => import('../views/research/breeding/seed-production-result/index.vue'),
+        meta: { title: '生产数据采集详情', requiresAuth: true }
       },
 
       // Breeder seed分发数据
@@ -798,6 +826,13 @@ const routes = [
         component: () => import('../views/research/seed/SeedPromotion.vue'),
         meta: { title: '种子推广信息管理', requiresAuth: true }
       },
+      // 种子推广详情
+      {
+        path: 'seed/promotion/detail/:promotionId',
+        name: 'SeedPromotionDetail',
+        component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
+        meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
+      },
 
       // 种子信息公示
       {
@@ -805,6 +840,13 @@ const routes = [
         name: 'SeedInfo',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
+      },
+      // 品种详情页
+      {
+        path: 'variety/detail/:publishId',
+        name: 'VarietyDetailPage',
+        component: () => import('../views/research/variety/VarietyDetail.vue'),
+        meta: { title: '品种详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

@@ -351,6 +351,7 @@
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testOrganization')" prop="testOrganization">
             <el-input
+              disabled
               v-model="formData.testOrganization"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testOrganization')"
               clearable
@@ -359,6 +360,7 @@
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testerName')" prop="testerName">
             <el-input
+              disabled
               v-model="formData.testerName"
               :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testerName')"
               clearable

@@ -117,10 +117,10 @@
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row.id)">
+                      <!-- <el-button link type="danger" @click="handleDelete(row.id)">
                         <i class="ri-delete-bin-line"></i>
                         {{ $t('common.delete') }}
-                      </el-button>
+                      </el-button> -->
                     </div>
                   </template>
                 </el-table-column>
@@ -181,9 +181,9 @@
                   <el-button size="small" @click="handleEdit(item.id)">
                     {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item.id)">
+                  <!-- <el-button type="danger" size="small" @click="handleDelete(item.id)">
                     {{ $t('common.delete') }}
-                  </el-button>
+                  </el-button> -->
                 </div>
               </div>
 

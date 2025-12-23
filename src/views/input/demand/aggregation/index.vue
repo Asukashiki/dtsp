@@ -63,14 +63,14 @@
               >
               </el-table-column>
               <el-table-column
-                  prop="submitQuantity"
-                  :label="$t('submitQuantity')"
+                  prop="unsubmitQuantity"
+                  :label="$t('unsubmitQuantity')"
                   min-width="140"
               >
               </el-table-column>
               <el-table-column
-                  prop="unsubmitQuantity"
-                  :label="$t('unsubmitQuantity')"
+                  prop="submitQuantity"
+                  :label="$t('submitQuantity')"
                   min-width="140"
               >
               </el-table-column>

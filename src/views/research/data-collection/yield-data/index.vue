@@ -164,14 +164,6 @@
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button v-if="row.workflowStatus === 'S1'" link type="warning" @click="handleAudit(row)">
-                        <i class="ri-file-check-line"></i>
-                        {{ $t('common.audit') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
-                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -224,12 +216,6 @@
                   </el-button>
                   <el-button size="small" @click="handleEdit(item)">
                     {{ $t('common.edit') }}
-                  </el-button>
-                  <el-button v-if="item.workflowStatus === 'S1'" type="warning" size="small" @click="handleAudit(item)">
-                    {{ $t('common.audit') }}
-                  </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item)">
-                    {{ $t('common.delete') }}
                   </el-button>
                 </div>
               </div>

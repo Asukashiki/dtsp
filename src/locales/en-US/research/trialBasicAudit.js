@@ -16,6 +16,7 @@ export default {
     view: 'View',
     submit: 'Submit',
     cancel: 'Cancel',
+    void: 'Void',
     archive: 'Archive',
     audit: 'Audit',
     delete: 'Delete',
@@ -94,6 +95,7 @@ export default {
       auditor: 'Auditor',
       auditTime: 'Audit Time',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
       operation: 'Operation'
     },
     detail: {

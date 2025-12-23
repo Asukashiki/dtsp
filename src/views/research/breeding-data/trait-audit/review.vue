@@ -1,401 +1,165 @@
 <template>
-  <div class="trial-plan-audit-review-container">
+  <div class="trait-audit-review-container">
+    <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
         <div class="header-left">
           <el-button link @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
+            {{ $t('trait-audit.backBtn') }}
           </el-button>
         </div>
         <div class="header-center">
-          <h1 class="page-title">{{ $t('research.trialPlanAudit.title') }}</h1>
+          <h1 class="page-title">{{ $t('trait-audit.detailTitle') }}</h1>
         </div>
         <div class="header-right"></div>
       </div>
     </div>
 
+    <!-- 详情区域 -->
     <div v-loading="loading" class="detail-wrapper">
       <template v-if="detailData">
+        <!-- 基本信息 -->
         <div class="detail-section">
           <div class="section-title">
             <i class="ri-information-line"></i>
-            {{ $t('research.trialPlanAudit.form.basicInfo') }}
+            {{ $t('trait-audit.cards.basicInfo') }}
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.planCode') }}:</span>
-              <span class="value highlight">{{ detailData.planCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.planStatus') }}:</span>
-              <el-tag :type="getTrialPlanStatusType(detailData.planStatus)">
-                {{ $t(`research.trialPlan.status.${detailData.planStatus}`) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.trialName') }}:</span>
-              <span class="value">{{ detailData.trialName || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.planCycle') }}:</span>
-              <span class="value">{{ detailData.planCycle || '1个生长周期' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.testType') }}:</span>
-              <span class="value">{{ detailData.testType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.province') }}:</span>
-              <span class="value">{{ detailData.province || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.isNational') }}:</span>
-              <el-tag :type="detailData.isNational === 1 ? 'success' : 'info'">
-                {{ detailData.isNational === 1 ? $t('common.yes') : $t('common.no') }}
-              </el-tag>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.trialPlanAudit.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('trait.recordId')">{{ detailData.recordId || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.plotId')">{{ detailData.plotId || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.trialId')">{{ detailData.trialId || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.batchId')">{{ detailData.batchId || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.observationDate')">{{ detailData.observationDate || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.growthStage')">
+                {{ getLabelByValue('growth_cycle', detailData.growthStage) || detailData.growthStage || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.observerId')">{{ getUserName(detailData.observerId) }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.columns.status')">
+                <el-tag type="info" v-if="detailData.status">
+                  {{ getLabelByValue('flow_status', detailData.status) || detailData.status }}
+                </el-tag>
+                <span v-else>-</span>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('trait.remarks')" :span="2">{{ detailData.remarks || '-' }}</el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
+        <!-- 性状明细 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.trialPlanAudit.form.dataStatistics') }}
+            <i class="ri-list-check"></i>
+            <span>{{ $t('trait-audit.cards.traitDetails') }}</span>
+            <el-tag type="success" style="margin-left: 12px;">{{ detailData.traitCount || 0 }} {{ $t('trait-audit.cards.traitDetails') }}</el-tag>
           </div>
-          <div class="statistics-grid">
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-seedling-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.varietyCount') }}</div>
-                <div class="stat-value">{{ varietyList.length }}</div>
-              </div>
+          <div class="card-body">
+            <!-- PC端表格 -->
+            <div class="pc-only">
+              <el-table :data="detailData.detailList" border stripe v-if="detailData.detailList && detailData.detailList.length > 0">
+                <el-table-column type="index" label="#" width="60" align="center" />
+                <el-table-column :label="$t('trait-audit.traitName')" min-width="200">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('agronomic_trait_name', row.traitCode) || row.traitName || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="traitCode" :label="$t('trait-audit.traitCode')" width="120" />
+                <el-table-column prop="traitValue" :label="$t('trait-audit.traitValue')" width="120" align="right" />
+                <el-table-column prop="unit" :label="$t('trait-audit.unit')" width="120" />
+              </el-table>
+              <el-empty v-else :description="$t('trait-audit.noTraits')" />
             </div>
 
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-map-pin-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.pointCount') }}</div>
-                <div class="stat-value">{{ trialPointList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-layout-grid-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.plotCount') }}</div>
-                <div class="stat-value">{{ detailData.plotCount || 0 }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-meter-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.indexCount') }}</div>
-                <div class="stat-value">{{ observationIndexList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-calendar-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.phaseCount') }}</div>
-                <div class="stat-value">{{ implementPlanList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-check-double-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.checkCount') }}</div>
-                <div class="stat-value">{{ checkItemList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-user-team-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.responsorCount') }}</div>
-                <div class="stat-value">{{ responsorList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-bar-chart-box-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.trialPlanAudit.statistics.totalCount') }}</div>
-                <div class="stat-value">
-                  {{ varietyList.length + trialPointList.length + observationIndexList.length + implementPlanList.length + checkItemList.length + responsorList.length }}
+            <!-- 移动端卡片 -->
+            <div class="mobile-only">
+              <div v-if="detailData.detailList && detailData.detailList.length > 0" class="trait-detail-list">
+                <div v-for="(item, index) in detailData.detailList" :key="item.detailId" class="trait-detail-card">
+                  <div class="trait-detail-header">
+                    <span class="trait-number">#{{ index + 1 }}</span>
+                    <span class="trait-name">{{ getLabelByValue('agronomic_trait_name', item.traitCode) || item.traitName || '-' }}</span>
+                  </div>
+                  <div class="trait-detail-body">
+                    <div class="detail-row">
+                      <span class="label">{{ $t('trait-audit.traitCode') }}:</span>
+                      <span class="value">{{ item.traitCode }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ $t('trait-audit.traitValue') }}:</span>
+                      <span class="value value-highlight">{{ item.traitValue }} <span class="unit">{{ item.unit }}</span></span>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <el-empty v-else :description="$t('trait-audit.noTraits')" />
             </div>
           </div>
         </div>
 
+        <!-- 照片信息 -->
+        <div class="detail-section" v-if="detailData.photoUrl">
+          <div class="section-title">
+            <i class="ri-image-line"></i>
+            <span>{{ $t('trait-audit.cards.photoInfo') }}</span>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="1" border>
+              <el-descriptions-item :label="$t('trait.photoUrl')">
+                <el-image :src="previewPhotoUrl" fit="contain" style="width: 200px; height: 150px" :preview-src-list="[previewPhotoUrl]" />
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
+
+        <!-- 系统信息 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('research.trialPlanAudit.form.compilationInfo') }}
+            <i class="ri-time-line"></i>
+            <span>{{ $t('trait-audit.cards.systemInfo') }}</span>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.compiledBy') }}:</span>
-              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.compiledAt') }}:</span>
-              <span class="value">{{ detailData.compiledAt || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('trait-audit.createBy')">{{ getUserName(detailData.createBy) }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait-audit.createTime')">{{ detailData.createTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait-audit.updateBy')">{{ getUserName(detailData.updateBy) }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('trait-audit.updateTime')">{{ detailData.updateTime || '-' }}</el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-send-plane-line"></i>
-            {{ $t('research.trialPlanAudit.form.submitInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.submitTime') }}:</span>
-              <span class="value">{{ detailData.submitTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.submitterName') }}:</span>
-              <span class="value">{{ detailData.submitterName || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.submitOrgName') }}:</span>
-              <span class="value">{{ detailData.submitOrgName || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-data-line"></i>
-            {{ $t('research.trialPlanAudit.form.dataDetails') }}
-          </div>
-          <el-tabs v-model="activeTab" type="card" style="margin-top: 12px">
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.variety')" name="variety">
-              <el-table
-                  :data="varietyList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-                  @row-click="handleVarietyView"
-              >
-                <el-table-column prop="varietyCode" :label="$t('research.trialPlanAudit.table.variety.varietyCode')" min-width="120" />
-                <el-table-column prop="varietyName" :label="$t('research.trialPlanAudit.table.variety.varietyName')" min-width="150" />
-                <el-table-column prop="varietyType" :label="$t('research.trialPlanAudit.table.variety.varietyType')" min-width="120" />
-                <el-table-column prop="breederUnit" :label="$t('research.trialPlanAudit.table.variety.breederUnit')" min-width="150" />
-                <el-table-column prop="isControl" :label="$t('research.trialPlanAudit.table.variety.isControl')" min-width="100" align="center">
-                  <template #default="scope">
-                    <el-tag :type="scope.row.isControl === 1 ? 'success' : 'info'">
-                      {{ scope.row.isControl === 1 ? $t('common.yes') : $t('common.no') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="seedingQuantity" :label="$t('research.trialPlanAudit.table.variety.seedingQuantity')" min-width="120" />
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.trialPoint')" name="trialPoint">
-              <el-table
-                  :data="trialPointList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="pointCode" :label="$t('research.trialPlanAudit.table.point.pointCode')" min-width="120" />
-                <el-table-column prop="pointName" :label="$t('research.trialPlanAudit.table.point.pointName')" min-width="150" />
-                <el-table-column prop="city" :label="$t('research.trialPlanAudit.table.point.city')" min-width="100" />
-                <el-table-column prop="address" :label="$t('research.trialPlanAudit.table.point.address')" min-width="180" />
-                <el-table-column prop="responsor" :label="$t('research.trialPlanAudit.table.point.responsor')" min-width="100" />
-                <el-table-column prop="phone" :label="$t('research.trialPlanAudit.table.point.phone')" min-width="120" />
-                <el-table-column prop="soilType" :label="$t('research.trialPlanAudit.table.point.soilType')" min-width="120" />
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.observationIndex')" name="observationIndex">
-              <el-table
-                  :data="observationIndexList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="indexCode" :label="$t('research.trialPlanAudit.table.index.indexCode')" min-width="120" />
-                <el-table-column prop="indexName" :label="$t('research.trialPlanAudit.table.index.indexName')" min-width="150" />
-                <el-table-column prop="indexType" :label="$t('research.trialPlanAudit.table.index.indexType')" min-width="120" />
-                <el-table-column prop="unit" :label="$t('research.trialPlanAudit.table.index.unit')" min-width="80" />
-                <el-table-column prop="observationStage" :label="$t('research.trialPlanAudit.table.index.observationStage')" min-width="150" />
-                <el-table-column prop="isRequired" :label="$t('research.trialPlanAudit.table.index.isRequired')" min-width="100" align="center">
-                  <template #default="scope">
-                    <el-tag :type="scope.row.isRequired === 1 ? 'danger' : 'info'">
-                      {{ scope.row.isRequired === 1 ? $t('common.yes') : $t('common.no') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.fieldDesign')" name="fieldDesign">
-              <el-table
-                  :data="fieldDesignList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="designType" :label="$t('research.trialPlanAudit.table.design.designType')" min-width="120" />
-                <el-table-column prop="replicationCount" :label="$t('research.trialPlanAudit.table.design.replicationCount')" min-width="120" />
-                <el-table-column prop="plotLength" :label="$t('research.trialPlanAudit.table.design.plotLength')" min-width="100" />
-                <el-table-column prop="plotWidth" :label="$t('research.trialPlanAudit.table.design.plotWidth')" min-width="100" />
-                <el-table-column prop="plotArea" :label="$t('research.trialPlanAudit.table.design.plotArea')" min-width="100" />
-                <el-table-column prop="rowSpacing" :label="$t('research.trialPlanAudit.table.design.rowSpacing')" min-width="100" />
-                <el-table-column prop="plantSpacing" :label="$t('research.trialPlanAudit.table.design.plantSpacing')" min-width="100" />
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.implementPlan')" name="implementPlan">
-              <el-table
-                  :data="implementPlanList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="phaseName" :label="$t('research.trialPlanAudit.table.plan.phaseName')" min-width="120" />
-                <el-table-column prop="startDate" :label="$t('research.trialPlanAudit.table.plan.startDate')" min-width="120" />
-                <el-table-column prop="endDate" :label="$t('research.trialPlanAudit.table.plan.endDate')" min-width="120" />
-                <el-table-column prop="mainContent" :label="$t('research.trialPlanAudit.table.plan.mainContent')" min-width="200" />
-                <el-table-column prop="responsor" :label="$t('research.trialPlanAudit.table.plan.responsor')" min-width="100" />
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-
-            <el-tab-pane :label="$t('research.trialPlanAudit.tab.checkItem')" name="checkItem">
-              <el-table
-                  :data="checkItemList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="checkItemName" :label="$t('research.trialPlanAudit.table.check.checkItemName')" min-width="150" />
-                <el-table-column prop="checkStandard" :label="$t('research.trialPlanAudit.table.check.checkStandard')" min-width="200" />
-                <el-table-column prop="checkMethod" :label="$t('research.trialPlanAudit.table.check.checkMethod')" min-width="150" />
-                <el-table-column prop="isKeyItem" :label="$t('research.trialPlanAudit.table.check.isKeyItem')" min-width="100" align="center">
-                  <template #default="scope">
-                    <el-tag :type="scope.row.isKeyItem === 1 ? 'danger' : 'info'">
-                      {{ scope.row.isKeyItem === 1 ? $t('common.yes') : $t('common.no') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('research.trialPlanAudit.table.common.remark')" min-width="180">
-                  <template #default="scope">
-                    {{ scope.row.remark || '-' }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-
+        <!-- 审核信息 (已审核时显示) -->
         <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="detail-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
-            {{ $t('research.trialPlanAudit.form.auditInfo') }}
+            {{ $t('trait-audit.cards.auditInfo') }}
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.auditStatus') }}:</span>
-              <el-tag :type="getAuditStatusType(detailData.auditStatus)">
-                {{ $t(`research.trialPlanAudit.auditStatus.${detailData.auditStatus}`) }}
+              <span class="label">{{ $t('trait-audit.auditStatus') }}:</span>
+              <el-tag :type="getTraitAuditStatusType(detailData.auditStatus)">
+                {{ detailData.auditStatus === 'approved' ? $t('trait-audit.status.approved') : $t('trait-audit.status.rejected') }}
               </el-tag>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.lockedFlag') }}:</span>
-              <el-tag :type="detailData.lockedFlag === 1 ? 'danger' : 'success'">
-                <i :class="detailData.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
-                {{ detailData.lockedFlag === 1 ? $t('research.trialPlanAudit.form.locked') : $t('research.trialPlanAudit.form.unlocked') }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.auditTime') }}:</span>
+              <span class="label">{{ $t('trait-audit.auditTime') }}:</span>
               <span class="value">{{ detailData.auditTime || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.trialPlanAudit.form.auditorName') }}:</span>
+              <span class="label">{{ $t('trait-audit.auditorName') }}:</span>
               <span class="value">{{ detailData.auditorName || '-' }}</span>
             </div>
             <div v-if="detailData.auditOpinion" class="detail-item full-width">
-              <span class="label">{{ $t('research.trialPlanAudit.form.auditOpinion') }}:</span>
+              <span class="label">{{ $t('trait-audit.auditOpinion') }}:</span>
               <span class="value">{{ detailData.auditOpinion }}</span>
             </div>
           </div>
         </div>
 
+        <!-- 审核表单 (待审核时显示) -->
         <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="detail-section audit-form-section">
           <div class="section-title">
             <i class="ri-shield-check-line"></i>
-            {{ $t('research.trialPlanAudit.form.auditInfo') }}
+            {{ $t('trait-audit.cards.auditInfo') }}
           </div>
 
           <el-form
@@ -405,42 +169,15 @@
               label-position="top"
               class="audit-form"
           >
-            <el-form-item :label="$t('research.trialPlanAudit.form.auditOpinion')" prop="auditOpinion">
+            <el-form-item :label="$t('trait-audit.auditOpinion')" prop="auditOpinion">
               <el-input
                   v-model="auditForm.auditOpinion"
                   type="textarea"
                   :rows="4"
-                  :placeholder="$t('research.trialPlanAudit.placeholder.auditOpinion')"
+                  :placeholder="$t('trait-audit.auditOpinionPlaceholder')"
                   maxlength="1000"
                   show-word-limit
               />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.trialPlanAudit.form.lockPlan')">
-              <div class="lock-dataset-control">
-                <el-switch
-                    v-model="auditForm.lockedFlag"
-                    :active-value="1"
-                    :inactive-value="0"
-                    active-color="#DA121A"
-                    inactive-color="#009A44"
-                    size="large"
-                >
-                  <template #active-action>
-                    <i class="ri-lock-line"></i>
-                  </template>
-                  <template #inactive-action>
-                    <i class="ri-lock-unlock-line"></i>
-                  </template>
-                </el-switch>
-                <span class="lock-label">
-                  {{ auditForm.lockedFlag === 1 ? $t('research.trialPlanAudit.form.locked') : $t('research.trialPlanAudit.form.unlocked') }}
-                </span>
-              </div>
-              <div class="lock-tip">
-                <i class="ri-information-line"></i>
-                {{ $t('research.trialPlanAudit.form.lockPlanTip') }}
-              </div>
             </el-form-item>
 
             <div class="audit-actions">
@@ -451,16 +188,7 @@
                   @click="handleApprove"
               >
                 <i class="ri-check-line"></i>
-                {{ $t('research.trialPlanAudit.actions.approve') }}
-              </el-button>
-              <el-button
-                  type="warning"
-                  size="large"
-                  :loading="submitting"
-                  @click="handleNeedsRevision"
-              >
-                <i class="ri-edit-line"></i>
-                {{ $t('research.trialPlanAudit.actions.needsRevision') }}
+                {{ $t('trait-audit.approveBtn') }}
               </el-button>
               <el-button
                   type="danger"
@@ -469,7 +197,7 @@
                   @click="handleReject"
               >
                 <i class="ri-close-line"></i>
-                {{ $t('research.trialPlanAudit.actions.reject') }}
+                {{ $t('trait-audit.rejectBtn') }}
               </el-button>
             </div>
           </el-form>
@@ -485,51 +213,41 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useDict } from '@/hooks/useDict'
-
-import { getTrialPlanById } from '@/api/trialPlan'
-import { getTrialPlanAuditById, performTrialPlanAudit } from '@/api/trialPlanAudit'
 import {
-  getVarietyList,
-  getTrialPointList,
-  getObservationIndexList,
-  getFieldDesignList,
-  getImplementPlanList,
-  getCheckItemList,
-  getResponsorList
-} from '@/api/trialPlanData'
+  getTraitRecordInfo,
+  getUserInfoById,
+  getAgronomicTraitAuditByTraitId,
+  performAgronomicTraitAudit,
+  submitTraitRecordAudit
+} from '@/api/breedingData'
+import { getFilePreviewUrl } from '@/api/file'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const { getLabelByValue } = useDict(['trial_plan_status', 'crop_type', 'variety_type'])
+const { getLabelByValue } = useDict(['flow_status', 'agronomic_trait_name', 'growth_cycle'])
 
+// 状态变量
 const loading = ref(false)
 const submitting = ref(false)
 const detailData = ref(null)
 const auditFormRef = ref(null)
-const activeTab = ref('variety')
+const userNames = ref({})
 
-const varietyList = ref([])
-const trialPointList = ref([])
-const observationIndexList = ref([])
-const fieldDesignList = ref([])
-const implementPlanList = ref([])
-const checkItemList = ref([])
-const responsorList = ref([])
-
+// 审核表单
 const auditForm = reactive({
-  trialPlanId: '',
+  traitId: '',
   auditStatus: '',
-  auditOpinion: '',
-  lockedFlag: 0
+  auditOpinion: ''
 })
 
+// 审核表单验证规则
 const auditRules = computed(() => ({
   auditOpinion: [
     {
       validator: (_rule, value, callback) => {
-        if ((auditForm.auditStatus === 'rejected' || auditForm.auditStatus === 'needs_revision') && !value) {
-          callback(new Error(t('research.trialPlanAudit.rules.auditOpinionRequired')))
+        if (auditForm.auditStatus === 'rejected' && !value) {
+          callback(new Error(t('trait-audit.rules.opinionRequired')))
         } else {
           callback()
         }
@@ -539,302 +257,226 @@ const auditRules = computed(() => ({
   ]
 }))
 
-const getTrialPlanStatusType = (status) => {
+// 照片预览URL
+const previewPhotoUrl = computed(() => {
+  if (!detailData.value?.photoUrl) return ''
+  if (detailData.value.photoUrl.startsWith('http')) {
+    return detailData.value.photoUrl
+  }
+  return detailData.value.photoUrl
+})
+
+// 审核状态标签类型映射
+const getTraitAuditStatusType = (status) => {
   const typeMap = {
-    draft: '',
-    submitted: 'info',
-    reviewing: 'warning',
+    pending: 'warning',
     approved: 'success',
     rejected: 'danger'
   }
   return typeMap[status] || ''
 }
 
-const getAuditStatusType = (status) => {
-  const typeMap = {
-    pending: 'warning',
-    approved: 'success',
-    rejected: 'danger',
-    needs_revision: 'warning'
-  }
-  return typeMap[status] || ''
-}
+// 加载用户名
+const loadUserNames = async () => {
+  const userIds = [
+    detailData.value?.createBy,
+    detailData.value?.updateBy,
+    detailData.value?.auditBy,
+    detailData.value?.observerId
+  ].filter(id => id && !userNames.value[id])
 
-const loadAllDataLists = async (planId) => {
-  if (!planId) return
-
-  try {
-    console.log(t('research.trialPlanAudit.log.loadingDataList', { planId }))
-    const [
-      varietyRes,
-      trialPointRes,
-      observationIndexRes,
-      fieldDesignRes,
-      implementPlanRes,
-      checkItemRes,
-      responsorRes
-    ] = await Promise.all([
-      getVarietyList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadVarietyFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getTrialPointList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadPointFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getObservationIndexList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadIndexFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getFieldDesignList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadDesignFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getImplementPlanList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadPlanFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getCheckItemList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadCheckFailed'), err)
-        return { rows: [], total: 0 }
-      }),
-      getResponsorList({ pageNum: 1, pageSize: 9999, planId }).catch(err => {
-        console.error(t('research.trialPlanAudit.log.loadResponsorFailed'), err)
-        return { rows: [], total: 0 }
-      })
-    ])
-
-    varietyList.value = (varietyRes?.rows || varietyRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    trialPointList.value = (trialPointRes?.rows || trialPointRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    observationIndexList.value = (observationIndexRes?.rows || observationIndexRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    fieldDesignList.value = (fieldDesignRes?.rows || fieldDesignRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    implementPlanList.value = (implementPlanRes?.rows || implementPlanRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    checkItemList.value = (checkItemRes?.rows || checkItemRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-    responsorList.value = (responsorRes?.rows || responsorRes?.data?.rows || []).map(item => ({ ...item, remark: item.remark || '' }))
-
-    if (detailData.value?.moduleRowRemarks && typeof detailData.value.moduleRowRemarks === 'string') {
-      try {
-        const moduleRemarks = JSON.parse(detailData.value.moduleRowRemarks)
-        const { varietyRemarks, pointRemarks, indexRemarks, designRemarks, planRemarks, checkRemarks } = moduleRemarks
-
-        if (varietyRemarks) {
-          const varietyRemarkMap = new Map(varietyRemarks.map(r => [r.varietyCode, r.remark]))
-          varietyList.value = varietyList.value.map(item => ({ ...item, remark: varietyRemarkMap.get(item.varietyCode) || item.remark }))
-        }
-
-        if (pointRemarks) {
-          const pointRemarkMap = new Map(pointRemarks.map(r => [r.pointCode, r.remark]))
-          trialPointList.value = trialPointList.value.map(item => ({ ...item, remark: pointRemarkMap.get(item.pointCode) || item.remark }))
-        }
-      } catch (parseError) {
-        console.error(t('research.trialPlanAudit.log.parseRemarkFailed'), parseError)
+  for (const userId of userIds) {
+    try {
+      const res = await getUserInfoById(userId)
+      if (res.code === 200 && res.data) {
+        userNames.value[userId] = res.data.nickName || res.data.userName || userId
       }
+    } catch (error) {
+      console.error(`Failed to load user info for ${userId}:`, error)
+      userNames.value[userId] = userId
     }
-  } catch (error) {
-    console.error(t('research.trialPlanAudit.log.loadDataFailed'), error)
-    ElMessage.warning(t('research.trialPlanAudit.message.loadDataFailed'))
   }
 }
 
-const loadStatisticsData = async (planId) => {
-  if (!planId) {
-    console.warn(t('research.trialPlanAudit.log.noPlanId'))
-    return null
-  }
-
-  try {
-    console.log(t('research.trialPlanAudit.log.loadingStatistics', { planId }))
-    const [varietyRes, pointRes, indexRes, planRes, checkRes, responsorRes] = await Promise.all([
-      getVarietyList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 })),
-      getTrialPointList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 })),
-      getObservationIndexList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 })),
-      getImplementPlanList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 })),
-      getCheckItemList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 })),
-      getResponsorList({ pageNum: 1, pageSize: 9999, planId }).catch(err => ({ total: 0 }))
-    ])
-
-    const varietyCount = varietyRes?.total || varietyRes?.data?.total || 0
-    const pointCount = pointRes?.total || pointRes?.data?.total || 0
-    const indexCount = indexRes?.total || indexRes?.data?.total || 0
-    const planCount = planRes?.total || planRes?.data?.total || 0
-    const checkCount = checkRes?.total || checkRes?.data?.total || 0
-    const responsorCount = responsorRes?.total || responsorRes?.data?.total || 0
-
-    const statistics = {
-      varietyCount,
-      pointCount,
-      indexCount,
-      planCount,
-      checkCount,
-      responsorCount
-    }
-    return statistics
-  } catch (error) {
-    console.error(t('research.trialPlanAudit.log.loadStatsFailed'), error)
-    return { varietyCount: 0, pointCount: 0, indexCount: 0, planCount: 0, checkCount: 0, responsorCount: 0 }
-  }
+// 获取用户显示名
+const getUserName = (userId) => {
+  if (!userId) return '-'
+  return userNames.value[userId] || userId
 }
 
+// 加载详情数据
 const loadDetail = async () => {
   loading.value = true
   try {
-    const planRes = await getTrialPlanById(route.params.id)
-    if (planRes.code === 200 && planRes.data) {
-      detailData.value = planRes.data
-      auditForm.trialPlanId = planRes.data.id
+    const traitId = route.params.traitId || route.query.traitId
+    if (!traitId) {
+      ElMessage.error(t('trait-audit.message.missingTraitId'))
+      goBack()
+      return
+    }
+    auditForm.traitId = traitId
 
-      if (planRes.data.id) {
-        const statisticsResult = await loadStatisticsData(planRes.data.id)
-        if (statisticsResult) {
-          Object.assign(detailData.value, statisticsResult)
+    // 加载性状详情
+    const traitRes = await getTraitRecordInfo(traitId)
+    if (traitRes.code === 200 && traitRes.data) {
+      detailData.value = traitRes.data
+      await loadUserNames()
+      // 处理照片预览
+      if (detailData.value.photoUrl && !detailData.value.photoUrl.startsWith('http')) {
+        try {
+          const previewRes = await getFilePreviewUrl(detailData.value.photoUrl)
+          if (previewRes.code === 200) {
+            detailData.value.photoUrl = previewRes.msg
+          }
+        } catch (error) {
+          console.error('Failed to get photo preview URL:', error)
         }
-        await loadAllDataLists(planRes.data.id)
-      }
-
-      try {
-        const auditRes = await getTrialPlanAuditById(route.params.id)
-        if (auditRes.code === 200 && auditRes.data) {
-          const auditData = auditRes.data
-          Object.assign(detailData.value, {
-            auditStatus: auditData.auditStatus || auditData.audit_status || 'pending',
-            auditTime: auditData.auditTime || auditData.audit_time || '-',
-            auditorName: auditData.auditorName || auditData.auditor_name || '-',
-            auditOpinion: auditData.auditOpinion || auditData.audit_opinion || '',
-            lockedFlag: auditData.lockedFlag ?? 0
-          })
-        }
-      } catch (error) {
-        console.log(t('research.trialPlanAudit.log.noAuditRecord'))
       }
     } else {
-      ElMessage.error(t('common.loadFailed'))
+      ElMessage.error(t('trait-audit.message.loadFailed'))
       goBack()
+      return
+    }
+
+    // 加载审核信息
+    try {
+      const auditRes = await getAgronomicTraitAuditByTraitId(traitId)
+      if (auditRes.code === 200 && auditRes.data) {
+        const auditInfo = auditRes.data
+        Object.assign(detailData.value, {
+          auditStatus: auditInfo.auditStatus || 'pending',
+          auditTime: auditInfo.auditTime || '-',
+          auditorName: auditInfo.auditorName || auditInfo.auditor_name || '-',
+          auditOpinion: auditInfo.auditOpinion || auditInfo.audit_opinion || ''
+        })
+      }
+    } catch (error) {
+      console.log(t('trait-audit.log.noAuditRecord'))
+      detailData.value.auditStatus = 'pending'
     }
   } catch (error) {
-    console.error(t('research.trialPlanAudit.log.loadDetailFailed'), error)
-    ElMessage.error(t('common.loadFailed'))
+    console.error(t('trait-audit.log.loadDetailFailed'), error)
+    ElMessage.error(t('trait-audit.message.loadFailed'))
     goBack()
   } finally {
     loading.value = false
   }
 }
 
+// 审核通过
 const handleApprove = async () => {
   try {
     await ElMessageBox.confirm(
-        t('research.trialPlanAudit.confirm.approve'),
+        t('trait-audit.confirm.approve'),
         t('common.confirm'),
-        { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'success' }
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'success'
+        }
     )
 
     submitting.value = true
     auditForm.auditStatus = 'approved'
-    const res = await performTrialPlanAudit(auditForm)
-
+    const res = await performAgronomicTraitAudit(auditForm)
     if (res.code === 200) {
-      ElMessage.success(t('research.trialPlanAudit.message.approveSuccess'))
+      ElMessage.success(t('trait-audit.message.approveSuccess'))
       goBack()
     } else {
-      ElMessage.error(res.msg || t('common.operationFailed'))
+      ElMessage.error(res.msg || t('trait-audit.message.operationFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error(t('research.trialPlanAudit.log.approveFailed'), error)
-      ElMessage.error(t('common.operationFailed'))
+      console.error(t('trait-audit.log.approveFailed'), error)
+      ElMessage.error(t('trait-audit.message.operationFailed'))
     }
   } finally {
     submitting.value = false
   }
 }
 
+// 审核驳回
 const handleReject = async () => {
   if (!auditForm.auditOpinion) {
-    ElMessage.warning(t('research.trialPlanAudit.message.rejectOpinionRequired'))
+    ElMessage.warning(t('trait-audit.rules.opinionRequired'))
     return
   }
 
   try {
     await ElMessageBox.confirm(
-        t('research.trialPlanAudit.confirm.reject'),
+        t('trait-audit.confirm.reject'),
         t('common.confirm'),
-        { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'warning'
+        }
     )
 
     submitting.value = true
     auditForm.auditStatus = 'rejected'
-    const res = await performTrialPlanAudit(auditForm)
-
+    const res = await performAgronomicTraitAudit(auditForm)
     if (res.code === 200) {
-      ElMessage.success(t('research.trialPlanAudit.message.rejectSuccess'))
+      ElMessage.success(t('trait-audit.message.rejectSuccess'))
       goBack()
     } else {
-      ElMessage.error(res.msg || t('common.operationFailed'))
+      ElMessage.error(res.msg || t('trait-audit.message.operationFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error(t('research.trialPlanAudit.log.rejectFailed'), error)
-      ElMessage.error(t('common.operationFailed'))
+      console.error(t('trait-audit.log.rejectFailed'), error)
+      ElMessage.error(t('trait-audit.message.operationFailed'))
     }
   } finally {
     submitting.value = false
   }
 }
 
-const handleNeedsRevision = async () => {
-  if (!auditForm.auditOpinion) {
-    ElMessage.warning(t('research.trialPlanAudit.message.needsRevisionOpinionRequired'))
-    return
-  }
-
+// 提交审核流程
+const handleSubmitAudit = async () => {
   try {
+    const traitId = route.params.traitId || route.query.traitId
     await ElMessageBox.confirm(
-        t('research.trialPlanAudit.confirm.needsRevision'),
+        t('trait-audit.confirm.submit'),
         t('common.confirm'),
-        { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'info'
+        }
     )
-
-    submitting.value = true
-    auditForm.auditStatus = 'needs_revision'
-    const res = await performTrialPlanAudit(auditForm)
-
+    const res = await submitTraitRecordAudit(traitId)
     if (res.code === 200) {
-      ElMessage.success(t('research.trialPlanAudit.message.needsRevisionSuccess'))
-      goBack()
+      ElMessage.success(t('trait-audit.message.submitSuccess'))
+      await loadDetail()
     } else {
-      ElMessage.error(res.msg || t('common.operationFailed'))
+      ElMessage.error(res.msg || t('trait-audit.message.operationFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error(t('research.trialPlanAudit.log.needsRevisionFailed'), error)
-      ElMessage.error(t('common.operationFailed'))
+      console.error(t('trait-audit.log.submitFailed'), error)
+      ElMessage.error(t('trait-audit.message.operationFailed'))
     }
-  } finally {
-    submitting.value = false
   }
 }
 
-const handleVarietyView = (row) => {
-  if (row.varietyCode) {
-    router.push(`/research/trial-plan/variety/detail/${row.varietyCode}`)
-  } else {
-    ElMessage.warning(t('common.noRecordId'))
-  }
-}
-
+// 返回上一页
 const goBack = () => {
   router.back()
 }
 
+// 初始化加载
 onMounted(() => {
   loadDetail()
 })
 </script>
 
 <style scoped>
-.trial-plan-audit-review-container {
+.trait-audit-review-container {
   min-height: calc(100vh - 120px);
 }
 
+/* 页面头部 */
 .page-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
@@ -867,6 +509,7 @@ onMounted(() => {
   color: #1f2937;
 }
 
+/* 详情区域 */
 .detail-wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -896,6 +539,11 @@ onMounted(() => {
   font-size: 20px;
 }
 
+.card-body {
+  margin-top: 16px;
+}
+
+/* 详情网格 */
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -930,67 +578,7 @@ onMounted(() => {
   flex: 1;
 }
 
-.detail-item .value.highlight {
-  color: #009A44;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.statistics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #86efac;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.stat-icon i {
-  font-size: 28px;
-  color: white;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #009A44;
-  line-height: 1;
-}
-
+/* 审核表单样式 */
 .audit-form-section {
   background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
   border: 2px solid #fbbf24;
@@ -998,41 +586,6 @@ onMounted(() => {
 
 .audit-form {
   margin-top: 20px;
-}
-
-.lock-dataset-control {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.lock-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #1f2937;
-}
-
-.lock-tip {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: #f0f9ff;
-  border-left: 3px solid #009A44;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.lock-tip i {
-  font-size: 16px;
-  color: #009A44;
-  flex-shrink: 0;
 }
 
 .audit-actions {
@@ -1046,69 +599,94 @@ onMounted(() => {
   min-width: 160px;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs) {
-  --el-tabs-header-text-color: #6b7280;
-  --el-tabs-active-text-color: #009A44;
-  --el-tabs-border-color: #e5e7eb;
-  --el-tabs-card-header-background: #f9fafb;
+/* 性状明细移动端样式 */
+.trait-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs__header) {
-  margin-bottom: 16px;
+.trait-detail-card {
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f9fafb;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs__item) {
-  padding: 0 20px;
-  height: 40px;
-  line-height: 40px;
+.trait-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e4e7ed;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs__item.is-active) {
-  background-color: #f0fdf4;
-  border-color: #009A44;
+.trait-number {
+  font-weight: 600;
+  color: #009A44;
+  font-size: 16px;
+  min-width: 30px;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs--card > .el-tabs__header .el-tabs__item.is-active) {
-  border-bottom-color: #009A44;
+.trait-name {
+  font-weight: 500;
+  color: #303133;
+  font-size: 15px;
+  flex: 1;
 }
 
-.trial-plan-audit-review-container :deep(.el-tabs__ink-bar) {
-  height: 3px;
-  background-color: #009A44;
+.trait-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.trial-plan-audit-review-container :deep(.el-table) {
-  --el-table-header-text-color: #009A44;
-  --el-table-row-hover-bg-color: #f0fdf4;
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
 }
 
-.trial-plan-audit-review-container :deep(.el-table th) {
-  background-color: #f8fff9 !important;
+.detail-row .label {
+  color: #606266;
 }
 
-.trial-plan-audit-review-container :deep(.el-table td) {
-  border-color: #e8f5ec;
+.detail-row .value {
+  color: #303133;
+  font-weight: 500;
 }
 
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
+.value-highlight {
+  color: #009A44;
+  font-size: 16px;
+}
 
-  .header-content {
-    padding: 16px;
-  }
+.unit {
+  color: #8492a6;
+  font-size: 13px;
+  margin-left: 4px;
+}
 
-  .detail-section {
-    padding: 20px 16px;
-  }
+/* 响应式适配 */
+.pc-only {
+  display: block;
+}
 
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
+.mobile-only {
+  display: none;
 }
 
 @media screen and (max-width: 768px) {
+  .pc-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
   .page-header {
     margin: -12px -12px 12px -12px;
   }
@@ -1147,30 +725,6 @@ onMounted(() => {
     border-left: 3px solid #009A44;
   }
 
-  .detail-item.full-width {
-    grid-column: auto;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 15px;
-  }
-
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-
   .audit-actions {
     flex-direction: column;
   }
@@ -1178,31 +732,6 @@ onMounted(() => {
   .audit-actions .el-button {
     width: 100%;
     min-width: auto;
-  }
-
-  .trial-plan-audit-review-container :deep(.el-tabs__nav) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .trial-plan-audit-review-container :deep(.el-tabs__item) {
-    padding: 0 16px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  .trial-plan-audit-review-container :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  .trial-plan-audit-review-container :deep(.el-table th) {
-    padding: 8px 4px;
-  }
-
-  .trial-plan-audit-review-container :deep(.el-table td) {
-    padding: 8px 4px;
   }
 }
 
@@ -1228,52 +757,6 @@ onMounted(() => {
     font-size: 14px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-  }
-
-  .detail-grid {
-    gap: 12px;
-  }
-
-  .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 14px;
-  }
-
-  .statistics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 10px;
-  }
-
-  .stat-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .stat-icon i {
-    font-size: 18px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-  }
-
-  .stat-value {
-    font-size: 18px;
   }
 }
 </style>

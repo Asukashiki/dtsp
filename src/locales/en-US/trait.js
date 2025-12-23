@@ -1,12 +1,13 @@
+// File name: agronomic-trait-collect-i18n-en.js (English configuration)
 export default {
-  // Page titles
+  // Page title
   title: 'Agronomic Trait Collection',
   subtitle: 'Record and manage agronomic trait data in breeding trials',
   list: 'Trait Record List',
-  add: 'Add Record',
+  add: 'Add New Record',
   edit: 'Edit Record',
-  detail: 'Record Details',
-  
+  detail: 'Record Detail',
+
   // Main record fields
   recordId: 'Record ID',
   plotId: 'Plot ID',
@@ -18,21 +19,21 @@ export default {
   photoUrl: 'Photo',
   remarks: 'Remarks',
   traitCount: 'Trait Count',
-  
+
   // Growth stage options
   growthStages: {
-    germination: 'Germination',
-    seedling: 'Seedling',
-    tillering: 'Tillering',
-    stem_elongation: 'Stem Elongation',
-    booting: 'Booting',
-    heading: 'Heading',
-    flowering: 'Flowering',
-    milk: 'Milk',
-    dough: 'Dough',
-    maturity: 'Maturity'
+    germination: 'Germination Stage',
+    seedling: 'Seedling Stage',
+    tillering: 'Tillering Stage',
+    stem_elongation: 'Stem Elongation Stage',
+    booting: 'Booting Stage',
+    heading: 'Heading Stage',
+    flowering: 'Flowering Stage',
+    milk: 'Milk Ripening Stage',
+    dough: 'Dough Ripening Stage',
+    maturity: 'Maturity Stage'
   },
-  
+
   // Trait details
   traitDetails: 'Trait Details',
   traitName: 'Trait Name',
@@ -41,17 +42,19 @@ export default {
   unit: 'Unit',
   addTrait: 'Add Trait',
   removeTrait: 'Remove',
-  noTraits: 'No trait data',
-  
+  noTraits: 'No Trait Data Available',
+
   // Operation prompts
-  selectPlot: 'Please select plot',
-  selectObserver: 'Please select observer',
-  selectGrowthStage: 'Please select growth stage',
-  selectTrait: 'Please select trait',
+  selectPlot: 'Please select a plot',
+  selectObserver: 'Please select an observer',
+  selectGrowthStage: 'Please select a growth stage',
+  selectTrait: 'Please select a trait',
   enterValue: 'Please enter trait value',
-  addAtLeastOneTrait: 'Please add at least one trait',
-  
-  // Table columns
+  addAtLeastOneTrait: 'Please add at least one trait data',
+  invalidConfirm: 'Are you sure to invalidate this trait record?', // Supplement: Invalidation confirmation prompt
+  submitAuditConfirm: 'Are you sure to submit this trait record for audit?',
+
+  // Table column names
   columns: {
     recordId: 'Record ID',
     plotId: 'Plot ID',
@@ -61,24 +64,31 @@ export default {
     growthStage: 'Growth Stage',
     traitCount: 'Trait Count',
     status: 'Status',
-    workflowStatus: 'Workflow Status',
-    createBy: 'Created By',
-    createTime: 'Create Time',
+    workflowStatus: 'Audit Status',
+    createBy: 'Creator',
+    createTime: 'Creation Time',
     actions: 'Actions'
   },
-  
+
   // Card titles
   cards: {
     basicInfo: 'Basic Information',
     traitDetails: 'Trait Details',
     photoInfo: 'Photo Information'
   },
-  
+
+  // Operation button text (Supplement: Buttons used in code)
+  invalid: 'Invalidate', // Supplement: Invalidate button
+  submitAudit: 'Initiate Audit', // Supplement: Initiate audit button
+
   // Message prompts
   deleteConfirm: 'Are you sure to delete the selected records?',
   deleteSuccess: 'Deleted successfully',
   addSuccess: 'Added successfully',
-  editSuccess: 'Updated successfully',
+  editSuccess: 'Edited successfully',
   uploadSuccess: 'Uploaded successfully',
-  uploadFailed: 'Upload failed'
+  uploadFailed: 'Upload failed',
+  invalidSuccess: 'Trait record invalidated successfully', // Supplement: Invalidation success prompt
+  invalidFailed: 'Failed to invalidate trait record', // Supplement: Invalidation failed prompt
+  submitAuditSuccess: 'Trait record submitted for audit successfully' // Supplement: Submit audit success prompt
 }

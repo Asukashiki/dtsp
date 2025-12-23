@@ -232,17 +232,59 @@
                 <el-table-column :label="$t('common.actions')" fixed="right" width="300">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
+                      <!-- 查看按钮 - 非草稿状态显示 -->
+                      <el-button 
+                        v-if="row.workflowStatus !== 'S0'"
+                        link 
+                        type="primary" 
+                        @click="handleView(row)"
+                      >
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
+                      
+                      <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                      <el-button 
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
+                        link 
+                        type="primary" 
+                        @click="handleEdit(row)"
+                      >
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
+                      
+                      <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                      <el-button 
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
+                        link 
+                        type="success" 
+                        @click="handleSubmit(row)"
+                      >
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.submit') }}
+                      </el-button>
+                      
+                      <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
+                      <el-button 
+                        v-if="row.workflowStatus === 'S2'"
+                        link 
+                        type="warning" 
+                        @click="handleArchive(row)"
+                      >
+                        <i class="ri-archive-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.archive') }}
+                      </el-button>
+                      
+                      <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
+                      <el-button 
+                        v-if="row.workflowStatus === 'S0'"
+                        link 
+                        type="danger" 
+                        @click="handleCancel(row)"
+                      >
+                        <i class="ri-close-circle-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.cancel') }}
                       </el-button>
                     </div>
                   </template>
@@ -353,14 +395,53 @@
                   </div>
                 </div>
                 <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
+                  <!-- 查看按钮 - 非草稿状态显示 -->
+                  <el-button 
+                    v-if="item.workflowStatus !== 'S0'"
+                    type="primary" 
+                    size="small" 
+                    @click="handleView(item)"
+                  >
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button size="small" @click="handleEdit(item)">
+                  
+                  <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                  <el-button 
+                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
+                    size="small" 
+                    @click="handleEdit(item)"
+                  >
                     {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item)">
-                    {{ $t('common.delete') }}
+                  
+                  <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                  <el-button 
+                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
+                    type="success" 
+                    size="small" 
+                    @click="handleSubmit(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.submit') }}
+                  </el-button>
+                  
+                  <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
+                  <el-button 
+                    v-if="item.workflowStatus === 'S2'"
+                    type="warning" 
+                    size="small" 
+                    @click="handleArchive(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.archive') }}
+                  </el-button>
+                  
+                  <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
+                  <el-button 
+                    v-if="item.workflowStatus === 'S0'"
+                    type="danger" 
+                    size="small" 
+                    @click="handleCancel(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.cancel') }}
                   </el-button>
                 </div>
               </div>
@@ -394,7 +475,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLabTestList, deleteLabTest } from '@/api/labTest'
+import { getLabTestList, deleteLabTest, submitLabTest, archiveLabTest, cancelLabTest } from '@/api/labTest'
 import { getBatchOptions } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
@@ -512,6 +593,87 @@ const handleDelete = async (row) => {
     if (error !== 'cancel') {
       console.error('Failed to delete:', error)
       ElMessage.error(t('common.deleteFailed'))
+    }
+  }
+}
+
+// 提交审核
+const handleSubmit = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.submitConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await submitLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.submitSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  }
+}
+
+// 归档
+const handleArchive = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.archiveConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await archiveLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.archiveSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to archive:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  }
+}
+
+// 作废
+const handleCancel = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.cancelDataConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await cancelLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.cancelSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to cancel:', error)
+      ElMessage.error(t('common.operationFailed'))
     }
   }
 }
