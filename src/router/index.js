@@ -121,7 +121,7 @@ const routes = [
     meta: { requiresAuth: true, layoutConfig: researchLayoutConfig },
     children: [
       // ==================== 育种数据管理 ====================
-      
+
       // 育种批次管理
       {
         path: 'breeding-data/batch',
@@ -161,7 +161,7 @@ const routes = [
         meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
       },
 
-      
+
       // 地块及播种信息管理
       {
         path: 'breeding-data/plot',
@@ -187,7 +187,7 @@ const routes = [
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 试验基础信息管理
       {
         path: 'breeding-data/trial',
@@ -213,7 +213,7 @@ const routes = [
         component: () => import('../views/research/breeding-data/trial/detail.vue'),
         meta: { title: '试验信息详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 农艺性状数据采集
       {
         path: 'breeding-data/trait',
@@ -246,7 +246,7 @@ const routes = [
         component: () => import('../views/research/breeding-data/trait/detail.vue'),
         meta: { title: '农艺性状数据详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 农事记录数据采集
       {
         path: 'breeding-data/farming',
@@ -272,7 +272,27 @@ const routes = [
         component: () => import('../views/research/breeding-data/farming/detail.vue'),
         meta: { title: '农事记录详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
+      // 农事记录数据采集审核 - 新增的审核路由
+      {
+        path: 'breeding-data/farming/farming-index',
+        name: 'FarmingRecordAuditIndex',
+        component: () => import('../views/research/breeding-data/farming/farming-index.vue'),
+        meta: { title: '农事记录数据采集审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/farming/farming-detail/:farmingId',
+        name: 'FarmingRecordAuditDetail',
+        component: () => import('../views/research/breeding-data/farming/farming-detail.vue'),
+        meta: { title: '农事记录审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/farming/farming-form/:farmingId',
+        name: 'FarmingRecordAuditForm',
+        component: () => import('../views/research/breeding-data/farming/farming-form.vue'),
+        meta: { title: '农事记录审核操作', hideInMenu: true, requiresAuth: true }
+      },
+
       // 环境属性数据采集
       {
         path: 'breeding-data/environment',
@@ -298,7 +318,7 @@ const routes = [
         component: () => import('../views/research/breeding-data/environment/detail.vue'),
         meta: { title: '环境数据详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 田间检验数据采集
       {
         path: 'breeding-data/field-inspection',
@@ -342,7 +362,7 @@ const routes = [
         component: () => import('../views/research/data-collection/yield-data/audit-list.vue'),
         meta: { title: '田间检验数据采集审核', requiresAuth: true }
       },
-      
+
       // 实验室测试数据采集
       {
         path: 'breeding-data/laboratory-test',
@@ -368,7 +388,7 @@ const routes = [
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // Breeder seed生产数据采集
       // 育种数据管理 - 育种数据集编制
       {
@@ -453,7 +473,7 @@ const routes = [
         component: () => import('../views/research/breeding/seed-production/index.vue'),
         meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
       },
-      
+
       // Breeder seed分发数据
       {
         path: 'breeding/seed-distribution',
@@ -461,7 +481,7 @@ const routes = [
         component: () => import('../views/research/breeding/seed-distribution/index.vue'),
         meta: { title: 'Breeder able seed分发数据', requiresAuth: true }
       },
-      
+
       // 物联网传感器维护
       {
         path: 'data-collection/iot-sensor',
@@ -526,7 +546,7 @@ const routes = [
         meta: { title: '环境监测数据审核', hideInMenu: true, requiresAuth: true }
       },
       // ==================== 繁殖数据管理 ====================
-      
+
       // OSE确认接收育种家种子
       {
         path: 'breeding/ose-receive-confirm',
@@ -534,7 +554,7 @@ const routes = [
         component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
         meta: { title: 'OSE确认接收育种家种子', requiresAuth: true }
       },
-      
+
       // 种子扩繁批次信息采集
       {
         path: 'breeding',
@@ -560,7 +580,7 @@ const routes = [
         component: () => import('../views/research/breeding/ose-information/detail.vue'),
         meta: { title: '种子扩繁批次详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 种子扩繁跟踪信息采集
       {
         path: 'breeding/tracking',
@@ -568,7 +588,7 @@ const routes = [
         component: () => import('../views/research/breeding-tracking/index.vue'),
         meta: { title: '种子扩繁跟踪信息采集', requiresAuth: true }
       },
-      
+
       // 繁殖种子认证申请
       {
         path: 'seed/breeding-certification',
@@ -594,7 +614,7 @@ const routes = [
         component: () => import('../views/seed/breeding-certification/detail.vue'),
         meta: { title: '认证申请详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // C1种子繁殖申请
       {
         path: 'c1-propagation',
@@ -620,7 +640,7 @@ const routes = [
         component: () => import('../views/research/c1-propagation/detail.vue'),
         meta: { title: '繁殖申请详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // C1种子繁殖申请审核
       {
         path: 'c1-propagation-audit',
@@ -634,7 +654,7 @@ const routes = [
         component: () => import('../views/research/c1-propagation-audit/detail.vue'),
         meta: { title: '繁殖申请审核详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // C1繁殖批次管理
       {
         path: 'c1-breeding-batch',
@@ -660,7 +680,7 @@ const routes = [
         component: () => import('../views/research/c1-breeding-batch/detail.vue'),
         meta: { title: 'C1繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
       // 种子认证审核
       {
         path: 'seed/breeding-audit',
@@ -668,7 +688,7 @@ const routes = [
         component: () => import('../views/seed/breeding-audit/index.vue'),
         meta: { title: '种子认证审核', requiresAuth: true }
       },
-      
+
       // 种子认证颁发
       {
         path: 'seed/breeding-certificate',
@@ -676,7 +696,7 @@ const routes = [
         component: () => import('../views/seed/breeding-certificate/index.vue'),
         meta: { title: '种子认证颁发', requiresAuth: true }
       },
-      
+
       // C1繁殖批次审核
       {
         path: 'c1-breeding-batch-audit',
@@ -684,7 +704,7 @@ const routes = [
         component: () => import('../views/seed/c1-breeding-batch-audit/index.vue'),
         meta: { title: 'C1繁殖批次审核', requiresAuth: true }
       },
-      
+
       // C1繁殖批次证书颁发
       {
         path: 'c1-breeding-certificate',
@@ -692,7 +712,7 @@ const routes = [
         component: () => import('../views/seed/c1-breeding-certificate/index.vue'),
         meta: { title: 'C1繁殖批次证书颁发', requiresAuth: true }
       },
-      
+
       // 繁殖机构注册
       {
         path: 'institution/registration',
@@ -753,7 +773,7 @@ const routes = [
       {
         path: 'institution/research-center/add',
         name: 'ResearchCenterAdd',
-        component: () => import('../views/research/institution/research-center/form.vue'),  
+        component: () => import('../views/research/institution/research-center/form.vue'),
         meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
       },
       {
@@ -770,7 +790,7 @@ const routes = [
       },
 
       // ==================== 种子信息服务 ====================
-      
+
       // 种子推广信息管理
       {
         path: 'seed/promotion',
@@ -778,7 +798,7 @@ const routes = [
         component: () => import('../views/research/seed/SeedPromotion.vue'),
         meta: { title: '种子推广信息管理', requiresAuth: true }
       },
-      
+
       // 种子信息公示
       {
         path: 'seed/info',

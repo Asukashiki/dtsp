@@ -37,6 +37,7 @@ export default {
   farmingRecordDataAdd: '新增农事记录',
   farmingRecordDataEdit: '编辑农事记录',
   farmingRecordDataDetail: '农事记录详情',
+  farmingRecordDataAudit: '农事记录数据采集审核',
 
   environmentDataCollection: '环境属性数据采集',
   environmentDataAdd: '新增环境数据',

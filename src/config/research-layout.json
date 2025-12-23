@@ -19,7 +19,7 @@
          {
           "index": "/research/breeding-data/batch/approve",
           "icon": "ri-calendar-line",
-          "titleKey": "research.menu.breedingBatchApprove", 
+          "titleKey": "research.menu.breedingBatchApprove",
           "roles": ["agri-admin", "OARI"]
         },
         {
@@ -44,6 +44,12 @@
           "index": "/research/breeding-data/farming",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.farmingRecordDataCollection",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding-data/farming/farming-index",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.farmingRecordDataAudit",
           "roles": ["agri-admin", "RC"]
         },
         {
