@@ -389,6 +389,7 @@ export default {
       // 列表列
       columns: {
         receiveConfirmId: '接收确认ID',
+        distributeId: '分发ID',
         oseName: 'OSE名称',
         breedSeedProduceBatchId: '种子ID',
         seedType: '种子类型',
