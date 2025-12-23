@@ -97,6 +97,11 @@ export default {
       status: {
         FINISHED: '已完成',
       },
+
+      result: {
+        title: '生产数据采集详情',
+        selection: '生产批次选择',
+      },
     },
 
     // 分发数据管理

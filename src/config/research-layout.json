@@ -114,6 +114,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding/seed-production-result",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProductionResult",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/breeding/seed-distribution",
           "icon": "ri-share-forward-line",
           "titleKey": "research.menu.breederSeedDistribution",
