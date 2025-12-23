@@ -48,6 +48,7 @@
           <!-- Table -->
           <el-table v-loading="loading" :data="resultList" style="width: 100%">
              <el-table-column type="index" width="50" align="center" />
+             <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchId')" prop="produceBatchId" min-width="150" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchName')" prop="produceBatchName" min-width="150" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.varietyName')" prop="varietyName" min-width="120" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.breedBatchName')" prop="breedBatchName" min-width="150" show-overflow-tooltip />

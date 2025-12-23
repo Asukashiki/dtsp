@@ -279,6 +279,10 @@ export default {
         // title: 'PRODUCTION DATA COLLECTION',
         title: 'Production Data Collection',
         selection: 'Production Batch Selection',
+        section: {
+          productionBatchSelection: 'Production Batch Selection',
+          collectionData: 'Collection Data',
+        },
       },
     },
 
