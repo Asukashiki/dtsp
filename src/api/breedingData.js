@@ -229,8 +229,12 @@ export function getIrrigationCount() {
 
 
 // ============ 环境属性数据 ============
+// export function getEnvironmentDataList(params) {
+//     return request({ url: `${API_BASE_URL}/breeding/environment/list`, method: 'get', params })
+// }
+
 export function getEnvironmentDataList(params) {
-    return request({ url: `${API_BASE_URL}/breeding/environment/list`, method: 'get', params })
+    return request({ url: `${API_BASE_URL}/breeding/environmentNew/list`, method: 'get', params })
 }
 
 export function getEnvironmentDataInfo(envId) {

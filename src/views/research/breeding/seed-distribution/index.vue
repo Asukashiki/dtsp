@@ -1,10 +1,10 @@
 <template>
   <div class="seed-distribution-container">
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-share-forward-line header-icon"></i>
+        <div class="header-left header-icon">
+          <i class="ri-share-forward-line"></i>
         </div>
+      <div class="header-content">
         <div class="header-text">
           <h1 class="page-title">{{ $t('research.breeding.seed.distribution.title') }}</h1>
           <p class="page-subtitle">{{ $t('research.breeding.seed.distribution.subtitle') }}</p>
@@ -342,61 +342,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.seed-distribution-container {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 24px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon {
-  font-size: 32px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-  min-width: 0;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0;
-}
 
 .search-bar {
   background: white;

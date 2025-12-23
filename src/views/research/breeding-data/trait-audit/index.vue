@@ -340,65 +340,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
 
-.page-wrapper {
-  margin: 0 auto;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
 
 .info-card {
   background: white;

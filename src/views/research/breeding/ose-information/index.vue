@@ -2,12 +2,14 @@
   <div class="breeding-module-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-left header-icon">
         <i class="ri-seedling-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
+        <div class="header-text">
         <h1 class="page-title">{{ $t('research.breeding.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.breeding.subtitle') }}</p>
+      </div>
       </div>
     </div>
 
@@ -341,42 +343,7 @@ const getStatusTagType = (status) => {
 </script>
 
 <style scoped lang="scss">
-.breeding-module-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
 
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-icon-wrapper {
-    font-size: 40px;
-    margin-right: 20px;
-  }
-
-  .header-text {
-    flex: 1;
-
-    .page-title {
-      margin: 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .page-subtitle {
-      margin: 5px 0 0 0;
-      opacity: 0.9;
-      font-size: 14px;
-    }
-  }
-}
 
 .content-wrapper {
   .search-bar {

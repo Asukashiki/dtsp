@@ -42,7 +42,7 @@
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.breedingLicense.form.cropType') }}</span>
-            <span class="value">{{ licenseDetail.cropType }}</span>
+            <span class="value">{{ getLabelByValue('crop_type', licenseDetail.cropType) || licenseDetail.cropType }}</span>
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.breedingLicense.form.varietyName') }}</span>
@@ -185,10 +185,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLicenseById } from '@/api/breedingLicense'
 import { getFilePreviewUrl } from '@/api/file'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 字典数据
+const { getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
 
 // State
 const loading = ref(false)
@@ -206,7 +210,7 @@ const getStatusType = (status) => {
 
 // Get Status Text
 const getStatusText = (status) => {
-  return t(`research.breedingLicense.status.${status}`) || status
+  return getLabelByValue('license_status', status) || status
 }
 
 // Format JSON

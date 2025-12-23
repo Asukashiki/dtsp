@@ -34,7 +34,7 @@
       <div class="detail-section">
         <h2 class="section-title">
           <i class="ri-information-line"></i>
-          {{ $t('research.variety.detail.basicInfo') }}
+          Basic Info
         </h2>
         <div class="info-grid">
           <div class="info-item">
@@ -43,7 +43,7 @@
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.variety.query.columns.cropType') }}</span>
-            <span class="value">{{ detailData.varietyType || '-' }}</span>
+            <span class="value">{{ getLabelByValue('crop_type', detailData.varietyType) || detailData.varietyType || '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.variety.query.columns.registerNo') }}</span>
@@ -60,7 +60,7 @@
       <div v-if="detailData.dataType === 'license'" class="detail-section">
         <h2 class="section-title">
           <i class="ri-shield-check-line"></i>
-          {{ $t('research.variety.detail.licenseInfo') }}
+          License Info
         </h2>
         <div class="info-grid">
           <div class="info-item">
@@ -69,7 +69,7 @@
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.variety.query.columns.approvalOrg') }}</span>
-            <span class="value">{{ detailData.approvalOrg || '-' }}</span>
+            <span class="value">{{ getLabelByValue('approval_org', detailData.approvalOrg) || detailData.approvalOrg || '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.variety.query.columns.approvalDate') }}</span>
@@ -92,14 +92,11 @@
           <div class="info-item">
             <span class="label">{{ $t('research.breedingLicense.form.licenseStatus') }}</span>
             <span class="value">
-              <el-tag type="success" v-if="detailData.licenseStatus === 'valid'">
-                {{ $t('research.breedingLicense.status.valid') }}
-              </el-tag>
-              <el-tag type="warning" v-else-if="detailData.licenseStatus === 'expired'">
-                {{ $t('research.breedingLicense.status.expired') }}
-              </el-tag>
-              <el-tag type="danger" v-else-if="detailData.licenseStatus === 'revoked'">
-                {{ $t('research.breedingLicense.status.revoked') }}
+              <el-tag
+                v-if="detailData.licenseStatus"
+                :type="detailData.licenseStatus === 'valid' ? 'success' : detailData.licenseStatus === 'expired' ? 'warning' : 'danger'"
+              >
+                {{ getLabelByValue('license_status', detailData.licenseStatus) || detailData.licenseStatus }}
               </el-tag>
               <span v-else>-</span>
             </span>
@@ -241,10 +238,14 @@ import { ElMessage } from 'element-plus'
 import { getVarietyPublicDetail } from '@/api/seedPromotion'
 import { getPromotionByVariety } from '@/api/seedPromotion'
 import { getFilePreviewUrl } from '@/api/file'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 字典数据
+const { getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
 
 const loading = ref(false)
 const detailData = ref({})
