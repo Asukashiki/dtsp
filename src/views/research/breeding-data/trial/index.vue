@@ -110,14 +110,14 @@
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="trialId" :label="$t('research.breedingData.trial.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('research.breedingData.trial.columns.batchId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialName" :label="$t('research.breedingData.trial.columns.trialName')" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('research.breedingData.trial.columns.batchId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="locationId" show-overflow-tooltip :label="$t('research.breedingData.trial.columns.locationId')" min-width="120" />
                 <el-table-column prop="year" :label="$t('research.breedingData.trial.columns.year')" min-width="100" />
                 <el-table-column prop="season" :label="$t('research.breedingData.trial.columns.season')" min-width="100" />
                 <el-table-column prop="designType" :label="$t('research.breedingData.trial.columns.designType')" min-width="140" />
                 <el-table-column prop="replications" :label="$t('research.breedingData.trial.columns.replications')" min-width="100" />
-                <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.auditStatus')" width="120" align="center">
+                <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.workflowStatus')" width="120" align="center">
                   <template #default="{ row }">
                     <StatusTag :status="row.trialStatus || row.workflowStatus || 'S0'" />
                   </template>
