@@ -215,6 +215,7 @@ import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getFarmerOptions } from '@/api/newFarm'
 import { useDict } from '@/hooks/useDict'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -233,6 +234,10 @@ const detailList = ref([])
 
 const isEdit = computed(() => !!route.params.traitId)
 
+// 获取当前登录用户信息
+const currentUser = getUserInfo()
+const defaultObserverId = currentUser?.user?.id || ''
+
 const formData = reactive({
   recordId: '',
   plotId: '',
@@ -240,7 +245,7 @@ const formData = reactive({
   batchId: '',
   observationDate: getCurrentDateTime(),
   growthStage: '',
-  observerId: '',
+  observerId: defaultObserverId,
   photoUrl: '',
   remarks: '',
   status: 'draft'
@@ -280,6 +285,18 @@ const loadFarmerOptions = async () => {
   try {
     const res = await getFarmerOptions()
     farmerOptions.value = res.data || []
+    
+    // 将当前用户添加到选项列表（如果不存在）
+    const currentUser = getUserInfo()
+    if (currentUser?.user?.id && currentUser?.user?.name) {
+      const userExists = farmerOptions.value.some(item => item.farmerId === currentUser.user.id)
+      if (!userExists) {
+        farmerOptions.value.unshift({
+          farmerId: currentUser.user.id,
+          farmerName: currentUser.user.name
+        })
+      }
+    }
   } catch (error) {
     console.error('Failed to load farmer options:', error)
   }
