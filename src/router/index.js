@@ -441,6 +441,12 @@ const routes = [
         component: () => import('../views/research/breeding/seed-production/index.vue'),
         meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
       },
+      {
+        path: 'breeding/seed-production-result',
+        name: 'SeedProductionResult',
+        component: () => import('../views/research/breeding/seed-production-result/index.vue'),
+        meta: { title: '生产数据采集详情', requiresAuth: true }
+      },
       
       // Breeder seed分发数据
       {

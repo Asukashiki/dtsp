@@ -274,6 +274,12 @@ export default {
       status: {
         FINISHED: 'Finished',
       },
+
+      result: {
+        // title: 'PRODUCTION DATA COLLECTION',
+        title: 'Production Data Collection',
+        selection: 'Production Batch Selection',
+      },
     },
 
     // Distribution Management

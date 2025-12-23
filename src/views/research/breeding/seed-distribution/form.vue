@@ -1,4 +1,4 @@
-<template>
+dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
   <div class="distribution-form-container">
     <div class="form-header">
       <div class="header-left">
@@ -372,7 +372,7 @@ const loadOseList = async () => {
 // 加载生产批次列表
 const loadProductionBatchList = async () => {
   try {
-    const res = await getBreedSeedProduceList({ pageNum: 1, pageSize: 1000 })
+    const res = await getBreedSeedProduceList({ pageNum: 1, pageSize: 1000, produceStatus: 'Finished' })
     if (res.code === 200) {
       productionBatchList.value = res.rows || []
       // 调试信息：打印第一条数据查看remainingQuantity是否正确返回
