@@ -77,6 +77,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/field-inspection-audit",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.fieldInspectionAudit",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/breeding-data/laboratory-test",
           "icon": "ri-flask-line",
           "titleKey": "research.menu.laboratoryTest",

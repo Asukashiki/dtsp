@@ -47,6 +47,7 @@ export default {
   fieldInspectionAdd: '新增田间检验',
   fieldInspectionEdit: '编辑田间检验',
   fieldInspectionDetail: '田间检验详情',
+  fieldInspectionAudit: '田间检验数据采集审核',
 
   laboratoryTest: '实验室测试数据采集',
   laboratoryTestAdd: '新增实验室测试',

@@ -633,7 +633,10 @@ export default {
       plotInfo: 'Plot Information',
       yieldInfo: 'Yield Information',
       operatorInfo: 'Operator Information',
-
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
+      updateTime: 'Update Time',
+      updateBy: 'Updated By',
       batchId: 'Breeding Batch ID',
       trialId: 'Trial ID',
       harvestDate: 'Harvest Date',
@@ -734,4 +737,74 @@ export default {
       actions: 'Actions',
     },
   },
-}
+
+  // Field Inspection Data Audit
+  fieldInspectionAudit: {
+    title: 'Field Inspection Data Audit',
+    subtitle: 'Audit field inspection data',
+    list: 'Pending Field Inspection Data List',
+    audit: 'Audit',
+
+    // Form fields
+    form: {
+      basicInfo: 'Basic Information',
+      inspectionInfo: 'Inspection Information',
+      auditInfo: 'Audit Information',
+      batchId: 'Breeding Batch ID',
+      trialId: 'Trial ID',
+      plotId: 'Plot ID',
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
+      inspectionDate: 'Inspection Date',
+      inspectionType: 'Inspection Type',
+      scoreCode: 'Score Code',
+      scoreValue: 'Score Value',
+      auditComment: 'Audit Comment',
+      auditor: 'Auditor',
+      auditDepartment: 'Audit Department',
+      approvalTime: 'Approval Time',
+    },
+
+    // Form placeholders
+    placeholder: {
+      auditComment: 'Please enter audit comment',
+      auditor: 'Please enter auditor',
+      auditDepartment: 'Please enter audit department',
+      approvalTime: 'Please select approval time',
+      inspectionDate: 'Please select inspection date',
+    },
+
+    // Form validation
+    rules: {
+      auditCommentRequired: 'Audit comment is required',
+    },
+
+    // Action buttons
+    approve: 'Approve',
+    reject: 'Reject',
+
+    // Confirmation prompts
+    confirmApprove: 'Are you sure to approve this audit?',
+    confirmReject: 'Are you sure to reject this audit?',
+
+    // Operation results
+    approveSuccess: 'Audit approved',
+    rejectSuccess: 'Audit rejected',
+
+    // Void related
+    void: 'Void',
+    voidReason: 'Void Reason',
+    confirmVoid: 'Are you sure to void this audit?',
+    voidSuccess: 'Void successful',
+
+    // Form placeholders
+    placeholder: {
+      voidReason: 'Please enter void reason',
+    },
+
+    // Form validation
+    rules: {
+      voidReasonRequired: 'Void reason is required',
+    },
+  },
+};
