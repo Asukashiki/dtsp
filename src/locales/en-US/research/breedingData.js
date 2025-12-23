@@ -296,6 +296,7 @@ export default {
         season: 'Season',
         sowingCount: 'Sowing Records',
         auditStatus: 'Audit Status',
+        workflowStatus: 'Workflow Status',
         createdBy: 'Created By',
         modifiedBy: 'Modified By',
         auditedBy: 'Audited By',

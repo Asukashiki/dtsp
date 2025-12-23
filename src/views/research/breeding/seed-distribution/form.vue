@@ -95,8 +95,8 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                 style="width: 100%"
                 @change="handleSeedLevelChange"
               >
-                <el-option label="Basic" value="Basic" />
-                <el-option label="Pre-Basic" value="Pre-Basic" />
+              <el-option label="Pre-Basic" value="Pre-Basic" />
+              <el-option label="Basic" value="Basic" />
               </el-select>
             </el-form-item>
 

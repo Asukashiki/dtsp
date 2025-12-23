@@ -108,7 +108,7 @@
             </el-table-column>
             <el-table-column
               prop="auditStatusDesc"
-              :label="t('research.trialBasicAudit.audit.list.status')"
+              :label="t('research.trialBasicAudit.audit.list.workflowStatus')"
               min-width="120"
               align="center"
             >
