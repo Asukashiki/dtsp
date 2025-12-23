@@ -187,7 +187,15 @@ const routes = [
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
         meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
       },
-      
+
+      // 地块及播种信息管理审核
+      {
+        path: 'breeding-data/plot-audit',
+        name: 'PlotAuditList',
+        component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
+        meta: { title: '地块及播种信息管理审核', requiresAuth: true }
+      },
+
       // 试验基础信息管理
       {
         path: 'breeding-data/trial',
@@ -355,6 +363,14 @@ const routes = [
         name: 'BreedingLabTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      
+      // 实验室测试数据采集审核
+      {
+        path: 'breeding-data/laboratory-test-audit',
+        name: 'BreedingLabTestAudit',
+        component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
+        meta: { title: '实验室测试数据采集审核', requiresAuth: true }
       },
       
       // Breeder seed生产数据采集

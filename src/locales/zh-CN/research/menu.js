@@ -20,6 +20,7 @@ export default {
   plotInfoAdd: '新增地块信息',
   plotInfoEdit: '编辑地块信息',
   plotInfoDetail: '地块信息详情',
+  plotInfoAudit: '地块及播种信息管理审核',
 
   trialBasicManagement: '试验基础信息管理',
   trialBasicAdd: '新增试验信息',
@@ -52,6 +53,7 @@ export default {
   laboratoryTestAdd: '新增实验室测试',
   laboratoryTestEdit: '编辑实验室测试',
   laboratoryTestDetail: '实验室测试详情',
+  laboratoryTestAudit: '实验室测试数据采集审核',
 
   breederSeedProduction: 'Breeder able seed生产数据采集',
   breederSeedProductionAdd: '新增育种家种子生产',

@@ -598,7 +598,47 @@ export default {
       resultValue: '请输入实验结果值',
       passFailFlag: '请选择实验结果标识',
       remark: '请输入备注(选填)',
+      auditOpinion: '请输入审核意见'
     },
+
+    // 审核相关
+    auditTitle: '实验室测试数据采集审核',
+    auditSubtitle: '审核和批准实验室测试数据',
+    auditList: '审核列表',
+    audit: '审核',
+    pendingAudit: '待审核',
+    audited: '已审核',
+    canceled: '已作废',
+    auditOpinion: '审核意见',
+    auditCanceled: '审核记录作废',
+    cancelType: '作废类型',
+    dataCanceled: '数据作废',
+
+    // 操作
+    submit: '提交审核',
+    approve: '通过',
+    reject: '退回',
+    return: '返回',
+    archive: '归档',
+    cancel: '作废',
+
+    // 确认消息
+    approveConfirm: '确定审核通过该数据吗？',
+    rejectConfirm: '确定退回该数据吗？',
+    cancelConfirm: '确定作废该审核记录吗？',
+    submitConfirm: '确定提交审核吗？',
+    archiveConfirm: '确定归档该数据吗？',
+    cancelDataConfirm: '确定作废该数据吗？',
+
+    // 成功消息
+    approveSuccess: '审核通过成功',
+    rejectSuccess: '退回成功',
+    cancelSuccess: '作废成功',
+    submitSuccess: '提交审核成功',
+    archiveSuccess: '归档成功',
+
+    // 验证消息
+    rejectOpinionRequired: '退回时必须填写审核意见',
 
     // 表单验证
     rules: {
