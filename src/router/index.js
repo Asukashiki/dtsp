@@ -229,6 +229,12 @@ const routes = [
         meta: { title: '农艺性状数据审核', requiresAuth: true }
       },
       {
+        path: 'breeding-data/trait-audit/review/:traitId',
+        name: 'AgronomicTraitDataAuditReview',
+        component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
+        meta: { title: '农艺性状数据审核页面', requiresAuth: true }
+      },
+      {
         path: 'breeding-data/trait/add',
         name: 'AgronomicTraitDataAdd',
         component: () => import('../views/research/breeding-data/trait/form.vue'),
@@ -434,6 +440,12 @@ const routes = [
         name: 'SeedProduction',
         component: () => import('../views/research/breeding/seed-production/index.vue'),
         meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/seed-production-result',
+        name: 'SeedProductionResult',
+        component: () => import('../views/research/breeding/seed-production-result/index.vue'),
+        meta: { title: '生产数据采集详情', requiresAuth: true }
       },
       
       // Breeder seed分发数据

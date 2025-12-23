@@ -54,6 +54,7 @@ export default {
   laboratoryTestDetail: 'Laboratory Test Detail',
 
   breederSeedProduction: 'Seed Production Data',
+  breederSeedProductionResult: 'Seed Production Result Data',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',

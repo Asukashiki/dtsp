@@ -8,8 +8,8 @@
             <i class="ri-leaf-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">性状审核</h1>
-            <p class="page-subtitle">对提交的性状数据进行审核管理</p>
+            <h1 class="page-title">{{ $t('trait-audit.title') }}</h1>
+            <p class="page-subtitle">{{ $t('trait-audit.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <div class="card-header">
             <div class="card-title">
               <i class="ri-file-list-3-line"></i>
-              <span>性状审核列表</span>
+              <span>{{ $t('trait-audit.listName') }}</span>
             </div>
           </div>
 
@@ -28,32 +28,10 @@
             <!-- 搜索筛选区 -->
             <div class="search-section">
               <div class="search-item">
-                <span class="search-label">批次ID:</span>
-                <el-select
-                    v-model="queryParams.batchId"
-                    placeholder="请选择"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">试验ID:</span>
-                <el-select
-                    v-model="queryParams.trialId"
-                    placeholder="请选择"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">生育期:</span>
+                <span class="search-label">{{ $t('trait.growthStage') }}:</span>
                 <el-select
                     v-model="queryParams.growthStage"
-                    placeholder="请选择"
+                    :placeholder="$t('trait-audit.pleaseSelect')"
                     clearable
                     class="filter-select"
                 >
@@ -61,24 +39,25 @@
                 </el-select>
               </div>
               <div class="search-item">
-                <span class="search-label">审核状态:</span>
+                <span class="search-label">{{ $t('trait-audit.auditStatusLabel') }}:</span>
                 <el-select
                     v-model="queryParams.auditStatus"
-                    placeholder="请选择"
+                    :placeholder="$t('trait-audit.pleaseSelect')"
                     clearable
                     class="filter-select"
                 >
-                  <el-option label="待审核" value="pending" />
-                  <el-option label="已通过" value="approved" />
-                  <el-option label="已驳回" value="rejected" />
+                  <el-option :label="$t('trait-audit.status.pending')" value="pending" />
+                  <el-option :label="$t('trait-audit.status.approved')" value="approved" />
+                  <!-- 删除已驳回选项，避免误选 -->
+                  <!-- <el-option :label="$t('trait-audit.status.rejected')" value="rejected" /> -->
                 </el-select>
               </div>
               <div class="search-actions">
                 <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>查询
+                  <i class="ri-search-line"></i>{{ $t('trait-audit.queryBtn') }}
                 </el-button>
                 <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>重置
+                  <i class="ri-refresh-line"></i>{{ $t('trait-audit.resetBtn') }}
                 </el-button>
               </div>
             </div>
@@ -86,35 +65,41 @@
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading">
-                <el-table-column prop="recordId" label="记录ID" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="plotId" label="地块ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" label="试验ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" label="批次ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="observationDate" label="观测日期" min-width="160" />
-                <el-table-column prop="growthStage" label="生育期" min-width="120">
+                <el-table-column prop="plotId" :label="$t('trait-audit.plotId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('trait-audit.trialId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('trait-audit.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="observationDate" :label="$t('trait-audit.observationDate')" min-width="160" />
+                <el-table-column prop="growthStage" :label="$t('trait-audit.growthStage')" min-width="120">
                   <template #default="{ row }">
                     {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="traitCount" label="性状数量" min-width="100" align="center">
+                <!-- 性状数量列 -->
+                <el-table-column :label="$t('trait-audit.traitCount')" min-width="100" align="center">
                   <template #default="{ row }">
-                    <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column label="审核状态" min-width="140">
-                  <template #default="{ row }">
-                    <el-tag :type="getAuditStatusType(row.auditStatus)">
-                      {{ row.auditStatus === 'pending' ? '待审核' : row.auditStatus === 'approved' ? '已通过' : '已驳回' }}
+                    <el-tag type="success" v-loading="detailLoading[row.recordId || row.traitId]">
+                      {{ row.traitDetailLength || 0 }}
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createBy" label="提交人" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="createTime" label="提交时间" min-width="160" />
-                <el-table-column label="操作" width="200" fixed="right">
+                <el-table-column :label="$t('trait-audit.auditStatus')" min-width="140">
+                  <template #default="{ row }">
+                    <el-tag :type="getAuditStatusType(row.auditStatus)">
+                      {{ row.auditStatus === 'pending' ? $t('trait-audit.status.pending') : row.auditStatus === 'approved' ? $t('trait-audit.status.approved') : $t('trait-audit.status.rejected') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createBy" :label="$t('trait-audit.submitter')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createTime" :label="$t('trait-audit.submitTime')" min-width="160" />
+                <el-table-column :label="$t('trait-audit.operations')" width="200" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>查看
+                      <el-button
+                          link
+                          type="primary"
+                          @click="handleView(row)"
+                      >
+                        <i class="ri-eye-line"></i>{{ $t('trait-audit.viewBtn') }}
                       </el-button>
                       <el-button
                           v-if="row.auditStatus === 'pending'"
@@ -122,7 +107,7 @@
                           type="success"
                           @click="handleAudit(row)"
                       >
-                        <i class="ri-check-line"></i>审核
+                        <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                       </el-button>
                     </div>
                   </template>
@@ -151,30 +136,36 @@
                     <span>{{ item.recordId }}</span>
                   </div>
                   <el-tag :type="getAuditStatusType(item.auditStatus)" size="small">
-                    {{ item.auditStatus === 'pending' ? '待审核' : item.auditStatus === 'approved' ? '已通过' : '已驳回' }}
+                    {{ item.auditStatus === 'pending' ? $t('trait-audit.status.pending') : item.auditStatus === 'approved' ? $t('trait-audit.status.approved') : $t('trait-audit.status.rejected') }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">地块ID:</span>
+                    <span class="label">{{ $t('trait-audit.mobileLabels.plotId') }}:</span>
                     <span class="value">{{ item.plotId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">观测日期:</span>
+                    <span class="label">{{ $t('trait-audit.mobileLabels.observationDate') }}:</span>
                     <span class="value">{{ item.observationDate }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">生育期:</span>
+                    <span class="label">{{ $t('trait-audit.mobileLabels.growthStage') }}:</span>
                     <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">性状数量:</span>
-                    <span class="value">{{ item.traitCount || 0 }}</span>
+                    <span class="label">{{ $t('trait-audit.mobileLabels.traitCount') }}:</span>
+                    <span class="value" v-loading="detailLoading[item.recordId || item.traitId]">
+                      {{ item.traitDetailLength || 0 }}
+                    </span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
-                  <el-button size="small" @click="handleView(item)">
-                    <i class="ri-eye-line"></i>查看
+                  <el-button
+                      size="small"
+                      type="primary"
+                      @click="handleView(item)"
+                  >
+                    <i class="ri-eye-line"></i>{{ $t('trait-audit.viewBtn') }}
                   </el-button>
                   <el-button
                       v-if="item.auditStatus === 'pending'"
@@ -182,7 +173,7 @@
                       type="success"
                       @click="handleAudit(item)"
                   >
-                    <i class="ri-check-line"></i>审核
+                    <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                   </el-button>
                 </div>
               </div>
@@ -200,7 +191,7 @@
             </div>
 
             <!-- 空状态 -->
-            <el-empty v-if="dataList.length === 0 && !loading" description="暂无数据" />
+            <el-empty v-if="dataList.length === 0 && !loading" :description="$t('trait-audit.emptyData')" />
           </div>
         </div>
       </div>
@@ -212,11 +203,12 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-// 替换为你的性状审核接口（需自行实现）
-import { getAgronomicTraitAuditList, getBatchOptions, getTrialOptions } from '@/api/breedingData'
+import { getAgronomicTraitAuditList, getBatchOptions, getTrialOptions, getTraitRecordInfo } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t } = useI18n()
 const { options, getLabelByValue } = useDict(['growth_cycle'])
 
 const loading = ref(false)
@@ -224,6 +216,8 @@ const dataList = ref([])
 const total = ref(0)
 const batchOptions = ref([])
 const trialOptions = ref([])
+const detailLoading = ref({})
+const traitDetailLengthCache = ref({})
 
 const queryParams = reactive({
   pageNum: 1,
@@ -231,10 +225,10 @@ const queryParams = reactive({
   batchId: '',
   trialId: '',
   growthStage: '',
-  auditStatus: '' // 审核状态：pending(待审核)、approved(已通过)、rejected(已驳回)
+  auditStatus: ''
 })
 
-// 审核状态标签类型映射（和数据集审核页面一致）
+// 审核状态标签类型映射
 const getAuditStatusType = (status) => {
   const typeMap = {
     pending: 'warning',
@@ -249,11 +243,37 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await getAgronomicTraitAuditList(queryParams)
-    dataList.value = res.rows || []
-    total.value = res.total || 0
+    dataList.value = res.data?.list || [];
+    total.value = res.data?.total || 0;
+
+    for (const item of dataList.value) {
+      const recordUniqueId = item.recordId || item.traitId
+      if (traitDetailLengthCache.value[recordUniqueId] !== undefined) {
+        item.traitDetailLength = traitDetailLengthCache.value[recordUniqueId]
+        continue
+      }
+
+      detailLoading.value[recordUniqueId] = true
+      try {
+        const traitDetailRes = await getTraitRecordInfo(recordUniqueId)
+        if (traitDetailRes.code === 200 && traitDetailRes.data) {
+          item.traitDetailLength = traitDetailRes.data.detailList?.length || 0
+          traitDetailLengthCache.value[recordUniqueId] = item.traitDetailLength
+        } else {
+          item.traitDetailLength = 0
+          traitDetailLengthCache.value[recordUniqueId] = 0
+        }
+      } catch (error) {
+        console.error(`加载性状记录【${recordUniqueId}】明细失败:`, error)
+        item.traitDetailLength = 0
+        traitDetailLengthCache.value[recordUniqueId] = 0
+      } finally {
+        detailLoading.value[recordUniqueId] = false
+      }
+    }
   } catch (error) {
     console.error('获取性状审核列表失败:', error)
-    ElMessage.error('加载数据失败，请重试')
+    ElMessage.error(t('trait-audit.message.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -296,19 +316,19 @@ const handleReset = () => {
   getList()
 }
 
-// 查看详情
-const handleView = (row) => {
-  router.push({
-    name: 'TraitAuditDetail', // 替换为你的性状审核详情页路由名称
-    params: { id: row.recordId }
-  })
-}
-
 // 进入审核页面
 const handleAudit = (row) => {
   router.push({
-    name: 'TraitAuditReview', // 替换为你的性状审核操作页路由名称
-    params: { id: row.recordId }
+    name: 'AgronomicTraitDataAuditReview',
+    params: { traitId: row.traitId || row.recordId }
+  })
+}
+
+// 查看详情
+const handleView = (row) => {
+  router.push({
+    name: 'AgronomicTraitDataAuditReview',
+    params: { traitId: row.traitId || row.recordId }
   })
 }
 
@@ -319,7 +339,6 @@ onMounted(() => {
 })
 </script>
 
-<!-- 完全复用数据集审核页面的原生CSS，去掉SCSS相关配置 -->
 <style scoped>
 .page-container {
   min-height: 100vh;
@@ -411,7 +430,7 @@ onMounted(() => {
   padding: 24px;
 }
 
-/* 搜索区域样式（适配性状审核的搜索项结构，样式和前者一致） */
+/* 搜索区域样式 */
 .search-section {
   display: flex;
   gap: 12px;
@@ -443,6 +462,7 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .table-wrapper {
@@ -550,7 +570,7 @@ onMounted(() => {
   display: none;
 }
 
-/* 响应式适配（完全和数据集审核页面一致） */
+/* 响应式适配 */
 @media screen and (max-width: 768px) {
   .page-container {
     padding: 12px;
