@@ -772,6 +772,13 @@ const routes = [
         component: () => import('../views/research/seed/SeedPromotion.vue'),
         meta: { title: '种子推广信息管理', requiresAuth: true }
       },
+      // 种子推广详情
+      {
+        path: 'seed/promotion/detail/:promotionId',
+        name: 'SeedPromotionDetail',
+        component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
+        meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
+      },
       
       // 种子信息公示
       {
@@ -779,6 +786,13 @@ const routes = [
         name: 'SeedInfo',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
+      },
+      // 品种详情页
+      {
+        path: 'variety/detail/:publishId',
+        name: 'VarietyDetailPage',
+        component: () => import('../views/research/variety/VarietyDetail.vue'),
+        meta: { title: '品种详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
