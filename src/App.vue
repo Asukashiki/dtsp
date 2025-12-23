@@ -18,7 +18,8 @@ const elementLocale = computed(() => {
   </el-config-provider>
 </template>
 
-<style>
+<style lang="scss">
+@import "./assets/styles/page-common.scss";
 /* * {
   margin: 0;
   padding: 0;
