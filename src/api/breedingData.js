@@ -262,6 +262,6 @@ export function performAgronomicTraitAudit(data) {
 }
 
 // 查询农艺性状审核历史记录
-export function submitTraitRecordAudit(traitId) {
-    return request({ url: `${API_BASE_URL}/breeding/trait/audit/history/${traitId}`, method: 'get' })
+export function submitTraitRecordAudit(recordId) {
+    return request({ url: `${API_BASE_URL}/breeding/traitRecord/submit/${recordId}`, method: 'post' })
 }

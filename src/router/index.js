@@ -229,6 +229,12 @@ const routes = [
         meta: { title: '农艺性状数据审核', requiresAuth: true }
       },
       {
+        path: 'breeding-data/trait-audit/review/:traitId',
+        name: 'AgronomicTraitDataAuditReview',
+        component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
+        meta: { title: '农艺性状数据审核页面', requiresAuth: true }
+      },
+      {
         path: 'breeding-data/trait/add',
         name: 'AgronomicTraitDataAdd',
         component: () => import('../views/research/breeding-data/trait/form.vue'),

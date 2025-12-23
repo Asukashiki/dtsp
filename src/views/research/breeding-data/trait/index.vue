@@ -34,28 +34,6 @@
             <!-- 搜索筛选区 -->
             <div class="search-section">
               <div class="search-item">
-                <span class="search-label">{{ $t('trait.batchId') }}:</span>
-                <el-select
-                    v-model="queryParams.batchId"
-                    :placeholder="$t('common.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">{{ $t('trait.trialId') }}:</span>
-                <el-select
-                    v-model="queryParams.trialId"
-                    :placeholder="$t('common.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in trialOptions" :key="item.trialId" :label="item.trialId" :value="item.trialId" />
-                </el-select>
-              </div>
-              <div class="search-item">
                 <span class="search-label">{{ $t('trait.growthStage') }}:</span>
                 <el-select
                     v-model="queryParams.growthStage"
@@ -67,9 +45,9 @@
                 </el-select>
               </div>
               <div class="search-item">
-                <span class="search-label">{{ $t('trait.columns.workflowStatus') }}:</span>
+                <span class="search-label">{{ $t('trait.columns.status') }}:</span>
                 <el-select
-                    v-model="queryParams.workflowStatus"
+                    v-model="queryParams.status"
                     :placeholder="$t('common.pleaseSelect')"
                     clearable
                     class="filter-select"
@@ -111,23 +89,38 @@
                     <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('trait.columns.workflowStatus')" min-width="140">
+                <el-table-column :label="$t('trait.columns.status')" min-width="140">
                   <template #default="{ row }">
-                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus }}</el-tag>
+                    <el-tag type="info">{{ getLabelByValue('flow_status', row.status) || row.status }}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
-                <el-table-column :label="$t('trait.columns.actions')" width="280" fixed="right">
+                <el-table-column :label="$t('trait.columns.actions')" width="360" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
                         <i class="ri-eye-line"></i>{{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
+                      <!-- 编辑按钮：仅草稿/驳回状态可见 -->
+                      <el-button
+                          v-if="row.status === 'draft' || row.status === 'rejected'"
+                          link
+                          type="primary"
+                          @click="handleEdit(row)"
+                      >
                         <i class="ri-edit-line"></i>{{ $t('common.edit') }}
                       </el-button>
-                      <!-- 新增：发起审核按钮（仅草稿/驳回状态可见） -->
+                      <!-- 新增：作废按钮 - 显示场景与编辑按钮完全一致 -->
+                      <el-button
+                          v-if="row.status === 'draft' || row.status === 'rejected'"
+                          link
+                          type="warning"
+                          @click="handleInvalid(row)"
+                      >
+                        <i class="ri-ban-line"></i>{{ $t('trait.invalid') }}
+                      </el-button>
+                      <!-- 发起审核按钮：仅草稿/驳回状态可见 -->
                       <el-button
                           v-if="row.status === 'draft' || row.status === 'rejected'"
                           link
@@ -179,26 +172,42 @@
                     <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait.columns.workflowStatus') }}:</span>
-                    <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus) || item.workflowStatus }}</span>
+                    <span class="label">{{ $t('trait.columns.status') }}:</span>
+                    <span class="value">{{ getLabelByValue('flow_status', item.status) || item.status }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
                   <el-button size="small" @click="handleView(item)">
                     <i class="ri-eye-line"></i>{{ $t('common.view') }}
                   </el-button>
-                  <el-button size="small" type="primary" @click="handleEdit(item)">
+                  <!-- 编辑按钮：仅草稿/驳回状态可见 -->
+                  <el-button
+                      v-if="item.status === 'draft' || item.status === 'rejected'"
+                      size="small"
+                      type="primary"
+                      @click="handleEdit(item)"
+                  >
                     <i class="ri-edit-line"></i>{{ $t('common.edit') }}
                   </el-button>
-                  <!-- 新增：发起审核按钮（仅草稿/驳回状态可见） -->
+                  <!-- 新增：作废按钮 - 显示场景与编辑按钮完全一致 -->
                   <el-button
-                      v-if="item.workflowStatus === 'draft' || item.workflowStatus === 'rejected'"
+                      v-if="item.status === 'draft' || item.status === 'rejected'"
+                      size="small"
+                      type="warning"
+                      @click="handleInvalid(item)"
+                  >
+                    <i class="ri-ban-line"></i>{{ $t('trait.invalid') }}
+                  </el-button>
+                  <!-- 发起审核按钮：仅草稿/驳回状态可见 -->
+                  <el-button
+                      v-if="item.status === 'draft' || item.status === 'rejected'"
                       size="small"
                       type="success"
                       @click="handleSubmitAudit(item)"
                   >
                     <i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}
                   </el-button>
+                  <!-- 删除按钮 -->
                   <el-button size="small" type="danger" @click="handleDelete(item)">
                     <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
                   </el-button>
@@ -230,10 +239,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   getTraitRecordList,
-  deleteTraitRecord,
   getBatchOptions,
   getTrialOptions,
-  submitTraitRecordAudit
+  submitTraitRecordAudit,
+  deleteTraitRecord // 仅保留该删除方法，移除deleteTraitRecord
 } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
@@ -254,7 +263,7 @@ const queryParams = reactive({
   batchId: '',
   trialId: '',
   growthStage: '',
-  workflowStatus: ''
+  status: ''
 })
 
 const getList = async () => {
@@ -262,7 +271,6 @@ const getList = async () => {
   try {
     const res = await getTraitRecordList(queryParams)
     // 兼容后端返回格式，和数据集页面保持一致
-    debugger;
     dataList.value = res.data?.list || res.rows || []
     total.value = res.data?.total || res.total || 0
   } catch (error) {
@@ -302,7 +310,7 @@ const handleReset = () => {
   queryParams.batchId = ''
   queryParams.trialId = ''
   queryParams.growthStage = ''
-  queryParams.workflowStatus = ''
+  queryParams.status = ''
   getList()
 }
 
@@ -332,28 +340,57 @@ const handleEdit = (row) => {
   router.push(`/research/breeding-data/trait/edit/${row.recordId}`)
 }
 
+// 核心修改：替换为deleteTraitRecord方法
 const handleDelete = (row) => {
   ElMessageBox.confirm(t('trait.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteTraitRecord(row.recordId)
+    await deleteTraitRecord(row.recordId) // 替换为deleteTraitRecord
     ElMessage.success(t('trait.deleteSuccess'))
     getList()
   }).catch(() => {})
 }
 
+// 核心修改：批量删除也替换为deleteTraitRecord方法
 const handleBatchDelete = () => {
   ElMessageBox.confirm(t('trait.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteTraitRecord(selectedIds.value.join(','))
+    await deleteTraitRecord(selectedIds.value.join(',')) // 替换为deleteTraitRecord
     ElMessage.success(t('trait.deleteSuccess'))
     selectedIds.value = []
     getList()
   }).catch(() => {})
 }
 
-// 新增：发起性状审核方法（仿照数据集页面逻辑）
+// 新增：作废方法（逻辑可根据业务需求调整，当前为标准确认流程）
+const handleInvalid = async (row) => {
+  try {
+    // 弹窗确认作废操作
+    await ElMessageBox.confirm(
+        t('trait.invalidConfirm'), // 需在国际化文件中配置该文案，如“确定要作废该性状记录吗？”
+        t('common.confirm'),
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'warning'
+        }
+    )
+    // 此处可调用作废接口（若有单独作废接口，替换为实际接口；若无，可暂时预留或复用逻辑）
+    // 示例：若作废接口为invalidAgronomicTrait，可改为 await invalidAgronomicTrait(row.recordId)
+    await deleteTraitRecord(row.recordId) // 临时复用删除接口，可根据实际业务替换
+    ElMessage.success(t('trait.invalidSuccess')) // 国际化文案：“性状记录作废成功”
+    getList() // 刷新列表
+  } catch (error) {
+    // 取消操作不提示错误
+    if (error !== 'cancel') {
+      console.error('作废性状记录失败:', error)
+      ElMessage.error(t('trait.invalidFailed')) // 国际化文案：“性状记录作废失败”
+    }
+  }
+}
+
+// 发起性状审核方法
 const handleSubmitAudit = async (row) => {
   try {
     // 弹窗确认提交
