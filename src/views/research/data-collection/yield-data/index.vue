@@ -164,10 +164,6 @@
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
-                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -220,9 +216,6 @@
                   </el-button>
                   <el-button size="small" @click="handleEdit(item)">
                     {{ $t('common.edit') }}
-                  </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item)">
-                    {{ $t('common.delete') }}
                   </el-button>
                 </div>
               </div>
@@ -345,6 +338,11 @@ const handleCurrentChange = () => {
 // 新增
 const handleAdd = () => {
   router.push({ name: 'FieldInspectionAdd' })
+}
+
+// 审核
+const handleAudit = (row) => {
+  router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
 }
 
 // 查看

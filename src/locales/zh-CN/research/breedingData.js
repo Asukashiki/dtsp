@@ -331,6 +331,15 @@ export default {
       replications: '重复次数',
       cropType: '作物类型',
       varietyName: '品种名称',
+      createdBy: '创建人',
+      createdName: '创建人',
+      createTime: '创建时间',
+      modifiedBy: '修改人',
+      modifiedName: '修改人',
+      updateTime: '修改时间',
+      approvedBy: '审核人',
+      approvedName: '审核人',
+      approvedTime: '审核时间',
     },
 
       placeholder: {
@@ -362,7 +371,12 @@ export default {
       varietyName: '品种名称',
       status: '状态',
       auditStatus: '审核状态',
+      createdName: '创建人',
       createTime: '创建时间',
+      modifiedName: '修改人',
+      updateTime: '修改时间',
+      approvedName: '审核人',
+      approvedTime: '审核时间',
       actions: '操作',
     },
 

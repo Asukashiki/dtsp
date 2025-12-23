@@ -31,6 +31,7 @@
               <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Irrigation Count">{{ irrigationCount }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -87,8 +88,20 @@ const getInfo = async () => {
   try {
     const res = await getPlotInfo(route.params.plotId)
     detailData.value = res.data || {}
+    // 获取灌溉次数
+    await loadIrrigationCount()
   } finally {
     loading.value = false
+  }
+}
+
+const loadIrrigationCount = async () => {
+  try {
+    const res = await getIrrigationCount()
+    const countMap = res.data || {}
+    irrigationCount.value = countMap[route.params.plotId] || 0
+  } catch (error) {
+    console.error('获取灌溉次数失败:', error)
   }
 }
 

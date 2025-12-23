@@ -30,6 +30,7 @@ export default {
   trialBasicAudit: 'Trial Basic Information Audit',
 
   agronomicTraitDataCollection: 'Agronomic Trait Data Collection',
+  agronomicTraitDataAudit: 'Agronomic Trait Data Audit',
   agronomicTraitDataAdd: 'Add Agronomic Trait Data',
   agronomicTraitDataEdit: 'Edit Agronomic Trait Data',
   agronomicTraitDataDetail: 'Agronomic Trait Data Detail',
@@ -48,6 +49,7 @@ export default {
   fieldInspectionAdd: 'Add Field Inspection',
   fieldInspectionEdit: 'Edit Field Inspection',
   fieldInspectionDetail: 'Field Inspection Detail',
+  fieldInspectionAudit: 'Field Inspection Data Collection Audit',
 
   laboratoryTest: 'Laboratory Test Data Collection',
   laboratoryTestAdd: 'Add Laboratory Test',
@@ -56,6 +58,7 @@ export default {
   laboratoryTestAudit: 'Laboratory Test Data Audit',
 
   breederSeedProduction: 'Seed Production Data',
+  breederSeedProductionResult: 'Production Data Collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',

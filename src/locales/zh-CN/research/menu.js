@@ -29,6 +29,7 @@ export default {
   trialBasicAudit: '试验基础信息管理审核',
 
   agronomicTraitDataCollection: '农艺性状数据采集',
+  agronomicTraitDataAudit: '农艺性状数据审核',
   agronomicTraitDataAdd: '新增农艺性状数据',
   agronomicTraitDataEdit: '编辑农艺性状数据',
   agronomicTraitDataDetail: '农艺性状数据详情',
@@ -47,6 +48,7 @@ export default {
   fieldInspectionAdd: '新增田间检验',
   fieldInspectionEdit: '编辑田间检验',
   fieldInspectionDetail: '田间检验详情',
+  fieldInspectionAudit: '田间检验数据采集审核',
 
   laboratoryTest: '实验室测试数据采集',
   laboratoryTestAdd: '新增实验室测试',

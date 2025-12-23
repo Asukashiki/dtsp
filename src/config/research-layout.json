@@ -59,6 +59,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/trait-audit",
+          "icon": "ri-leaf-line",
+          "titleKey": "research.menu.agronomicTraitDataAudit",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/data-collection/environment-new-data",
           "icon": "ri-cloud-line",
           "titleKey": "research.menu.environmentNewData",
@@ -74,6 +80,12 @@
           "index": "/research/breeding-data/field-inspection",
           "icon": "ri-bar-chart-box-line",
           "titleKey": "research.menu.fieldInspection",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding-data/field-inspection-audit",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.fieldInspectionAudit",
           "roles": ["agri-admin", "RC"]
         },
         {
@@ -117,6 +129,12 @@
           "index": "/research/breeding/seed-production",
           "icon": "ri-seedling-line",
           "titleKey": "research.menu.breederSeedProduction",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding/seed-production-result",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProductionResult",
           "roles": ["agri-admin", "RC"]
         },
         {

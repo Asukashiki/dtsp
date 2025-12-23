@@ -229,6 +229,19 @@ const routes = [
         component: () => import('../views/research/breeding-data/trait/index.vue'),
         meta: { title: '农艺性状数据采集', requiresAuth: true }
       },
+      // 农艺性状数据采集
+      {
+        path: 'breeding-data/trait-audit',
+        name: 'AgronomicTraitDataAudit',
+        component: () => import('../views/research/breeding-data/trait-audit/index.vue'),
+        meta: { title: '农艺性状数据审核', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/trait-audit/review/:traitId',
+        name: 'AgronomicTraitDataAuditReview',
+        component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
+        meta: { title: '农艺性状数据审核页面', requiresAuth: true }
+      },
       {
         path: 'breeding-data/trait/add',
         name: 'AgronomicTraitDataAdd',
@@ -324,6 +337,24 @@ const routes = [
         name: 'FieldInspectionDetail',
         component: () => import('../views/research/data-collection/yield-data/detail.vue'),
         meta: { title: '田间检验数据详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/audit/:id',
+        name: 'FieldInspectionAudit',
+        component: () => import('../views/research/data-collection/yield-data/audit.vue'),
+        meta: { title: '田间检验数据审核', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection/audit-detail/:id',
+        name: 'FieldInspectionAuditDetail',
+        component: () => import('../views/research/data-collection/yield-data/audit-detail.vue'),
+        meta: { title: '田间检验数据审核详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/field-inspection-audit',
+        name: 'FieldInspectionAuditList',
+        component: () => import('../views/research/data-collection/yield-data/audit-list.vue'),
+        meta: { title: '田间检验数据采集审核', requiresAuth: true }
       },
       
       // 实验室测试数据采集
@@ -443,6 +474,12 @@ const routes = [
         name: 'SeedProduction',
         component: () => import('../views/research/breeding/seed-production/index.vue'),
         meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/seed-production-result',
+        name: 'SeedProductionResult',
+        component: () => import('../views/research/breeding/seed-production-result/index.vue'),
+        meta: { title: '生产数据采集详情', requiresAuth: true }
       },
       
       // Breeder seed分发数据
@@ -769,6 +806,13 @@ const routes = [
         component: () => import('../views/research/seed/SeedPromotion.vue'),
         meta: { title: '种子推广信息管理', requiresAuth: true }
       },
+      // 种子推广详情
+      {
+        path: 'seed/promotion/detail/:promotionId',
+        name: 'SeedPromotionDetail',
+        component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
+        meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
+      },
       
       // 种子信息公示
       {
@@ -776,6 +820,13 @@ const routes = [
         name: 'SeedInfo',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
         meta: { title: '种子信息公示', requiresAuth: true }
+      },
+      // 品种详情页
+      {
+        path: 'variety/detail/:publishId',
+        name: 'VarietyDetailPage',
+        component: () => import('../views/research/variety/VarietyDetail.vue'),
+        meta: { title: '品种详情', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
@@ -1692,4 +1743,4 @@ function redirectToLogin(fullPath, userStore) {
   userStore.logoutAndRedirect(1000)
 }
 
-export default router 
+export default router

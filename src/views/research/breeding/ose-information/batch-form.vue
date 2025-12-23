@@ -66,7 +66,7 @@
               </el-select>
             </el-form-item>
 
-            
+
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.startDate')" prop="startDate">
               <el-date-picker

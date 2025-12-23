@@ -144,7 +144,10 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" fixed="left" />
+          <el-table-column prop="plotId" :label="$t('research.environmentNewData.columns.plotId')" min-width="120" />
+          <el-table-column prop="batchId" :label="$t('research.environmentNewData.columns.batchId')" min-width="120" />
+          <el-table-column prop="trialId" :label="$t('research.environmentNewData.columns.trialId')" min-width="120" />
+          <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" />
           <el-table-column prop="parameterCode" :label="$t('research.environmentNewData.columns.parameterCode')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag :type="getParameterTag(row.parameterCode)" size="small">
@@ -224,6 +227,18 @@
                 <i class="ri-folder-line info-icon"></i>
                 <span class="info-label">{{ $t('research.environmentNewData.columns.batchName') }}:</span>
                 <span class="info-value">{{ item.batchName || item.batchId || '-' }}</span>
+              </div>
+
+              <div class="info-row">
+                <i class="ri-flask-line info-icon"></i>
+                <span class="info-label">{{ $t('research.environmentNewData.columns.trialId') }}:</span>
+                <span class="info-value">{{ item.trialId || '-' }}</span>
+              </div>
+
+              <div class="info-row">
+                <i class="ri-map-pin-line info-icon"></i>
+                <span class="info-label">{{ $t('research.environmentNewData.columns.plotId') }}:</span>
+                <span class="info-value">{{ item.plotId || '-' }}</span>
               </div>
 
               <div class="info-row">

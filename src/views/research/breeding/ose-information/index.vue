@@ -89,7 +89,7 @@
           <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" />
           <el-table-column prop="breedingMethodName" :label="'Breeding methods'" min-width="140" align="center" />
-          <el-table-column prop="breedingLevelName" :label="$t('research.breeding.batch.columns.breedingLevel')" width="160" align="center" />
+          <el-table-column prop="breedingLevelName" :label="$t('research.breeding.breedingBatch.form.breedingLevel')" width="160" align="center" />
           <el-table-column prop="startDate" :label="$t('research.breeding.batch.columns.startDate')" width="120" align="center" />
           <el-table-column prop="statusName" :label="$t('research.breeding.batch.columns.status')" width="100" align="center">
             <template #default="{ row }">

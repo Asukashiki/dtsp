@@ -77,9 +77,13 @@ export default {
 
   // Detail Page
   detail: {
+    title: 'Promotion Detail',
     basicInfo: 'Basic Information',
     videoPreview: 'Video Preview',
     statistics: 'Statistics',
+    relatedVarieties: 'Related Varieties',
+    noVideo: 'No video available',
+    viewVarietyDetail: 'View Variety Detail',
   },
 
   // Card Display (Mobile)

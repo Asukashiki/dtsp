@@ -337,11 +337,26 @@ const getList = async () => {
     const res = await getPlotInfoList(queryParams)
     dataList.value = res.rows || []
     total.value = res.total || 0
+    // 获取灌溉次数统计
+    await loadIrrigationCount()
   } catch (error) {
     console.error('获取列表失败:', error)
   } finally {
     loading.value = false
   }
+}
+
+const loadIrrigationCount = async () => {
+  try {
+    const res = await getIrrigationCount()
+    irrigationCountMap.value = res.data || {}
+  } catch (error) {
+    console.error('获取灌溉次数失败:', error)
+  }
+}
+
+const getIrrigationCountForPlot = (plotId) => {
+  return irrigationCountMap.value[plotId] || 0
 }
 
 const loadBatchOptions = async () => {

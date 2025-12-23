@@ -60,7 +60,7 @@
             <el-input
               v-model="formData.batchId"
               :placeholder="$t('research.environmentNewData.placeholder.batchId')"
-              :disabled="isReadOnly || isAuditMode"
+              disabled
             />
           </el-form-item>
 
@@ -68,7 +68,7 @@
             <el-input
               v-model="formData.trialId"
               :placeholder="$t('research.environmentNewData.placeholder.trialId')"
-              :disabled="isReadOnly || isAuditMode"
+              disabled
             />
           </el-form-item>
         </div>

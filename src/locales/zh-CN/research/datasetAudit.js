@@ -15,7 +15,7 @@ export default {
   },
 
   // 搜索筛选
-  searchPlaceholder: '搜索数据集编号、批次名称、品种名称',
+  searchPlaceholder: '搜索品种名称',
   filterByAuditStatus: '按审核状态筛选',
   filterByDatasetStatus: '按数据集状态筛选',
   allAuditStatus: '全部审核状态',

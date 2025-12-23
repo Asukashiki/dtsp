@@ -120,6 +120,32 @@
           </div>
         </div>
 
+        <!-- 审核信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-file-check-line"></i>
+            {{ $t('research.dataCollection.fieldInspectionAudit.form.auditInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditBy') }}:</span>
+              <span class="value">{{ detailData.auditBy || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditTime') }}:</span>
+              <span class="value">{{ detailData.auditTime || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.yieldData.columns.auditStatus') }}:</span>
+              <span class="value">{{ getLabelByValue('flow_status', detailData.workflowStatus) || detailData.workflowStatus || '-' }}</span>
+            </div>
+            <div class="detail-item full-width">
+              <span class="label">{{ $t('research.dataCollection.fieldInspectionAudit.form.auditComment') }}:</span>
+              <span class="value">{{ detailData.auditRemark || '-' }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 系统信息 -->
         <div class="detail-section">
           <div class="section-title">
@@ -143,14 +169,6 @@
               <span class="label">{{ $t('research.dataCollection.yieldData.form.updateTime') }}:</span>
               <span class="value">{{ detailData.updateTime || '-' }}</span>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditBy') }}:</span>
-              <span class="value">{{ detailData.auditBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.auditTime || '-' }}</span>
-            </div>
           </div>
         </div>
       </template>
@@ -164,10 +182,12 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getYieldDataDetail } from '@/api/yieldData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const { getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
 const detailData = ref(null)

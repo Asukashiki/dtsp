@@ -117,24 +117,35 @@
             <div class="items-table pc-only">
               <el-table :data="detailData.inputItems" stripe border>
                 <el-table-column type="index" :label="'#'" width="60" />
-                <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="120">
+                <el-table-column prop="inputCategory" :label="$t('farmerDemand.form.inputCategory')" min-width="180">
                   <template #default="{ row }">
                     {{ getInputCategoryLabel(row.inputCategory) || row.inputCategory || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('farmerDemand.form.variety')" min-width="120">
+                <el-table-column :label="$t('farmerDemand.form.variety')" min-width="180">
                   <template #default="{ row }">
                     {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="100">
+                <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="180">
                   <template #default="{ row }">
-                    {{ row.unit || '-' }}
+                    {{ getLabelByValue('agri_unit', row.unit) }}
                   </template>
                 </el-table-column>
+                <el-table-column prop="season" :label="$t('season')" width="100" >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('agri_season', row.season) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="cropLand" :label="$t('crop land')" width="100" />
                 <el-table-column prop="quantity" :label="$t('farmerDemand.form.quantity')" width="120">
                   <template #default="{ row }">
                     {{ row.quantity || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="fertilizerAmount" :label="$t('Specific fertilization amount')" width="120">
+                  <template #default="{ row }">
+                    {{ row.fertilizerAmount || '-' }}
                   </template>
                 </el-table-column>
               </el-table>
@@ -180,6 +191,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmerDemandDetail } from '@/api/farmerDemand'
 import { useDict, clearDictCache } from '@/hooks/useDict'
+
+const { getLabelByValue, options } = useDict(['agri_season', 'agri_unit'])
 
 const router = useRouter()
 const route = useRoute()

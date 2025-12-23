@@ -66,6 +66,12 @@
         <div class="table-card pc-view">
           <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading" scrollbar-always-on>
             <el-table-column
+                prop="distributeId"
+                :label="$t('research.breeding.seed.distribution.columns.distributeId')"
+                min-width="150"
+                show-overflow-tooltip
+            />
+            <el-table-column
               prop="distributeName"
               :label="$t('research.breeding.seed.distribution.columns.distributeName')"
               min-width="150"
@@ -252,7 +258,7 @@ const filteredList = computed(() => {
   let list = dataList.value
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    list = list.filter(item => 
+    list = list.filter(item =>
       item.distributeName?.toLowerCase().includes(query) ||
       item.oseName?.toLowerCase().includes(query) ||
       item.fromSeedLevel?.toLowerCase().includes(query) ||

@@ -16,7 +16,7 @@ export default {
   submitConfirm: 'Are you sure to submit this dataset?',
 
   // 搜索筛选
-  searchPlaceholder: 'Search batch ID, batch name, variety name',
+  searchPlaceholder: 'Search variety name',
   filterByCrop: 'Filter by crop type',
   filterByStatus: 'Filter by dataset status',
   allCrops: 'All Crops',

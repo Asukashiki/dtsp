@@ -15,7 +15,7 @@ export default {
   },
 
   // 搜索筛选
-  searchPlaceholder: 'Search dataset code, batch name, variety name',
+  searchPlaceholder: 'Search variety name',
   filterByAuditStatus: 'Filter by audit status',
   filterByDatasetStatus: 'Filter by dataset status',
   allAuditStatus: 'All Audit Status',

@@ -88,6 +88,8 @@ export default {
     inputItems: 'Input Items',
     inputCategory: 'Category',
     inputType: 'Input Type',
+    season: 'Season',
+    cropLand: 'Crop Land (hectares)',
     variety: 'Variety',
     specification: 'Specification',
     unit: 'Unit',
@@ -95,6 +97,13 @@ export default {
     addItem: 'Add Input',
     removeItem: 'Remove',
     noItems: 'No input items',
+  },
+
+  // Real-time Display
+  realtime: {
+    totalCropLand: 'Total Crop Land',
+    totalLandArea: 'Total Land Area',
+    hectares: 'hectares',
   },
 
   // Form Placeholders
@@ -113,6 +122,8 @@ export default {
     remark: 'Please enter remark',
     inputCategory: 'Please select Category',
     inputType: 'Please enter input type',
+    season: 'Please select season',
+    cropLand: 'Please enter crop land',
     variety: 'Please enter variety',
     specification: 'Please enter specification',
     unit: 'Please enter Unit',
@@ -149,6 +160,8 @@ export default {
     remarkLength: 'Remark max 500 characters',
     inputCategoryRequired: 'Please select Category',
     inputTypeRequired: 'Please enter input type',
+    seasonRequired: 'Please select season',
+    cropLandRequired: 'Please enter crop land',
     varietyRequired: 'Please enter variety',
     unitRequired: 'Please enter Unit',
     quantityRequired: 'Please enter demand quantity',
@@ -221,6 +234,8 @@ export default {
     deleteFailed: 'Delete failed',
     noData: 'No data available',
     farmerDemandExists: 'This farmer already has a demand record for the current year. Please check the existing record or select a different farmer.',
+    farmerNoLand: 'This farmer does not have land ownership (land area is 0 or empty), cannot enter demand information',
+    cropLandExceedsLandArea: 'Total crop land ({totalCropLand} hectares) exceeds total land area ({landArea} hectares)',
   },
 
   // Detail Page Sections
@@ -237,4 +252,34 @@ export default {
     itemsInfo: 'Input Items',
     auditInfo: 'Audit Records',
   },
+
+  // Approval Related
+  approve: {
+    title: 'Approve Farmer Demand',
+    subtitle: 'Review farmer submitted input demand information',
+    opinion: 'Approval Opinion',
+    opinionPlaceholder: 'Please enter approval opinion (optional)',
+    opinionRequired: 'Please enter approval opinion',
+    approve: 'Approve',
+    reject: 'Reject',
+    approveConfirm: 'Confirm to approve this demand?',
+    rejectConfirm: 'Confirm to reject this demand?',
+    approveSuccess: 'Approved successfully',
+    approveFailed: 'Approval failed',
+    rejectSuccess: 'Rejected successfully',
+    rejectFailed: 'Rejection failed',
+  },
+
+  // Audit Related
+  audit: {
+    approveConfirm: 'Confirm to approve this demand audit?',
+    approveSuccess: 'Audit approved successfully',
+    approveFailed: 'Audit approval failed',
+    rejectReason: 'Please enter rejection reason',
+    rejectReasonPlaceholder: 'Please explain the rejection reason in detail',
+    rejectReasonRequired: 'Rejection reason cannot be empty',
+    rejectSuccess: 'Rejected successfully',
+    rejectFailed: 'Rejection failed',
+    quantityExceedsMax: 'Item {index}: Demand quantity ({quantity}) exceeds maximum allowable quantity ({max}). Please modify before submitting'
+  }
 }

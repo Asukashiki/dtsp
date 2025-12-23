@@ -47,7 +47,6 @@
                 clearable
                 class="search-select"
               >
-                <el-option :label="$t('research.datasetCompilation.allStatus')" value="" />
                 <el-option :label="$t('research.datasetCompilation.status.draft')" value="draft" />
                 <el-option :label="$t('research.datasetCompilation.status.submitted')" value="submitted" />
                 <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
@@ -181,7 +180,7 @@
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
                     <i class="ri-database-2-line"></i>
-                    <span>{{ item.batchName }}</span>
+                    <span>{{ item.varietyName }}</span>
                   </div>
                   <el-tag :type="getStatusType(item.datasetStatus)" size="small">
                     {{ getStatusLabel(item.datasetStatus) }}
@@ -301,7 +300,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getDatasetList({
-      batchName: searchForm.keyword,
+      varietyName: searchForm.keyword,
       datasetStatus: searchForm.datasetStatus,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize

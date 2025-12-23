@@ -48,6 +48,8 @@ export default {
     action: '操作',
     days: '天',
     audit: '审核',
+    approve: '通过',
+    reject: '驳回',
     update: '更新',
     remarks: '备注',
     refresh: '刷新',
@@ -101,5 +103,6 @@ export default {
     required: '该项必填',
     saveSuccess: '保存成功',
     queryFailed: '获取详情失败',
-    birthDate: '出生日期'
+    birthDate: '出生日期',
+    invalidParams: '无效的参数',
   }

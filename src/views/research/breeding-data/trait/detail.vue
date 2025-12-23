@@ -30,9 +30,9 @@
                 {{ getLabelByValue('growth_cycle', detailData.growthStage) || detailData.growthStage || '-' }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('trait.observerId')">{{ getUserName(detailData.observerId) }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('trait.columns.workflowStatus')">
-                <el-tag type="info" v-if="detailData.workflowStatus">
-                  {{ getLabelByValue('flow_status', detailData.workflowStatus) || detailData.workflowStatus }}
+              <el-descriptions-item :label="$t('trait.columns.status')">
+                <el-tag type="info" v-if="detailData.status">
+                  {{ getLabelByValue('flow_status', detailData.status) || detailData.status }}
                 </el-tag>
                 <span v-else>-</span>
               </el-descriptions-item>

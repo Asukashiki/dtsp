@@ -102,6 +102,8 @@ export default {
     inputItems: '投入品明细',
     inputCategory: '投入品大类',
     inputType: '农资类型',
+    season: '季节',
+    cropLand: '耕地面积(公顷)',
     variety: '品种',
     specification: '规格',
     unit: '单位',
@@ -109,6 +111,13 @@ export default {
     addItem: '添加投入品',
     removeItem: '移除',
     noItems: '暂无投入品明细',
+  },
+
+  // 实时显示
+  realtime: {
+    totalCropLand: '总耕地面积',
+    totalLandArea: '土地总面积',
+    hectares: '公顷',
   },
 
   // 表单占位符
@@ -127,6 +136,8 @@ export default {
     remark: '请输入备注信息',
     inputCategory: '请选择投入品大类',
     inputType: '请输入农资类型',
+    season: '请选择季节',
+    cropLand: '请输入耕地面积',
     variety: '请输入品种',
     specification: '请输入规格',
     unit: '请输入单位',
@@ -148,6 +159,8 @@ export default {
     remarkLength: '备注最多500个字符',
     inputCategoryRequired: '请选择投入品大类',
     inputTypeRequired: '请输入农资类型',
+    seasonRequired: '请选择季节',
+    cropLandRequired: '请输入耕地面积',
     varietyRequired: '请输入品种',
     unitRequired: '请输入单位',
     quantityRequired: '请输入需求数量',
@@ -220,6 +233,8 @@ export default {
     deleteFailed: '删除失败',
     noData: '暂无数据',
     farmerDemandExists: '该农民在当前年份已有需求记录，请查看已有记录或选择其他农民。',
+    farmerNoLand: '该农民没有土地产权（土地面积为0或空），无法录入需求信息',
+    cropLandExceedsLandArea: '录入的总耕地面积({totalCropLand}公顷)超过了土地总面积({landArea}公顷)',
   },
 
   // 详情页专用
@@ -236,4 +251,34 @@ export default {
     itemsInfo: '投入品明细',
     auditInfo: '审核记录',
   },
+
+  // 审批相关
+  approve: {
+    title: '审批农民需求',
+    subtitle: '审核农民提交的投入品需求信息',
+    opinion: '审批意见',
+    opinionPlaceholder: '请输入审批意见（选填）',
+    opinionRequired: '请输入审批意见',
+    approve: '通过',
+    reject: '驳回',
+    approveConfirm: '确认通过该需求吗？',
+    rejectConfirm: '确认驳回该需求吗？',
+    approveSuccess: '审批通过成功',
+    approveFailed: '审批通过失败',
+    rejectSuccess: '审批驳回成功',
+    rejectFailed: '审批驳回失败',
+  },
+
+  // 审核相关
+  audit: {
+    approveConfirm: '确认通过该需求审核吗？',
+    approveSuccess: '审核通过成功',
+    approveFailed: '审核通过失败',
+    rejectReason: '请输入驳回原因',
+    rejectReasonPlaceholder: '请详细说明驳回原因',
+    rejectReasonRequired: '驳回原因不能为空',
+    rejectSuccess: '驳回成功',
+    rejectFailed: '驳回失败',
+    quantityExceedsMax: '第 {index} 项的需求数量({quantity})超过了最大允许数量({max})，请修改后再提交'
+  }
 }

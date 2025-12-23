@@ -48,6 +48,8 @@ export default {
   action: 'Action',
   days: 'days',
   audit: 'Audit',
+  approve: 'Approve',
+  reject: 'Reject',
   update: 'Update',
   remarks: 'Remarks',
   refresh: 'Refresh',
@@ -101,5 +103,6 @@ export default {
   required: 'this item is required',
   saveSuccess: 'Save Success',
   queryFailed: 'query Info failed',
-  birthDate: 'Birth Date'
+  birthDate: 'Birth Date',
+  invalidParams: 'Invalid parameters'
 }

@@ -444,6 +444,7 @@ export default {
       ORCHARD: 'Orchard',
       FOREST: 'Forest',
       OTHER: 'Other',
+      CULTIVATING: 'Cultivating',
     },
 
     // Detail page sections

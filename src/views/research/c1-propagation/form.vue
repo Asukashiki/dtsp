@@ -150,8 +150,8 @@
                 :placeholder="$t('research.c1Propagation.placeholder.fromSeedType')"
                 style="width: 100%"
               >
-                <el-option label="BreederSeed" value="BreederSeed" />
-                <el-option label="OriginalSeed" value="OriginalSeed" />
+                <el-option label="Pre-Basic" value="Pre-Basic" />
+                <el-option label="Basic" value="Basic" />
               </el-select>
             </el-form-item>
 
@@ -161,7 +161,7 @@
                 :placeholder="$t('research.c1Propagation.placeholder.toSeedType')"
                 style="width: 100%"
               >
-                <el-option label="OriginalSeed" value="OriginalSeed" />
+                <el-option label="Basic" value="Basic" />
                 <el-option label="C1" value="C1" />
               </el-select>
             </el-form-item>
