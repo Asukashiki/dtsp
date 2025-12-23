@@ -352,6 +352,14 @@ const routes = [
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
       
+      // 实验室测试数据采集审核
+      {
+        path: 'breeding-data/laboratory-test-audit',
+        name: 'BreedingLabTestAudit',
+        component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
+        meta: { title: '实验室测试数据采集审核', requiresAuth: true }
+      },
+      
       // Breeder seed生产数据采集
       // 育种数据管理 - 育种数据集编制
       {

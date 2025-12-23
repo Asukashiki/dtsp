@@ -53,6 +53,7 @@ export default {
   laboratoryTestAdd: 'Add Laboratory Test',
   laboratoryTestEdit: 'Edit Laboratory Test',
   laboratoryTestDetail: 'Laboratory Test Detail',
+  laboratoryTestAudit: 'Laboratory Test Data Audit',
 
   breederSeedProduction: 'Seed Production Data',
   breederSeedProductionAdd: 'Add Breeder Seed Production',

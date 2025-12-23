@@ -83,6 +83,12 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding-data/laboratory-test-audit",
+          "icon": "ri-file-check-line",
+          "titleKey": "research.menu.laboratoryTestAudit",
+          "roles": ["agri-admin", "OARI"]
+        },
+        {
           "index": "/research/breeding-data/dataset-compilation",
           "icon": "ri-file-list-line",
           "titleKey": "research.menu.datasetCompilation",

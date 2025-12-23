@@ -566,7 +566,47 @@ export default {
       resultValue: 'Please enter result value',
       passFailFlag: 'Please select pass/fail flag',
       remark: 'Please enter remark (optional)',
+      auditOpinion: 'Please enter audit opinion'
     },
+
+    // Audit related
+    auditTitle: 'Laboratory Test Data Audit',
+    auditSubtitle: 'Review and approve laboratory test data',
+    auditList: 'Audit List',
+    audit: 'Audit',
+    pendingAudit: 'Pending Audit',
+    audited: 'Audited',
+    canceled: 'Canceled',
+    auditOpinion: 'Audit Opinion',
+    auditCanceled: 'Audit Record Canceled',
+    cancelType: 'Cancel Type',
+    dataCanceled: 'Data Canceled',
+
+    // Actions
+    submit: 'Submit for Approval',
+    approve: 'Approve',
+    reject: 'Reject',
+    return: 'Return',
+    archive: 'Archive',
+    cancel: 'Cancel',
+
+    // Confirmation messages
+    approveConfirm: 'Are you sure to approve this data?',
+    rejectConfirm: 'Are you sure to reject this data?',
+    cancelConfirm: 'Are you sure to cancel this audit record?',
+    submitConfirm: 'Are you sure to submit for approval?',
+    archiveConfirm: 'Are you sure to archive this data?',
+    cancelDataConfirm: 'Are you sure to cancel this data?',
+
+    // Success messages
+    approveSuccess: 'Approved successfully',
+    rejectSuccess: 'Rejected successfully',
+    cancelSuccess: 'Canceled successfully',
+    submitSuccess: 'Submitted successfully',
+    archiveSuccess: 'Archived successfully',
+
+    // Validation messages
+    rejectOpinionRequired: 'Audit opinion is required when rejecting',
 
     rules: {
       batchIdRequired: 'Please select breeding batch',
