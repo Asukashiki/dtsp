@@ -402,7 +402,7 @@ const routes = [
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
-      
+      {
       // 实验室测试数据采集审核
         path: 'breeding-data/laboratory-test-audit',
         name: 'BreedingLabTestAudit',
