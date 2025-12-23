@@ -13,29 +13,50 @@
       </div>
 
       <div class="card-body" v-loading="loading">
-        <el-descriptions :column="2" border>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceBatchName')">
-            {{ detail.produceBatchName || '-' }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.columns.varietyName')">
-             {{ detail.varietyName || '-' }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.columns.breedBatchName')">
-             {{ detail.breedBatchName || '-' }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')">
-             {{ detail.producedAmount }} kg
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.form.time')">
-             {{ detail.collectionDate }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('research.breeding.seed.production.columns.operatorName')">
-             {{ detail.operator }}
-          </el-descriptions-item>
-           <el-descriptions-item :label="$t('common.createTime')">
-             {{ detail.createTime }}
-          </el-descriptions-item>
-        </el-descriptions>
+        <div class="section">
+          <h3 class="section-title">{{ $t('research.breeding.seed.production.section.productionBatchSelection') }}</h3>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceBatchId')">
+              {{ detail.produceBatchId || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceBatchName')">
+              {{ detail.produceBatchName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.varietyName')">
+              {{ detail.varietyName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.breedBatchName')">
+              {{ detail.breedBatchName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.form.trialName')">
+              {{ detail.trialName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')">
+              {{ detail.fromSeedLevel || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.form.toSeedLevel')">
+              {{ detail.toSeedLevel || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+        
+        <div class="section" style="margin-top: 24px;">
+          <h3 class="section-title">{{ $t('research.breeding.seed.production.section.collectionData') }}</h3>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')">
+              {{ detail.producedAmount }} kg
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.form.time')">
+              {{ detail.collectionDate }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breeding.seed.production.columns.operatorName')">
+              {{ detail.operator }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('common.createTime')">
+              {{ detail.createTime }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
       </div>
     </div>
   </div>
@@ -112,5 +133,14 @@ onMounted(() => {
 
 .card-body {
   padding: 30px 24px;
+}
+
+.section-title {
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
 }
 </style>

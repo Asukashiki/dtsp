@@ -16,7 +16,7 @@
         </div>
         <div class="info-grid">
           <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId') }}</span>
+            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.distributeId') }}</span>
             <span class="value">{{ data.distributeId }}</span>
           </div>
           <div class="info-item">

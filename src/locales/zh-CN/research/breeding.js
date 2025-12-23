@@ -101,6 +101,10 @@ export default {
       result: {
         title: '生产数据采集详情',
         selection: '生产批次选择',
+        section: {
+          productionBatchSelection: '生产批次选择',
+          collectionData: '采集数据',
+        },
       },
     },
 
@@ -389,6 +393,7 @@ export default {
       // 列表列
       columns: {
         receiveConfirmId: '接收确认ID',
+        distributeId: '分发ID',
         oseName: 'OSE名称',
         breedSeedProduceBatchId: '种子ID',
         seedType: '种子类型',
