@@ -356,12 +356,21 @@ const handleUploadPhoto = async (options) => {
       const fileData = res.data
       const dataId = fileData.id || fileData.dataId
 
+      // 获取预览 URL
+      let previewUrl = ''
+      try {
+        const previewRes = await getFilePreviewUrl(dataId)
+        previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      } catch (error) {
+        console.warn('Failed to get preview URL:', error)
+      }
+
       const fileObj = {
         name: file.name,
         uid: file.uid,
         dataId: dataId,
         fileId: dataId,
-        url: dataId
+        url: previewUrl || dataId // 使用预览 URL 或 dataId
       }
 
       photoFileList.value = [fileObj]
@@ -443,9 +452,19 @@ const getInfo = async () => {
     // 处理照片
     if (res.data.photoUrl) {
       const fileId = res.data.photoUrl
+      
+      // 获取预览 URL
+      let previewUrl = ''
+      try {
+        const previewRes = await getFilePreviewUrl(fileId)
+        previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      } catch (error) {
+        console.warn('Failed to get preview URL:', error)
+      }
+      
       photoFileList.value = [{
         name: t('trait.photoUrl'),
-        url: fileId,
+        url: previewUrl || fileId, // 使用预览 URL 或 fileId
         dataId: fileId,
         fileId: fileId,
         uid: Date.now() + '-photo'

@@ -340,6 +340,7 @@ export default {
       approvedBy: '审核人',
       approvedName: '审核人',
       approvedTime: '审核时间',
+      rejectReason: '退回原因',
     },
 
       placeholder: {

@@ -54,7 +54,7 @@
                   clearable
                   class="filter-select"
                 >
-                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchName" :value="item.batchId" />
+                  <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId" :value="item.batchId" />
                 </el-select>
               </div>
               <div class="search-item">

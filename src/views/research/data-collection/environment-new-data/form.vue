@@ -306,7 +306,8 @@ const formData = reactive({
   source: '',
   remark: '',
   observerId: '',
-  workflowStatus: ''// 添加审批意见字段
+  workflowStatus: '',
+  approvalComment: '' // 添加审批意见字段
 })
 
 const unitOptions = ref([
@@ -332,6 +333,9 @@ const rules = reactive({
   unit: [
     { required: true, message: t('research.environmentNewData.rules.unitRequired'), trigger: 'blur' },
     { max: 20, message: t('research.environmentNewData.rules.unitLength'), trigger: 'blur' }
+  ],
+  approvalComment: [
+    { required: true, message: t('research.environmentNewData.rules.approvalCommentRequired') || '请填写审批意见', trigger: 'blur' }
   ]
 })
 
@@ -452,10 +456,7 @@ const handleSubmit = async () => {
 // 审核通过
 const handleApprove = async () => {
   try {
-    // 验证表单，特别是审批意见字段
-    const valid = await formRef.value.validateField('approvalComment').catch(() => false)
-    if (!valid) return
-
+    // 审核通过时审批意见可选，不强制验证
     const res = await approveEnvironmentNewData(formData.envRecordId, formData.approvalComment)
     if (res.code === 200) {
       ElMessage.success(t('research.environmentNewData.approveSuccess'))
@@ -469,12 +470,14 @@ const handleApprove = async () => {
   }
 }
 
-// 驳回
+// 驳回 - 驳回时应验证审批意见已填
 const handleReject = async () => {
   try {
-    // 验证表单，特别是审批意见字段
-    const valid = await formRef.value.validateField('approvalComment').catch(() => false)
-    if (!valid) return
+    // 驳回时必须填写审批意见
+    if (!formData.approvalComment || formData.approvalComment.trim() === '') {
+      ElMessage.warning(t('research.environmentNewData.rules.approvalCommentRequired') || '驳回时必须填写审批意见')
+      return
+    }
 
     const res = await rejectEnvironmentNewData(formData.envRecordId, formData.approvalComment)
     if (res.code === 200) {

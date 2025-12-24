@@ -43,6 +43,11 @@ export default {
       season: '季节',
       createTime: '创建时间',
       createBy: '创建人',
+      auditInfo: '审核信息',
+      rejectedBy: '退回人',
+      rejectedTime: '退回时间',
+      rejectReason: '退回原因',
+      rejectInfo: '退回信息',
     },
 
     // 表单占位符

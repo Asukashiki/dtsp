@@ -115,7 +115,11 @@
           <i class="ri-arrow-left-line"></i>
           {{ $t('common.back') }}
         </el-button>
-        <el-button type="primary" @click="handleEdit">
+        <!-- 查看页面不应该有编辑按钮，只有草稿(S0)和驳回(S3)状态才显示编辑按钮 -->
+        <el-button 
+          v-if="canEdit" 
+          type="primary" 
+          @click="handleEdit">
           <i class="ri-edit-line"></i>
           {{ $t('common.edit') }}
         </el-button>
@@ -125,16 +129,18 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentNewDataDetail } from '@/api/environment-new-data'
 import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 const { getLabelByValue } = useDict(['env_parameter_code'])
 
 const loading = ref(false)
@@ -158,7 +164,15 @@ const detailData = reactive({
   updateTime: '',
   updateBy: '',
   auditBy: '',
-  auditTime: ''
+  auditTime: '',
+  workflowStatus: ''
+})
+
+// 判断是否可以编辑：只有草稿(S0)和驳回(S3)状态才可以编辑
+const canEdit = computed(() => {
+  const editableStatuses = ['S0', 'S3']
+  const hasPermission = userStore.hasWorkflowStatusPermission ? userStore.hasWorkflowStatusPermission('edit') : true
+  return editableStatuses.includes(detailData.workflowStatus) && hasPermission
 })
 
 // 获取参数类型标签

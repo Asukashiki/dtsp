@@ -194,6 +194,19 @@
                       <el-input v-model="formData.approvedTime" disabled />
                     </el-form-item>
                   </el-col>
+                  
+                  <!-- 退回原因 (仅在退回状态时显示) -->
+                  <el-col v-if="formData.trialStatus === 'S3'" :xs="24" :sm="24">
+                    <el-form-item :label="$t('research.breedingData.trial.form.rejectReason')">
+                      <el-input
+                        v-model="formData.rejectReason"
+                        type="textarea"
+                        :rows="3"
+                        disabled
+                        :placeholder="$t('common.noData')"
+                      />
+                    </el-form-item>
+                  </el-col>
                 </template>
               </el-row>
             </div>
@@ -251,7 +264,10 @@ const formData = reactive({
   cropType: '',
   varietyCode: '',
   varietyName: '',
-  trialStatus: 'S0' // 默认草稿状态
+  trialStatus: 'S0', // 默认草稿状态
+  rejectedName: '',
+  rejectedTime: '',
+  rejectReason: ''
 })
 
 // 判断是否可以提交审核 (草稿状态 S0 或 已退回状态 S3)
@@ -475,5 +491,31 @@ onMounted(() => {
   justify-content: center;
   gap: 16px;
   padding: 24px 0;
+}
+
+.reject-content {
+  .reject-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #909399;
+    
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .reject-reason-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #303133;
+  }
 }
 </style>
