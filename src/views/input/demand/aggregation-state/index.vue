@@ -32,6 +32,7 @@
                 :data="tableData"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -153,6 +154,7 @@
                 :data="drillDownData"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -279,6 +281,7 @@
                 :data="drillDown2Data"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -406,6 +409,7 @@
                 :data="drillDown3Data"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -939,7 +943,9 @@ const loadData = async () => {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
       sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      level: '3'
+      level: '3',
+      orderByColumn: 'year',
+      isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
@@ -1040,7 +1046,9 @@ const loadDrillDownData = async () => {
       pageSize: drillDownPagination.pageSize,
       targetCode: currentDrillDownRow.value.sourceCode,
       year: currentDrillDownRow.value.year,
-      level: '3'
+      level: '3',
+      orderByColumn: 'year',
+      isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
@@ -1113,7 +1121,9 @@ const loadDrillDown2Data = async () => {
       pageSize: drillDown2Pagination.pageSize,
       targetCode: currentDrillDown2Row.value.sourceCode,
       year: currentDrillDown2Row.value.year,
-      level: '2'
+      level: '2',
+      orderByColumn: 'year',
+      isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
@@ -1184,7 +1194,9 @@ const loadDrillDown3Data = async () => {
       pageSize: drillDown3Pagination.pageSize,
       targetCode: currentDrillDown3Row.value.sourceCode,
       year: currentDrillDown3Row.value.year,
-      level: '0'
+      level: '0',
+      orderByColumn: 'year',
+      isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 

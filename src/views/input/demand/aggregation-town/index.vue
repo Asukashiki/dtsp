@@ -32,6 +32,7 @@
                 :data="tableData"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -252,6 +253,7 @@
                 :data="drillDownData"
                 stripe
                 empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
                 <el-table-column
                   prop="year"
@@ -663,7 +665,9 @@ const loadData = async () => {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
       sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      level: "1"
+      level: "1",
+      orderByColumn: 'year',
+      isAsc: 'desc'
       // sourceCode:'huangshan'
       // TODO: Add user context filters
     }
@@ -850,7 +854,9 @@ const loadDrillDownData = async () => {
       pageSize: drillDownPagination.pageSize,
       targetCode: currentDrillDownRow.value.sourceCode,
       year: currentDrillDownRow.value.year,
-      level: 0
+      level: 0,
+      orderByColumn: 'year',
+      isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
