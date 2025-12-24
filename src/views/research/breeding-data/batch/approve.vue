@@ -8,8 +8,8 @@
             <i class="ri-list-check-2"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.batch.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.batch.subtitle') }}</p>
+            <h1 class="page-title">{{ $t('research.breedingData.batch.audit.title') }}</h1>
+            <p class="page-subtitle">{{ $t('research.breedingData.batch.audit.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -228,7 +228,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
@@ -244,6 +244,7 @@ import {
 } from '@/api/breedingData'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 const userStore = useUserStore()
 
@@ -294,7 +295,7 @@ const handleReset = () => {
   queryParams.batchName = ''
   queryParams.cropType = ''
   queryParams.varietyName = ''
-  queryParams.workflowStatus = ''
+  setQueryParamsByTab(activeTab.value)
   getList()
 }
 
@@ -329,11 +330,25 @@ const handleAdd = () => {
 }
 
 const handleView = (row) => {
-  router.push(`/research/breeding-data/batch/detail/${row.dataId}`)
+  router.push({
+    path: `/research/breeding-data/batch/detail/${row.dataId}`,
+    query: {
+      from: '/research/breeding-data/batch',
+      tab: activeTab.value,
+      ...queryParams
+    }
+  })
 }
 
 const handleEdit = (row) => {
-  router.push(`/research/breeding-data/batch/edit/${row.dataId}`)
+  router.push({
+    path: `/research/breeding-data/batch/edit/${row.dataId}`,
+    query: {
+      from: '/research/breeding-data/batch',
+      tab: activeTab.value,
+      ...queryParams
+    }
+  })
 }
 
 const handleDelete = (row) => {
@@ -540,12 +555,40 @@ const handleCancelBatch = async (row) => {
 const handleAudit = (row) => {
   router.push({
     path: `/research/breeding-data/batch/audit/${row.dataId}`,
-    query: { mode: 'audit' }
+    query: {
+      mode: 'audit',
+      from: '/research/breeding-data/batch',
+      tab: activeTab.value,
+      ...queryParams
+    }
   })
 }
 
 onMounted(() => {
-  setQueryParamsByTab(activeTab.value)
+  if (route.query.tab) {
+    activeTab.value = route.query.tab
+    setQueryParamsByTab(activeTab.value)
+  } else {
+    setQueryParamsByTab(activeTab.value)
+  }
+  if (route.query.batchId) {
+    queryParams.batchId = route.query.batchId
+  }
+  if (route.query.batchName) {
+    queryParams.batchName = route.query.batchName
+  }
+  if (route.query.cropType) {
+    queryParams.cropType = route.query.cropType
+  }
+  if (route.query.varietyName) {
+    queryParams.varietyName = route.query.varietyName
+  }
+  if (route.query.pageNum) {
+    queryParams.pageNum = parseInt(route.query.pageNum) || 1
+  }
+  if (route.query.pageSize) {
+    queryParams.pageSize = parseInt(route.query.pageSize) || 10
+  }
   getList()
 })
 </script>

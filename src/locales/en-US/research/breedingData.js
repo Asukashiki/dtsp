@@ -187,7 +187,16 @@ export default {
       approved: 'Approved',
       completed: 'Completed'
     },
+
+    audit: {
+      title: 'Breeding Batch Audit',
+      subtitle: 'Manage breeding batch audit records',
+      list: 'Audit List',
+      detail: 'Audit Details',
+    },
   },
+
+  
 
   // Plot and Sowing Information Management
   plot: {
