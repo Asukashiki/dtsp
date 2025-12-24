@@ -41,6 +41,11 @@ export default {
       season: 'Season',
       createTime: 'Created Time',
       createBy: 'Created By',
+      auditInfo: 'Audit Information',
+      rejectedBy: 'Rejected By',
+      rejectedTime: 'Rejected Time',
+      rejectReason: 'Reject Reason',
+      rejectInfo: 'Reject Information',
     },
 
     placeholder: {

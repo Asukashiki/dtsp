@@ -6,8 +6,8 @@
         <i class="ri-cloud-line"></i>
       </div>
       <div class="header-text">
-        <h1 class="page-title">{{ $t('research.environmentNewData.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.environmentNewData.subtitle') }}</p>
+        <h1 class="page-title">{{ $t('research.environmentNewData.titleAuth') }}</h1>
+        <p class="page-subtitle">{{ $t('research.environmentNewData.subtitleAuth') }}</p>
       </div>
     </div>
 
@@ -126,10 +126,7 @@
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
-              <span class="btn-text">{{ $t('research.environmentNewData.add') }}</span>
-            </el-button>
+            <!-- 移除新增按钮，审核列表不应该有新增记录的按钮 -->
           </div>
         </div>
       </div>
@@ -287,10 +284,7 @@
       </div>
     </div>
 
-    <!-- 移动端浮动添加按钮 -->
-    <div class="mobile-fab" @click="handleAdd">
-      <i class="ri-add-line"></i>
-    </div>
+    <!-- 移动端浮动添加按钮 - 审核列表不应该有新增记录的按钮，已移除 -->
   </div>
 </template>
 
@@ -369,17 +363,19 @@ const getActionButtons = (row) => {
         buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
       }
       break
-    case 'S1': // 待审批
+    case 'S1': // 待审批 - 待审核数据查看页面不应该有编辑按钮，只显示审核按钮
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
+        buttons.push({ type: 'success', action: 'audit', label: 'audit', icon: 'ri-check-line' })
       }
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
     case 'S3': // 审核驳回
+      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       if (userStore.hasWorkflowStatusPermission && userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        buttons.push({ type: 'warning', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
       break
     case 'S9': // 已作废
@@ -501,7 +497,7 @@ const handleReject = async (row) => {
       return
     }
     
-    // 显示审核意见输入框
+    // 显示审核意见输入框，驳回时应验证审批意见已填
     const { value: auditComment } = await ElMessageBox.prompt(
       t('research.environmentNewData.rejectCommentPrompt'),
       t('research.environmentNewData.rejectCommentTitle'),
@@ -510,7 +506,13 @@ const handleReject = async (row) => {
         cancelButtonText: t('common.cancel'),
         inputPlaceholder: t('research.environmentNewData.rejectCommentPlaceholder'),
         inputType: 'textarea',
-        inputRows: 4
+        inputRows: 4,
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') {
+            return t('research.environmentNewData.rules.approvalCommentRequired') || '驳回时必须填写审批意见'
+          }
+          return true
+        }
       }
     )
     
@@ -636,7 +638,7 @@ const handleBatchReject = async () => {
       return
     }
 
-    // 显示审核意见输入框
+    // 显示审核意见输入框，驳回时应验证审批意见已填
     const { value: auditComment } = await ElMessageBox.prompt(
       t('research.environmentNewData.rejectCommentPrompt'),
       t('research.environmentNewData.rejectCommentTitle'),
@@ -645,7 +647,13 @@ const handleBatchReject = async () => {
         cancelButtonText: t('common.cancel'),
         inputPlaceholder: t('research.environmentNewData.rejectCommentPlaceholder'),
         inputType: 'textarea',
-        inputRows: 4
+        inputRows: 4,
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') {
+            return t('research.environmentNewData.rules.approvalCommentRequired') || '驳回时必须填写审批意见'
+          }
+          return true
+        }
       }
     )
 
@@ -737,20 +745,21 @@ const handleSearch = () => {
   loadData()
 }
 
-// 重置
+// 重置 - 点击重置按钮，页面不应该显示所有状态的数据，应保持当前标签页的状态筛选
 const handleReset = () => {
   searchForm.stationId = ''
   searchForm.parameterCode = ''
   searchForm.batchId = ''
-  searchForm.workflowStatus = ''
+  // 保持当前标签页的状态筛选，不清空 workflowStatus
+  setQueryParamsByTab(activeTab.value)
   pagination.pageNum = 1
   loadData()
 }
 
-// 新增
-const handleAdd = () => {
-  router.push('/research/data-collection/environment-new-data/add')
-}
+// 新增 - 审核列表不应该有新增记录的功能，已移除
+// const handleAdd = () => {
+//   router.push('/research/data-collection/environment-new-data/add')
+// }
 
 // 查看
 const handleView = (row) => {

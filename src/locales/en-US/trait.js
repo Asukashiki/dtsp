@@ -79,7 +79,7 @@ export default {
 
   // Operation button text (Supplement: Buttons used in code)
   invalid: 'Invalidate', // Supplement: Invalidate button
-  submitAudit: 'Initiate Audit', // Supplement: Initiate audit button
+  submitAudit: 'Submit for Audit', // Supplement: Initiate audit button
 
   // Message prompts
   deleteConfirm: 'Are you sure to delete the selected records?',

@@ -2,7 +2,9 @@
 // Environment New Data i18n File
 export default {
   title: 'Environment New Data',
+  titleAuth: 'Environmental monitoring data review',
   subtitle: 'Manage environmental monitoring data records',
+  subtitleAuth: 'Review and manage environmental monitoring data',
   list: 'Data List',
   add: 'Add Record',
   edit: 'Edit Record',
@@ -125,6 +127,8 @@ export default {
     unitLength: 'Unit cannot exceed 20 characters',
     sourceLength: 'Source cannot exceed 100 characters',
     remarkLength: 'Remarks cannot exceed 500 characters',
+    approvalCommentRequired: 'Approval comment is required when rejecting',
+    plotIdRequired: 'Please select plot',
   },
 
   // Table Columns

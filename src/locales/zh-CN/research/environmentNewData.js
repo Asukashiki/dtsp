@@ -2,7 +2,9 @@
 // Environment New Data i18n File (Chinese)
 export default {
   title: '环境监测数据',
+  titleAuth: '环境监测数据审核',
   subtitle: '管理气象站等环境监测设备的数据记录',
+  subtitleAuth: '对环境监测数据进行审核管理',
   list: '数据列表',
   add: '新增记录',
   edit: '编辑记录',
@@ -116,6 +118,8 @@ export default {
     unitLength: '单位不能超过20个字符',
     sourceLength: '数据来源不能超过100个字符',
     remarkLength: '备注不能超过500个字符',
+    approvalCommentRequired: '驳回时必须填写审批意见',
+    plotIdRequired: '请选择地块',
   },
 
   // Table Columns

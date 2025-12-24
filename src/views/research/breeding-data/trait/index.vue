@@ -47,7 +47,7 @@
               <div class="search-item">
                 <span class="search-label">{{ $t('trait.columns.status') }}:</span>
                 <el-select
-                    v-model="queryParams.status"
+                    v-model="queryParams.workflowStatus"
                     :placeholder="$t('common.pleaseSelect')"
                     clearable
                     class="filter-select"
@@ -91,7 +91,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('trait.columns.status')" min-width="140">
                   <template #default="{ row }">
-                    <el-tag type="info">{{ getLabelByValue('flow_status', row.status) || row.status }}</el-tag>
+                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus || row.status) || row.workflowStatus || row.status || '-' }}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
@@ -173,7 +173,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('trait.columns.status') }}:</span>
-                    <span class="value">{{ getLabelByValue('flow_status', item.status) || item.status }}</span>
+                    <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus || item.status) || item.workflowStatus || item.status || '-' }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
@@ -263,7 +263,7 @@ const queryParams = reactive({
   batchId: '',
   trialId: '',
   growthStage: '',
-  status: ''
+  workflowStatus: ''
 })
 
 const getList = async () => {
@@ -310,7 +310,7 @@ const handleReset = () => {
   queryParams.batchId = ''
   queryParams.trialId = ''
   queryParams.growthStage = ''
-  queryParams.status = ''
+  queryParams.workflowStatus = ''
   getList()
 }
 

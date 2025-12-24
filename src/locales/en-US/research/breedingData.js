@@ -362,6 +362,7 @@ export default {
       approvedBy: 'Approved By',
       approvedName: 'Approved By',
       approvedTime: 'Approved Time',
+      rejectReason: 'Reject Reason',
     },
 
     placeholder: {

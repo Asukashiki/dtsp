@@ -111,6 +111,28 @@
             </div>
           </div>
         </div>
+
+        <!-- 审核信息 (仅在退回状态时显示) -->
+        <div v-if="detailData.workflowStatus === 'S3' || detailData.rejectReason" class="detail-section">
+          <div class="section-title">
+            <i class="ri-file-list-3-line"></i>
+            {{ $t('research.dataCollection.trialBase.form.auditInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item full-width" v-if="detailData.rejectedName">
+              <span class="label">{{ $t('research.dataCollection.trialBase.form.rejectedBy') }}:</span>
+              <span class="value">{{ detailData.rejectedName }}</span>
+            </div>
+            <div class="detail-item full-width" v-if="detailData.rejectedTime">
+              <span class="label">{{ $t('research.dataCollection.trialBase.form.rejectedTime') }}:</span>
+              <span class="value">{{ detailData.rejectedTime }}</span>
+            </div>
+            <div class="detail-item full-width" v-if="detailData.rejectReason">
+              <span class="label">{{ $t('research.dataCollection.trialBase.form.rejectReason') }}:</span>
+              <span class="value reject-reason">{{ detailData.rejectReason }}</span>
+            </div>
+          </div>
+        </div>
       </template>
     </div>
   </div>
@@ -251,6 +273,15 @@ onMounted(() => {
 .detail-item .value {
   color: #1f2937;
   flex: 1;
+}
+
+.detail-item .value.reject-reason {
+  color: #dc2626;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  border-radius: 4px;
 }
 
 @media screen and (max-width: 1024px) {
