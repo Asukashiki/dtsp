@@ -101,11 +101,12 @@
                     {{ formatDateTime(row.auditedDatetime) }}
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="200" fixed="right">
+                <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="280" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                      <el-button link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                      <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                      <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)"><i class="ri-send-plane-line"></i>Submit for Review</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -140,7 +141,8 @@
                   </div>
                   <div class="mobile-card-footer">
                     <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                    <el-button size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                    <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>Submit</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(item)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
                   </div>
                 </div>
@@ -160,7 +162,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions } from '@/api/breedingData'
+import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions, submitFarmingRecordForReview } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -266,6 +268,46 @@ const handleMobileSelect = (item) => {
 const handleAdd = () => router.push('/research/breeding-data/farming/add')
 const handleView = (row) => router.push(`/research/breeding-data/farming/detail/${row.farmingId}`)
 const handleEdit = (row) => router.push(`/research/breeding-data/farming/edit/${row.farmingId}`)
+
+// 判断是否显示编辑按钮（只在审核状态为S0、S1或S3时显示）
+const shouldShowEditButton = (row) => {
+  const status = row.auditStatus || row.workflowStatus
+  return status === 'S0' || status === 'S1' || status === 'S3'
+}
+
+// 判断是否显示提交审核按钮（只在审核状态为S0或S3时显示）
+const shouldShowSubmitButton = (row) => {
+  const status = row.auditStatus || row.workflowStatus
+  return status === 'S0' || status === 'S3'
+}
+
+// 提交审核
+const handleSubmitForReview = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to submit this record for review?',
+      'Confirm',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    
+    const res = await submitFarmingRecordForReview({ farmingId: row.farmingId })
+    if (res.code === 200) {
+      ElMessage.success('Submit for review successfully')
+      getList()
+    } else {
+      ElMessage.error(res.msg || 'Submit failed')
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit for review:', error)
+      ElMessage.error('Submit failed')
+    }
+  }
+}
 
 const handleDelete = (row) => {
   ElMessageBox.confirm(t('research.breedingData.farming.deleteConfirm'), t('common.warning'), { type: 'warning' }).then(async () => {

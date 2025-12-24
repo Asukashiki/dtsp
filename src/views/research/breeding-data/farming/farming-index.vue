@@ -295,8 +295,21 @@ const activityTypeOptions = [
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getFarmingRecordList(queryParams)
-    dataList.value = (res.rows || []).map(item => ({
+    // 添加过滤条件：不显示S0和S3状态的单子
+    const params = {
+      ...queryParams,
+      excludeStatuses: 'S0,S3' // 排除S0和S3状态
+    }
+    
+    const res = await getFarmingRecordList(params)
+    
+    // 前端再次过滤，确保不显示S0和S3状态的数据
+    const filteredData = (res.rows || []).filter(item => {
+      const status = item.workflowStatus || item.auditStatus
+      return status !== 'S0' && status !== 'S3'
+    })
+    
+    dataList.value = filteredData.map(item => ({
       ...item,
       checked: false // Ensure each item has checked property
     }))

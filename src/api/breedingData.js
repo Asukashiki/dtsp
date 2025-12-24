@@ -223,6 +223,10 @@ export function deleteFarmingRecord(farmingIds) {
     return request({ url: `${API_BASE_URL}/breeding/farming/remove`, method: 'get', params: { farmingIds } })
 }
 
+export function submitFarmingRecordForReview(data) {
+    return request({ url: `${API_BASE_URL}/breeding/farming/submitForReview`, method: 'post', data })
+}
+
 export function getIrrigationCount() {
     return request({ url: `${API_BASE_URL}/breeding/farming/irrigationCount`, method: 'get' })
 }
