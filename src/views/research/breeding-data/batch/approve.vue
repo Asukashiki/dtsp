@@ -37,12 +37,16 @@
                 <span><i class="ri-time-line"></i> {{ $t('research.breedingData.batch.tabs.pendingApproval') }}</span>
               </template>
             </el-tab-pane>
+            <el-tab-pane :label="$t('research.breedingData.batch.tabs.voided')" name="voided">
+              <template #label>
+                <span><i class="ri-forbid-line"></i> {{ $t('research.breedingData.batch.tabs.voided') }}</span>
+              </template>
+            </el-tab-pane>
             <el-tab-pane :label="$t('research.breedingData.batch.tabs.approved')" name="approved">
               <template #label>
                 <span><i class="ri-check-line"></i> {{ $t('research.breedingData.batch.tabs.approved') }}</span>
               </template>
             </el-tab-pane>
-
           </el-tabs>
         </div>
 
@@ -235,6 +239,7 @@ import { useUserStore } from '@/store'
 import { useDict } from '@/hooks/useDict'
 import {
   getBreedingBatchList,
+  getBreedingBatchVoidedList,
   deleteBreedingBatch,
   submitForAudit,
   approveBatch,
@@ -273,7 +278,15 @@ const queryParams = reactive({
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getBreedingBatchList(queryParams)
+    let res
+    // 根据当前标签页选择不同的 API 方法
+    if (activeTab.value === 'voided') {
+      // Voided 标签页使用专门的 API
+      res = await getBreedingBatchVoidedList(queryParams)
+    } else {
+      // 其他标签页使用通用 API
+      res = await getBreedingBatchList(queryParams)
+    }
     dataList.value = res.rows || []
     total.value = res.total || 0
   } catch (error) {
@@ -381,8 +394,11 @@ const setQueryParamsByTab = (tabName) => {
     case 'approved':
       queryParams.workflowStatus = 'S2' // 审核通过
       break
+    case 'voided':
+      queryParams.workflowStatus = '' // 已作废
+      break
     case 'completed':
-      queryParams.workflowStatus = 'S8' // 已归档
+      queryParams.workflowStatus = 'S9' // 已归档
       break
   }
 }
@@ -396,39 +412,40 @@ const getActionButtons = (row) => {
   const workflowStatus = row.workflowStatus
   const buttons = []
   
-  // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (workflowStatus) {
-    case 'S0': // 草稿
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-      }
-      break
-    case 'S1': // 待审批
-      if (userStore.hasWorkflowStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-      }
-      break
-    case 'S2': // 审核通过
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-            // 添加作废按钮
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-      }
-      break
-    case 'S3': // 审核驳回
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      break
-    case 'S9': // 已归档
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      break
-    case 'S10': // 已作废
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      break
+  // 如果在 Voided 标签页，只显示查看按钮
+  if (activeTab.value === 'voided') {
+    buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+  } else {
+    // 根据状态显示不同的操作按钮，并检查用户权限
+    switch (workflowStatus) {
+      case 'S0': // 草稿
+        if (userStore.hasWorkflowStatusPermission('edit')) {
+          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        }
+        if (userStore.hasWorkflowStatusPermission('submit')) {
+          buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+        }
+        break
+      case 'S1': // 待审批
+        if (userStore.hasWorkflowStatusPermission('approve')) {
+          buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
+        }
+        break
+      case 'S2': // 审核通过
+        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        break
+      case 'S3': // 审核驳回
+        if (userStore.hasWorkflowStatusPermission('edit')) {
+          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        }
+        break
+      case 'S9': // 已归档
+        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        break
+      case 'S10': // 已作废
+        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        break
+    }
   }
   
   return buttons

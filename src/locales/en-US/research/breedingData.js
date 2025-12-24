@@ -185,7 +185,8 @@ export default {
       myCreated: 'My Created',
       pendingApproval: 'Pending Approval',
       approved: 'Approved',
-      completed: 'Completed'
+      completed: 'Completed',
+      voided: 'Voided'
     },
 
     audit: {

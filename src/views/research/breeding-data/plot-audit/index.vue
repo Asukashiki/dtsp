@@ -91,7 +91,7 @@
               </el-tab-pane>
 
               <!-- 已作废 -->
-              <!-- <el-tab-pane :label="$t('research.breedingData.plot.canceled')" name="S10">
+              <el-tab-pane :label="$t('research.breedingData.plot.canceled')" name="S10">
                 <div class="search-section">
                   <div class="search-item">
                     <span class="search-label">Trial ID:</span>
@@ -132,7 +132,7 @@
                         </el-tag>
                       </template>
                     </el-table-column>
-                     作废类型列 - 只在已作废标签页显示 
+                     <!-- 作废类型列 - 只在已作废标签页显示  -->
                     <el-table-column :label="$t('research.breedingData.plot.cancelType')" min-width="140">
                       <template #default="{ row }">
                         <el-tag v-if="row.auditCanceled && row.auditCanceled > 0" type="warning">
@@ -166,7 +166,7 @@
                     />
                   </div>
                 </div>
-              </el-tab-pane> -->
+              </el-tab-pane>
 
               <el-tab-pane :label="$t('research.breedingData.plot.audited')" name="S2">
                 <div class="search-section">

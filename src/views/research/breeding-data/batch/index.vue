@@ -281,7 +281,9 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await getBreedingBatchList(queryParams)
-    dataList.value = res.rows || []
+    // 过滤掉 S10 状态的数据
+    const filteredRows = (res.rows || []).filter(row => row.workflowStatus !== 'S10')
+    dataList.value = filteredRows
     total.value = res.total || 0
   } catch (error) {
     console.error('Failed to fetch breeding batch list:', error)
