@@ -131,7 +131,7 @@
                 <el-table-column prop="createTime" :label="$t('research.breedingData.trial.columns.createTime')" min-width="160" show-overflow-tooltip />
                 <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
                   <template #default="{ row }">
-                    <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" @archive="handleArchive" />
+                    <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -251,7 +251,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicList, deleteTrialBasic, getBatchOptions } from '@/api/breedingData'
-import { submitTrial, cancelTrial, archiveTrial } from '@/api/research/trialBasicAudit'
+import { submitTrial, cancelTrial } from '@/api/research/trialBasicAudit'
 import { useDict } from '@/hooks/useDict'
 import StatusTag from './components/StatusTag.vue'
 import ActionButtons from './components/ActionButtons.vue'
@@ -412,27 +412,6 @@ const handleCancelConfirm = async (reason) => {
   } catch (error) {
     console.error('作废失败:', error)
   }
-}
-
-// 归档
-const handleArchive = async (row) => {
-  ElMessageBox.confirm(
-    t('research.trialBasicAudit.action.archiveConfirm'),
-    t('common.warning'),
-    {
-      type: 'warning',
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel')
-    }
-  ).then(async () => {
-    try {
-      await archiveTrial(row.trialId)
-      ElMessage.success(t('research.trialBasicAudit.action.archiveSuccess'))
-      getList()
-    } catch (error) {
-      console.error('归档失败:', error)
-    }
-  }).catch(() => {})
 }
 
 onMounted(() => {
