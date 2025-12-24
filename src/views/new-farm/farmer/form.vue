@@ -416,7 +416,7 @@ const handleWoredaChange = async (woredaCode) => {
       formData.cooperativeId = orgName
     }
   } catch (error) {
-    ElMessage.error(t('newFarm.common.loadWoredaFailed') || '加载Woreda关联信息失败')
+    ElMessage.error(t('newFarm.common.loadWoredaFailed') || 'Failed to load the Woreda association information')
   } finally {
     woredaLoading.value = false
   }

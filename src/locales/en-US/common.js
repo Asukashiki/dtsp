@@ -3,6 +3,7 @@ export default {
   cancel: 'Cancel',
   save: 'Save',
   delete: 'Delete',
+  void: 'Void',
   edit: 'Edit',
   search: 'Search',
   reset: 'Reset',

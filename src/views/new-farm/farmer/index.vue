@@ -158,7 +158,7 @@
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)">
                 <i class="ri-delete-bin-line"></i>
-                {{ $t('common.delete') }}
+                {{ $t('common.void') }}
               </el-button>
             </template>
           </el-table-column>
