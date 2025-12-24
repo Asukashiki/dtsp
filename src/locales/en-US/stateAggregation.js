@@ -43,6 +43,7 @@ export default {
     pending: 'Pending',
     approved: 'Approved',
     rejected: 'Rejected',
+    submited: 'Submited',
   },
 
   // Add Year Dialog

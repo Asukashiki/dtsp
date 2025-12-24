@@ -205,7 +205,7 @@
                       {{ $t('stateAggregation.status.draft') }}
                     </el-tag>
                     <el-tag v-else-if="row.status === '1'" type="warning">
-                      {{ $t('stateAggregation.status.pending') }}
+                      {{ $t('stateAggregation.status.submited') }}
                     </el-tag>
                     <el-tag v-else-if="row.status === '2'" type="success">
                       {{ $t('stateAggregation.status.approved') }}
