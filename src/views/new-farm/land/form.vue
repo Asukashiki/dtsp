@@ -27,18 +27,18 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.land.form.landName')" prop="landName">
               <el-input
-                v-model="formData.landName"
-                :placeholder="$t('newFarm.land.placeholder.landName')"
-                maxlength="100"
-                show-word-limit
+                  v-model="formData.landName"
+                  :placeholder="$t('newFarm.land.placeholder.landName')"
+                  maxlength="100"
+                  show-word-limit
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.land.form.ownerType')" prop="ownerType">
               <el-select
-                v-model="formData.ownerType"
-                :placeholder="$t('newFarm.land.placeholder.ownerType')"
-                style="width: 100%"
+                  v-model="formData.ownerType"
+                  :placeholder="$t('newFarm.land.placeholder.ownerType')"
+                  style="width: 100%"
               >
                 <el-option value="PRIVATE" :label="$t('newFarm.land.ownerType.PRIVATE')" />
                 <el-option value="CONTRACT" :label="$t('newFarm.land.ownerType.CONTRACT')" />
@@ -49,9 +49,9 @@
 
             <el-form-item :label="$t('newFarm.land.form.landType')" prop="landType">
               <el-select
-                v-model="formData.landType"
-                :placeholder="$t('newFarm.land.placeholder.landType')"
-                style="width: 100%"
+                  v-model="formData.landType"
+                  :placeholder="$t('newFarm.land.placeholder.landType')"
+                  style="width: 100%"
               >
                 <el-option value="PADDY" :label="$t('newFarm.land.landType.PADDY')" />
                 <el-option value="DRY" :label="$t('newFarm.land.landType.DRY')" />
@@ -63,12 +63,12 @@
 
             <el-form-item :label="$t('newFarm.land.form.areaSize')" prop="areaSize">
               <el-input-number
-                v-model="formData.areaSize"
-                :placeholder="$t('newFarm.land.placeholder.areaSize')"
-                :min="0"
-                :precision="2"
-                :step="0.1"
-                style="width: 100%"
+                  v-model="formData.areaSize"
+                  :placeholder="$t('newFarm.land.placeholder.areaSize')"
+                  :min="0"
+                  :precision="2"
+                  :step="0.1"
+                  style="width: 100%"
               />
               <div class="form-tip">{{ $t('newFarm.land.tips.areaUnit') }}</div>
             </el-form-item>
@@ -83,67 +83,104 @@
           </div>
         </div>
 
-        <!-- 位置信息 -->
+        <!-- 位置信息 - 三级联动下拉框 -->
         <div class="form-block">
           <div class="block-header">
             <i class="ri-map-pin-line"></i>
             <h3>{{ $t('newFarm.land.sections.locationInfo') }}</h3>
           </div>
           <div class="form-grid">
+            <!-- Zone下拉框 -->
             <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
-              <el-input
-                v-model="formData.zoneCode"
-                :placeholder="$t('newFarm.common.selectZone')"
-                maxlength="50"
-              />
+              <el-select
+                  v-model="formData.zoneCode"
+                  :placeholder="$t('newFarm.common.selectZone')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleZoneChange"
+                  :loading="zoneLoading"
+              >
+                <el-option
+                    v-for="item in zoneOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
 
+            <!-- Woreda下拉框 -->
             <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
-              <el-input
-                v-model="formData.woredaCode"
-                :placeholder="$t('newFarm.common.selectWoreda')"
-                maxlength="50"
-              />
+              <el-select
+                  v-model="formData.woredaCode"
+                  :placeholder="$t('newFarm.common.selectWoreda')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleWoredaChange"
+                  :loading="woredaLoading"
+                  :disabled="!formData.zoneCode"
+              >
+                <el-option
+                    v-for="item in woredaOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
 
+            <!-- Kebele下拉框 -->
             <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
-              <el-input
-                v-model="formData.kebeleCode"
-                :placeholder="$t('newFarm.common.selectKebele')"
-                maxlength="50"
-              />
+              <el-select
+                  v-model="formData.kebeleCode"
+                  :placeholder="$t('newFarm.common.selectKebele')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  :loading="kebeleLoading"
+                  :disabled="!formData.woredaCode"
+              >
+                <el-option
+                    v-for="item in kebeleOptions"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.land.form.latitude')" prop="latitude">
               <el-input-number
-                v-model="formData.latitude"
-                :placeholder="$t('newFarm.land.placeholder.latitude')"
-                :precision="6"
-                :step="0.000001"
-                :min="-90"
-                :max="90"
-                style="width: 100%"
+                  v-model="formData.latitude"
+                  :placeholder="$t('newFarm.land.placeholder.latitude')"
+                  :precision="6"
+                  :step="0.000001"
+                  :min="-90"
+                  :max="90"
+                  style="width: 100%"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.land.form.longitude')" prop="longitude">
               <el-input-number
-                v-model="formData.longitude"
-                :placeholder="$t('newFarm.land.placeholder.longitude')"
-                :precision="6"
-                :step="0.000001"
-                :min="-180"
-                :max="180"
-                style="width: 100%"
+                  v-model="formData.longitude"
+                  :placeholder="$t('newFarm.land.placeholder.longitude')"
+                  :precision="6"
+                  :step="0.000001"
+                  :min="-180"
+                  :max="180"
+                  style="width: 100%"
               />
             </el-form-item>
 
             <el-form-item :label="$t('newFarm.land.form.address')" prop="address" class="full-width-item">
               <el-input
-                v-model="formData.address"
-                :placeholder="$t('newFarm.land.placeholder.address')"
-                maxlength="200"
-                show-word-limit
+                  v-model="formData.address"
+                  :placeholder="$t('newFarm.land.placeholder.address')"
+                  maxlength="200"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -158,20 +195,20 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.land.form.farmerId')" prop="farmerId">
               <el-select
-                v-model="formData.farmerId"
-                :placeholder="$t('newFarm.land.placeholder.farmerId')"
-                filterable
-                remote
-                :remote-method="handleFarmerSearch"
-                :loading="farmerSearchLoading"
-                clearable
-                style="width: 100%"
+                  v-model="formData.farmerId"
+                  :placeholder="$t('newFarm.land.placeholder.farmerId')"
+                  filterable
+                  remote
+                  :remote-method="handleFarmerSearch"
+                  :loading="farmerSearchLoading"
+                  clearable
+                  style="width: 100%"
               >
                 <el-option
-                  v-for="item in farmerOptions"
-                  :key="item.farmerId"
-                  :label="`${item.farmerName} (${item.farmerId})`"
-                  :value="item.farmerId"
+                    v-for="item in farmerOptions"
+                    :key="item.farmerId"
+                    :label="`${item.farmerName} (${item.farmerId})`"
+                    :value="item.farmerId"
                 />
               </el-select>
               <div class="form-tip">{{ $t('newFarm.land.tips.farmerOptional') }}</div>
@@ -188,12 +225,12 @@
           <div class="form-grid">
             <el-form-item :label="$t('newFarm.common.remark')" prop="remark" class="full-width-item">
               <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="4"
-                :placeholder="$t('newFarm.land.placeholder.remark')"
-                maxlength="500"
-                show-word-limit
+                  v-model="formData.remark"
+                  type="textarea"
+                  :rows="4"
+                  :placeholder="$t('newFarm.land.placeholder.remark')"
+                  maxlength="500"
+                  show-word-limit
               />
             </el-form-item>
           </div>
@@ -222,6 +259,8 @@ import {
   updateLand,
   getFarmerOptions
 } from '@/api/newFarm'
+// 引入三级联动接口（和农民表单一致）
+import { listSubRegionByCode } from '@/api/application'
 
 const router = useRouter()
 const route = useRoute()
@@ -233,6 +272,15 @@ const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 const farmerOptions = ref([])
 const farmerSearchLoading = ref(false)
+
+// 三级联动相关状态（新增）
+const zoneOptions = ref([])
+const woredaOptions = ref([])
+const kebeleOptions = ref([])
+const zoneLoading = ref(false)
+const woredaLoading = ref(false)
+const kebeleLoading = ref(false)
+const ORomiaRegionCode = '102000000' // 奥罗米亚州编码（和农民表单一致）
 
 // 表单数据
 const formData = reactive({
@@ -267,6 +315,12 @@ const formRules = computed(() => ({
   areaSize: [
     { required: true, message: t('newFarm.land.rules.areaSizeRequired'), trigger: 'blur' }
   ],
+  zoneCode: [
+    { required: true, message: t('newFarm.land.rules.zoneCodeRequired'), trigger: 'change' }
+  ],
+  woredaCode: [
+    { required: true, message: t('newFarm.land.rules.woredaCodeRequired'), trigger: 'change' }
+  ],
   kebeleCode: [
     { required: true, message: t('newFarm.land.rules.kebeleCodeRequired'), trigger: 'blur' }
   ]
@@ -274,6 +328,65 @@ const formRules = computed(() => ({
 
 const goBack = () => {
   router.back()
+}
+
+// 加载Zone选项（奥罗米亚州下的子区划）
+const loadZoneOptions = async () => {
+  zoneLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: ORomiaRegionCode })
+    if (res.code === 200) {
+      zoneOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadZoneFailed'))
+  } finally {
+    zoneLoading.value = false
+  }
+}
+
+// Zone选择变化：清空下级，加载Woreda
+const handleZoneChange = async (zoneCode) => {
+  // 清空下级数据
+  formData.woredaCode = ''
+  formData.kebeleCode = ''
+  woredaOptions.value = []
+  kebeleOptions.value = []
+
+  if (!zoneCode) return
+
+  woredaLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: zoneCode })
+    if (res.code === 200) {
+      woredaOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadWoredaFailed'))
+  } finally {
+    woredaLoading.value = false
+  }
+}
+
+// Woreda选择变化：清空Kebele，加载Kebele选项
+const handleWoredaChange = async (woredaCode) => {
+  // 清空Kebele数据
+  formData.kebeleCode = ''
+  kebeleOptions.value = []
+
+  if (!woredaCode) return
+
+  kebeleLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: woredaCode })
+    if (res.code === 200) {
+      kebeleOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('newFarm.common.loadKebeleFailed'))
+  } finally {
+    kebeleLoading.value = false
+  }
 }
 
 // 加载农民选项
@@ -291,7 +404,7 @@ const handleFarmerSearch = async (keyword) => {
   }
 }
 
-// 加载详情
+// 加载详情（编辑模式下联动回显）
 const loadDetail = async () => {
   pageLoading.value = true
   try {
@@ -312,6 +425,17 @@ const loadDetail = async () => {
       formData.address = data.address || ''
       formData.farmerId = data.farmerId || ''
       formData.remark = data.remark || ''
+
+      // 编辑模式下联动回显：先加载Zone，再加载Woreda，最后加载Kebele
+      if (formData.zoneCode) {
+        await loadZoneOptions()
+        // 加载对应Woreda
+        await handleZoneChange(formData.zoneCode)
+        // 赋值Woreda后加载Kebele
+        if (formData.woredaCode) {
+          await handleWoredaChange(formData.woredaCode)
+        }
+      }
 
       // 如果有关联农民，加载农民信息
       if (data.farmerId) {
@@ -339,6 +463,14 @@ const handleSubmit = async () => {
       try {
         const data = { ...formData }
 
+        // 可选：如果需要传递名称字段，可在这里补充（和农民表单一致）
+        const zone = zoneOptions.value.find(item => item.code === data.zoneCode)
+        const woreda = woredaOptions.value.find(item => item.code === data.woredaCode)
+        const kebele = kebeleOptions.value.find(item => item.code === data.kebeleCode)
+        if (zone) data.zoneName = zone.name
+        if (woreda) data.woredaName = woreda.name
+        if (kebele) data.kebeleName = kebele.name
+
         let res
         if (isEdit.value) {
           res = await updateLand(route.params.id, data)
@@ -363,7 +495,11 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
+  // 初始化加载Zone选项
+  await loadZoneOptions()
+  // 初始化加载农民选项
   await handleFarmerSearch('')
+  // 编辑模式加载详情
   if (isEdit.value) {
     await loadDetail()
   }
@@ -391,6 +527,16 @@ onMounted(async () => {
 .form-tip { font-size: 12px; color: #909399; margin-top: 4px; }
 
 .form-actions { display: flex; justify-content: flex-end; gap: 16px; padding-top: 24px; border-top: 1px solid #f0f2f5; }
+
+/* 下拉框加载状态样式优化 */
+.el-select__loading { display: flex; align-items: center; justify-content: center; }
+
+/* 禁用状态样式统一 */
+.el-select.is-disabled .el-select__wrapper {
+  background-color: #f5f7fa;
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
 
 @media screen and (max-width: 1024px) {
   .form-grid { grid-template-columns: 1fr; }
