@@ -80,7 +80,7 @@
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe @selection-change="handleSelectionChange" :default-sort="{ prop: 'year', order: 'descending' }">
+              <el-table v-loading="loading" :data="tableData" stripe @selection-change="handleSelectionChange" :default-sort="{ prop: 'createdTime', order: 'descending' }">
                 <el-table-column
                   type="selection"
                   width="55"
@@ -362,7 +362,7 @@ const loadData = async () => {
       farmerIdNumber: searchForm.keyword,
       village: searchForm.keyword,
       status: searchForm.status,
-      orderByColumn: 'year',
+      orderByColumn: 'createdTime',
       isAsc: 'desc'
     })
     if (res.code === 200) {

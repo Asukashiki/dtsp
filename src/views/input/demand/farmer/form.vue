@@ -119,21 +119,21 @@
                 <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
               </div>
 
-              <!-- 按季节显示耕地面积汇总 -->
-              <div v-if="Object.keys(seasonSummaries).length > 0" class="season-summaries-list">
-                <div v-for="(sum, season) in seasonSummaries" :key="season"
+              <!-- 按季节+类型显示耕地面积汇总 -->
+              <div v-if="Object.keys(seasonTypeSummaries).length > 0" class="season-summaries-list">
+                <div v-for="(data, key) in seasonTypeSummaries" :key="key"
                      class="season-summary-item"
-                     :class="{ 'exceeded': sum > formData.landArea }">
-                  <span class="season-name">{{ getSeasonName(season) }}</span>
-                  <span class="season-sum">{{ sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
-                  <i v-if="sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
+                     :class="{ 'exceeded': data.sum > formData.landArea }">
+                  <span class="season-name">{{ getSeasonName(data.season) }} - {{ getInputTypeName(data.type) }}</span>
+                  <span class="season-sum">{{ data.sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
+                  <i v-if="data.sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
                 </div>
               </div>
 
               <!-- 超出警告（汇总显示） -->
               <div v-if="isSeasonCropLandExceeded" class="error-message">
                 <i class="ri-error-warning-line"></i>
-                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
+                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ getInputTypeName(isSeasonCropLandExceeded.type) }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
               </div>
             </div>
 
@@ -358,42 +358,32 @@ const formData = reactive({
   inputItems: []
 })
 
-// 检查是否有任何季节的耕地面积超出土地面积
-const isSeasonCropLandExceeded = computed(() => {
-  if (!formData.landArea) return null
-
-  // 按季节分组检查
-  const seasonGroups = {}
-  formData.inputItems.forEach(item => {
-    if (item.season) {
-      if (!seasonGroups[item.season]) {
-        seasonGroups[item.season] = 0
-      }
-      seasonGroups[item.season] += (item.cropLand || 0)
-    }
-  })
-
-  // 返回第一个超出限制的季节和对应的总和
-  for (const [season, sum] of Object.entries(seasonGroups)) {
-    if (sum > formData.landArea) {
-      return { season, sum }
-    }
-  }
-  return null
-})
-
-// 按季节分组汇总（用于显示）
-const seasonSummaries = computed(() => {
+// 按季节+类型分组汇总（用于显示和校验）
+const seasonTypeSummaries = computed(() => {
   const result = {}
   formData.inputItems.forEach(item => {
-    if (item.season) {
-      if (!result[item.season]) {
-        result[item.season] = 0
+    if (item.season && item.inputType) {
+      const key = `${item.season}_${item.inputType}`
+      if (!result[key]) {
+        result[key] = { season: item.season, type: item.inputType, sum: 0 }
       }
-      result[item.season] += (item.cropLand || 0)
+      result[key].sum += (item.cropLand || 0)
     }
   })
   return result
+})
+
+// 检查是否有任何季节+类型组合的耕地面积超出土地面积
+const isSeasonCropLandExceeded = computed(() => {
+  if (!formData.landArea) return null
+
+  // 检查每个季节+类型组合
+  for (const [key, data] of Object.entries(seasonTypeSummaries.value)) {
+    if (data.sum > formData.landArea) {
+      return { season: data.season, type: data.type, sum: data.sum }
+    }
+  }
+  return null
 })
 
 // 获取季节名称（从字典中查找）
@@ -402,6 +392,14 @@ const getSeasonName = (seasonValue) => {
   const agriSeason = options.agri_season || dictOptions.value.agri_season || []
   const season = agriSeason.find(item => item.value === seasonValue)
   return season ? season.label : seasonValue
+}
+
+// 获取投入品类型名称（从字典中查找）
+const getInputTypeName = (typeValue) => {
+  if (!typeValue) return ''
+  const inputType = options.input_type || dictOptions.value.input_type || []
+  const type = inputType.find(item => item.value === typeValue)
+  return type ? type.label : typeValue
 }
 
 // 表单验证规则
@@ -542,10 +540,23 @@ const loadData = async () => {
       }
 
       // 适配编辑态的级联选择器值
+      // 注意：后端返回的 inputCategory 是大类(IN01)，inputType 是小类(IN0101)
+      // 前端级联选择器需要 cascadeValue = [大类, 小类]
+      // 前端 inputType 存大类，inputCategory 存小类
       if (formData.inputItems && formData.inputItems.length > 0) {
         formData.inputItems.forEach(item => {
-          item.cascadeValue = item.inputType && item.inputCategory
-              ? [item.inputType, item.inputCategory]
+          // 后端返回：inputCategory=大类, inputType=小类
+          // 前端期望：inputType=大类, inputCategory=小类
+          const backendCategory = item.inputCategory  // 大类 IN01
+          const backendType = item.inputType  // 小类 IN0101
+          
+          // 修正字段映射
+          item.inputType = backendCategory  // 前端大类
+          item.inputCategory = backendType  // 前端小类
+          
+          // 设置级联选择器值 [大类, 小类]
+          item.cascadeValue = backendCategory && backendType
+              ? [backendCategory, backendType]
               : []
         })
       } else {
