@@ -119,12 +119,12 @@
                 <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
               </div>
 
-              <!-- 按季节+类型显示耕地面积汇总 -->
-              <div v-if="Object.keys(seasonTypeSummaries).length > 0" class="season-summaries-list">
-                <div v-for="(data, key) in seasonTypeSummaries" :key="key"
+              <!-- 按混合规则显示耕地面积汇总：种子按大类，化肥按小类 -->
+              <div v-if="Object.keys(mixedSummaries).length > 0" class="season-summaries-list">
+                <div v-for="(data, key) in mixedSummaries" :key="key"
                      class="season-summary-item"
                      :class="{ 'exceeded': data.sum > formData.landArea }">
-                  <span class="season-name">{{ getSeasonName(data.season) }} - {{ getInputTypeName(data.type) }}</span>
+                  <span class="season-name">{{ getSeasonName(data.season) }} - {{ data.displayName }}</span>
                   <span class="season-sum">{{ data.sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
                   <i v-if="data.sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
                 </div>
@@ -133,7 +133,7 @@
               <!-- 超出警告（汇总显示） -->
               <div v-if="isSeasonCropLandExceeded" class="error-message">
                 <i class="ri-error-warning-line"></i>
-                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ getInputTypeName(isSeasonCropLandExceeded.type) }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
+                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ isSeasonCropLandExceeded.displayName }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
               </div>
             </div>
 
@@ -358,14 +358,34 @@ const formData = reactive({
   inputItems: []
 })
 
-// 按季节+类型分组汇总（用于显示和校验）
-const seasonTypeSummaries = computed(() => {
+// 混合分组汇总逻辑：
+// - 种子(IN01)：按季节+大类(inputType)汇总，同一季节所有种子加在一起判断
+// - 化肥(IN02)：按季节+小类(inputCategory)分别判断，每种化肥单独判断
+const mixedSummaries = computed(() => {
   const result = {}
   formData.inputItems.forEach(item => {
     if (item.season && item.inputType) {
-      const key = `${item.season}_${item.inputType}`
+      let key, displayName
+      
+      if (item.inputType === 'IN01') {
+        // 种子：按季节+大类分组
+        key = `${item.season}_${item.inputType}`
+        displayName = getInputTypeName(item.inputType)
+      } else {
+        // 化肥及其他：按季节+小类分组
+        if (!item.inputCategory) return
+        key = `${item.season}_${item.inputCategory}`
+        displayName = getInputCategoryName(item.inputCategory)
+      }
+      
       if (!result[key]) {
-        result[key] = { season: item.season, type: item.inputType, sum: 0 }
+        result[key] = { 
+          season: item.season, 
+          inputType: item.inputType,
+          inputCategory: item.inputCategory,
+          displayName: displayName,
+          sum: 0 
+        }
       }
       result[key].sum += (item.cropLand || 0)
     }
@@ -373,14 +393,17 @@ const seasonTypeSummaries = computed(() => {
   return result
 })
 
-// 检查是否有任何季节+类型组合的耕地面积超出土地面积
+// 检查是否有任何分组的耕地面积超出土地面积
 const isSeasonCropLandExceeded = computed(() => {
   if (!formData.landArea) return null
 
-  // 检查每个季节+类型组合
-  for (const [key, data] of Object.entries(seasonTypeSummaries.value)) {
+  for (const [key, data] of Object.entries(mixedSummaries.value)) {
     if (data.sum > formData.landArea) {
-      return { season: data.season, type: data.type, sum: data.sum }
+      return { 
+        season: data.season, 
+        displayName: data.displayName,
+        sum: data.sum 
+      }
     }
   }
   return null
@@ -394,12 +417,20 @@ const getSeasonName = (seasonValue) => {
   return season ? season.label : seasonValue
 }
 
-// 获取投入品类型名称（从字典中查找）
+// 获取投入品类型名称（从字典中查找，大类）
 const getInputTypeName = (typeValue) => {
   if (!typeValue) return ''
   const inputType = options.input_type || dictOptions.value.input_type || []
   const type = inputType.find(item => item.value === typeValue)
   return type ? type.label : typeValue
+}
+
+// 获取投入品小类名称（从字典中查找）
+const getInputCategoryName = (categoryValue) => {
+  if (!categoryValue) return ''
+  const inputCategory = options.input_category || dictOptions.value.input_category || []
+  const category = inputCategory.find(item => item.value === categoryValue)
+  return category ? category.label : categoryValue
 }
 
 // 表单验证规则
@@ -512,13 +543,17 @@ const handleSelectFarmer = (farmer) => {
 
 // 添加投入品明细
 const handleAddItem = () => {
+  // 获取 Unit 字典的第一个选项作为默认值
+  const unitOptions = options.agri_unit || dictOptions.value.agri_unit || []
+  const defaultUnit = unitOptions.length > 0 ? unitOptions[0].value : ''
+  
   formData.inputItems.push({
     cascadeValue: [],
     inputType: '',
     inputCategory: '',
     season: '',
     cropLand: null,
-    unit: '',
+    unit: defaultUnit,
     quantity: null
   })
 }
@@ -619,11 +654,11 @@ const handleSubmit = async () => {
       return
     }
 
-    // 验证按季节分组的耕地面积是否超过土地总面积
+    // 验证混合分组的耕地面积是否超过土地总面积
     const exceeded = isSeasonCropLandExceeded.value
     if (exceeded) {
       const seasonName = getSeasonName(exceeded.season)
-      ElMessage.error(`${seasonName}: ${t('farmerDemand.messages.cropLandExceedsLandArea', {
+      ElMessage.error(`${seasonName} - ${exceeded.displayName}: ${t('farmerDemand.messages.cropLandExceedsLandArea', {
         totalCropLand: exceeded.sum.toFixed(2),
         landArea: formData.landArea
       })}`)
