@@ -133,7 +133,11 @@
               </el-table-column>
 <!--              <el-table-column prop="production_batch_no" :label="$t('input.inventory.stockIn.productionBatch')" width="150" />-->
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockIn.specification')" width="120" />
-              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center" />
+              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockIn.unit')" width="80" align="center">
+                <template #default="scope">
+                  {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
+                </template>
+              </el-table-column>
               <el-table-column prop="quantity" :label="$t('input.inventory.stockIn.columns.quantity')" width="100" align="center" />
               <el-table-column prop="expiry_date" :label="$t('input.inventory.stockIn.expiryDate')" width="120">
                 <template #default="scope">
@@ -185,7 +189,7 @@
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.unit') }}:</span>
-                  <span class="value">{{ item.unit_of_measure }}</span>
+                  <span class="value">{{ getLabelByValue('input_material_unit', item.unit_of_measure) || item.unit_of_measure }}</span>
                 </div>
                 <div class="info-row">
                   <span class="label">{{ $t('input.inventory.stockIn.columns.quantity') }}:</span>
@@ -221,7 +225,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 // 初始化字典
-const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category', 'input_material_unit'])
 
 const loading = ref(false)
 const detailData = ref(null)

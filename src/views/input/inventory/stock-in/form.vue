@@ -161,7 +161,20 @@
                   <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
-                  <el-input v-model="item.unit" :placeholder="$t('input.inventory.stockIn.placeholder.unit')" clearable />
+                  <el-select
+                    v-model="item.unit"
+                    :placeholder="$t('input.inventory.stockIn.placeholder.unit')"
+                    class="full-width"
+                    clearable
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="unitItem in options.input_material_unit"
+                      :key="unitItem.value"
+                      :label="unitItem.label"
+                      :value="unitItem.value"
+                    />
+                  </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
                   <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
@@ -243,7 +256,8 @@ const {
   refresh: refreshDict
 } = useDict([
   'input_type',
-  'input_category'
+  'input_category',
+  'input_material_unit'
 ], {
   immediate: true,
   cache: true

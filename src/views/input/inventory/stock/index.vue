@@ -240,7 +240,7 @@ import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
 import { useDict } from '@/hooks/useDict'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
 
 const router = useRouter()
@@ -430,14 +430,16 @@ const loadSummaryData = async () => {
       warehouseId: filterWarehouse.value,
       materialType: filterMaterialType.value,
       agriculturalInputType: filterAgriculturalInputType.value,
-      organCode: currentUserOrganCode.value // 按部门过滤
+      organCode: currentUserOrganCode.value, // 按部门过滤
+      minQuantity: 0.01 // 只统计库存大于0的记录，与列表查询保持一致
     })
 
-    if (res.code === 200 && res.data) {
+    if (res.code === 200 && res.data && Array.isArray(res.data) && res.data.length > 0) {
       summaryData.value = res.data
       // 计算投入品类型统计
       calculateTypeStatistics()
     } else {
+      // 没有数据时清空统计
       summaryData.value = []
       typeStatistics.value = []
     }
@@ -450,7 +452,8 @@ const loadSummaryData = async () => {
 
 // 计算投入品类型统计
 const calculateTypeStatistics = () => {
-  if (!summaryData.value || summaryData.value.length === 0) {
+  // 严格检查数据是否存在
+  if (!summaryData.value || !Array.isArray(summaryData.value) || summaryData.value.length === 0) {
     typeStatistics.value = []
     return
   }
@@ -459,14 +462,23 @@ const calculateTypeStatistics = () => {
   const typeMap = new Map()
   summaryData.value.forEach(item => {
     const materialType = item.material_type
-    if (materialType) {
+    const totalQuantity = Number(item.total_quantity || 0)
+    
+    // 只统计有效的数据（类型存在且数量大于0）
+    if (materialType && totalQuantity > 0) {
       if (typeMap.has(materialType)) {
-        typeMap.set(materialType, typeMap.get(materialType) + Number(item.total_quantity || 0))
+        typeMap.set(materialType, typeMap.get(materialType) + totalQuantity)
       } else {
-        typeMap.set(materialType, Number(item.total_quantity || 0))
+        typeMap.set(materialType, totalQuantity)
       }
     }
   })
+
+  // 如果没有有效的统计数据，清空结果
+  if (typeMap.size === 0) {
+    typeStatistics.value = []
+    return
+  }
 
   // 转换为数组格式
   typeStatistics.value = Array.from(typeMap.entries()).map(([materialType, total]) => ({

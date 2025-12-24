@@ -255,11 +255,14 @@ export const getWoredaReceiveList = (params) => {
  * Woreda确认接收
  * Confirm Woreda receive
  */
-export const confirmWoredaReceive = (id, params) => {
+export const confirmWoredaReceive = (id, confirmBy, confirmOrg) => {
   return agricultureRequest({
     url: `/invested/receive/woreda/confirm/${id}`,
     method: 'post',
-    params
+    params: {
+      confirmBy,
+      confirmOrg
+    }
   })
 }
 

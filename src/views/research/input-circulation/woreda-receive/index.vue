@@ -61,8 +61,8 @@
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { getWoredaReceiveList } from '@/api/inputCirculation'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getWoredaReceiveList, confirmWoredaReceive } from '@/api/inputCirculation'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -107,8 +107,47 @@ const handleView = (row) => {
   router.push(`/input/input-circulation/woreda-receive/detail/${row.id}`)
 }
 
-const handleConfirm = (row) => {
-  router.push(`/input/input-circulation/woreda-receive/confirm/${row.id}`)
+const handleConfirm = async (row) => {
+  ElMessageBox.confirm(
+    'Are you sure you want to confirm receipt of this distribution?',
+    'Confirm Receipt',
+    {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      loading.value = true
+      // Get current user info
+      const userInfoStr = localStorage.getItem('userInfo')
+      let confirmBy = ''
+      let confirmOrg = ''
+      
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr)
+        const user = userInfo.user || userInfo
+        confirmBy = user.REALNAME || user.USERNAME || user.realName || user.username || ''
+        confirmOrg = user.ORGANNAME || user.organName || ''
+      }
+
+      const response = await confirmWoredaReceive(row.id, confirmBy, confirmOrg)
+      
+      if (response.code === 200) {
+        ElMessage.success('Receipt confirmed successfully')
+        handleQuery() // Refresh the list
+      } else {
+        ElMessage.error(response.msg || 'Failed to confirm receipt')
+      }
+    } catch (error) {
+      console.error('Failed to confirm receipt:', error)
+      ElMessage.error('Failed to confirm receipt')
+    } finally {
+      loading.value = false
+    }
+  }).catch(() => {
+    // User cancelled
+  })
 }
 
 const checkMobile = () => {

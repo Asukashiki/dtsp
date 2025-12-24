@@ -252,11 +252,20 @@
                   :label="$t('input.inventory.stockOut.form.unitOfMeasure')"
                   :prop="`details.${index}.unitOfMeasure`"
                 >
-                  <el-input
+                  <el-select
                     v-model="item.unitOfMeasure"
                     :placeholder="$t('input.inventory.stockOut.placeholder.unitOfMeasure')"
+                    class="full-width"
                     clearable
-                  />
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="unitItem in options.input_material_unit"
+                      :key="unitItem.value"
+                      :label="unitItem.label"
+                      :value="unitItem.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </div>
               <div class="item-actions">
@@ -339,7 +348,8 @@ const {
   refresh: refreshDict
 } = useDict([
   'input_type',
-  'input_category'
+  'input_category',
+  'input_material_unit'
 ], {
   immediate: true,
   cache: true
