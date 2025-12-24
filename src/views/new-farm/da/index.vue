@@ -90,11 +90,16 @@
             <el-col :xs="24" :sm="12" :md="6">
               <div class="filter-item">
                 <label class="filter-label">{{ $t('newFarm.common.woredaCode') }}</label>
-                <el-input
-                  v-model="searchFilters.woredaCode"
+                <el-cascader
+                  v-model="regionCodePath"
+                  :options="regionTreeOptions"
                   :placeholder="$t('newFarm.common.selectWoreda')"
+                  :props="cascaderProps"
+                  filterable
                   clearable
-                  @clear="handleSearch"
+                  style="width: 100%"
+                  v-loading="regionTreeLoading"
+                  @change="handleRegionChange"
                 />
               </div>
             </el-col>
@@ -114,7 +119,11 @@
           <el-table-column prop="daName" :label="$t('newFarm.da.columns.daName')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="phone" :label="$t('newFarm.da.columns.phone')" min-width="130" />
           <el-table-column prop="account" :label="$t('newFarm.da.columns.account')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="woredaName" :label="$t('newFarm.da.columns.woredaCode')" min-width="150" show-overflow-tooltip />
+          <el-table-column :label="$t('newFarm.da.columns.woredaCode')" min-width="150" show-overflow-tooltip>
+            <template #default="{ row }">
+              {{ getWoredaName(row.woredaCode) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="accountStatus" :label="$t('newFarm.da.columns.accountStatus')" min-width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="row.accountStatus === '1' ? 'success' : 'danger'" size="small">
@@ -200,7 +209,7 @@
               </div>
               <div class="info-row">
                 <span class="label">{{ $t('newFarm.da.columns.woredaCode') }}:</span>
-                <span class="value">{{ item.woredaName || '-' }}</span>
+                <span class="value">{{ getWoredaName(item.woredaCode) }}</span>
               </div>
             </div>
 
@@ -280,6 +289,7 @@ import {
   updateDaStatus,
   resetDaPassword
 } from '@/api/newFarm'
+import { getRegionTree } from '@/api/orgRegistration'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -304,6 +314,20 @@ const pagination = reactive({
 // 表格数据
 const tableData = ref([])
 const loading = ref(false)
+
+// 区域相关状态
+const regionTreeOptions = ref([])
+const regionTreeLoading = ref(false)
+const regionCodePath = ref(null)
+
+// 级联选择器配置 - 只允许选择Woreda级别 (orgType='1' && orgGrade=4)
+const cascaderProps = {
+  checkStrictly: true,
+  emitPath: false,
+  disabled: (data) => {
+    return !(data.orgType === '1' && data.orgGrade === 4)
+  }
+}
 
 // 重置密码相关
 const resetPasswordVisible = ref(false)
@@ -335,6 +359,48 @@ const passwordRules = computed(() => ({
     }
   ]
 }))
+
+// 加载区域树
+const loadRegionTree = async () => {
+  regionTreeLoading.value = true
+  try {
+    const res = await getRegionTree()
+    if (res.code === 200 && res.data) {
+      regionTreeOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load region tree:', error)
+  } finally {
+    regionTreeLoading.value = false
+  }
+}
+
+// 处理区域选择变化
+const handleRegionChange = (value) => {
+  searchFilters.woredaCode = value || ''
+  handleSearch()
+}
+
+// 递归查找区域节点
+const findRegionNode = (tree, code) => {
+  for (const node of tree) {
+    if (node.value === code || node.code === code) {
+      return node
+    }
+    if (node.children && node.children.length > 0) {
+      const found = findRegionNode(node.children, code)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+// 获取 Woreda 名称
+const getWoredaName = (woredaCode) => {
+  if (!woredaCode || regionTreeOptions.value.length === 0) return '-'
+  const node = findRegionNode(regionTreeOptions.value, woredaCode)
+  return node?.label || node?.name || woredaCode
+}
 
 // 获取列表数据
 const fetchData = async () => {
@@ -377,6 +443,7 @@ const handleReset = () => {
   searchFilters.woredaCode = ''
   searchFilters.kebeleCode = ''
   searchFilters.accountStatus = ''
+  regionCodePath.value = null
   handleSearch()
 }
 
@@ -499,7 +566,8 @@ const handleDelete = async (row) => {
 }
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
+  await loadRegionTree()
   fetchData()
 })
 </script>
