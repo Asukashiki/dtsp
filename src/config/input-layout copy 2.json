@@ -4,7 +4,24 @@
   "icon": "ri-database-2-line",
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "menus": [
-      {
+    {
+      "index": "registration-management",
+      "icon": "ri-building-2-line",
+      "titleKey": "input.menu.registrationManagement",
+      "children": [
+        {
+          "index": "/input/registration",
+          "icon": "ri-file-add-line",
+          "titleKey": "input.menu.registration"
+        },
+        {
+          "index": "/input/registration/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "input.menu.registrationApproval"
+        }
+      ]
+    },
+    {
       "index": "newFarmManagement",
       "icon": "ri-plant-line",
       "titleKey": "newFarm.moduleName",
@@ -73,26 +90,11 @@
           "index": "/input/demand/aggregation-state",
           "icon": "ri-building-4-line",
           "titleKey": "input.menu.stateAggregation"
-        }
-      ]
-    },
-    {
-      "name" : "投入品配额分配管理",
-      "index": "input-quota",
-      "icon": "ri-file-chart-2-line",
-      "titleKey": "quota.menu.inputQuota",
-      "children": [
-        {
-          "name" : "投入品年度配额管理",
-          "index": "/input/allocate/state-quota",
-          "icon": "ri-calendar-line",
-          "titleKey": "quota.stateQuota.title"
         },
         {
-          "name" : "投入品配额分配管理",
-          "index": "/input/allocate/quota-allocation",
-          "icon": "ri-bike-line",
-          "titleKey": "quota.allocation.title"
+          "index": "/input/demand/demand-inquiry",
+          "icon": "ri-search-line",
+          "titleKey": "input.menu.demandInquiry"
         }
       ]
     },
@@ -102,11 +104,6 @@
       "icon": "ri-truck-line",
       "titleKey": "research.menu.inputCirculation",
       "children": [
-        {
-          "index": "/input/input-circulation/quota",
-          "icon": "ri-file-chart-line",
-          "titleKey": "research.menu.inputQuotaView"
-        },
         {
           "index": "/input/input-circulation/ose-release",
           "icon": "ri-share-forward-line",
@@ -131,6 +128,11 @@
           "index": "/input/input-circulation/farmer-release",
           "icon": "ri-user-received-line",
           "titleKey": "research.menu.cooperativeReleaseToFarmer"
+        },
+        {
+          "index": "/input/input-circulation/farmer-receive",
+          "icon": "ri-user-follow-line",
+          "titleKey": "research.menu.farmerReceive"
         }
       ]
     },

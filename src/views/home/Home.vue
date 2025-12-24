@@ -31,7 +31,7 @@
         </div>
         <div class="announcements-list">
           <div
-            v-for="(item, index) in announcementList.splice(0,2)"
+            v-for="(item, index) in announcementList.slice(0,2)"
             :key="index"
             class="announcement-item"
             @click="handleAnnouncementClick(item)"
