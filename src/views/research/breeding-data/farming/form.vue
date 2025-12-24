@@ -180,12 +180,18 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Auditor">
-                    <el-input v-model="formData.auditor" disabled />
+                    <el-input v-model="formData.auditBy" placeholder="Enter auditor name" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Audited Time">
-                    <el-input v-model="formData.auditedDatetime" disabled />
+                    <el-date-picker
+                      v-model="formData.auditTime"
+                      type="datetime"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%"
+                      placeholder="Select audited date and time"
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -336,7 +342,7 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
-    
+
     // 自动设置操作员ID为登录用户
     if (!submitData.operatorId) {
       const userInfo = getUserInfo()
@@ -370,7 +376,7 @@ onMounted(() => {
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
-  
+
   // 确保新建模式下activityDate有默认值
   if (!isEdit.value) {
     // 延迟设置默认值，确保组件已挂载

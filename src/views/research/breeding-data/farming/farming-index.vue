@@ -115,16 +115,16 @@
                         link type="success"
                         @click="handleAudit(row)"
                       >
-                        <i class="ri-check-line"></i>audit
+                        <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                       </el-button>
 
-                      <!-- Show "Invalid" button for S2 and S10 status -->
+                      <!-- Show "Invalid" button for S0, S1 and S3 status -->
                       <el-button
-                        v-if="row.workflowStatus === 'S2' || row.workflowStatus === 'S3' || row.auditStatus === 'S2' || row.auditStatus === 'S3'"
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
                         link type="warning"
                         @click="handleCancel(row)"
                       >
-                        <i class="ri-close-line"></i>void
+                        <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
                       </el-button>
 
                       <!-- Show "Edit" button for editable status -->
@@ -185,17 +185,17 @@
                       type="success"
                       @click="handleAudit(item)"
                     >
-                      <i class="ri-check-line"></i>Approval
+                      <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                     </el-button>
 
-                    <!-- Show "Invalid" button for S2 and S10 status -->
+                    <!-- Show "Invalid" button for S0, S1 and S3 status -->
                     <el-button
-                      v-if="item.workflowStatus === 'S2' || item.workflowStatus === 'S10' || item.auditStatus === 'S2' || item.auditStatus === 'S10'"
+                      v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
                       size="small"
                       type="warning"
                       @click="handleCancel(item)"
                     >
-                      <i class="ri-close-line"></i>Invalid
+                      <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
                     </el-button>
 
                     <!-- Show "Edit" button for editable status -->
@@ -300,15 +300,15 @@ const getList = async () => {
       ...queryParams,
       excludeStatuses: 'S0,S3' // 排除S0和S3状态
     }
-    
+
     const res = await getFarmingRecordList(params)
-    
+
     // 前端再次过滤，确保不显示S0和S3状态的数据
     const filteredData = (res.rows || []).filter(item => {
       const status = item.workflowStatus || item.auditStatus
       return status !== 'S0' && status !== 'S3'
     })
-    
+
     dataList.value = filteredData.map(item => ({
       ...item,
       checked: false // Ensure each item has checked property

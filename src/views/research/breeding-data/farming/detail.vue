@@ -45,8 +45,8 @@
               <el-descriptions-item label="Created Time">{{ formatDateTime(detailData.createTime) }}</el-descriptions-item>
               <el-descriptions-item label="Modifier">{{ detailData.modifier || detailData.updateBy || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Modified Time">{{ formatDateTime(detailData.updateTime) }}</el-descriptions-item>
-              <el-descriptions-item label="Auditor">{{ detailData.auditor || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Audited Time">{{ formatDateTime(detailData.auditedDatetime) }}</el-descriptions-item>
+              <el-descriptions-item label="Auditor">{{ detailData.auditBy || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audited Time">{{ formatDateTime(detailData.auditTime) }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
