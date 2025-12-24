@@ -142,8 +142,8 @@
                   <div class="mobile-card-footer">
                     <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
                     <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>Submit</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(item)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
+                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(item)"> <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
                   </div>
                 </div>
               <div class="pagination-wrapper">
@@ -293,7 +293,7 @@ const handleSubmitForReview = async (row) => {
         type: 'warning'
       }
     )
-    
+
     const res = await submitFarmingRecordForReview({ farmingId: row.farmingId })
     if (res.code === 200) {
       ElMessage.success('Submit for review successfully')
