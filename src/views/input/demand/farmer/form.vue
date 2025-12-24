@@ -286,7 +286,7 @@ const isEdit = computed(() => !!route.params.id)
 const farmerList = ref([])
 const farmerLoading = ref(false)
 const selectedFarmer = ref(null)
-const daId = ref('')
+const userId = ref('')
 
 // 当前年份
 const currentYear = new Date().getFullYear()
@@ -453,25 +453,19 @@ const handleCascaderChange = (val, index) => {
 
 // 农民搜索方法
 const handleSearchFarmer = async (query) => {
-  if (!daId.value) {
-    farmerList.value = []
-    return
-  }
-
   farmerLoading.value = true
   try {
     const requestParams = {
-      daId: daId.value,
       farmerName: query.trim() || '',
       pageNum: 1,
-      pageSize: 40
+      pageSize: 9999999
     }
 
     const res = await getFarmerList(requestParams)
     farmerList.value = res.data?.records || res.data?.rows || []
 
     if (farmerList.value.length === 0) {
-      ElMessage.info(t('farmerDemand.tips.noFarmerFound', { daId: daId.value, query: query }))
+      ElMessage.info(t('farmerDemand.tips.noFarmerFound', { query: query }))
     }
   } catch (e) {
     ElMessage.error(t('common.loadFailed'))
@@ -573,7 +567,7 @@ const loadData = async () => {
             formData.kebeleName = farmerRes.data.kebeleName
             formData.landArea = farmerRes.data.totalLandArea || farmerRes.data.landArea || formData.landArea
           } else {
-            const listRes = await getFarmerList({ daId: daId.value, farmerId: formData.farmerId, pageSize: 1 })
+            const listRes = await getFarmerList({ farmerId: formData.farmerId, pageSize: 1 })
             if (listRes.data?.records?.length) {
               selectedFarmer.value = listRes.data.records[0]
             }
@@ -643,7 +637,7 @@ const handleSubmit = async () => {
 
     submitting.value = true
     const apiFunc = isEdit.value ? updateFarmerDemand : addFarmerDemand
-    const params = { ...submitData, daId: daId.value }
+    const params = { ...submitData }
 
     if (isEdit.value) {
       params.id = route.params.id
@@ -686,12 +680,13 @@ onMounted(async () => {
     labelWidth.value
   })
 
-  // 获取用户DA ID
+  // 获取用户ID
   try {
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr)
-      daId.value = userInfo.daId || 'DA202401001'
+      // 从 userInfo.userInfo.user.id 获取用户ID
+      userId.value = userInfo?.userInfo?.user?.id || userInfo?.user?.id || ''
     } else {
       ElMessage.warning(t('common.tips.noUserInfo'))
     }
@@ -704,9 +699,7 @@ onMounted(async () => {
   loadData()
 
   // 初始化农民列表
-  if (daId.value) {
-    handleSearchFarmer('')
-  }
+  handleSearchFarmer('')
 })
 </script>
 

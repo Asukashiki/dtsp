@@ -441,7 +441,9 @@ const loadDaOptions = async () => {
       if (userInfoStr) {
         try {
           const userInfo = JSON.parse(userInfoStr)
-          defaultDaName.value = userInfo.user.NAME || ''
+          // 兼容 userInfo.userInfo.user 和 userInfo.user 两种结构
+          const user = userInfo?.userInfo?.user || userInfo?.user
+          defaultDaName.value = user?.NAME || user?.name || ''
           if (defaultDaName.value) {
             const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
             if (targetDa) {
