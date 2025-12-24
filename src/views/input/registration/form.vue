@@ -121,7 +121,13 @@
                     v-model="regionCodePath"
                     :options="regionTreeOptions"
                     :placeholder="$t('orgRegistration.placeholder.regionCode')"
-                    :props="{ checkStrictly: true, emitPath: false }"
+                    :props="{ 
+                      checkStrictly: true, 
+                      emitPath: false,
+                      value: 'orgId',
+                      label: 'orgName',
+                      children: 'children'
+                    }"
                     filterable
                     clearable
                     style="width: 100%"
@@ -470,13 +476,36 @@ const rules = reactive({
   ]
 })
 
+// 递归过滤区域树，只保留 orgGrade = 3 (Zone 级别) 的节点
+const filterRegionByGrade = (nodes, targetGrade = 3) => {
+  if (!nodes || nodes.length === 0) return []
+  
+  const result = []
+  for (const node of nodes) {
+    if (node.orgGrade === targetGrade) {
+      // 找到目标级别的节点，添加到结果中（不保留子节点）
+      result.push({
+        ...node,
+        children: null,
+        hasChild: false
+      })
+    } else if (node.children && node.children.length > 0) {
+      // 继续递归搜索子节点
+      const filteredChildren = filterRegionByGrade(node.children, targetGrade)
+      result.push(...filteredChildren)
+    }
+  }
+  return result
+}
+
 // 加载行政区划树
 const loadRegionTree = async () => {
   regionTreeLoading.value = true
   try {
     const res = await getRegionTree()
     if (res.code === 200 && res.data) {
-      regionTreeOptions.value = res.data
+      // 过滤只保留 orgGrade = 3 (Zone 级别) 的节点
+      regionTreeOptions.value = filterRegionByGrade(res.data, 3)
     }
   } catch (error) {
     console.error('Failed to load region tree:', error)

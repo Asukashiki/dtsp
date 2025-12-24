@@ -56,6 +56,8 @@ export default {
   quantity: '分发数量',
   demandQuantity: '需求数量',
   quantityExceedsDemand: '分发数量不能超过需求数量',
+  quantityCannotBeZero: '分发数量不能为0',
+  noDemandCannotAdd: '没有需求数据，无法添加分发明细',
   unitPrice: '单价',
   releaseTime: '分发时间',
   detailInfo: '明细信息',
@@ -105,6 +107,7 @@ export default {
   receiveName: '接收单名称',
 
   // 提示信息
+  confirmReceiveMessage: '确认接收此分发单吗？',
   confirmReceiveSuccess: '接收确认成功',
   confirmReceiveFailed: '接收确认失败',
   addReleaseSuccess: '分发单新增成功',

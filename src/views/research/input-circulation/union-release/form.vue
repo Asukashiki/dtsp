@@ -225,6 +225,11 @@ const getSubRegionByCode = async (code) => {
 
 // Zone变化处理
 const handleZoneChange = async (value) => {
+  // 清空目标相关字段
+  formData.targetId = ''
+  formData.targetAddress = ''
+  formData.targetContact = ''
+  formData.targetPhone = ''
   await getAllCoorList(value)
   await loadDemandList(value)
 }
@@ -367,11 +372,18 @@ const fetchDetail = async () => {
 }
 
 const addDetail = () => {
+  // 检查是否有需求数据
+  if (!demandList.value || demandList.value.length === 0) {
+    ElMessage.warning(t('inputCirculation.noDemandCannotAdd'))
+    return
+  }
+  // 默认选择第一个单位
+  const defaultUnit = options.value.agri_unit?.[0]?.value || ''
   formData.details.push({
     inputType: '',
     inputCategory: '',
     quantity: 0,
-    unit: '',
+    unit: defaultUnit,
     unitPrice: 0,
     maxQuantity: 0
   })
@@ -385,6 +397,14 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
+    
+    // 验证分发数量不能为0
+    const zeroQuantityDetail = formData.details.find(d => !d.quantity || d.quantity <= 0)
+    if (zeroQuantityDetail) {
+      ElMessage.warning(t('inputCirculation.quantityCannotBeZero'))
+      return
+    }
+    
     loading.value = true
     try {
       // 库存校验

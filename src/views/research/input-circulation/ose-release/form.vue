@@ -127,11 +127,11 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
+          <!-- <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
             <template #default="scope">
               <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" />
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
             <template #default="scope">
               <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>

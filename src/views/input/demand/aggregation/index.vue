@@ -203,7 +203,7 @@
           </div>
 
           <!-- 分页 -->
-          <div v-if="pagination.total > 0" class="pagination-wrapper">
+          <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
             <el-pagination
               :current-page="pagination.currentPage"
               :page-size="pagination.pageSize"
@@ -217,7 +217,7 @@
               @update:current-page="pagination.currentPage = $event"
               @update:page-size="pagination.pageSize = $event"
             />
-          </div>
+          </div> -->
 
           <!-- 空状态 -->
           <el-empty
@@ -299,7 +299,7 @@
       </el-table>
 
       <!-- 分页 -->
-      <div v-if="detailPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
+      <!-- <div v-if="detailPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
         <el-pagination
           :current-page="detailPagination.currentPage"
           :page-size="detailPagination.pageSize"
@@ -313,7 +313,7 @@
           @update:current-page="detailPagination.currentPage = $event"
           @update:page-size="detailPagination.pageSize = $event"
         />
-      </div>
+      </div> -->
 
       <el-empty
         v-if="detailData.length === 0 && !detailLoading"
@@ -350,7 +350,7 @@ const tableData = ref([])
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
+  pageSize: 9999999,
   total: 0
 })
 

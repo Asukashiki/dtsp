@@ -110,7 +110,7 @@
             </div>
 
             <!-- 分页 -->
-            <div v-if="pagination.total > 0" class="pagination-wrapper">
+            <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
               <el-pagination
                 :current-page="pagination.currentPage"
                 :page-size="pagination.pageSize"
@@ -124,7 +124,7 @@
                 @update:current-page="pagination.currentPage = $event"
                 @update:page-size="pagination.pageSize = $event"
               />
-            </div>
+            </div> -->
 
             <!-- 空状态 -->
             <el-empty
@@ -860,7 +860,7 @@ const viewMode = ref('main')
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
+  pageSize: 999999999,
   total: 0
 })
 
