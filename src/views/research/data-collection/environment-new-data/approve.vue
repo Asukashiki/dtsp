@@ -13,21 +13,7 @@
 
     <!-- 内容区域 -->
     <div class="content-wrapper">
-      <!-- 状态标签页 -->
-      <div class="status-tabs">
-        <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-          <el-tab-pane :label="$t('research.environmentNewData.tabs.pendingApproval')" name="pendingApproval">
-            <template #label>
-              <span><i class="ri-time-line"></i> {{ $t('research.environmentNewData.tabs.pendingApproval') }}</span>
-            </template>
-          </el-tab-pane>
-          <el-tab-pane :label="$t('research.environmentNewData.tabs.approved')" name="approved">
-            <template #label>
-              <span><i class="ri-check-line"></i> {{ $t('research.environmentNewData.tabs.approved') }}</span>
-            </template>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      
 
       <!-- 搜索和筛选栏 -->
       <div class="search-bar">
@@ -129,6 +115,23 @@
             <!-- 移除新增按钮，审核列表不应该有新增记录的按钮 -->
           </div>
         </div>
+      </div>
+
+
+      <!-- 状态标签页 -->
+      <div class="status-tabs">
+        <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+          <el-tab-pane :label="$t('research.environmentNewData.tabs.pendingApproval')" name="pendingApproval">
+            <template #label>
+              <span><i class="ri-time-line"></i> {{ $t('research.environmentNewData.tabs.pendingApproval') }}</span>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('research.environmentNewData.tabs.approved')" name="approved">
+            <template #label>
+              <span><i class="ri-check-line"></i> {{ $t('research.environmentNewData.tabs.approved') }}</span>
+            </template>
+          </el-tab-pane>
+        </el-tabs>
       </div>
 
       <!-- PC端：数据表格 -->
