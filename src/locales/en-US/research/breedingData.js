@@ -217,6 +217,7 @@ export default {
     auditCanceled: 'Audit Canceled',
     dataCanceled: 'Data Canceled',
     submitAudit: 'Submit for Audit',
+    submit: 'Submit',
     approve: 'Approve',
     reject: 'Reject',
     archive: 'Archive',

@@ -120,7 +120,7 @@
                 <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
                 <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
                 <el-table-column prop="auditOpinion" :label="$t('research.breedingData.plot.auditOpinion')" min-width="150" show-overflow-tooltip />
-                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="280" fixed="right">
+                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="300" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <!-- S0草稿: 编辑、作废、提交审核 -->
@@ -128,11 +128,11 @@
                         <el-button link type="primary" @click="handleEdit(row)">
                           <i class="ri-edit-line"></i>{{ $t('common.edit') }}
                         </el-button>
+                        <el-button link type="success" @click="handleSubmitAudit(row)">
+                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submit') }}
+                        </el-button>  
                         <el-button link type="danger" @click="handleCancel(row)">
                           <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                        </el-button>
-                        <el-button link type="success" @click="handleSubmitAudit(row)">
-                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submitAudit') }}
                         </el-button>
                       </template>
                       <!-- S1待审批: 查看 -->
@@ -146,9 +146,6 @@
                         <el-button link type="primary" @click="handleView(row)">
                           <i class="ri-eye-line"></i>{{ $t('common.view') }}
                         </el-button>
-                        <el-button link type="warning" @click="handleArchive(row)">
-                          <i class="ri-archive-line"></i>{{ $t('research.breedingData.plot.archive') }}
-                        </el-button>
                       </template>
                       <!-- S3已退回: 编辑、作废、重新提交 -->
                       <template v-else-if="row.auditStatus === 'S3'">
@@ -159,7 +156,7 @@
                           <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
                         </el-button>
                         <el-button link type="success" @click="handleSubmitAudit(row)">
-                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submitAudit') }}
+                          <i class="ri-send-plane-line"></i>{{ $t('research.breedingData.plot.submit') }}
                         </el-button>
                       </template>
                       <!-- S9已归档/S10作废: 查看 -->
