@@ -9,7 +9,7 @@
         <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ mainData.releaseId }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ mainData.releaseName }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ mainData.releaseBy }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ mainData.targetPhone }}</el-descriptions-item>
+<!--        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ mainData.targetPhone }}</el-descriptions-item>-->
         <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ mainData.releaseOrg }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ mainData.releaseDate }}</el-descriptions-item>
 
@@ -114,7 +114,7 @@ const loadDemandListByReleaseId = async (releaseId) => {
     const releaseMain = releaseResponse.data?.main || {}
     const regionCode = releaseMain.zoneId || releaseMain.zone_id
     const year = releaseMain.releaseYear || releaseMain.release_year || new Date().getFullYear().toString()
-    
+
     if (releaseResponse.code === 200 && regionCode) {
       const response = await getTownAggregationDetail({ sourceCode: regionCode, year })
       if (response.code === 200) {

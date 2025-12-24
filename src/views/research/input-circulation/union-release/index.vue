@@ -48,7 +48,7 @@
       </el-button>
       <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
         <el-icon><Delete /></el-icon>
-        {{ t('batchDelete') }}
+        {{ t('common.batchDelete') }}
       </el-button>
     </el-card>
 
@@ -256,7 +256,7 @@ const handleDetail = (id) => {
 
 // 删除
 const handleDelete = (id) => {
-  ElMessageBox.confirm(t('deleteConfirm'), t('warning'), {
+  ElMessageBox.confirm(t('common.deleteConfirm'), t('warning'), {
     confirmButtonText: t('confirm'),
     cancelButtonText: t('cancel'),
     type: 'warning'
