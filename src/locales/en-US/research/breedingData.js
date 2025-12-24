@@ -212,7 +212,7 @@ export default {
     auditList: 'Audit List',
     pendingAudit: 'Pending Audit',
     audited: 'Audited',
-    canceled: 'Canceled',
+    canceled: 'Voided',
     cancelType: 'Cancel Type',
     auditCanceled: 'Audit Canceled',
     dataCanceled: 'Data Canceled',
