@@ -181,7 +181,8 @@ export default {
       myCreated: '我的创建',
       pendingApproval: '待审批',
       approved: '已审批',
-      completed: '已完结'
+      completed: '已完结',
+      voided: '已作废'
     },
   },
 

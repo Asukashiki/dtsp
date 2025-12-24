@@ -58,12 +58,19 @@
                         {{ formatDateTime(row.sowingTime) }}
                       </template>
                     </el-table-column>
+                    <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
+                      <template #default="{ row }">
+                        <el-tag :type="row.auditStatus === 'S2' ? 'success' : (row.auditStatus === 'S10' ? 'danger' : 'warning')">
+                          {{ getStatusLabel(row.auditStatus) }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="createdName" :label="$t('research.breedingData.plot.columns.createdBy')" min-width="100" />
                     <el-table-column prop="createTime" :label="$t('research.breedingData.plot.columns.createTime')" min-width="120" />
                     <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="120" fixed="right">
                       <template #default="{ row }">
                         <el-button link type="primary" @click="handleAudit(row)">
-                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                          <i class="ri-eye-line"></i>{{ $t('common.audit') }}
                         </el-button>
                       </template>
                     </el-table-column>
@@ -125,7 +132,7 @@
                         </el-tag>
                       </template>
                     </el-table-column>
-                    <!-- 作废类型列 - 只在已作废标签页显示 -->
+                     <!-- 作废类型列 - 只在已作废标签页显示  -->
                     <el-table-column :label="$t('research.breedingData.plot.cancelType')" min-width="140">
                       <template #default="{ row }">
                         <el-tag v-if="row.auditCanceled && row.auditCanceled > 0" type="warning">

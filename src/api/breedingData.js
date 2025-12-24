@@ -13,6 +13,10 @@ export function getBreedingBatchList(params) {
     return request({ url: `${API_BASE_URL}/breeding/batch/list`, method: 'get', params })
 }
 
+export function getBreedingBatchVoidedList(params) {
+    return request({ url: `${API_BASE_URL}/breeding/batch/voidedList`, method: 'get', params })
+}
+
 export function getBreedingBatchInfo(dataId) {
     return request({ url: `${API_BASE_URL}/breeding/batch/getInfo`, method: 'get', params: { dataId } })
 }

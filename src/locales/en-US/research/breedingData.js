@@ -185,7 +185,8 @@ export default {
       myCreated: 'My Created',
       pendingApproval: 'Pending Approval',
       approved: 'Approved',
-      completed: 'Completed'
+      completed: 'Completed',
+      voided: 'Voided'
     },
 
     audit: {
@@ -217,6 +218,7 @@ export default {
     auditCanceled: 'Audit Canceled',
     dataCanceled: 'Data Canceled',
     submitAudit: 'Submit for Audit',
+    submit: 'Submit',
     approve: 'Approve',
     reject: 'Reject',
     archive: 'Archive',

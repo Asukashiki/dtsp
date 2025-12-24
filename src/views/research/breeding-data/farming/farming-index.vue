@@ -115,7 +115,7 @@
                         link type="success"
                         @click="handleAudit(row)"
                       >
-                        <i class="ri-check-line"></i>Approval
+                        <i class="ri-check-line"></i>audit
                       </el-button>
 
                       <!-- Show "Invalid" button for S2 and S10 status -->
@@ -124,7 +124,7 @@
                         link type="warning"
                         @click="handleCancel(row)"
                       >
-                        <i class="ri-close-line"></i>Invalid
+                        <i class="ri-close-line"></i>void
                       </el-button>
 
                       <!-- Show "Edit" button for editable status -->

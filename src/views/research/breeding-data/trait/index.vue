@@ -196,7 +196,7 @@
                       type="warning"
                       @click="handleInvalid(item)"
                   >
-                    <i class="ri-ban-line"></i>{{ $t('trait.invalid') }}
+                    <i class="ri-ban-line"></i>{{ $t('common.void') }}
                   </el-button>
                   <!-- 发起审核按钮：仅草稿/驳回状态可见 -->
                   <el-button

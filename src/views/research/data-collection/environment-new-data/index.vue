@@ -125,7 +125,7 @@
           <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
           <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
             <template #default="{ row }">
-              <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+              <el-tag :type="getWorkflowStatusType(row.workflowStatus)">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="200" fixed="right">
