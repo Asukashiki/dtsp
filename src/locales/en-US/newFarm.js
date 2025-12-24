@@ -323,8 +323,8 @@ export default {
       success: 'Import completed: {success} added, {update} updated, {fail} failed',
     },
     // Confirm messages
-    confirmDelete: 'Are you sure to delete this farmer? Associated lands will be unlinked.',
-    confirmBatchDelete: 'Are you sure to delete {count} selected farmers?',
+    confirmDelete: 'Are you sure to void this farmer? Associated lands will be unlinked.',
+    confirmBatchDelete: 'Are you sure to void {count} selected farmers?',
     // Messages
     messages: {
       addSuccess: 'Added successfully',
