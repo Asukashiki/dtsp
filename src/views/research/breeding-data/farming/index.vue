@@ -107,6 +107,7 @@
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
                       <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
                       <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)"><i class="ri-send-plane-line"></i>Submit for Review</el-button>
+                      <el-button v-if="shouldShowCancelButton(row)" link type="danger" @click="handleCancel(row)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -142,8 +143,8 @@
                   <div class="mobile-card-footer">
                     <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
                     <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>Submit</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(item)"><i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}</el-button>
+                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}</el-button>
+                    <el-button v-if="shouldShowCancelButton(item)" size="small" type="danger" @click="handleCancel(item)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
                   </div>
                 </div>
               <div class="pagination-wrapper">
@@ -163,6 +164,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions, submitFarmingRecordForReview } from '@/api/breedingData'
+import { cancelFarmingRecord } from '@/api/farmingRecordAudit'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -281,6 +283,12 @@ const shouldShowSubmitButton = (row) => {
   return status === 'S0' || status === 'S3'
 }
 
+// 判断是否显示作废按钮（只在审核状态为S0、S1或S3时显示）
+const shouldShowCancelButton = (row) => {
+  const status = row.auditStatus || row.workflowStatus
+  return status === 'S0' || status === 'S1' || status === 'S3'
+}
+
 // 提交审核
 const handleSubmitForReview = async (row) => {
   try {
@@ -293,7 +301,7 @@ const handleSubmitForReview = async (row) => {
         type: 'warning'
       }
     )
-    
+
     const res = await submitFarmingRecordForReview({ farmingId: row.farmingId })
     if (res.code === 200) {
       ElMessage.success('Submit for review successfully')
@@ -314,6 +322,23 @@ const handleDelete = (row) => {
     await deleteFarmingRecord(row.farmingId)
     ElMessage.success(t('research.breedingData.farming.deleteSuccess'))
     getList()
+  }).catch(() => {})
+}
+
+const handleCancel = (row) => {
+  ElMessageBox.confirm('Are you sure you want to invalidate this farming record?', 'Warning', {
+    type: 'warning',
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel'
+  }).then(async () => {
+    try {
+      await cancelFarmingRecord(row.farmingId)
+      ElMessage.success('Invalidated successfully')
+      getList()
+    } catch (error) {
+      console.error('Failed to invalidate:', error)
+      ElMessage.error('Failed to invalidate')
+    }
   }).catch(() => {})
 }
 

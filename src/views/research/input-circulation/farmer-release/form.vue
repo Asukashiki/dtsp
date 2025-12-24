@@ -274,20 +274,20 @@ const getDemandQuantity = (inputType, inputCategory) => {
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
   if (!detail.inputType) return
-  
+
   // 校验需求量
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (typeof maxQty === 'number' && detail.quantity > maxQty) {
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
     detail.quantity = maxQty
   }
-  
+
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
-    .filter(d => d.inputType === detail.inputType && 
+    .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
-  
+
   try {
     const organCode = userStore.userInfo?.user?.organCode
     const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
@@ -303,7 +303,7 @@ const validateQuantity = async (index) => {
   } catch (error) {
     console.error('Failed to validate stock:', error)
   }
-  
+
   calculateTotalPrice(index)
 }
 
@@ -325,7 +325,7 @@ const fetchDetail = async () => {
         formData.releaseYear = String(formData.releaseYear)
       }
       formData.details = response.data.details || []
-      
+
       // 从农民列表填充手机号和地址
       if (formData.farmerId) {
         const farmer = farmerList.value.find(f => f.farmerId === formData.farmerId)
@@ -381,7 +381,7 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
-    
+
     // 库存校验
     loading.value = true
     try {
@@ -394,7 +394,7 @@ const handleSubmit = async () => {
         }
         quantityByType[key].quantity += (detail.quantity || 0)
       }
-      
+
       // 检查每种类型的可用库存
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
@@ -408,7 +408,7 @@ const handleSubmit = async () => {
           }
         }
       }
-      
+
       const submitData = {
         ...formData,
         releaseYear: formData.releaseYear ? parseInt(formData.releaseYear, 10) : null,
@@ -452,6 +452,7 @@ onMounted(async () => {
     formData.releaseBy = userInfo.userName || userInfo.nickName || userInfo.name ||
       userInfo.user?.userName || userInfo.user?.nickName ||
       userInfo.user?.name || ''
+    formData.releaseOrg = userInfo.user.ORGANNAME || userInfo.organCode || ''
   }
 
   if (isEdit.value) {
