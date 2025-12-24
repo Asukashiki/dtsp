@@ -697,6 +697,15 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
+    submitForReview: '提交审核',
+    submitForReviewSuccess: '提交审核成功',
+    submitForReviewConfirm: '确定要提交审核吗？',
+    void: '作废',
+    voidSuccess: '作废成功',
+    voidConfirm: '确定要作废该数据吗？',
+    voidReason: '作废原因',
+    voidReasonPlaceholder: '请输入作废原因',
+    voidReasonRequired: '作废原因不能为空',
 
     // 搜索筛选
     searchPlaceholder: '搜索育种批次ID、地块编号',

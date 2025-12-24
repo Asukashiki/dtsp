@@ -310,7 +310,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -375,7 +375,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -424,7 +424,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -499,7 +499,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -579,7 +579,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -599,7 +599,7 @@
                   style="width: 100%; margin-top: 12px"
                   :empty-text="''"
               >
-                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.lab.testId')" min-width="120" />
+                <el-table-column prop="dataId" :label="$t('research.datasetCompilation.table.lab.testId')" min-width="120" />
                 <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
                 <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
                 <el-table-column prop="sampleId" :label="$t('research.datasetCompilation.table.lab.sampleId')" min-width="100">
@@ -660,7 +660,7 @@
                     <el-input
                         v-model="scope.row.remark"
                         type="textarea"
-                        rows="2"
+                        :rows="2"
                         :placeholder="$t('research.datasetCompilation.placeholder.remarkInput')"
                         :disabled="!isEditable"
                         resize="none"
@@ -930,7 +930,7 @@ const loadStatisticsData = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    labTestList.value = (labRes?.data?.list || []).map(item => ({
+    labTestList.value = (labRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
@@ -999,10 +999,10 @@ const loadStatisticsData = async (trialId) => {
 
       // 实验室测试备注回显
       if (labTestRemarks) {
-        const labTestRemarkMap = new Map(labTestRemarks.map(r => [r.id, r.remark]))
+        const labTestRemarkMap = new Map(labTestRemarks.map(r => [r.dataId, r.remark]))
         labTestList.value = labTestList.value.map(item => ({
           ...item,
-          remark: labTestRemarkMap.get(item.id) || item.remark
+          remark: labTestRemarkMap.get(item.dataId) || item.remark
         }))
       }
     }

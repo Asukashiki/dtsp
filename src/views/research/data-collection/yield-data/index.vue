@@ -61,7 +61,7 @@
                 />
               </el-select>
               <!-- 状态 -->
-              <el-select
+<!--              <el-select
                 v-model="searchForm.status"
                 :placeholder="$t('research.dataCollection.yieldData.columns.status')"
                 clearable
@@ -70,7 +70,7 @@
                 <el-option :label="$t('common.all')" value="" />
                 <el-option label="submit" value="submit" />
                 <el-option label="approve" value="approve" />
-              </el-select>
+              </el-select>-->
               <!-- 审核状态（字典 flow_status） -->
               <el-select
                 v-model="searchForm.workflowStatus"
@@ -132,7 +132,7 @@
                   :label="$t('research.dataCollection.yieldData.columns.scoreValue')"
                   min-width="120"
                 />
-                <el-table-column
+<!--                <el-table-column
                   prop="status"
                   :label="$t('research.dataCollection.yieldData.columns.status')"
                   min-width="120"
@@ -140,7 +140,7 @@
                   <template #default="{ row }">
                     <el-tag type="info">{{ mapStatus(row.status) }}</el-tag>
                   </template>
-                </el-table-column>
+                </el-table-column>-->
                 <el-table-column
                   :label="$t('research.dataCollection.yieldData.columns.auditStatus')"
                   min-width="140"
@@ -160,10 +160,22 @@
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
+
+                      <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)">
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
+
+                      <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)">
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('research.dataCollection.yieldData.submitForReview') }}
+                      </el-button>
+
+                      <el-button v-if="shouldShowVoidButton(row)" link type="danger" @click="handleVoid(row)">
+                        <i class="ri-close-circle-line"></i>
+                        {{ $t('research.dataCollection.yieldData.void') }}
+                      </el-button>
+
                     </div>
                   </template>
                 </el-table-column>
@@ -214,8 +226,14 @@
                   <el-button type="primary" size="small" @click="handleView(item)">
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button size="small" @click="handleEdit(item)">
+                  <el-button v-if="shouldShowEditButton(item)" size="small" @click="handleEdit(item)">
                     {{ $t('common.edit') }}
+                  </el-button>
+                  <el-button v-if="shouldShowSubmitButton(item)" type="warning" size="small" @click="handleSubmitForReview(item)">
+                    {{ $t('research.dataCollection.yieldData.submitForReview') }}
+                  </el-button>
+                  <el-button v-if="shouldShowVoidButton(item)" type="danger" size="small" @click="handleVoid(item)">
+                    {{ $t('research.dataCollection.yieldData.void') }}
                   </el-button>
                 </div>
               </div>
@@ -249,7 +267,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
+import { getYieldDataList, deleteYieldData, submitYieldDataForReview, voidYieldData } from '@/api/yieldData'
 import { getPlotInfoList } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
@@ -353,6 +371,104 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push({ name: 'FieldInspectionEdit', params: { id: row.id } })
+}
+
+// 判断是否显示编辑按钮（只在审批状态为S0、S1或S3时显示）
+const shouldShowEditButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S0' || status === 'S1' || status === 'S3'
+}
+
+// 判断是否显示提交审核按钮（只在审批状态为S2或S3时显示）
+const shouldShowSubmitButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S2' || status === 'S3'
+}
+
+// 判断是否显示作废按钮（只在审批状态不是S10时显示）
+const shouldShowVoidButton = (row) => {
+  const status = row.workflowStatus
+  return status !== 'S10'
+}
+
+// 提交审核
+const handleSubmitForReview = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to submit this record for review?',
+      'Confirm',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    const res = await submitYieldDataForReview({ id: row.id })
+    if (res.code === 200) {
+      ElMessage.success('Submit for review successfully')
+      handleSearch()
+    } else {
+      ElMessage.error(res.msg || 'Submit failed')
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit for review:', error)
+      ElMessage.error('Submit failed')
+    }
+  }
+}
+
+// 作废
+const handleVoid = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to void this record?',
+      'Confirm',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+
+    // 弹出输入框让用户输入作废原因
+    const { value: reason } = await ElMessageBox.prompt(
+      'Please enter the reason for voiding',
+      'Void Reason',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        inputType: 'textarea',
+        inputPlaceholder: 'Please enter the reason for voiding',
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') {
+            return 'Void reason is required'
+          }
+          return true
+        }
+      }
+    )
+
+    // 调用作废接口
+    const submitData = {
+      id: row.id,
+      remark: reason
+    }
+
+    const res = await voidYieldData(submitData)
+    if (res.code === 200) {
+      ElMessage.success('Void successfully')
+      // 刷新列表
+      handleSearch()
+    } else {
+      ElMessage.error(res.msg || 'Operation failed')
+    }
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      console.error('Failed to void:', error)
+      ElMessage.error('Operation failed')
+    }
+  }
 }
 
 // 删除

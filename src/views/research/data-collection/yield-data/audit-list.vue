@@ -301,7 +301,8 @@ const handleSearch = async () => {
     // 构建查询参数
     const params = {
       pageNum: pagination.currentPage,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      status: '1' // 只展示Status为'1'的数据
     }
 
     // 只添加非空的搜索条件

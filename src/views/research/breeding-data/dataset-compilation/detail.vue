@@ -113,7 +113,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-map-line"></i>
@@ -614,7 +614,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.createdBy') }}:</span>
-              <span class="value">{{ detailData.createdByName || '-' }}</span>
+              <span class="value">{{ detailData.createdBy || '-' }}</span>
             </div>
             <div v-if="detailData.updatedTime" class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.updatedTime') }}:</span>

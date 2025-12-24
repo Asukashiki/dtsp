@@ -13,7 +13,7 @@
           <h1 class="page-title">{{ $t('research.dataCollection.fieldInspectionAudit.detail') }}</h1>
         </div>
         <div class="header-right">
-          <el-button type="warning" @click="handleAudit">
+          <el-button v-if="shouldShowAuditButton" type="warning" @click="handleAudit">
             <i class="ri-file-check-line"></i>
             {{ $t('common.audit') }}
           </el-button>
@@ -139,7 +139,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -153,6 +153,13 @@ const { getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
 const detailData = ref(null)
+
+// 判断是否显示审核按钮（只在审批状态为S2或S3时显示）
+const shouldShowAuditButton = computed(() => {
+  if (!detailData.value) return false
+  const status = detailData.value.workflowStatus
+  return status === 'S1' || status === 'S3'
+})
 
 // 加载详情
 const loadDetail = async () => {
@@ -173,6 +180,9 @@ const loadDetail = async () => {
     loading.value = false
   }
 }
+
+
+
 
 // 返回列表
 const handleBack = () => {
