@@ -545,24 +545,24 @@ const rules = computed(() => ({
       cb()
     }, trigger: ['blur','change'] }
   ],
-  germinationRate: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.germinationRateRequired'), trigger: 'blur' }
-  ],
-  purityPercent: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.purityPercentRequired'), trigger: 'blur' }
-  ],
-  moistureContentPercent: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.moistureContentPercentRequired'), trigger: 'blur' }
-  ],
-  proteinPercent: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.proteinPercentRequired'), trigger: 'blur' }
-  ],
-  seedHealthFindings: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.seedHealthFindingsRequired'), trigger: 'blur' }
-  ],
-  traceabilityLink: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.traceabilityLinkRequired'), trigger: 'blur' }
-  ],
+  // germinationRate: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.germinationRateRequired'), trigger: 'blur' }
+  // ],
+  // purityPercent: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.purityPercentRequired'), trigger: 'blur' }
+  // ],
+  // moistureContentPercent: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.moistureContentPercentRequired'), trigger: 'blur' }
+  // ],
+  // proteinPercent: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.proteinPercentRequired'), trigger: 'blur' }
+  // ],
+  // seedHealthFindings: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.seedHealthFindingsRequired'), trigger: 'blur' }
+  // ],
+  // traceabilityLink: [
+  //   { required: true, message: t('research.dataCollection.laboratoryTest.rules.traceabilityLinkRequired'), trigger: 'blur' }
+  // ],
   testDate: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.testDateRequired'), trigger: 'change' }
   ],
