@@ -50,7 +50,7 @@
                 <el-option :label="$t('research.breedingLicense.allStatus')" value="" />
                 <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
                 <el-option :label="$t('research.breedingLicense.status.expired')" value="expired" />
-                <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />
+<!--                <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />-->
               </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
