@@ -210,8 +210,8 @@
                   min-width="160"
                 />
                 <el-table-column
-                  prop="updatedBy"
-                  :label="$t('common.updatedBy')"
+                  prop="updateBy"
+                  :label="$t('common.updateBy')"
                   min-width="120"
                 />
                 <el-table-column
@@ -233,54 +233,54 @@
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <!-- 查看按钮 - 非草稿状态显示 -->
-                      <el-button 
+                      <el-button
                         v-if="row.workflowStatus !== 'S0'"
-                        link 
-                        type="primary" 
+                        link
+                        type="primary"
                         @click="handleView(row)"
                       >
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      
+
                       <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                      <el-button 
+                      <el-button
                         v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
-                        link 
-                        type="primary" 
+                        link
+                        type="primary"
                         @click="handleEdit(row)"
                       >
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      
+
                       <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                      <el-button 
+                      <el-button
                         v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
-                        link 
-                        type="success" 
+                        link
+                        type="success"
                         @click="handleSubmit(row)"
                       >
                         <i class="ri-send-plane-line"></i>
                         {{ $t('research.dataCollection.laboratoryTest.submit') }}
                       </el-button>
-                      
+
                       <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
-                      <el-button 
+                      <el-button
                         v-if="row.workflowStatus === 'S2'"
-                        link 
-                        type="warning" 
+                        link
+                        type="warning"
                         @click="handleArchive(row)"
                       >
                         <i class="ri-archive-line"></i>
                         {{ $t('research.dataCollection.laboratoryTest.archive') }}
                       </el-button>
-                      
+
                       <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
-                      <el-button 
+                      <el-button
                         v-if="row.workflowStatus === 'S0'"
-                        link 
-                        type="danger" 
+                        link
+                        type="danger"
                         @click="handleCancel(row)"
                       >
                         <i class="ri-close-circle-line"></i>
@@ -378,8 +378,8 @@
                     <span class="value">{{ item.createdTime || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('common.updatedBy') }}:</span>
-                    <span class="value">{{ item.updatedBy || '-' }}</span>
+                    <span class="label">{{ $t('common.updateBy') }}:</span>
+                    <span class="value">{{ item.updateBy || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('common.updatedTime') }}:</span>
@@ -396,49 +396,49 @@
                 </div>
                 <div class="mobile-card-actions">
                   <!-- 查看按钮 - 非草稿状态显示 -->
-                  <el-button 
+                  <el-button
                     v-if="item.workflowStatus !== 'S0'"
-                    type="primary" 
-                    size="small" 
+                    type="primary"
+                    size="small"
                     @click="handleView(item)"
                   >
                     {{ $t('common.view') }}
                   </el-button>
-                  
+
                   <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                  <el-button 
+                  <el-button
                     v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
-                    size="small" 
+                    size="small"
                     @click="handleEdit(item)"
                   >
                     {{ $t('common.edit') }}
                   </el-button>
-                  
+
                   <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                  <el-button 
+                  <el-button
                     v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
-                    type="success" 
-                    size="small" 
+                    type="success"
+                    size="small"
                     @click="handleSubmit(item)"
                   >
                     {{ $t('research.dataCollection.laboratoryTest.submit') }}
                   </el-button>
-                  
+
                   <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
-                  <el-button 
+                  <el-button
                     v-if="item.workflowStatus === 'S2'"
-                    type="warning" 
-                    size="small" 
+                    type="warning"
+                    size="small"
                     @click="handleArchive(item)"
                   >
                     {{ $t('research.dataCollection.laboratoryTest.archive') }}
                   </el-button>
-                  
+
                   <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
-                  <el-button 
+                  <el-button
                     v-if="item.workflowStatus === 'S0'"
-                    type="danger" 
-                    size="small" 
+                    type="danger"
+                    size="small"
                     @click="handleCancel(item)"
                   >
                     {{ $t('research.dataCollection.laboratoryTest.cancel') }}

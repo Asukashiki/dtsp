@@ -52,6 +52,7 @@
                 <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
                 <el-option :label="$t('research.datasetCompilation.status.approved')" value="approved" />
                 <el-option :label="$t('research.datasetCompilation.status.rejected')" value="rejected" />
+                <el-option :label="$t('research.datasetCompilation.status.needs_revision')" value="needs_revision" />
               </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>

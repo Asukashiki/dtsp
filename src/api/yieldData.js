@@ -66,3 +66,29 @@ export const deleteYieldData = (ids) => {
         data: ids
     })
 }
+
+/**
+ * 提交审核产量数据
+ * @param {Object} data 包含id的对象
+ * @returns Promise
+ */
+export const submitYieldDataForReview = (data) => {
+    return request({
+        url: `${API_BASE_URL}/seed/yield-data/submitForReview`,
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 作废产量数据
+ * @param {Object} data 包含id和remark的对象
+ * @returns Promise
+ */
+export const voidYieldData = (data) => {
+    return request({
+        url: `${API_BASE_URL}/seed/yield-data/void`,
+        method: 'post',
+        data
+    })
+}

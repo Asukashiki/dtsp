@@ -29,6 +29,7 @@ export default {
     reviewing: 'Reviewing',
     approved: 'Approved',
     rejected: 'Rejected',
+    needs_revision: 'NeedsRevision',
   },
 
   // 表单字段

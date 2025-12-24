@@ -402,6 +402,8 @@ const routes = [
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
         meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
       },
+
+      // 实验室测试数据采集审核
       {
       // 实验室测试数据采集审核
         path: 'breeding-data/laboratory-test-audit',
@@ -409,6 +411,9 @@ const routes = [
         component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
         meta: { title: '实验室测试数据采集审核', requiresAuth: true }
       },
+
+      // Breeder seed生产数据采集
+      // 育种数据管理 - 育种数据集编制
       {
         path: 'breeding-data/dataset-compilation',
         name: 'DatasetCompilation',
@@ -497,7 +502,6 @@ const routes = [
         component: () => import('../views/research/breeding/seed-production-result/index.vue'),
         meta: { title: '生产数据采集详情', requiresAuth: true }
       },
-      
       // Breeder seed分发数据
       {
         path: 'breeding/seed-distribution',
@@ -829,7 +833,6 @@ const routes = [
         component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
         meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
       },
-      
       // 种子信息公示
       {
         path: 'seed/info',
