@@ -413,8 +413,9 @@ const getActionButtons = (row) => {
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      if (userStore.hasWorkflowStatusPermission('archive')) {
-        buttons.push({ type: 'success', action: 'archive', label: 'archive', icon: 'ri-archive-line' })
+            // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S3': // 审核驳回
