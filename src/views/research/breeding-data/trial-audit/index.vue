@@ -118,7 +118,7 @@
             </el-table-column>
             <el-table-column
               :label="t('research.trialBasicAudit.list.operation')"
-              min-width="100"
+              min-width="150"
               fixed="right"
               align="center"
             >
@@ -255,7 +255,7 @@
             </el-table-column>
             <el-table-column
               :label="t('research.trialBasicAudit.list.operation')"
-              width="100"
+              min-width="150"
               fixed="right"
               align="center"
             >
@@ -429,7 +429,7 @@ const handleTabChange = (tab) => {
   if (tab === 'S1') {
     queryParams.auditStatus = 'S1'
   } else {
-    queryParams.auditStatus = '' // 已审核包含 S2 和 S3
+    queryParams.auditStatus = 'S2'
   }
   handleQuery()
 }
