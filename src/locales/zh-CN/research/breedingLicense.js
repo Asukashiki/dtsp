@@ -73,12 +73,12 @@ export default {
     varietyTraits: '物种特性',
     minYieldPotential: '最小产量潜力 (公吨/公顷)',
     maxYieldPotential: '最大产量潜力 (公吨/公顷)',
-    diseaseResistance: '抗病性 (JSON格式)',
-    stressTolerance: '压力耐受性 (JSON格式)',
+    diseaseResistance: '抗病性 ',
+    stressTolerance: '压力耐受性 ',
     maturityDays: '成熟期 (天)',
     plantHeight: '株高 (cm)',
     grainQualityTraits: '谷物品质性状',
-    otherTraits: '其他特性 (JSON格式)',
+    otherTraits: '其他特性',
 
     // 操作信息
     operationInfo: '操作信息',
