@@ -192,6 +192,7 @@ export default {
   agronomicData: 'Agronomic Data Collection',
   farmingRecord: 'Farming Record Collection',
   environmentData: 'Environment & Soil Data Collection',
+
   farmerData: 'Farmer & Plot Data Collection',
   labData: 'Laboratory Test Data Collection',
   yieldData: 'Yield Data Collection',
