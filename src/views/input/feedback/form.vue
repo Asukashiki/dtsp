@@ -213,9 +213,11 @@ const rules = computed(() => ({
     { required: true, message: t('input.feedback.rules.contentRequired'), trigger: 'blur' }
   ],
   contactName: [
+    { required: true, message: t('input.feedback.rules.contactNameRequired'), trigger: 'blur' },
     { max: 100, message: t('input.feedback.rules.contactNameLength'), trigger: 'blur' }
   ],
   contactPhone: [
+    { required: true, message: t('input.feedback.rules.contactPhoneRequired'), trigger: 'blur' },
     { max: 20, message: t('input.feedback.rules.contactPhoneLength'), trigger: 'blur' },
     { validator: validatePhone, trigger: 'blur' }
   ],

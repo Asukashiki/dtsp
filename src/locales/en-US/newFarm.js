@@ -193,6 +193,7 @@ export default {
       editSuccess: 'Updated successfully',
       deleteSuccess: 'Deleted successfully',
       resetPasswordSuccess: 'Password reset successfully',
+      accountUnavailable: 'Account already exists, please use another one',
     },
     // Tips
     tips: {

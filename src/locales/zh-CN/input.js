@@ -1066,16 +1066,24 @@ export default {
 
   // 数据大屏
   dashboard: {
-    title: '农业投入品供应管理大屏',
-    subtitle: '实时数据监控与可视化分析',
+    title: '农业投入品管理大屏',
+    subtitle: '需求、分配与分发流通实时监控',
     lastUpdate: '最后更新',
     autoRefresh: '自动刷新',
+    refreshInterval: '刷新间隔',
+    systemStatus: '系统正常',
     fullscreen: '全屏',
     exitFullscreen: '退出全屏',
     overview: {
+      totalDemands: '需求申报',
+      allocated: '已分配',
+      satisfactionRate: '需求满足率',
+      allocationRate: '分配完成率',
+      arrivalRate: '流通到达率',
+      certifiedSuppliers: '认证供应商',
+      pendingSuppliers: '待审核',
+      activeWarehouses: '活跃仓库',
       totalSuppliers: '供应商总数',
-      certifiedSuppliers: '已认证供应商',
-      pendingSuppliers: '待审核供应商',
       rejectedSuppliers: '未通过供应商',
       totalInputs: '投入品总数',
       seedInputs: '种子类',
@@ -1151,6 +1159,23 @@ export default {
       count: '数量',
       stockQuantity: '库存量',
       percentage: '占比'
+    },
+    demandByType: {
+      title: '需求类型分布'
+    },
+    demandByRegion: {
+      title: '需求地区分布 (TOP 10)'
+    },
+    allocationProgress: {
+      title: '分配进度',
+      overall: '总体'
+    },
+    circulation: {
+      title: '流通分发状态'
+    },
+    recentActivities: {
+      title: '最新动态',
+      noData: '暂无最新动态'
     },
     warnings: {
       title: '预警信息',
@@ -1344,7 +1369,9 @@ export default {
       titleRequired: '请输入反馈标题',
       titleLength: '反馈标题最多200字符',
       contentRequired: '请输入反馈内容',
+      contactNameRequired: '请输入联系人姓名',
       contactNameLength: '联系人姓名最多100字符',
+      contactPhoneRequired: '请输入联系电话',
       contactPhoneLength: '联系电话最多20字符',
       contactPhoneFormat: '请输入正确的电话号码',
       contactEmailFormat: '请输入正确的邮箱地址',

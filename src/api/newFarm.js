@@ -119,6 +119,20 @@ export const getDaOptions = (kebeleCode = '') => {
   })
 }
 
+/**
+ * 检查DA账号是否可用
+ * @param {string} account - 账号
+ * @param {string} excludeDaId - 排除的DA编码（编辑时使用）
+ * @returns {Promise} - true-可用，false-已存在
+ */
+export const checkDaAccountUnique = (account, excludeDaId = '') => {
+  return request({
+    url: '/farmland/da/checkAccount',
+    method: 'get',
+    params: { account, excludeDaId }
+  })
+}
+
 // ==================== 农民管理 API ====================
 
 /**

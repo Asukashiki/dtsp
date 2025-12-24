@@ -1,128 +1,37 @@
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as echarts from 'echarts'
 import {
-  getOverview,
+  getAllDashboardData,
+  getDashboardOverview,
+  getDemandSummary,
+  getAllocationProgress,
+  getCirculationStatus,
   getTopSuppliers,
-  getWarehouseStats,
-  getStockTrend,
-  getInputTypeDistribution,
-  getWarnings,
-  getTodayStock,
-  getExpiringSoon,
-  getStockStatusDistribution
-} from '@/api/dashboard'
+  getRecentActivities
+} from '@/api/inputDashboard'
 
 const { t, locale } = useI18n()
 
 // 数据状态
 const overview = ref({})
+const demandByType = ref([])
+const demandByRegion = ref([])
+const allocationProgress = ref({})
+const circulationStatus = ref({})
 const topSuppliers = ref([])
-const warehouseStats = ref([])
-const stockTrendData = ref([])
-const inputDistribution = ref([])
-const warnings = ref([])
+const recentActivities = ref([])
 const loading = ref(false)
 const lastUpdateTime = ref('')
 const currentTime = ref('')
+const selectedYear = ref(new Date().getFullYear().toString())
 
-// 模拟的额外数据
-const recentRecords = ref([])
-const expiringItems = ref([])
-const stockAlertStats = ref({ expired: 0, nearExpiry: 0, lowStock: 0, normal: 0 })
-
-// Ethiopian Agriculture Mock Data
-const getMockData = () => {
-  const today = new Date()
-  const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-
-  return {
-    overview: {
-      totalSuppliers: 156,
-      certifiedSuppliers: 142,
-      totalInputs: 2847,
-      seedInputs: 1245,
-      fertilizerInputs: 1602,
-      totalWarehouses: 48,
-      capacityUsageRate: 73.5,
-      totalStockQuantity: 185620,
-      todayStockInCount: 23,
-      todayStockOutCount: 18,
-      pendingWarnings: 7
-    },
-    topSuppliers: [
-      { orgName: 'Ethiopian Seed Enterprise', monthStockInQuantity: 12500 },
-      { orgName: 'Oromia Seed Enterprise', monthStockInQuantity: 9800 },
-      { orgName: 'Amhara Seed Enterprise', monthStockInQuantity: 8600 },
-      { orgName: 'SNNPR Agricultural Input', monthStockInQuantity: 7200 },
-      { orgName: 'Tigray Seed Corporation', monthStockInQuantity: 5400 },
-      { orgName: 'Sidama Agro Supplies', monthStockInQuantity: 4100 }
-    ],
-    warehouseStats: [
-      { warehouseName: 'Addis Ababa Central', usageRate: 85 },
-      { warehouseName: 'Adama Warehouse', usageRate: 72 },
-      { warehouseName: 'Hawassa Storage', usageRate: 68 },
-      { warehouseName: 'Bahir Dar Depot', usageRate: 78 },
-      { warehouseName: 'Jimma Facility', usageRate: 55 },
-      { warehouseName: 'Mekelle Center', usageRate: 62 }
-    ],
-    stockTrendData: Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(today)
-      d.setDate(d.getDate() - (6 - i))
-      return {
-        date: formatDate(d),
-        stockInQuantity: Math.floor(Math.random() * 800) + 400,
-        stockOutQuantity: Math.floor(Math.random() * 600) + 300
-      }
-    }),
-    inputDistribution: [
-      { typeName: 'Teff Seeds', count: 420 },
-      { typeName: 'Wheat Seeds', count: 380 },
-      { typeName: 'DAP Fertilizer', count: 520 },
-      { typeName: 'Urea Fertilizer', count: 480 },
-      { typeName: 'Coffee Seedlings', count: 290 },
-      { typeName: 'Maize Seeds', count: 350 }
-    ],
-    warnings: [
-      { warningId: 1, warningType: '1', warningLevel: 2, warehouseName: 'Adama Warehouse', warningContent: 'Teff seeds batch TF-2024-089 expires in 15 days', warningTime: formatDate(today) },
-      { warningId: 2, warningType: '3', warningLevel: 3, warehouseName: 'Hawassa Storage', warningContent: 'DAP Fertilizer stock below minimum threshold', warningTime: formatDate(today) },
-      { warningId: 3, warningType: '2', warningLevel: 3, warehouseName: 'Bahir Dar Depot', warningContent: 'Wheat seeds batch WH-2024-056 has expired', warningTime: formatDate(today) },
-      { warningId: 4, warningType: '1', warningLevel: 1, warehouseName: 'Jimma Facility', warningContent: 'Coffee seedlings approaching expiry in 25 days', warningTime: formatDate(today) },
-      { warningId: 5, warningType: '4', warningLevel: 2, warehouseName: 'Addis Ababa Central', warningContent: 'Warehouse capacity at 92% - consider redistribution', warningTime: formatDate(today) },
-      { warningId: 6, warningType: '3', warningLevel: 2, warehouseName: 'Mekelle Center', warningContent: 'NPS Fertilizer running low for upcoming season', warningTime: formatDate(today) }
-    ],
-    recentRecords: [
-      { stockRecordId: 1, stockType: '1', inputName: 'Teff Seeds (Magna)', warehouseName: 'Adama', quantity: 500, unit: 'kg', stockTime: '09:30' },
-      { stockRecordId: 2, stockType: '2', inputName: 'DAP Fertilizer', warehouseName: 'Hawassa', quantity: 200, unit: 'kg', stockTime: '10:15' },
-      { stockRecordId: 3, stockType: '1', inputName: 'Wheat Seeds (Kakaba)', warehouseName: 'Bahir Dar', quantity: 750, unit: 'kg', stockTime: '11:00' },
-      { stockRecordId: 4, stockType: '2', inputName: 'Urea Fertilizer', warehouseName: 'Jimma', quantity: 300, unit: 'kg', stockTime: '11:45' },
-      { stockRecordId: 5, stockType: '1', inputName: 'Maize Seeds (BH-661)', warehouseName: 'Addis Ababa', quantity: 450, unit: 'kg', stockTime: '13:20' },
-      { stockRecordId: 6, stockType: '2', inputName: 'Coffee Seedlings', warehouseName: 'Sidama', quantity: 1000, unit: 'pcs', stockTime: '14:30' }
-    ],
-    expiringItems: [
-      { inputStockId: 1, inputName: 'Teff Seeds (Quncho)', warehouseName: 'Adama Warehouse', quantity: 320, unit: 'kg', daysUntilExpiry: 5 },
-      { inputStockId: 2, inputName: 'Barley Seeds (HB-1307)', warehouseName: 'Bahir Dar', quantity: 180, unit: 'kg', daysUntilExpiry: 8 },
-      { inputStockId: 3, inputName: 'Sorghum Seeds', warehouseName: 'Hawassa Storage', quantity: 250, unit: 'kg', daysUntilExpiry: 12 },
-      { inputStockId: 4, inputName: 'Chickpea Seeds', warehouseName: 'Mekelle Center', quantity: 400, unit: 'kg', daysUntilExpiry: 3 },
-      { inputStockId: 5, inputName: 'Lentil Seeds', warehouseName: 'Jimma Facility', quantity: 150, unit: 'kg', daysUntilExpiry: -2 }
-    ],
-    stockAlertStats: {
-      expired: 3,
-      nearExpiry: 12,
-      lowStock: 8,
-      normal: 245
-    }
-  }
-}
-
-// Check if data is empty
-const isDataEmpty = (data) => {
-  if (!data) return true
-  if (Array.isArray(data)) return data.length === 0
-  if (typeof data === 'object') return Object.keys(data).length === 0
-  return false
-}
+// 年份选项
+const yearOptions = computed(() => {
+  const currentYear = new Date().getFullYear()
+  return Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())
+})
 
 // 全屏控制
 const isFullscreen = ref(false)
@@ -132,14 +41,13 @@ const dashboardRef = ref(null)
 const autoRefreshEnabled = ref(true)
 const refreshInterval = ref(null)
 const timeInterval = ref(null)
-const trendDays = ref(7)
 
 // Chart实例
-let stockTrendChart = null
-let inputDistChart = null
-let warehouseChart = null
+let demandTypeChart = null
+let demandRegionChart = null
+let allocationChart = null
+let circulationChart = null
 let supplierChart = null
-let alertStatsChart = null
 
 // 更新当前时间
 const updateCurrentTime = () => {
@@ -170,10 +78,17 @@ const formatTime = (date) => {
 
 // 格式化数字
 const formatNumber = (num) => {
+  if (num === null || num === undefined) return '0'
   if (num >= 10000) {
     return (num / 10000).toFixed(1) + 'w'
   }
-  return num?.toLocaleString() || '0'
+  return num.toLocaleString()
+}
+
+// 格式化百分比
+const formatPercent = (num) => {
+  if (num === null || num === undefined) return '0%'
+  return Number(num).toFixed(1) + '%'
 }
 
 // 切换全屏
@@ -195,232 +110,48 @@ const handleFullscreenChange = () => {
   }, 100)
 }
 
-
 // 获取所有数据
 const fetchAllData = async () => {
-  const mockData = getMockData()
-
   try {
     loading.value = true
 
-    const [
-      overviewRes,
-      suppliersRes,
-      trendRes,
-      distributionRes,
-      warningsRes,
-      todayStockRes,
-      expiringRes,
-      stockStatusRes
-    ] = await Promise.all([
-      getOverview().catch(() => ({ code: -1 })),
-      getTopSuppliers(10).catch(() => ({ code: -1 })),
-      getStockTrend(trendDays.value).catch(() => ({ code: -1 })),
-      getInputTypeDistribution().catch(() => ({ code: -1 })),
-      getWarnings(20).catch(() => ({ code: -1 })),
-      getTodayStock().catch(() => ({ code: -1 })),
-      getExpiringSoon(20).catch(() => ({ code: -1 })),
-      getStockStatusDistribution().catch(() => ({ code: -1 }))
-    ])
-
-    // Overview - use mock data if empty
-    if (overviewRes.code === 200 && !isDataEmpty(overviewRes.data)) {
-      overview.value = overviewRes.data
-    } else {
-      overview.value = mockData.overview
-    }
-
-    // Suppliers - use mock data if empty
-    if (suppliersRes.code === 200 && !isDataEmpty(suppliersRes.data)) {
-      topSuppliers.value = suppliersRes.data
-    } else {
-      topSuppliers.value = mockData.topSuppliers
-    }
-
-    // Warehouse stats - use mock data if empty
-    if (warehouseRes.code === 200 && !isDataEmpty(warehouseRes.data)) {
-      warehouseStats.value = warehouseRes.data
-    } else {
-      warehouseStats.value = mockData.warehouseStats
-    }
-
-    // Stock trend - use mock data if empty
-    if (trendRes.code === 200 && !isDataEmpty(trendRes.data)) {
-      stockTrendData.value = trendRes.data
-    } else {
-      stockTrendData.value = mockData.stockTrendData
-    }
-
-    // Input distribution - use mock data if empty
-    if (distributionRes.code === 200 && !isDataEmpty(distributionRes.data)) {
-      inputDistribution.value = distributionRes.data
-    } else {
-      inputDistribution.value = mockData.inputDistribution
-    }
-
-    // Warnings - use mock data if empty
-    if (warningsRes.code === 200 && !isDataEmpty(warningsRes.data)) {
-      warnings.value = warningsRes.data
-    } else {
-      warnings.value = mockData.warnings
-    }
-
-    // Today stock records - use mock data if empty
-    if (todayStockRes.code === 200 && !isDataEmpty(todayStockRes.data)) {
-      recentRecords.value = todayStockRes.data
-    } else {
-      recentRecords.value = mockData.recentRecords
-    }
-
-    // Expiring items - use mock data if empty
-    if (expiringRes.code === 200 && !isDataEmpty(expiringRes.data)) {
-      expiringItems.value = expiringRes.data
-    } else {
-      expiringItems.value = mockData.expiringItems
-    }
-
-    // Stock status distribution - use mock data if empty
-    if (stockStatusRes.code === 200 && !isDataEmpty(stockStatusRes.data)) {
-      const statusData = stockStatusRes.data
-      stockAlertStats.value = {
-        expired: statusData.find(s => s.stockStatus === '2')?.productCount || 0,
-        nearExpiry: statusData.find(s => s.stockStatus === '1')?.productCount || 0,
-        lowStock: 0,
-        normal: statusData.find(s => s.stockStatus === '0')?.productCount || 0
-      }
-    } else {
-      stockAlertStats.value = mockData.stockAlertStats
+    const res = await getAllDashboardData(selectedYear.value)
+    
+    if (res.code === 200 && res.data) {
+      overview.value = res.data.overview || {}
+      demandByType.value = res.data.demandSummaryByType || []
+      demandByRegion.value = res.data.demandSummaryByRegion || []
+      allocationProgress.value = res.data.allocationProgress || {}
+      circulationStatus.value = res.data.circulationStatus || {}
+      topSuppliers.value = res.data.topSuppliers || []
+      recentActivities.value = res.data.recentActivities || []
     }
 
     lastUpdateTime.value = formatTime()
     updateCharts()
   } catch (error) {
-    console.error('Failed to fetch dashboard data, using mock data:', error)
-    // Use all mock data on complete failure
-    overview.value = mockData.overview
-    topSuppliers.value = mockData.topSuppliers
-    warehouseStats.value = mockData.warehouseStats
-    stockTrendData.value = mockData.stockTrendData
-    inputDistribution.value = mockData.inputDistribution
-    warnings.value = mockData.warnings
-    recentRecords.value = mockData.recentRecords
-    expiringItems.value = mockData.expiringItems
-    stockAlertStats.value = mockData.stockAlertStats
-    lastUpdateTime.value = formatTime()
-    updateCharts()
+    console.error('Failed to fetch dashboard data:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 初始化入库出库趋势图表
-const initStockTrendChart = () => {
-  const chartDom = document.getElementById('stockTrendChart')
+// 初始化需求类型分布图表
+const initDemandTypeChart = () => {
+  const chartDom = document.getElementById('demandTypeChart')
   if (!chartDom) return
 
-  stockTrendChart = echarts.init(chartDom)
-  updateStockTrendChart()
+  demandTypeChart = echarts.init(chartDom)
+  updateDemandTypeChart()
 }
 
-// 更新入库出库趋势图表
-const updateStockTrendChart = () => {
-  if (!stockTrendChart || !stockTrendData.value.length) return
+// 更新需求类型分布图表
+const updateDemandTypeChart = () => {
+  if (!demandTypeChart || !demandByType.value.length) return
 
-  const dates = stockTrendData.value.map(item => item.date)
-  const stockInData = stockTrendData.value.map(item => item.stockInQuantity)
-  const stockOutData = stockTrendData.value.map(item => item.stockOutQuantity)
-
-  const option = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: 'rgba(0, 20, 40, 0.9)',
-      borderColor: 'rgba(0, 212, 255, 0.5)',
-      borderWidth: 1,
-      textStyle: { color: '#fff', fontSize: 12 }
-    },
-    legend: {
-      data: [t('input.dashboard.stockTrend.stockIn'), t('input.dashboard.stockTrend.stockOut')],
-      textStyle: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 11 },
-      top: 0,
-      itemGap: 20
-    },
-    grid: {
-      left: '3%',
-      right: '3%',
-      bottom: '8%',
-      top: '15%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: dates,
-      boundaryGap: false,
-      axisLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.3)' } },
-      axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 10, rotate: 30 },
-      splitLine: { show: false }
-    },
-    yAxis: {
-      type: 'value',
-      axisLine: { show: false },
-      axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 10 },
-      splitLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.1)' } }
-    },
-    series: [
-      {
-        name: t('input.dashboard.stockTrend.stockIn'),
-        type: 'line',
-        data: stockInData,
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 4,
-        itemStyle: { color: '#00d4ff' },
-        lineStyle: { width: 2, color: '#00d4ff' },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(0, 212, 255, 0.4)' },
-            { offset: 1, color: 'rgba(0, 212, 255, 0.05)' }
-          ])
-        }
-      },
-      {
-        name: t('input.dashboard.stockTrend.stockOut'),
-        type: 'line',
-        data: stockOutData,
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 4,
-        itemStyle: { color: '#ffd700' },
-        lineStyle: { width: 2, color: '#ffd700' },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(255, 215, 0, 0.4)' },
-            { offset: 1, color: 'rgba(255, 215, 0, 0.05)' }
-          ])
-        }
-      }
-    ]
-  }
-
-  stockTrendChart.setOption(option)
-}
-
-// 初始化投入品分布图表
-const initInputDistChart = () => {
-  const chartDom = document.getElementById('inputDistChart')
-  if (!chartDom) return
-
-  inputDistChart = echarts.init(chartDom)
-  updateInputDistChart()
-}
-
-// 更新投入品分布图表
-const updateInputDistChart = () => {
-  if (!inputDistChart || !inputDistribution.value.length) return
-
-  const data = inputDistribution.value.map(item => ({
-    name: item.typeName,
-    value: item.count
+  const data = demandByType.value.map(item => ({
+    name: item.inputTypeDesc || item.inputType,
+    value: Number(item.demandQuantity) || 0
   }))
 
   const option = {
@@ -429,22 +160,22 @@ const updateInputDistChart = () => {
       trigger: 'item',
       formatter: '{b}: {c} ({d}%)',
       backgroundColor: 'rgba(0, 20, 40, 0.9)',
-      borderColor: 'rgba(0, 212, 255, 0.5)',
+      borderColor: 'rgba(0, 154, 68, 0.5)',
       textStyle: { color: '#fff' }
     },
     legend: {
       orient: 'vertical',
       right: '2%',
       top: 'center',
-      textStyle: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 10 },
-      itemGap: 8,
-      itemWidth: 10,
-      itemHeight: 10
+      textStyle: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 11 },
+      itemGap: 10,
+      itemWidth: 12,
+      itemHeight: 12
     },
     series: [
       {
         type: 'pie',
-        radius: ['40%', '65%'],
+        radius: ['35%', '60%'],
         center: ['35%', '50%'],
         avoidLabelOverlap: false,
         itemStyle: {
@@ -452,98 +183,235 @@ const updateInputDistChart = () => {
           borderColor: 'rgba(0, 20, 40, 0.8)',
           borderWidth: 2
         },
-        label: {
-          show: false
-        },
+        label: { show: false },
         emphasis: {
           label: { show: true, fontSize: 12, fontWeight: 'bold', color: '#fff' },
-          itemStyle: {
-            shadowBlur: 20,
-            shadowColor: 'rgba(0, 212, 255, 0.5)'
-          }
+          itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 154, 68, 0.5)' }
         },
         data: data,
-        color: ['#00d4ff', '#ffd700', '#ff6b6b', '#4ade80', '#a78bfa', '#fb923c']
+        color: ['#009A44', '#FEDD00', '#DA121A', '#3b82f6', '#a855f7', '#f59e0b']
       }
     ]
   }
 
-  inputDistChart.setOption(option)
+  demandTypeChart.setOption(option)
 }
 
-// 初始化仓库统计图表
-const initWarehouseChart = () => {
-  const chartDom = document.getElementById('warehouseChart')
+// 初始化需求地区分布图表
+const initDemandRegionChart = () => {
+  const chartDom = document.getElementById('demandRegionChart')
   if (!chartDom) return
 
-  warehouseChart = echarts.init(chartDom)
-  updateWarehouseChart()
+  demandRegionChart = echarts.init(chartDom)
+  updateDemandRegionChart()
 }
 
-// 更新仓库统计图表
-const updateWarehouseChart = () => {
-  if (!warehouseChart || !warehouseStats.value.length) return
+// 更新需求地区分布图表
+const updateDemandRegionChart = () => {
+  if (!demandRegionChart || !demandByRegion.value.length) return
 
-  const names = warehouseStats.value.map(item => item.warehouseName)
-  const usageRates = warehouseStats.value.map(item => Number(item.usageRate || 0))
+  const names = demandByRegion.value.slice(0, 8).map(item => 
+    (item.regionName || '').length > 10 ? (item.regionName || '').slice(0, 10) + '...' : (item.regionName || '')
+  )
+  const quantities = demandByRegion.value.slice(0, 8).map(item => Number(item.demandQuantity) || 0)
 
   const option = {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(0, 20, 40, 0.9)',
-      borderColor: 'rgba(0, 212, 255, 0.5)',
+      borderColor: 'rgba(0, 154, 68, 0.5)',
       textStyle: { color: '#fff' }
     },
     grid: {
       left: '3%',
-      right: '4%',
+      right: '10%',
+      bottom: '3%',
+      top: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 10 },
+      splitLine: { lineStyle: { color: 'rgba(0, 154, 68, 0.1)' } }
+    },
+    yAxis: {
+      type: 'category',
+      data: names.reverse(),
+      axisLine: { lineStyle: { color: 'rgba(0, 154, 68, 0.3)' } },
+      axisLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 10 }
+    },
+    series: [
+      {
+        type: 'bar',
+        data: quantities.reverse(),
+        barWidth: '50%',
+        itemStyle: {
+          borderRadius: [0, 4, 4, 0],
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            { offset: 0, color: 'rgba(0, 154, 68, 0.3)' },
+            { offset: 1, color: '#009A44' }
+          ])
+        },
+        label: {
+          show: true,
+          position: 'right',
+          color: 'rgba(255, 255, 255, 0.8)',
+          fontSize: 10
+        }
+      }
+    ]
+  }
+
+  demandRegionChart.setOption(option)
+}
+
+// 初始化分配进度图表
+const initAllocationChart = () => {
+  const chartDom = document.getElementById('allocationChart')
+  if (!chartDom) return
+
+  allocationChart = echarts.init(chartDom)
+  updateAllocationChart()
+}
+
+// 更新分配进度图表
+const updateAllocationChart = () => {
+  if (!allocationChart) return
+
+  const data = [
+    { name: 'Zone', value: Number(allocationProgress.value.zoneCompletionRate) || 0 },
+    { name: 'Woreda', value: Number(allocationProgress.value.woredaCompletionRate) || 0 },
+    { name: 'Kebele', value: Number(allocationProgress.value.kebeleCompletionRate) || 0 },
+    { name: 'Farmer', value: Number(allocationProgress.value.farmerCompletionRate) || 0 }
+  ]
+
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b}: {c}%',
+      backgroundColor: 'rgba(0, 20, 40, 0.9)',
+      borderColor: 'rgba(254, 221, 0, 0.5)',
+      textStyle: { color: '#fff' }
+    },
+    grid: {
+      left: '3%',
+      right: '6%',
       bottom: '12%',
       top: '8%',
       containLabel: true
     },
     xAxis: {
       type: 'category',
-      data: names,
-      axisLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.3)' } },
-      axisLabel: { 
-        color: 'rgba(255, 255, 255, 0.6)', 
-        fontSize: 9, 
-        rotate: 30,
-        interval: 0
-      }
+      data: data.map(d => d.name),
+      axisLine: { lineStyle: { color: 'rgba(254, 221, 0, 0.3)' } },
+      axisLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 11 }
     },
     yAxis: {
       type: 'value',
       max: 100,
       axisLine: { show: false },
-      axisLabel: { 
-        color: 'rgba(255, 255, 255, 0.6)', 
-        fontSize: 9,
-        formatter: '{value}%'
-      },
-      splitLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.1)' } }
+      axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 10, formatter: '{value}%' },
+      splitLine: { lineStyle: { color: 'rgba(254, 221, 0, 0.1)' } }
     },
     series: [
       {
         type: 'bar',
-        data: usageRates,
-        barWidth: '50%',
+        data: data.map(d => d.value),
+        barWidth: '45%',
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#00d4ff' },
-            { offset: 1, color: 'rgba(0, 212, 255, 0.3)' }
+            { offset: 0, color: '#FEDD00' },
+            { offset: 1, color: 'rgba(254, 221, 0, 0.3)' }
           ])
+        },
+        label: {
+          show: true,
+          position: 'top',
+          color: '#FEDD00',
+          fontSize: 11,
+          formatter: '{c}%'
         }
       }
     ]
   }
 
-  warehouseChart.setOption(option)
+  allocationChart.setOption(option)
 }
 
-// 初始化供应商图表
+// 初始化流通状态图表
+const initCirculationChart = () => {
+  const chartDom = document.getElementById('circulationChart')
+  if (!chartDom) return
+
+  circulationChart = echarts.init(chartDom)
+  updateCirculationChart()
+}
+
+// 更新流通状态图表
+const updateCirculationChart = () => {
+  if (!circulationChart) return
+
+  const cs = circulationStatus.value
+  const data = [
+    { name: 'OSE Distributed', value: Number(cs.oseDistributedQuantity) || 0, color: '#009A44' },
+    { name: 'Union Received', value: Number(cs.unionReceivedQuantity) || 0, color: '#10b981' },
+    { name: 'Woreda Received', value: Number(cs.woredaReceivedQuantity) || 0, color: '#FEDD00' },
+    { name: 'Farmer Received', value: Number(cs.farmerReceivedQuantity) || 0, color: '#DA121A' }
+  ]
+
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(0, 20, 40, 0.9)',
+      borderColor: 'rgba(218, 18, 26, 0.5)',
+      textStyle: { color: '#fff' }
+    },
+    legend: {
+      data: data.map(d => d.name),
+      textStyle: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 10 },
+      top: 0,
+      itemGap: 15
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '10%',
+      top: '18%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: ['Flow Status'],
+      axisLine: { show: false },
+      axisLabel: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 10 },
+      splitLine: { lineStyle: { color: 'rgba(218, 18, 26, 0.1)' } }
+    },
+    series: data.map(d => ({
+      name: d.name,
+      type: 'bar',
+      data: [d.value],
+      barWidth: 35,
+      itemStyle: {
+        color: d.color,
+        borderRadius: [4, 4, 0, 0]
+      }
+    }))
+  }
+
+  circulationChart.setOption(option)
+}
+
+// 初始化供应商排行图表
 const initSupplierChart = () => {
   const chartDom = document.getElementById('supplierChart')
   if (!chartDom) return
@@ -552,13 +420,13 @@ const initSupplierChart = () => {
   updateSupplierChart()
 }
 
-// 更新供应商图表
+// 更新供应商排行图表
 const updateSupplierChart = () => {
   if (!supplierChart || !topSuppliers.value.length) return
 
   const data = topSuppliers.value.slice(0, 6).map(item => ({
-    name: item.orgName?.length > 6 ? item.orgName.slice(0, 6) + '...' : item.orgName,
-    value: item.monthStockInQuantity || 0
+    name: (item.orgName || '').length > 12 ? (item.orgName || '').slice(0, 12) + '...' : (item.orgName || ''),
+    value: Number(item.totalDistributed) || 0
   }))
 
   const option = {
@@ -566,7 +434,7 @@ const updateSupplierChart = () => {
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(0, 20, 40, 0.9)',
-      borderColor: 'rgba(0, 212, 255, 0.5)',
+      borderColor: 'rgba(0, 154, 68, 0.5)',
       textStyle: { color: '#fff' }
     },
     grid: {
@@ -580,24 +448,24 @@ const updateSupplierChart = () => {
       type: 'value',
       axisLine: { show: false },
       axisLabel: { color: 'rgba(255, 255, 255, 0.6)', fontSize: 9 },
-      splitLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.1)' } }
+      splitLine: { lineStyle: { color: 'rgba(0, 154, 68, 0.1)' } }
     },
     yAxis: {
       type: 'category',
       data: data.map(d => d.name).reverse(),
-      axisLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.3)' } },
-      axisLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 9 }
+      axisLine: { lineStyle: { color: 'rgba(0, 154, 68, 0.3)' } },
+      axisLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 10 }
     },
     series: [
       {
         type: 'bar',
         data: data.map(d => d.value).reverse(),
-        barWidth: '55%',
+        barWidth: '50%',
         itemStyle: {
           borderRadius: [0, 4, 4, 0],
           color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-            { offset: 0, color: 'rgba(251, 146, 60, 0.3)' },
-            { offset: 1, color: '#fb923c' }
+            { offset: 0, color: 'rgba(0, 154, 68, 0.3)' },
+            { offset: 1, color: '#009A44' }
           ])
         },
         label: {
@@ -613,116 +481,22 @@ const updateSupplierChart = () => {
   supplierChart.setOption(option)
 }
 
-// 初始化预警统计图表
-const initAlertStatsChart = () => {
-  const chartDom = document.getElementById('alertStatsChart')
-  if (!chartDom) return
-
-  alertStatsChart = echarts.init(chartDom)
-  updateAlertStatsChart()
-}
-
-// 更新预警统计图表
-const updateAlertStatsChart = () => {
-  if (!alertStatsChart) return
-
-  const data = [
-    { value: stockAlertStats.value.expired, name: t('input.dashboard.stockStatus.expired'), itemStyle: { color: '#ef4444' } },
-    { value: stockAlertStats.value.nearExpiry, name: t('input.dashboard.stockStatus.nearExpiry'), itemStyle: { color: '#f59e0b' } },
-    { value: stockAlertStats.value.lowStock, name: t('input.dashboard.stockStatus.lowStock'), itemStyle: { color: '#8b5cf6' } },
-    { value: stockAlertStats.value.normal, name: t('input.dashboard.stockStatus.normal'), itemStyle: { color: '#22c55e' } }
-  ]
-
-  const option = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'item',
-      formatter: '{b}: {c} ({d}%)',
-      backgroundColor: 'rgba(0, 20, 40, 0.9)',
-      borderColor: 'rgba(0, 212, 255, 0.5)',
-      textStyle: { color: '#fff' }
-    },
-    series: [
-      {
-        type: 'pie',
-        radius: ['50%', '75%'],
-        center: ['50%', '50%'],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 4,
-          borderColor: 'rgba(0, 20, 40, 0.8)',
-          borderWidth: 2
-        },
-        label: {
-          show: false
-        },
-        emphasis: {
-          label: { show: true, fontSize: 11, fontWeight: 'bold', color: '#fff' }
-        },
-        data: data
-      }
-    ]
-  }
-
-  alertStatsChart.setOption(option)
-}
-
 // 更新所有图表
 const updateCharts = () => {
-  updateStockTrendChart()
-  updateInputDistChart()
-  updateWarehouseChart()
+  updateDemandTypeChart()
+  updateDemandRegionChart()
+  updateAllocationChart()
+  updateCirculationChart()
   updateSupplierChart()
-  updateAlertStatsChart()
-}
-
-// 切换趋势天数
-const changeTrendDays = async (days) => {
-  trendDays.value = days
-  try {
-    const res = await getStockTrend(days)
-    if (res.code === 200 && !isDataEmpty(res.data)) {
-      stockTrendData.value = res.data
-    } else {
-      // Generate mock trend data for the specified days
-      const today = new Date()
-      const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-      stockTrendData.value = Array.from({ length: days }, (_, i) => {
-        const d = new Date(today)
-        d.setDate(d.getDate() - (days - 1 - i))
-        return {
-          date: formatDate(d),
-          stockInQuantity: Math.floor(Math.random() * 800) + 400,
-          stockOutQuantity: Math.floor(Math.random() * 600) + 300
-        }
-      })
-    }
-    updateStockTrendChart()
-  } catch (error) {
-    console.error('Failed to fetch stock trend, using mock data:', error)
-    // Generate mock trend data on error
-    const today = new Date()
-    const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-    stockTrendData.value = Array.from({ length: days }, (_, i) => {
-      const d = new Date(today)
-      d.setDate(d.getDate() - (days - 1 - i))
-      return {
-        date: formatDate(d),
-        stockInQuantity: Math.floor(Math.random() * 800) + 400,
-        stockOutQuantity: Math.floor(Math.random() * 600) + 300
-      }
-    })
-    updateStockTrendChart()
-  }
 }
 
 // 窗口大小变化时重新渲染图表
 const handleResize = () => {
-  stockTrendChart?.resize()
-  inputDistChart?.resize()
-  warehouseChart?.resize()
+  demandTypeChart?.resize()
+  demandRegionChart?.resize()
+  allocationChart?.resize()
+  circulationChart?.resize()
   supplierChart?.resize()
-  alertStatsChart?.resize()
 }
 
 // 切换自动刷新
@@ -740,7 +514,7 @@ const startAutoRefresh = () => {
   stopAutoRefresh()
   refreshInterval.value = setInterval(() => {
     fetchAllData()
-  }, 30000)
+  }, 60000) // 每分钟刷新
 }
 
 // 停止自动刷新
@@ -751,50 +525,34 @@ const stopAutoRefresh = () => {
   }
 }
 
-// 预警级别样式
-const getWarningLevelClass = (level) => {
-  switch (level) {
-    case 3: return 'border-l-red-500 bg-red-500/10'
-    case 2: return 'border-l-yellow-500 bg-yellow-500/10'
-    case 1: return 'border-l-green-500 bg-green-500/10'
-    default: return 'border-l-gray-500 bg-gray-500/10'
+// 年份变化
+const handleYearChange = () => {
+  fetchAllData()
+}
+
+// 获取活动类型样式
+const getActivityTypeClass = (type) => {
+  switch (type) {
+    case 'allocation': return 'bg-green-500/20 text-green-400 border-green-500/30'
+    case 'distribution': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+    case 'receive': return 'bg-red-500/20 text-red-400 border-red-500/30'
+    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
   }
 }
 
-// 预警级别文本
-const getWarningLevelText = (level) => {
-  switch (level) {
-    case 3: return t('input.dashboard.warnings.levels.high')
-    case 2: return t('input.dashboard.warnings.levels.medium')
-    case 1: return t('input.dashboard.warnings.levels.low')
-    default: return ''
-  }
-}
-
-// 预警类型文本
-const getWarningTypeText = (type) => {
-  const typeMap = {
-    '1': t('input.dashboard.warnings.types.nearExpiry'),
-    '2': t('input.dashboard.warnings.types.expired'),
-    '3': t('input.dashboard.warnings.types.lowStock'),
-    '4': t('input.dashboard.warnings.types.overCapacity')
-  }
-  return typeMap[type] || ''
-}
-
-// 预警级别颜色
-const getWarningLevelColor = (level) => {
-  switch (level) {
-    case 3: return 'text-red-400 bg-red-500/20'
-    case 2: return 'text-yellow-400 bg-yellow-500/20'
-    case 1: return 'text-green-400 bg-green-500/20'
-    default: return 'text-gray-400 bg-gray-500/20'
-  }
+// 格式化活动时间
+const formatActivityTime = (time) => {
+  if (!time) return ''
+  const d = new Date(time)
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${month}-${day} ${hours}:${minutes}`
 }
 
 // 监听语言切换，重新渲染图表
 watch(locale, () => {
-  // 当语言切换时，延迟更新图表以确保 DOM 已更新
   setTimeout(() => {
     updateCharts()
   }, 100)
@@ -808,11 +566,11 @@ onMounted(() => {
   fetchAllData()
 
   setTimeout(() => {
-    initStockTrendChart()
-    initInputDistChart()
-    initWarehouseChart()
+    initDemandTypeChart()
+    initDemandRegionChart()
+    initAllocationChart()
+    initCirculationChart()
     initSupplierChart()
-    initAlertStatsChart()
   }, 100)
 
   window.addEventListener('resize', handleResize)
@@ -824,11 +582,11 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  stockTrendChart?.dispose()
-  inputDistChart?.dispose()
-  warehouseChart?.dispose()
+  demandTypeChart?.dispose()
+  demandRegionChart?.dispose()
+  allocationChart?.dispose()
+  circulationChart?.dispose()
   supplierChart?.dispose()
-  alertStatsChart?.dispose()
 
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
@@ -847,14 +605,14 @@ onBeforeUnmount(() => {
   >
     <!-- 背景装饰 -->
     <div class="overflow-hidden fixed inset-0 pointer-events-none">
-      <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl bg-cyan-500/10"></div>
-      <div class="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl bg-blue-500/10"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-3xl"></div>
+      <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl bg-green-500/10"></div>
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl bg-yellow-500/10"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/5 rounded-full blur-3xl"></div>
     </div>
 
     <!-- 网格背景 -->
     <div class="fixed inset-0 opacity-20 pointer-events-none">
-      <div class="w-full h-full" style="background-image: linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
+      <div class="w-full h-full" style="background-image: linear-gradient(rgba(0, 154, 68, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 154, 68, 0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
     </div>
 
     <div class="dashboard-content" v-loading="loading">
@@ -875,11 +633,26 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <!-- 右侧信息 -->
+          <!-- 右侧控制 -->
           <div class="header-right">
+            <!-- 年份选择 -->
+            <el-select 
+              v-model="selectedYear" 
+              @change="handleYearChange"
+              class="year-select"
+              size="small"
+            >
+              <el-option 
+                v-for="year in yearOptions" 
+                :key="year" 
+                :label="year" 
+                :value="year" 
+              />
+            </el-select>
+
             <!-- 当前时间 -->
             <div class="time-box">
-              <i class="text-cyan-400 ri-time-line"></i>
+              <i class="text-green-400 ri-time-line"></i>
               <span class="time-text">{{ currentTime }}</span>
             </div>
 
@@ -890,9 +663,6 @@ onBeforeUnmount(() => {
               :class="autoRefreshEnabled ? 'active' : ''"
             >
               <i :class="autoRefreshEnabled ? 'ri-refresh-line animate-spin' : 'ri-pause-circle-line'"></i>
-              <span class="hidden sm:inline">
-                {{ autoRefreshEnabled ? t('input.dashboard.autoRefreshOn') : t('input.dashboard.autoRefreshOff') }}
-              </span>
             </button>
 
             <!-- 全屏按钮 -->
@@ -908,92 +678,77 @@ onBeforeUnmount(() => {
 
       <!-- 数据概览卡片 -->
       <section class="stats-grid">
-        <!-- 供应商 -->
-        <div class="stat-card cyan">
+        <!-- 需求总数 -->
+        <div class="stat-card green">
           <div class="stat-header">
-            <div class="stat-icon cyan">
-              <i class="ri-building-4-line"></i>
+            <div class="stat-icon green">
+              <i class="ri-file-list-3-line"></i>
             </div>
-            <span class="stat-badge green">
-              <i class="ri-checkbox-circle-fill"></i>
-              {{ overview.certifiedSuppliers || 0 }}
-            </span>
           </div>
-          <div class="stat-value">{{ formatNumber(overview.totalSuppliers || 0) }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.totalSuppliers') }}</div>
+          <div class="stat-value">{{ formatNumber(overview.totalDemands || 0) }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.totalDemands') }}</div>
+          <div class="stat-sub">
+            <span class="text-green-400">{{ t('input.dashboard.overview.allocated') }}: {{ overview.allocatedDemands || 0 }}</span>
+          </div>
         </div>
 
-        <!-- 投入品 -->
+        <!-- 需求满足率 -->
         <div class="stat-card yellow">
           <div class="stat-header">
             <div class="stat-icon yellow">
-              <i class="ri-seedling-line"></i>
-            </div>
-            <div class="stat-badges">
-              <span class="mini-badge yellow">{{ overview.seedInputs || 0 }}</span>
-              <span class="mini-badge green">{{ overview.fertilizerInputs || 0 }}</span>
+              <i class="ri-checkbox-circle-line"></i>
             </div>
           </div>
-          <div class="stat-value">{{ formatNumber(overview.totalInputs || 0) }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.totalInputs') }}</div>
+          <div class="stat-value">{{ formatPercent(overview.demandSatisfactionRate) }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.satisfactionRate') }}</div>
         </div>
 
-        <!-- 仓库 -->
-        <div class="stat-card purple">
-          <div class="stat-header">
-            <div class="stat-icon purple">
-              <i class="ri-store-3-line"></i>
-            </div>
-            <span class="stat-percent">{{ (overview.capacityUsageRate || 0).toFixed(1) }}%</span>
-          </div>
-          <div class="stat-value">{{ overview.totalWarehouses || 0 }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.totalWarehouses') }}</div>
-        </div>
-
-        <!-- 库存 -->
+        <!-- 分配完成率 -->
         <div class="stat-card blue">
           <div class="stat-header">
             <div class="stat-icon blue">
-              <i class="ri-archive-line"></i>
-            </div>
-            <div class="status-dots">
-              <span class="dot green" :title="t('input.dashboard.overview.normalStock')"></span>
-              <span class="dot yellow" :title="t('input.dashboard.overview.nearExpiryStock')"></span>
-              <span class="dot red" :title="t('input.dashboard.overview.expiredStock')"></span>
+              <i class="ri-git-branch-line"></i>
             </div>
           </div>
-          <div class="stat-value">{{ formatNumber(overview.totalStockQuantity || 0) }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.totalStockQuantity') }}</div>
+          <div class="stat-value">{{ formatPercent(overview.allocationCompletionRate) }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.allocationRate') }}</div>
         </div>
 
-        <!-- 今日业务 -->
-        <div class="stat-card emerald">
-          <div class="stat-header">
-            <div class="stat-icon emerald">
-              <i class="ri-calendar-check-line"></i>
-            </div>
-          </div>
-          <div class="stat-value">{{ (overview.todayStockInCount || 0) + (overview.todayStockOutCount || 0) }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.todayBusiness') }}</div>
-          <div class="stat-sub">
-            <span class="text-cyan-400">↓{{ overview.todayStockInCount || 0 }}</span>
-            <span class="text-yellow-400">↑{{ overview.todayStockOutCount || 0 }}</span>
-          </div>
-        </div>
-
-        <!-- 预警 -->
+        <!-- 流通到达率 -->
         <div class="stat-card red">
           <div class="stat-header">
             <div class="stat-icon red">
-              <i class="ri-alarm-warning-line"></i>
+              <i class="ri-truck-line"></i>
             </div>
-            <span v-if="overview.pendingWarnings > 0" class="pulse-dot">
-              <span class="ping"></span>
-              <span class="dot"></span>
+          </div>
+          <div class="stat-value">{{ formatPercent(overview.circulationArrivalRate) }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.arrivalRate') }}</div>
+        </div>
+
+        <!-- 认证供应商 -->
+        <div class="stat-card purple">
+          <div class="stat-header">
+            <div class="stat-icon purple">
+              <i class="ri-building-4-line"></i>
+            </div>
+            <span class="stat-badge">
+              <i class="ri-time-line"></i>
+              {{ overview.pendingSuppliers || 0 }}
             </span>
           </div>
-          <div class="stat-value">{{ overview.pendingWarnings || 0 }}</div>
-          <div class="stat-label">{{ t('input.dashboard.overview.pendingWarnings') }}</div>
+          <div class="stat-value">{{ overview.certifiedSuppliers || 0 }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.certifiedSuppliers') }}</div>
+        </div>
+
+        <!-- 活跃仓库 -->
+        <div class="stat-card emerald">
+          <div class="stat-header">
+            <div class="stat-icon emerald">
+              <i class="ri-store-3-line"></i>
+            </div>
+          </div>
+          <div class="stat-value">{{ overview.activeWarehouses || 0 }}</div>
+          <div class="stat-label">{{ t('input.dashboard.overview.activeWarehouses') }}</div>
         </div>
       </section>
 
@@ -1001,228 +756,119 @@ onBeforeUnmount(() => {
       <div class="main-grid">
         <!-- 左侧主区域 -->
         <div class="main-left">
-          <!-- 趋势图 -->
-          <div class="chart-card trend-chart">
-            <div class="chart-header">
-              <div class="chart-title">
-                <div class="title-icon cyan">
-                  <i class="ri-line-chart-line"></i>
-                </div>
-                <h3>{{ t('input.dashboard.stockTrend.title') }}</h3>
-              </div>
-              <div class="chart-actions">
-                <button 
-                  @click="changeTrendDays(7)"
-                  class="period-btn"
-                  :class="{ active: trendDays === 7 }"
-                >
-                  {{ t('input.dashboard.stockTrend.last7Days') }}
-                </button>
-                <button 
-                  @click="changeTrendDays(30)"
-                  class="period-btn"
-                  :class="{ active: trendDays === 30 }"
-                >
-                  {{ t('input.dashboard.stockTrend.last30Days') }}
-                </button>
-              </div>
-            </div>
-            <div id="stockTrendChart" class="chart-body"></div>
-          </div>
-
-          <!-- 中间四个图表 -->
-          <div class="charts-grid">
-            <!-- 仓库利用率 -->
+          <!-- 上面两个图表 -->
+          <div class="charts-row">
+            <!-- 需求类型分布 -->
             <div class="chart-card">
-              <div class="chart-header compact">
-                <div class="chart-title small">
-                  <div class="title-icon purple small">
-                    <i class="ri-bar-chart-box-line"></i>
-                  </div>
-                  <h3>{{ t('input.dashboard.warehouse.title') }}</h3>
-                </div>
-              </div>
-              <div id="warehouseChart" class="chart-body small"></div>
-            </div>
-
-            <!-- 投入品分布 -->
-            <div class="chart-card">
-              <div class="chart-header compact">
-                <div class="chart-title small">
-                  <div class="title-icon yellow small">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <div class="title-icon green">
                     <i class="ri-pie-chart-line"></i>
                   </div>
-                  <h3>{{ t('input.dashboard.inputDistribution.title') }}</h3>
+                  <h3>{{ t('input.dashboard.demandByType.title') }}</h3>
                 </div>
               </div>
-              <div id="inputDistChart" class="chart-body small"></div>
+              <div id="demandTypeChart" class="chart-body"></div>
             </div>
 
-            <!-- 供应商排行 -->
+            <!-- 分配进度 -->
             <div class="chart-card">
-              <div class="chart-header compact">
-                <div class="chart-title small">
-                  <div class="title-icon orange small">
-                    <i class="ri-trophy-line"></i>
+              <div class="chart-header">
+                <div class="chart-title">
+                  <div class="title-icon yellow">
+                    <i class="ri-bar-chart-grouped-line"></i>
                   </div>
-                  <h3>{{ t('input.dashboard.topSuppliers.title') }}</h3>
+                  <h3>{{ t('input.dashboard.allocationProgress.title') }}</h3>
+                </div>
+                <span class="overall-rate">
+                  {{ t('input.dashboard.allocationProgress.overall') }}: {{ formatPercent(allocationProgress.overallCompletionRate) }}
+                </span>
+              </div>
+              <div id="allocationChart" class="chart-body"></div>
+            </div>
+          </div>
+
+          <!-- 下面两个图表 -->
+          <div class="charts-row">
+            <!-- 需求地区分布 -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <div class="title-icon blue">
+                    <i class="ri-bar-chart-horizontal-line"></i>
+                  </div>
+                  <h3>{{ t('input.dashboard.demandByRegion.title') }}</h3>
                 </div>
               </div>
-              <div id="supplierChart" class="chart-body small"></div>
+              <div id="demandRegionChart" class="chart-body"></div>
             </div>
 
-            <!-- 库存预警统计 -->
+            <!-- 流通状态 -->
             <div class="chart-card">
-              <div class="chart-header compact">
-                <div class="chart-title small">
-                  <div class="title-icon red small">
-                    <i class="ri-pie-chart-2-line"></i>
+              <div class="chart-header">
+                <div class="chart-title">
+                  <div class="title-icon red">
+                    <i class="ri-flow-chart"></i>
                   </div>
-                  <h3>{{ t('input.dashboard.stockStatus.title') }}</h3>
+                  <h3>{{ t('input.dashboard.circulation.title') }}</h3>
                 </div>
               </div>
-              <div class="flex items-center chart-body small">
-                <div id="alertStatsChart" class="w-1/2 h-full"></div>
-                <div class="pr-2 space-y-2 w-1/2">
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-red-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.expired') }}</span>
-                    <span class="font-medium text-red-400">{{ stockAlertStats.expired }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-amber-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.nearExpiry') }}</span>
-                    <span class="font-medium text-amber-400">{{ stockAlertStats.nearExpiry }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-violet-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.lowStock') }}</span>
-                    <span class="font-medium text-violet-400">{{ stockAlertStats.lowStock }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="flex gap-1 items-center"><span class="w-2 h-2 bg-green-500 rounded-full"></span>{{ t('input.dashboard.stockStatus.normal') }}</span>
-                    <span class="font-medium text-green-400">{{ stockAlertStats.normal }}</span>
-                  </div>
-                </div>
-              </div>
+              <div id="circulationChart" class="chart-body"></div>
             </div>
           </div>
         </div>
 
         <!-- 右侧边栏 -->
         <div class="main-right">
-          <!-- 今日出入库记录 -->
+          <!-- 供应商排行 -->
           <div class="side-card">
             <div class="side-header">
               <div class="side-title">
-                <div class="title-icon emerald small">
-                  <i class="ri-exchange-line"></i>
+                <div class="title-icon green small">
+                  <i class="ri-trophy-line"></i>
                 </div>
-                <h3>{{ t('input.dashboard.todayStock.title') }}</h3>
+                <h3>{{ t('input.dashboard.topSuppliers.title') }}</h3>
               </div>
-              <span class="record-count">{{ recentRecords.length }}</span>
+              <span class="record-count">{{ topSuppliers.length }}</span>
             </div>
-            <div class="record-list">
+            <div id="supplierChart" class="chart-body-side"></div>
+          </div>
+
+          <!-- 最新动态 -->
+          <div class="side-card flex-1">
+            <div class="side-header">
+              <div class="side-title">
+                <div class="title-icon yellow small">
+                  <i class="ri-history-line"></i>
+                </div>
+                <h3>{{ t('input.dashboard.recentActivities.title') }}</h3>
+              </div>
+              <span class="record-count">{{ recentActivities.length }}</span>
+            </div>
+            <div class="activity-list">
               <div
-                v-if="recentRecords.length === 0"
-                class="empty-warning"
+                v-if="recentActivities.length === 0"
+                class="empty-state"
               >
                 <i class="ri-inbox-line"></i>
-                <p>{{ t('input.dashboard.todayStock.noData') }}</p>
+                <p>{{ t('input.dashboard.recentActivities.noData') }}</p>
               </div>
               <div
-                v-for="record in recentRecords"
-                :key="record.stockRecordId"
-                class="record-item"
+                v-for="activity in recentActivities.slice(0, 8)"
+                :key="activity.id"
+                class="activity-item"
               >
-                <div class="record-type" :class="record.stockType === '1' ? 'in' : 'out'">
-                  <i :class="record.stockType === '1' ? 'ri-arrow-down-line' : 'ri-arrow-up-line'"></i>
+                <div class="activity-type" :class="getActivityTypeClass(activity.activityType)">
+                  {{ activity.activityTypeDesc }}
                 </div>
-                <div class="record-info">
-                  <div class="record-name">{{ record.inputName }}</div>
-                  <div class="record-meta">
-                    <span>{{ record.warehouseName }}</span>
-                    <span>{{ record.stockTime }}</span>
+                <div class="activity-info">
+                  <div class="activity-name">{{ activity.inputName || '-' }}</div>
+                  <div class="activity-meta">
+                    <span>{{ activity.source }} → {{ activity.target }}</span>
+                    <span>{{ activity.quantity }} {{ activity.unit }}</span>
                   </div>
                 </div>
-                <div class="record-qty" :class="record.stockType === '1' ? 'in' : 'out'">
-                  {{ record.stockType === '1' ? '+' : '-' }}{{ record.quantity }}{{ record.unit }}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 即将过期 -->
-          <div class="side-card">
-            <div class="side-header">
-              <div class="side-title">
-                <div class="title-icon amber small">
-                  <i class="ri-timer-flash-line"></i>
-                </div>
-                <h3>{{ t('input.dashboard.expiring.title') }}</h3>
-              </div>
-              <span class="expire-count">{{ expiringItems.length }}</span>
-            </div>
-            <div class="expire-list">
-              <div
-                v-if="expiringItems.length === 0"
-                class="empty-warning"
-              >
-                <i class="ri-check-double-line"></i>
-                <p>{{ t('input.dashboard.expiring.noData') }}</p>
-              </div>
-              <div
-                v-for="item in expiringItems"
-                :key="item.inputStockId"
-                class="expire-item"
-              >
-                <div class="expire-days" :class="{ urgent: item.daysUntilExpiry <= 5 }">
-                  <span v-if="item.daysUntilExpiry < 0">{{ t('input.dashboard.expiring.expired') }}</span>
-                  <span v-else>{{ item.daysUntilExpiry }}{{ t('input.dashboard.expiring.days') }}</span>
-                </div>
-                <div class="expire-info">
-                  <div class="expire-name">{{ item.inputName }}</div>
-                  <div class="expire-meta">{{ item.warehouseName }} · {{ item.quantity }}{{ item.unit }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 预警列表 -->
-          <div class="flex-1 side-card">
-            <div class="side-header">
-              <div class="side-title">
-                <div class="title-icon red small">
-                  <i class="ri-alarm-warning-line"></i>
-                </div>
-                <h3>{{ t('input.dashboard.warnings.title') }}</h3>
-              </div>
-              <span class="warning-count">{{ warnings.length }}</span>
-            </div>
-            
-            <div class="warning-list">
-              <div
-                v-for="warning in warnings.slice(0, 6)"
-                :key="warning.warningId"
-                class="warning-item"
-                :class="getWarningLevelClass(warning.warningLevel)"
-              >
-                <div class="warning-header">
-                  <span class="warning-type">{{ getWarningTypeText(warning.warningType) }}</span>
-                  <span 
-                    class="warning-level"
-                    :class="getWarningLevelColor(warning.warningLevel)"
-                  >
-                    {{ getWarningLevelText(warning.warningLevel) }}
-                  </span>
-                </div>
-                <p class="warning-content">{{ warning.warningContent }}</p>
-                <div class="warning-footer">
-                  <span><i class="ri-store-3-line"></i>{{ warning.warehouseName }}</span>
-                  <span>{{ warning.warningTime }}</span>
-                </div>
-              </div>
-              
-              <div v-if="warnings.length === 0" class="empty-warning">
-                <i class="ri-checkbox-circle-line"></i>
-                <p>{{ t('input.dashboard.warnings.noWarnings') }}</p>
+                <div class="activity-time">{{ formatActivityTime(activity.activityTime) }}</div>
               </div>
             </div>
           </div>
@@ -1232,8 +878,8 @@ onBeforeUnmount(() => {
       <!-- 底部状态栏 -->
       <footer class="dashboard-footer">
         <div class="footer-left">
-          <span><i class="text-cyan-400 ri-refresh-line"></i>{{ t('input.dashboard.lastUpdate') }}: {{ lastUpdateTime }}</span>
-          <span class="hidden sm:flex"><i class="text-yellow-400 ri-timer-line"></i>{{ t('input.dashboard.refreshInterval') }}: 30s</span>
+          <span><i class="text-green-400 ri-refresh-line"></i>{{ t('input.dashboard.lastUpdate') }}: {{ lastUpdateTime }}</span>
+          <span class="hidden sm:flex"><i class="text-yellow-400 ri-timer-line"></i>{{ t('input.dashboard.refreshInterval') }}: 60s</span>
         </div>
         <div class="footer-right">
           <span class="status-indicator">
@@ -1278,7 +924,7 @@ onBeforeUnmount(() => {
   border-radius: 12px;
   background: linear-gradient(90deg, rgba(30, 41, 59, 0.5), rgba(30, 41, 59, 0.3), rgba(30, 41, 59, 0.5));
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 212, 255, 0.2);
+  border: 1px solid rgba(0, 154, 68, 0.2);
 }
 
 .header-left {
@@ -1295,11 +941,11 @@ onBeforeUnmount(() => {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #22d3ee, #3b82f6);
+  background: linear-gradient(135deg, #009A44, #10b981);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 154, 68, 0.3);
 }
 
 .status-dot {
@@ -1316,7 +962,7 @@ onBeforeUnmount(() => {
 .header-title {
   font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, #22d3ee, #3b82f6, #a855f7);
+  background: linear-gradient(90deg, #009A44, #FEDD00, #DA121A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1332,6 +978,16 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.year-select {
+  width: 100px;
+}
+
+.year-select :deep(.el-input__wrapper) {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 8px;
 }
 
 .time-box {
@@ -1353,11 +1009,10 @@ onBeforeUnmount(() => {
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 500;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(51, 65, 85, 0.5);
   color: rgba(148, 163, 184, 0.9);
@@ -1367,14 +1022,14 @@ onBeforeUnmount(() => {
 
 .action-btn:hover {
   background: rgba(51, 65, 85, 0.5);
-  border-color: rgba(0, 212, 255, 0.5);
-  color: #22d3ee;
+  border-color: rgba(0, 154, 68, 0.5);
+  color: #009A44;
 }
 
 .action-btn.active {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #22c55e;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.2), rgba(16, 185, 129, 0.2));
+  border-color: rgba(0, 154, 68, 0.5);
+  color: #009A44;
 }
 
 /* 统计卡片网格 */
@@ -1396,40 +1051,19 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.stat-card:hover::before {
-  opacity: 1;
-}
-
-.stat-card.cyan::before { background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), transparent); }
-.stat-card.yellow::before { background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), transparent); }
-.stat-card.purple::before { background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), transparent); }
-.stat-card.blue::before { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent); }
-.stat-card.emerald::before { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent); }
-.stat-card.red::before { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), transparent); }
-
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
-.stat-card.cyan:hover { border-color: rgba(34, 211, 238, 0.5); }
-.stat-card.yellow:hover { border-color: rgba(250, 204, 21, 0.5); }
-.stat-card.purple:hover { border-color: rgba(168, 85, 247, 0.5); }
+.stat-card.green:hover { border-color: rgba(0, 154, 68, 0.5); }
+.stat-card.yellow:hover { border-color: rgba(254, 221, 0, 0.5); }
 .stat-card.blue:hover { border-color: rgba(59, 130, 246, 0.5); }
+.stat-card.red:hover { border-color: rgba(218, 18, 26, 0.5); }
+.stat-card.purple:hover { border-color: rgba(168, 85, 247, 0.5); }
 .stat-card.emerald:hover { border-color: rgba(16, 185, 129, 0.5); }
-.stat-card.red:hover { border-color: rgba(239, 68, 68, 0.5); }
 
 .stat-header {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1446,58 +1080,22 @@ onBeforeUnmount(() => {
   font-size: 18px;
 }
 
-.stat-icon.cyan { background: rgba(34, 211, 238, 0.2); color: #22d3ee; }
-.stat-icon.yellow { background: rgba(250, 204, 21, 0.2); color: #facc15; }
-.stat-icon.purple { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+.stat-icon.green { background: rgba(0, 154, 68, 0.2); color: #009A44; }
+.stat-icon.yellow { background: rgba(254, 221, 0, 0.2); color: #FEDD00; }
 .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.stat-icon.red { background: rgba(218, 18, 26, 0.2); color: #DA121A; }
+.stat-icon.purple { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
 .stat-icon.emerald { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.stat-icon.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
 .stat-badge {
   font-size: 11px;
   display: flex;
   align-items: center;
   gap: 3px;
+  color: #f59e0b;
 }
-
-.stat-badge.green { color: #22c55e; }
-
-.stat-badges {
-  display: flex;
-  gap: 4px;
-}
-
-.mini-badge {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.mini-badge.yellow { background: rgba(250, 204, 21, 0.2); color: #facc15; }
-.mini-badge.green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-
-.stat-percent {
-  font-size: 11px;
-  color: #a855f7;
-}
-
-.status-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.status-dots .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.dot.green { background: #22c55e; }
-.dot.yellow { background: #facc15; }
-.dot.red { background: #ef4444; }
 
 .stat-value {
-  position: relative;
   font-size: 26px;
   font-weight: 700;
   color: white;
@@ -1505,39 +1103,15 @@ onBeforeUnmount(() => {
 }
 
 .stat-label {
-  position: relative;
   font-size: 11px;
   color: rgba(148, 163, 184, 0.8);
 }
 
 .stat-sub {
-  position: relative;
   display: flex;
   gap: 10px;
   margin-top: 6px;
   font-size: 11px;
-}
-
-.pulse-dot {
-  position: relative;
-  width: 8px;
-  height: 8px;
-}
-
-.pulse-dot .ping {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: #ef4444;
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.pulse-dot .dot {
-  position: relative;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ef4444;
 }
 
 /* 主内容区域 */
@@ -1563,6 +1137,14 @@ onBeforeUnmount(() => {
   min-height: 0;
 }
 
+.charts-row {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
 /* 图表卡片 */
 .chart-card {
   border-radius: 12px;
@@ -1570,123 +1152,62 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(12px);
   border: 1px solid rgba(51, 65, 85, 0.5);
   overflow: hidden;
-}
-
-.trend-chart {
-  flex: 1.2;
   display: flex;
   flex-direction: column;
-  padding: 14px;
+  padding: 12px;
 }
 
 .chart-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   flex-shrink: 0;
-}
-
-.chart-header.compact {
-  padding: 10px 14px;
-  margin-bottom: 0;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
 }
 
 .chart-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .chart-title h3 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: white;
-}
-
-.chart-title.small h3 {
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .title-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 14px;
 }
 
+.title-icon.green { background: rgba(0, 154, 68, 0.2); color: #009A44; }
+.title-icon.yellow { background: rgba(254, 221, 0, 0.2); color: #FEDD00; }
+.title-icon.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.title-icon.red { background: rgba(218, 18, 26, 0.2); color: #DA121A; }
 .title-icon.small {
-  width: 26px;
-  height: 26px;
-  font-size: 13px;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
 }
 
-.title-icon.cyan { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.2)); color: #22d3ee; }
-.title-icon.purple { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
-.title-icon.yellow { background: rgba(250, 204, 21, 0.2); color: #facc15; }
-.title-icon.orange { background: rgba(251, 146, 60, 0.2); color: #fb923c; }
-.title-icon.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-.title-icon.emerald { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.title-icon.amber { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-
-.chart-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.period-btn {
-  padding: 5px 12px;
-  border-radius: 6px;
+.overall-rate {
   font-size: 11px;
-  font-weight: 500;
-  background: rgba(51, 65, 85, 0.5);
-  color: rgba(148, 163, 184, 0.9);
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.period-btn:hover {
-  background: rgba(51, 65, 85, 0.8);
-  color: white;
-}
-
-.period-btn.active {
-  background: linear-gradient(135deg, #22d3ee, #3b82f6);
-  color: white;
-  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+  color: #FEDD00;
+  padding: 4px 8px;
+  background: rgba(254, 221, 0, 0.1);
+  border-radius: 4px;
 }
 
 .chart-body {
   flex: 1;
-  min-height: 0;
-}
-
-.chart-body.small {
-  height: 100%;
-  padding: 8px;
-}
-
-/* 图表网格 */
-.charts-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  min-height: 0;
-}
-
-.charts-grid .chart-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.charts-grid .chart-body {
-  flex: 1;
+  min-height: 150px;
 }
 
 /* 侧边卡片 */
@@ -1695,17 +1216,17 @@ onBeforeUnmount(() => {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.3));
   backdrop-filter: blur(12px);
   border: 1px solid rgba(51, 65, 85, 0.5);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  padding: 12px;
 }
 
 .side-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+  margin-bottom: 10px;
   flex-shrink: 0;
 }
 
@@ -1718,240 +1239,88 @@ onBeforeUnmount(() => {
 .side-title h3 {
   font-size: 12px;
   font-weight: 600;
-  color: white;
-}
-
-.record-count, .expire-count, .warning-count {
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .record-count {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0, 154, 68, 0.2);
+  color: #009A44;
 }
 
-.expire-count {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
+.chart-body-side {
+  height: 160px;
 }
 
-.warning-count {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-}
-
-/* 记录列表 */
-.record-list {
-  padding: 8px;
-  overflow-y: auto;
+/* 活动列表 */
+.activity-list {
   flex: 1;
+  overflow-y: auto;
 }
 
-.record-item {
+.activity-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(30, 41, 59, 0.3);
-  margin-bottom: 6px;
-  transition: all 0.2s;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
 }
 
-.record-item:hover {
-  background: rgba(30, 41, 59, 0.5);
+.activity-item:last-child {
+  border-bottom: none;
 }
 
-.record-type {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.record-type.in {
-  background: rgba(34, 211, 238, 0.2);
-  color: #22d3ee;
-}
-
-.record-type.out {
-  background: rgba(250, 204, 21, 0.2);
-  color: #facc15;
-}
-
-.record-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.record-name {
-  font-size: 11px;
-  font-weight: 500;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.record-meta {
-  display: flex;
-  gap: 8px;
-  font-size: 10px;
-  color: rgba(148, 163, 184, 0.7);
-  margin-top: 2px;
-}
-
-.record-qty {
-  font-size: 11px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.record-qty.in { color: #22d3ee; }
-.record-qty.out { color: #facc15; }
-
-/* 过期列表 */
-.expire-list {
-  padding: 8px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.expire-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(30, 41, 59, 0.3);
-  margin-bottom: 6px;
-}
-
-.expire-days {
-  width: 40px;
-  height: 32px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  flex-shrink: 0;
-}
-
-.expire-days.urgent {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  animation: pulse 2s infinite;
-}
-
-.expire-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.expire-name {
-  font-size: 11px;
-  font-weight: 500;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.expire-meta {
-  font-size: 10px;
-  color: rgba(148, 163, 184, 0.7);
-  margin-top: 2px;
-}
-
-/* 预警列表 */
-.warning-list {
-  padding: 8px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.warning-item {
-  padding: 10px;
-  border-radius: 8px;
-  border-left: 3px solid;
-  margin-bottom: 8px;
-  transition: all 0.2s;
-}
-
-.warning-item:hover {
-  transform: translateX(2px);
-}
-
-.warning-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.warning-type {
-  font-size: 11px;
-  font-weight: 500;
-  color: white;
-}
-
-.warning-level {
-  font-size: 10px;
+.activity-type {
+  font-size: 9px;
   padding: 2px 6px;
   border-radius: 4px;
-  font-weight: 500;
+  border: 1px solid;
+  white-space: nowrap;
 }
 
-.warning-content {
-  font-size: 10px;
-  color: rgba(148, 163, 184, 0.8);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.activity-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-name {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
   overflow: hidden;
-  margin-bottom: 6px;
-  line-height: 1.4;
+  text-overflow: ellipsis;
 }
 
-.warning-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.activity-meta {
   font-size: 10px;
-  color: rgba(100, 116, 139, 0.8);
+  color: rgba(148, 163, 184, 0.7);
+  display: flex;
+  gap: 6px;
 }
 
-.warning-footer i {
-  margin-right: 3px;
+.activity-time {
+  font-size: 10px;
+  color: rgba(148, 163, 184, 0.6);
+  white-space: nowrap;
 }
 
-.empty-warning {
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 30px;
-  color: rgba(100, 116, 139, 0.6);
+  color: rgba(148, 163, 184, 0.5);
 }
 
-.empty-warning i {
-  font-size: 36px;
-  margin-bottom: 8px;
-  color: rgba(34, 197, 94, 0.3);
+.empty-state i {
+  font-size: 32px;
+  margin-bottom: 10px;
 }
 
-.empty-warning p {
+.empty-state p {
   font-size: 12px;
 }
 
@@ -1962,24 +1331,27 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
-  border-radius: 10px;
   background: rgba(30, 41, 59, 0.3);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(51, 65, 85, 0.3);
+  border-radius: 8px;
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.7);
 }
 
-.footer-left, .footer-right {
+.footer-left {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 11px;
-  color: rgba(100, 116, 139, 0.8);
+  gap: 20px;
 }
 
-.footer-left span, .footer-right span {
+.footer-left span {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
 }
 
 .status-indicator {
@@ -1991,63 +1363,27 @@ onBeforeUnmount(() => {
 .status-dot-small {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
   background: #22c55e;
+  border-radius: 50%;
   animation: pulse 2s infinite;
 }
 
-/* 自定义滚动条 */
-.record-list::-webkit-scrollbar,
-.expire-list::-webkit-scrollbar,
-.warning-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.record-list::-webkit-scrollbar-track,
-.expire-list::-webkit-scrollbar-track,
-.warning-list::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-}
-
-.record-list::-webkit-scrollbar-thumb,
-.expire-list::-webkit-scrollbar-thumb,
-.warning-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 255, 0.3);
-  border-radius: 2px;
-}
-
-.record-list::-webkit-scrollbar-thumb:hover,
-.expire-list::-webkit-scrollbar-thumb:hover,
-.warning-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 255, 0.5);
-}
-
-/* 动画 */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
 
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
-  }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* 响应式适配 */
-@media (max-width: 1400px) {
-  .charts-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .main-grid {
-    grid-template-columns: 1fr 280px;
-  }
+.animate-spin {
+  animation: spin 2s linear infinite;
 }
 
-@media (max-width: 1200px) {
+/* 响应式 */
+@media (max-width: 1280px) {
   .stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -2057,39 +1393,25 @@ onBeforeUnmount(() => {
   }
   
   .main-right {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    height: auto;
+    flex-direction: row;
   }
   
   .side-card {
-    max-height: 250px;
+    flex: 1;
   }
 }
 
 @media (max-width: 768px) {
-  .dashboard-content {
-    padding: 8px;
-    gap: 8px;
-  }
-  
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .charts-grid {
+  .charts-row {
     grid-template-columns: 1fr;
   }
   
   .main-right {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
-}
-
-/* 全屏样式 */
-:fullscreen .dashboard-container {
-  background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%);
-    width: 100vw;
-  height: 100vh;
 }
 </style>

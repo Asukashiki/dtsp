@@ -84,6 +84,7 @@ function transformOrgTree(treeData) {
         orgCode: node.orgCode,
         orgName: node.orgName,
         orgType: node.orgType,
+        orgGrade: node.orgGrade, // 保留orgGrade用于级别判断
         regionCode: node.regionCode,
         regionName: node.regionName
       }

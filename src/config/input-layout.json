@@ -28,6 +28,12 @@
       "name": "农田管理",
       "children": [
         {
+          "index": "/input/da",
+          "icon": "ri-user-star-line",
+          "titleKey": "newFarm.menu.daManagement",
+          "name": "DA管理"
+        },
+        {
           "index": "/input/farmer",
           "icon": "ri-user-line",
           "titleKey": "newFarm.menu.farmerManagement",
