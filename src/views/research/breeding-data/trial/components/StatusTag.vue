@@ -33,6 +33,7 @@ const tagType = computed(() => {
     S1: 'warning',   // 待审批 - 橙色
     S2: 'success',   // 已审批 - 绿色
     S3: 'danger',    // 已退回 - 红色
+    S4: 'info',      // 已作废 - 灰色
     S9: '',          // 已归档 - 默认色
     S10: 'info'      // 作废 - 灰色
   }

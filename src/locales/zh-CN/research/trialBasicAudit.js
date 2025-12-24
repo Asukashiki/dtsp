@@ -5,6 +5,7 @@ export default {
     S1: '待审批',
     S2: '已审批',
     S3: '已退回',
+    S4: '已作废',
     S9: '已归档',
     S10: '作废'
   },
@@ -16,6 +17,7 @@ export default {
     view: '查看',
     submit: '提交',
     cancel: '作废',
+    void: '作废',
     archive: '归档',
     audit: '审核',
     delete: '删除',
@@ -34,7 +36,12 @@ export default {
     cancelConfirm: '确定要作废该试验吗?',
     cancelSuccess: '作废成功',
     archiveConfirm: '确定要归档该试验吗?',
-    archiveSuccess: '归档成功'
+    archiveSuccess: '归档成功',
+    voidConfirm: '确定要作废该审核记录吗?',
+    voidSuccess: '作废成功',
+    voidFailed: '作废失败',
+    voidReasonPlaceholder: '请输入作废原因',
+    voidReasonRequired: '请输入作废原因'
   },
 
   // 列表页
@@ -84,7 +91,8 @@ export default {
     subtitle1: '对已提交试验数据进行审核',
     tabs: {
       pending: '待审核',
-      audited: '已审核'
+      audited: '已审核',
+      voided: '已作废'
     },
     list: {
       trialName: '试验名称',
@@ -94,6 +102,7 @@ export default {
       auditor: '审核人',
       auditTime: '审核时间',
       status: '审核状态',
+      voidReason: '作废原因',
       operation: '操作'
     },
     detail: {
