@@ -43,17 +43,6 @@
     >
       {{ t('research.trialBasicAudit.action.void') }}
     </el-button>
-
-    <!-- 归档 -->
-    <el-button
-      v-if="showArchive"
-      type="warning"
-      :size="size"
-      :link="link"
-      @click="handleArchive"
-    >
-      {{ t('research.trialBasicAudit.action.archive') }}
-    </el-button>
   </div>
 </template>
 
@@ -76,7 +65,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'view', 'submit', 'cancel', 'archive'])
+const emit = defineEmits(['edit', 'view', 'submit', 'cancel'])
 
 const { t } = useI18n()
 
@@ -84,16 +73,14 @@ const { t } = useI18n()
 const status = computed(() => props.trial.trialStatus || props.trial.workflowStatus || 'S0')
 
 const showEdit = computed(() => status.value === 'S0' || status.value === 'S3')
-const showView = computed(() => status.value === 'S1' || status.value === 'S9' || status.value === 'S10')
+const showView = computed(() => status.value === 'S0' ||status.value === 'S1' || status.value === 'S2' || status.value === 'S3' || status.value === 'S9' || status.value === 'S10')
 const showSubmit = computed(() => status.value === 'S0' || status.value === 'S3')
-const showCancel = computed(() => status.value === 'S0' || status.value === 'S3')
-const showArchive = computed(() => status.value === 'S2')
+const showCancel = computed(() => status.value === 'S0' || status.value === 'S1' || status.value === 'S2' || status.value === 'S3' || status.value === 'S9' || status.value === 'S10')
 
 const handleEdit = () => emit('edit', props.trial)
 const handleView = () => emit('view', props.trial)
 const handleSubmit = () => emit('submit', props.trial)
 const handleCancel = () => emit('cancel', props.trial)
-const handleArchive = () => emit('archive', props.trial)
 </script>
 
 <style scoped lang="scss">

@@ -589,7 +589,7 @@ const generateBatchId = () => {
 }
 
 const goBack = () => {
-  router.push('/research/breeding-data/batch')
+  router.back()
 }
 
 // 监听年份变化，自动生成 batchId

@@ -121,11 +121,11 @@
           {{ t('research.trialBasicAudit.action.return') }}
         </el-button>
         <template v-if="auditData.auditStatus === 'S1' && !isReadonly">
-          <el-button type="danger" @click="handleReject">
-            {{ t('research.trialBasicAudit.action.reject') }}
-          </el-button>
           <el-button type="success" @click="handleApprove">
             {{ t('research.trialBasicAudit.action.approve') }}
+          </el-button>
+          <el-button type="danger" @click="handleReject">
+            {{ t('research.trialBasicAudit.action.reject') }}
           </el-button>
         </template>
       </div>
