@@ -379,16 +379,16 @@ const shouldShowEditButton = (row) => {
   return status === 'S0' || status === 'S1' || status === 'S3'
 }
 
-// 判断是否显示提交审核按钮（只在审批状态为S2或S3时显示）
+// 判断是否显示提交审核按钮（只在审批状态为S0、S1或S3时显示）
 const shouldShowSubmitButton = (row) => {
   const status = row.workflowStatus
-  return status === 'S2' || status === 'S3'
+  return status === 'S0' || status === 'S1' || status === 'S3'
 }
 
-// 判断是否显示作废按钮（只在审批状态不是S10时显示）
+// 判断是否显示作废按钮（只在审批状态为S0、S1或S3时显示）
 const shouldShowVoidButton = (row) => {
   const status = row.workflowStatus
-  return status !== 'S10'
+  return status === 'S0' || status === 'S1' || status === 'S3'
 }
 
 // 提交审核

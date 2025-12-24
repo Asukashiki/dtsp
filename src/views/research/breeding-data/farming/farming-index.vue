@@ -118,9 +118,9 @@
                         <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                       </el-button>
 
-                      <!-- Show "Invalid" button for S2 and S10 status -->
+                      <!-- Show "Invalid" button for S0, S1 and S3 status -->
                       <el-button
-                        v-if="row.workflowStatus === 'S2' || row.workflowStatus === 'S3' || row.auditStatus === 'S2' || row.auditStatus === 'S3'"
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
                         link type="warning"
                         @click="handleCancel(row)"
                       >
@@ -188,14 +188,14 @@
                       <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
                     </el-button>
 
-                    <!-- Show "Invalid" button for S2 and S10 status -->
+                    <!-- Show "Invalid" button for S0, S1 and S3 status -->
                     <el-button
-                      v-if="item.workflowStatus === 'S2' || item.workflowStatus === 'S10' || item.auditStatus === 'S2' || item.auditStatus === 'S10'"
+                      v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
                       size="small"
                       type="warning"
                       @click="handleCancel(item)"
                     >
-                      <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
+                      <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
                     </el-button>
 
                     <!-- Show "Edit" button for editable status -->
