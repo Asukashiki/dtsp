@@ -126,15 +126,11 @@
           </div>
           <div class="info-item full-width" v-if="licenseDetail.diseaseResistance">
             <span class="label">{{ $t('research.breedingLicense.form.diseaseResistance') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.diseaseResistance) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.diseaseResistance }}</span>
           </div>
           <div class="info-item full-width" v-if="licenseDetail.stressTolerance">
             <span class="label">{{ $t('research.breedingLicense.form.stressTolerance') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.stressTolerance) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.stressTolerance }}</span>
           </div>
           <div class="info-item full-width" v-if="licenseDetail.grainQualityTraits">
             <span class="label">{{ $t('research.breedingLicense.form.grainQualityTraits') }}</span>
@@ -142,9 +138,7 @@
           </div>
           <div class="info-item full-width" v-if="licenseDetail.otherTraits">
             <span class="label">{{ $t('research.breedingLicense.form.otherTraits') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.otherTraits) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.otherTraits }}</span>
           </div>
         </div>
       </div>
@@ -213,15 +207,15 @@ const getStatusText = (status) => {
   return getLabelByValue('license_status', status) || status
 }
 
-// Format JSON
-const formatJson = (jsonStr) => {
-  try {
-    const obj = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr
-    return JSON.stringify(obj, null, 2)
-  } catch (e) {
-    return jsonStr
-  }
-}
+// // Format JSON
+// const formatJson = (jsonStr) => {
+//   try {
+//     const obj = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr
+//     return JSON.stringify(obj, null, 2)
+//   } catch (e) {
+//     return jsonStr
+//   }
+// }
 
 // Fetch License Detail
 const fetchLicenseDetail = async () => {

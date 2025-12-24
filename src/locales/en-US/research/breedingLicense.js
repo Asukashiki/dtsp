@@ -73,12 +73,12 @@ export default {
     varietyTraits: 'Variety Traits',
     minYieldPotential: 'Min Yield Potential (t/ha)',
     maxYieldPotential: 'Max Yield Potential (t/ha)',
-    diseaseResistance: 'Disease Resistance (JSON)',
-    stressTolerance: 'Stress Tolerance (JSON)',
+    diseaseResistance: 'Disease Resistance ',
+    stressTolerance: 'Stress Tolerance ',
     maturityDays: 'Maturity Days',
     plantHeight: 'Plant Height (cm)',
     grainQualityTraits: 'Grain Quality Traits',
-    otherTraits: 'Other Traits (JSON)',
+    otherTraits: 'Other Traits ',
 
     // Operation Information
     operationInfo: 'Operation Information',

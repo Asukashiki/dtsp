@@ -324,8 +324,8 @@ export default {
       biomassWeightKg: '请输入生物量重量',
       spikeDensity: '请输入穗密度',
       grainWeightPerSpike: '请输入每穗粒重',
-      diseaseScore: '请输入疾病评分(JSON格式)',
-      stressIndicators: '请输入压力指标(JSON格式)',
+      diseaseScore: '请输入疾病评分',
+      stressIndicators: '请输入压力指标',
       pestObservation: '请输入害虫观察',
     },
 
