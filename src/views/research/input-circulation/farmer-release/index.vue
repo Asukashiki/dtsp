@@ -73,10 +73,10 @@
         <el-icon><Plus /></el-icon>
         {{ t('add') }}
       </el-button>
-      <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
+      <!-- <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
         <el-icon><Delete /></el-icon>
-        {{ t('batchDelete') }}
-      </el-button>
+        {{ t('batch') }}
+      </el-button> -->
     </el-card>
 
     <!-- 桌面端表格 -->
@@ -116,9 +116,9 @@
         <el-table-column prop="releaseOrg" :label="t('releaseOrg')" min-width="150" />
         <el-table-column :label="t('actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row.id)">{{ t('detail') }}</el-button>
-            <el-button link type="primary" @click="handleEdit(row.id)">{{ t('edit') }}</el-button>
-            <el-button link type="danger" @click="handleDelete(row.id)">{{ t('delete') }}</el-button>
+            <el-button link type="primary" @click="handleDetail(row.id)">{{ t('common.view') }}</el-button>
+            <el-button link type="primary" @click="handleEdit(row.id)">{{ t('common.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row.id)">{{ t('common.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

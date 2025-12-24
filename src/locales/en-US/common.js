@@ -2,7 +2,7 @@ export default {
   confirm: 'Confirm',
   cancel: 'Cancel',
   save: 'Save',
-  delete: 'Delete',
+  delete: 'Void',
   edit: 'Edit',
   search: 'Search',
   reset: 'Reset',

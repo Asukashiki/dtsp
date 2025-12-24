@@ -179,7 +179,7 @@
                       >
                         <i class="ri-delete-bin-line"></i>
                         {{ $t('common.delete') }}
-                      </el-button>
+                      </el-button>  
                     </div>
                   </template>
                 </el-table-column>

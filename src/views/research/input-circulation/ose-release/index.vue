@@ -34,7 +34,7 @@
     <!-- 工具栏 -->
     <el-card class="toolbar-card">
       <el-button type="primary" @click="handleAdd"><el-icon><Plus /></el-icon>{{ $t('common.add') }}</el-button>
-      <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch"><el-icon><Delete /></el-icon>{{ $t('common.batchDelete') }}</el-button>
+      <!-- <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch"><el-icon><Delete /></el-icon>{{ $t('common.batchDelete') }}</el-button> -->
     </el-card>
 
     <!-- 数据表格 - 桌面端 -->
