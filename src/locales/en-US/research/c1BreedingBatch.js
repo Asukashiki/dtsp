@@ -1,22 +1,18 @@
 export default {
-  // 页面标题
-  title: 'Seed Multiplication Information',
+  title: 'C1 Propagation Batch Management',
   subtitle: 'Manage C1 seed propagation batch information',
 
-  // 操作
   add: 'Add Batch',
   edit: 'Edit Batch',
-  delete: 'Delete',
+  delete: 'Void',
   view: 'View Details',
 
-  // 搜索
   searchPlaceholder: 'Search by batch ID, variety name...',
-  filterByCrop: 'Filter by crop',
-  filterByStatus: 'Filter by status',
+  filterByCrop: 'Filter by Crop',
+  filterByStatus: 'Filter by Status',
   allCrops: 'All Crops',
   allStatus: 'All Status',
 
-  // 表单
   form: {
     basicInfo: 'Basic Information',
     breedingInfo: 'Breeding Information',
@@ -41,11 +37,10 @@ export default {
     orgId: 'Organization ID',
     orgName: 'Organization Name',
     orgType: 'Organization Type',
-    location: 'Location',
+    location: 'Propagation Location',
     remark: 'Remarks'
   },
 
-  // 占位符
   placeholder: {
     linkedBatchNo: 'Please select an approved propagation application',
     cropType: 'Please select crop type',
@@ -61,11 +56,10 @@ export default {
     plantingArea: 'Please enter planting area',
     orgId: 'Organization ID',
     orgName: 'Organization Name',
-    location: 'Please enter location',
+    location: 'Please enter propagation location',
     remark: 'Please enter remarks'
   },
 
-  // 表格列
   columns: {
     batchId: 'Batch ID',
     cropType: 'Crop Type',
@@ -78,7 +72,6 @@ export default {
     actions: 'Actions'
   },
 
-  // 繁殖级别
   breedingLevel: {
     parentPrep: 'Parent Preparation',
     original: 'Pre-basic/Breeder Seed',
@@ -86,17 +79,15 @@ export default {
     certified: 'Certified Seed'
   },
 
-  // 状态
   status: {
     ongoing: 'Ongoing',
     completed: 'Completed',
-    terminated: 'Terminated'
+    terminated: 'Terminated',
+    voided: 'Voided'
   },
 
-  // 审核状态
   auditApproved: 'Approved',
 
-  // 详情页
   detail: {
     title: 'Batch Details',
     tabs: {
@@ -109,11 +100,10 @@ export default {
     yieldData: 'Yield Data',
     relatedRecords: 'Related Records',
     orgInfo: 'Organization Information',
-    trackingCount: 'Tracking Records',
-    testCount: 'Test Records'
+    trackingCount: 'Tracking Records Count',
+    testCount: 'Test Records Count'
   },
 
-  // 验证规则
   rules: {
     cropTypeRequired: 'Please select crop type',
     varietyNameRequired: 'Please enter variety name',
@@ -121,21 +111,20 @@ export default {
     startDateRequired: 'Please select start date'
   },
 
-  // 消息
   messages: {
     addSuccess: 'Batch added successfully',
     updateSuccess: 'Batch updated successfully',
-    deleteSuccess: 'Batch deleted successfully',
-    deleteConfirm: 'Are you sure to delete this batch?',
-    loadError: 'Failed to load data'
+    deleteSuccess: 'Batch voided successfully',
+    deleteConfirm: 'Are you sure to void this batch?',
+    loadError: 'Failed to load data',
+    deleteInvalid: 'Void'
   },
 
-  // 跟踪记录
   tracking: {
     add: 'Add Tracking',
     edit: 'Edit Tracking',
     detail: 'Tracking Details',
-    deleteConfirm: 'Are you sure to delete this tracking record?',
+    deleteConfirm: 'Are you sure to void this tracking record?',
     trackingId: 'Tracking ID',
     location: 'Location',
     result: 'Tracking Result',
@@ -153,12 +142,11 @@ export default {
     inspectionValue: 'Inspection Value'
   },
 
-  // 检测记录
   test: {
     add: 'Add Test',
     edit: 'Edit Test',
     detail: 'Test Details',
-    deleteConfirm: 'Are you sure to delete this test record?',
+    deleteConfirm: 'Are you sure to void this test record?',
     testId: 'Test ID',
     testItem: 'Test Item',
     testDate: 'Test Date',
@@ -178,4 +166,4 @@ export default {
     passTrue: 'Passed',
     passFalse: 'Failed'
   }
-}
+}s

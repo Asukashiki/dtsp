@@ -130,11 +130,11 @@ export default {
     jsonFormat: 'Please enter valid JSON format',
   },
 
-  // Action Buttons
+  // Action Buttons：
   actions: {
     add: 'Add License',
     edit: 'Edit',
-    delete: 'Delete',
+    delete: 'Void',
     detail: 'View Detail',
     backToList: 'Back to List',
     submit: 'Submit',
@@ -144,13 +144,13 @@ export default {
     upload: 'Upload File',
   },
 
-  // Messages
+  // Messages：
   message: {
     addSuccess: 'License added successfully',
     updateSuccess: 'License updated successfully',
-    deleteSuccess: 'License deleted successfully',
+    deleteSuccess: 'License voided successfully',
     submitSuccess: 'Submitted successfully',
-    confirmDelete: 'Are you sure you want to delete the selected license(s)?',
+    confirmDelete: 'Are you sure you want to void the selected license(s)?',
     selectAtLeastOne: 'Please select at least one record',
     batchAlreadyHasLicense: 'This batch already has a license',
     datasetNotApproved: 'Dataset has not been approved yet',
