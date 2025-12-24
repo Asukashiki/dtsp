@@ -127,7 +127,7 @@
           <el-table-column :label="$t('input.inventory.stockOut.columns.actions')" width="280" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i> {{ $t('input.inventory.stockOut.actions.view') }}
+                <i class="ri-eye-line"></i> {{ $t('common.view') }}
               </el-button>
               <el-button v-if="row.outbound_status === 'pending'" link type="success" @click="handleAudit(row)">
                 <i class="ri-check-line"></i> {{ $t('input.inventory.stockOut.actions.audit') }}

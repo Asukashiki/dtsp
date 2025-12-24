@@ -2,10 +2,10 @@
   <div class="seed-promotion-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-icon header-left">
         <i class="ri-movie-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
         <h1 class="page-title">{{ $t('research.seedPromotion.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.seedPromotion.subtitle') }}</p>
       </div>
@@ -358,56 +358,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.seed-promotion-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  min-height: calc(100vh - 60px);
-}
-
-/* 页面头部 */
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 32px;
-  padding: 32px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.2);
-
-  .header-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 24px;
-
-    i {
-      font-size: 40px;
-      color: white;
-    }
-  }
-
-  .header-text {
-    flex: 1;
-    color: white;
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-    }
-
-    .page-subtitle {
-      font-size: 16px;
-      opacity: 0.95;
-      margin: 0;
-    }
-  }
-}
-
 /* 工具栏 */
 .toolbar {
   margin-bottom: 24px;

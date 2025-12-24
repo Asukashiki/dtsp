@@ -2,15 +2,13 @@
   <div class="c1-batch-audit-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-audit-line header-icon"></i>
+        <div class="header-left header-icon">
+          <i class="ri-checkbox-circle-line"></i>
         </div>
-        <div class="header-text">
+        <div class="header-content">
           <h1 class="page-title">{{ $t('seed.c1BatchAudit.title') }}</h1>
           <p class="page-subtitle">{{ $t('seed.c1BatchAudit.subtitle') }}</p>
         </div>
-      </div>
     </div>
 
     <!-- 内容区域 -->
@@ -445,17 +443,6 @@ onMounted(() => loadData())
 </script>
 
 <style scoped>
-.c1-batch-audit-container { min-height: calc(100vh - 120px); position: relative; }
-
-/* 页面头部 */
-.page-header { background: linear-gradient(135deg, #009A44 0%, #00b350 100%); padding: 24px 0; margin: -24px 0 24px 0; border-radius: 0 0 16px 16px; }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-.header-icon-wrapper { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-shrink: 0; }
-.header-icon { font-size: 32px; color: white; }
-.header-text { flex: 1; color: white; min-width: 0; }
-.page-title { font-size: 24px; font-weight: 600; margin: 0 0 4px 0; }
-.page-subtitle { font-size: 14px; opacity: 0.9; margin: 0; }
-
 /* 搜索栏 */
 .search-bar { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
 .search-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }

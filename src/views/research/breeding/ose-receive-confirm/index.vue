@@ -72,6 +72,7 @@
                 :placeholder="$t('research.breeding.seed.receiveConfirm.searchPlaceholder')"
                 clearable
                 class="search-input"
+                @keyup.enter="handleSearch"
               >
                 <template #prefix>
                   <i class="ri-search-line"></i>
@@ -82,16 +83,30 @@
                 :placeholder="$t('research.breeding.seed.receiveConfirm.filterByStatus')"
                 clearable
                 class="filter-select"
+                @change="handleSearch"
               >
                 <el-option :label="$t('research.breeding.seed.receiveConfirm.allStatus')" value="" />
                 <el-option :label="$t('research.breeding.seed.receiveConfirm.status.PENDING')" value="PENDING" />
                 <el-option :label="$t('research.breeding.seed.receiveConfirm.status.CONFIRMED')" value="CONFIRMED" />
               </el-select>
+              <el-button type="primary" @click="handleSearch">
+                <i class="ri-search-line"></i>
+                {{ $t('common.search') }}
+              </el-button>
+              <el-button @click="handleReset">
+                <i class="ri-restart-line"></i>
+                {{ $t('common.reset') }}
+              </el-button>
             </div>
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+                <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.distributeId')" width="200">
+                  <template #default="{ row }">
+                    {{ row.distributeId }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')" width="200">
                   <template #default="{ row }">
                     <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
@@ -176,6 +191,10 @@
             <!-- 移动端卡片 -->
             <div class="mobile-cards mobile-only">
               <div v-for="item in filteredList" :key="item.receiveConfirmId" class="mobile-card">
+                <div class="card-row">
+                  <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.distributeId') }}:</span>
+                  <span class="value">{{ item.distributeDetail?.distributeId }}</span>
+                </div>
                 <div class="card-row">
                   <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.oseName') }}:</span>
                   <span class="value">{{ item.oseName }}</span>
@@ -269,29 +288,6 @@ const currentDetailData = ref({})
 const filteredList = computed(() => {
   let list = dataList.value
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item => {
-      // 检查OSE名称
-      if (item.oseName?.toLowerCase().includes(query)) {
-        return true
-      }
-
-      // 检查分发明细中的字段
-      if (item.distributeDetail?.detailList) {
-        return item.distributeDetail.detailList.some(detail => {
-          return (
-            detail.breedSeedProduceBatchId?.toLowerCase().includes(query) ||
-            detail.seedType?.toLowerCase().includes(query) ||
-            detail.varietyName?.toLowerCase().includes(query)
-          )
-        })
-      }
-
-      return false
-    })
-  }
-
   if (filterStatus.value) {
     list = list.filter(item => item.receiveStatus === filterStatus.value)
   }
@@ -329,7 +325,8 @@ const loadData = async () => {
     const params = {
       pageNum: currentPage.value,
       pageSize: pageSize.value,
-      receiveStatus: filterStatus.value || undefined
+      receiveStatus: filterStatus.value || undefined,
+      searchKeyword: searchQuery.value || undefined
     }
     const res = await getOseReceiveConfirmList(params)
     if (res.code === 200) {
@@ -365,6 +362,18 @@ const handleView = (row) => {
   showDetail.value = true
 }
 
+const handleSearch = () => {
+  currentPage.value = 1
+  loadData()
+}
+
+const handleReset = () => {
+  searchQuery.value = ''
+  filterStatus.value = ''
+  currentPage.value = 1
+  loadData()
+}
+
 const handleConfirmSuccess = () => {
   showConfirmDialog.value = false
   loadData()
@@ -376,55 +385,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-}
 
-.page-wrapper {
-  margin: 0 auto;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 20px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-}
-
-.header-content {
-  flex: 1;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: white;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
 
 /* 统计卡片区域 */
 .stats-grid {

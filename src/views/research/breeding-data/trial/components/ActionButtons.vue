@@ -19,7 +19,7 @@
       :link="link"
       @click="handleView"
     >
-      {{ t('research.trialBasicAudit.action.view') }}
+      <i class="ri-eye-line"></i> {{ t('research.trialBasicAudit.action.view') }}
     </el-button>
 
     <!-- 提交 -->

@@ -189,7 +189,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.submitterName') }}:</span>
-              <span class="value">{{ detailData.submitterName || '-' }}</span>
+              <span class="value">{{ detailData.submitByName || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetAudit.form.submitOrgName') }}:</span>

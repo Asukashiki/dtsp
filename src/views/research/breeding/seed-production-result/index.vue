@@ -2,10 +2,11 @@
   <div class="result-container">
     <div v-show="!showForm && !showDetail" class="list-view">
        <div class="page-header">
-        <div class="header-content">
-            <div class="header-icon-wrapper">
-            <i class="ri-file-list-3-line header-icon"></i>
+       
+            <div class="header-left header-icon">
+            <i class="ri-file-list-3-line "></i>
             </div>
+             <div class="header-content">
             <div class="header-text">
             <h1 class="page-title">{{ $t('research.breeding.seed.production.result.title') }}</h1>
             <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
@@ -48,6 +49,7 @@
           <!-- Table -->
           <el-table v-loading="loading" :data="resultList" style="width: 100%">
              <el-table-column type="index" width="50" align="center" />
+             <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchId')" prop="produceBatchId" min-width="150" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchName')" prop="produceBatchName" min-width="150" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.varietyName')" prop="varietyName" min-width="120" show-overflow-tooltip />
              <el-table-column :label="$t('research.breeding.seed.production.columns.breedBatchName')" prop="breedBatchName" min-width="150" show-overflow-tooltip />
@@ -175,66 +177,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.result-container {
-    min-height: calc(100vh - 120px);
-    position: relative;
-    padding: 20px;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 24px 0;
-  margin: -20px -20px 20px -20px;
-  border-radius: 0 0 16px 16px;
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.header-icon {
-  font-size: 32px;
-  color: white;
-}
-
-.header-text {
-  color: white;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    min-height: 400px;
-}
 
 .search-form {
   margin-bottom: 20px;

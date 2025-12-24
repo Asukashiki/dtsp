@@ -325,7 +325,7 @@
                   <template #default="{ row }">
                     <el-button link type="primary" @click="handleDrillDownDetail(row)">
                       <i class="ri-eye-line"></i>
-                      Detail
+                      {{ $t('common.view') }}
                     </el-button>
                   </template>
                 </el-table-column>
@@ -445,7 +445,7 @@
                   <template #default="{ row }">
                     <el-button link type="primary" @click="handleDrillDown2Detail(row)">
                       <i class="ri-eye-line"></i>
-                      Detail
+                      {{ $t('common.view') }}
                     </el-button>
                   </template>
                 </el-table-column>

@@ -87,7 +87,7 @@
                       @click="handleView(row)"
                     >
                       <i class="ri-eye-line"></i>
-                      {{ $t('common.viewDetails') }}
+                      {{ $t('common.view') }}
                     </el-button>
                     <el-button
                       v-if="row.status === 1"
@@ -156,7 +156,7 @@
                 <div class="card-actions">
                   <el-button type="primary" plain size="small" @click="handleView(item)">
                     <i class="ri-eye-line"></i>
-                    {{ $t('common.viewDetails') }}
+                    {{ $t('common.view') }}
                   </el-button>
                   <el-button
                     v-if="item.status === 1"

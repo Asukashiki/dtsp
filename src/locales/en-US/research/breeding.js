@@ -279,6 +279,10 @@ export default {
         // title: 'PRODUCTION DATA COLLECTION',
         title: 'Production Data Collection',
         selection: 'Production Batch Selection',
+        section: {
+          productionBatchSelection: 'Production Batch Selection',
+          collectionData: 'Collection Data',
+        },
       },
     },
 
@@ -543,6 +547,7 @@ export default {
 
       columns: {
         receiveConfirmId: 'Receive Confirmation ID',
+        distributeId: 'Distribution ID',
         oseName: 'OSE Name',
         seedId: 'Seed ID',
         breedSeedProduceBatchId: 'Production Batch ID',

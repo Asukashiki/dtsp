@@ -38,6 +38,7 @@
                       filterable
                       style="width: 100%"
                       @change="handlePlotChange"
+                      :disabled="isAuditMode"
                     >
                       <el-option
                         v-for="item in plotOptions"
@@ -69,13 +70,14 @@
                       value-format="YYYY-MM-DD HH:mm:ss"
                       style="width: 100%"
                       placeholder="Select activity date and time"
+                      :disabled="isAuditMode"
                     />
                   </el-form-item>
                 </el-col>
                 <!-- Activity Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Activity Type" prop="activityType">
-                    <el-select v-model="formData.activityType" placeholder="Please select activity type" style="width: 100%">
+                    <el-select v-model="formData.activityType" placeholder="Please select activity type" style="width: 100%" :disabled="isAuditMode">
                       <el-option label="Fertilizer" value="fertilizer" />
                       <el-option label="Irrigation" value="irrigation" />
                       <el-option label="Pest Control" value="pest_control" />
@@ -88,19 +90,19 @@
                 <!-- Input Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Input Name">
-                    <el-input v-model="formData.inputName" placeholder="Enter input name (e.g., fertilizer type, pesticide name)" />
+                    <el-input v-model="formData.inputName" placeholder="Enter input name (e.g., fertilizer type, pesticide name)" :disabled="isAuditMode" />
                   </el-form-item>
                 </el-col>
                 <!-- Quantity -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Quantity">
-                    <el-input-number v-model="formData.quantity" :min="0" :precision="2" style="width: 100%" placeholder="Enter quantity" />
+                    <el-input-number v-model="formData.quantity" :min="0" :precision="2" style="width: 100%" placeholder="Enter quantity" :disabled="isAuditMode" />
                   </el-form-item>
                 </el-col>
                 <!-- Unit -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Unit">
-                    <el-select v-model="formData.unit" placeholder="Please select unit" style="width: 100%">
+                    <el-select v-model="formData.unit" placeholder="Please select unit" style="width: 100%" :disabled="isAuditMode">
                       <el-option label="kg" value="kg" />
                       <el-option label="g" value="g" />
                       <el-option label="L" value="L" />
@@ -118,6 +120,7 @@
                       placeholder="Please select operator"
                       filterable
                       style="width: 100%"
+                      :disabled="isAuditMode"
                     >
                       <el-option
                         v-for="item in farmerOptions"
@@ -141,6 +144,7 @@
                       type="textarea"
                       :rows="3"
                       placeholder="Enter operation description"
+                      :disabled="isAuditMode"
                     />
                   </el-form-item>
                 </el-col>
@@ -148,7 +152,7 @@
             </div>
           </div>
 
-          <!-- Audit Information (仅编辑模式显示) -->
+          <!-- Audit Information (Only shown in edit mode) -->
           <div class="info-card" v-if="isEdit">
             <div class="card-header">
               <div class="card-title">
@@ -158,6 +162,41 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Workflow Status">
+                    <el-tag :type="getStatusType(formData.workflowStatus || formData.auditStatus || 'S1')">
+                      {{ getLabelByValue('flow_status', formData.workflowStatus || formData.auditStatus || 'S1') }}
+                    </el-tag>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Auditor (audit_by)" :prop="isAuditMode ? 'auditBy' : ''">
+                    <el-input
+                      v-model="formData.auditBy"
+                      :disabled="!isAuditMode"
+                      placeholder="Auditor will be automatically filled"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Audit Time (audit_time)">
+                    <el-input
+                      v-model="formData.auditTime"
+                      disabled
+                      placeholder="Audit time will be automatically generated"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item label="Remark" >
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="4"
+                      disabled
+                    />
+                  </el-form-item>
+                </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Creator">
                     <el-input v-model="formData.creator" disabled />
@@ -178,24 +217,48 @@
                     <el-input v-model="formData.updateTime" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Auditor">
-                    <el-input v-model="formData.auditor" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Audited Time">
-                    <el-input v-model="formData.auditedDatetime" disabled />
+              </el-row>
+            </div>
+          </div>
+
+          <!-- Audit Operation Area (Only shown in audit mode) -->
+          <div class="info-card" v-if="isAuditMode">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-check-line"></i>
+                <span>Audit Operation</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24">
+                  <el-form-item label="Audit Remark" prop="auditRemark">
+                    <el-input
+                      v-model="formData.auditRemark"
+                      type="textarea"
+                      :rows="4"
+                      placeholder="Please enter audit remark (required)"
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
           </div>
 
-          <!-- 操作按钮 -->
+          <!-- Operation Buttons -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+            <template v-if="isAuditMode">
+              <el-button type="danger" @click="handleReject" :loading="submitLoading">
+                <i class="ri-close-line"></i>Disagree
+              </el-button>
+              <el-button type="success" @click="handleApprove" :loading="submitLoading">
+                <i class="ri-check-line"></i>agree
+              </el-button>
+            </template>
+            <template v-else>
+              <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+            </template>
           </div>
         </el-form>
       </div>
@@ -207,58 +270,104 @@
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
+import { auditFarmingRecord } from '@/api/farmingRecordAudit'
 import { getFarmerOptions } from '@/api/newFarm'
 import { getUserInfo } from '@/utils/auth'
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
 const plotOptions = ref([])
 const farmerOptions = ref([])
+const { options: dictOptions, getLabelByValue } = useDict('flow_status')
+
+// Determine tag type based on status value
+const getStatusType = (status) => {
+  const typeMap = {
+    'S0': 'info',     // Draft
+    'S1': 'warning',  // Pending Approval
+    'S2': 'success',  // Approved
+    'S3': 'danger',   // Rejected
+    'S10': 'info'     // Invalid
+  }
+  return typeMap[status] || 'warning'
+}
 
 const isEdit = computed(() => !!route.params.farmingId)
+const isAuditMode = computed(() => route.path.includes('farming-form'))
+
+
 
 const formData = reactive({
   farmingRecordId: '',
   plotId: '',
   trialId: '',
   batchId: '',
-  activityDate: null, // 初始化为null，后续在onMounted中设置默认值
+  activityDate: null, // Initialize as null, will be set to default value in onMounted
   activityType: '',
   inputName: '',
   quantity: null,
   unit: '',
   operatorId: '',
-  operationDesc: ''
+  operationDesc: '',
+  // Audit related fields
+  workflowStatus: '',
+  auditStatus: '',
+  auditBy: '',
+  auditor: '',
+  auditTime: '',
+  auditRemark: ''
 })
 
 const rules = {
   plotId: [{ required: true, message: 'Please select Plot ID', trigger: 'change' }],
   activityDate: [{ required: true, message: 'Please select Activity Date', trigger: 'change' }],
   activityType: [{ required: true, message: 'Please select Activity Type', trigger: 'change' }],
-  operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }]
+  operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }],
+  auditRemark: [
+    {
+      required: true,
+      message: 'Please enter audit remark',
+      trigger: 'blur',
+      validator: (rule, value, callback) => {
+        if (isAuditMode.value && (!value || value.trim() === '')) {
+          callback(new Error('Audit remark is required'))
+        } else {
+          callback()
+        }
+      }
+    }
+  ]
 }
 
-// 将日期对象格式化为 'YYYY-MM-DD HH:mm:ss'
+// Format date object to 'YYYY-MM-DD HH:mm:ss'
+const formatDate = (date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  const seconds = String(d.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+// Format current date to 'YYYY-MM-DD HH:mm:ss'
 const formatNow = () => {
-  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
-  const d = new Date()
-  const Y = d.getFullYear()
-  const M = pad(d.getMonth() + 1)
-  const D = pad(d.getDate())
-  const h = pad(d.getHours())
-  const m = pad(d.getMinutes())
-  const s = pad(d.getSeconds())
-  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+  return formatDate(new Date())
 }
 
-// 解析当前用户的可用操作员ID，优先 farmerId，其次 userId/id
+// Parse current user's available operator ID, prioritize farmerId, then userId/id
 const resolveOperatorId = () => {
   const ui = getUserInfo() || {}
   const candidate = ui.farmerId ?? ui.userId ?? ui.id ?? ui?.user?.userId ?? ui?.user?.id
@@ -279,7 +388,7 @@ const loadFarmerOptions = async () => {
     const res = await getFarmerOptions()
     farmerOptions.value = res.data || []
 
-    // 确保当前用户在选项中，以便默认值能正确显示
+    // Ensure current user is in options so default value can be displayed correctly
     const opId = resolveOperatorId()
     if (opId) {
       const exists = farmerOptions.value.some((x) => String(x.farmerId) === String(opId))
@@ -288,7 +397,7 @@ const loadFarmerOptions = async () => {
         const displayName = ui?.user?.name || ''
         farmerOptions.value.unshift({ farmerId: opId, farmerName: displayName || String(opId) })
       }
-      // 若为新建且尚未设置，赋默认值
+      // If it's new creation and not set yet, assign default value
       if (!isEdit.value && !formData.operatorId) {
         formData.operatorId = String(opId)
       }
@@ -309,9 +418,9 @@ const handlePlotChange = (plotId) => {
 
 const getInfo = async () => {
   if (!isEdit.value) {
-    // 新建模式下确保activityDate有默认值
+    // Ensure activityDate has default value in new creation mode
     formData.activityDate = formatNow()
-    // 新建模式下默认操作员为当前用户
+    // Default operator to current user in new creation mode
     if (!formData.operatorId) {
       const opId = resolveOperatorId()
       if (opId) formData.operatorId = opId
@@ -322,6 +431,15 @@ const getInfo = async () => {
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
     Object.assign(formData, res.data)
+
+    // If it's audit mode, automatically fill in auditor and audit time
+    if (isAuditMode.value) {
+      if (userStore.userInfo && userStore.userInfo.user) {
+        const user = userStore.userInfo.user
+        formData.auditBy = user.name || user.REALNAME || user.USERNAME || user.username || user.NAME || user.userId || ''
+      }
+      formData.auditTime = formatNow()
+    }
   } catch (error) {
     console.error('Failed to load farming record info:', error)
   } finally {
@@ -336,8 +454,8 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
-    
-    // 自动设置操作员ID为登录用户
+
+    // Automatically set operator ID to logged-in user
     if (!submitData.operatorId) {
       const userInfo = getUserInfo()
       if (userInfo && userInfo.userId) {
@@ -349,7 +467,7 @@ const handleSubmit = async () => {
       await editFarmingRecord(submitData)
       ElMessage.success('Farming record updated successfully')
     } else {
-      // 新建时设置初始审核状态为S1:待审批
+      // Set initial audit status to S1: Pending Approval for new creation
       submitData.auditStatus = 'S1'
       await addFarmingRecord(submitData)
       ElMessage.success('Farming record added successfully')
@@ -362,27 +480,98 @@ const handleSubmit = async () => {
   }
 }
 
+const handleApprove = async () => {
+  // Validate audit opinion
+  if (!formData.auditRemark || formData.auditRemark.trim() === '') {
+    ElMessage.error('Audit remark is required')
+    return
+  }
+
+  ElMessageBox.confirm('Are you sure you want to approve this farming record?', 'Confirm Audit', {
+    type: 'success',
+    confirmButtonText: 'Approve',
+    cancelButtonText: 'Cancel'
+  }).then(async () => {
+    submitLoading.value = true
+    try {
+      const userInfo = getUserInfo()
+      await auditFarmingRecord({
+        farmingId: route.params.farmingId,
+        workflowStatus: 'S2',
+        auditRemark: formData.auditRemark,
+      })
+      ElMessage.success('Record approved')
+      goBack()
+    } catch (error) {
+      console.error('Approve failed:', error)
+      ElMessage.error('Failed to approve')
+    } finally {
+      submitLoading.value = false
+    }
+  }).catch(() => {})
+}
+
+const handleReject = async () => {
+  // Validate audit opinion
+  if (!formData.auditRemark || formData.auditRemark.trim() === '') {
+    ElMessage.error('Audit remark is required')
+    return
+  }
+
+  ElMessageBox.confirm('Are you sure you want to reject this farming record?', 'Confirm Audit', {
+    type: 'warning',
+    confirmButtonText: 'Reject',
+    cancelButtonText: 'Cancel'
+  }).then(async () => {
+    submitLoading.value = true
+    try {
+      const userInfo = getUserInfo()
+      await auditFarmingRecord({
+        farmingId: route.params.farmingId,
+        workflowStatus: 'S3',
+        auditRemark: formData.auditRemark,
+      })
+      ElMessage.success('Record rejected')
+      goBack()
+    } catch (error) {
+      console.error('Reject failed:', error)
+      ElMessage.error('Failed to reject')
+    } finally {
+      submitLoading.value = false
+    }
+  }).catch(() => {})
+}
+
 const goBack = () => {
-  router.push('/research/breeding-data/farming')
+  router.push('/research/breeding-data/farming/farming-index')
 }
 
 onMounted(() => {
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
-  
-  // 确保新建模式下activityDate有默认值
+
+  // Ensure activityDate has default value in new creation mode
   if (!isEdit.value) {
-    // 延迟设置默认值，确保组件已挂载
+    // Delay setting default value to ensure component is mounted
     nextTick(() => {
       if (!formData.activityDate) {
         formData.activityDate = formatNow()
       }
-      // 兜底：若未设置操作员则默认当前用户
+      // Fallback: if operator is not set, default to current user
       if (!formData.operatorId) {
         const opId = resolveOperatorId()
         if (opId) formData.operatorId = opId
       }
+    })
+  } else if (isAuditMode.value) {
+    // Initialize auditor information in audit mode
+    nextTick(() => {
+      if (userStore.userInfo && userStore.userInfo.user) {
+        const user = userStore.userInfo.user
+        formData.auditBy = user.name || user.REALNAME || user.USERNAME || user.username || user.NAME || user.userId || ''
+      }
+      formData.auditTime = formatNow()
     })
   }
 })

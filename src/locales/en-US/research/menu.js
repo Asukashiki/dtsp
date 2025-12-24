@@ -39,6 +39,7 @@ export default {
   farmingRecordDataAdd: 'Add Farming Record',
   farmingRecordDataEdit: 'Edit Farming Record',
   farmingRecordDataDetail: 'Farming Record Detail',
+  farmingRecordDataAudit: 'Farming Record Data Collection Audit',
 
   environmentDataCollection: 'Environment Data Collection',
   environmentDataAdd: 'Add Environment Data',
