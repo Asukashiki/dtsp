@@ -123,7 +123,11 @@
               <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockOut.form.batchNo')" width="150" />
               <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
-              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100" />
+              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100">
+                <template #default="scope">
+                  {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
+                </template>
+              </el-table-column>
               <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
                 <template #default="{ row }">
                   <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
@@ -167,7 +171,7 @@
                 </div>
                 <div v-if="item.unit_of_measure" class="info-row">
                   <span class="label">{{ $t('input.inventory.stockOut.form.unitOfMeasure') }}:</span>
-                  <span class="value">{{ item.unit_of_measure }}</span>
+                  <span class="value">{{ getLabelByValue('input_material_unit', item.unit_of_measure) || item.unit_of_measure }}</span>
                 </div>
               </div>
               <div v-if="item.batch_splits && item.batch_splits.length > 0" class="item-footer">
@@ -214,7 +218,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 // 初始化字典
-const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category', 'input_material_unit'])
 
 const loading = ref(false)
 const detailData = ref(null)
