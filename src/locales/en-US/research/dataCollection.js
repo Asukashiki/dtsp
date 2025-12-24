@@ -581,7 +581,7 @@ export default {
     audit: 'Audit',
     pendingAudit: 'Pending Audit',
     audited: 'Audited',
-    canceled: 'Canceled',
+    canceled: 'Voided',
     auditOpinion: 'Audit Opinion',
     auditCanceled: 'Audit Record Canceled',
     cancelType: 'Cancel Type',
