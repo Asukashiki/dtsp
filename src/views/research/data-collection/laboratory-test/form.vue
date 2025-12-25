@@ -177,37 +177,6 @@
             {{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}
           </div>
 
-          <!-- Test Status（自动计算，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')" prop="passFailFlag">
-            <el-input
-              v-model="passFailFlagDisplay"
-              disabled
-              readonly
-            >
-              <template #prefix>
-                <el-tag
-                  v-if="formData.passFailFlag === 'true' || formData.passFailFlag === true"
-                  type="success"
-                  size="small"
-                >
-                  Pass
-                </el-tag>
-                <el-tag
-                  v-else-if="formData.passFailFlag === 'false' || formData.passFailFlag === false"
-                  type="danger"
-                  size="small"
-                >
-                  Fail
-                </el-tag>
-              </template>
-              <template #suffix>
-                <el-tooltip content="基于实验参数和实验结果值自动判定" placement="top">
-                  <i class="ri-information-line" style="color: #909399"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')" prop="germinationRate">
             <div class="input-with-unit">
               <el-input-number
@@ -331,6 +300,27 @@
             <i class="ri-calendar-check-line"></i>
             {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
           </div>
+
+          <!-- Test Status（自动计算，只读） -->
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')" prop="passFailFlag">
+            <el-input v-model="passFailFlagDisplay" disabled readonly>
+              <template #prefix>
+                <el-tag v-if="formData.passFailFlag === 'true' || formData.passFailFlag === true" type="success"
+                  size="small">
+                  Pass
+                </el-tag>
+                <el-tag v-else-if="formData.passFailFlag === 'false' || formData.passFailFlag === false" type="danger"
+                  size="small">
+                  Fail
+                </el-tag>
+              </template>
+              <template #suffix>
+                <el-tooltip content="基于实验参数和实验结果值自动判定" placement="top">
+                  <i class="ri-information-line" style="color: #909399"></i>
+                </el-tooltip>
+              </template>
+            </el-input>
+          </el-form-item>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testDate')" prop="testDate">
             <el-date-picker
