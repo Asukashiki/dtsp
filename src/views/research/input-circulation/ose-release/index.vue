@@ -58,9 +58,9 @@
         <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" min-width="160" />
         <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
-            <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
-            <el-button type="primary" link @click="handleEdit(scope.row)">{{ $t('common.edit') }}</el-button>
-            <el-button type="danger" link @click="handleDelete(scope.row)">{{ $t('common.delete') }}</el-button>
+            <el-button type="primary" link @click="handleView(scope.row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+            <el-button type="primary" link @click="handleEdit(scope.row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+            <el-button type="danger" link @click="handleDelete(scope.row)"><i class="ri-delete-bin-line"></i>{{ $t('common.void') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

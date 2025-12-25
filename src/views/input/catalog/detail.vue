@@ -53,10 +53,10 @@
               <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
               <span class="value">{{ getAgriculturalInputTypeLabel }}</span>
             </div>
-            <div class="detail-item">
+<!--            <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.variety') }}:</span>
               <span class="value">{{ detailData.variety || '-' }}</span>
-            </div>
+            </div>-->
 
             <div class="detail-item">
               <span class="label">{{ $t('input.catalog.form.inputSku') }}:</span>

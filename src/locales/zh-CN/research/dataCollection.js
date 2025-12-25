@@ -532,6 +532,7 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
+    auditInfo: '审核信息',
 
     // 搜索筛选
     searchPlaceholder: '搜索育种批次ID、样本编号',

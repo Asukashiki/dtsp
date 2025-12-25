@@ -91,15 +91,6 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
-              <span class="value">
-                <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
-                  {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
-                </el-tag>
-              </span>
-            </div>
-            <div class="detail-grid">
-              <div class="detail-item">
 
 
 
@@ -163,6 +154,16 @@
             <i class="ri-calendar-check-line"></i>
             {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
           </div>
+          <div class="detail-item">
+            <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
+            <span class="value">
+              <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
+                {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
+              </el-tag>
+            </span>
+          </div>
+
+
           <div class="detail-grid">
             <div class="detail-item">
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
@@ -207,10 +208,7 @@
                 <span class="value">{{ detailData.auditOpinion || '-' }}</span>
               </div>
             </div>
-          </div>
         </div>
-
-
       </template>
     </div>
   </div>

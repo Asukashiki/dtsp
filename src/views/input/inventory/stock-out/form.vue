@@ -681,6 +681,21 @@ const handleDistributionChange = async (distributionId) => {
             let matchedInput = null
             if (stockMaterialId) {
               matchedInput = inputList.value.find(input => input.inputId === stockMaterialId)
+
+              // 如果在inputList中找不到匹配的投入品，则创建一个新的投入品对象
+              if (!matchedInput) {
+                matchedInput = {
+                  inputId: stockMaterialId,
+                  inputName: stockMaterialName,
+                  type: detailInputType,
+                  agriculturalInputType: detailAgriculturalInputType,
+                  variety: detail.variety || '',
+                  specModel: stockSpecModel,
+                  unitOfMeasure: stockUnitOfMeasure
+                }
+                // 将新投入品添加到inputList中，确保下拉框能找到它
+                inputList.value.push(matchedInput)
+              }
             }
 
             newDetails.push({
