@@ -574,6 +574,7 @@ export default {
       expectedRange: '预期范围',
       resultValue: '实验结果值',
       passFailFlag: '实验结果标识',
+      testStatus: '测试状态',
       remark: '备注',
       createTime: '创建时间',
       createBy: '创建人',
@@ -626,6 +627,14 @@ export default {
     return: '返回',
     archive: '归档',
     cancel: '作废',
+
+    // 退回信息
+    rejected: '已退回',
+    rejectionInfo: '退回信息',
+    rejectBy: '退回人',
+    rejectOrg: '退回机构',
+    rejectTime: '退回时间',
+    rejectReason: '退回原因',
 
     // 确认消息
     approveConfirm: '确定审核通过该数据吗？',

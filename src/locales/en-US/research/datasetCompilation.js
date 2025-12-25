@@ -14,6 +14,7 @@ export default {
   editSuccess: 'Edited successfully',
   submitSuccess: 'Submitted successfully',
   submitConfirm: 'Are you sure to submit this dataset?',
+  pendingCode: 'Pending',
 
   // 搜索筛选
   searchPlaceholder: 'Search variety name',
@@ -152,7 +153,8 @@ export default {
     batchIdAuto: 'Batch ID will be auto-filled based on trial ID',
     compiledByAuto: 'Auto-filled with current logged-in user',
     cropTypeAuto: 'Crop type auto-filled from trial information',
-    varietyNameAuto: 'Variety name auto-filled from trial information'
+    varietyNameAuto: 'Variety name auto-filled from trial information',
+    codeAfterApproval: 'Official dataset code will be auto-generated after approval'
   },
 
   // Tab页标题
@@ -216,6 +218,12 @@ export default {
     // 环境监测数据列
     environment: {
       envRecordId: 'Environment Record ID',
+      stationId: 'Station ID',
+      timestamp: 'Timestamp',
+      parameterCode: 'Parameter Code',
+      value: 'Value',
+      unit: 'Unit',
+      source: 'Data Source',
       collectTime: 'Collection Time',
       dataType: 'Data Type',
       soilPh: 'Soil pH Value',

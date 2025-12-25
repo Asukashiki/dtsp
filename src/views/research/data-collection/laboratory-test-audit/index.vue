@@ -95,7 +95,7 @@
                     />
                     <el-table-column
                       prop="passFailFlag"
-                      :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                      :label="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                       min-width="100"
                     >
                       <template #default="{ row }">
@@ -325,7 +325,7 @@
                     />
                     <el-table-column
                       prop="passFailFlag"
-                      :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                      :label="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                       min-width="100"
                     >
                       <template #default="{ row }">
@@ -374,6 +374,83 @@
                 <!-- 空状态 -->
                 <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
               </el-tab-pane>
+
+              <!-- 已退回 Rejected -->
+              <el-tab-pane :label="$t('research.dataCollection.laboratoryTest.rejected') || 'Rejected'" name="S3">
+                <!-- 搜索区域 -->
+                <div class="search-section">
+                  <el-input v-model="queryParams.sampleId"
+                    :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')" clearable
+                    class="search-input">
+                    <template #prefix>
+                      <i class="ri-search-line"></i>
+                    </template>
+                  </el-input>
+                  <el-select v-model="queryParams.batchId"
+                    :placeholder="$t('research.dataCollection.laboratoryTest.form.batchId')" filterable clearable
+                    class="search-input">
+                    <el-option v-for="item in batchOptions" :key="item.batchId" :label="item.batchId"
+                      :value="item.batchId" />
+                  </el-select>
+                  <el-button type="primary" @click="handleQuery">
+                    <i class="ri-search-line"></i>
+                    {{ $t('common.search') }}
+                  </el-button>
+                  <el-button @click="handleReset">
+                    <i class="ri-refresh-line"></i>
+                    {{ $t('common.reset') }}
+                  </el-button>
+                </div>
+
+                <!-- PC端表格 -->
+                <div class="table-wrapper pc-only">
+                  <el-table :data="dataList" stripe v-loading="loading">
+                    <el-table-column prop="sampleId" :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
+                      min-width="150" show-overflow-tooltip />
+                    <el-table-column prop="batchId" :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
+                      min-width="150" show-overflow-tooltip />
+                    <el-table-column prop="trialId" :label="$t('research.dataCollection.laboratoryTest.form.trialId')"
+                      min-width="150" show-overflow-tooltip />
+                    <el-table-column prop="sampleType"
+                      :label="$t('research.dataCollection.laboratoryTest.form.sampleType')" min-width="120" />
+                    <el-table-column prop="testDate" :label="$t('research.dataCollection.laboratoryTest.form.testDate')"
+                      min-width="120" />
+                    <el-table-column :label="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
+                      min-width="100">
+                      <template #default="{ row }">
+                        <el-tag type="danger">
+                          {{ $t('research.dataCollection.laboratoryTest.rejected') || 'Rejected' }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="updateBy"
+                      :label="$t('research.dataCollection.laboratoryTest.rejectBy') || 'Rejected By'" min-width="100" />
+                    <el-table-column prop="updateTime"
+                      :label="$t('research.dataCollection.laboratoryTest.rejectTime') || 'Rejected Time'"
+                      min-width="160" />
+                    <el-table-column prop="auditOpinion"
+                      :label="$t('research.dataCollection.laboratoryTest.rejectReason') || 'Reason'" min-width="200"
+                      show-overflow-tooltip />
+                    <el-table-column :label="$t('common.actions')" width="120" fixed="right">
+                      <template #default="{ row }">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>
+                          {{ $t('common.view') }}
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <div class="pagination-wrapper">
+                    <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+                      :page-sizes="[10, 20, 50, 100]" :total="total" layout="total, sizes, prev, pager, next, jumper"
+                      @size-change="getList" @current-change="getList" />
+                  </div>
+                </div>
+
+                <!-- 空状态 -->
+                <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
+              </el-tab-pane>
             </el-tabs>
           </div>
         </div>
@@ -394,7 +471,7 @@
           <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')">{{ currentRow.purityPercent }}%</el-descriptions-item>
           <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')">{{ currentRow.moistureContentPercent }}%</el-descriptions-item>
           <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')">{{ currentRow.proteinPercent }}%</el-descriptions-item>
-          <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')">
+          <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')">
             <el-tag v-if="currentRow.passFailFlag === 'true' || currentRow.passFailFlag === true" type="success">Pass</el-tag>
             <el-tag v-else-if="currentRow.passFailFlag === 'false' || currentRow.passFailFlag === false" type="danger">Fail</el-tag>
             <span v-else>-</span>

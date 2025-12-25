@@ -2,20 +2,17 @@
   <div class="dataset-form-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
-          </el-button>
+          </div>
         </div>
-        <div class="header-center">
+        <div class="header-content">
           <h1 class="page-title">
             {{ isEdit ? $t('research.datasetCompilation.edit') : $t('research.datasetCompilation.add') }}
           </h1>
         </div>
-        <div class="header-right"></div>
-      </div>
     </div>
 
     <!-- 表单区域 -->
@@ -121,7 +118,7 @@
           </el-form-item>
           <el-form-item :label="$t('research.datasetCompilation.form.cropType')" prop="cropType">
             <el-input
-                v-model="formData.cropType"
+                :value="getLabelByValue('crop_type', formData.cropType) || formData.cropType"
                 :placeholder="$t('research.datasetCompilation.placeholder.cropType')"
                 disabled
                 readonly
@@ -444,53 +441,52 @@
                   style="width: 100%; margin-top: 12px"
                   :empty-text="''"
               >
-                <el-table-column prop="envRecordId" :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="collectTime" :label="$t('research.datasetCompilation.table.environment.collectTime')" min-width="120">
+                <el-table-column prop="envRecordId"
+                  :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column prop="stationId" :label="$t('research.datasetCompilation.table.environment.stationId')"
+                  min-width="120" show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="120" show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="120" show-overflow-tooltip />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')"
+                  min-width="120" show-overflow-tooltip />
+                <el-table-column prop="timestamp" :label="$t('research.datasetCompilation.table.environment.timestamp')"
+                  min-width="160">
                   <template #default="scope">
-                    {{ scope.row.collectTime || '-' }}
+                    {{ scope.row.timestamp || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="dataType" :label="$t('research.datasetCompilation.table.environment.dataType')" min-width="100">
+                <el-table-column prop="parameterCode"
+                  :label="$t('research.datasetCompilation.table.environment.parameterCode')" min-width="120">
                   <template #default="scope">
-                    {{ scope.row.dataType || '-' }}
+                    {{ getLabelByValue('env_parameter_code', scope.row.parameterCode) || scope.row.parameterCode || '-'
+                    }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilPh" :label="$t('research.datasetCompilation.table.environment.soilPh')" min-width="100">
+                <el-table-column prop="value" :label="$t('research.datasetCompilation.table.environment.value')"
+                  min-width="100">
                   <template #default="scope">
-                    {{ scope.row.soilPh || '-' }}
+                    {{ scope.row.value !== null && scope.row.value !== undefined ? scope.row.value : '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilTemperature" :label="$t('research.datasetCompilation.table.environment.soilTemperature')" min-width="120">
+                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.environment.unit')"
+                  min-width="80">
                   <template #default="scope">
-                    {{ scope.row.soilTemperature || 0 }}
+                    {{ scope.row.unit || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilMoisture" :label="$t('research.datasetCompilation.table.environment.soilMoisture')" min-width="120">
+                <el-table-column prop="source" :label="$t('research.datasetCompilation.table.environment.source')"
+                  min-width="100">
                   <template #default="scope">
-                    {{ scope.row.soilMoisture || 0 }}
+                    {{ scope.row.source || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="airTemperature" :label="$t('research.datasetCompilation.table.environment.airTemperature')" min-width="120">
+                <el-table-column prop="createTime" :label="$t('research.datasetCompilation.table.common.createdTime')"
+                  min-width="160">
                   <template #default="scope">
-                    {{ scope.row.airTemperature || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="airHumidity" :label="$t('research.datasetCompilation.table.environment.airHumidity')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.airHumidity || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="rainfall" :label="$t('research.datasetCompilation.table.environment.rainfall')" min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.rainfall || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')" min-width="150">
-                  <template #default="scope">
-                    {{ scope.row.remarks || '-' }}
+                    {{ scope.row.createTime || '-' }}
                   </template>
                 </el-table-column>
                 <!-- 备注列 -->
@@ -708,7 +704,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
-const { getLabelByValue } = useDict(['growth_cycle']) // 新增字典解析
+const { getLabelByValue } = useDict(['growth_cycle', 'crop_type', 'env_parameter_code']) // 新增字典解析
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -1170,40 +1166,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.dataset-form-container {
-  min-height: calc(100vh - 120px);
-}
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-left,
-.header-right {
-  flex: 1;
-}
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-.form-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-}
 .dataset-form {
   background: white;
   border-radius: 12px;

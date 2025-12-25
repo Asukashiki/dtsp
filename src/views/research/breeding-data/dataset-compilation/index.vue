@@ -23,7 +23,7 @@
               <span>{{ $t('research.datasetCompilation.list') }}</span>
             </div>
             <el-button type="primary" @click="handleAdd">
-              <i class="ri-file-edit-line"></i>
+              <i class="ri-add-line"></i>
               {{ $t('common.add') }}
             </el-button>
           </div>
@@ -70,9 +70,24 @@
                 <el-table-column
                   prop="datasetCode"
                   :label="$t('research.datasetCompilation.columns.datasetCode')"
-                  min-width="150"
+                  min-width="180"
                   show-overflow-tooltip
-                />
+>
+                  <template #default="{ row }">
+                    <template v-if="row.datasetCode">
+                      <span class="dataset-code">{{ row.datasetCode }}</span>
+                    </template>
+                    <template v-else>
+                      <el-tooltip :content="$t('research.datasetCompilation.tooltip.codeAfterApproval')"
+                        placement="top">
+                        <span class="temp-tag">
+                          <i class="ri-time-line"></i>
+                          {{ $t('research.datasetCompilation.pendingCode') }}
+                        </span>
+                      </el-tooltip>
+                    </template>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.datasetCompilation.columns.trialId')"
@@ -94,7 +109,11 @@
                   prop="cropType"
                   :label="$t('research.datasetCompilation.columns.cropType')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="varietyName"
                   :label="$t('research.datasetCompilation.columns.varietyName')"
@@ -206,7 +225,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
@@ -278,9 +297,11 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDatasetList, deleteDataset, submitDataset } from '@/api/dataset'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { getLabelByValue } = useDict(['crop_type'])
 
 const loading = ref(false)
 const tableData = ref([])
@@ -500,6 +521,34 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+/* Dataset Code 样式 */
+.dataset-code {
+  color: #009A44;
+  font-weight: 600;
+}
+
+.temp-code {
+  display: inline-flex;
+  align-items: center;
+}
+
+.temp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  color: #999;
+  font-size: 12px;
+  cursor: help;
+}
+
+.temp-tag i {
+  font-size: 14px;
+  color: #faad14;
+}
 /* 分页 */
 .pagination-wrapper {
   display: flex;

@@ -2,19 +2,17 @@
   <div class="laboratory-test-form-container">
     <!-- 页面头部 -->
     <div class="page-header">
+      <div class="header-left">
+        <div class="back-btn" link @click="goBack">
+          <i class="ri-arrow-left-line"></i>
+          {{ $t('common.back') }}
+        </div>
+      </div>
       <div class="header-content">
-        <div class="header-left">
-          <el-button link @click="goBack">
-            <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">
-            {{ isEdit ? $t('research.dataCollection.laboratoryTest.edit') : $t('research.dataCollection.laboratoryTest.add') }}
-          </h1>
-        </div>
-        <div class="header-right"></div>
+        <h1 class="page-title">
+          {{ isEdit ? $t('research.dataCollection.laboratoryTest.edit') :
+            $t('research.dataCollection.laboratoryTest.add') }}
+        </h1>
       </div>
     </div>
 
@@ -95,13 +93,7 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleStatus')" prop="sampleCondition">
-            <el-input
-              v-model="formData.sampleCondition"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleStatus')"
-              clearable
-            />
-          </el-form-item>
+
 
           <!-- 关联地块（用于报表关联样本）
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.plotId') || '地块编号'" prop="plotId">
@@ -175,8 +167,18 @@
             </template>
           </el-form-item>
 
-          <!-- 实验结果标识（自动计算，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')" prop="passFailFlag">
+
+        </div>
+
+        <!-- 测试数据 -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="ri-bar-chart-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}
+          </div>
+
+          <!-- Test Status（自动计算，只读） -->
+          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')" prop="passFailFlag">
             <el-input
               v-model="passFailFlagDisplay"
               disabled
@@ -205,14 +207,6 @@
               </template>
             </el-input>
           </el-form-item>
-        </div>
-
-        <!-- 测试数据 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}
-          </div>
 
           <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')" prop="germinationRate">
             <div class="input-with-unit">
@@ -456,10 +450,8 @@ const passFailFlagDisplay = computed(() => {
 
 // 样本类型/参数/预期范围映射
 const sampleTypeOptions = [
-  { value: 'soil', label: 'Soil' },
   { value: 'grain', label: 'Grain' },
   { value: 'leaf_tissue', label: 'Leaf Tissue' },
-  { value: 'water', label: 'Water' },
   { value: 'nutrient_analysis', label: 'Nutrient Analysis' }
 ]
 
@@ -521,9 +513,7 @@ const rules = computed(() => ({
   sampleId: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleIdRequired'), trigger: 'blur' }
   ],
-  sampleCondition: [
-    { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleConditionRequired'), trigger: 'blur' }
-  ],
+
   sampleType: [
     { required: true, message: t('research.dataCollection.laboratoryTest.rules.sampleTypeRequired') || '请选择样本类型', trigger: 'change' }
   ],
@@ -829,49 +819,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.laboratory-test-form-container {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
 .lab-form {
   background: white;
   border-radius: 12px;
@@ -931,128 +878,6 @@ onMounted(() => {
 
 .form-actions .el-button {
   min-width: 120px;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .lab-form {
-    padding: 20px 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .lab-form {
-    padding: 16px 12px;
-    border-radius: 8px;
-  }
-
-  .lab-form :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  .lab-form :deep(.el-form-item__label) {
-    text-align: left;
-    display: block;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    padding: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-  }
-
-  .lab-form :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  .unit-hint {
-    font-size: 13px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    padding-top: 20px;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .form-actions .el-button:first-child {
-    order: 2;
-  }
-
-  .form-actions .el-button:last-child {
-    order: 1;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .lab-form {
-    padding: 12px 8px;
-  }
-
-  .lab-form :deep(.el-form-item) {
-    margin-bottom: 16px;
-  }
-
-  .lab-form :deep(.el-form-item__label) {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .unit-hint {
-    font-size: 12px;
-  }
 }
 
 /* 文件上传组件样式 */
