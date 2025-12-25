@@ -901,11 +901,11 @@ const loadStatisticsData = async (trialId) => {
       }),
       getLabTestList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
         console.error('获取实验室测试数据失败:', err)
-        return { data: { list: [], total: 0 } }
+        return { rows: [], total: 0 }
       }),
       getYieldDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
         console.error('获取产量数据失败:', err)
-        return { msg: "操作失败", code: 500, data: [] }
+        return { msg: "", code: 500, data: [] }
       })
     ])
 
@@ -926,11 +926,11 @@ const loadStatisticsData = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    labTestList.value = (labRes?.data || []).map(item => ({
+    labTestList.value = (labRes?.rows || labRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
-    yieldDataList.value = (yieldRes?.data || []).map(item => ({
+    yieldDataList.value = (yieldRes?.rows || yieldRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
@@ -995,7 +995,7 @@ const loadStatisticsData = async (trialId) => {
 
       // 实验室测试备注回显
       if (labTestRemarks) {
-        const labTestRemarkMap = new Map(labTestRemarks.map(r => [r.dataId, r.remark]))
+        const labTestRemarkMap = new Map(labTestRemarks.map(r => [r.dataId || r.id, r.remark]))
         labTestList.value = labTestList.value.map(item => ({
           ...item,
           remark: labTestRemarkMap.get(item.dataId) || item.remark
@@ -1108,7 +1108,7 @@ const handleSubmit = () => {
           remark: item.remark.trim()
         })).filter(item => item.remark),
         labTestRemarks: labTestList.value.map(item => ({
-          id: item.id,
+          dataId: item.dataId,
           remark: item.remark.trim()
         })).filter(item => item.remark)
       }
