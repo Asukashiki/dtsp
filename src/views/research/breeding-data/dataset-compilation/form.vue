@@ -519,11 +519,11 @@
                 <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
                 <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
                 <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.plot.plotAreaM2')" min-width="100">
+                <!-- <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.plot.plotAreaM2')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.plotAreaM2 || 0 }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="inspectionDate" :label="$t('research.datasetCompilation.table.yield.inspectionDate')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.inspectionDate || '-' }}
@@ -534,7 +534,7 @@
                     {{ scope.row.inspectionType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="grainWeightKg" :label="$t('research.datasetCompilation.table.yield.grainWeightKg')" min-width="100">
+                <!-- <el-table-column prop="grainWeightKg" :label="$t('research.datasetCompilation.table.yield.grainWeightKg')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.grainWeightKg || 0 }}
                   </template>
@@ -548,17 +548,17 @@
                   <template #default="scope">
                     {{ scope.row.moistureContent || 0 }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="scoreValue" :label="$t('research.datasetCompilation.table.yield.scoreValue')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.scoreValue || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="harvestDate" :label="$t('research.datasetCompilation.table.yield.harvestDate')" min-width="120">
+                <!-- <el-table-column prop="harvestDate" :label="$t('research.datasetCompilation.table.yield.harvestDate')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.harvestDate || '-' }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="recorderName" :label="$t('research.datasetCompilation.table.yield.recorderName')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.recorderName || '-' }}

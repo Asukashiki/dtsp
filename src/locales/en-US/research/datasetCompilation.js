@@ -141,7 +141,7 @@ export default {
 
   // 操作按钮
   actions: {
-    submit: 'Submit for Review',
+    submit: 'Submit',
     statistics: 'Data Statistics',
     view: 'View',
     edit: 'Edit',

@@ -18,7 +18,7 @@ export default {
     add: '新增注册申请',
     edit: '编辑注册申请',
     detail: '注册申请详情',
-    submit: '提交审核',
+    submit: '提交',
     delete: '删除申请',
     deleteConfirm: '确定删除该注册申请吗?',
     deleteSuccess: '删除成功',

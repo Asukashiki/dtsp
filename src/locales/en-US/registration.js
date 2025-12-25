@@ -18,7 +18,7 @@ export default {
     add: 'Add Registration',
     edit: 'Edit Registration',
     detail: 'Registration Details',
-    submit: 'Submit for Review',
+    submit: 'Submit',
     delete: 'Delete Application',
     deleteConfirm: 'Are you sure to delete this registration application?',
     deleteSuccess: 'Deleted successfully',
