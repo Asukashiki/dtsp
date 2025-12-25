@@ -91,7 +91,7 @@
               </el-tab-pane>
 
               <!-- 已作废 -->
-              <el-tab-pane :label="$t('research.breedingData.plot.canceled')" name="S10">
+              <!-- <el-tab-pane :label="$t('research.breedingData.plot.canceled')" name="S10">
                 <div class="search-section">
                   <div class="search-item">
                     <span class="search-label">Trial ID:</span>
@@ -131,9 +131,9 @@
                           {{ getStatusLabel(row.auditStatus) }}
                         </el-tag>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                      <!-- 作废类型列 - 只在已作废标签页显示  -->
-                    <el-table-column :label="$t('research.breedingData.plot.cancelType')" min-width="140">
+                    <!-- <el-table-column :label="$t('research.breedingData.plot.cancelType')" min-width="140">
                       <template #default="{ row }">
                         <el-tag v-if="row.auditCanceled && row.auditCanceled > 0" type="warning">
                           <i class="ri-file-forbid-line"></i> {{ $t('research.breedingData.plot.auditCanceled') }}
@@ -152,9 +152,9 @@
                         </el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </el-table> -->
 
-                  <div class="pagination-wrapper">
+                  <!-- <div class="pagination-wrapper">
                     <el-pagination
                       v-model:current-page="queryParams.pageNum"
                       v-model:page-size="queryParams.pageSize"
@@ -166,8 +166,7 @@
                     />
                   </div>
                 </div>
-              </el-tab-pane>
-
+              </el-tab-pane> -->
               <el-tab-pane :label="$t('research.breedingData.plot.audited')" name="S2">
                 <div class="search-section">
                   <div class="search-item">
@@ -216,9 +215,9 @@
                         <el-button link type="primary" @click="handleView(row)">
                           <i class="ri-eye-line"></i>{{ $t('common.view') }}
                         </el-button>
-                        <el-button v-if="row.auditStatus === 'S2'" link type="danger" @click="handleCancelAuditRecord(row)">
+                        <!-- <el-button v-if="row.auditStatus === 'S2'" link type="danger" @click="handleCancelAuditRecord(row)">
                           <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                        </el-button>
+                        </el-button> -->
                       </template>
                     </el-table-column>
                   </el-table>

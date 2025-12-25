@@ -59,7 +59,7 @@ export default {
     },
 
     actions: {
-      submitForReview: '提交审核',
+      submitForReview: '提交',
       edit: '编辑',
       approve: '审核通过',
       reject: '审核驳回',
@@ -203,7 +203,7 @@ export default {
     cancelType: '作废类型',
     auditCanceled: '审核作废',
     dataCanceled: '数据作废',
-    submitAudit: '提交审核',
+    submitAudit: '提交',
     approve: '审核通过',
     reject: '审核退回',
     archive: '归档',

@@ -147,9 +147,9 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.voided')" name="S4">
+        <!-- <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.voided')" name="S4"> -->
           <!-- PC端表格 -->
-          <el-table
+          <!-- <el-table
             v-if="!isMobile"
             v-loading="loading"
             :data="auditList"
@@ -228,10 +228,10 @@
                 </el-button>
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
 
           <!-- 移动端卡片 -->
-          <div v-else class="mobile-card-list">
+          <!-- <div v-else class="mobile-card-list">
             <AuditCard
               v-for="item in auditList"
               :key="item.auditId"
@@ -241,8 +241,8 @@
               @view="handleView"
             />
             <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
-          </div>
-        </el-tab-pane>
+          </div> -->
+        <!-- </el-tab-pane> -->
 
         <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.audited')" name="audited">
           <!-- PC端表格 -->
@@ -365,7 +365,7 @@
                 >
                   {{ t('research.trialBasicAudit.action.view') }}
                 </el-button>
-                <el-button
+                <!-- <el-button
                   v-if="row.auditStatus === 'S2'"
                   type="danger"
                   size="small"
@@ -373,7 +373,7 @@
                   @click="handleVoid(row)"
                 >
                   {{ t('research.trialBasicAudit.action.void') }}
-                </el-button>
+                </el-button> -->
               </template>
             </el-table-column>
           </el-table>

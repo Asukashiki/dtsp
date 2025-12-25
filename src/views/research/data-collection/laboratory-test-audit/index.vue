@@ -141,10 +141,10 @@
                 <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
               </el-tab-pane>
 
-              <!-- 已作废 -->
+              <!-- 已作废
               <el-tab-pane :label="$t('research.dataCollection.laboratoryTest.canceled')" name="S10">
                 <!-- 搜索区域 -->
-                <div class="search-section">
+                <!-- <div class="search-section">
                   <el-input
                     v-model="queryParams.sampleId"
                     :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
@@ -177,10 +177,10 @@
                     <i class="ri-refresh-line"></i>
                     {{ $t('common.reset') }}
                   </el-button>
-                </div>
+                </div> -->
 
                 <!-- PC端表格 -->
-                <div class="table-wrapper pc-only">
+                <!-- <div class="table-wrapper pc-only">
                   <el-table :data="dataList" stripe v-loading="loading">
                     <el-table-column
                       prop="sampleId"
@@ -248,11 +248,11 @@
                       @current-change="getList"
                     />
                   </div>
-                </div>
+                </div> -->
 
                 <!-- 空状态 -->
-                <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
-              </el-tab-pane>
+                <!-- <el-empty v-if="dataList.length === 0 && !loading" :description="$t('home.noData')" />
+              </el-tab-pane> -->
 
               <!-- 已审核 -->
               <el-tab-pane :label="$t('research.dataCollection.laboratoryTest.audited')" name="S2">
@@ -344,16 +344,16 @@
                       :label="$t('common.approveTime')"
                       min-width="160"
                     />
-                    <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+                    <el-table-column :label="$t('common.actions')" width="100" fixed="right">
                       <template #default="{ row }">
                         <el-button link type="primary" @click="handleView(row)">
                           <i class="ri-eye-line"></i>
                           {{ $t('common.view') }}
                         </el-button>
-                        <el-button link type="danger" @click="handleCancelAuditRecord(row)">
+                        <!-- <el-button link type="danger" @click="handleCancelAuditRecord(row)">
                           <i class="ri-close-circle-line"></i>
                           {{ $t('research.dataCollection.laboratoryTest.cancel') }}
-                        </el-button>
+                        </el-button> -->
                       </template>
                     </el-table-column>
                   </el-table>

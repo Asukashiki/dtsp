@@ -60,7 +60,7 @@ export default {
     },
 
     actions: {
-      submitForReview: 'Submit for Review',
+      submitForReview: 'Submit',
       edit: 'Edit',
       submit: 'Submit',
       approve: 'Approve',
@@ -217,7 +217,7 @@ export default {
     cancelType: 'Cancel Type',
     auditCanceled: 'Audit Canceled',
     dataCanceled: 'Data Canceled',
-    submitAudit: 'Submit for Audit',
+    submitAudit: 'Submit',
     submit: 'Submit',
     approve: 'Approve',
     reject: 'Reject',
