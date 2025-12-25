@@ -417,9 +417,10 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await getLabTestAuditList(queryParams)
-    const rows = res.data || []
+    // 支持多种返回格式：rows(TableDataInfo), list, 或直接data数组
+    const rows = res.rows || res.data?.rows || res.data?.list || res.data || []
     dataList.value = rows
-    total.value = rows.length || 0
+    total.value = res.total || res.data?.total || rows.length || 0
   } finally {
     loading.value = false
   }
