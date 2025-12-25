@@ -523,8 +523,9 @@ const loadData = async () => {
       pageSize: pagination.pageSize
     })
     if (res.code === 200) {
-      tableData.value = res.data?.list || res.data || []
-      pagination.total = res.data?.total || res.total || 0
+      // 支持多种返回格式：rows(TableDataInfo), list, 或直接data数组
+      tableData.value = res.rows || res.data?.rows || res.data?.list || res.data || []
+      pagination.total = res.total || res.data?.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)

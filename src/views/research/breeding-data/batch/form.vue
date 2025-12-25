@@ -57,12 +57,12 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" :disabled="isReadOnly" @input="generateVarietyCode" />
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
-                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" disabled />
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')">
+                    <el-input v-model="formData.varietyCode" disabled :placeholder="'V_{cropType}_{year}_0001'" />
                   </el-form-item>
                 </el-col>
 
@@ -568,13 +568,21 @@ const handleCropTypeChange = () => {
   generateVarietyCode()
 }
 
-// 自动生成品种编码：作物类型_品种名称
+// 自动生成品种编码：V_作物类型_年度_0001（四位流水号）
 const generateVarietyCode = () => {
-  if (formData.cropType && formData.varietyName) {
-    formData.varietyCode = `${formData.cropType}_${formData.varietyName}`
-  } else {
+  // 编辑模式下不自动生成
+  if (isEdit.value) return
+
+  const { cropType, year } = formData
+
+  if (!cropType || !year) {
     formData.varietyCode = ''
+    return
   }
+
+  // 生成4位流水号（这里暂时使用随机数，实际应该从后端获取最新的流水号）
+  const serial = String(Math.floor(Math.random() * 10000)).padStart(4, '0')
+  formData.varietyCode = `V_${cropType}_${year}_${serial}`
 }
 
 // 生成 batchId: B_${cropType}_${year}_serial(6位)
@@ -598,9 +606,10 @@ const goBack = () => {
   router.back()
 }
 
-// 监听年份变化，自动生成 batchId
+// 监听年份变化，自动生成 batchId 和品种编码
 watch(() => formData.year, () => {
   generateBatchId()
+  generateVarietyCode()
 })
 
 // 禁用过去年份（遵循日期逻辑：不允许早于当前年）
