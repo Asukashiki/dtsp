@@ -249,11 +249,11 @@
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
             <template v-if="isAuditMode">
-              <el-button type="success" @click="handleApprove" :loading="submitLoading">
-                <i class="ri-check-line"></i>approve
-              </el-button>
               <el-button type="danger" @click="handleReject" :loading="submitLoading">
                 <i class="ri-close-line"></i>reject
+              </el-button>
+              <el-button type="success" @click="handleApprove" :loading="submitLoading">
+                <i class="ri-check-line"></i>approve
               </el-button>
             </template>
             <template v-else>
