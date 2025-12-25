@@ -224,7 +224,7 @@
                   :label="$t('common.approveTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <!-- 查看按钮 - 非草稿状态显示 -->
@@ -261,7 +261,7 @@
                       </el-button>
 
                       <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
-                      <el-button
+                      <!-- <el-button
                         v-if="row.workflowStatus === 'S2'"
                         link
                         type="warning"
@@ -269,7 +269,7 @@
                       >
                         <i class="ri-archive-line"></i>
                         {{ $t('research.dataCollection.laboratoryTest.archive') }}
-                      </el-button>
+                      </el-button> -->
 
                       <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
                       <el-button
