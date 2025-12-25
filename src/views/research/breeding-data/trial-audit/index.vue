@@ -113,7 +113,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
               </template>
             </el-table-column>
             <el-table-column
@@ -208,7 +208,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
               </template>
             </el-table-column>
             <el-table-column
@@ -347,7 +347,7 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
               </template>
             </el-table-column>
             <el-table-column

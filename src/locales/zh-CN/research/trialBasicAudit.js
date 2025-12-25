@@ -1,6 +1,6 @@
 export default {
-  // 状态
-  status: {
+  // 审核状态 (Workflow Status)
+  workflowStatus: {
     S0: '草稿',
     S1: '待审批',
     S2: '已审批',
@@ -8,6 +8,12 @@ export default {
     S4: '已作废',
     S9: '已归档',
     S10: '作废'
+  },
+
+  // 业务状态 (Business Status)
+  status: {
+    '01': '进行中',
+    '02': '已完成'
   },
 
   // 操作按钮

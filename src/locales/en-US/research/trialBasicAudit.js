@@ -1,6 +1,6 @@
 export default {
-  // Status
-  status: {
+  // Workflow Status
+  workflowStatus: {
     S0: 'Draft',
     S1: 'Pending Approval',
     S2: 'Approved',
@@ -8,6 +8,12 @@ export default {
     S4: 'Voided',
     S9: 'Archived',
     S10: 'Cancelled'
+  },
+
+  // Business Status
+  status: {
+    '01': 'Ongoing',
+    '02': 'Finished'
   },
 
   // Actions

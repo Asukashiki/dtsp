@@ -119,17 +119,17 @@
                 <el-table-column prop="replications" :label="$t('research.breedingData.trial.columns.replications')" min-width="100" />
                 <el-table-column prop="trialStatus" :label="$t('research.breedingData.trial.columns.workflowStatus')" width="120" align="center">
                   <template #default="{ row }">
-                    <StatusTag :status="row.trialStatus || row.workflowStatus || 'S0'" />
+                    <StatusTag :status="row.trialStatus || row.workflowStatus || 'S0'" type="workflow" />
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('research.breedingData.trial.columns.status')" width="120" align="center">
                   <template #default="{ row }">
-                    {{ getTrialStatusText(row) }}
+                    <StatusTag :status="row.status || '01'" type="business" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="createdName" :label="$t('research.breedingData.trial.columns.createdName')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="createTime" :label="$t('research.breedingData.trial.columns.createTime')" min-width="160" show-overflow-tooltip />
-                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="300" fixed="right">
+                <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
                     <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" />
                   </template>
@@ -189,12 +189,16 @@
                     <span class="value">{{ item.replications }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.trial.columns.auditStatus') }}:</span>
-                    <span class="value">{{ item.trialStatus || item.workflowStatus }}</span>
+                    <span class="label">{{ $t('research.breedingData.trial.columns.workflowStatus') }}:</span>
+                    <span class="value">
+                      <StatusTag :status="item.trialStatus || item.workflowStatus || 'S0'" type="workflow" />
+                    </span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.status') }}:</span>
-                    <span class="value">{{ getTrialStatusText(item) }}</span>
+                    <span class="value">
+                      <StatusTag :status="item.status || '01'" type="business" />
+                    </span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.trial.columns.createdName') }}:</span>
@@ -420,15 +424,15 @@ onMounted(() => {
 })
 
 /**
- * 显示用状态（业务映射）：
- * - 审核通过(S2) => completed
- * - 审核中(S1)   => Active
+ * 显示用状态（业务状态映射）：
+ * - 进行中(01) => Ongoing
+ * - 已完成(02) => Finished
  * 其他状态返回 "-"
  */
 const getTrialStatusText = (row) => {
-  const s = row?.workflowStatus || row?.trialStatus
-  if (s === 'S2') return 'completed'
-  if (s === 'S1') return 'Active'
+  const s = row?.status
+  if (s === '01') return 'Ongoing'
+  if (s === '02') return 'Finished'
   return '-'
 }
 </script>

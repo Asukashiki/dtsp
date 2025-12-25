@@ -2,7 +2,7 @@
   <el-card class="audit-card" shadow="hover">
     <div class="card-header">
       <div class="title">{{ audit.trialName }}</div>
-      <StatusTag :status="audit.workflowStatus || audit.auditStatus" />
+      <StatusTag :status="audit.workflowStatus || audit.auditStatus" type="workflow" />
     </div>
 
     <div class="card-content">
