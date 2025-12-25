@@ -56,13 +56,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
-                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" :disabled="isReadOnly" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" :disabled="isReadOnly" @input="generateVarietyCode" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-input v-model="formData.varietyName" :placeholder="$t('research.breedingData.batch.placeholder.varietyName')" :disabled="isReadOnly" />
+                  <el-form-item :label="$t('research.breedingData.batch.form.varietyCode')" prop="varietyCode">
+                    <el-input v-model="formData.varietyCode" :placeholder="$t('research.breedingData.batch.placeholder.varietyCode')" disabled />
                   </el-form-item>
                 </el-col>
 
@@ -115,11 +115,6 @@
                     <el-select v-model="formData.status" :placeholder="$t('research.breedingData.batch.placeholder.status')" style="width: 100%" disabled>
                       <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.batch.form.workflowStatus')" prop="workflowStatus">
-                    <el-input :value="getLabelByValue('flow_status', formData.workflowStatus)" disabled style="width: 100%" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
@@ -569,6 +564,17 @@ const handleSubmit = async () => {
 const handleCropTypeChange = () => {
   // 自动生成 batchId
   generateBatchId()
+  // 自动生成品种编码
+  generateVarietyCode()
+}
+
+// 自动生成品种编码：作物类型_品种名称
+const generateVarietyCode = () => {
+  if (formData.cropType && formData.varietyName) {
+    formData.varietyCode = `${formData.cropType}_${formData.varietyName}`
+  } else {
+    formData.varietyCode = ''
+  }
 }
 
 // 生成 batchId: B_${cropType}_${year}_serial(6位)
