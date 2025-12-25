@@ -539,6 +539,7 @@ export default {
       expectedRange: 'Expected Range',
       resultValue: 'Result Value',
       passFailFlag: 'Pass/Fail Flag',
+      testStatus: 'Test Status',
       remark: 'Remark',
       createTime: 'Created Time',
       createBy: 'Created By',
@@ -594,6 +595,14 @@ export default {
     return: 'Return',
     archive: 'Archive',
     cancel: 'Cancel',
+
+    // Rejection info
+    rejected: 'Rejected',
+    rejectionInfo: 'Rejection Information',
+    rejectBy: 'Rejected By',
+    rejectOrg: 'Organization',
+    rejectTime: 'Rejected Time',
+    rejectReason: 'Reason',
 
     // Confirmation messages
     approveConfirm: 'Are you sure to approve this data?',

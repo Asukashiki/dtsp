@@ -2,29 +2,24 @@
   <div class="dataset-detail-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-left">
-          <el-button link @click="goBack">
-            <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button
-              v-if="detailData && (detailData.datasetStatus === 'draft' || detailData.datasetStatus === 'rejected')"
-              type="primary"
-              @click="handleEdit"
-          >
-            <i class="ri-edit-line"></i>
-            {{ $t('common.edit') }}
-          </el-button>
+      <div class="header-left">
+        <div class="back-btn" link @click="goBack">
+          <i class="ri-arrow-left-line"></i>
+          {{ $t('common.back') }}
         </div>
       </div>
+      <div class="header-content">
+        <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
+      </div>
+      <div class="header-right">
+        <el-button
+          v-if="detailData && (detailData.datasetStatus === 'draft' || detailData.datasetStatus === 'rejected')"
+          type="primary" @click="handleEdit">
+          <i class="ri-edit-line"></i>
+          {{ $t('common.edit') }}
+        </el-button>
+      </div>
     </div>
-
     <!-- 详情区域 -->
     <div v-loading="loading" class="detail-wrapper">
       <template v-if="detailData">
@@ -63,7 +58,8 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType || '-' }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', detailData.cropType) || detailData.cropType || '-'
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.datasetCompilation.form.varietyName') }}:</span>
@@ -102,14 +98,15 @@
           </div>
           <div class="statistics-grid">
 
-             <div class="stat-card">
+            <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-bar-chart-box-line"></i>
               </div>
               <div class="stat-content">
                 <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
                 <div class="stat-value">
-                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length + environmentDataList.length + yieldDataList.length + labTestList.length }}
+                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length +
+                    environmentDataList.length + yieldDataList.length + labTestList.length }}
                 </div>
               </div>
             </div>
@@ -185,52 +182,60 @@
           <el-tabs v-model="activeTab" type="card" style="margin-top: 12px">
             <!-- 地块及播种信息Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.plot')" name="plotInfo">
-              <el-table
-                  :data="plotInfoList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.plot.plotId')" min-width="120" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="replicationNo" :label="$t('research.datasetCompilation.table.plot.replicationNo')" min-width="100" />
-                <el-table-column prop="rowNo" :label="$t('research.datasetCompilation.table.plot.rowNo')" min-width="80" />
-                <el-table-column prop="columnNo" :label="$t('research.datasetCompilation.table.plot.columnNo')" min-width="80" />
-                <el-table-column prop="varietyCode" :label="$t('research.datasetCompilation.table.plot.varietyCode')" min-width="100" />
-                <el-table-column prop="sowingDate" :label="$t('research.datasetCompilation.table.plot.sowingDate')" min-width="100">
+              <el-table :data="plotInfoList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')">
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.plot.plotId')"
+                  min-width="120" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="100" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="100" />
+                <el-table-column prop="replicationNo"
+                  :label="$t('research.datasetCompilation.table.plot.replicationNo')" min-width="100" />
+                <el-table-column prop="rowNo" :label="$t('research.datasetCompilation.table.plot.rowNo')"
+                  min-width="80" />
+                <el-table-column prop="columnNo" :label="$t('research.datasetCompilation.table.plot.columnNo')"
+                  min-width="80" />
+                <el-table-column prop="varietyCode" :label="$t('research.datasetCompilation.table.plot.varietyCode')"
+                  min-width="100" />
+                <el-table-column prop="sowingDate" :label="$t('research.datasetCompilation.table.plot.sowingDate')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.sowingDate || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="seedQuantity" :label="$t('research.datasetCompilation.table.plot.seedQuantity')" min-width="100">
+                <el-table-column prop="seedQuantity" :label="$t('research.datasetCompilation.table.plot.seedQuantity')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.seedQuantity || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="sowingMethod" :label="$t('research.datasetCompilation.table.plot.sowingMethod')" min-width="100">
+                <el-table-column prop="sowingMethod" :label="$t('research.datasetCompilation.table.plot.sowingMethod')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.sowingMethod || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.plot.plotAreaM2')" min-width="100">
+                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.plot.plotAreaM2')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.plotAreaM2 || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="gpsLat" :label="$t('research.datasetCompilation.table.plot.gpsLat')" min-width="100">
+                <el-table-column prop="gpsLat" :label="$t('research.datasetCompilation.table.plot.gpsLat')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.gpsLat || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="gpsLong" :label="$t('research.datasetCompilation.table.plot.gpsLong')" min-width="100">
+                <el-table-column prop="gpsLong" :label="$t('research.datasetCompilation.table.plot.gpsLong')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.gpsLong || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="region" :label="$t('research.datasetCompilation.table.plot.region')" min-width="100">
+                <el-table-column prop="region" :label="$t('research.datasetCompilation.table.plot.region')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.region || '-' }}
                   </template>
@@ -245,49 +250,54 @@
 
             <!-- 农事记录数据Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.farming')" name="farmingRecord">
-              <el-table
-                  :data="farmingRecordList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="farmingRecordId" :label="$t('research.datasetCompilation.table.farming.farmingRecordId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="activityDate" :label="$t('research.datasetCompilation.table.farming.activityDate')" min-width="120">
+              <el-table :data="farmingRecordList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')">
+                <el-table-column prop="farmingRecordId"
+                  :label="$t('research.datasetCompilation.table.farming.farmingRecordId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')"
+                  min-width="100" />
+                <el-table-column prop="activityDate"
+                  :label="$t('research.datasetCompilation.table.farming.activityDate')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.activityDate || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="activityType" :label="$t('research.datasetCompilation.table.farming.activityType')" min-width="100">
+                <el-table-column prop="activityType"
+                  :label="$t('research.datasetCompilation.table.farming.activityType')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.activityType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="inputName" :label="$t('research.datasetCompilation.table.farming.inputName')" min-width="120">
+                <el-table-column prop="inputName" :label="$t('research.datasetCompilation.table.farming.inputName')"
+                  min-width="120">
                   <template #default="scope">
                     {{ scope.row.inputName || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="quantity" :label="$t('research.datasetCompilation.table.common.quantity')" min-width="80">
+                <el-table-column prop="quantity" :label="$t('research.datasetCompilation.table.common.quantity')"
+                  min-width="80">
                   <template #default="scope">
                     {{ scope.row.quantity || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.common.unit')" min-width="80">
+                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.common.unit')"
+                  min-width="80">
                   <template #default="scope">
                     {{ scope.row.unit || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="operatorId" :label="$t('research.datasetCompilation.table.farming.operatorId')" min-width="100">
+                <el-table-column prop="operatorId" :label="$t('research.datasetCompilation.table.farming.operatorId')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.operatorId || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="operationDesc" :label="$t('research.datasetCompilation.table.farming.operationDesc')" min-width="150">
+                <el-table-column prop="operationDesc"
+                  :label="$t('research.datasetCompilation.table.farming.operationDesc')" min-width="150">
                   <template #default="scope">
                     {{ scope.row.operationDesc || '-' }}
                   </template>
@@ -302,22 +312,19 @@
 
             <!-- 农艺性状数据Tab（与前者保持一致） -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.agronomic')" name="agronomicTrait">
-              <el-table
-                  :data="agronomicTraitList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-                  @row-click="handleAgronomicView"
-              >
+              <el-table :data="agronomicTraitList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')" @row-click="handleAgronomicView">
                 <!-- 选择列 -->
                 <el-table-column type="selection" width="50" />
                 <!-- 主记录核心字段列 -->
-                <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160"
+                  show-overflow-tooltip />
+                <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140"
+                  show-overflow-tooltip />
+                <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140"
+                  show-overflow-tooltip />
+                <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140"
+                  show-overflow-tooltip />
                 <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
                 <!-- 生长周期：字典解析 -->
                 <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
@@ -326,13 +333,15 @@
                   </template>
                 </el-table-column>
                 <!-- 性状数量：success标签展示 -->
-                <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100" align="center">
+                <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100"
+                  align="center">
                   <template #default="{ row }">
                     <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
                   </template>
                 </el-table-column>
                 <!-- 创建人、创建时间 -->
-                <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
+                <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120"
+                  show-overflow-tooltip />
                 <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
                 <!-- 备注列 -->
                 <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
@@ -345,59 +354,66 @@
 
             <!-- 环境监测数据Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.environment')" name="environmentData">
-              <el-table
-                  :data="environmentDataList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="envRecordId" :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="collectTime" :label="$t('research.datasetCompilation.table.environment.collectTime')" min-width="120">
+              <el-table :data="environmentDataList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')">
+                <el-table-column prop="envRecordId"
+                  :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')"
+                  min-width="100" />
+                <el-table-column prop="collectTime"
+                  :label="$t('research.datasetCompilation.table.environment.collectTime')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.collectTime || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="dataType" :label="$t('research.datasetCompilation.table.environment.dataType')" min-width="100">
+                <el-table-column prop="dataType" :label="$t('research.datasetCompilation.table.environment.dataType')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.dataType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilPh" :label="$t('research.datasetCompilation.table.environment.soilPh')" min-width="100">
+                <el-table-column prop="soilPh" :label="$t('research.datasetCompilation.table.environment.soilPh')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.soilPh || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilTemperature" :label="$t('research.datasetCompilation.table.environment.soilTemperature')" min-width="120">
+                <el-table-column prop="soilTemperature"
+                  :label="$t('research.datasetCompilation.table.environment.soilTemperature')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.soilTemperature || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilMoisture" :label="$t('research.datasetCompilation.table.environment.soilMoisture')" min-width="120">
+                <el-table-column prop="soilMoisture"
+                  :label="$t('research.datasetCompilation.table.environment.soilMoisture')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.soilMoisture || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="airTemperature" :label="$t('research.datasetCompilation.table.environment.airTemperature')" min-width="120">
+                <el-table-column prop="airTemperature"
+                  :label="$t('research.datasetCompilation.table.environment.airTemperature')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.airTemperature || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="airHumidity" :label="$t('research.datasetCompilation.table.environment.airHumidity')" min-width="120">
+                <el-table-column prop="airHumidity"
+                  :label="$t('research.datasetCompilation.table.environment.airHumidity')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.airHumidity || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="rainfall" :label="$t('research.datasetCompilation.table.environment.rainfall')" min-width="100">
+                <el-table-column prop="rainfall" :label="$t('research.datasetCompilation.table.environment.rainfall')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.rainfall || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')" min-width="150">
+                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')"
+                  min-width="150">
                   <template #default="scope">
                     {{ scope.row.remarks || '-' }}
                   </template>
@@ -412,64 +428,72 @@
 
             <!-- 田间检查数据Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.yield')" name="yieldData">
-              <el-table
-                  :data="yieldDataList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.yield.inspectionId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')" min-width="100" />
-                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.yield.plotAreaM2')" min-width="100">
+              <el-table :data="yieldDataList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')">
+                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.yield.inspectionId')"
+                  min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="100" />
+                <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')"
+                  min-width="100" />
+                <el-table-column prop="plotAreaM2" :label="$t('research.datasetCompilation.table.yield.plotAreaM2')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.plotAreaM2 || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="inspectionDate" :label="$t('research.datasetCompilation.table.yield.inspectionDate')" min-width="120">
+                <el-table-column prop="inspectionDate"
+                  :label="$t('research.datasetCompilation.table.yield.inspectionDate')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.inspectionDate || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="inspectionType" :label="$t('research.datasetCompilation.table.yield.inspectionType')" min-width="100">
+                <el-table-column prop="inspectionType"
+                  :label="$t('research.datasetCompilation.table.yield.inspectionType')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.inspectionType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="grainWeightKg" :label="$t('research.datasetCompilation.table.yield.grainWeightKg')" min-width="100">
+                <el-table-column prop="grainWeightKg"
+                  :label="$t('research.datasetCompilation.table.yield.grainWeightKg')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.grainWeightKg || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="yieldQtPerHa" :label="$t('research.datasetCompilation.table.yield.yieldQtPerHa')" min-width="100">
+                <el-table-column prop="yieldQtPerHa" :label="$t('research.datasetCompilation.table.yield.yieldQtPerHa')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.yieldQtPerHa || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="moistureContent" :label="$t('research.datasetCompilation.table.yield.moistureContent')" min-width="100">
+                <el-table-column prop="moistureContent"
+                  :label="$t('research.datasetCompilation.table.yield.moistureContent')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.moistureContent || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="scoreValue" :label="$t('research.datasetCompilation.table.yield.scoreValue')" min-width="100">
+                <el-table-column prop="scoreValue" :label="$t('research.datasetCompilation.table.yield.scoreValue')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.scoreValue || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="harvestDate" :label="$t('research.datasetCompilation.table.yield.harvestDate')" min-width="120">
+                <el-table-column prop="harvestDate" :label="$t('research.datasetCompilation.table.yield.harvestDate')"
+                  min-width="120">
                   <template #default="scope">
                     {{ scope.row.harvestDate || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="recorderName" :label="$t('research.datasetCompilation.table.yield.recorderName')" min-width="100">
+                <el-table-column prop="recorderName" :label="$t('research.datasetCompilation.table.yield.recorderName')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.recorderName || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="createdTime" :label="$t('research.datasetCompilation.table.common.createdTime')" min-width="150">
+                <el-table-column prop="createdTime" :label="$t('research.datasetCompilation.table.common.createdTime')"
+                  min-width="150">
                   <template #default="scope">
                     {{ scope.row.createdTime || '-' }}
                   </template>
@@ -484,66 +508,74 @@
 
             <!-- 实验室测试数据Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.lab')" name="labTest">
-              <el-table
-                  :data="labTestList"
-                  border
-                  stripe
-                  size="small"
-                  style="width: 100%; margin-top: 12px"
-                  :empty-text="$t('common.noData')"
-              >
-                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.lab.testId')" min-width="120" />
-                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')" min-width="100" />
-                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')" min-width="100" />
-                <el-table-column prop="sampleId" :label="$t('research.datasetCompilation.table.lab.sampleId')" min-width="100">
+              <el-table :data="labTestList" border stripe size="small" style="width: 100%; margin-top: 12px"
+                :empty-text="$t('common.noData')">
+                <el-table-column prop="id" :label="$t('research.datasetCompilation.table.lab.testId')"
+                  min-width="120" />
+                <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
+                  min-width="100" />
+                <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
+                  min-width="100" />
+                <el-table-column prop="sampleId" :label="$t('research.datasetCompilation.table.lab.sampleId')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.sampleId || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="sampleType" :label="$t('research.datasetCompilation.table.lab.sampleType')" min-width="100">
+                <el-table-column prop="sampleType" :label="$t('research.datasetCompilation.table.lab.sampleType')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.sampleType || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="germinationRate" :label="$t('research.datasetCompilation.table.lab.germinationRate')" min-width="100">
+                <el-table-column prop="germinationRate"
+                  :label="$t('research.datasetCompilation.table.lab.germinationRate')" min-width="100">
                   <template #default="scope">
                     {{ scope.row.germinationRate || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="purityPercent" :label="$t('research.datasetCompilation.table.lab.purityPercent')" min-width="100">
+                <el-table-column prop="purityPercent" :label="$t('research.datasetCompilation.table.lab.purityPercent')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.purityPercent || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="moistureContentPercent" :label="$t('research.datasetCompilation.table.lab.moistureContentPercent')" min-width="120">
+                <el-table-column prop="moistureContentPercent"
+                  :label="$t('research.datasetCompilation.table.lab.moistureContentPercent')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.moistureContentPercent || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="proteinPercent" :label="$t('research.datasetCompilation.table.lab.proteinPercent')" min-width="120">
+                <el-table-column prop="proteinPercent"
+                  :label="$t('research.datasetCompilation.table.lab.proteinPercent')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.proteinPercent || 0 }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="testDate" :label="$t('research.datasetCompilation.table.lab.testDate')" min-width="120">
+                <el-table-column prop="testDate" :label="$t('research.datasetCompilation.table.lab.testDate')"
+                  min-width="120">
                   <template #default="scope">
                     {{ scope.row.testDate || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="testOrganization" :label="$t('research.datasetCompilation.table.lab.testOrganization')" min-width="120">
+                <el-table-column prop="testOrganization"
+                  :label="$t('research.datasetCompilation.table.lab.testOrganization')" min-width="120">
                   <template #default="scope">
                     {{ scope.row.testOrganization || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="testerName" :label="$t('research.datasetCompilation.table.lab.testerName')" min-width="100">
+                <el-table-column prop="testerName" :label="$t('research.datasetCompilation.table.lab.testerName')"
+                  min-width="100">
                   <template #default="scope">
                     {{ scope.row.testerName || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="passFailFlag" :label="$t('research.datasetCompilation.table.lab.passFailFlag')" min-width="100">
+                <el-table-column prop="passFailFlag" :label="$t('research.datasetCompilation.table.lab.passFailFlag')"
+                  min-width="100">
                   <template #default="scope">
                     <el-tag :type="scope.row.passFailFlag === 'pass' ? 'success' : 'danger'">
-                      {{ scope.row.passFailFlag === 'pass' ? $t('research.datasetCompilation.table.lab.pass') : (scope.row.passFailFlag === 'fail' ? $t('research.datasetCompilation.table.lab.fail') : '-') }}
+                      {{ scope.row.passFailFlag === 'pass' ? $t('research.datasetCompilation.table.lab.pass') :
+                        (scope.row.passFailFlag === 'fail' ? $t('research.datasetCompilation.table.lab.fail') : '-') }}
                     </el-tag>
                   </template>
                 </el-table-column>
@@ -648,7 +680,7 @@ import { getYieldDataList } from '@/api/yieldData'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status'])
+const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status', 'crop_type'])
 
 const loading = ref(false)
 const detailData = ref(null)
@@ -882,49 +914,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.dataset-detail-container {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 /* 详情分节 */
 .detail-section {
   background: white;

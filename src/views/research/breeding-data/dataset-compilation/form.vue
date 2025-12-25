@@ -2,20 +2,17 @@
   <div class="dataset-form-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
             {{ $t('common.back') }}
-          </el-button>
+          </div>
         </div>
-        <div class="header-center">
+        <div class="header-content">
           <h1 class="page-title">
             {{ isEdit ? $t('research.datasetCompilation.edit') : $t('research.datasetCompilation.add') }}
           </h1>
         </div>
-        <div class="header-right"></div>
-      </div>
     </div>
 
     <!-- 表单区域 -->
@@ -121,7 +118,7 @@
           </el-form-item>
           <el-form-item :label="$t('research.datasetCompilation.form.cropType')" prop="cropType">
             <el-input
-                v-model="formData.cropType"
+                :value="getLabelByValue('crop_type', formData.cropType) || formData.cropType"
                 :placeholder="$t('research.datasetCompilation.placeholder.cropType')"
                 disabled
                 readonly
@@ -708,7 +705,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
-const { getLabelByValue } = useDict(['growth_cycle']) // 新增字典解析
+const { getLabelByValue } = useDict(['growth_cycle', 'crop_type']) // 新增字典解析
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -1170,40 +1167,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.dataset-form-container {
-  min-height: calc(100vh - 120px);
-}
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-left,
-.header-right {
-  flex: 1;
-}
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-.form-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-}
 .dataset-form {
   background: white;
   border-radius: 12px;

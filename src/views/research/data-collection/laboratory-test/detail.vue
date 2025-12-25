@@ -2,24 +2,20 @@
   <div class="laboratory-test-detail-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+        <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
+        <div class="header-content">
           <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button type="primary" @click="handleEdit">
-            <i class="ri-edit-line"></i>
-            {{ $t('common.edit') }}
-          </el-button>
         </div>
       </div>
     </div>
+
+
+
+
 
     <!-- 详情区域 -->
     <div v-loading="loading" class="detail-wrapper">
@@ -53,14 +49,9 @@
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleId') }}:</span>
               <span class="value">{{ detailData.sampleId }}</span>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleCondition') }}:</span>
-              <el-tag>{{ detailData.sampleCondition }}</el-tag>
-            </div>
-            <!-- <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.plotId') || '地块编号' }}:</span>
-              <span class="value">{{ detailData.plotId || '-' }}</span>
-            </div> -->
+            <!-- plotId commented out -->
+
+
           </div>
         </div>
 
@@ -87,14 +78,8 @@
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.resultValue') }}:</span>
               <span class="value">{{ detailData.resultValue || '-' }}</span>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.passFailFlag') }}:</span>
-              <span class="value">
-                <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
-                  {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
-                </el-tag>
-              </span>
-            </div>
+
+
           </div>
         </div>
 
@@ -106,6 +91,24 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
+              <span class="value">
+                <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
+                  {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
+                </el-tag>
+              </span>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+
+
+
+
+
+
+
+
+ 
               <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
               <span class="value highlight">{{ detailData.germinationRate }}%</span>
             </div>
@@ -175,6 +178,39 @@
             </div>
           </div>
         </div>
+
+          <!-- 退回信息 (仅在已退回S3状态时显示) -->
+          <div v-if="detailData.workflowStatus === 'S3'" class="detail-section rejection-section">
+            <div class="section-title">
+              <i class="ri-error-warning-line"></i>
+              {{ $t('research.dataCollection.laboratoryTest.rejectionInfo') || 'Rejection Information' }}
+            </div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectBy') || 'Rejected By'
+                }}:</span>
+                <span class="value">{{ detailData.approveByName || detailData.updateBy || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectOrg') || 'Organization'
+                }}:</span>
+                <span class="value">{{ detailData.rejectOrgName || '-' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectTime') || 'Rejected Time'
+                }}:</span>
+                <span class="value">{{ detailData.updateTime || '-' }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectReason') || 'Reason'
+                }}:</span>
+                <span class="value">{{ detailData.auditOpinion || '-' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       </template>
     </div>
   </div>
@@ -279,49 +315,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.laboratory-test-detail-container {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 /* 详情分节 */
 .detail-section {
   background: white;

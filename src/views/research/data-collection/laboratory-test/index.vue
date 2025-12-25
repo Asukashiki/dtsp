@@ -70,7 +70,7 @@
               </el-input>
               <el-select
                 v-model="searchForm.passFailFlag"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                 clearable
                 class="search-input"
               >
@@ -128,11 +128,6 @@
                   min-width="120"
                 />
                 <el-table-column
-                  prop="sampleCondition"
-                  :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
-                  min-width="120"
-                />
-                <el-table-column
                   prop="sampleType"
                   :label="$t('research.dataCollection.laboratoryTest.form.sampleType')"
                   min-width="120"
@@ -149,7 +144,7 @@
                 />
                 <el-table-column
                   prop="passFailFlag"
-                  :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                  :label="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                   min-width="120"
                 >
                   <template #default="{ row }">
@@ -346,7 +341,7 @@
                     <span class="value">{{ item.resultValue || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.passFailFlag') }}:</span>
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
                     <span class="value">
                       <el-tag v-if="item.passFailFlag === 'true' || item.passFailFlag === true" type="success" size="small">Pass</el-tag>
                       <el-tag v-else-if="item.passFailFlag === 'false' || item.passFailFlag === false" type="danger" size="small">Fail</el-tag>
