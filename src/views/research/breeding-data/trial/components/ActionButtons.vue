@@ -75,7 +75,8 @@ const status = computed(() => props.trial.trialStatus || props.trial.workflowSta
 const showEdit = computed(() => status.value === 'S0' || status.value === 'S3')
 const showView = computed(() => status.value === 'S0' ||status.value === 'S1' || status.value === 'S2' || status.value === 'S3' || status.value === 'S9' || status.value === 'S10')
 const showSubmit = computed(() => status.value === 'S0' || status.value === 'S3')
-const showCancel = computed(() => status.value === 'S0' || status.value === 'S1' || status.value === 'S2' || status.value === 'S3' || status.value === 'S9' || status.value === 'S10')
+// 只有草稿(S0)和待审批(S1)状态显示作废按钮
+const showCancel = computed(() => status.value === 'S0' || status.value === 'S1')
 
 const handleEdit = () => emit('edit', props.trial)
 const handleView = () => emit('view', props.trial)
