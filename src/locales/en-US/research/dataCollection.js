@@ -595,7 +595,7 @@ export default {
     reject: 'Reject',
     return: 'Return',
     archive: 'Archive',
-    cancel: 'Cancel',
+    cancel: 'void',
 
     // Rejection info
     rejected: 'Rejected',
@@ -961,7 +961,7 @@ export default {
     audit: 'Audit',
     approve: 'Approve',
     reject: 'Reject',
-    cancel: 'Cancel',
+    cancel: 'void',
     
     // Confirmation messages
     confirmApprove: 'Are you sure to approve this farming record?',
