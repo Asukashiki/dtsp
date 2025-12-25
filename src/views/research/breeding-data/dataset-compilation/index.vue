@@ -70,9 +70,24 @@
                 <el-table-column
                   prop="datasetCode"
                   :label="$t('research.datasetCompilation.columns.datasetCode')"
-                  min-width="150"
+                  min-width="180"
                   show-overflow-tooltip
-                />
+>
+                  <template #default="{ row }">
+                    <template v-if="row.datasetCode">
+                      <span class="dataset-code">{{ row.datasetCode }}</span>
+                    </template>
+                    <template v-else>
+                      <el-tooltip :content="$t('research.datasetCompilation.tooltip.codeAfterApproval')"
+                        placement="top">
+                        <span class="temp-tag">
+                          <i class="ri-time-line"></i>
+                          {{ $t('research.datasetCompilation.pendingCode') }}
+                        </span>
+                      </el-tooltip>
+                    </template>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.datasetCompilation.columns.trialId')"
@@ -506,6 +521,34 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+/* Dataset Code 样式 */
+.dataset-code {
+  color: #009A44;
+  font-weight: 600;
+}
+
+.temp-code {
+  display: inline-flex;
+  align-items: center;
+}
+
+.temp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  color: #999;
+  font-size: 12px;
+  cursor: help;
+}
+
+.temp-tag i {
+  font-size: 14px;
+  color: #faad14;
+}
 /* 分页 */
 .pagination-wrapper {
   display: flex;

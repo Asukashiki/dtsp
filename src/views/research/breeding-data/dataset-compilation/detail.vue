@@ -357,65 +357,51 @@
               <el-table :data="environmentDataList" border stripe size="small" style="width: 100%; margin-top: 12px"
                 :empty-text="$t('common.noData')">
                 <el-table-column prop="envRecordId"
-                  :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="120" />
+                  :label="$t('research.datasetCompilation.table.environment.envRecordId')" min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column prop="stationId" :label="$t('research.datasetCompilation.table.environment.stationId')"
+                  min-width="120" show-overflow-tooltip />
                 <el-table-column prop="trialId" :label="$t('research.datasetCompilation.table.common.trialId')"
-                  min-width="100" />
+                  min-width="120" show-overflow-tooltip />
                 <el-table-column prop="batchId" :label="$t('research.datasetCompilation.table.common.batchId')"
-                  min-width="100" />
+                  min-width="120" show-overflow-tooltip />
                 <el-table-column prop="plotId" :label="$t('research.datasetCompilation.table.common.plotId')"
-                  min-width="100" />
-                <el-table-column prop="collectTime"
-                  :label="$t('research.datasetCompilation.table.environment.collectTime')" min-width="120">
+                  min-width="120" show-overflow-tooltip />
+                <el-table-column prop="timestamp" :label="$t('research.datasetCompilation.table.environment.timestamp')"
+                  min-width="160">
                   <template #default="scope">
-                    {{ scope.row.collectTime || '-' }}
+                    {{ scope.row.timestamp || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="dataType" :label="$t('research.datasetCompilation.table.environment.dataType')"
+                <el-table-column prop="parameterCode"
+                  :label="$t('research.datasetCompilation.table.environment.parameterCode')" min-width="120">
+                  <template #default="scope">
+                    {{ getLabelByValue('env_parameter_code', scope.row.parameterCode) || scope.row.parameterCode || '-'
+                    }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="value" :label="$t('research.datasetCompilation.table.environment.value')"
                   min-width="100">
                   <template #default="scope">
-                    {{ scope.row.dataType || '-' }}
+                    {{ scope.row.value !== null && scope.row.value !== undefined ? scope.row.value : '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilPh" :label="$t('research.datasetCompilation.table.environment.soilPh')"
+                <el-table-column prop="unit" :label="$t('research.datasetCompilation.table.environment.unit')"
+                  min-width="80">
+                  <template #default="scope">
+                    {{ scope.row.unit || '-' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="source" :label="$t('research.datasetCompilation.table.environment.source')"
                   min-width="100">
                   <template #default="scope">
-                    {{ scope.row.soilPh || '-' }}
+                    {{ scope.row.source || '-' }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="soilTemperature"
-                  :label="$t('research.datasetCompilation.table.environment.soilTemperature')" min-width="120">
+                <el-table-column prop="createTime" :label="$t('research.datasetCompilation.table.common.createdTime')"
+                  min-width="160">
                   <template #default="scope">
-                    {{ scope.row.soilTemperature || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="soilMoisture"
-                  :label="$t('research.datasetCompilation.table.environment.soilMoisture')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.soilMoisture || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="airTemperature"
-                  :label="$t('research.datasetCompilation.table.environment.airTemperature')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.airTemperature || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="airHumidity"
-                  :label="$t('research.datasetCompilation.table.environment.airHumidity')" min-width="120">
-                  <template #default="scope">
-                    {{ scope.row.airHumidity || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="rainfall" :label="$t('research.datasetCompilation.table.environment.rainfall')"
-                  min-width="100">
-                  <template #default="scope">
-                    {{ scope.row.rainfall || 0 }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remarks" :label="$t('research.datasetCompilation.table.common.remarks')"
-                  min-width="150">
-                  <template #default="scope">
-                    {{ scope.row.remarks || '-' }}
+                    {{ scope.row.createTime || '-' }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('research.datasetCompilation.table.common.remark')" min-width="180">
@@ -680,7 +666,7 @@ import { getYieldDataList } from '@/api/yieldData'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status', 'crop_type'])
+const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status', 'crop_type', 'env_parameter_code'])
 
 const loading = ref(false)
 const detailData = ref(null)
@@ -785,7 +771,7 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    labTestList.value = (labRes?.data?.list || []).map(item => ({
+    labTestList.value = (labRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))

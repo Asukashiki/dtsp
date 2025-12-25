@@ -15,6 +15,7 @@ export default {
   editSuccess: '编辑成功',
   submitSuccess: '提交成功',
   submitConfirm: '确定提交该数据集吗?',
+  pendingCode: '待生成',
 
   // 搜索筛选
   searchPlaceholder: '搜索品种名称',
@@ -151,7 +152,8 @@ export default {
     batchIdAuto: '批次ID将根据试验ID自动填充',
     compiledByAuto: '自动获取当前登录用户',
     cropTypeAuto: '作物类型从试验信息自动获取',
-    varietyNameAuto: '品种名称从试验信息自动获取'
+    varietyNameAuto: '品种名称从试验信息自动获取',
+    codeAfterApproval: '正式数据集编号将在审核通过后自动生成'
   },
 
   // Tab页标题
@@ -215,6 +217,12 @@ export default {
     // 环境监测数据列
     environment: {
       envRecordId: '环境记录ID',
+      stationId: '气象站ID',
+      timestamp: '采集时间',
+      parameterCode: '参数代码',
+      value: '测量值',
+      unit: '单位',
+      source: '数据来源',
       collectTime: '采集时间',
       dataType: '数据类型',
       soilPh: '土壤pH值',
