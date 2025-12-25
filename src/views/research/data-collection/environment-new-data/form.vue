@@ -108,12 +108,13 @@
               value-format="YYYY-MM-DD HH:mm"
               style="width: 100%"
               :disabled="isReadOnly || isAuditMode"
+              :default-value="new Date()"
             />
           </el-form-item>
 
-          <!-- Observer ID (disabled, default to current user id) -->
+          <!-- Observer Name (disabled, default to current user name) -->
           <el-form-item :label="$t('research.environmentNewData.form.observerId')">
-            <el-input v-model="formData.observerId" disabled />
+            <el-input v-model="observerName" disabled />
           </el-form-item>
         </div>
 
@@ -170,12 +171,15 @@
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.source')" prop="source">
-            <el-input
+            <el-select
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
-              maxlength="100"
+              style="width: 100%"
               :disabled="isReadOnly || isAuditMode"
-            />
+            >
+              <el-option label="IOT" value="IOT" />
+              <el-option label="Metrology" value="metrology" />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.remark')" prop="remark">
@@ -310,6 +314,9 @@ const formData = reactive({
   approvalComment: '' // 添加审批意见字段
 })
 
+// 观察员名称（用于显示）
+const observerName = ref('')
+
 const unitOptions = ref([
   { value: '°C', label: '°C' },
 ])
@@ -388,6 +395,23 @@ const loadDetail = async () => {
     const res = await getEnvironmentNewDataDetail(route.params.envRecordId)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      // 设置观察员名称
+      if (res.data.observerName) {
+        observerName.value = res.data.observerName
+      } else if (res.data.observerId) {
+        // 如果后端没有返回observerName，尝试从当前用户信息获取
+        try {
+          const u = getUserInfo()
+          if (u && u.user && u.user.id === res.data.observerId) {
+            // 优先使用 name，然后是 nickName，最后是 userName
+            observerName.value = u.user.name || u.user.nickName || u.user.userName || res.data.observerId
+          } else {
+            observerName.value = res.data.observerId
+          }
+        } catch (e) {
+          observerName.value = res.data.observerId
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -494,16 +518,30 @@ const handleReject = async () => {
 
 onMounted(() => {
   loadPlotOptions()
-  loadDetail()
+  // 先设置默认值，再加载详情（这样编辑模式下会被覆盖）
   // 设置 Observer ID 为当前登录用户（仅新增时，且为空时）
   try {
     const u = getUserInfo()
-    if (!isEdit.value && !formData.observerId && u && u.user && u.user.id) {
+    if (!isEdit.value && u && u.user && u.user.id) {
       formData.observerId = u.user.id
+      // 优先使用 name，然后是 nickName，最后是 userName
+      observerName.value = u.user.name || u.user.nickName || u.user.userName || u.user.id
+    }
+    // 设置采集时间默认值为当前时间（仅新增时）
+    if (!isEdit.value && !formData.timestamp) {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const day = String(now.getDate()).padStart(2, '0')
+      const hours = String(now.getHours()).padStart(2, '0')
+      const minutes = String(now.getMinutes()).padStart(2, '0')
+      formData.timestamp = `${year}-${month}-${day} ${hours}:${minutes}`
     }
   } catch (e) {
     // ignore
   }
+  // 加载详情数据（编辑模式）
+  loadDetail()
 })
 </script>
 
