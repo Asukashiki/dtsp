@@ -165,12 +165,12 @@ watch(() => props.editData, (newVal) => {
 
 const phoneValidator = (rule, value, callback) => {
   if (!value) {
-
+    callback(new Error(t('research.breeding.seed.ose.rules.contactNumber')))
   } else {
     // 埃塞俄比亚手机号格式: 251开头，总共12位
     const phoneRegex = /^251\d{9}$/
     if (!phoneRegex.test(value)) {
-
+      callback(new Error(t('research.breeding.seed.ose.rules.contactNumberFormat')))
     } else {
       callback()
     }
@@ -178,21 +178,21 @@ const phoneValidator = (rule, value, callback) => {
 }
 
 const rules = computed(() => ({
-  // oseCode: [
-  //   { required: true, message: t('research.breeding.seed.ose.rules.oseCode'), trigger: 'blur' }
-  // ],
-  // oseName: [
-  //   { required: true, message: t('research.breeding.seed.ose.rules.oseName'), trigger: 'blur' }
-  // ],
-  // location: [
-  //   { required: true, message: t('research.breeding.seed.ose.rules.location'), trigger: 'blur' }
-  // ],
-  // regionCode: [
-  //   { required: true, message: t('research.breeding.seed.ose.rules.regionCode'), trigger: 'change' }
-  // ],
-  // contactName: [
-  //   { required: true, message: t('research.breeding.seed.ose.rules.contactName'), trigger: 'blur' }
-  // ],
+  oseCode: [
+    { required: true, message: t('research.breeding.seed.ose.rules.oseCode'), trigger: 'blur' }
+  ],
+  oseName: [
+    { required: true, message: t('research.breeding.seed.ose.rules.oseName'), trigger: 'blur' }
+  ],
+  location: [
+    { required: true, message: t('research.breeding.seed.ose.rules.location'), trigger: 'blur' }
+  ],
+  regionCode: [
+    { required: true, message: t('research.breeding.seed.ose.rules.regionCode'), trigger: 'change' }
+  ],
+  contactName: [
+    { required: true, message: t('research.breeding.seed.ose.rules.contactName'), trigger: 'blur' }
+  ],
   contactNumber: [
     { required: true, validator: phoneValidator, trigger: 'blur' }
   ]

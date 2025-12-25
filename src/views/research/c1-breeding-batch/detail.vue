@@ -128,13 +128,13 @@
                     <span class="unit" v-if="batchInfo.expectedYield">kg</span>
                   </span>
                 </div>
-                <div class="info-item highlight">
+                <!-- <div class="info-item highlight">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.actualYield') }}</span>
                   <span class="value metric">
                     <span class="number">{{ batchInfo.actualYield || '-' }}</span>
                     <span class="unit" v-if="batchInfo.actualYield">kg</span>
                   </span>
-                </div>
+                </div> -->
                 <div class="info-item">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.plantingArea') }}</span>
                   <span class="value">{{ batchInfo.plantingArea || '-' }} ha</span>
