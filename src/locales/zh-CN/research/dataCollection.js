@@ -620,7 +620,7 @@ export default {
     dataCanceled: '数据作废',
 
     // 操作
-    submit: '提交审核',
+    submit: '提交',
     approve: '通过',
     reject: '退回',
     return: '返回',

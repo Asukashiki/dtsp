@@ -27,7 +27,7 @@ export default {
     reject: 'Reject',
     batchApprove: 'Batch Approve',
     batchReject: 'Batch Reject',
-    submit: 'Submit for Audit',
+    submit: 'Submit',
     lockBatch: 'Lock Batch',
     aggregationSubmit: 'Submit Aggregation',
     aggregationDetail: 'Aggregation Detail',

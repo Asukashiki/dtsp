@@ -27,7 +27,7 @@ export default {
     reject: '驳回',
     batchApprove: '批量通过',
     batchReject: '批量驳回',
-    submit: '提交审核',
+    submit: '提交',
     lockBatch: '锁定批次',
     aggregationSubmit: '汇聚数据提交',
     aggregationDetail: '汇聚数据详情',

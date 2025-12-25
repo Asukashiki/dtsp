@@ -588,7 +588,7 @@ export default {
     dataCanceled: 'Data Canceled',
 
     // Actions
-    submit: 'Submit for Approval',
+    submit: 'Submit',
     approve: 'Approve',
     reject: 'Reject',
     return: 'Return',
