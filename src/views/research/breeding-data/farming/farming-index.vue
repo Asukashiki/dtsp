@@ -104,37 +104,28 @@
                 </el-table-column>
                 <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="250" fixed="right">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                      </el-button>
-
-                      <!-- Show "Approval" button for S1 and S0 status -->
-                      <el-button
-                        v-if="row.workflowStatus === 'S1' || row.workflowStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S0'"
-                        link type="success"
-                        @click="handleAudit(row)"
-                      >
-                        <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                      </el-button>
-
-                      <!-- Show "Invalid" button for S0, S1 and S3 status -->
-                      <el-button
-                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
-                        link type="warning"
-                        @click="handleCancel(row)"
-                      >
-                        <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                      </el-button>
-
-                      <!-- Show "Edit" button for editable status -->
-<!--                      <el-button
-                        v-if="!row.workflowStatus || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
-                        link type="primary"
-                        @click="handleEdit(row)"
-                      >
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>-->
+                    <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button link type="primary" @click="handleView(row)">
+                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                        </el-button>
+                        <el-button
+                          v-if="row.workflowStatus === 'S1' || row.workflowStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S0'"
+                          link type="success"
+                          @click="handleAudit(row)"
+                        >
+                          <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
+                        </el-button>
+                      </div>
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button
+                          v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
+                          link type="warning"
+                          @click="handleCancel(row)"
+                        >
+                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
+                        </el-button>
+                      </div>
                     </div>
                   </template>
                 </el-table-column>
@@ -174,39 +165,31 @@
                     <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
                   </div>
                   <div class="mobile-card-footer">
-                    <el-button size="small" @click="handleView(item)">
-                      <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                    </el-button>
-
-                    <!-- Show "Approval" button for S1 and S0 status -->
-                    <el-button
-                      v-if="item.workflowStatus === 'S1' || item.workflowStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S0'"
-                      size="small"
-                      type="success"
-                      @click="handleAudit(item)"
-                    >
-                      <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                    </el-button>
-
-                    <!-- Show "Invalid" button for S0, S1 and S3 status -->
-                    <el-button
-                      v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
-                      size="small"
-                      type="warning"
-                      @click="handleCancel(item)"
-                    >
-                      <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                    </el-button>
-
-                    <!-- Show "Edit" button for editable status -->
-<!--                    <el-button
-                      v-if="!item.workflowStatus || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
-                      size="small"
-                      type="primary"
-                      @click="handleEdit(item)"
-                    >
-                      <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                    </el-button>-->
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%;">
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button size="small" @click="handleView(item)">
+                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                        </el-button>
+                        <el-button
+                          v-if="item.workflowStatus === 'S1' || item.workflowStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S0'"
+                          size="small"
+                          type="success"
+                          @click="handleAudit(item)"
+                        >
+                          <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
+                        </el-button>
+                      </div>
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button
+                          v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
+                          size="small"
+                          type="warning"
+                          @click="handleCancel(item)"
+                        >
+                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
+                        </el-button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               <div class="pagination-wrapper">

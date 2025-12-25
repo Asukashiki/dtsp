@@ -403,7 +403,10 @@ const handleSubmitForReview = async (row) => {
         type: 'warning'
       }
     )
-    const res = await submitYieldDataForReview({ id: row.id })
+    const res = await submitYieldDataForReview({
+      id: row.id,
+      workflowStatus: 'S1' // 提交审核后状态应为S1
+    })
     if (res.code === 200) {
       ElMessage.success('Submit for review successfully')
       handleSearch()
@@ -452,7 +455,8 @@ const handleVoid = async (row) => {
     // 调用作废接口
     const submitData = {
       id: row.id,
-      remark: reason
+      remark: reason,
+      workflowStatus: 'S10' // 作废后状态应为S10
     }
 
     const res = await voidYieldData(submitData)
