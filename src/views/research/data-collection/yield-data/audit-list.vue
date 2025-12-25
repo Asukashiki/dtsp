@@ -161,13 +161,22 @@
                         {{ $t('common.view') }}
                       </el-button>
                       <el-button
-                        v-if="row.workflowStatus !== 'S10'"
+                        v-if="shouldShowAuditButton(row)"
                         link
-                        :type="row.workflowStatus === 'S2' ? 'danger' : 'warning'"
+                        type="warning"
                         @click="handleAudit(row)"
                       >
-                        <i :class="row.workflowStatus === 'S2' ? 'ri-close-circle-line' : 'ri-file-check-line'"></i>
-                        {{ row.workflowStatus === 'S2' ? $t('research.dataCollection.fieldInspectionAudit.void') : $t('common.audit') }}
+                        <i class="ri-file-check-line"></i>
+                        {{ $t('common.audit') }}
+                      </el-button>
+                      <el-button
+                        v-if="shouldShowVoidButton(row)"
+                        link
+                        type="danger"
+                        @click="handleVoid(row)"
+                      >
+                        <i class="ri-close-circle-line"></i>
+                        {{ $t('research.dataCollection.fieldInspectionAudit.void') }}
                       </el-button>
                     </div>
                   </template>
@@ -202,13 +211,22 @@
                       {{ $t('common.view') }}
                     </el-button>
                     <el-button
-                      v-if="item.workflowStatus !== 'S10'"
+                      v-if="shouldShowAuditButton(item)"
                       link
-                      :type="item.workflowStatus === 'S2' ? 'danger' : 'warning'"
+                      type="warning"
                       @click="handleAudit(item)"
                     >
-                      <i :class="item.workflowStatus === 'S2' ? 'ri-close-circle-line' : 'ri-file-check-line'"></i>
-                      {{ item.workflowStatus === 'S2' ? $t('research.dataCollection.fieldInspectionAudit.void') : $t('common.audit') }}
+                      <i class="ri-file-check-line"></i>
+                      {{ $t('common.audit') }}
+                    </el-button>
+                    <el-button
+                      v-if="shouldShowVoidButton(item)"
+                      link
+                      type="danger"
+                      @click="handleVoid(item)"
+                    >
+                      <i class="ri-close-circle-line"></i>
+                      {{ $t('research.dataCollection.fieldInspectionAudit.void') }}
                     </el-button>
                   </div>
                 </div>
@@ -235,7 +253,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- 移动端分页 -->
               <div class="mobile-pagination-wrapper">
                 <el-pagination
@@ -320,7 +338,7 @@ const handleSearch = async () => {
     if (searchForm.workflowStatus !== '') {
       params.workflowStatus = searchForm.workflowStatus
     }
-    
+
     const res = await getFieldInspectionAuditList(params)
     if (res.code === 200) {
       // 处理BaseController.getDataTable()返回的TableDataInfo格式
@@ -377,62 +395,75 @@ const handleView = (row) => {
   router.push({ name: 'FieldInspectionAuditDetail', params: { id: row.id } })
 }
 
-// 审核或作废
+// 判断是否显示审核按钮（只在审批状态为S1时显示）
+const shouldShowAuditButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S1'
+}
+
+// 判断是否显示作废按钮（只在审批状态为S0、S1或S3时显示）
+const shouldShowVoidButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S0' || status === 'S1' || status === 'S3'
+}
+
+// 审核操作
 const handleAudit = async (row) => {
-  // 如果状态是S2（审核通过），则执行作废操作
-  if (row.workflowStatus === 'S2') {
-    try {
-      await ElMessageBox.confirm(
-        t('research.dataCollection.fieldInspectionAudit.confirmVoid'),
-        t('common.confirm'),
-        {
-          confirmButtonText: t('common.confirm'),
-          cancelButtonText: t('common.cancel'),
-          type: 'warning'
-        }
-      )
+  // 跳转到审核页面
+  router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
+}
 
-      // 弹出输入框让用户输入作废原因
-      const { value: reason } = await ElMessageBox.prompt(
-        t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
-        t('research.dataCollection.fieldInspectionAudit.voidReason'),
-        {
-          confirmButtonText: t('common.confirm'),
-          cancelButtonText: t('common.cancel'),
-          inputType: 'textarea',
-          inputPlaceholder: t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
-          inputValidator: (value) => {
-            if (!value || value.trim() === '') {
-              return t('research.dataCollection.fieldInspectionAudit.rules.voidReasonRequired')
-            }
-            return true
+// 作废操作
+const handleVoid = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.fieldInspectionAudit.confirmVoid'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    // 弹出输入框让用户输入作废原因
+    const { value: reason } = await ElMessageBox.prompt(
+      t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
+      t('research.dataCollection.fieldInspectionAudit.voidReason'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        inputType: 'textarea',
+        inputPlaceholder: t('research.dataCollection.fieldInspectionAudit.placeholder.voidReason'),
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') {
+            return t('research.dataCollection.fieldInspectionAudit.rules.voidReasonRequired')
           }
+          return true
         }
-      )
+      }
+    )
 
-      // 调用作废接口
-      const submitData = {
-        id: row.id,
-        remark: reason
-      }
-
-      const res = await voidFieldInspection(submitData)
-      if (res.code === 200) {
-        ElMessage.success(t('research.dataCollection.fieldInspectionAudit.voidSuccess'))
-        // 刷新列表
-        handleSearch()
-      } else {
-        ElMessage.error(res.msg || t('common.operationFailed'))
-      }
-    } catch (error) {
-      if (error !== 'cancel' && error !== 'close') {
-        console.error('Failed to void:', error)
-        ElMessage.error(t('common.operationFailed'))
-      }
+    // 调用作废接口
+    const submitData = {
+      id: row.id,
+      remark: reason,
+      workflowStatus: 'S4' // 作废后状态应为S4
     }
-  } else {
-    // 其他状态（S1待审核、S3驳回、S10作废）跳转到审核页面
-    router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
+
+    const res = await voidFieldInspection(submitData)
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.fieldInspectionAudit.voidSuccess'))
+      // 刷新列表
+      handleSearch()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      console.error('Failed to void:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
   }
 }
 
