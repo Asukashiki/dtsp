@@ -188,7 +188,7 @@ export default {
       columnNo: 'Column No.',
       varietyCode: 'Variety Code',
       sowingDate: 'Sowing Date',
-      seedQuantity: 'Seed Quantity (kg)',
+      seedQuantity: 'Seed Quantity (g)',
       sowingMethod: 'Sowing Method',
       plotAreaM2: 'Plot Area (㎡)',
       gpsLat: 'GPS Latitude',

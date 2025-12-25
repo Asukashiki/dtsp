@@ -22,6 +22,7 @@ export default {
     success: '操作成功',
     failed: '操作失败',
     tips: '提示',
+    prompt: '提示',
     warning: '警告',
     addSuccess: '新增成功',
     updateSuccess: '更新成功',

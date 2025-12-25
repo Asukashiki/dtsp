@@ -26,7 +26,7 @@
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
-              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
+              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width" @change="handleCropTypeChange">
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.wheat')" value="WHEAT" />
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.corn')" value="CORN" />
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.rice')" value="RICE" />
@@ -36,7 +36,11 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" clearable />
+              <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" clearable @blur="generateVarietyCode" />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyCode')" prop="varietyCode">
+              <el-input v-model="formData.varietyCode" :placeholder="$t('research.breeding.breedingBatch.form.varietyCodePlaceholder')" clearable />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">

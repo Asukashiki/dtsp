@@ -263,7 +263,7 @@ export default {
       season: 'Season',
       activityCode: 'Activity Code',
       kpiCode: 'KPI Code',
-      seedQuantity: 'Seed Quantity (kg)',
+      seedQuantity: 'Seed Quantity (g)',
       sowingMethod: 'Sowing Method',
       sowingTime: 'Sowing Time',
     },
@@ -319,7 +319,7 @@ export default {
 
       // Sowing information sub-object
       sowing: {
-          seedQuantity: 'Seed Quantity (kg)',
+          seedQuantity: 'Seed Quantity (g)',
           sowingMethod: 'Sowing Method',
           sowingTime: 'Sowing Time',
       },

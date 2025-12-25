@@ -112,7 +112,7 @@
               <el-row :gutter="20">
                 <!-- Seed Quantity (kg) -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Seed Quantity (kg)">
+                  <el-form-item label="Seed Quantity (g)">
                     <el-input-number v-model="formData.seedQuantity" :min="0" :precision="2" style="width: 100%" placeholder="Enter seed quantity in kg" />
                   </el-form-item>
                 </el-col>

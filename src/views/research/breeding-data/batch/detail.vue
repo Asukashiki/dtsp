@@ -21,15 +21,14 @@
               <el-descriptions-item :label="$t('research.breedingData.batch.form.batchName')">{{ detailData.batchName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.batchId')">{{ detailData.batchId }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.cropType')">{{ displayCropType }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyCode')">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyName')">{{ detailData.varietyName }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.batch.form.varietyCode')">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.breedingMethod')">{{ detailData.breedingMethod }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.year')">{{ detailData.year }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.germplasmSource')">{{ detailData.germplasmSource || '-' }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.parentalSeedSource')">{{ detailData.parentalSeedSource || '-' }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.objective')">{{ detailData.objective || '-' }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.batch.form.status')">{{ detailData.status || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.workflowStatus')">{{ getWorkflowStatusLabel(detailData.workflowStatus) }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>

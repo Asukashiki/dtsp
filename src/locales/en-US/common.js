@@ -23,6 +23,7 @@ export default {
   success: 'Success',
   failed: 'Failed',
   tips: 'Tips',
+  prompt: 'Prompt',
   warning: 'Warning',
   addSuccess: 'Added successfully',
   updateSuccess: 'Updated successfully',
