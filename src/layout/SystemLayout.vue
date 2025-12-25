@@ -170,8 +170,8 @@ const isCollapsed = ref(false)
 const mobileMenuVisible = ref(false)
 
 // 从store获取用户信息
-const userName = computed(() => userStore.userInfo?.user?.name || '用户')
-const organName = computed(() => userStore.userInfo?.user?.organName || '访客')
+const userName = computed(() => userStore.userInfo?.user?.name || 'user')
+const organName = computed(() => userStore.userInfo?.user?.organName || 'user')
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 获取用户角色列表
