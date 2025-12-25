@@ -499,6 +499,7 @@ export default {
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
     editSuccess: 'Updated successfully',
+    auditInfo: 'Audit Information',
 
     searchPlaceholder: 'Search batch ID, sample ID',
     filterByBatch: 'Filter by breeding batch',
