@@ -103,11 +103,18 @@
                 </el-table-column>
                 <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="280" fixed="right">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                      <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                      <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)"><i class="ri-send-plane-line"></i>Submit for Review</el-button>
-                      <el-button v-if="shouldShowCancelButton(row)" link type="danger" @click="handleCancel(row)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
+                    <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+                        <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                      </div>
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)">
+                          <i class="ri-send-plane-line"></i>
+                          {{ $t('farmerDemand.actions.submit') }}
+                        </el-button>
+                        <el-button v-if="shouldShowCancelButton(row)" link type="danger" @click="handleCancel(row)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
+                      </div>
                     </div>
                   </template>
                 </el-table-column>
@@ -141,10 +148,16 @@
                     <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
                   </div>
                   <div class="mobile-card-footer">
-                    <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                    <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                    <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}</el-button>
-                    <el-button v-if="shouldShowCancelButton(item)" size="small" type="danger" @click="handleCancel(item)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%;">
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+                        <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+                      </div>
+                      <div style="display: flex; gap: 5px; width: 100%;">
+                        <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}</el-button>
+                        <el-button v-if="shouldShowCancelButton(item)" size="small" type="danger" @click="handleCancel(item)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               <div class="pagination-wrapper">
