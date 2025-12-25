@@ -120,7 +120,7 @@
                 <el-table-column prop="auditedName" :label="$t('research.breedingData.plot.columns.auditedBy')" min-width="120" />
                 <el-table-column prop="auditTime" :label="$t('research.breedingData.plot.columns.auditTime')" min-width="120" />
                 <el-table-column prop="auditOpinion" :label="$t('research.breedingData.plot.auditOpinion')" min-width="150" show-overflow-tooltip />
-                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="300" fixed="right">
+                <el-table-column :label="$t('research.breedingData.plot.columns.actions')" width="220" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <!-- S0草稿: 编辑、作废、提交审核 -->
