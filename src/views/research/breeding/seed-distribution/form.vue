@@ -182,7 +182,7 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                     <div style="display: flex; justify-content: space-between">
                       <span>{{ batch.varietyName }} - {{ batch.cropType }}</span>
                       <span style="color: #8492a6; font-size: 13px">
-                        {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.remainingQuantity ?? batch.produceSeedQuantrity ?? 0 }} kg
+                        {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.produceSeedQuantrity ?? 0 }} kg
                       </span>
                     </div>
                   </el-option>
@@ -437,7 +437,7 @@ const handleBatchChange = async (index) => {
     const res = await getBreedSeedProduceDetail(detail.produceBatchId)
     if (res.code === 200 && res.data) {
       // 使用后端返回的最新剩余量
-      detail.maxQuantity = res.data.remainingQuantity || res.data.produceSeedQuantrity || 0
+      detail.maxQuantity = res.data.produceSeedQuantrity || 0
 
       // 同时更新缓存列表中的数据，以便下拉选项显示最新的剩余量
         const batchIndex = productionBatchList.value.findIndex(
@@ -452,7 +452,7 @@ const handleBatchChange = async (index) => {
         item => item.produceBatchId === detail.produceBatchId
       )
       if (batch) {
-        detail.maxQuantity = batch.remainingQuantity || batch.produceSeedQuantrity || 0
+        detail.maxQuantity = batch.produceSeedQuantrity || 0
       } else {
         detail.maxQuantity = null
       }
@@ -502,7 +502,7 @@ const handleBatchChange = async (index) => {
       item => item.produceBatchId === detail.produceBatchId
     )
     if (batch) {
-      detail.maxQuantity = batch.remainingQuantity || batch.produceSeedQuantrity || 0
+      detail.maxQuantity = batch.produceSeedQuantrity || 0
     } else {
       detail.maxQuantity = null
     }
