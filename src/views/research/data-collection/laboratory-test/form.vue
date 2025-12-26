@@ -440,8 +440,10 @@ const passFailFlagDisplay = computed(() => {
 
 // 样本类型/参数/预期范围映射
 const sampleTypeOptions = [
+  { value: 'soil', label: 'Soil' },
   { value: 'grain', label: 'Grain' },
   { value: 'leaf_tissue', label: 'Leaf Tissue' },
+  { value: 'water', label: 'Water' },
   { value: 'nutrient_analysis', label: 'Nutrient Analysis' }
 ]
 
