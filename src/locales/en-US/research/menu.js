@@ -123,7 +123,7 @@ export default {
   c1SeedPropagationApplicationAudit: 'Seed Multiplication Application Audit',
   c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
 
-  c1BatchAudit: 'Breeding Seed Audit',
+  c1BatchAudit: 'Seed Multiplication Audit',
   c1BatchAuditDetail: 'Breeding Seed Audit Detail',
 
   c1BatchCertificate: 'Seed Certificate Issuance',
@@ -173,7 +173,7 @@ export default {
   breedingTracking: 'Breeding Tracking Management',
   breedingSeed: 'Breeding Seed Management',
   breedingCertification: 'Breeding Seed Certification Application',
-  breedingAudit: 'Breeding Seed Audit',
+  breedingAudit: 'Seed Multiplication Audit',
   breedingCertificate: 'Seed Certificate Issuance',
   breedingDataManagement: 'Breeding Data Management',
   fieldInspection: 'Field Inspection Data Collection',

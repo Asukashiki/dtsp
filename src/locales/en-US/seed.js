@@ -213,7 +213,7 @@ export default {
 
   // Breeding Seed Audit
   breedingAudit: {
-    title: 'Breeding Seed Audit',
+    title: 'Seed Multiplication Audit',
     subtitle: 'Review pending breeding seed certification applications',
     list: 'Audit List',
     pendingOnly: 'Show pending applications only',
@@ -235,13 +235,13 @@ export default {
 
   // C1 Breeding Batch Audit
   c1BatchAudit: {
-    title: 'Breeding Seed Audit',
-    subtitle: 'Review pending breeding batches',
+    title: 'Seed Multiplication Audit',
+    subtitle: 'Review pending multiplication information',
     searchPlaceholder: 'Search batch ID, variety name, organization',
     filterByCrop: 'Filter by crop type',
     noData: 'No pending batches',
     audit: 'Audit',
-    auditDialog: 'Audit Breeding Batch',
+    auditDialog: 'Seed Multiplication Audit',
     auditResult: 'Audit Result',
     auditComment: 'Audit Comment',
     auditCommentPlaceholder: 'Please enter audit comment',
