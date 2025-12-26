@@ -267,9 +267,6 @@ const loadData = async () => {
 
       tableData.value = list
       pagination.total = res.data.total || 0
-      if (tableData.value.length === 0 && pagination.page === 1) {
-        ElMessage.info(t('home.noData'))
-      }
     } else {
       ElMessage.error(res?.msg || t('common.dataLoadFailed'))
       tableData.value = []
