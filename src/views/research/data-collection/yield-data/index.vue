@@ -373,10 +373,10 @@ const handleEdit = (row) => {
   router.push({ name: 'FieldInspectionEdit', params: { id: row.id } })
 }
 
-// 判断是否显示编辑按钮（只在审批状态为S0、S1或S3时显示）
+// 判断是否显示编辑按钮（只在审批状态为S0或S3时显示）
 const shouldShowEditButton = (row) => {
   const status = row.workflowStatus
-  return status === 'S0' || status === 'S1' || status === 'S3'
+  return status === 'S0' || status === 'S3'
 }
 
 // 判断是否显示提交审核按钮（只在审批状态为S0、或S3时显示）
