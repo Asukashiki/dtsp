@@ -2,14 +2,13 @@
   <div class="batch-detail-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button @click="goBack">
+        <div class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
+      </div>
+      <div class="header-content">
           <h1 class="page-title">{{ $t('research.c1BreedingBatch.detail.title') }}</h1>
           <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
         </div>
@@ -17,8 +16,7 @@
           <el-button type="primary" @click="handleEdit" v-if="batchInfo && !isReadonly">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
-          </el-button>
-        </div>
+        </el-button>
       </div>
     </div>
 
@@ -280,52 +278,6 @@ const goBack = () => {
 </script>
 
 <style scoped lang="scss">
-.batch-detail-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 12px;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.2);
-
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .header-left, .header-right {
-      min-width: 80px;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .batch-id {
-        margin: 5px 0 0 0;
-        font-size: 14px;
-        opacity: 0.9;
-      }
-    }
-
-    .header-right {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-}
 
 .content-wrapper {
   background: white;

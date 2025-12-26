@@ -2,16 +2,15 @@
   <div class="breeding-batch-form-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+        <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('research.breeding.breedingBatch.edit') : $t('research.breeding.breedingBatch.add') }}</h1>
-        </div>
+      </div>
+      <div class="header-content">
+        <h1 class="page-title">{{ isEdit ? $t('research.breeding.breedingBatch.edit') :
+          $t('research.breeding.breedingBatch.add') }}</h1>
       </div>
     </div>
 
@@ -216,52 +215,12 @@ const goBack = () => {
 
 <style scoped lang="scss">
 .breeding-batch-form-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-content {
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .header-left {
-      margin-right: auto;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-    }
-  }
-}
 
 .form-wrapper {
   background: white;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .breeding-batch-form {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
 
   .form-block {
     margin-bottom: 30px;

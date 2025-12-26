@@ -1,9 +1,9 @@
 export default {
-  title: 'C1 Propagation Batch Management',
-  subtitle: 'Manage C1 seed propagation batch information',
+  title: 'Seed Multiplication Information',
+  subtitle: 'Manage Seed Multiplication Information',
 
-  add: 'Add Batch',
-  edit: 'Edit Batch',
+  add: 'Add Seed Multiplication Information',
+  edit: 'Edit Seed Multiplication Information',
   delete: 'Void',
   view: 'View Details',
 
@@ -89,7 +89,7 @@ export default {
   auditApproved: 'Approved',
 
   detail: {
-    title: 'Batch Details',
+    title: 'Details',
     tabs: {
       basicInfo: 'Basic Info',
       trackingRecords: 'Tracking Records',
