@@ -140,7 +140,7 @@ export default {
 
   // 操作按钮
   actions: {
-    submit: '提交审核',
+    submit: '提交',
     statistics: '数据统计',
     view: '查看',
     edit: '编辑',

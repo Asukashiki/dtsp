@@ -678,7 +678,7 @@ export default {
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
     editSuccess: 'Updated successfully',
-    submitForReview: 'Submit for Review',
+    submitForReview: 'Submit',
     submitForReviewSuccess: 'Submit for review successfully',
     submitForReviewConfirm: 'Are you sure you want to submit for review?',
     void: 'Void',

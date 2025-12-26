@@ -712,7 +712,7 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
-    submitForReview: '提交审核',
+    submitForReview: '提交',
     submitForReviewSuccess: '提交审核成功',
     submitForReviewConfirm: '确定要提交审核吗？',
     void: '作废',

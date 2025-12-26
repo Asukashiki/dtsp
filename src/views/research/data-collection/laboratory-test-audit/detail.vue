@@ -101,6 +101,32 @@
           </div>
         </div>
 
+        <!-- 健康与追溯 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-heart-pulse-line"></i>
+            {{ $t('research.dataCollection.laboratoryTest.form.healthTraceability') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item full-width">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.seedHealthFindings') }}:</span>
+              <span class="value">{{ detailData.seedHealthFindings || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.traceabilityLink') }}:</span>
+              <span class="value">{{ detailData.traceabilityLink || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labReportFile') }}:</span>
+              <span v-if="detailData.labReportFile" class="value file-link" @click="handlePreviewFile(detailData.labReportFile)">
+                <i class="ri-file-pdf-line"></i>
+                {{ detailData.labReportFileName || $t('research.dataCollection.laboratoryTest.form.labReportFile') }}
+              </span>
+              <span v-else class="value">-</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 检测信息 -->
         <div class="detail-section">
           <div class="section-title">
@@ -189,6 +215,7 @@
 import { ref, reactive, defineProps, defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getFilePreviewUrl } from '@/api/file'
 
 const props = defineProps({
   detailData: {
@@ -216,6 +243,23 @@ const auditForm = reactive({
 
 const goBack = () => {
   emit('back')
+}
+
+// 文件预览处理
+const handlePreviewFile = async (fileId) => {
+  if (!fileId) return
+
+  try {
+    const res = await getFilePreviewUrl(fileId)
+    if (res.code === 200 && res.msg) {
+      window.open(res.msg, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview file:', error)
+    ElMessage.error(t('common.failed'))
+  }
 }
 
 const handleApprove = async () => {
@@ -309,6 +353,25 @@ const handleReject = async () => {
 .detail-item .value.highlight {
   color: #009A44;
   font-weight: 600;
+  font-size: 16px;
+}
+
+/* 文件链接样式 */
+.file-link {
+  color: #009A44 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+}
+
+.file-link:hover {
+  color: #007a36 !important;
+  text-decoration: underline;
+}
+
+.file-link i {
   font-size: 16px;
 }
 

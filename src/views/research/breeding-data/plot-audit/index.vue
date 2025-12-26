@@ -254,10 +254,10 @@
           <el-descriptions-item label="Column No">{{ currentRow.columnNo }}</el-descriptions-item>
           <el-descriptions-item label="Sowing Date">{{ formatDateTime(currentRow.sowingTime) }}</el-descriptions-item>
           <el-descriptions-item label="Seed Quantity">{{ currentRow.seedQuantity }} kg</el-descriptions-item>
-          <el-descriptions-item label="Region">{{ currentRow.region }}</el-descriptions-item>
-          <el-descriptions-item label="Zone">{{ currentRow.zone }}</el-descriptions-item>
-          <el-descriptions-item label="Woreda">{{ currentRow.woreda }}</el-descriptions-item>
-          <el-descriptions-item label="Kebele">{{ currentRow.kebele }}</el-descriptions-item>
+          <!-- <el-descriptions-item label="Region">{{ currentRow.region }}</el-descriptions-item> -->
+          <!-- <el-descriptions-item label="Zone">{{ currentRow.zone }}</el-descriptions-item> -->
+          <!-- <el-descriptions-item label="Woreda">{{ currentRow.woreda }}</el-descriptions-item> -->
+          <!-- <el-descriptions-item label="Kebele">{{ currentRow.kebele }}</el-descriptions-item> -->
           <el-descriptions-item label="Created By">{{ currentRow.createdName }}</el-descriptions-item>
           <el-descriptions-item label="Create Time">{{ currentRow.createTime }}</el-descriptions-item>
         </el-descriptions>
