@@ -100,8 +100,8 @@
                   style="width: 100%"
                   @change="handleSeedLevelChange"
                 >
-                  <el-option label="Breeder" value="Breeder" />
                   <el-option label="Pre-Basic" value="Pre-Basic" />
+                  <el-option label="Breeder" value="Breeder" />
                 </el-select>
               </el-form-item>
 
