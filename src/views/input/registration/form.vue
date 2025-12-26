@@ -399,6 +399,7 @@ const auditLogs = ref([])
 const usernameCheckResult = ref(null)
 
 // 行政区划树
+const rawRegionTree = ref([])
 const regionTreeOptions = ref([])
 const regionTreeLoading = ref(false)
 const regionCodePath = ref(null)
@@ -417,11 +418,6 @@ const businessLicenseFileList = ref([])
 const taxCertFileList = ref([])
 const businessLicensePreviewUrl = ref('')
 const taxCertPreviewUrl = ref('')
-
-// 监听 inputTypesArray 变化，同步到 formData.inputTypes
-watch(inputTypesArray, (val) => {
-  formData.inputTypes = val.join(',')
-})
 
 // 表单数据
 const formData = reactive({
@@ -450,6 +446,24 @@ const formData = reactive({
   contactEmail: ''
 })
 
+// 监听 inputTypesArray 变化，同步到 formData.inputTypes
+watch(inputTypesArray, (val) => {
+  formData.inputTypes = val.join(',')
+})
+
+// 监听 orgType 变化，更新区域树并重置已选值
+watch(() => formData.orgType, (newVal, oldVal) => {
+  if (rawRegionTree.value.length > 0) {
+    refreshRegionTreeOptions()
+    // 如果不是初次设置（oldVal 非空）且值发生变化，重置区域选择
+    if (oldVal && newVal !== oldVal) {
+      regionCodePath.value = null
+      formData.regionCode = ''
+      formData.regionName = ''
+    }
+  }
+})
+
 // 密码确认验证
 const validateConfirmPassword = (rule, value, callback) => {
   if (!isEdit.value && formData.applyPassword && value !== formData.applyPassword) {
@@ -476,24 +490,33 @@ const rules = reactive({
   ]
 })
 
-// 递归过滤区域树，只保留 orgGrade = 3 (Zone 级别) 的节点
+// 递归过滤区域树，确保结构完整但只能选择目标层级
 const filterRegionByGrade = (nodes, targetGrade = 3) => {
   if (!nodes || nodes.length === 0) return []
   
   const result = []
   for (const node of nodes) {
     if (node.orgGrade === targetGrade) {
-      // 找到目标级别的节点，添加到结果中（不保留子节点）
+      // 达到目标层级，该节点可选且不再展示子节点
       result.push({
         ...node,
         children: null,
-        hasChild: false
+        hasChild: false,
+        disabled: false // 确保可选
       })
-    } else if (node.children && node.children.length > 0) {
-      // 继续递归搜索子节点
-      const filteredChildren = filterRegionByGrade(node.children, targetGrade)
-      result.push(...filteredChildren)
+    } else if (node.orgGrade < targetGrade) {
+      // 尚未达到目标层级（如 target 为 4 时遇到了 Grade 3 或更高级别）
+      // 必须保留结构以便到达子级，但该中间节点不可选
+      const filteredChildren = filterRegionByGrade(node.children || [], targetGrade)
+      if (filteredChildren.length > 0) {
+        result.push({
+          ...node,
+          children: filteredChildren,
+          disabled: true // 中间层级不可直接选择
+        })
+      }
     }
+    // 如果节点层级已经超过了目标层级，则直接忽略
   }
   return result
 }
@@ -504,14 +527,20 @@ const loadRegionTree = async () => {
   try {
     const res = await getRegionTree()
     if (res.code === 200 && res.data) {
-      // 过滤只保留 orgGrade = 3 (Zone 级别) 的节点
-      regionTreeOptions.value = filterRegionByGrade(res.data, 3)
+      rawRegionTree.value = res.data
+      refreshRegionTreeOptions()
     }
   } catch (error) {
     console.error('Failed to load region tree:', error)
   } finally {
     regionTreeLoading.value = false
   }
+}
+
+// 根据当前 orgType 刷新区域树选项
+const refreshRegionTreeOptions = () => {
+  const targetGrade = formData.orgType === 'COOPERATIVE' ? 4 : 3
+  regionTreeOptions.value = filterRegionByGrade(rawRegionTree.value, targetGrade)
 }
 
 // 处理区域选择变化
