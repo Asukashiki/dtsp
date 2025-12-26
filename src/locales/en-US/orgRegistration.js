@@ -1,6 +1,6 @@
 export default {
   // 页面标题
-  title: 'Organization Registration',
+  title: 'Union/Cooperative Registration Application',
   subtitle: 'Manage Union and Cooperative registration applications and approvals',
   
   // 列表页
@@ -16,7 +16,7 @@ export default {
 
   // 审核列表页
   audit: {
-    title: 'Registration Approval',
+    title: 'Union/Cooperative Registration Application Audit',
     subtitle: 'Review Union and Cooperative registration applications',
     listTitle: 'Pending Applications',
     noData: 'No pending applications'

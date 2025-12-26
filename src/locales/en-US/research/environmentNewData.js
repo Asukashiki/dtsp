@@ -1,8 +1,8 @@
 // 环境监测新数据国际化文件 (English)
 // Environment New Data i18n File
 export default {
-  title: 'Environment New Data',
-  titleAuth: 'Environmental monitoring data review',
+  title: 'Environment Monitoring Data',
+  titleAuth: 'Environment Monitoring Data Approval',
   subtitle: 'Manage environmental monitoring data records',
   subtitleAuth: 'Review and manage environmental monitoring data',
   list: 'Data List',

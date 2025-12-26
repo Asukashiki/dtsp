@@ -478,7 +478,7 @@ export default {
   // Farming Record
   farming: {
     title: 'Farming Record Data Collection',
-    titleAudit: 'Farming Record Data Collection (Audit)',
+    titleAudit: 'Farming Record Data Collection Audit',
     subtitle: 'Record fertilization, irrigation, pest control and other farming operations',
     list: 'Farming Record List',
     add: 'Add Farming Record',

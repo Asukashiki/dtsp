@@ -1,6 +1,6 @@
 export default {
-  title: 'C1 Propagation Batch Management',
-  subtitle: 'Manage C1 seed propagation batch information',
+  title: 'Seed Multiplication Information',
+  subtitle: 'Manage seed multiplication batch information',
 
   add: 'Add Batch',
   edit: 'Edit Batch',

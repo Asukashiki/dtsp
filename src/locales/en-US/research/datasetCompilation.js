@@ -161,7 +161,7 @@ export default {
   tab: {
     plot: 'Plot & Sowing Information',
     farming: 'Farming Record Collection',
-    agronomic: 'Agronomic Trait Collection',
+    agronomic: 'Agronomic Trait Data Collection',
     environment: 'Environmental Monitoring Data',
     yield: 'Field Inspection Collection',
     lab: 'Lab Test Collection'

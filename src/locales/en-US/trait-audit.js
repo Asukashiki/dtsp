@@ -2,7 +2,7 @@
 export default {
   // ==================== Trait Audit List Page ====================
   // Page basic copy
-  title: "Trait Audit",
+  title: "Agronomic Trait Data Audit",
   subtitle: "Review and manage submitted trait data",
   listName: "Trait Audit List",
 
