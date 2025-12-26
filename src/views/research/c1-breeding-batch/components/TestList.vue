@@ -29,13 +29,6 @@
         <el-table-column prop="testDate" :label="t('research.c1BreedingBatch.test.testDate')" min-width="120" align="center" />
         <el-table-column prop="testValue" :label="t('research.c1BreedingBatch.test.testValue')" min-width="100" align="center" />
         <el-table-column prop="unit" :label="t('research.c1BreedingBatch.test.unit')" min-width="80" align="center" />
-        <el-table-column prop="passStatus" :label="t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
-          <template #default="{ row }">
-            <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
-              {{ row.passStatus === 'TRUE' ? t('research.c1BreedingBatch.test.passTrue') : t('research.c1BreedingBatch.test.passFalse') }}
-            </el-tag>
-          </template>
-        </el-table-column>
         <el-table-column prop="testResult" :label="t('research.c1BreedingBatch.test.testResult')" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getResultTagType(row.testResult)" size="small">
@@ -99,7 +92,7 @@
  
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testValue')">
-            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur" />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.unit')">
