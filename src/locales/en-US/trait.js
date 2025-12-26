@@ -1,7 +1,7 @@
 // File name: agronomic-trait-collect-i18n-en.js (English configuration)
 export default {
   // Page title
-  title: 'Agronomic Trait Collection',
+  title: 'Agronomic Trait Data Collection',
   subtitle: 'Record and manage agronomic trait data in breeding trials',
   list: 'Trait Record List',
   add: 'Add New Record',

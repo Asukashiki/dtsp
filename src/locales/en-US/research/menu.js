@@ -15,7 +15,7 @@ export default {
   breedingBatchEdit: 'Edit Breeding Batch',
   breedingBatchDetail: 'Breeding Batch Detail',
 
-  breedingBatchApprove: 'Breeding Batch Approve',
+  breedingBatchApprove: 'Breeding Batch Audit',
 
   plotInfoManagement: 'Plot and Sowing Information ',
   plotInfoAdd: 'Add Plot Information',
@@ -115,7 +115,7 @@ export default {
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',
 
-  c1SeedPropagationApplication: 'Seed Propagation Application',
+  c1SeedPropagationApplication: 'Seed Multiplication Application',
   c1SeedPropagationApplicationAdd: 'Add Propagation Application',
   c1SeedPropagationApplicationEdit: 'Edit Propagation Application',
   c1SeedPropagationApplicationDetail: 'Propagation Application Detail',

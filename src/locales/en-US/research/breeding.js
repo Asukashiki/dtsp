@@ -288,7 +288,7 @@ export default {
 
     // Distribution Management
     distribution: {
-      title: 'Seed Distribution Data Management',
+      title: 'Seed Distribution Data',
       subtitle: 'Manage Seed distribution records, track seed flow to OSE',
       list: 'Distribution Data List',
       add: 'Add Distribution Data',

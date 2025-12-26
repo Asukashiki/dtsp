@@ -1,6 +1,6 @@
 export default {
   // 页面基础标题
-  title: 'Dataset Audit Details',
+  title: 'Breeding Dataset Audit',
   subtitle: 'Review submitted datasets',
   list: 'Audit List',
   detail: 'Audit Details',
