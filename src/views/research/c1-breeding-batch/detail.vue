@@ -80,10 +80,10 @@
                   <span class="label">{{ $t('research.c1BreedingBatch.form.parentSeedSource') }}</span>
                   <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
                 </div> -->
-                <div class="info-item full-width">
+                <!-- <div class="info-item full-width">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.location') }}</span>
                   <span class="value">{{ batchInfo.location || '-' }}</span>
-                </div>
+                </div> -->
               </div>
             </div>
 

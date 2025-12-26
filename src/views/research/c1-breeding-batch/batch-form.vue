@@ -102,9 +102,9 @@
             </el-form-item>
 
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
+            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
               <el-input v-model="formData.location" :placeholder="$t('research.c1BreedingBatch.placeholder.location')" clearable />
-            </el-form-item>
+            </el-form-item> -->
           </div>
         </div>
 
