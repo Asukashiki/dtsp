@@ -176,11 +176,11 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                   <el-option
                     v-for="batch in productionBatchList"
                     :key="batch.produceBatchId"
-                    :label="`${batch.varietyName} - ${batch.cropType} (${batch.time})`"
+                    :label="`${batch.produceBatchId} - ${batch.cropType} (${batch.time})`"
                     :value="batch.produceBatchId"
                   >
                     <div style="display: flex; justify-content: space-between">
-                      <span>{{ batch.varietyName }} - {{ batch.cropType }}</span>
+                      <span>{{ batch.produceBatchId }} - {{ batch.cropType }}</span>
                       <span style="color: #8492a6; font-size: 13px">
                         {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.produceSeedQuantrity ?? 0 }} kg
                       </span>
@@ -464,8 +464,8 @@ const handleBatchChange = async (index) => {
     )
     
     if (selectedBatch) {
-      detail.produceBatchName = selectedBatch.varietyName ? 
-        `${selectedBatch.varietyName} - ${selectedBatch.cropType} (${selectedBatch.time})` : ''
+      detail.produceBatchName = selectedBatch.produceBatchId ? 
+        `${selectedBatch.produceBatchId} - ${selectedBatch.cropType} (${selectedBatch.time})` : ''
     } else {
       detail.produceBatchName = ''
     }
