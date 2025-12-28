@@ -437,7 +437,7 @@ const handleBatchChange = async (index) => {
     const res = await getBreedSeedProduceDetail(detail.produceBatchId)
     if (res.code === 200 && res.data) {
       // 使用后端返回的最新剩余量
-      detail.maxQuantity = res.data.produceSeedQuantrity || 0
+      detail.maxQuantity = res.data.remainingQuantity || 0
 
       // 同时更新缓存列表中的数据，以便下拉选项显示最新的剩余量
         const batchIndex = productionBatchList.value.findIndex(
@@ -452,7 +452,7 @@ const handleBatchChange = async (index) => {
         item => item.produceBatchId === detail.produceBatchId
       )
       if (batch) {
-        detail.maxQuantity = batch.produceSeedQuantrity || 0
+        detail.maxQuantity = batch.remainingQuantity || 0
       } else {
         detail.maxQuantity = null
       }
@@ -502,7 +502,7 @@ const handleBatchChange = async (index) => {
       item => item.produceBatchId === detail.produceBatchId
     )
     if (batch) {
-      detail.maxQuantity = batch.produceSeedQuantrity || 0
+      detail.maxQuantity = batch.remainingQuantity || 0
     } else {
       detail.maxQuantity = null
     }
