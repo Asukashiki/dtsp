@@ -14,7 +14,8 @@
 
       <div class="card-body" v-loading="loading">
         <div class="section">
-          <h3 class="section-title">{{ $t('research.breeding.seed.production.section.productionBatchSelection') }}</h3>
+          <h3 class="section-title">{{ $t('research.breeding.seed.production.result.section.productionBatchSelection')
+          }}</h3>
           <el-descriptions :column="2" border>
             <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceBatchId')">
               {{ detail.produceBatchId || '-' }}
@@ -41,7 +42,7 @@
         </div>
         
         <div class="section" style="margin-top: 24px;">
-          <h3 class="section-title">{{ $t('research.breeding.seed.production.section.collectionData') }}</h3>
+          <h3 class="section-title">{{ $t('research.breeding.seed.production.result.section.collectionData') }}</h3>
           <el-descriptions :column="2" border>
             <el-descriptions-item :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')">
               {{ detail.producedAmount }} kg
