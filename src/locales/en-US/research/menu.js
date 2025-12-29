@@ -140,12 +140,12 @@ export default {
   propagationOrgRegistrationEdit: 'Edit Organization Registration',
   propagationOrgRegistrationDetail: 'Organization Registration Detail',
 
-  institutionRegistration: 'Union/Cooperative Registration Application',
-  institutionRegistrationAdd: 'Add Union/Cooperative Registration Application',
-  institutionRegistrationEdit: 'Edit Union/Cooperative Registration Application',
-  institutionRegistrationDetail: 'Union/Cooperative Registration Application Detail',
+  institutionRegistration: 'Multiplier Registration Application',
+  institutionRegistrationAdd: 'Add Multiplier Registration Application',
+  institutionRegistrationEdit: 'Edit Multiplier Registration Application',
+  institutionRegistrationDetail: 'Multiplier Registration Application Detail',
 
-  institutionApproval: 'Union/Cooperative Registration Application Audit',
+  institutionApproval: 'Multiplier Registration Application Audit',
   institutionApprovalDetail: 'Audit Details',
 
   seedPromotionManagement: 'Seed Promotion Management',

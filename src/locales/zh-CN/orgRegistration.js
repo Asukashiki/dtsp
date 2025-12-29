@@ -25,7 +25,8 @@ export default {
   // 机构类型
   orgType: {
     UNION: '联合会',
-    COOPERATIVE: '合作社'
+    COOPERATIVE: '合作社',
+    PRIVATE: '民营'
   },
 
   // 审核状态

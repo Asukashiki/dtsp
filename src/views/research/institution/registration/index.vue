@@ -53,6 +53,7 @@
                 <el-option value="" :label="$t('orgRegistration.list.allTypes')"></el-option>
                 <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
                 <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
+                <el-option value="PRIVATE" :label="$t('orgRegistration.orgType.PRIVATE')"></el-option>
               </el-select>
 
               <el-select
