@@ -56,14 +56,14 @@
               <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable  disabled/>
             </el-form-item>
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">
+            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">
               <el-select v-model="formData.breedingMethod" :placeholder="$t('research.c1BreedingBatch.placeholder.breedingMethod')" class="full-width">
                 <el-option label="Hybridization" value="hybridization" />
                 <el-option label="Selection" value="selection" />
                 <el-option label="Mutation" value="mutation" />
                 <el-option label="Other" value="other" />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.parentSeedSource')" class="full-width-item">
               <el-input v-model="formData.parentSeedSource" :placeholder="$t('research.c1BreedingBatch.placeholder.parentSeedSource')" clearable />
@@ -102,9 +102,9 @@
             </el-form-item>
 
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
+            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
               <el-input v-model="formData.location" :placeholder="$t('research.c1BreedingBatch.placeholder.location')" clearable />
-            </el-form-item>
+            </el-form-item> -->
           </div>
         </div>
 

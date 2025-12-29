@@ -176,11 +176,11 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                   <el-option
                     v-for="batch in productionBatchList"
                     :key="batch.produceBatchId"
-                    :label="`${batch.varietyName} - ${batch.cropType} (${batch.time})`"
+                    :label="`${batch.produceBatchId} - ${batch.cropType} (${batch.time})`"
                     :value="batch.produceBatchId"
                   >
                     <div style="display: flex; justify-content: space-between">
-                      <span>{{ batch.varietyName }} - {{ batch.cropType }}</span>
+                      <span>{{ batch.produceBatchId }} - {{ batch.cropType }}</span>
                       <span style="color: #8492a6; font-size: 13px">
                         {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.produceSeedQuantrity ?? 0 }} kg
                       </span>
@@ -437,7 +437,7 @@ const handleBatchChange = async (index) => {
     const res = await getBreedSeedProduceDetail(detail.produceBatchId)
     if (res.code === 200 && res.data) {
       // 使用后端返回的最新剩余量
-      detail.maxQuantity = res.data.produceSeedQuantrity || 0
+      detail.maxQuantity = res.data.remainingQuantity || 0
 
       // 同时更新缓存列表中的数据，以便下拉选项显示最新的剩余量
         const batchIndex = productionBatchList.value.findIndex(
@@ -452,7 +452,7 @@ const handleBatchChange = async (index) => {
         item => item.produceBatchId === detail.produceBatchId
       )
       if (batch) {
-        detail.maxQuantity = batch.produceSeedQuantrity || 0
+        detail.maxQuantity = batch.remainingQuantity || 0
       } else {
         detail.maxQuantity = null
       }
@@ -464,8 +464,8 @@ const handleBatchChange = async (index) => {
     )
     
     if (selectedBatch) {
-      detail.produceBatchName = selectedBatch.varietyName ? 
-        `${selectedBatch.varietyName} - ${selectedBatch.cropType} (${selectedBatch.time})` : ''
+      detail.produceBatchName = selectedBatch.produceBatchId ? 
+        `${selectedBatch.produceBatchId} - ${selectedBatch.cropType} (${selectedBatch.time})` : ''
     } else {
       detail.produceBatchName = ''
     }
@@ -502,7 +502,7 @@ const handleBatchChange = async (index) => {
       item => item.produceBatchId === detail.produceBatchId
     )
     if (batch) {
-      detail.maxQuantity = batch.produceSeedQuantrity || 0
+      detail.maxQuantity = batch.remainingQuantity || 0
     } else {
       detail.maxQuantity = null
     }
