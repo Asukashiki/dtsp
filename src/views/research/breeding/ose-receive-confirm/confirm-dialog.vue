@@ -29,9 +29,8 @@
           :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
           min-width="140"
         >
-
           <template #default="{ row }">
-            {{ row.cropType || '-' }}
+            {{ getLabelByValue('crop_type', row.cropType) || '-' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -134,6 +133,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { confirmOseReceive } from '@/api/breedSeed'
 import { useUserStore } from '@/store/user'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   modelValue: {
@@ -148,6 +148,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 const userStore = useUserStore()
 
 const formRef = ref(null)

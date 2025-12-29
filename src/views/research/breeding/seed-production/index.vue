@@ -94,7 +94,11 @@
               :label="$t('research.breeding.seed.production.columns.cropType')"
               min-width="120"
               align="center"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="time"
               :label="$t('research.breeding.seed.production.columns.time')"
@@ -185,7 +189,7 @@
               @click="handleView(item)"
             >
               <div class="card-header">
-                <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+                <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
                 <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.production.status.${item.produceStatus}`) }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.varietyName }}</h3>
@@ -275,10 +279,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedSeedProduceList, deleteBreedSeedProduce } from '@/api/breedSeed'
+import { useDict } from '@/hooks/useDict'
 import ProductionForm from './form.vue'
 import ProductionDetail from './detail.vue'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)

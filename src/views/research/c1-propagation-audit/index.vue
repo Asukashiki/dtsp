@@ -117,7 +117,11 @@
               :label="$t('research.c1Propagation.columns.cropType')"
               min-width="160"
               align="center"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="$t('research.c1Propagation.columns.varietyName')"
@@ -198,7 +202,7 @@
                 <el-tag :type="getStatusType(item.applyStatus)" size="small">
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
-                <el-tag type="info" size="small">{{ item.cropType }}</el-tag>
+                <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
                 <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
@@ -264,10 +268,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1PropagationAllList } from '@/api/c1Propagation'
+import { useDict } from '@/hooks/useDict'
 import AuditForm from './audit-form.vue'
 import AuditDetail from './detail.vue'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)

@@ -103,12 +103,13 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Unit">
                     <el-select v-model="formData.unit" placeholder="Please select unit" style="width: 100%" :disabled="isAuditMode">
-                      <el-option label="kg" value="kg" />
+                      <el-option label="Kg/ha" value="Kg/ha" />
                       <el-option label="g" value="g" />
                       <el-option label="L" value="L" />
                       <el-option label="mL" value="mL" />
                       <el-option label="bags" value="bags" />
                       <el-option label="pieces" value="pieces" />
+                      <el-option label="cm" value="cm" />
                     </el-select>
                   </el-form-item>
                 </el-col>

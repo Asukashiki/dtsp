@@ -97,7 +97,11 @@
               :label="$t('research.c1Propagation.columns.cropType')"
               min-width="160"
               align="center"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="$t('research.c1Propagation.columns.varietyName')"
@@ -242,10 +246,14 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1PropagationList, deleteC1Propagation } from '@/api/c1Propagation'
+import { useDict } from '@/hooks/useDict'
 import PropagationForm from './form.vue'
 import PropagationDetail from './detail.vue'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)

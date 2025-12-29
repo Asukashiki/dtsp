@@ -80,7 +80,11 @@
         >
           <el-table-column prop="batchId" :label="$t('seed.c1BatchAudit.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
           <el-table-column prop="varietyName" :label="$t('seed.c1BatchAudit.columns.varietyName')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="cropType" :label="$t('seed.c1BatchAudit.columns.cropType')" min-width="100" align="center" />
+          <el-table-column prop="cropType" :label="$t('seed.c1BatchAudit.columns.cropType')" min-width="100" align="center">
+            <template #default="{ row }">
+              {{ getLabelByValue('crop_type', row.cropType) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="orgName" :label="$t('seed.c1BatchAudit.columns.orgName')" min-width="180" show-overflow-tooltip />
           <el-table-column prop="startDate" :label="$t('seed.c1BatchAudit.columns.startDate')" min-width="120" align="center" />
           <el-table-column prop="batchStatus" :label="$t('seed.c1BatchAudit.columns.batchStatus')" min-width="100" align="center">
@@ -145,7 +149,7 @@
               </div>
               <div class="info-item">
                 <span class="info-label">{{ $t('seed.c1BatchAudit.columns.cropType') }}</span>
-                <span class="info-value">{{ item.cropType }}</span>
+                <span class="info-value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
               </div>
               <div class="info-item full">
                 <span class="info-label">{{ $t('seed.c1BatchAudit.columns.orgName') }}</span>
@@ -238,9 +242,13 @@ import {
   getC1TrackingList,
   getC1TestList
 } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const searchParams = reactive({
   keyword: '',
