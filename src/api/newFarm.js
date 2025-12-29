@@ -22,14 +22,15 @@ export const getDaList = async (params = {}) => {
       phone: params.phone || '',
       woredaCode: params.woredaCode || '',
       kebeleCode: params.kebeleCode || '',
-      accountStatus: params.accountStatus || ''
+      accountStatus: params.accountStatus || '',
+      searchValue: params.searchValue || ''
     }
   })
   return {
     ...res,
     data: {
       ...res,
-      records:res.rows
+      records: res.rows
     }
   }
 }
@@ -152,7 +153,8 @@ export const getFarmerList = async (params = {}) => {
       gender: params.gender || '',
       phone: params.phone || '',
       kebeleCode: params.kebeleCode || '',
-      daId: params.daId || ''
+      daId: params.daId || '',
+      searchValue: params.searchValue || ''
     }
   })
   return {
@@ -305,10 +307,12 @@ export const getLandList = async (params = {}) => {
       landId: params.landId || '',
       farmerId: params.farmerId || '',
       farmerName: params.farmerName || '',
+      farmerPhone: params.farmerPhone || '',
       kebeleCode: params.kebeleCode || '',
       landType: params.landType || '',
       currentStatus: params.currentStatus || '',
-      daId: params.daId || ''
+      daId: params.daId || '',
+      searchValue: params.searchValue || ''
     }
   })
   return {
