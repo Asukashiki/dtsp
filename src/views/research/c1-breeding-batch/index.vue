@@ -88,7 +88,11 @@
         >
           <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
           <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center" />
+          <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center">
+            <template #default="{ row }">
+              {{ getLabelByValue('crop_type', row.cropType) }}
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="breedingLevel" :label="$t('research.c1BreedingBatch.columns.breedingLevel')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag size="small">{{ getBreedingLevelName(row.breedingLevel) }}</el-tag>
@@ -150,7 +154,7 @@
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.c1BreedingBatch.columns.cropType') }}:</span>
-              <span class="value">{{ item.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.c1BreedingBatch.columns.startDate') }}:</span>
@@ -176,9 +180,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1BreedingBatchList, deleteC1BreedingBatch } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据
 const loading = ref(false)

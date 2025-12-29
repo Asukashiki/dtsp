@@ -41,7 +41,7 @@
                 <div class="overview-content">
                   <span class="overview-label">{{ $t('research.c1BreedingBatch.form.cropType') }}</span>
                   <span class="overview-value">
-                    <el-tag size="small">{{ batchInfo.cropType }}</el-tag>
+                    <el-tag size="small">{{ getLabelByValue('crop_type', batchInfo.cropType) }}</el-tag>
                   </span>
                 </div>
               </div>
@@ -198,12 +198,16 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 import TrackingList from './components/TrackingList.vue'
 import TestList from './components/TestList.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const activeTab = ref('basic')
 const batchInfo = ref(null)

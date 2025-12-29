@@ -67,7 +67,11 @@
               prop="cropType"
               :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
               min-width="140"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
                 prop="seedType"
                 :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
@@ -126,6 +130,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   modelValue: {
@@ -139,6 +144,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'close'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const dialogVisible = computed({
   get: () => props.modelValue,

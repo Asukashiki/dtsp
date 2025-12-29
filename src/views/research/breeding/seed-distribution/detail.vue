@@ -134,7 +134,7 @@
           <div v-for="(item, index) in data.detailList" :key="item.distributeDetailId" class="mobile-detail-card">
             <div class="card-header">
               <el-tag type="primary" size="small">{{ $t('common.index') }} {{ index + 1 }}</el-tag>
-              <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
             </div>
             <h4 class="card-title">{{ item.varietyName }}</h4>
             <div class="card-info">
@@ -198,6 +198,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -208,6 +209,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const handleBack = () => {
   emit('back')

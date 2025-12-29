@@ -42,12 +42,14 @@
                   :placeholder="$t('common.pleaseSelect')"
                   clearable
                   style="width: 100%"
+                  :loading="dictLoading"
                 >
-                  <el-option label="Wheat" value="Wheat" />
-                  <el-option label="Maize" value="Maize" />
-                  <el-option label="Teff" value="Teff" />
-                  <el-option label="Sorghum" value="Sorghum" />
-                  <el-option label="Barley" value="Barley" />
+                  <el-option
+                    v-for="item in options.crop_type"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -111,7 +113,7 @@
           <el-table-column prop="varietyName" :label="$t('seed.c1Certificate.columns.varietyName')" min-width="120" />
           <el-table-column prop="cropType" :label="$t('seed.c1Certificate.columns.cropType')" width="120" align="center">
             <template #default="{ row }">
-              <el-tag type="success" size="small">{{ row.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', row.cropType) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="startDate" :label="$t('seed.c1Certificate.columns.startDate')" width="120" align="center" />
@@ -224,7 +226,7 @@
           <div class="card-header">
             <div class="header-left">
               <div class="batch-id">{{ item.batchId }}</div>
-              <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
             </div>
             <div class="header-right">
               <el-tag :type="item.printCount > 0 ? 'info' : 'success'" size="small">
@@ -296,9 +298,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getApprovedC1BatchList, recordC1BatchPrint } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
 
 // 搜索参数
 const searchParams = reactive({
