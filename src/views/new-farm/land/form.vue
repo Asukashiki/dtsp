@@ -417,24 +417,53 @@ const loadDetail = async () => {
       formData.areaSize = data.areaSize || null
       formData.areaUnit = data.areaUnit || 'HECTARE'
       formData.currentStatus = data.currentStatus || 'IDLE'
-      formData.zoneCode = data.zoneCode || ''
-      formData.woredaCode = data.woredaCode || ''
-      formData.kebeleCode = data.kebeleCode || ''
       formData.latitude = data.latitude || null
       formData.longitude = data.longitude || null
       formData.address = data.address || ''
       formData.farmerId = data.farmerId || ''
       formData.remark = data.remark || ''
 
+      // 保存原始的三级联动值
+      const savedZoneCode = data.zoneCode || ''
+      const savedWoredaCode = data.woredaCode || ''
+      const savedKebeleCode = data.kebeleCode || ''
+
       // 编辑模式下联动回显：先加载Zone，再加载Woreda，最后加载Kebele
-      if (formData.zoneCode) {
+      if (savedZoneCode) {
         await loadZoneOptions()
-        // 加载对应Woreda
-        await handleZoneChange(formData.zoneCode)
-        // 赋值Woreda后加载Kebele
-        if (formData.woredaCode) {
-          await handleWoredaChange(formData.woredaCode)
+        
+        // 加载对应Woreda选项（不使用handleZoneChange，避免清空数据）
+        woredaLoading.value = true
+        try {
+          const woredaRes = await listSubRegionByCode({ regionCode: savedZoneCode })
+          if (woredaRes.code === 200) {
+            woredaOptions.value = woredaRes.data || []
+          }
+        } catch (error) {
+          ElMessage.error(t('newFarm.common.loadWoredaFailed'))
+        } finally {
+          woredaLoading.value = false
         }
+
+        // 如果有Woreda，加载Kebele选项（不使用handleWoredaChange，避免清空数据）
+        if (savedWoredaCode) {
+          kebeleLoading.value = true
+          try {
+            const kebeleRes = await listSubRegionByCode({ regionCode: savedWoredaCode })
+            if (kebeleRes.code === 200) {
+              kebeleOptions.value = kebeleRes.data || []
+            }
+          } catch (error) {
+            ElMessage.error(t('newFarm.common.loadKebeleFailed'))
+          } finally {
+            kebeleLoading.value = false
+          }
+        }
+
+        // 最后恢复三级联动的值
+        formData.zoneCode = savedZoneCode
+        formData.woredaCode = savedWoredaCode
+        formData.kebeleCode = savedKebeleCode
       }
 
       // 如果有关联农民，加载农民信息
