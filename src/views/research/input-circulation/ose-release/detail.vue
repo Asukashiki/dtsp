@@ -9,8 +9,8 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ detailData.main?.releaseId }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ detailData.main?.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetId')">{{ detailData.main?.targetId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetContact')">{{ detailData.main?.targetContact }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.unionId')">{{ detailData.main?.targetId }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.unionContact')">{{ detailData.main?.targetContact }}</el-descriptions-item>
 <!--        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ detailData.main?.targetPhone }}</el-descriptions-item>-->
         <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ detailData.main?.releaseDate }}</el-descriptions-item>
 <!--        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ detailData.main?.releaseBy }}</el-descriptions-item>-->
