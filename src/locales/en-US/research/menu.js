@@ -58,6 +58,9 @@ export default {
   laboratoryTestDetail: 'Laboratory Test Detail',
   laboratoryTestAudit: 'Laboratory Test Data Audit',
 
+  fieldDetection: 'Field Detection',
+  labTesting: 'Lab Testing',
+
   breederSeedProduction: 'Seed Production Data',
   breederSeedProductionResult: 'Production Data Collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',

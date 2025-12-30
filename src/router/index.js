@@ -709,6 +709,34 @@ const routes = [
         meta: { title: 'C1繁殖批次详情', hideInMenu: true, requiresAuth: true }
       },
 
+      // 田间检测
+      {
+        path: 'field-detection',
+        name: 'FieldDetection',
+        component: () => import('../views/research/detection/field-detection/index.vue'),
+        meta: { title: '田间检测', requiresAuth: true }
+      },
+      {
+        path: 'field-detection/add',
+        name: 'FieldDetectionAdd',
+        component: () => import('../views/research/detection/field-detection/add.vue'),
+        meta: { title: '新增田间检测', hideInMenu: true, requiresAuth: true }
+      },
+
+      // 实验室检测
+      {
+        path: 'lab-testing',
+        name: 'LabTesting',
+        component: () => import('../views/research/detection/lab-testing/index.vue'),
+        meta: { title: '实验室检测', requiresAuth: true }
+      },
+      {
+        path: 'lab-testing/add',
+        name: 'LabTestingAdd',
+        component: () => import('../views/research/detection/lab-testing/add.vue'),
+        meta: { title: '新增实验室检测', hideInMenu: true, requiresAuth: true }
+      },
+
       // 种子认证审核
       {
         path: 'seed/breeding-audit',

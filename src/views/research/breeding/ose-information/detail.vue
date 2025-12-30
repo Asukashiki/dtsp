@@ -134,36 +134,6 @@
               </div>
             </div>
 
-            <!-- 统计信息 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-file-list-line"></i>
-                <span>{{ $t('research.breeding.detail.relatedRecords') }}</span>
-              </div>
-              <div class="stats-grid">
-                <div class="stat-card" @click="activeTab = 'tracking'">
-                  <div class="stat-icon tracking">
-                    <i class="ri-map-pin-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.trackingCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.trackingCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
-                </div>
-                <div class="stat-card" @click="activeTab = 'test'">
-                  <div class="stat-icon test">
-                    <i class="ri-test-tube-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.testCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.testCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
-                </div>
-              </div>
-            </div>
-
             <!-- 机构信息 -->
             <div class="detail-section" v-if="batchInfo.orgId || batchInfo.orgName">
               <div class="section-title">
@@ -214,24 +184,6 @@
           <div v-else class="loading-wrapper">
             <el-skeleton :rows="5" animated />
           </div>
-        </el-tab-pane>
-
-        <!-- Tab 2: 跟踪记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.trackingRecords')" name="tracking">
-          <TrackingList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
-        </el-tab-pane>
-
-        <!-- Tab 3: 检测记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.testRecords')" name="test">
-          <TestList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
         </el-tab-pane>
       </el-tabs>
     </div>
