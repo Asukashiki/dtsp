@@ -79,7 +79,11 @@
                   <el-table-column prop="planName" :label="$t('research.breeding.plan.columns.planName')" min-width="150"  show-overflow-tooltip />
                   <el-table-column prop="batchId" :label="$t('research.breeding.plan.columns.batchId')" min-width="120" />
                   <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" min-width="100" />
-                  <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" min-width="100" />
+                  <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" min-width="100">
+                    <template #default="{ row }">
+                      {{ getLabelByValue('crop_type', row.cropType) }}
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="varietyName" :label="$t('research.breeding.plan.columns.varietyName')" min-width="150" />
                   <el-table-column prop="propagationLevel" :label="$t('research.breeding.plan.columns.propagationLevel')" min-width="130" />
                   <el-table-column prop="personInCharge" :label="$t('research.breeding.plan.columns.personInCharge')" min-width="120" />
@@ -143,7 +147,7 @@
                     </div>
                     <div class="mobile-card-row">
                       <span class="label">{{ $t('research.breeding.plan.columns.cropType') }}:</span>
-                      <span class="value">{{ item.cropType }}</span>
+                      <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
                     </div>
                     <div class="mobile-card-row">
                       <span class="label">{{ $t('research.breeding.plan.columns.varietyName') }}:</span>
@@ -216,8 +220,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import BreedingPlanForm from '../components/BreedingPlanForm.vue'
 import { getBreedingPlanList, removeBreedingPlan } from '@/api/enterprise'
 import { mockCropTypes, mockPlanStatus } from '@/mock/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)

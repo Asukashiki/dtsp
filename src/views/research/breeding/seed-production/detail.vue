@@ -42,7 +42,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.time') }}:</span>
@@ -101,6 +101,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -110,6 +111,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const handleBack = () => {
   emit('back')
