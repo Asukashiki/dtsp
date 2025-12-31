@@ -152,10 +152,10 @@ export const getFarmerList = async (params = {}) => {
       idCard: params.idCard || '',
       gender: params.gender || '',
       phone: params.phone || '',
-      kebeleName: params.kebeleName || '',
       kebeleCode: params.kebeleCode || '',
       daId: params.daId || '',
-      searchValue: params.searchValue || ''
+      searchValue: params.searchValue || '',
+      kebeleName: params.kebeleName || ''
     }
   })
   return {

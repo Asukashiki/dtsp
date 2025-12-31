@@ -83,6 +83,12 @@
               min-width="220"
               show-overflow-tooltip
             />
+              <el-table-column
+              prop="parentalSeedSource"
+              :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
+              min-width="150"
+              show-overflow-tooltip
+            />
             <el-table-column
                 prop="produceBatchName"
                 :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"

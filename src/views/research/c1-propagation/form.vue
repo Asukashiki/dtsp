@@ -84,11 +84,19 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.c1Propagation.form.cropType')" prop="cropType">
-              <el-input
+              <el-select
                 v-model="formData.cropType"
                 :placeholder="$t('research.c1Propagation.placeholder.cropType')"
                 disabled
-              />
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in options.crop_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.c1Propagation.form.varietyName')" prop="varietyName">
@@ -186,8 +194,12 @@ import { ElMessage } from 'element-plus'
 import { addC1Propagation, updateC1Propagation } from '@/api/c1Propagation'
 import { getBreedingBatchPageList } from '@/api/breeding'
 import { getUserInfo } from '@/utils/auth'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options } = useDict(['crop_type'])
 
 const props = defineProps({
   isEdit: {
