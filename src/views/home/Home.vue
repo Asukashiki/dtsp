@@ -160,14 +160,16 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/new-farm'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   },
   production: {
     name: t('home.modules.production.name'),
     desc: t('home.modules.production.desc'),
     icon: 'ri-seedling-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
-    path: '/production'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   },
   procurement: {
     name: t('home.modules.procurement.name'),
@@ -195,7 +197,8 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/new-farm'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   }
 }))
 
@@ -258,7 +261,11 @@ const handleMoreAnnouncements = () => {
 const handleSystemClick = (module) => {
   console.log('点击系统模块:', module)
   if (module.path) {
-    router.push(module.path)
+    if (module.external) {
+      window.open(module.path, '_blank')
+    } else {
+      router.push(module.path)
+    }
   }
 }
 

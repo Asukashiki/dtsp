@@ -38,11 +38,12 @@
               @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allCrops')" value="" />
-            <el-option label="Wheat" value="WHEAT" />
-            <el-option label="Corn" value="CORN" />
-            <el-option label="Rice" value="RICE" />
-            <el-option label="Soybean" value="SOYBEAN" />
-            <el-option label="Cotton" value="COTTON" />
+            <el-option
+              v-for="item in options.crop_type"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -90,7 +91,7 @@
           <el-table-column prop="batchId" :label="$t('research.breeding.batch.columns.batchId')" width="220" fixed="left" />
           <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" />
-          <el-table-column prop="breedingMethodName" :label="'Breeding methods'" min-width="140" align="center" />
+          <!-- <el-table-column prop="breedingMethodName" :label="'Breeding methods'" min-width="140" align="center" /> -->
           <el-table-column prop="breedingLevelName" :label="$t('research.breeding.breedingBatch.form.breedingLevel')" width="160" align="center" />
           <el-table-column prop="startDate" :label="$t('research.breeding.batch.columns.startDate')" width="120" align="center" />
           <el-table-column prop="statusName" :label="$t('research.breeding.batch.columns.status')" width="100" align="center">
@@ -194,9 +195,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedingBatchPageList, deleteBreedingBatchPage } from '@/api/breeding'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用字典获取作物类型
+const { options, getLabelByValue } = useDict(['crop_type'])
 
 // 数据
 const loading = ref(false)
@@ -209,15 +214,6 @@ const queryData = ref({
   pageNum: 1,
   pageSize: 10
 })
-
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
 
 // 繁育方法映射
 const breedingMethodMap = computed(() => ({
@@ -261,7 +257,7 @@ const handleSearch = async () => {
       // 添加显示名称
       tableData.value = records.map(item => ({
         ...item,
-        cropTypeName: cropTypeMap.value[item.cropType] || item.cropType,
+        cropTypeName: getLabelByValue('crop_type', item.cropType) || item.cropType,
         breedingMethodName: breedingMethodMap.value[item.breedingMethod] || item.breedingMethod,
         breedingLevelName: breedingLevelMap.value[item.breedingLevel] || item.breedingLevel,
         statusName: statusMap.value[item.batchStatus] || item.batchStatus

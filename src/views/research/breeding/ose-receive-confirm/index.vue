@@ -150,11 +150,10 @@
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" :label="$t('research.breeding.seed.receiveConfirm.columns.createTime')" width="180" />
+                <el-table-column prop="createTime" :label="$t('research.breeding.seed.receiveConfirm.columns.createTime')" width="240" />
                 <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.actions')" width="150" fixed="right">
                   <template #default="{ row }">
                     <el-button
-                      v-if="row.receiveStatus === 'PENDING'"
                       link
                       type="primary"
                       @click="handleConfirm(row)"
@@ -163,7 +162,6 @@
                       {{ $t('research.breeding.seed.receiveConfirm.confirm') }}
                     </el-button>
                     <el-button
-                      v-else
                       link
                       type="primary"
                       @click="handleView(row)"
@@ -223,7 +221,6 @@
                 </div>
                 <div class="card-actions">
                   <el-button
-                    v-if="item.receiveStatus === 'PENDING'"
                     link
                     type="primary"
                     @click="handleConfirm(item)"
@@ -231,7 +228,6 @@
                     {{ $t('research.breeding.seed.receiveConfirm.confirm') }}
                   </el-button>
                   <el-button
-                    v-else
                     link
                     type="primary"
                     @click="handleView(item)"

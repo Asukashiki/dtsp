@@ -24,20 +24,39 @@
             <h3>{{ $t('research.breeding.breedingBatch.form.basicInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <el-form-item :label="$t('research.breeding.breedingBatch.form.parentSeedSource')" prop="parentSeedSource" class="full-width-item">
+            <!-- Distribution ID -->
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.distributionId')" prop="distributionId" class="full-width-item">
               <el-select
-                v-model="formData.parentSeedSource"
-                :placeholder="$t('research.breeding.breedingBatch.form.parentSeedSourcePlaceholder')"
+                v-model="formData.distributionId"
+                :placeholder="$t('research.breeding.breedingBatch.form.distributionIdPlaceholder')"
                 filterable
                 clearable
                 class="full-width"
-                @change="handleParentSeedSourceChange"
+                @change="handleDistributionIdChange"
               >
                 <el-option
-                  v-for="item in breedSeedProduceList"
-                  :key="item.produceBatchId"
-                  :label="`${item.varietyName}`"
-                  :value="item.produceBatchId"
+                  v-for="item in confirmedDistributionList"
+                  :key="item.distributeId"
+                  :label="item.distributeId"
+                  :value="item.distributeId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.parentalSeedSource')" prop="parentalSeedSource" class="full-width-item">
+              <el-select
+                v-model="formData.parentalSeedSource"
+                :placeholder="$t('research.breeding.breedingBatch.form.parentalSeedSourcePlaceholder')"
+                filterable
+                clearable
+                class="full-width"
+                :disabled="!formData.distributionId"
+                @change="handleParentalSeedSourceChange"
+              >
+                <el-option
+                  v-for="item in parentalSeedSourceOptions"
+                  :key="item.parentalSeedSource"
+                  :label="item.parentalSeedSource"
+                  :value="item.parentalSeedSource"
                 />
               </el-select>
             </el-form-item>
@@ -140,7 +159,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
-import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { getBreedSeedProduceList, getOseReceiveConfirmList } from '@/api/breedSeed'
 import { useDict } from '@/hooks/useDict'
 import { getUserInfo } from '@/utils/auth'
 
@@ -150,15 +169,18 @@ const route = useRoute()
 const formRef = ref(null)
 const loading = ref(false)
 const breedSeedProduceList = ref([])
+const confirmedDistributionList = ref([])
+const parentalSeedSourceOptions = ref([])
 const { options } = useDict(['crop_type'])
 
 const isEdit = computed(() => !!route.params.id)
 
 const formData = ref({
+  distributionId: '',
   cropType: '',
   varietyName: '',
   breedingLevel: '',
-  parentSeedSource: '',
+  parentalSeedSource: '',
   startDate: '',
   endDate: '',
   expectedYield: '',
@@ -169,7 +191,8 @@ const formData = ref({
 })
 
 const rules = {
-  parentSeedSource: [{ required: true, message: 'Please select the parent seed source', trigger: 'change' }],
+  distributionId: [{ required: true, message: 'Please select the distribution ID', trigger: 'change' }],
+  parentalSeedSource: [{ required: true, message: 'Please select the parental seed source', trigger: 'change' }],
   cropType: [{ required: true, message: 'Crop type is required', trigger: 'blur' }],
   varietyName: [{ required: true, message: 'Variety name is required', trigger: 'blur' }],
   breedingLevel: [{ required: true, message: 'Breeding level is required', trigger: 'change' }],
@@ -193,10 +216,79 @@ const loadBreedSeedProduceList = async () => {
   }
 }
 
-// 处理Parent Seed Source变化
-const handleParentSeedSourceChange = (value) => {
-  console.log('Parent seed source changed:', value)
-  
+// 加载已确认的接收记录列表
+const loadConfirmedDistributionList = async () => {
+  try {
+    const response = await getOseReceiveConfirmList({
+      pageNum: 1,
+      pageSize: 1000,
+      receiveStatus: 'CONFIRMED' // 只获取已确认的接收记录
+    })
+    if (response.code === 200 && response.rows) {
+      confirmedDistributionList.value = response.rows
+    }
+  } catch (error) {
+    console.error('Failed to load confirmed distribution list:', error)
+  }
+}
+
+// 处理Distribution ID变化
+const handleDistributionIdChange = (value) => {
+  console.log('Distribution ID changed:', value)
+
+  // 清空parentalSeedSource相关字段
+  formData.value.parentalSeedSource = ''
+  formData.value.cropType = ''
+  formData.value.varietyName = ''
+  parentalSeedSourceOptions.value = []
+
+  if (!value) {
+    return
+  }
+
+  // 根据选中的distributeId查找对应的接收记录
+  const selectedDistribution = confirmedDistributionList.value.find(
+    item => item.distributeId === value
+  )
+
+  console.log('Selected distribution:', selectedDistribution)
+
+  if (selectedDistribution && selectedDistribution.distributeDetail?.detailList) {
+    // 从detailList中提取并去重parentalSeedSource选项
+    const detailList = selectedDistribution.distributeDetail.detailList
+    const uniqueOptions = []
+    const seenSources = new Set()
+
+    detailList.forEach(detail => {
+      const source = detail.parentalSeedSource
+      if (source && !seenSources.has(source)) {
+        seenSources.add(source)
+        uniqueOptions.push({
+          parentalSeedSource: source,
+          varietyName: detail.varietyName,
+          cropType: detail.cropType,
+          seedType: detail.seedType,
+          produceBatchId: detail.breedSeedProduceBatchId
+        })
+      }
+    })
+
+    parentalSeedSourceOptions.value = uniqueOptions
+    console.log('Parental seed source options:', uniqueOptions)
+
+    // 默认选择第一个选项
+    if (uniqueOptions.length > 0) {
+      formData.value.parentalSeedSource = uniqueOptions[0].parentalSeedSource
+      formData.value.cropType = uniqueOptions[0].cropType || ''
+      formData.value.varietyName = uniqueOptions[0].varietyName || ''
+    }
+  }
+}
+
+// 处理Parental Seed Source变化
+const handleParentalSeedSourceChange = (value) => {
+  console.log('Parental seed source changed:', value)
+
   if (!value) {
     // 如果清空选择，则清空cropType和varietyName
     formData.value.cropType = ''
@@ -205,11 +297,11 @@ const handleParentSeedSourceChange = (value) => {
     return
   }
 
-  // 根据选中的produceBatchId查找对应的数据
-  const selectedItem = breedSeedProduceList.value.find(
-    item => item.produceBatchId === value
+  // 根据选中的parentalSeedSource查找对应的数据
+  const selectedItem = parentalSeedSourceOptions.value.find(
+    item => item.parentalSeedSource === value
   )
-  
+
   console.log('Selected item:', selectedItem)
 
   if (selectedItem) {
@@ -232,7 +324,9 @@ onMounted(async () => {
   formData.value.orgName = currentUser.organName || currentUser.ORGAN_NAME || formData.value.orgName
   formData.value.orgId = currentUser.organCode || currentUser.ORGAN_CODE || formData.value.orgId
 
-  await loadBreedSeedProduceList()
+  // 并行加载数据
+  await Promise.all([loadBreedSeedProduceList(), loadConfirmedDistributionList()])
+
   if (isEdit.value) {
     await loadDetail()
   }
@@ -265,7 +359,7 @@ const handleSubmit = async () => {
       loading.value = true
       try {
         const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
-        const aData = {...data, objective: formData.value.objective || '1'} 
+        const aData = {...data, objective: formData.value.objective || '1', parentSeedSource: formData.value.parentalSeedSource} 
         const response = isEdit.value ? await updateBreedingBatchPage(aData) : await addBreedingBatchPage(aData)
 
         if (response.code === 200) {
