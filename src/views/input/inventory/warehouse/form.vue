@@ -42,12 +42,26 @@
               <el-input v-model="formData.location" :placeholder="$t('input.inventory.warehouse.placeholder.location')" clearable />
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.capacity')" prop="capacity">
-              <el-input-number v-model="formData.capacity" :placeholder="$t('input.inventory.warehouse.placeholder.capacity')" :min="1" :precision="2" class="full-width" />
+              <el-input
+                v-model="capacityDisplay"
+                :placeholder="$t('input.inventory.warehouse.placeholder.capacity')"
+                type="number"
+                @input="handleCapacityInput"
+                class="full-width"
+              >
+                <template #append>KG</template>
+              </el-input>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.warehouseArea')" prop="warehouseArea">
-              <el-input-number v-model="formData.warehouseArea" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseArea')" :min="0" :precision="2" class="full-width">
-                <template #append>m²</template>
-              </el-input-number>
+              <el-input
+                v-model="warehouseAreaDisplay"
+                :placeholder="$t('input.inventory.warehouse.placeholder.warehouseArea')"
+                type="number"
+                @input="handleWarehouseAreaInput"
+                class="full-width"
+              >
+                <template #append>L</template>
+              </el-input>
             </el-form-item>
             <el-form-item :label="$t('input.inventory.warehouse.form.organName')" prop="organName">
               <el-input v-model="formData.organName" :placeholder="$t('input.inventory.warehouse.placeholder.organName')" clearable />
@@ -135,6 +149,38 @@ const formRef = ref(null)
 const submitLoading = ref(false)
 const isEdit = computed(() => route.path.includes('/edit/'))
 const warehouseId = computed(() => route.params.id)
+
+// 容量显示值
+const capacityDisplay = ref('')
+
+// 处理容量输入
+const handleCapacityInput = (value) => {
+  // 将输入值转换为数字并保留两位小数
+  const numValue = parseFloat(value)
+  if (!isNaN(numValue)) {
+    formData.capacity = Math.round(numValue * 100) / 100
+    capacityDisplay.value = formData.capacity.toString()
+  } else {
+    formData.capacity = null
+    capacityDisplay.value = ''
+  }
+}
+
+// 仓库面积显示值
+const warehouseAreaDisplay = ref('')
+
+// 处理仓库面积输入
+const handleWarehouseAreaInput = (value) => {
+  // 将输入值转换为数字并保留两位小数
+  const numValue = parseFloat(value)
+  if (!isNaN(numValue)) {
+    formData.warehouseArea = Math.round(numValue * 100) / 100
+    warehouseAreaDisplay.value = formData.warehouseArea.toString()
+  } else {
+    formData.warehouseArea = null
+    warehouseAreaDisplay.value = ''
+  }
+}
 
 const formData = reactive({
   warehouseCode: '',
@@ -252,6 +298,15 @@ const loadData = async () => {
         remark: res.data.remark || '',
         status: res.data.status || '1'
       })
+      // 设置容量显示值
+      if (res.data.capacity) {
+        capacityDisplay.value = res.data.capacity.toString()
+      }
+
+      // 设置仓库面积显示值
+      if (res.data.warehouse_area) {
+        warehouseAreaDisplay.value = res.data.warehouse_area.toString()
+      }
 
       // 如果有文件，设置文件列表
       if (res.data.site_certificate) {

@@ -553,7 +553,7 @@ export default {
         warehouseType: '仓库类型',
         location: '仓库位置',
         capacity: '仓库容量',
-        warehouseArea: '仓库面积',
+        warehouseArea: '仓库容积',
         usedCapacity: '已用容量',
         availableCapacity: '可用容量',
         belongs: '所属单位',
@@ -568,7 +568,9 @@ export default {
         createPeople: '创建人',
         createTime: '创建时间',
         updatePeople: '修改人',
-        updateTime: '更新时间'
+        updateTime: '更新时间',
+        usedWarehouseArea: '已用容积',
+        availableWarehouseArea: '可用容积'
       },
       placeholder: {
         warehouseCode: '请输入仓库编码',
@@ -576,7 +578,7 @@ export default {
         warehouseType: '请选择仓库类型',
         location: '请输入仓库位置',
         capacity: '请输入仓库容量',
-        warehouseArea: '请输入仓库面积',
+        warehouseArea: '请输入仓库容积',
         organName: '请输入仓库归属部门',
         contactPerson: '请输入联系人',
         contactPhone: '请输入联系电话',
@@ -600,7 +602,7 @@ export default {
         warehouseName: '仓库名称',
         warehouseType: '仓库类型',
         location: '仓库位置',
-        warehouseArea: '仓库面积',
+        warehouseArea: '仓库容积',
         belongs: '所属单位',
         organName: '仓库归属部门',
         supplierName: '供应商名称',
@@ -609,7 +611,8 @@ export default {
         contactPerson: '联系人',
         contactPhone: '联系电话',
         status: '状态',
-        actions: '操作'
+        actions: '操作',
+        usedWarehouseArea: '容积'
       },
       status: {
         enabled: '启用',
@@ -948,7 +951,7 @@ export default {
         batchNo: '请选择批次号',
         quantity: '请输入出库数量',
         specModel: '请输入规格型号(选填)',
-        unitOfMeasure: '请输入计量单位(选填)',
+        unitOfMeasure: '请选择计量单位',
         itemRemarks: '请输入明细备注',
         auditRemark: '请输入审核意见',
         inputCategory: '投入品品类（自动填充）',
@@ -969,7 +972,8 @@ export default {
         quantityExceeds: '出库数量不能超过可用库存',
         itemsRequired: '请至少添加一条出库商品明细',
         detailsRequired: '请至少添加一条出库明细',
-        auditRemarkRequired: '请输入审核意见'
+        auditRemarkRequired: '请输入审核意见',
+        unitOfMeasureRequired: '请选择计量单位'
       },
       columns: {
         outboundOrderId: '出库单号',
