@@ -17,15 +17,15 @@
           <el-option v-for="item in zoneList" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetId')" prop="targetId">
+        <el-form-item :label="$t('inputCirculation.unionId')" prop="targetId">
           <el-select v-model="formData.targetId" :placeholder="$t('common.pleaseSelect')" @change="getUnionInfo">
             <el-option v-for="item in unionList" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetAddress')">
+        <el-form-item :label="$t('inputCirculation.unionAddress')">
           <el-input v-model="formData.targetAddress" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetContact')">
+        <el-form-item :label="$t('inputCirculation.unionContact')">
           <el-input v-model="formData.targetContact" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
 <!--        <el-form-item :label="$t('inputCirculation.targetPhone')">-->
@@ -180,11 +180,7 @@ const loading = ref(false)
 const formRef = ref(null)
 const isEdit = computed(() => !!route.params.id)
 
-// 只显示种子类型 (IN01)
-const seedTypeOptions = computed(() => {
-  if (!options.value.input_type) return []
-  return options.value.input_type.filter(item => item.value === 'IN01')
-})
+
 
 const formData = reactive({
   id: '',

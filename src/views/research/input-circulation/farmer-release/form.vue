@@ -190,7 +190,7 @@ const formData = reactive({
   releaseDate: new Date().toISOString().split('T')[0],
   releaseBy: '',
   releaseOrg: '',
-  receiveStatus: 'pending',
+  receiveStatus: 'completed',
   details: []
 })
 
