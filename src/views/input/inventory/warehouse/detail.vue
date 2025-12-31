@@ -55,29 +55,41 @@
               <span class="label">{{ $t('input.inventory.warehouse.form.location') }}:</span>
               <span class="value">{{ detailData.location }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item full-width">
               <span class="label">{{ $t('input.inventory.warehouse.form.organName') }}:</span>
               <span class="value">{{ detailData.organ_name || '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.capacity') }}:</span>
-              <span class="value">{{ detailData.capacity }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.warehouse.form.warehouseArea') }}:</span>
-              <span class="value">{{ detailData.warehouse_area ? detailData.warehouse_area + ' m²' : '-' }}</span>
+              <span class="value">{{ detailData.capacity ? detailData.capacity + ' KG' : '-' }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.usedCapacity') }}:</span>
-              <span class="value">{{ detailData.used_capacity || 0 }}</span>
+              <span class="value">{{ detailData.used_capacity || 0 }} KG</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.form.availableCapacity') }}:</span>
-              <span class="value">{{ detailData.available_capacity || (detailData.capacity - (detailData.used_capacity || 0)) }}</span>
+              <span class="value">{{ detailData.available_capacity || (detailData.capacity - (detailData.used_capacity || 0)) }} KG</span>
             </div>
-            <div class="detail-item full-width">
+            <div class="detail-item">
               <span class="label">{{ $t('input.inventory.warehouse.columns.usageRate') }}:</span>
               <el-progress :percentage="getUsageRate(detailData)" :color="getProgressColor(detailData)" />
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.warehouseArea') }}:</span>
+              <span class="value">{{ detailData.warehouse_area ? detailData.warehouse_area + ' L' : '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.usedWarehouseArea') }}:</span>
+              <span class="value">{{ detailData.used_warehouse_area || 0 }} L</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.form.usedWarehouseArea') }}:</span>
+              <span class="value">{{(detailData.warehouse_area - (detailData.used_warehouse_area || 0)) }} L</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('input.inventory.warehouse.columns.usageRate') }}:</span>
+              <el-progress :percentage="getWarehouseArea(detailData)" :color="getWarehouseAreaColor(detailData)" />
             </div>
             <div class="detail-item full-width" v-if="detailData.site_certificate">
               <span class="label">{{ $t('input.inventory.warehouse.form.siteCertificate') }}:</span>
@@ -194,9 +206,26 @@ const getUsageRate = (row) => {
   return Math.round(((row.used_capacity || 0) / row.capacity) * 100)
 }
 
+// 计算使用率
+const getWarehouseArea = (row) => {
+  if (!row.warehouse_area || row.warehouse_area === 0) return 0
+  return Math.round(((row.used_warehouse_area || 0) / row.warehouse_area) * 100)
+}
+
+
+
+
 // 获取进度条颜色
 const getProgressColor = (row) => {
   const rate = getUsageRate(row)
+  if (rate >= 90) return '#f56c6c'
+  if (rate >= 70) return '#e6a23c'
+  return '#67c23a'
+}
+
+// 获取进度条颜色
+const getWarehouseAreaColor = (row) => {
+  const rate = getWarehouseArea(row)
   if (rate >= 90) return '#f56c6c'
   if (rate >= 70) return '#e6a23c'
   return '#67c23a'
