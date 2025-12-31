@@ -44,11 +44,12 @@
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
               <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" class="full-width" disabled>
-                <el-option label="Wheat" value="Wheat" />
-                <el-option label="Maize" value="Maize" />
-                <el-option label="Teff" value="Teff" />
-                <el-option label="Sorghum" value="Sorghum" />
-                <el-option label="Barley" value="Barley" />
+                <el-option
+                  v-for="item in options.crop_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
 
@@ -159,10 +160,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, addC1BreedingBatch, updateC1BreedingBatch, getApprovedPropagations } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options } = useDict(['crop_type'])
 
 const formRef = ref(null)
 const loading = ref(false)

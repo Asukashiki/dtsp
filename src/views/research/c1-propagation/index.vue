@@ -172,7 +172,7 @@
                 <el-tag :type="getStatusType(item.applyStatus)" size="small">
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
-                <el-tag type="info" size="small">{{ item.cropType }}</el-tag>
+                <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
                 <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
