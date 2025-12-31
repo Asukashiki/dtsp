@@ -1,10 +1,10 @@
-<template>
+﻿<template>
   <div class="form-container">
     <div class="info-card">
       <div class="card-header">
         <div class="card-title">
           <i class="ri-file-list-3-line"></i>
-          <span>{{ $t('prebasicSeedProductionResult.add') }}</span>
+          <span>{{ $t('basicSeedProductionResult.add') }}</span>
         </div>
         <el-button @click="handleCancel">
           <i class="ri-arrow-left-line"></i>
@@ -24,14 +24,14 @@
           <div class="form-section">
             <div class="section-title">
               <i class="ri-seedling-line"></i>
-              {{ $t('prebasicSeedProductionResult.form.batchInfo') }}
+              {{ $t('basicSeedProductionResult.form.batchInfo') }}
             </div>
 
             <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.produceBatchId')" prop="produceBatchId">
+              <el-form-item :label="$t('basicSeedProductionResult.form.produceBatchId')" prop="produceBatchId">
                 <el-select
                   v-model="formData.produceBatchId"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.produceBatchId')"
+                  :placeholder="$t('basicSeedProductionResult.placeholder.produceBatchId')"
                   filterable
                   clearable
                   style="width: 100%"
@@ -51,27 +51,27 @@
                 </el-select>
               </el-form-item>
               
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.varietyName')" prop="varietyName">
+              <el-form-item :label="$t('basicSeedProductionResult.form.varietyName')" prop="varietyName">
                 <el-input v-model="formData.varietyName" disabled />
               </el-form-item>
             </div>
 
             <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.breedBatchName')" prop="breedBatchName">
+              <el-form-item :label="$t('basicSeedProductionResult.form.breedBatchName')" prop="breedBatchName">
                 <el-input v-model="formData.breedBatchName" disabled />
               </el-form-item>
 
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.trialName')" prop="trialName">
+              <el-form-item :label="$t('basicSeedProductionResult.form.trialName')" prop="trialName">
                 <el-input v-model="formData.trialName" disabled />
               </el-form-item>
             </div>
             
             <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.fromSeedLevel')" prop="fromSeedLevel">
+              <el-form-item :label="$t('basicSeedProductionResult.form.fromSeedLevel')" prop="fromSeedLevel">
                 <el-input v-model="formData.fromSeedLevel" disabled />
               </el-form-item>
               
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.toSeedLevel')" prop="toSeedLevel">
+              <el-form-item :label="$t('basicSeedProductionResult.form.toSeedLevel')" prop="toSeedLevel">
                 <el-input v-model="formData.toSeedLevel" disabled />
               </el-form-item>
             </div>
@@ -81,31 +81,31 @@
           <div class="form-section">
             <div class="section-title">
               <i class="ri-scales-3-line"></i>
-              {{ $t('prebasicSeedProductionResult.form.resultInfo') }}
+              {{ $t('basicSeedProductionResult.form.resultInfo') }}
             </div>
 
             <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.outputQuantity')" prop="outputQuantity">
+              <el-form-item :label="$t('basicSeedProductionResult.form.outputQuantity')" prop="outputQuantity">
                 <el-input-number
                   v-model="formData.outputQuantity"
                   :min="0"
                   :precision="2"
                   style="width: 100%"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.outputQuantity')"
+                  :placeholder="$t('basicSeedProductionResult.placeholder.outputQuantity')"
                 />
               </el-form-item>
               
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.operator')">
+              <el-form-item :label="$t('basicSeedProductionResult.form.operator')">
                 <el-input v-model="operatorName" disabled />
               </el-form-item>
             </div>
             
             <div class="form-row">
-               <el-form-item :label="$t('prebasicSeedProductionResult.form.collectionDate')" prop="collectionDate">
+               <el-form-item :label="$t('basicSeedProductionResult.form.collectionDate')" prop="collectionDate">
                 <el-date-picker
                   v-model="formData.collectionDate"
                   type="datetime"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.collectionDate')"
+                  :placeholder="$t('basicSeedProductionResult.placeholder.collectionDate')"
                   style="width: 100%"
                 />
               </el-form-item>
@@ -128,7 +128,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addPrebasicSeedProduceResult, getPrebasicSeedProduceList } from '@/api/prebasicSeed'
+import { addBasicSeedProduceResult, getBasicSeedProduceList } from '@/api/basicSeed'
 import { useUserStore } from '@/store'
 
 const { t } = useI18n()
@@ -160,20 +160,20 @@ const formData = reactive({
 
 const rules = computed(() => ({
   produceBatchId: [
-    { required: true, message: t('prebasicSeedProductionResult.rules.produceBatchIdRequired'), trigger: 'change' }
+    { required: true, message: t('basicSeedProductionResult.rules.produceBatchIdRequired'), trigger: 'change' }
   ],
   outputQuantity: [
-    { required: true, message: t('prebasicSeedProductionResult.rules.outputQuantityRequired'), trigger: 'blur' },
-    { type: 'number', min: 0, message: t('prebasicSeedProductionResult.rules.outputQuantityMin'), trigger: 'blur' }
+    { required: true, message: t('basicSeedProductionResult.rules.outputQuantityRequired'), trigger: 'blur' },
+    { type: 'number', min: 0, message: t('basicSeedProductionResult.rules.outputQuantityMin'), trigger: 'blur' }
   ],
   collectionDate: [
-    { required: true, message: t('prebasicSeedProductionResult.rules.collectionDateRequired'), trigger: 'change' }
+    { required: true, message: t('basicSeedProductionResult.rules.collectionDateRequired'), trigger: 'change' }
   ]
 }))
 
 const loadBatchList = async () => {
   try {
-    const res = await getPrebasicSeedProduceList({ pageNum: 1, pageSize: 1000 })
+    const res = await getBasicSeedProduceList({ pageNum: 1, pageSize: 1000 })
     if (res.code === 200) {
       // Filter out batches with produceStatus === 'Finished' or flowStatus === 'S10' (Voided)
       batchList.value = (res.rows || []).filter(batch => 
@@ -235,7 +235,7 @@ const handleSubmit = async () => {
       operator: operatorName.value
     }
     
-    const res = await addPrebasicSeedProduceResult(submitData)
+    const res = await addBasicSeedProduceResult(submitData)
     if (res.code === 200) {
       ElMessage.success(t('common.submitSuccess'))
       emit('success')

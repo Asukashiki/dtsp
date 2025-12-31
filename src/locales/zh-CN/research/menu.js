@@ -75,6 +75,14 @@ export default {
   prebasicSeedProductionResult: 'PreBasic繁殖批次数据采集',
   prebasicSeedProductionResultDetail: '生产结果详情',
 
+  basicSeedProduction: 'Basic繁殖批次',
+  basicSeedProductionAdd: '新增Basic繁殖批次',
+  basicSeedProductionEdit: '编辑Basic繁殖批次',
+  basicSeedProductionDetail: 'Basic繁殖批次详情',
+
+  basicSeedProductionResult: 'Basic繁殖批次数据采集',
+  basicSeedProductionResultDetail: 'Basic繁殖批次数据采集详情',
+
   breederSeedProductionResult: '生产数据采集详情',
   oseManagementAdd: '新增OSE',
   oseManagementEdit: '编辑OSE',

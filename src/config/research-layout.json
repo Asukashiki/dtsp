@@ -129,6 +129,18 @@
           "icon": "ri-bar-chart-line",
           "titleKey": "research.menu.prebasicSeedProductionResult",
           "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.basicSeedProduction",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production-result",
+          "icon": "ri-bar-chart-line",
+          "titleKey": "research.menu.basicSeedProductionResult",
+          "roles": ["agri-admin", "OSE"]
         }
       ]
     },

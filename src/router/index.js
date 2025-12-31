@@ -526,6 +526,22 @@ const routes = [
         meta: { title: 'Pre-basic Seed生产结果数据', requiresAuth: true }
       },
 
+      // Basic Seed生产数据采集
+      {
+        path: 'breeding/basic-seed-production',
+        name: 'BasicSeedProduction',
+        component: () => import('../views/research/breeding/basic-seed-production/index.vue'),
+        meta: { title: 'Basic Seed生产数据采集', requiresAuth: true }
+      },
+
+      // Basic Seed生产结果数据
+      {
+        path: 'breeding/basic-seed-production-result',
+        name: 'BasicSeedProductionResult',
+        component: () => import('../views/research/breeding/basic-seed-production-result/index.vue'),
+        meta: { title: 'Basic Seed生产结果数据', requiresAuth: true }
+      },
+
       // 物联网传感器维护
       {
         path: 'data-collection/iot-sensor',

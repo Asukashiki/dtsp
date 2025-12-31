@@ -27,6 +27,7 @@ export default {
     addSuccess: '新增成功',
     updateSuccess: '更新成功',
     deleteSuccess: '删除成功',
+    submitSuccess: '提交成功',
     deleteFailed: '删除失败',
     deleteConfirm: '确定删除该数据吗?',
     operationFailed: '操作失败',

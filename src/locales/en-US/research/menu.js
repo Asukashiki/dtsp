@@ -77,6 +77,14 @@ export default {
   prebasicSeedProductionResult: 'Pre-Basic Seed Batch Data',
   prebasicSeedProductionResultDetail: 'Production Result Detail',
 
+  basicSeedProduction: 'Basic Seed Batch Info',
+  basicSeedProductionAdd: 'Add Basic Seed Batch',
+  basicSeedProductionEdit: 'Edit Basic Seed Batch',
+  basicSeedProductionDetail: 'Basic Seed Batch Detail',
+
+  basicSeedProductionResult: 'Basic Seed Batch Data',
+  basicSeedProductionResultDetail: 'Basic Seed Batch Data Detail',
+
   oseManagement: 'OSE Maintenance',
   oseManagementAdd: 'Add OSE',
   oseManagementEdit: 'Edit OSE',
