@@ -17,7 +17,6 @@
     <div class="content-wrapper">
       <!-- 搜索栏 -->
       <div class="search-bar">
-<!--
         <div class="search-row">
           <el-input
             v-model="searchFilters.keyword"
@@ -32,9 +31,36 @@
             </template>
           </el-input>
         </div>
--->
 
-
+        <div class="action-row">
+          <div class="action-left">
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              <span class="btn-text">{{ $t('common.add') }}</span>
+            </el-button>
+            <el-button type="success" plain @click="handleImport">
+              <i class="ri-upload-2-line"></i>
+              <span class="btn-text">{{ $t('newFarm.farmer.actions.import') }}</span>
+            </el-button>
+            <el-button type="primary" plain @click="handleSearch">
+              <i class="ri-search-line"></i>
+              <span class="btn-text">{{ $t('common.search') }}</span>
+            </el-button>
+            <el-button @click="handleReset">
+              <i class="ri-restart-line"></i>
+              <span class="btn-text">{{ $t('common.reset') }}</span>
+            </el-button>
+            <el-button
+              v-if="selectedIds.length > 0"
+              type="danger"
+              plain
+              @click="handleBatchDelete"
+            >
+              <i class="ri-delete-bin-line"></i>
+              <span class="btn-text">{{ $t('newFarm.farmer.actions.batchDelete') }} ({{ selectedIds.length }})</span>
+            </el-button>
+          </div>
+        </div>
 
         <!-- 筛选条件 -->
         <div class="filter-row">
@@ -374,12 +400,22 @@ const fetchData = async () => {
     const params = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      farmerName: searchFilters.farmerName || searchFilters.keyword,
-      phone: searchFilters.phone,
-      idCard: searchFilters.idCard,
-      gender: searchFilters.gender,
-      kebeleName: searchFilters.kebeleName,
-      daId: searchFilters.daId
+      kebeleCode: searchFilters.kebeleCode,
+      daId: searchFilters.daId,
+      searchValue: searchFilters.keyword,
+      kebeleName: searchFilters.kebeleName
+    }
+
+    // 核心逻辑：
+    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
+    // 此时忽略 farmerName/phone/idCard 等单个字段的严格筛选
+    if (searchFilters.keyword) {
+      params.searchValue = searchFilters.keyword
+    } else {
+      // 当顶部搜索框为空时，使用具体的字段筛选
+      if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
+      if (searchFilters.phone) params.phone = searchFilters.phone
+      if (searchFilters.idCard) params.idCard = searchFilters.idCard
     }
 
     const res = await getFarmerList(params)
@@ -534,12 +570,12 @@ const handleExceed = () => {
 const handleDownloadTemplate = async () => {
   try {
     const res = await downloadFarmerImportTemplate()
-    
+
     // res 现在应该是 Blob 对象
     const blob = res instanceof Blob ? res : new Blob([res], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     })
-    
+
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
