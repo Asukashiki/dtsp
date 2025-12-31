@@ -67,7 +67,15 @@ export default {
   breederSeedDistributionEdit: '编辑种子分发',
   breederSeedDistributionDetail: '种子分发详情',
 
-  oseManagement: 'OSE维护',
+  prebasicSeedProduction: 'PreBasic繁殖批次信息',
+  prebasicSeedProductionAdd: '新增原原种生产',
+  prebasicSeedProductionEdit: '编辑原原种生产',
+  prebasicSeedProductionDetail: '原原种生产详情',
+
+  prebasicSeedProductionResult: 'PreBasic繁殖批次数据采集',
+  prebasicSeedProductionResultDetail: '生产结果详情',
+
+  breederSeedProductionResult: '生产数据采集详情',
   oseManagementAdd: '新增OSE',
   oseManagementEdit: '编辑OSE',
   oseManagementDetail: 'OSE详情',

@@ -69,6 +69,14 @@ export default {
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
 
+  prebasicSeedProduction: 'Pre-Basic Seed Batch Info',
+  prebasicSeedProductionAdd: 'Add Pre-basic Seed Production',
+  prebasicSeedProductionEdit: 'Edit Pre-basic Seed Production',
+  prebasicSeedProductionDetail: 'Pre-basic Seed Production Detail',
+
+  prebasicSeedProductionResult: 'Pre-Basic Seed Batch Data',
+  prebasicSeedProductionResultDetail: 'Production Result Detail',
+
   oseManagement: 'OSE Maintenance',
   oseManagementAdd: 'Add OSE',
   oseManagementEdit: 'Edit OSE',
