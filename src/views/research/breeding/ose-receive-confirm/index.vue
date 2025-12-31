@@ -154,6 +154,7 @@
                 <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.actions')" width="150" fixed="right">
                   <template #default="{ row }">
                     <el-button
+                      v-if="row.receiveStatus === 'PENDING'"
                       link
                       type="primary"
                       @click="handleConfirm(row)"
@@ -221,6 +222,7 @@
                 </div>
                 <div class="card-actions">
                   <el-button
+                    v-if="item.receiveStatus === 'PENDING'"
                     link
                     type="primary"
                     @click="handleConfirm(item)"
