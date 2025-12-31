@@ -65,7 +65,8 @@
             v-for="(module, key) in systemModules"
             :key="key"
             class="system-card"
-            @click="handleSystemClick(module)"
+            :class="{ 'disabled': module.disabled }"
+            @click="!module.disabled && handleSystemClick(module)"
           >
             <div class="system-icon-wrapper" :style="{ background: module.gradient }">
               <i :class="module.icon"></i>
@@ -74,7 +75,7 @@
               <h3 class="system-name">{{ module.name }}</h3>
               <p class="system-desc">{{ module.desc }}</p>
             </div>
-            <div class="system-arrow">
+            <div class="system-arrow" v-if="!module.disabled">
               <i class="ri-arrow-right-s-line"></i>
             </div>
           </div>
@@ -175,22 +176,25 @@ const systemModules = computed(() => ({
     name: t('home.modules.procurement.name'),
     desc: t('home.modules.procurement.desc'),
     icon: 'ri-shopping-cart-line',
-    gradient: 'linear-gradient(135deg, #1890FF 0%, #40A9FF 100%)',
-    path: '/procurement'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/procurement',
+    disabled: true // 禁用
   },
   traceability: {
     name: t('home.modules.traceability.name'),
     desc: t('home.modules.traceability.desc'),
     icon: 'ri-qr-code-line',
-    gradient: 'linear-gradient(135deg, #722ED1 0%, #9254DE 100%)',
-    path: '/traceability'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/traceability',
+    disabled: true // 禁用
   },
   data: {
     name: t('home.modules.data.name'),
     desc: t('home.modules.data.desc'),
     icon: 'ri-bar-chart-box-line',
-    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFA940 100%)',
-    path: '/data'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/data',
+    disabled: true // 禁用
   },
   farm: {
     name: t('home.modules.farm.name'),
@@ -514,6 +518,20 @@ const handleGuideClick = (guide) => {
   border: 2px solid rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.system-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.system-card.disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
 .system-card:hover {
