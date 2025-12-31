@@ -237,41 +237,18 @@ const handleZoneChange = async (value) => {
   formData.targetAddress = ''
   formData.targetContact = ''
   formData.targetPhone = ''
-  await getAllCoorList(value)
+  await getAllCoopList(value)
   await loadDemandList(value)
 }
 
-const getAllCoorList = async (value) => {
-  loading.value = true
-  try {
-    const response = await getRegistrationList({
-      regionCode: value,
-      orgType: 'COOPERATIVE',
-      auditStatus: 1,
-      page: 1,
-      pageSize: 10000
-    })
-    console.log('Cooperative List Response:', response)
-    if (response.code === 200) {
-      const list = response.data.records || response.data.rows || response.data.list || []
-      coorList.value = list.map(item => ({
-        code: item.id,
-        name: item.orgName
-      }))
-    }
-  } catch (error) {
-    ElMessage.error(t('inputCirculation.queryCoorListFailed'))
-  } finally {
-    loading.value = false
-  }
-}
+// This method is now consolidated into getAllCoopList below
 
 // 加载需求列表
-const loadDemandList = async (regionCode) => {
+const loadDemandList = async (code) => {
   demandLoading.value = true
   try {
     const response = await getTownAggregationDetail({ 
-      sourceCode: regionCode,
+      sourceCode: code,
       year: formData.releaseYear || new Date().getFullYear().toString()
     })
     if (response.code === 200) {
@@ -297,8 +274,8 @@ const getCoorInfo = async (value) => {
   try {
     const response = await getUnionDetailByUnionId(value)
     if (response.code === 200 && response.data) {
-      formData.targetAddress = response.data.fullAddress
-      formData.targetContact = response.data.operator
+      formData.targetAddress = response.data.baseInfo?.fullAddress || response.data.fullAddress
+      formData.targetContact = response.data.baseInfo?.contactName || response.data.operator
     }
   } catch (error) {
     ElMessage.error(t('union.getUnionInfoFailed'))
@@ -486,6 +463,34 @@ const handleSubmit = async () => {
       loading.value = false
     }
   })
+}
+
+const regionCode = ref('')
+
+const getAllCoopList = async (value) => {
+  loading.value = true
+  regionCode.value = value
+  try {
+    const response = await getRegistrationList({
+      regionCode: value,
+      orgType: 'COOPERATIVE',
+      auditStatus: 1,
+      page: 1,
+      pageSize: 10000
+    })
+    console.log('Cooperative List Response:', response)
+    if (response.code === 200) {
+      const list = response.data.records || response.data.rows || response.data.list || []
+      coorList.value = list.map(item => ({
+        code: item.id,
+        name: item.orgName
+      }))
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryCoorListFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleBack = () => {
