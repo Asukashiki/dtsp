@@ -281,6 +281,7 @@ const handleDistributionIdChange = (value) => {
       formData.value.parentalSeedSource = uniqueOptions[0].parentalSeedSource
       formData.value.cropType = uniqueOptions[0].cropType || ''
       formData.value.varietyName = uniqueOptions[0].varietyName || ''
+      formData.value.breedingLevel = uniqueOptions[0].seedType || ''
     }
   }
 }
@@ -308,6 +309,7 @@ const handleParentalSeedSourceChange = (value) => {
     // 自动填充cropType和varietyName
     formData.value.cropType = selectedItem.cropType || ''
     formData.value.varietyName = selectedItem.varietyName || ''
+    formData.value.breedingLevel = selectedItem.seedType || ''
     console.log('Updated formData:', {
       cropType: formData.value.cropType,
       varietyName: formData.value.varietyName
