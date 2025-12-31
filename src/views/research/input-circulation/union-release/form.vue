@@ -67,7 +67,7 @@
             :header-cell-style="{ textAlign: 'center' }"
             :cell-style="{ textAlign: 'center' }">
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="80" />
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputType"
                          :placeholder="$t('common.pleaseSelect')"
@@ -77,7 +77,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputCategory"
                          :placeholder="$t('common.pleaseSelect')"
@@ -88,9 +88,14 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
             <template #default="scope">
               <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
+            <template #default="scope">
+              <span>{{ scope.row.currentStock }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
@@ -100,10 +105,11 @@
                 :min="0" 
                 :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                 :precision="2"
-                @change="validateQuantity(scope.$index)" />
+                @change="validateQuantity(scope.$index)" 
+                style="width: 100%" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
             <template #default="scope">
               <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
                 <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
@@ -112,7 +118,7 @@
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
             <template #default="scope">
-              <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" />
+              <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
@@ -137,6 +143,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application'
@@ -237,9 +244,20 @@ const handleZoneChange = async (value) => {
 const getAllCoorList = async (value) => {
   loading.value = true
   try {
-    const response = await getOrgansRegionByCode({regionCode: value})
+    const response = await getRegistrationList({
+      regionCode: value,
+      orgType: 'COOPERATIVE',
+      auditStatus: 1,
+      page: 1,
+      pageSize: 10000
+    })
+    console.log('Cooperative List Response:', response)
     if (response.code === 200) {
-      coorList.value = response.data
+      const list = response.data.records || response.data.rows || response.data.list || []
+      coorList.value = list.map(item => ({
+        code: item.id,
+        name: item.orgName
+      }))
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryCoorListFailed'))
@@ -302,6 +320,29 @@ const handleInputCategoryChange = (index) => {
   const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.quantity = 0
   detail.maxQuantity = demandQty
+  fetchStock(index)
+}
+
+// 获取库存
+const fetchStock = async (index) => {
+  const detail = formData.details[index]
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.currentStock = 0
+    return
+  }
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (res.code === 200 && res.data) {
+      detail.currentStock = res.data.availableStock || 0
+    } else {
+      detail.currentStock = 0
+    }
+  } catch (error) {
+    console.error('Failed to fetch stock:', error)
+    detail.currentStock = 0
+  }
 }
 
 // 根据投入品类型过滤投入品类别
@@ -385,7 +426,8 @@ const addDetail = () => {
     quantity: 0,
     unit: defaultUnit,
     unitPrice: 0,
-    maxQuantity: 0
+    maxQuantity: 0,
+    currentStock: 0
   })
 }
 

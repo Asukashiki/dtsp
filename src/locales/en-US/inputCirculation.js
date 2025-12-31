@@ -55,6 +55,7 @@ export default {
   inputName: 'Input Name',
   required: 'Required Quantity',
   quantity: 'Quantity',
+  currentStock: 'Current Stock',
   demandQuantity: 'Demand Quantity',
   quantityExceedsDemand: 'Quantity exceeds demand limit',
   quantityCannotBeZero: 'Quantity cannot be zero',
@@ -108,7 +109,7 @@ export default {
   // Menu items
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
-  oseReleaseToUnion: 'Release Seeds to Union',
+  oseReleaseToUnion: 'Release Agri Input to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToCooperative: 'Union Distribution to Cooperative',
   cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',

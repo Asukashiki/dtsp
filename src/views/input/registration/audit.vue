@@ -210,7 +210,7 @@ const submitting = ref(false)
 const registrationData = ref({})
 
 // 初始化字典
-const { getLabelByValue } = useDict(['input_category'], {
+const { getLabelByValue } = useDict(['input_type'], {
   immediate: true,
   cache: true
 })
@@ -223,7 +223,7 @@ const taxCertPreviewUrl = ref('')
 const getInputTypesLabel = (inputTypes) => {
   if (!inputTypes) return '-'
   const types = inputTypes.split(',').filter(Boolean)
-  return types.map(type => getLabelByValue('input_category', type) || type).join(', ')
+  return types.map(type => getLabelByValue('input_type', type) || type).join(', ')
 }
 
 // 格式化区域名称（将 # 分隔转为 > 分隔）
