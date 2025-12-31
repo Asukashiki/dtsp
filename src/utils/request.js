@@ -33,6 +33,18 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   response => {
+    // 如果是 blob 类型的响应（文件下载），直接返回 data
+    // 检查 responseType 或者 Content-Type
+    const contentType = response.headers['content-type'] || ''
+    const isBlob = response.config.responseType === 'blob' || 
+                   contentType.includes('application/vnd.openxmlformats') ||
+                   contentType.includes('application/octet-stream') ||
+                   contentType.includes('application/vnd.ms-excel')
+    
+    if (isBlob) {
+      return response.data
+    }
+
     const userStore = useUserStore()
     const res = response.data
     // 根据实际情况调整
@@ -57,8 +69,32 @@ request.interceptors.response.use(
   error => {
     // 处理HTTP错误状态码
     if (error.response) {
-      const { status } = error.response
+      const { status, config } = error.response
       console.log('status',status)
+      
+      // 如果是 blob 类型的错误响应，尝试解析错误信息
+      if (config && config.responseType === 'blob') {
+        const reader = new FileReader()
+        reader.onload = () => {
+          try {
+            const errorData = JSON.parse(reader.result)
+            ElMessage({
+              message: errorData.msg || errorData.message || 'Download failed',
+              type: 'error',
+              duration: 5 * 1000
+            })
+          } catch (e) {
+            ElMessage({
+              message: 'Download failed',
+              type: 'error',
+              duration: 5 * 1000
+            })
+          }
+        }
+        reader.readAsText(error.response.data)
+        return Promise.reject(error)
+      }
+      
       // 未授权或token过期
       if (status === 401) {
         handleUnauthorized('Login expired, please log in again')
