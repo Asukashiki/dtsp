@@ -173,20 +173,6 @@
             <el-skeleton :rows="5" animated />
           </div>
         </el-tab-pane>
-
-        <!-- Tab 2: 跟踪记录 -->
-        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.trackingRecords')" name="tracking">
-          <div class="tab-content">
-            <TrackingList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
-          </div>
-        </el-tab-pane>
-
-        <!-- Tab 3: 检测记录 -->
-        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.testRecords')" name="test">
-          <div class="tab-content">
-            <TestList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
-          </div>
-        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -275,6 +261,28 @@ const handleEdit = () => {
   router.push(`/research/c1-breeding-batch/edit/${route.params.id}`)
 }
 
+// 前往田间检测页面
+const goToFieldDetection = () => {
+  router.push({
+    path: '/research/field-detection',
+    query: {
+      batchId: batchInfo.value.batchId,
+      seedClass: 'C1'
+    }
+  })
+}
+
+// 前往实验室检测页面
+const goToLabTesting = () => {
+  router.push({
+    path: '/research/lab-testing',
+    query: {
+      batchId: batchInfo.value.batchId,
+      seedClass: 'C1'
+    }
+  })
+}
+
 // 返回
 const goBack = () => {
   router.back()
@@ -295,6 +303,29 @@ const goBack = () => {
     }
 
     .tab-content {
+      .tab-action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%);
+        border-radius: 8px;
+        border: 1px solid #ffeaa7;
+        margin-bottom: 20px;
+
+        .hint-text {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #e67e22;
+          font-size: 14px;
+
+          i {
+            font-size: 18px;
+          }
+        }
+      }
+
       .status-overview-card {
         display: flex;
         background: linear-gradient(135deg, #f0f9f4 0%, #e6f7ed 100%);
@@ -510,6 +541,20 @@ const goBack = () => {
   }
 
   .content-wrapper .batch-tabs .tab-content {
+    .tab-action-bar {
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+
+      .hint-text {
+        justify-content: center;
+      }
+
+      .el-button {
+        width: 100%;
+      }
+    }
+
     .status-overview-card {
       flex-direction: column;
       gap: 12px;

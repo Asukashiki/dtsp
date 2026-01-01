@@ -2,6 +2,7 @@
 export default {
   title: 'Seed Multiplication Batch Information',
   subtitle: 'Integrated management of seed multiplication batches, tracking records, and testing information',
+  relatedRecords: 'Related Records',
 
   // Shared crop types
   cropType: {
@@ -279,6 +280,8 @@ export default {
         // title: 'PRODUCTION DATA COLLECTION',
         title: 'Production Data Collection',
         selection: 'Production Batch Selection',
+        productionBatchSelection: 'Production Batch Selection',
+        collectionData: 'Collection Data',
         section: {
           productionBatchSelection: 'Production Batch Selection',
           collectionData: 'Collection Data',

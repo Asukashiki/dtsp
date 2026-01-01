@@ -36,6 +36,7 @@
                   <el-select v-model="formData.orgType" :placeholder="$t('orgRegistration.placeholder.orgType')" style="width: 100%" :disabled="isView">
                     <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
                     <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
+                    <el-option value="PRIVATE" :label="$t('orgRegistration.orgType.PRIVATE')"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>

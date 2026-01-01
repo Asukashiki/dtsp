@@ -57,6 +57,9 @@ export default {
   laboratoryTestDetail: '实验室测试详情',
   laboratoryTestAudit: '实验室测试数据采集审核',
 
+  fieldDetection: '田间检测',
+  labTesting: '实验室检测',
+
   breederSeedProduction: 'Breeder able seed生产数据采集',
   breederSeedProductionAdd: '新增育种家种子生产',
   breederSeedProductionEdit: '编辑育种家种子生产',

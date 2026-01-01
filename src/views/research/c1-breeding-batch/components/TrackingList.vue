@@ -145,7 +145,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking, checkRule } from '@/api/c1BreedingBatch'
+import { getTrackingList, getTrackingById, addTracking, updateTracking, deleteTracking, checkRule } from '@/api/detection'
 import { useUserStore } from '@/store/user'
 
 // Stage与Score的映射关系
@@ -179,7 +179,8 @@ const scoreUnitMap = {
   'MOISTURE': '%'
 }
 const props = defineProps({
-  batchId: { type: String, required: true },
+  batchId: { type: String, required: false },  // 改为可选
+  seedClass: { type: String, default: 'C1' },  // 新增seedClass prop
   readonly: { type: Boolean, default: false }
 })
 const emit = defineEmits(['refresh'])
@@ -221,11 +222,26 @@ const currentUnit = computed(() => {
   const score = formData.value.score
   return scoreUnitMap[score] || ''
 })
+
+// 监听batchId变化，重新加载列表
+watch(() => props.batchId, (newBatchId) => {
+  if (newBatchId) {
+    loadList()
+  }
+})
+
 onMounted(() => loadList())
+
 const loadList = async () => {
+  if (!props.batchId) return  // 如果没有batchId，不加载
   loading.value = true
   try {
-    const response = await getC1TrackingList({ batchId: props.batchId, pageNum: 1, pageSize: 100 })
+    const response = await getTrackingList({
+      batchId: props.batchId,
+      seedClass: props.seedClass,  // 传递seedClass
+      pageNum: 1,
+      pageSize: 100
+    })
     if (response.code === 200) {
       tableData.value = response.data?.records || []
     }
@@ -243,7 +259,20 @@ const handleAdd = () => {
   const operatorName = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
   // 自动生成lotId，格式: {batchId} (直接使用批次号作为lot_id)
   const lotId = props.batchId || ''
-  formData.value = { seedClass: '', lotId: lotId, stage: '', score: '', inspectionValue: '', location: '', startDate: '', endDate: '', trackingResult: '', trackingDesc: '', operator: operatorName }
+  // 自动设置seedClass
+  formData.value = {
+    seedClass: props.seedClass,  // 使用传入的seedClass
+    lotId: lotId,
+    stage: '',
+    score: '',
+    inspectionValue: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    trackingResult: '',
+    trackingDesc: '',
+    operator: operatorName
+  }
   currentView.value = 'form'
 }
 
@@ -258,7 +287,7 @@ const handleStageChange = (val) => {
 const handleEdit = async (row) => {
   isEdit.value = true
   editingId.value = row.id
-  const response = await getC1TrackingById(row.id)
+  const response = await getTrackingById(row.id)
   if (response.code === 200 && response.data) {
     formData.value = { ...response.data }
   }
@@ -274,7 +303,7 @@ const handleDelete = (id) => {
     cancelButtonText: t('common.cancel'),
     type: 'warning'
   }).then(async () => {
-    const response = await deleteC1Tracking([id])
+    const response = await deleteTracking([id])
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       loadList()
@@ -288,9 +317,13 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        const data = { ...formData.value, batchId: props.batchId }
+        const data = {
+          ...formData.value,
+          batchId: props.batchId,
+          seedClass: props.seedClass  // 确保传递seedClass
+        }
         if (isEdit.value) data.id = editingId.value
-        const response = isEdit.value ? await updateC1Tracking(data) : await addC1Tracking(data)
+        const response = isEdit.value ? await updateTracking(data) : await addTracking(data)
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.addSuccess'))
           handleBack()

@@ -90,8 +90,11 @@
         >
           <el-table-column prop="batchId" :label="$t('research.breeding.batch.columns.batchId')" width="220" fixed="left" />
           <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" />
-          <!-- <el-table-column prop="breedingMethodName" :label="'Breeding methods'" min-width="140" align="center" /> -->
+          <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" >
+            <template #default="{ row }">
+              <span>{{getLabelByValue('crop_type', row.cropType) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="breedingLevelName" :label="$t('research.breeding.breedingBatch.form.breedingLevel')" width="160" align="center" />
           <el-table-column prop="startDate" :label="$t('research.breeding.batch.columns.startDate')" width="120" align="center" />
           <el-table-column prop="statusName" :label="$t('research.breeding.batch.columns.status')" width="100" align="center">
@@ -101,7 +104,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="trackingCount" :label="$t('research.breeding.batch.columns.trackingCount')" min-width="140" align="center">
+          <!-- <el-table-column prop="trackingCount" :label="$t('research.breeding.batch.columns.trackingCount')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.trackingCount || 0 }}</el-tag>
             </template>
@@ -110,7 +113,7 @@
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.testCount || 0 }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column :label="$t('common.actions')" width="260" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id)">{{ $t('common.view') }}</el-button>
@@ -195,7 +198,10 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedingBatchPageList, deleteBreedingBatchPage } from '@/api/breeding'
+
 import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue } = useDict(['crop_type']);
 
 const router = useRouter()
 const { t } = useI18n()
