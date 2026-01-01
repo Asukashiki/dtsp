@@ -117,6 +117,30 @@
           "icon": "ri-checkbox-circle-line",
           "titleKey": "research.menu.datasetAudit",
           "roles": ["agri-admin", "OARI"]
+        },
+        {
+          "index": "/research/breeding/prebasic-seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.prebasicSeedProduction",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/prebasic-seed-production-result",
+          "icon": "ri-bar-chart-line",
+          "titleKey": "research.menu.prebasicSeedProductionResult",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.basicSeedProduction",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production-result",
+          "icon": "ri-bar-chart-line",
+          "titleKey": "research.menu.basicSeedProductionResult",
+          "roles": ["agri-admin", "OSE"]
         }
       ]
     },

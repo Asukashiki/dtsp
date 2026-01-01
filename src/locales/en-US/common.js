@@ -28,6 +28,7 @@ export default {
   addSuccess: 'Added successfully',
   updateSuccess: 'Updated successfully',
   deleteSuccess: 'Deleted successfully',
+  submitSuccess: 'Submitted successfully',
   deleteFailed: 'Delete failed',
   deleteConfirm: 'Are you sure you want to void this data?',
   operationFailed: 'Operation failed',
