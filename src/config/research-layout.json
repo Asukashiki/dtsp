@@ -119,6 +119,18 @@
           "roles": ["agri-admin", "OARI"]
         },
         {
+          "index": "/research/breeding/seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProduction",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
+          "index": "/research/breeding/seed-production-result",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.breederSeedProductionResult",
+          "roles": ["agri-admin", "RC"]
+        },
+        {
           "index": "/research/breeding/prebasic-seed-production",
           "icon": "ri-seedling-line",
           "titleKey": "research.menu.prebasicSeedProduction",
@@ -141,6 +153,12 @@
           "icon": "ri-bar-chart-line",
           "titleKey": "research.menu.basicSeedProductionResult",
           "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/seed-distribution",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.breederSeedDistribution",
+          "roles": ["agri-admin", "RC"]
         }
       ]
     },
@@ -149,24 +167,6 @@
       "icon": "ri-plant-line",
       "titleKey": "research.menu.propagationDataManagement",
       "children": [
-        {
-          "index": "/research/breeding/seed-production",
-          "icon": "ri-seedling-line",
-          "titleKey": "research.menu.breederSeedProduction",
-          "roles": ["agri-admin", "RC"]
-        },
-        {
-          "index": "/research/breeding/seed-production-result",
-          "icon": "ri-seedling-line",
-          "titleKey": "research.menu.breederSeedProductionResult",
-          "roles": ["agri-admin", "RC"]
-        },
-        {
-          "index": "/research/breeding/seed-distribution",
-          "icon": "ri-share-forward-line",
-          "titleKey": "research.menu.breederSeedDistribution",
-          "roles": ["agri-admin", "RC"]
-        },
         {
           "index": "/research/breeding/ose-receive-confirm",
           "icon": "ri-checkbox-circle-line",

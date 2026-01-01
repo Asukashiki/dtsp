@@ -23,6 +23,9 @@ export default {
     trialName: 'Trial Name',
     fromSeedLevel: 'From Level',
     toSeedLevel: 'To Level',
+    breedBatchId: 'Breed Batch ID',
+    varietyId: 'Variety ID',
+    cropType: 'Crop Type',
     outputQuantity: 'Output Quantity (kg)',
     collectionDate: 'Collection Date',
     operator: 'Operator'

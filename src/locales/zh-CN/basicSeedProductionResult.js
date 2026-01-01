@@ -23,6 +23,9 @@ export default {
     trialName: '试验批次',
     fromSeedLevel: '来源等级',
     toSeedLevel: '目标等级',
+    breedBatchId: '育种批次ID',
+    varietyId: '品种ID',
+    cropType: '作物类型',
     outputQuantity: '产出数量(kg)',
     collectionDate: '收获日期',
     operator: '操作人'

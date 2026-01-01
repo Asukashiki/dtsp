@@ -75,6 +75,15 @@
                 <el-input v-model="formData.toSeedLevel" disabled />
               </el-form-item>
             </div>
+            
+            <div class="form-row">
+              <el-form-item :label="$t('prebasicSeedProductionResult.form.cropType')" prop="cropType">
+                <el-input
+                  v-model="cropTypeLabel"
+                  disabled
+                />
+              </el-form-item>
+            </div>
           </div>
 
           <!-- Result Data -->
@@ -130,15 +139,24 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addPrebasicSeedProduceResult, getPrebasicSeedProduceList } from '@/api/prebasicSeed'
 import { useUserStore } from '@/store'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
 const userStore = useUserStore()
 
+// 使用 useDict 获取作物类型字典
+const { getLabelByValue } = useDict(['crop_type'])
+
 const operatorName = computed(() => {
   const info = userStore.userInfo
   const user = info.user || info
   return user?.nickName || user?.userName || user?.name || '-'
+})
+
+// 计算属性：作物类型显示 label
+const cropTypeLabel = computed(() => {
+  return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
 })
 
 const formRef = ref(null)
@@ -155,7 +173,10 @@ const formData = reactive({
   breedBatchName: '',
   trialName: '',
   fromSeedLevel: '',
-  toSeedLevel: ''
+  toSeedLevel: '',
+  breedBatchId: '',
+  varietyId: '',
+  cropType: ''
 })
 
 const rules = computed(() => ({
@@ -193,6 +214,9 @@ const handleBatchChange = (batchId) => {
     formData.trialName = ''
     formData.fromSeedLevel = ''
     formData.toSeedLevel = ''
+    formData.breedBatchId = ''
+    formData.varietyId = ''
+    formData.cropType = ''
     return
   }
   
@@ -204,6 +228,9 @@ const handleBatchChange = (batchId) => {
     formData.trialName = batch.trialName
     formData.fromSeedLevel = batch.fromSeedLevel
     formData.toSeedLevel = batch.toSeedLevel
+    formData.breedBatchId = batch.breedBatchId || ''
+    formData.varietyId = batch.varietyId || ''
+    formData.cropType = batch.cropType || ''
   }
 }
 
@@ -230,6 +257,9 @@ const handleSubmit = async () => {
       trialName: formData.trialName,
       fromSeedLevel: formData.fromSeedLevel,
       toSeedLevel: formData.toSeedLevel,
+      breedBatchId: formData.breedBatchId,
+      varietyId: formData.varietyId,
+      cropType: formData.cropType,
       outputQuantity: formData.outputQuantity,
       collectionDate: formattedDate,
       operator: operatorName.value
