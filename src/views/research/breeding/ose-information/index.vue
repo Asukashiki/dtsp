@@ -206,8 +206,8 @@ const { getLabelByValue } = useDict(['crop_type']);
 const router = useRouter()
 const { t } = useI18n()
 
-// 使用字典获取作物类型
-const { options, getLabelByValue } = useDict(['crop_type'])
+// 使用字典获取作物类型 
+  const { options } = useDict(['crop_type'])
 
 // 数据
 const loading = ref(false)
