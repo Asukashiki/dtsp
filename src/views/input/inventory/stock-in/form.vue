@@ -160,6 +160,9 @@
                 <el-form-item :label="$t('input.inventory.stockIn.form.specification')" :prop="`details.${index}.specification`">
                   <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
                 </el-form-item>
+                <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
+                  <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
+                </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
                   <el-select
                     v-model="item.unit"
@@ -175,9 +178,6 @@
                       :value="unitItem.value"
                     />
                   </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
-                  <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
                 </el-form-item>
                 <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`" :rules="detailRules.expiryDate">
                   <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" value-format="YYYY-MM-DD" />

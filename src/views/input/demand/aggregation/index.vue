@@ -65,19 +65,19 @@
               </el-table-column>
               <el-table-column
                   prop="unsubmitQuantity"
-                  :label="$t('unsubmitQuantity')"
+                  :label="$t('Unsubmit Quantity')"
                   min-width="140"
               >
               </el-table-column>
               <el-table-column
                   prop="submitQuantity"
-                  :label="$t('submitQuantity')"
+                  :label="$t('Submit Quantity')"
                   min-width="140"
               >
               </el-table-column>
               <el-table-column
                   prop="auditQuantity"
-                  :label="$t('auditQuantity')"
+                  :label="$t('Audit Quantity')"
                   min-width="140"
               >
               </el-table-column>
@@ -128,7 +128,7 @@
                     </el-button>
                     <el-button link type="info" @click="handleDetail(row)">
                       <i class="ri-list-check"></i>
-                      {{ $t('villageAggregation.actions.detail') }}
+                      {{ $t('Aggregation detail') }}
                     </el-button>
                   </div>
                 </template>

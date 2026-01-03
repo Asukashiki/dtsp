@@ -139,6 +139,17 @@
                   </template>
                 </el-table-column> -->
                 <el-table-column
+                  prop="status"
+                  :label="$t('demandAudit.columns.status')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag :type="getStatusType(row.status)" size="small">
+                      {{ getStatusLabel(row.status) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   prop="submitTime"
                   :label="$t('demandAudit.columns.submitTime')"
                   min-width="160"
@@ -176,8 +187,8 @@
                     <i class="ri-user-line"></i>
                     <span>{{ item.farmerName }}</span>
                   </div>
-                  <el-tag type="info" size="small">
-                    {{ getAuditLevelLabel(item.currentAuditLevel) }}
+                  <el-tag :type="getStatusType(item.status)" size="small">
+                    {{ getStatusLabel(item.status) }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
@@ -204,6 +215,14 @@
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('demandAudit.columns.landArea') }}:</span>
                     <span class="value">{{ item.landArea || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('demandAudit.columns.status') }}:</span>
+                    <span class="value">
+                      <el-tag :type="getStatusType(item.status)" size="small">
+                        {{ getStatusLabel(item.status) }}
+                      </el-tag>
+                    </span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('demandAudit.columns.submitTime') }}:</span>
@@ -492,6 +511,28 @@ const auditLevelOptions = computed(() => ({
 // 获取审核层级标签
 const getAuditLevelLabel = (level) => {
   return auditLevelOptions.value[level] || level
+}
+
+// 获取状态标签
+const getStatusLabel = (status) => {
+  const statusMap = {
+    0: t('demandAudit.status.draft'),
+    1: t('demandAudit.status.submitted'),
+    2: t('demandAudit.status.approved'),
+    3: t('demandAudit.status.rejected')
+  }
+  return statusMap[status] || '-'
+}
+
+// 获取状态类型（用于el-tag的type属性）
+const getStatusType = (status) => {
+  const typeMap = {
+    0: 'info',      // draft - 灰色
+    1: 'warning',   // submitted - 橙色
+    2: 'success',   // approved - 绿色
+    3: 'danger'     // rejected - 红色
+  }
+  return typeMap[status] || 'info'
 }
 
 // 统一审核对话框

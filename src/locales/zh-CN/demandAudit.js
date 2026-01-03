@@ -44,6 +44,7 @@ export default {
     village: '村庄',
     landArea: '地块面积',
     currentAuditLevel: '当前审核层级',
+    status: '状态',
     submitTime: '提交时间',
     actions: '操作',
   },

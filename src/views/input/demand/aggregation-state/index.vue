@@ -57,12 +57,12 @@
                 />
                 <el-table-column
                   prop="unsubmitQuantity"
-                  :label="$t('unsubmitQuantity')"
+                  :label="$t('Unsubmit Quantity')"
                   min-width="140"
                 />
                 <el-table-column
                     prop="submitQuantity"
-                    :label="$t('submitQuantity')"
+                    :label="$t('Submit Quantity')"
                     min-width="140"
                 />
                 <el-table-column
@@ -103,7 +103,7 @@
                 </div>
                 <div class="mobile-card-actions">
                   <el-button type="info" size="small" @click="handleDetail(item)">
-                    {{ $t('stateAggregation.actions.detail') }}
+                    {{ $t('Aggregation detail') }}
                   </el-button>
                 </div>
               </div>
@@ -180,18 +180,18 @@
                 </el-table-column>
                 <el-table-column
                     prop="unsubmitQuantity"
-                    :label="$t('unsubmitQuantity')"
+                    :label="$t('Unsubmit Quantity')"
                     min-width="140"
                 />
                 <el-table-column
                     prop="submitQuantity"
-                    :label="$t('submitQuantity')"
+                    :label="$t('Submit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
                 <el-table-column
                     prop="auditQuantity"
-                    :label="$t('auditQuantity')"
+                    :label="$t('Audit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
@@ -307,18 +307,18 @@
                 </el-table-column>
                 <el-table-column
                     prop="unsubmitQuantity"
-                    :label="$t('unsubmitQuantity')"
+                    :label="$t('Unsubmit Quantity')"
                     min-width="140"
                 />
                 <el-table-column
                     prop="submitQuantity"
-                    :label="$t('submitQuantity')"
+                    :label="$t('Submit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
                 <el-table-column
                     prop="auditQuantity"
-                    :label="$t('auditQuantity')"
+                    :label="$t('Audit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
@@ -429,18 +429,18 @@
                 </el-table-column>
                 <el-table-column
                     prop="unsubmitQuantity"
-                    :label="$t('unsubmitQuantity')"
+                    :label="$t('Unsubmit Quantity')"
                     min-width="140"
                 />
                 <el-table-column
                     prop="submitQuantity"
-                    :label="$t('submitQuantity')"
+                    :label="$t('Submit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
                 <el-table-column
                     prop="auditQuantity"
-                    :label="$t('auditQuantity')"
+                    :label="$t('Audit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
