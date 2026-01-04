@@ -251,7 +251,7 @@
                     @change="handleUnitChange(item, index)"
                   >
                     <el-option
-                      v-for="unitItem in options.input_material_unit"
+                      v-for="unitItem in getFilteredUnits(item)"
                       :key="unitItem.value"
                       :label="unitItem.label"
                       :value="unitItem.value"
@@ -670,10 +670,10 @@ const handleDistributionChange = async (distributionId) => {
           const requiredQuantity = detail.required || detail.quantity || 0
           const requiredCapacityKg = detail.requiredCapacityKg || 0
           const requiredVolumeL = detail.requiredVolumeL || 0
-          
+
           let isInsufficient = false
           let insufficientReason = ''
-          
+
           if (totalAvailable <= 0 || totalAvailable < requiredQuantity) {
             isInsufficient = true
             insufficientReason = `Quantity insufficient (Required: ${requiredQuantity}, Available: ${totalAvailable})`
@@ -684,7 +684,7 @@ const handleDistributionChange = async (distributionId) => {
             isInsufficient = true
             insufficientReason = `Volume insufficient (Required: ${requiredVolumeL} L, Available: ${totalVolumeL} L)`
           }
-          
+
           if (isInsufficient) {
             // 库存不足
             insufficientItems.push({
@@ -920,6 +920,7 @@ const loadBatchList = async (detail) => {
           quantity: item.quantity,
           capacityKg: item.capacity || 0, // 总容量(KG)
           volumeL: item.warehouse_area || 0, // 总容积(L)
+          unitOfMeasure: item.unit_of_measure || '', // 计量单位
           expiryDate: item.expiry_date,
           createdAt: item.created_at
         }))
@@ -938,6 +939,10 @@ const loadBatchList = async (detail) => {
         detail.available_quantity = batches[0].quantity
         detail.available_capacity_kg = batches[0].capacityKg
         detail.available_volume_l = batches[0].volumeL
+        // 自动带出该批次的计量单位
+        if (batches[0].unitOfMeasure) {
+          detail.unitOfMeasure = batches[0].unitOfMeasure
+        }
       } else {
         detail.materialBatchId = ''
         detail.available_quantity = 0
@@ -967,6 +972,7 @@ const handleBatchChange = (item, index) => {
     item.available_quantity = 0
     item.available_capacity_kg = 0
     item.available_volume_l = 0
+    item.unitOfMeasure = '' // 清空计量单位
     return
   }
 
@@ -976,10 +982,13 @@ const handleBatchChange = (item, index) => {
     item.available_quantity = selectedBatch.quantity
     item.available_capacity_kg = selectedBatch.capacityKg || 0
     item.available_volume_l = selectedBatch.volumeL || 0
+    // 强制更新计量单位为该批次的计量单位
+    item.unitOfMeasure = selectedBatch.unitOfMeasure || ''
   } else {
     item.available_quantity = 0
     item.available_capacity_kg = 0
     item.available_volume_l = 0
+    item.unitOfMeasure = '' // 清空计量单位
   }
 }
 
@@ -1099,6 +1108,26 @@ const getFilteredInputs = (item) => {
   }
 
   return filteredList
+}
+
+// 根据已选批次号筛选计量单位列表
+// 如果已选择批次号，则只显示该批次对应的计量单位
+const getFilteredUnits = (item) => {
+  const allUnits = options.value.input_material_unit || []
+
+  // 如果没有选择批次号，返回所有计量单位
+  if (!item.materialBatchId || !item.batchList || item.batchList.length === 0) {
+    return allUnits
+  }
+
+  // 找到已选批次的计量单位
+  const selectedBatch = item.batchList.find(batch => batch.materialBatchId === item.materialBatchId)
+  if (!selectedBatch || !selectedBatch.unitOfMeasure) {
+    return allUnits
+  }
+
+  // 只返回该批次对应的计量单位
+  return allUnits.filter(unit => unit.value === selectedBatch.unitOfMeasure)
 }
 
 // 处理投入品类型变化
@@ -1239,7 +1268,6 @@ const calculateRequiredCapacity = (unitOfMeasure, quantity) => {
 const handleUnitChange = async (item, index) => {
   // 清空之前的警告
   item.capacityWarning = ''
-
   if (!item.unitOfMeasure || !item.quantity || item.quantity <= 0) {
     return
   }
