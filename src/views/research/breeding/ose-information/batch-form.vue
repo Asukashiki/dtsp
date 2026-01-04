@@ -55,7 +55,7 @@
                 <el-option
                   v-for="item in parentalSeedSourceOptions"
                   :key="item.parentalSeedSource"
-                  :label="item.parentalSeedSource"
+                  :label="item.produceBatchName || item.parentalSeedSource"
                   :value="item.parentalSeedSource"
                 />
               </el-select>
@@ -257,18 +257,20 @@ const handleDistributionIdChange = (value) => {
     // 从detailList中提取并去重parentalSeedSource选项
     const detailList = selectedDistribution.distributeDetail.detailList
     const uniqueOptions = []
-    const seenSources = new Set()
+    const seenBatches = new Set()
 
     detailList.forEach(detail => {
-      const source = detail.parentalSeedSource
-      if (source && !seenSources.has(source)) {
-        seenSources.add(source)
+      // Use breedSeedProduceBatchId as the unique key and display value
+      const batchId = detail.breedSeedProduceBatchId
+      if (batchId && !seenBatches.has(batchId)) {
+        seenBatches.add(batchId)
         uniqueOptions.push({
-          parentalSeedSource: source,
+          parentalSeedSource: batchId, // Use batch ID as parental seed source
           varietyName: detail.varietyName,
           cropType: detail.cropType,
           seedType: detail.seedType,
-          produceBatchId: detail.breedSeedProduceBatchId
+          produceBatchId: batchId,
+          produceBatchName: detail.produceBatchName || batchId
         })
       }
     })
