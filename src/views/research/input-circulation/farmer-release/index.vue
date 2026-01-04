@@ -105,13 +105,13 @@
             {{ formatDateTime(row.releaseDate) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
+        <!-- <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
           <template #default="{ row }">
             <el-tag :type="row.stockStatus === 'completed' ? 'success' : 'warning'">
               {{ row.stockStatus }}
             </el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column prop="releaseOrg" :label="t('releaseOrg')" min-width="150" />
         <el-table-column :label="t('actions')" width="220" fixed="right">

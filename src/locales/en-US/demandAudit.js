@@ -44,6 +44,7 @@ export default {
     village: 'Village',
     landArea: 'Land Area',
     currentAuditLevel: 'Current Audit Level',
+    status: 'Status',
     submitTime: 'Submit Time',
     actions: 'Actions',
   },
