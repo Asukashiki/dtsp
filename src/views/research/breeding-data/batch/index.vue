@@ -129,17 +129,10 @@
                 </el-table-column>
                 <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button 
-                        v-for="button in getActionButtons(row)" 
-                        :key="button.action"
-                        link 
-                        :type="button.type" 
-                        @click="handleAction(row, button.action)">
-                        <i :class="button.icon"></i>{{ button.label }}
-                      </el-button>
-                     
-                    </div>
+                    <ActionButtons
+                      :workflow-status="row.workflowStatus"
+                      mode="list"
+                      @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -200,17 +193,10 @@
                   </div>
                 </div>
                 <div class="mobile-card-footer">
-                  <el-button 
-                    v-for="button in getActionButtons(item)" 
-                    :key="button.action"
-                    size="small"
-                    :type="button.type === 'primary' ? 'primary' : ''" 
-                    @click="handleAction(item, button.action)">
-                    <i :class="button.icon"></i>{{ button.label }}
-                  </el-button>
-                  <!-- <el-button size="small" type="danger" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button> -->
+                  <ActionButtons
+                    :workflow-status="item.workflowStatus"
+                    mode="list"
+                    @action="(action) => handleAction(item, action)" />
                 </div>
               </div>
 
@@ -239,6 +225,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 import { useDict } from '@/hooks/useDict'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import {
   getBreedingBatchList,
   deleteBreedingBatch,
@@ -397,59 +384,6 @@ const handleTabChange = (tabName) => {
   getList()
 }
 
-const getActionButtons = (row) => {
-  const workflowStatus = row.workflowStatus
-  const buttons = []
-  
-  // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (workflowStatus) {
-    case 'S0': // 草稿
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-      }
-      // 添加作废按钮
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-      }
-      break
-    case 'S1': // 待审批
-      if (userStore.hasWorkflowStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      }
-      // 添加作废按钮
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-      }
-      break
-    case 'S2': // 审核通过
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      break
-    case 'S3': // 审核驳回
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-      }
-      // 添加作废按钮
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-      }
-      break
-    case 'S9': // 已归档
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      break
-    case 'S10': // 已作废
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }) 
-      break
-  }
-  
-  return buttons
-}
-
 const handleAction = (row, action) => {
   switch (action) {
     case 'view':
@@ -584,77 +518,5 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.status-tabs {
-  margin-bottom: 20px;
-  
-  :deep(.el-tabs__item) {
-    font-size: 14px;
-    
-    i {
-      margin-right: 4px;
-    }
-  }
-}
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-
-    .filter-select {
-      width: 180px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-
-    @media (max-width: 768px) {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 80px;
-      }
-
-      .search-input,
-      .filter-select {
-        flex: 1;
-        width: auto;
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
 </style>

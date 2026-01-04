@@ -1,0 +1,784 @@
+// ==================== 工作流通用样式 ====================
+// Workflow-specific styles that extend page-common.scss
+// Used by breeding batch and other approval-based modules
+
+@import './page-common.scss';
+
+// ==================== 工作流状态配置 ====================
+
+// Additional color variables for workflow (variants not defined in page-common.scss)
+$primary-green-light: #00b350;
+$primary-green-dark: #008038;
+$accent-yellow-light: #FFF4CC;
+$accent-yellow-dark: #E6C700;
+$accent-red-light: #FF3D47;
+$accent-red-dark: #C10F17;
+
+// Additional text and background colors
+$color-text-placeholder: #C0C4CC;
+$color-bg-lighter: #F8F9FA;
+
+// Workflow status color mapping
+$workflow-status-colors: (
+  'S0': (
+    // Draft - 草稿
+    type: 'info',
+    color: #909399,
+    bg: rgba(144, 147, 153, 0.1),
+    border: #D3D4D6
+  ),
+  'S1': (
+    // Pending Approval - 待审批
+    type: 'warning',
+    color: #E6A23C,
+    bg: rgba(230, 162, 60, 0.1),
+    border: #F5DAB1
+  ),
+  'S2': (
+    // Approved - 审核通过
+    type: 'primary',
+    color: #409EFF,
+    bg: rgba(64, 158, 255, 0.1),
+    border: #B3D8FF
+  ),
+  'S3': (
+    // Rejected - 审核驳回
+    type: 'danger',
+    color: $accent-red,
+    bg: rgba(218, 18, 26, 0.1),
+    border: #FBC4C4
+  ),
+  'S9': (
+    // Archived - 已归档
+    type: 'info',
+    color: #606266,
+    bg: rgba(96, 98, 102, 0.1),
+    border: #C8C9CC
+  ),
+  'S10': (
+    // Voided - 已作废
+    type: 'danger',
+    color: $accent-red-dark,
+    bg: rgba(193, 15, 23, 0.1),
+    border: #F8C7CC
+  )
+);
+
+// ==================== 状态标签页 ====================
+
+.status-tabs {
+  margin-bottom: 20px;
+  background: white;
+  padding: 0 16px;
+  border-radius: 8px 8px 0 0;
+
+  :deep(.el-tabs__header) {
+    margin: 0;
+    border-bottom: 2px solid $color-border-lighter;
+  }
+
+  :deep(.el-tabs__nav-wrap)::after {
+    display: none; // Remove default border
+  }
+
+  :deep(.el-tabs__item) {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 20px;
+    height: 48px;
+    line-height: 48px;
+    color: $color-text-regular;
+    transition: all 0.3s ease;
+    position: relative;
+
+    i {
+      margin-right: 6px;
+      font-size: 16px;
+      vertical-align: middle;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      color: $primary-green-light;
+
+      i {
+        transform: scale(1.1);
+      }
+    }
+
+    &.is-active {
+      color: $primary-green;
+      font-weight: 600;
+
+      i {
+        color: $primary-green;
+      }
+    }
+
+    &.is-disabled {
+      color: $color-text-placeholder;
+      cursor: not-allowed;
+    }
+  }
+
+  :deep(.el-tabs__active-bar) {
+    background-color: $primary-green;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+  }
+
+  :deep(.el-tabs__content) {
+    padding: 0;
+  }
+
+  // 响应式适配
+  @media screen and (max-width: 768px) {
+    padding: 0 8px;
+
+    :deep(.el-tabs__item) {
+      font-size: 13px;
+      padding: 0 12px;
+      height: 44px;
+      line-height: 44px;
+
+      i {
+        margin-right: 4px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    :deep(.el-tabs__item) {
+      padding: 0 8px;
+
+      span {
+        display: none; // Hide text on very small screens
+      }
+
+      i {
+        margin-right: 0;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// ==================== 工作流信息卡片 ====================
+
+.workflow-info-card {
+  @extend .info-card;
+
+  .workflow-timeline {
+    position: relative;
+    padding-left: 32px;
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 24px;
+
+      &:last-child {
+        padding-bottom: 0;
+
+        &::before {
+          display: none;
+        }
+      }
+
+      // Timeline line
+      &::before {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 8px;
+        width: 2px;
+        height: calc(100% + 8px);
+        background: $color-border-light;
+      }
+
+      // Timeline dot
+      &::after {
+        content: '';
+        position: absolute;
+        left: -28px;
+        top: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid $primary-green;
+        box-shadow: 0 0 0 3px rgba($primary-green, 0.1);
+      }
+
+      &.is-current::after {
+        background: $primary-green;
+        box-shadow: 0 0 0 4px rgba($primary-green, 0.2);
+      }
+
+      &.is-rejected::after {
+        border-color: $accent-red;
+        background: $accent-red;
+        box-shadow: 0 0 0 4px rgba($accent-red, 0.15);
+      }
+
+      &.is-approved::after {
+        border-color: $primary-green;
+        background: $primary-green;
+      }
+    }
+
+    .timeline-content {
+      background: $color-bg-lighter;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid $primary-green;
+
+      .timeline-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        .timeline-title {
+          font-weight: 600;
+          font-size: 14px;
+          color: $color-text-primary;
+        }
+
+        .timeline-time {
+          font-size: 12px;
+          color: $color-text-secondary;
+        }
+      }
+
+      .timeline-body {
+        font-size: 13px;
+        color: $color-text-regular;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+// ==================== 审批历史表格样式 ====================
+
+.approval-history-table {
+  :deep(.el-table) {
+    border-radius: 8px;
+    overflow: hidden;
+
+    th.el-table__cell {
+      background: linear-gradient(
+        to right,
+        rgba($primary-green, 0.05),
+        rgba($primary-green, 0.02)
+      );
+      color: $color-text-primary;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td.el-table__cell {
+      font-size: 14px;
+    }
+
+    .el-table__row {
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgba($primary-green, 0.02);
+      }
+    }
+
+    .el-table__empty-text {
+      color: $color-text-secondary;
+      font-size: 14px;
+    }
+  }
+
+  .approval-comment {
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
+  .approval-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.is-approved {
+      background: rgba($primary-green, 0.1);
+      color: $primary-green;
+    }
+
+    &.is-rejected {
+      background: rgba($accent-red, 0.1);
+      color: $accent-red;
+    }
+
+    i {
+      font-size: 14px;
+    }
+  }
+}
+
+// ==================== 工作流操作按钮组 ====================
+
+.workflow-action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 0;
+  border-top: 1px solid $color-border-lighter;
+
+  .el-button {
+    min-width: 100px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    // Icon alignment
+    i {
+      margin-right: 6px;
+      font-size: 16px;
+      vertical-align: middle;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
+
+    .el-button {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}
+
+// ==================== 工作流状态标签增强 ====================
+
+.workflow-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 14px;
+  }
+
+  // Dynamic status colors
+  @each $status, $colors in $workflow-status-colors {
+    &.status-#{$status} {
+      color: map-get($colors, 'color');
+      background: map-get($colors, 'bg');
+      border: 1px solid map-get($colors, 'border');
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ==================== 搜索区域增强（工作流专用） ====================
+
+.workflow-search-section {
+  @extend .search-section;
+
+  .status-filter {
+    flex: 0 0 auto;
+
+    .el-select {
+      width: 220px;
+    }
+
+    @media screen and (max-width: 768px) {
+      flex: 1 1 100%;
+
+      .el-select {
+        width: 100%;
+      }
+    }
+  }
+
+  // Advanced filter toggle
+  .advanced-filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $primary-green;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    i {
+      font-size: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      background: rgba($primary-green, 0.05);
+    }
+
+    &.is-active i {
+      transform: rotate(180deg);
+    }
+  }
+
+  .advanced-filters {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    background: $color-bg-lighter;
+    border-radius: 8px;
+    margin-top: 12px;
+    animation: slideDown 0.3s ease;
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// ==================== 工作流徽章提示 ====================
+
+.workflow-badge {
+  position: relative;
+  display: inline-flex;
+
+  .badge-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $accent-red;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.8;
+    }
+  }
+
+  .badge-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 9px;
+    background: $accent-red;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// ==================== 空状态（工作流专用） ====================
+
+.workflow-empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: $color-text-secondary;
+
+  .empty-icon {
+    font-size: 80px;
+    color: $color-text-placeholder;
+    margin-bottom: 16px;
+    opacity: 0.5;
+
+    i {
+      display: block;
+    }
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $color-text-regular;
+    margin-bottom: 8px;
+  }
+
+  .empty-description {
+    font-size: 14px;
+    color: $color-text-secondary;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .empty-action {
+    .el-button {
+      padding: 10px 24px;
+    }
+  }
+}
+
+// ==================== 审批意见输入框 ====================
+
+.approval-comment-input {
+  .el-textarea__inner {
+    border: 2px solid $color-border-light;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: $primary-green;
+      box-shadow: 0 0 0 3px rgba($primary-green, 0.1);
+    }
+
+    &::placeholder {
+      color: $color-text-placeholder;
+      font-style: italic;
+    }
+  }
+
+  .comment-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: $color-text-secondary;
+
+    i {
+      font-size: 14px;
+      color: $primary-green;
+    }
+  }
+
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: $color-text-secondary;
+    margin-top: 4px;
+
+    &.is-exceed {
+      color: $accent-red;
+      font-weight: 500;
+    }
+  }
+}
+
+// ==================== 批量操作栏 ====================
+
+.batch-operations-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(
+    to right,
+    rgba($primary-green, 0.05),
+    rgba($primary-green, 0.02)
+  );
+  border: 1px solid rgba($primary-green, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  .selected-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $color-text-regular;
+
+    .selected-count {
+      font-weight: 600;
+      color: $primary-green;
+    }
+  }
+
+  .batch-actions {
+    display: flex;
+    gap: 8px;
+
+    .el-button {
+      padding: 6px 16px;
+      font-size: 13px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+
+    .batch-actions {
+      width: 100%;
+      flex-wrap: wrap;
+
+      .el-button {
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+  }
+}
+
+// ==================== 工作流进度指示器 ====================
+
+.workflow-progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  position: relative;
+
+  // Progress line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: $color-border-light;
+    z-index: 0;
+  }
+
+  .progress-step {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid $color-border-light;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: $color-text-placeholder;
+      transition: all 0.3s ease;
+    }
+
+    .step-label {
+      font-size: 12px;
+      color: $color-text-secondary;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    &.is-completed .step-icon {
+      background: $primary-green;
+      border-color: $primary-green;
+      color: white;
+    }
+
+    &.is-active .step-icon {
+      border-color: $primary-green;
+      color: $primary-green;
+      border-width: 3px;
+      box-shadow: 0 0 0 4px rgba($primary-green, 0.1);
+    }
+
+    &.is-rejected .step-icon {
+      background: $accent-red;
+      border-color: $accent-red;
+      color: white;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+
+    &::before {
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: 2px;
+      height: auto;
+    }
+
+    .progress-step {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+
+      .step-label {
+        text-align: left;
+      }
+    }
+  }
+}
+
+// ==================== 响应式辅助类 ====================
+
+@media screen and (max-width: 768px) {
+  .workflow-mobile-stack {
+    flex-direction: column !important;
+    gap: 12px !important;
+
+    & > * {
+      width: 100% !important;
+    }
+  }
+}

@@ -154,16 +154,42 @@ $color-bg-light: #f5f7fa;
   gap: 12px;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
-.search-input {
+.search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   flex: 1;
   min-width: 200px;
 }
 
+.search-label {
+  font-size: 14px;
+  color: $color-text-regular;
+  font-weight: 500;
+}
+
+.search-input {
+  width: 100%;
+}
+
 .filter-select {
-  width: 180px;
+  width: 100%;
+}
+
+.search-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
   flex-shrink: 0;
+
+  .el-button {
+    i {
+      margin-right: 4px;
+    }
+  }
 }
 
 // ==================== 表格区域 ====================
@@ -333,10 +359,23 @@ $color-bg-light: #f5f7fa;
 
   .search-section {
     flex-direction: column;
+    gap: 16px;
+
+    .search-item {
+      min-width: 100%;
+    }
 
     .search-input,
     .filter-select {
       width: 100%;
+    }
+
+    .search-actions {
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
     }
   }
 

@@ -27,28 +27,11 @@
             
           </div>
 
-
           <!-- 状态标签页 -->
-        <div class="status-tabs">
-          <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-
-            <el-tab-pane :label="$t('research.breedingData.batch.tabs.pendingApproval')" name="pendingApproval">
-              <template #label>
-                <span><i class="ri-time-line"></i> {{ $t('research.breedingData.batch.tabs.pendingApproval') }}</span>
-              </template>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('research.breedingData.batch.tabs.voided')" name="voided">
-              <template #label>
-                <span><i class="ri-forbid-line"></i> {{ $t('research.breedingData.batch.tabs.voided') }}</span>
-              </template>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('research.breedingData.batch.tabs.approved')" name="approved">
-              <template #label>
-                <span><i class="ri-check-line"></i> {{ $t('research.breedingData.batch.tabs.approved') }}</span>
-              </template>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange" />
 
           <div class="card-body">
             <!-- 搜索筛选区 -->
@@ -131,16 +114,11 @@
                 </el-table-column>
                 <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="200" fixed="right">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button 
-                        v-for="button in getActionButtons(row)" 
-                        :key="button.action"
-                        link 
-                        :type="button.type" 
-                        @click="handleAction(row, button.action)">
-                        <i :class="button.icon"></i>{{ button.label }}
-                      </el-button>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="row.workflowStatus"
+                      mode="list"
+                      :is-voided-tab="activeTab === 'voided'"
+                      @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -201,14 +179,11 @@
                   </div>
                 </div>
                 <div class="mobile-card-footer">
-                  <el-button 
-                    v-for="button in getActionButtons(item)" 
-                    :key="button.action"
-                    size="small"
-                    :type="button.type === 'primary' ? 'primary' : ''" 
-                    @click="handleAction(item, button.action)">
-                    <i :class="button.icon"></i>{{ button.label }}
-                  </el-button>
+                  <ActionButtons
+                    :workflow-status="item.workflowStatus"
+                    mode="list"
+                    :is-voided-tab="activeTab === 'voided'"
+                    @action="(action) => handleAction(item, action)" />
                 </div>
               </div>
 
@@ -237,6 +212,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 import { useDict } from '@/hooks/useDict'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import {
   getBreedingBatchList,
   getBreedingBatchVoidedList,
@@ -258,6 +235,25 @@ const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const activeTab = ref('pendingApproval')
+
+// Tab configuration
+const tabConfig = [
+  {
+    name: 'pendingApproval',
+    label: 'research.breedingData.batch.tabs.pendingApproval',
+    icon: 'ri-time-line'
+  },
+  {
+    name: 'voided',
+    label: 'research.breedingData.batch.tabs.voided',
+    icon: 'ri-forbid-line'
+  },
+  {
+    name: 'approved',
+    label: 'research.breedingData.batch.tabs.approved',
+    icon: 'ri-check-line'
+  }
+]
 
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict([
@@ -406,49 +402,6 @@ const setQueryParamsByTab = (tabName) => {
 const handleTabChange = (tabName) => {
   setQueryParamsByTab(tabName)
   getList()
-}
-
-const getActionButtons = (row) => {
-  const workflowStatus = row.workflowStatus
-  const buttons = []
-  
-  // 如果在 Voided 标签页，只显示查看按钮
-  if (activeTab.value === 'voided') {
-    buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-  } else {
-    // 根据状态显示不同的操作按钮，并检查用户权限
-    switch (workflowStatus) {
-      case 'S0': // 草稿
-        if (userStore.hasWorkflowStatusPermission('edit')) {
-          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-        }
-        if (userStore.hasWorkflowStatusPermission('submit')) {
-          buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-        }
-        break
-      case 'S1': // 待审批
-        if (userStore.hasWorkflowStatusPermission('approve')) {
-          buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-        }
-        break
-      case 'S2': // 审核通过
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        break
-      case 'S3': // 审核驳回
-        if (userStore.hasWorkflowStatusPermission('edit')) {
-          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-        }
-        break
-      case 'S9': // 已归档
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        break
-      case 'S10': // 已作废
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        break
-    }
-  }
-  
-  return buttons
 }
 
 const handleAction = (row, action) => {
@@ -613,77 +566,5 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.status-tabs {
-  margin-bottom: 20px;
-  
-  :deep(.el-tabs__item) {
-    font-size: 14px;
-    
-    i {
-      margin-right: 4px;
-    }
-  }
-}
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-
-    .filter-select {
-      width: 180px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-
-    @media (max-width: 768px) {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 80px;
-      }
-
-      .search-input,
-      .filter-select {
-        flex: 1;
-        width: auto;
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
 </style>
