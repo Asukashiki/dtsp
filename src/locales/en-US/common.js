@@ -107,5 +107,8 @@ export default {
   saveSuccess: 'Save Success',
   queryFailed: 'query Info failed',
   birthDate: 'Birth Date',
-  invalidParams: 'Invalid parameters'
+  invalidParams: 'Invalid parameters',
+  // Tab labels
+  aggregationResults: 'Aggregation Results',
+  farmerDemands: 'Farmer Demands'
 }

@@ -315,7 +315,12 @@ const loadData = async () => {
 
 // 返回
 const handleBack = () => {
-  router.back()
+  // 如果有返回路径参数，使用 push 导航到该路径
+  if (route.query.returnPath) {
+    router.push(route.query.returnPath)
+  } else {
+    router.back()
+  }
 }
 
 // 编辑
@@ -394,7 +399,12 @@ const handleApprove = async () => {
 
     if (res.code === 200) {
       ElMessage.success(t('farmerDemand.audit.approveSuccess'))
-      router.back()
+      // 使用智能返回
+      if (route.query.returnPath) {
+        router.push(route.query.returnPath)
+      } else {
+        router.back()
+      }
     } else {
       ElMessage.error(res.message || t('farmerDemand.audit.approveFailed'))
     }
@@ -436,7 +446,12 @@ const handleReject = async () => {
 
     if (res.code === 200) {
       ElMessage.success(t('farmerDemand.audit.rejectSuccess'))
-      router.back()
+      // 使用智能返回
+      if (route.query.returnPath) {
+        router.push(route.query.returnPath)
+      } else {
+        router.back()
+      }
     } else {
       ElMessage.error(res.message || t('farmerDemand.audit.rejectFailed'))
     }
