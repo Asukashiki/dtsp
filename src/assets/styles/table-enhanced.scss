@@ -1,0 +1,572 @@
+// ==================== 增强表格样式 ====================
+// 基于设计图的表格样式优化
+
+@use './page-common.scss' as *;
+
+// 额外的颜色变量（如果 page-common 中没有定义）
+$primary-green-dark: #008038;
+$primary-green-light: #00b350;
+
+// ==================== 表格容器 ====================
+.table-wrapper {
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  border: none;
+
+  :deep(.el-table) {
+    font-size: 13px;
+    color: $color-text-primary;
+
+    // 表头样式
+    .el-table__header-wrapper {
+      .el-table__header {
+        th.el-table__cell {
+          background: #E5F4EC;
+          color: $primary-green;
+          font-weight: 600;
+          font-size: 13px;
+          padding: 14px 0;
+          border-bottom: 1px solid $color-border-lighter;
+
+          .cell {
+            padding: 0 16px;
+            line-height: 1.5;
+          }
+
+          &:first-child {
+            padding-left: 0;
+
+            .cell {
+              padding-left: 16px;
+            }
+          }
+
+          &:last-child {
+            padding-right: 0;
+
+            .cell {
+              padding-right: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    // 表体样式
+    .el-table__body-wrapper {
+      .el-table__body {
+        td.el-table__cell {
+          padding: 16px 0;
+          border-bottom: 1px solid $color-border-lighter;
+          font-size: 13px;
+
+          .cell {
+            padding: 0 16px;
+            line-height: 1.6;
+          }
+
+          &:first-child {
+            padding-left: 0;
+
+            .cell {
+              padding-left: 16px;
+            }
+          }
+
+          &:last-child {
+            padding-right: 0;
+
+            .cell {
+              padding-right: 16px;
+            }
+          }
+        }
+
+        // 行悬停效果
+        .el-table__row {
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: rgba($primary-green, 0.02);
+
+            td.el-table__cell {
+              background-color: transparent;
+            }
+          }
+        }
+
+        // 斑马纹
+        .el-table__row--striped {
+          td.el-table__cell {
+            background-color: #fafbfc;
+          }
+
+          &:hover {
+            td.el-table__cell {
+              background-color: rgba($primary-green, 0.02);
+            }
+          }
+        }
+      }
+    }
+
+    // 空数据样式
+    .el-table__empty-block {
+      padding: 48px 0;
+
+      .el-table__empty-text {
+        color: $color-text-secondary;
+        font-size: 14px;
+      }
+    }
+
+    // 固定列阴影
+    .el-table__fixed,
+    .el-table__fixed-right {
+      &::before {
+        background-color: transparent;
+      }
+    }
+
+    // 去掉固定列的阴影线
+    .el-table-fixed-column--left,
+    .el-table-fixed-column--right {
+      &::before {
+        box-shadow: none !important;
+      }
+    }
+    
+    .el-table__fixed-right-patch {
+      background: #E5F4EC !important;
+    }
+
+    // 固定列表头背景色（只针对表头）
+    .el-table__header {
+      .el-table-fixed-column--right {
+        background: #E5F4EC !important;
+      }
+    }
+
+    .el-table__fixed-right-patch {
+      background-color: #fafbfc;
+    }
+
+    // 选择框样式
+    .el-table-column--selection {
+      .cell {
+        padding: 0 16px;
+      }
+
+      .el-checkbox {
+        .el-checkbox__inner {
+          border-radius: 4px;
+          border-color: #dcdfe6;
+
+          &:hover {
+            border-color: $primary-green;
+          }
+        }
+
+        &.is-checked {
+          .el-checkbox__inner {
+            background-color: $primary-green;
+            border-color: $primary-green;
+          }
+        }
+      }
+    }
+  }
+
+  // 加载状态
+  :deep(.el-loading-mask) {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+  }
+}
+
+// ==================== 表格操作按钮 ====================
+.table-action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .el-button {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &.el-button--text,
+    &.is-link {
+      padding: 5px 8px;
+      
+      &:hover {
+        background: rgba($primary-green, 0.08);
+      }
+    }
+
+    i {
+      font-size: 14px;
+      margin-right: 2px;
+    }
+  }
+}
+
+// ==================== 表格标签样式 ====================
+.table-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  i {
+    font-size: 13px;
+  }
+
+  // 状态标签颜色
+  &.tag-success {
+    background: rgba(#00b350, 0.1);
+    color: #00b350;
+    border: 1px solid rgba(#00b350, 0.2);
+  }
+
+  &.tag-warning {
+    background: rgba(#E6A23C, 0.1);
+    color: #E6A23C;
+    border: 1px solid rgba(#E6A23C, 0.2);
+  }
+
+  &.tag-danger {
+    background: rgba(#DA121A, 0.1);
+    color: #DA121A;
+    border: 1px solid rgba(#DA121A, 0.2);
+  }
+
+  &.tag-info {
+    background: rgba(#909399, 0.1);
+    color: #909399;
+    border: 1px solid rgba(#909399, 0.2);
+  }
+
+  &.tag-primary {
+    background: rgba(#409EFF, 0.1);
+    color: #409EFF;
+    border: 1px solid rgba(#409EFF, 0.2);
+  }
+}
+
+// ==================== 分页样式增强 ====================
+.pagination-wrapper {
+  margin-top: 20px;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border-top: 1px solid $color-border-lighter;
+
+  :deep(.el-pagination) {
+    .el-pagination__total {
+      font-size: 13px;
+      color: $color-text-secondary;
+      margin-right: auto;
+    }
+
+    .el-pagination__sizes {
+      .el-select {
+        .el-input__wrapper {
+          border-radius: 6px;
+          box-shadow: 0 0 0 1px $color-border-light inset;
+
+          &:hover {
+            box-shadow: 0 0 0 1px $primary-green inset;
+          }
+
+          &.is-focus {
+            box-shadow: 0 0 0 1px $primary-green inset;
+          }
+        }
+      }
+    }
+
+    .btn-prev,
+    .btn-next {
+      background: white;
+      border: 1px solid $color-border-light;
+      border-radius: 6px;
+      padding: 0 10px;
+      min-width: 32px;
+      height: 32px;
+
+      &:hover:not(:disabled) {
+        color: $primary-green;
+        border-color: $primary-green;
+        background: rgba($primary-green, 0.05);
+      }
+
+      &:disabled {
+        background: #f5f7fa;
+        border-color: $color-border-lighter;
+      }
+    }
+
+    .el-pager {
+      .number {
+        background: white;
+        border: 1px solid $color-border-light;
+        border-radius: 6px;
+        min-width: 32px;
+        height: 32px;
+        line-height: 30px;
+        margin: 0 4px;
+        font-size: 13px;
+
+        &:hover {
+          color: $primary-green;
+          border-color: $primary-green;
+          background: rgba($primary-green, 0.05);
+        }
+
+        &.is-active {
+          background: $primary-green;
+          border-color: $primary-green;
+          color: white;
+          font-weight: 600;
+        }
+      }
+
+      .more {
+        background: transparent;
+        border: none;
+        color: $color-text-secondary;
+        line-height: 32px;
+
+        &:hover {
+          color: $primary-green;
+        }
+      }
+    }
+
+    .el-pagination__jump {
+      margin-left: 12px;
+      font-size: 13px;
+      color: $color-text-secondary;
+
+      .el-input {
+        .el-input__wrapper {
+          border-radius: 6px;
+          box-shadow: 0 0 0 1px $color-border-light inset;
+          width: 50px;
+
+          &:hover {
+            box-shadow: 0 0 0 1px $primary-green inset;
+          }
+
+          &.is-focus {
+            box-shadow: 0 0 0 1px $primary-green inset;
+          }
+
+          .el-input__inner {
+            text-align: center;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ==================== 响应式适配 ====================
+@media screen and (max-width: 1200px) {
+  .table-wrapper {
+    :deep(.el-table) {
+      font-size: 12px;
+
+      .el-table__header-wrapper {
+        .el-table__header {
+          th.el-table__cell {
+            font-size: 12px;
+            padding: 10px 0;
+          }
+        }
+      }
+
+      .el-table__body-wrapper {
+        .el-table__body {
+          td.el-table__cell {
+            padding: 12px 0;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .table-action-buttons {
+    .el-button {
+      padding: 4px 8px;
+      font-size: 12px;
+
+      i {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .pagination-wrapper {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+
+    :deep(.el-pagination) {
+      width: 100%;
+      justify-content: center;
+
+      .el-pagination__total {
+        margin-right: 0;
+        margin-bottom: 8px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .btn-prev,
+      .btn-next {
+        min-width: 36px;
+        height: 36px;
+      }
+
+      .el-pager {
+        .number {
+          min-width: 36px;
+          height: 36px;
+          line-height: 34px;
+        }
+      }
+    }
+  }
+}
+
+// ==================== 表格工具栏 ====================
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fafbfc;
+  border-bottom: 1px solid $color-border-lighter;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toolbar-button {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    i {
+      margin-right: 4px;
+      font-size: 14px;
+    }
+
+    &:hover {
+      background: rgba($primary-green, 0.08);
+      color: $primary-green;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+
+    .toolbar-left,
+    .toolbar-right {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+// ==================== 批量操作栏（表格专用） ====================
+.table-batch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: linear-gradient(to right, rgba($primary-green, 0.05), rgba($primary-green, 0.02));
+  border-bottom: 1px solid rgba($primary-green, 0.15);
+
+  .batch-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $color-text-regular;
+
+    .selected-count {
+      font-weight: 600;
+      color: $primary-green;
+      font-size: 14px;
+    }
+
+    .clear-selection {
+      color: $primary-green;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 8px;
+      text-decoration: underline;
+
+      &:hover {
+        color: $primary-green-dark;
+      }
+    }
+  }
+
+  .batch-actions {
+    display: flex;
+    gap: 8px;
+
+    .el-button {
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+
+      i {
+        margin-right: 4px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 16px;
+
+    .batch-actions {
+      width: 100%;
+
+      .el-button {
+        flex: 1;
+      }
+    }
+  }
+}

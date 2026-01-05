@@ -1,14 +1,15 @@
 <template>
-  <div class="workflow-action-buttons">
+  <div class="workflow-action-buttons" :class="{ 'is-table-mode': mode === 'list' }">
     <el-button
       v-for="button in visibleButtons"
       :key="button.action"
       :type="button.type"
+      :size="mode === 'list' ? 'small' : 'default'"
       :loading="loading && currentAction === button.action"
       :disabled="disabled || (loading && currentAction !== button.action)"
       @click="handleAction(button)">
       <i :class="button.icon"></i>
-      {{ $t(`common.${button.label}`) }}
+      <span class="btn-text">{{ $t(`common.${button.label}`) }}</span>
     </el-button>
   </div>
 </template>
@@ -40,6 +41,14 @@ const props = defineProps({
   isVoidedTab: {
     type: Boolean,
     default: false
+  },
+
+  /**
+   * Whether to show audit button (for pages that have separate audit page)
+   */
+  showAudit: {
+    type: Boolean,
+    default: true
   },
 
   /**
@@ -128,17 +137,24 @@ const getDefaultButtons = () => {
       if (userStore.hasWorkflowStatusPermission('submit')) {
         buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
       }
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
+      // 管理页面显示作废按钮，审核页面不显示
+      if (!props.showAudit && userStore.hasWorkflowStatusPermission('cancel')) {
         buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
 
     case 'S1': // Pending Approval
-      if (userStore.hasWorkflowStatusPermission('approve')) {
+      if (props.showAudit && userStore.hasWorkflowStatusPermission('approve')) {
+        // 审核页面：只显示审核按钮
         buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      } else if (!props.showAudit) {
+        // 管理页面：显示查看按钮 + 作废按钮
+        if (userStore.hasWorkflowStatusPermission('approve')) {
+          buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        }
+        if (userStore.hasWorkflowStatusPermission('cancel')) {
+          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+        }
       }
       break
 
@@ -147,14 +163,22 @@ const getDefaultButtons = () => {
       break
 
     case 'S3': // Rejected
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('cancel')) {
-        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+      if (props.showAudit) {
+        // 审核页面：只显示编辑按钮
+        if (userStore.hasWorkflowStatusPermission('edit')) {
+          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        }
+      } else {
+        // 管理页面：显示编辑、提交、作废按钮
+        if (userStore.hasWorkflowStatusPermission('edit')) {
+          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        }
+        if (userStore.hasWorkflowStatusPermission('submit')) {
+          buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+        }
+        if (userStore.hasWorkflowStatusPermission('cancel')) {
+          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+        }
       }
       break
 

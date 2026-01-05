@@ -2,7 +2,7 @@
 // Workflow-specific styles that extend page-common.scss
 // Used by breeding batch and other approval-based modules
 
-@import './page-common.scss';
+@use './page-common.scss' as *;
 
 // ==================== 工作流状态配置 ====================
 
@@ -338,7 +338,7 @@ $workflow-status-colors: (
   align-items: center;
   justify-content: flex-end;
   padding: 16px 0;
-  border-top: 1px solid $color-border-lighter;
+  // border-top: 1px solid $color-border-lighter;
 
   .el-button {
     min-width: 100px;
@@ -362,6 +362,37 @@ $workflow-status-colors: (
     }
   }
 
+  // 表格列表模式 - 紧凑样式，支持换行
+  &.is-table-mode {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
+    justify-content: flex-start;
+
+    .el-button {
+      min-width: auto;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      margin: 0 !important;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      i {
+        margin-right: 4px;
+        font-size: 13px;
+      }
+
+      .btn-text {
+        white-space: nowrap;
+      }
+    }
+  }
+
   @media screen and (max-width: 768px) {
     flex-direction: column;
     gap: 8px;
@@ -369,6 +400,15 @@ $workflow-status-colors: (
     .el-button {
       width: 100%;
       min-width: auto;
+    }
+
+    &.is-table-mode {
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .el-button {
+        width: auto;
+      }
     }
   }
 }
