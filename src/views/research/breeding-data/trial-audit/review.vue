@@ -147,19 +147,17 @@
           </div>
         </div>
 
-        <!-- 操作按钮区域 -->
-        <div class="form-actions">
+        <!-- 操作按钮区域（仅审核模式显示） -->
+        <div v-if="auditData.auditStatus === 'S1' && !isReadonly" class="form-actions">
           <el-button @click="goBack">
             {{ t('research.trialBasicAudit.action.return') }}
           </el-button>
-          <template v-if="auditData.auditStatus === 'S1' && !isReadonly">
-            <el-button type="success" @click="handleApprove">
-              {{ t('research.trialBasicAudit.action.approve') }}
-            </el-button>
-            <el-button type="danger" @click="handleReject">
-              {{ t('research.trialBasicAudit.action.reject') }}
-            </el-button>
-          </template>
+          <el-button type="success" @click="handleApprove">
+            {{ t('research.trialBasicAudit.action.approve') }}
+          </el-button>
+          <el-button type="danger" @click="handleReject">
+            {{ t('research.trialBasicAudit.action.reject') }}
+          </el-button>
         </div>
       </div>
     </div>

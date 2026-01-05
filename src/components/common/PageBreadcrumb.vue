@@ -228,7 +228,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 4px;
   background: white;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
   padding: 0 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   height: 40px;

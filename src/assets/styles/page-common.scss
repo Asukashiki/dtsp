@@ -343,6 +343,19 @@ $color-bg-lighter: #F8F9FA;
   border: 1px solid $color-border-lighter;
 }
 
+// ==================== 表单标签样式 ====================
+// 确保表单标签不换行，完整显示，右对齐
+.card-body {
+  .el-form-item {
+    .el-form-item__label {
+      white-space: nowrap;
+      text-align: right !important;
+      justify-content: flex-end !important;
+      flex-shrink: 0;
+    }
+  }
+}
+
 // ==================== 响应式设计 ====================
 @media screen and (max-width: 1200px) {
   .page-header {

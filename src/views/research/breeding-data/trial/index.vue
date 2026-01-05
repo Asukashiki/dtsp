@@ -101,7 +101,11 @@
               <el-table-column prop="createTime" :label="$t('research.breedingData.trial.columns.createTime')" min-width="160" show-overflow-tooltip />
               <el-table-column :label="$t('research.breedingData.trial.columns.actions')" width="240" fixed="right">
                 <template #default="{ row }">
-                  <ActionButtons :trial="row" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" />
+                  <ActionButtons
+                    :workflow-status="row.trialStatus || row.workflowStatus || 'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    @action="(action) => handleAction(row, action)" />
                 </template>
               </el-table-column>
             </el-table>
@@ -181,7 +185,11 @@
               </div>
             </div>
             <div class="mobile-card-footer">
-              <ActionButtons :trial="item" @edit="handleEdit" @view="handleView" @submit="handleSubmit" @cancel="handleCancel" />
+              <ActionButtons
+                :workflow-status="item.trialStatus || item.workflowStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                @action="(action) => handleAction(item, action)" />
             </div>
           </div>
 
@@ -220,7 +228,7 @@ import { getTrialBasicList, deleteTrialBasic, getBatchOptions } from '@/api/bree
 import { submitTrial, cancelTrial } from '@/api/research/trialBasicAudit'
 import { useDict } from '@/hooks/useDict'
 import StatusTag from './components/StatusTag.vue'
-import ActionButtons from './components/ActionButtons.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import ReasonDialog from './components/ReasonDialog.vue'
 
 const router = useRouter()
@@ -335,6 +343,23 @@ const handleBatchDelete = () => {
     selectedIds.value = []
     getList()
   }).catch(() => {})
+}
+
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmit(row)
+      break
+    case 'cancelBatch':
+      handleCancel(row)
+      break
+  }
 }
 
 // 提交审核

@@ -5,7 +5,7 @@ export default {
     title: 'Breeding Batch ',
     subtitle: 'Manage breeding batch information including crop type, variety name, breeding method, etc.',
     list: 'Breeding Batch List',
-    add: 'Add Breeding Batch',
+    add: 'Add',
     edit: 'Edit Breeding Batch',
     detail: 'Breeding Batch Details',
     deleteConfirm: 'Are you sure to delete this breeding batch?',

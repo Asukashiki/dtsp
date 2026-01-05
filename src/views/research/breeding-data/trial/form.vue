@@ -1,14 +1,14 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
-      <!-- 页面头部（带返回按钮） -->
+      <!-- 页面头部 -->
       <div class="page-header">
         <div class="header-left">
           <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
           </el-button>
           <div class="header-content">
-            <h1 class="page-title">{{ pageTitle }}</h1>
+            <h1 class="page-title">{{ isEdit ? $t('research.breedingData.trial.edit') : $t('research.breedingData.trial.add') }}</h1>
           </div>
         </div>
       </div>
@@ -38,7 +38,6 @@
                     <el-input v-model="formData.trialId" disabled :placeholder="'T_{cropType}_{year}_000001'" />
                   </el-form-item>
                 </el-col>
-
                 <!-- Batch Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.batchName')" prop="batchId">
@@ -63,10 +62,7 @@
                 <!-- Crop Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.cropType')" prop="cropType">
-                    <el-input 
-                      v-model="cropTypeDisplay" 
-                      disabled 
-                      :placeholder="$t('research.breedingData.trial.placeholder.cropType')" />
+                    <el-input v-model="cropTypeDisplay" disabled :placeholder="$t('research.breedingData.trial.placeholder.cropType')" />
                   </el-form-item>
                 </el-col>
                 <!-- Variety Code -->
@@ -144,85 +140,63 @@
                     <el-input-number v-model="formData.replications" :min="1" :max="10" :placeholder="$t('research.breedingData.trial.placeholder.replications')" style="width: 100%" />
                   </el-form-item>
                 </el-col>
+
+                <!-- 以下字段仅在编辑模式下显示 -->
+                <template v-if="isEdit">
+                  <!-- 创建人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.createdName')">
+                      <el-input v-model="formData.createdName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 创建时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.createTime')">
+                      <el-input v-model="formData.createTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 修改人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.modifiedName')">
+                      <el-input v-model="formData.modifiedName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 修改时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.updateTime')">
+                      <el-input v-model="formData.updateTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 审核人 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.approvedName')">
+                      <el-input v-model="formData.approvedName" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 审核时间 -->
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item :label="$t('research.breedingData.trial.form.approvedTime')">
+                      <el-input v-model="formData.approvedTime" disabled />
+                    </el-form-item>
+                  </el-col>
+                  <!-- 退回原因 (仅在退回状态时显示) -->
+                  <el-col v-if="formData.trialStatus === 'S3'" :xs="24" :sm="24">
+                    <el-form-item :label="$t('research.breedingData.trial.form.rejectReason')">
+                      <el-input
+                        v-model="formData.rejectReason"
+                        type="textarea"
+                        :rows="3"
+                        disabled
+                        :placeholder="$t('common.noData')"
+                      />
+                    </el-form-item>
+                  </el-col>
+                </template>
               </el-row>
             </div>
           </div>
 
-          <!-- 元数据信息（编辑模式下显示） -->
-          <div class="info-card" v-if="isEdit">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-information-line"></i>
-                <span>{{ $t('research.breedingData.trial.form.metadataInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <!-- 创建人 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.createdName')">
-                    <el-input v-model="formData.createdName" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- 创建时间 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.createTime')">
-                    <el-input v-model="formData.createTime" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- 修改人 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.modifiedName')">
-                    <el-input v-model="formData.modifiedName" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- 修改时间 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.updateTime')">
-                    <el-input v-model="formData.updateTime" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- 审核人 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.approvedName')">
-                    <el-input v-model="formData.approvedName" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- 审核时间 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.trial.form.approvedTime')">
-                    <el-input v-model="formData.approvedTime" disabled />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- 退回原因（仅在退回状态时显示） -->
-          <div class="info-card" v-if="formData.trialStatus === 'S3'">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-close-circle-line"></i>
-                <span>{{ $t('research.breedingData.trial.form.rejectInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24">
-                  <el-form-item :label="$t('research.breedingData.trial.form.rejectReason')">
-                    <el-input
-                      v-model="formData.rejectReason"
-                      type="textarea"
-                      :rows="3"
-                      disabled
-                      :placeholder="$t('common.noData')" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- 操作按钮区域 -->
+          <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSave" :loading="saveLoading">{{ $t('common.save') }}</el-button>
@@ -261,11 +235,6 @@ const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type']
 
 const isEdit = computed(() => !!route.params.trialId)
 
-// 页面标题
-const pageTitle = computed(() => {
-  return isEdit.value ? t('research.breedingData.trial.edit') : t('research.breedingData.trial.add')
-})
-
 const formData = reactive({
   trialId: '',
   batchId: '',
@@ -282,13 +251,7 @@ const formData = reactive({
   trialStatus: 'S0',
   rejectedName: '',
   rejectedTime: '',
-  rejectReason: '',
-  createdName: '',
-  createTime: '',
-  modifiedName: '',
-  updateTime: '',
-  approvedName: '',
-  approvedTime: ''
+  rejectReason: ''
 })
 
 // 判断是否可以提交审核 (草稿状态 S0 或 已退回状态 S3)
@@ -345,6 +308,14 @@ const loadLocationOptions = async () => {
   } catch (error) {
     console.error('获取研究中心选项失败:', error)
   }
+}
+
+const getStatusType = (status) => {
+  const statusMap = {
+    'approved': 'success',
+    'ongoing': 'warning'
+  }
+  return statusMap[status] || 'info'
 }
 
 const handleBatchChange = (batchId) => {
@@ -427,6 +398,7 @@ const handleSubmitAudit = async () => {
   ).then(async () => {
     submitLoading.value = true
     try {
+      console.log(formData,'formData')
       const submitData = { ...formData }
       if (submitData.year) {
         submitData.year = parseInt(submitData.year)
@@ -466,6 +438,7 @@ const generateTrialId = () => {
 
   const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
   formData.trialId = `T_${cropType}_${year}_${serial}`
+  console.log(formData.trialId,'formData.trialId')
 }
 
 const goBack = () => {
