@@ -95,7 +95,7 @@
           <el-table-column prop="location" :label="$t('input.inventory.warehouse.columns.location')" min-width="200" show-overflow-tooltip />
           <el-table-column prop="warehouse_area" :label="$t('input.inventory.warehouse.columns.warehouseArea')" min-width="120" align="right">
             <template #default="{ row }">
-              {{ row.warehouse_area ? row.warehouse_area + ' m²' : '-' }}
+              {{ row.warehouse_area ? row.warehouse_area + ' L' : '-' }}
             </template>
           </el-table-column>
           <el-table-column prop="organ_name" :label="$t('input.inventory.warehouse.columns.organName')" min-width="160" show-overflow-tooltip />
@@ -107,6 +107,16 @@
           <el-table-column :label="$t('input.inventory.warehouse.columns.usageRate')" min-width="140" align="center">
             <template #default="{ row }">
               <el-progress :percentage="getUsageRate(row)" :color="getProgressColor(row)" />
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('input.inventory.warehouse.columns.usedWarehouseArea')" min-width="150" align="center">
+            <template #default="{ row }">
+              {{ row.used_warehouse_area || 0 }} / {{ row.warehouse_area || 0 }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('input.inventory.warehouse.columns.usageRate')" min-width="140" align="center">
+            <template #default="{ row }">
+              <el-progress :percentage="getWarehouseArea(row)" :color="getWarehouseAreaColor(row)" />
             </template>
           </el-table-column>
           <el-table-column prop="contact_person" :label="$t('input.inventory.warehouse.columns.contactPerson')" min-width="140" />
@@ -277,9 +287,11 @@ const getTypeTag = (type) => {
 // 计算使用率
 const getUsageRate = (row) => {
   if (!row.capacity || row.capacity === 0) return 0
-  return Math.round((row.used_capacity / row.capacity) * 100)
+  // 确保转换为数字类型
+  const capacity = parseFloat(row.capacity) || 0
+  const usedCapacity = parseFloat(row.used_capacity) || 0
+  return Math.round((usedCapacity / capacity) * 100)
 }
-
 // 获取进度条颜色
 const getProgressColor = (row) => {
   const rate = getUsageRate(row)
@@ -287,6 +299,21 @@ const getProgressColor = (row) => {
   if (rate >= 70) return '#e6a23c'
   return '#67c23a'
 }
+
+// 计算使用率
+const getWarehouseArea = (row) => {
+  if (!row.warehouse_area || row.warehouse_area === 0) return 0
+  return Math.round(((row.used_warehouse_area || 0) / row.warehouse_area) * 100)
+}
+// 获取进度条颜色
+const getWarehouseAreaColor = (row) => {
+  const rate = getWarehouseArea(row)
+  if (rate >= 90) return '#f56c6c'
+  if (rate >= 70) return '#e6a23c'
+  return '#67c23a'
+}
+
+
 
 // 获取当前用户部门ID
 const getCurrentUserOrganCode = () => {

@@ -38,11 +38,12 @@
               @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allCrops')" value="" />
-            <el-option label="Wheat" value="WHEAT" />
-            <el-option label="Corn" value="CORN" />
-            <el-option label="Rice" value="RICE" />
-            <el-option label="Soybean" value="SOYBEAN" />
-            <el-option label="Cotton" value="COTTON" />
+            <el-option
+              v-for="item in options.crop_type"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -205,6 +206,9 @@ const { getLabelByValue } = useDict(['crop_type']);
 const router = useRouter()
 const { t } = useI18n()
 
+// 使用字典获取作物类型 
+  const { options } = useDict(['crop_type'])
+
 // 数据
 const loading = ref(false)
 const tableData = ref([])
@@ -216,15 +220,6 @@ const queryData = ref({
   pageNum: 1,
   pageSize: 10
 })
-
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
 
 // 繁育方法映射
 const breedingMethodMap = computed(() => ({
@@ -268,7 +263,7 @@ const handleSearch = async () => {
       // 添加显示名称
       tableData.value = records.map(item => ({
         ...item,
-        cropTypeName: cropTypeMap.value[item.cropType] || item.cropType,
+        cropTypeName: getLabelByValue('crop_type', item.cropType) || item.cropType,
         breedingMethodName: breedingMethodMap.value[item.breedingMethod] || item.breedingMethod,
         breedingLevelName: breedingLevelMap.value[item.breedingLevel] || item.breedingLevel,
         statusName: statusMap.value[item.batchStatus] || item.batchStatus

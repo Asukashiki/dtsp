@@ -28,6 +28,7 @@ export default {
   addSuccess: 'Added successfully',
   updateSuccess: 'Updated successfully',
   deleteSuccess: 'Deleted successfully',
+  submitSuccess: 'Submitted successfully',
   deleteFailed: 'Delete failed',
   deleteConfirm: 'Are you sure you want to void this data?',
   operationFailed: 'Operation failed',
@@ -107,5 +108,8 @@ export default {
   saveSuccess: 'Save Success',
   queryFailed: 'query Info failed',
   birthDate: 'Birth Date',
-  invalidParams: 'Invalid parameters'
+  invalidParams: 'Invalid parameters',
+  // Tab labels
+  aggregationResults: 'Aggregation Results',
+  farmerDemands: 'Farmer Demands'
 }

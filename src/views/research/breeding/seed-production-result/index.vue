@@ -59,7 +59,6 @@
                 </template>
              </el-table-column>
              <el-table-column :label="$t('research.breeding.seed.production.form.time')" prop="collectionDate" width="160" align="center" />
-             <el-table-column :label="$t('common.createTime')" prop="createTime" width="160" align="center" />
              <el-table-column :label="$t('research.breeding.seed.production.columns.operatorName')" prop="operator" width="120" align="center" />
              <el-table-column :label="$t('common.action')" align="center" width="150" fixed="right">
               <template #default="scope">

@@ -113,6 +113,8 @@
           </el-table-column>
           <el-table-column prop="material_batch_id" :label="$t('input.inventory.stock.columns.batchNo')" min-width="180" />
           <el-table-column prop="warehouse_name" :label="$t('input.inventory.stock.columns.warehouseName')" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="capacity" :label="$t('input.inventory.warehouse.columns.capacity') + ' (KG)'" min-width="140" align="center" />
+          <el-table-column prop="warehouse_area" :label="$t('input.inventory.warehouse.columns.usedWarehouseArea')+ ' (L)'"  min-width="140" align="center" />
           <el-table-column prop="quantity" :label="$t('input.inventory.stock.columns.currentQuantity')" min-width="140" align="center" />
           <el-table-column prop="created_at" :label="$t('input.inventory.stock.columns.inDate')" width="120">
           <template #default="{ row }">
@@ -464,7 +466,7 @@ const calculateTypeStatistics = () => {
   summaryData.value.forEach(item => {
     const materialType = item.material_type
     const totalQuantity = Number(item.total_quantity || 0)
-    
+
     // 只统计有效的数据（类型存在且数量大于0）
     if (materialType && totalQuantity > 0) {
       if (typeMap.has(materialType)) {

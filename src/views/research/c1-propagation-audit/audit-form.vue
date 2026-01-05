@@ -30,7 +30,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.varietyName') }}:</span>
@@ -114,8 +114,12 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { auditC1Propagation } from '@/api/c1Propagation'
 import { getUserInfo } from '@/utils/auth'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const props = defineProps({
   data: {

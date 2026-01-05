@@ -552,7 +552,7 @@ export default {
         warehouseType: 'Warehouse Type',
         location: 'Warehouse Location',
         capacity: 'Warehouse Capacity',
-        warehouseArea: 'Warehouse Area',
+        warehouseArea: 'Warehouse Volume',
         usedCapacity: 'Used Capacity',
         availableCapacity: 'Available Capacity',
         belongs: 'Affiliated Unit',
@@ -567,7 +567,9 @@ export default {
         createPeople: 'Creator',
         createTime: 'Creation Time',
         updatePeople: 'Modifier',
-        updateTime: 'Update Time'
+        updateTime: 'Update Time',
+        usedWarehouseArea: 'Used Warehouse Volume',
+        availableWarehouseArea: 'Available Warehouse Volume'
       },
       placeholder: {
         warehouseCode: 'Enter warehouse code',
@@ -575,7 +577,7 @@ export default {
         warehouseType: 'Select warehouse type',
         location: 'Enter warehouse location',
         capacity: 'Enter warehouse capacity',
-        warehouseArea: 'Enter warehouse area',
+        warehouseArea: 'Enter warehouse volume',
         organName: 'Enter warehouse affiliation department',
         contactPerson: 'Enter contact person',
         contactPhone: 'Enter contact phone',
@@ -599,7 +601,7 @@ export default {
         warehouseName: 'Warehouse Name',
         warehouseType: 'Warehouse Type',
         location: 'Location',
-        warehouseArea: 'Warehouse Area',
+        warehouseArea: 'Warehouse Volume',
         belongs: 'Affiliated Unit',
         organName: 'Affiliation Department',
         supplierName: 'Supplier Name',
@@ -608,7 +610,8 @@ export default {
         contactPerson: 'Contact Person',
         contactPhone: 'Contact Phone',
         status: 'Status',
-        actions: 'Actions'
+        actions: 'Actions',
+        usedWarehouseArea: 'Volume'
       },
       status: {
         enabled: 'Enabled',
@@ -937,7 +940,7 @@ export default {
         batchNo: 'Select batch number',
         quantity: 'Enter stock out quantity',
         specModel: 'Enter specification model (optional)',
-        unitOfMeasure: 'Enter Unit (optional)',
+        unitOfMeasure: 'Select unit of measure',
         itemRemarks: 'Enter item remarks',
         auditRemark: 'Enter audit opinion',
         inputCategory: 'Category (auto-filled)',
@@ -958,7 +961,8 @@ export default {
         quantityExceeds: 'Stock out quantity cannot exceed available inventory',
         itemsRequired: 'Please add at least one stock out product detail',
         detailsRequired: 'Please add at least one stock out detail',
-        auditRemarkRequired: 'Please enter audit opinion'
+        auditRemarkRequired: 'Please enter audit opinion',
+        unitOfMeasureRequired: 'Please select unit of measure'
       },
       columns: {
         outboundOrderId: 'Stock Out Order Number',

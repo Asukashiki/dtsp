@@ -43,8 +43,8 @@
         <el-table-column type="selection" width="55" />
         <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" />
         <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" />
-        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" min-width="150" />
-        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" min-width="160" />
+        <el-table-column prop="targetId" :label="$t('Union')" min-width="150" />
+        <el-table-column prop="targetContact" :label="$t('Union Contact')" min-width="160" />
         <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" min-width="160" />
         <el-table-column prop="status" :label="$t('inputCirculation.status')" min-width="120" />
         <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">

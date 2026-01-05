@@ -213,7 +213,7 @@
                     <el-option
                       v-for="batch in item.batchList || []"
                       :key="batch.materialBatchId"
-                      :label="`${batch.materialBatchId} (${$t('input.inventory.stockOut.form.availableQuantity')}: ${batch.quantity})`"
+                      :label="`${batch.materialBatchId} (Available: ${batch.capacityKg || 0} KG, ${batch.volumeL || 0} L)`"
                       :value="batch.materialBatchId"
                     />
                   </el-select>
@@ -231,6 +231,7 @@
                     :step="1"
                     :precision="2"
                     class="full-width"
+                    @change="handleQuantityChange(item, index)"
                   />
                   <span v-if="item.available_quantity !== undefined" class="available-hint">
                     {{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.available_quantity || 0 }}
@@ -238,26 +239,16 @@
                 </el-form-item>
 
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.specModel')"
-                  :prop="`details.${index}.specModel`"
-                >
-                  <el-input
-                    v-model="item.specModel"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.specModel')"
-                    clearable
-                  />
-                </el-form-item>
-
-                <el-form-item
                   :label="$t('input.inventory.stockOut.form.unitOfMeasure')"
                   :prop="`details.${index}.unitOfMeasure`"
+                  :rules="detailRules.unitOfMeasure"
                 >
                   <el-select
                     v-model="item.unitOfMeasure"
                     :placeholder="$t('input.inventory.stockOut.placeholder.unitOfMeasure')"
                     class="full-width"
-                    clearable
                     v-loading="dictLoading"
+                    @change="handleUnitChange(item, index)"
                   >
                     <el-option
                       v-for="unitItem in options.input_material_unit"
@@ -266,6 +257,20 @@
                       :value="unitItem.value"
                     />
                   </el-select>
+                  <span v-if="item.capacityWarning" class="capacity-warning">
+                    {{ item.capacityWarning }}
+                  </span>
+                </el-form-item>
+
+                <el-form-item
+                    :label="$t('input.inventory.stockOut.form.specModel')"
+                    :prop="`details.${index}.specModel`"
+                >
+                  <el-input
+                      v-model="item.specModel"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.specModel')"
+                      clearable
+                  />
                 </el-form-item>
               </div>
               <div class="item-actions">
@@ -493,7 +498,10 @@ const formData = reactive({
       quantity: null,
       specModel: '',
       unitOfMeasure: '',
-      available_quantity: 0
+      available_quantity: 0,
+      available_capacity_kg: 0, // 可用容量(KG)
+      available_volume_l: 0, // 可用容积(L)
+      capacityWarning: '' // 容量校验警告信息
     }
   ]
 })
@@ -517,21 +525,12 @@ const detailRules = computed(() => ({
   inputType: [
     { required: true, message: t('input.inventory.stockOut.rules.materialTypeRequired'), trigger: 'blur' }
   ],
+  unitOfMeasure: [
+    { required: true, message: t('input.inventory.stockOut.rules.unitOfMeasureRequired'), trigger: 'change' }
+  ],
   quantity: [
     { required: true, message: t('input.inventory.stockOut.rules.quantityRequired'), trigger: 'blur' },
-    { type: 'number', min: 0.01, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        const index = parseInt(rule.field.split('.')[1])
-        const detail = formData.details[index]
-        if (value && detail.available_quantity > 0 && value > detail.available_quantity) {
-          callback(new Error(t('input.inventory.stockOut.rules.quantityExceeds')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
+    { type: 'number', min: 0.01, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' }
   ]
 }))
 
@@ -631,6 +630,8 @@ const handleDistributionChange = async (distributionId) => {
           })
 
           let totalAvailable = 0
+          let totalCapacityKg = 0
+          let totalVolumeL = 0
           let batchList = []
           let firstBatchId = ''
           let firstStockItem = null // 保存第一个有库存的库存项，用于提取投入品信息
@@ -643,6 +644,8 @@ const handleDistributionChange = async (distributionId) => {
               .map(item => ({
                 materialBatchId: item.material_batch_id,
                 quantity: item.quantity,
+                capacityKg: item.capacity || 0,
+                volumeL: item.warehouse_area || 0,
                 expiryDate: item.expiry_date,
                 createdAt: item.created_at,
                 stockItem: item // 保存完整的库存项信息
@@ -655,19 +658,41 @@ const handleDistributionChange = async (distributionId) => {
 
             batchList = batches
             totalAvailable = batches.reduce((sum, batch) => sum + batch.quantity, 0)
+            totalCapacityKg = batches.reduce((sum, batch) => sum + batch.capacityKg, 0)
+            totalVolumeL = batches.reduce((sum, batch) => sum + batch.volumeL, 0)
             if (batches.length > 0) {
               firstBatchId = batches[0].materialBatchId
               firstStockItem = batches[0].stockItem // 获取第一个批次对应的库存项
             }
           }
 
-          // 检查库存是否充足
+          // 检查库存是否充足（数量、容量、容积）
           const requiredQuantity = detail.required || detail.quantity || 0
+          const requiredCapacityKg = detail.requiredCapacityKg || 0
+          const requiredVolumeL = detail.requiredVolumeL || 0
+          
+          let isInsufficient = false
+          let insufficientReason = ''
+          
           if (totalAvailable <= 0 || totalAvailable < requiredQuantity) {
+            isInsufficient = true
+            insufficientReason = `Quantity insufficient (Required: ${requiredQuantity}, Available: ${totalAvailable})`
+          } else if (requiredCapacityKg > 0 && totalCapacityKg < requiredCapacityKg) {
+            isInsufficient = true
+            insufficientReason = `Capacity insufficient (Required: ${requiredCapacityKg} KG, Available: ${totalCapacityKg} KG)`
+          } else if (requiredVolumeL > 0 && totalVolumeL < requiredVolumeL) {
+            isInsufficient = true
+            insufficientReason = `Volume insufficient (Required: ${requiredVolumeL} L, Available: ${totalVolumeL} L)`
+          }
+          
+          if (isInsufficient) {
             // 库存不足
             insufficientItems.push({
               name: detail.variety || detail.cropType || detailInputType + '-' + detailAgriculturalInputType,
-              required: requiredQuantity
+              required: requiredQuantity,
+              reason: insufficientReason,
+              availableCapacityKg: totalCapacityKg,
+              availableVolumeL: totalVolumeL
             })
           } else {
             // 库存充足，创建出库明细
@@ -708,13 +733,18 @@ const handleDistributionChange = async (distributionId) => {
               batchList: batchList.map(b => ({
                 materialBatchId: b.materialBatchId,
                 quantity: b.quantity,
+                capacityKg: b.capacityKg,
+                volumeL: b.volumeL,
                 expiryDate: b.expiryDate,
                 createdAt: b.createdAt
               })),
               quantity: requiredQuantity,
               specModel: matchedInput?.specModel || stockSpecModel,
               unitOfMeasure: matchedInput?.unitOfMeasure || stockUnitOfMeasure,
-              available_quantity: batchList.length > 0 ? batchList[0].quantity : 0
+              available_quantity: batchList.length > 0 ? batchList[0].quantity : 0,
+              available_capacity_kg: batchList.length > 0 ? batchList[0].capacityKg : 0,
+              available_volume_l: batchList.length > 0 ? batchList[0].volumeL : 0,
+              capacityWarning: ''
             })
           }
         } catch (error) {
@@ -722,31 +752,49 @@ const handleDistributionChange = async (distributionId) => {
           // 查询失败，视为库存不足
           insufficientItems.push({
             name: detail.variety || detail.cropType || detailInputType + '-' + detailAgriculturalInputType,
-            required: detail.required || detail.quantity || 0
+            required: detail.required || detail.quantity || 0,
+            reason: 'Failed to query stock'
           })
         }
       }
 
       // 检查是否有库存不足的投入品
       if (insufficientItems.length > 0) {
-        // 将库存不足的投入品名称和需求量组合成字符串
-        const itemNames = insufficientItems.map(item => `${item.name}(Demand：${item.required})`).join('、')
+        // 将库存不足的投入品名称、需求量和原因组合成字符串
+        const itemNames = insufficientItems.map(item => {
+          let info = `${item.name} (Required: ${item.required})`
+          if (item.reason) {
+            info += ` - ${item.reason}`
+          }
+          if (item.availableCapacityKg !== undefined) {
+            info += ` [Available: ${item.availableCapacityKg} KG, ${item.availableVolumeL} L]`
+          }
+          return info
+        }).join('<br/>')
 
         // 显示确认对话框，询问用户是否继续处理有库存不足的出库单
         ElMessageBox.confirm(
-            `The following inputs are currently in insufficient stock in the warehouse：${itemNames}。Whether to continue？`,
+            `<div>The following inputs are currently in insufficient stock in the warehouse:<br/>${itemNames}<br/><br/>Whether to continue?</div>`,
             'Insufficient stock prompt',
             {
-              confirmButtonText: 'continue', // 确认按钮文本
-              cancelButtonText: 'cancel', // 取消按钮文本
-              type: 'warning' // 消息类型为警告
+              confirmButtonText: 'Continue',
+              cancelButtonText: 'Cancel',
+              type: 'warning',
+              dangerouslyUseHTMLString: true
             }
         ).then(() => {
           // 用户选择继续处理
           if (newDetails.length > 0) {
             // 如果有可以出库的投入品，更新表单明细
             formData.details = newDetails
-            ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`) // 显示成功消息
+            ElMessage.success(`Automatically brought in ${newDetails.length} item details`)
+
+            // 对每个明细进行容量校验
+            newDetails.forEach((detail, index) => {
+              if (detail.unitOfMeasure && detail.quantity) {
+                handleUnitChange(detail, index)
+              }
+            })
           } else {
             // 如果没有任何投入品可以出库，显示警告消息
             ElMessage.warning('There is no inventory of any of the inputs listed in this distribution order in the current warehouse')
@@ -758,7 +806,14 @@ const handleDistributionChange = async (distributionId) => {
       } else {
         // 所有投入品库存都充足，直接替换表单明细
         formData.details = newDetails
-        ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`) // 显示成功消息
+        ElMessage.success(`Automatically brought in ${newDetails.length} item details`)
+
+        // 对每个明细进行容量校验
+        newDetails.forEach((detail, index) => {
+          if (detail.unitOfMeasure && detail.quantity) {
+            handleUnitChange(detail, index)
+          }
+        })
       }
     }
   } catch (error) {
@@ -863,6 +918,8 @@ const loadBatchList = async (detail) => {
         .map(item => ({
           materialBatchId: item.material_batch_id,
           quantity: item.quantity,
+          capacityKg: item.capacity || 0, // 总容量(KG)
+          volumeL: item.warehouse_area || 0, // 总容积(L)
           expiryDate: item.expiry_date,
           createdAt: item.created_at
         }))
@@ -879,20 +936,28 @@ const loadBatchList = async (detail) => {
       if (batches.length > 0) {
         detail.materialBatchId = batches[0].materialBatchId
         detail.available_quantity = batches[0].quantity
+        detail.available_capacity_kg = batches[0].capacityKg
+        detail.available_volume_l = batches[0].volumeL
       } else {
         detail.materialBatchId = ''
         detail.available_quantity = 0
+        detail.available_capacity_kg = 0
+        detail.available_volume_l = 0
       }
     } else {
       detail.batchList = []
       detail.materialBatchId = ''
       detail.available_quantity = 0
+      detail.available_capacity_kg = 0
+      detail.available_volume_l = 0
     }
   } catch (error) {
     console.error('Failed to load batch list:', error)
     detail.batchList = []
     detail.materialBatchId = ''
     detail.available_quantity = 0
+    detail.available_capacity_kg = 0
+    detail.available_volume_l = 0
   }
 }
 
@@ -900,6 +965,8 @@ const loadBatchList = async (detail) => {
 const handleBatchChange = (item, index) => {
   if (!item.materialBatchId) {
     item.available_quantity = 0
+    item.available_capacity_kg = 0
+    item.available_volume_l = 0
     return
   }
 
@@ -907,8 +974,12 @@ const handleBatchChange = (item, index) => {
   const selectedBatch = item.batchList.find(batch => batch.materialBatchId === item.materialBatchId)
   if (selectedBatch) {
     item.available_quantity = selectedBatch.quantity
+    item.available_capacity_kg = selectedBatch.capacityKg || 0
+    item.available_volume_l = selectedBatch.volumeL || 0
   } else {
     item.available_quantity = 0
+    item.available_capacity_kg = 0
+    item.available_volume_l = 0
   }
 }
 
@@ -1051,9 +1122,185 @@ const handleItemCategoryChange = (item, index) => {
   item.materialBatchId = ''
   item.batchList = []
   item.available_quantity = 0
+  item.capacityWarning = ''
 
   // 不在此处加载批次号，应该等用户选择投入品后再加载
   // 因为同一类型+品类可能对应多个不同的投入品，批次应该属于具体的投入品
+}
+
+/**
+ * 解析计量单位字符串，提取数值和单位
+ * 支持格式：KG, g, ml, L, Package/10kg, Bottle/500ml 等
+ * @param {string} unitLabel 计量单位标签（如 Package/50kg）
+ * @returns {object} { value: 数值, unit: 单位, unitType: 'weight'|'volume', convertedValue: 转换后的值(KG或L) }
+ */
+const parseUnitString = (unitLabel) => {
+  if (!unitLabel) {
+    return { success: false, message: '计量单位为空' }
+  }
+
+  const trimmedString = unitLabel.trim().toLowerCase()
+
+  // 处理纯单位的情况
+  if (trimmedString === 'kg') {
+    return { success: true, value: 1, unit: 'kg', unitType: 'weight', convertedValue: 1 }
+  } else if (trimmedString === 'g') {
+    return { success: true, value: 1, unit: 'g', unitType: 'weight', convertedValue: 0.001 }
+  } else if (trimmedString === 'ml') {
+    return { success: true, value: 1, unit: 'ml', unitType: 'volume', convertedValue: 0.001 }
+  } else if (trimmedString === 'l') {
+    return { success: true, value: 1, unit: 'l', unitType: 'volume', convertedValue: 1 }
+  }
+
+  // 正则匹配带数值的格式：Package/10kg, Bottle/500ml 等
+  const pattern = /(?:.*[/\s])?(\d+(?:\.\d+)?)(kg|g|l|ml)/i
+  const match = unitLabel.match(pattern)
+
+  if (!match) {
+    return { success: false, message: '无法解析计量单位格式' }
+  }
+
+  const value = parseFloat(match[1])
+  const unit = match[2].toLowerCase()
+
+  let unitType, convertedValue
+
+  switch (unit) {
+    case 'kg':
+      unitType = 'weight'
+      convertedValue = value
+      break
+    case 'g':
+      unitType = 'weight'
+      convertedValue = value / 1000
+      break
+    case 'l':
+      unitType = 'volume'
+      convertedValue = value
+      break
+    case 'ml':
+      unitType = 'volume'
+      convertedValue = value / 1000
+      break
+    default:
+      return { success: false, message: '不支持的计量单位' }
+  }
+
+  return { success: true, value, unit, unitType, convertedValue }
+}
+
+/**
+ * 根据字典值获取计量单位标签
+ * @param {string} dictValue 字典值（如 U101）
+ * @returns {string} 字典标签（如 Package/10kg）
+ */
+const getUnitLabel = (dictValue) => {
+  if (!dictValue || !options.value.input_material_unit) return ''
+  const unitItem = options.value.input_material_unit.find(item => item.value === dictValue)
+  return unitItem ? unitItem.label : ''
+}
+
+/**
+ * 计算出库所需的总容量
+ * @param {string} unitOfMeasure 计量单位字典值
+ * @param {number} quantity 出库数量
+ * @returns {object} { success, unitType, requiredAmount, message }
+ */
+const calculateRequiredCapacity = (unitOfMeasure, quantity) => {
+  if (!unitOfMeasure || !quantity || quantity <= 0) {
+    return { success: false, message: '计量单位或数量无效' }
+  }
+
+  const unitLabel = getUnitLabel(unitOfMeasure)
+  if (!unitLabel) {
+    return { success: false, message: '未找到计量单位' }
+  }
+
+  const parseResult = parseUnitString(unitLabel)
+  if (!parseResult.success) {
+    return { success: false, message: parseResult.message }
+  }
+
+  const requiredAmount = parseResult.convertedValue * quantity
+
+  return {
+    success: true,
+    unitType: parseResult.unitType,
+    requiredAmount,
+    unitLabel,
+    perUnitValue: parseResult.convertedValue,
+    unit: parseResult.unitType === 'weight' ? 'KG' : 'L'
+  }
+}
+
+/**
+ * 处理计量单位变化，校验库存容量是否满足
+ */
+const handleUnitChange = async (item, index) => {
+  // 清空之前的警告
+  item.capacityWarning = ''
+
+  if (!item.unitOfMeasure || !item.quantity || item.quantity <= 0) {
+    return
+  }
+
+  // 必须有批次号才能校验
+  if (!item.materialBatchId) {
+    return
+  }
+
+  // 计算所需容量
+  const calcResult = calculateRequiredCapacity(item.unitOfMeasure, item.quantity)
+  if (!calcResult.success) {
+    item.capacityWarning = calcResult.message
+    return
+  }
+
+  // 校验库存容量 - 通过批次号查询
+  try {
+    const validateRes = await validateStock({
+      warehouseId: formData.warehouse_id,
+      details: [{
+        materialBatchId: item.materialBatchId,
+        quantity: item.quantity,
+        unitOfMeasure: item.unitOfMeasure
+      }]
+    })
+    if (validateRes.data && !validateRes.data.valid) {
+      const insufficientItems = validateRes.data.insufficient_items || []
+      if (insufficientItems.length > 0) {
+        const insufficientItem = insufficientItems[0]
+        const maxAvailable = insufficientItem.max_available_by_unit || 0
+        let warningMessage = ''
+        if (insufficientItem.unit_type === 'weight') {
+          warningMessage = `Insufficient inventory capacity! Required: ${calcResult.requiredAmount.toFixed(2)} KG, Available: ${insufficientItem.available_capacity_kg || 0} KG (Max quantity available: ${maxAvailable})`
+        } else if (insufficientItem.unit_type === 'volume') {
+          warningMessage = `Insufficient inventory volume! Required: ${calcResult.requiredAmount.toFixed(2)} L, Available: ${insufficientItem.available_volume_l || 0} L (Max quantity available: ${maxAvailable})`
+        } else {
+          warningMessage = `Insufficient inventory! Max quantity available: ${maxAvailable}`
+        }
+
+        // Clear the quantity and show warning
+        item.quantity = null
+        item.capacityWarning = warningMessage
+        ElMessage.warning(warningMessage)
+      }
+    } else {
+      // Stock is sufficient, clear warning
+      item.capacityWarning = ''
+    }
+  } catch (error) {
+    console.error('Failed to validate stock capacity:', error)
+  }
+}
+
+/**
+ * 处理数量变化，重新校验库存容量
+ */
+const handleQuantityChange = (item, index) => {
+  if (item.unitOfMeasure) {
+    handleUnitChange(item, index)
+  }
 }
 
 // 添加明细
@@ -1069,7 +1316,10 @@ const addDetail = () => {
     quantity: null,
     specModel: '',
     unitOfMeasure: '',
-    available_quantity: 0
+    available_quantity: 0,
+    available_capacity_kg: 0, // 可用容量(KG)
+    available_volume_l: 0, // 可用容积(L)
+    capacityWarning: '' // 容量校验警告信息
   })
 }
 
@@ -1140,23 +1390,23 @@ const handleSubmit = async () => {
       return
     }
 
-    // 校验：同一批次号的总出库数量不能超过可用库存
-    const batchValidationError = validateBatchQuantity()
-    if (batchValidationError) {
-      ElMessage.error(batchValidationError)
+    // 检查所有明细是否填写了计量单位
+    const hasEmptyUnit = formData.details.some(detail => !detail.unitOfMeasure)
+    if (hasEmptyUnit) {
+      ElMessage.warning(t('input.inventory.stockOut.rules.unitOfMeasureRequired'))
       return
     }
 
     submitLoading.value = true
 
-    // 提交前校验库存是否充足
+    // 提交前校验库存是否充足（基于批次号和计量单位计算容量）
     try {
       const validateRes = await validateStock({
         warehouseId: formData.warehouse_id,
         details: formData.details.map(detail => ({
-          materialId: detail.inputId || '', // 可能为空
-          materialName: detail.inputName,
-          quantity: detail.quantity
+          materialBatchId: detail.materialBatchId || '',
+          quantity: detail.quantity,
+          unitOfMeasure: detail.unitOfMeasure
         }))
       })
 
@@ -1164,9 +1414,16 @@ const handleSubmit = async () => {
       if (!validateRes.data.valid) {
         const insufficientItems = validateRes.data.insufficient_items || []
         if (insufficientItems.length > 0) {
-          const itemList = insufficientItems.map(item =>
-            `${item.material_name}(Demand：${item.required_quantity}，Available：${item.available_quantity}，Lacking：${item.shortage})`
-          ).join('<br/>')
+          // 根据单位类型显示不同的提示信息
+          const itemList = insufficientItems.map(item => {
+            if (item.unit_type === 'weight') {
+              return `${item.material_name || item.material_batch_id}(Required：${item.required_capacity_kg} KG，Available：${item.available_capacity_kg} KG，Max available: ${item.max_available_by_unit})`
+            } else if (item.unit_type === 'volume') {
+              return `${item.material_name || item.material_batch_id}(Required：${item.required_volume_l} L，Available：${item.available_volume_l} L，Max available: ${item.max_available_by_unit})`
+            } else {
+              return `${item.material_name || item.material_batch_id}(Demand：${item.required_quantity}，Available：${item.available_quantity}，Max available: ${item.max_available_by_unit || 0})`
+            }
+          }).join('<br/>')
 
           await ElMessageBox.confirm(
             `<div>The inventory of the following inputs is insufficient：<br/>${itemList}<br/><br/>Is it still necessary to submit the outbound order？</div>`,
@@ -1373,6 +1630,14 @@ onMounted(() => {
   font-size: 12px;
   color: #909399;
   margin-left: 8px;
+}
+
+.capacity-warning {
+  display: block;
+  font-size: 12px;
+  color: #E6A23C;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 .form-actions {

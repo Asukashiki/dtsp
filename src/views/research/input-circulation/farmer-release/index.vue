@@ -105,13 +105,13 @@
             {{ formatDateTime(row.releaseDate) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
-          <template #default="scope">
-            <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
-              {{ getStockStatusText(scope.row.stockStatus) }}
+        <!-- <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
+          <template #default="{ row }">
+            <el-tag :type="row.stockStatus === 'completed' ? 'success' : 'warning'">
+              {{ row.stockStatus }}
             </el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column prop="releaseOrg" :label="t('releaseOrg')" min-width="150" />
         <el-table-column :label="t('actions')" width="220" fixed="right">
@@ -268,10 +268,10 @@ const getStockStatusTag = (status) => {
   return map[status] || 'info'
 }
 
-// 获取出入库状态文本
-const getStockStatusText = (status) => {
-  return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
-}
+// // 获取出入库状态文本
+// const getStockStatusText = (status) => {
+//   return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
+// }
 
 // 重置查询
 const handleReset = () => {

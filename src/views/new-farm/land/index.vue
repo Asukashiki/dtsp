@@ -128,6 +128,18 @@
 
             <el-col :xs="24" :sm="12" :md="6">
               <div class="filter-item">
+                <label class="filter-label">{{ $t('newFarm.farmer.form.phone') }}</label>
+                <el-input
+                  v-model="searchFilters.phone"
+                  :placeholder="$t('newFarm.farmer.placeholder.phone')"
+                  clearable
+                  @clear="handleSearch"
+                />
+              </div>
+            </el-col>
+
+            <el-col :xs="24" :sm="12" :md="6">
+              <div class="filter-item">
                 <label class="filter-label">{{ $t('newFarm.common.kebeleCode') }}</label>
                 <el-input
                   v-model="searchFilters.kebeleCode"
@@ -358,6 +370,7 @@ const searchFilters = reactive({
   landName: '',
   farmerId: '',
   farmerName: '',
+  phone: '',
   kebeleCode: '',
   landType: '',
   currentStatus: '',
@@ -396,13 +409,22 @@ const fetchData = async () => {
     const params = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      landName: searchFilters.landName || searchFilters.keyword,
-      farmerId: searchFilters.farmerId,
-      farmerName: searchFilters.farmerName,
       kebeleCode: searchFilters.kebeleCode,
       landType: searchFilters.landType,
       currentStatus: searchFilters.currentStatus,
       daId: searchFilters.daId
+    }
+
+    // 核心逻辑：
+    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
+    // 此时忽略 landName/landId 等单个字段的严格筛选
+    if (searchFilters.keyword) {
+      params.searchValue = searchFilters.keyword
+    } else {
+      // 当顶部搜索框为空时，使用具体的字段筛选
+      if (searchFilters.landName) params.landName = searchFilters.landName
+      if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
+      if (searchFilters.phone) params.farmerPhone = searchFilters.phone
     }
 
     const res = await getLandList(params)
@@ -442,6 +464,7 @@ const handleReset = () => {
   searchFilters.landName = ''
   searchFilters.farmerId = ''
   searchFilters.farmerName = ''
+  searchFilters.phone = ''
   searchFilters.kebeleCode = ''
   searchFilters.landType = ''
   searchFilters.currentStatus = ''

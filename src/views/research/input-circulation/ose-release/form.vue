@@ -17,15 +17,15 @@
           <el-option v-for="item in zoneList" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetId')" prop="targetId">
+        <el-form-item :label="$t('inputCirculation.unionId')" prop="targetId">
           <el-select v-model="formData.targetId" :placeholder="$t('common.pleaseSelect')" @change="getUnionInfo">
             <el-option v-for="item in unionList" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetAddress')">
+        <el-form-item :label="$t('inputCirculation.unionAddress')">
           <el-input v-model="formData.targetAddress" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
-        <el-form-item :label="$t('inputCirculation.targetContact')">
+        <el-form-item :label="$t('inputCirculation.unionContact')">
           <el-input v-model="formData.targetContact" :placeholder="$t('common.pleaseInput')" />
         </el-form-item>
 <!--        <el-form-item :label="$t('inputCirculation.targetPhone')">-->
@@ -84,17 +84,17 @@
             :header-cell-style="{ textAlign: 'center' }"
             :cell-style="{ textAlign: 'center' }">
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="80" />
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputType"
                          :placeholder="$t('common.pleaseSelect')"
                          @change="handleInputTypeChange(scope.$index)"
                          style="width: 100%">
-                <el-option v-for="item in seedTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in options.input_type" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputCategory"
                          :placeholder="$t('common.pleaseSelect')"
@@ -105,9 +105,14 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
             <template #default="scope">
               <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
+            <template #default="scope">
+              <span>{{ scope.row.currentStock }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
@@ -117,10 +122,11 @@
                 :min="0" 
                 :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                 :precision="2"
-                @change="validateQuantity(scope.$index)" />
+                @change="validateQuantity(scope.$index)" 
+                style="width: 100%" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
             <template #default="scope">
               <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
                 <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
@@ -159,6 +165,7 @@ import {getUnionDetailByUnionId} from "@/api/union.js";
 import {getOrgansRegionByCode, listSubRegionByCode} from "@/api/application.js";
 import {getCurrentUserInfo} from "@/api/user.js";
 import {getTownAggregationDetail} from "@/api/villageAggregation.js";
+import { getRegistrationList } from '@/api/orgRegistration'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store/user'
 
@@ -173,11 +180,7 @@ const loading = ref(false)
 const formRef = ref(null)
 const isEdit = computed(() => !!route.params.id)
 
-// 只显示种子类型 (IN01)
-const seedTypeOptions = computed(() => {
-  if (!options.value.input_type) return []
-  return options.value.input_type.filter(item => item.value === 'IN01')
-})
+
 
 const formData = reactive({
   id: '',
@@ -248,9 +251,20 @@ const getAllUnionList = async (value) => {
   loading.value = true
   regionCode.value = value
   try {
-    const response = await getOrgansRegionByCode({regionCode: value})
+    const response = await getRegistrationList({
+      regionCode: value,
+      orgType: 'UNION',
+      auditStatus: 1,
+      page: 1,
+      pageSize: 10000
+    })
+    console.log('Union List Response:', response)
     if (response.code === 200) {
-      unionList.value = response.data
+      const list = response.data.records || response.data.rows || response.data.list || []
+      unionList.value = list.map(item => ({
+        code: item.id,
+        name: item.orgName
+      }))
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryUnionListFailed'))
@@ -310,6 +324,30 @@ const handleInputCategoryChange = (index) => {
   const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.quantity = 0
   detail.maxQuantity = demandQty
+  // 获取库存
+  fetchStock(index)
+}
+
+// 获取库存
+const fetchStock = async (index) => {
+  const detail = formData.details[index]
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.currentStock = 0
+    return
+  }
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (res.code === 200 && res.data) {
+      detail.currentStock = res.data.availableStock || 0
+    } else {
+      detail.currentStock = 0
+    }
+  } catch (error) {
+    console.error('Failed to fetch stock:', error)
+    detail.currentStock = 0
+  }
 }
 
 // 根据投入品类型过滤投入品类别
@@ -434,7 +472,11 @@ const addDetail = () => {
     quantity: 0,
     unit: '',
     unitPrice: 0,
-    maxQuantity: 0
+    quantity: 0,
+    unit: '',
+    unitPrice: 0,
+    maxQuantity: 0,
+    currentStock: 0
   })
 }
 

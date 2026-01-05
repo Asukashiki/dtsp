@@ -409,11 +409,20 @@ const fetchData = async () => {
     const params = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      daName: searchFilters.daName || searchFilters.keyword,
-      phone: searchFilters.phone,
       woredaCode: searchFilters.woredaCode,
       kebeleCode: searchFilters.kebeleCode,
       accountStatus: searchFilters.accountStatus
+    }
+
+    // 核心逻辑：
+    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
+    // 此时忽略 daName/phone 等单个字段的严格筛选
+    if (searchFilters.keyword) {
+      params.searchValue = searchFilters.keyword
+    } else {
+      // 当顶部搜索框为空时，使用具体的字段筛选
+      if (searchFilters.daName) params.daName = searchFilters.daName
+      if (searchFilters.phone) params.phone = searchFilters.phone
     }
 
     const res = await getDaList(params)
@@ -443,6 +452,7 @@ const handleReset = () => {
   searchFilters.woredaCode = ''
   searchFilters.kebeleCode = ''
   searchFilters.accountStatus = ''
+  searchFilters.searchValue = ''
   regionCodePath.value = null
   handleSearch()
 }

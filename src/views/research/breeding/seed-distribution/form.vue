@@ -176,14 +176,11 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                   <el-option
                     v-for="batch in productionBatchList"
                     :key="batch.produceBatchId"
-                    :label="`${batch.produceBatchId} - ${batch.cropType} (${batch.time})`"
+                    :label="`${batch.produceBatchId}`"
                     :value="batch.produceBatchId"
                   >
                     <div style="display: flex; justify-content: space-between">
-                      <span>{{ batch.produceBatchId }} - {{ batch.cropType }}</span>
-                      <span style="color: #8492a6; font-size: 13px">
-                        {{ $t('research.breeding.seed.distribution.remaining') }}: {{ batch.produceSeedQuantrity ?? 0 }} kg
-                      </span>
+                      <span>{{ batch.produceBatchId }}</span>
                     </div>
                   </el-option>
                 </el-select>
@@ -204,7 +201,7 @@ dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
                 />
               </el-form-item>
 
-              <el-form-item
+                            <el-form-item
                 :label="$t('research.breeding.seed.distribution.form.parentalSeedSource')"
                 :prop="`detailList.${index}.parentalSeedSource`"
               >
@@ -276,6 +273,8 @@ import { getBreedSeedProduceList } from '@/api/breedSeed'
 import { useUserStore } from '@/store/user'
 import { getBreedSeedProduceDetail } from '@/api/breedSeed'
 import { getBreedingBatchList } from '@/api/breedingData'
+import { getPrebasicSeedProduceResultList } from '@/api/prebasicSeed'
+import { getBasicSeedProduceResultList } from '@/api/basicSeed'
 
 const { t } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
@@ -372,7 +371,20 @@ const loadOseList = async () => {
 // 加载生产批次列表
 const loadProductionBatchList = async () => {
   try {
-    const res = await getBreedSeedProduceList({ pageNum: 1, pageSize: 1000, produceStatus: 'Finished' })
+    let res;
+    // 根据 fromSeedLevel 的值调用不同的 API
+    if (formData.fromSeedLevel === 'Pre-Basic') {
+      // 当 fromSeedLevel 为 Pre-Basic 时，调用原原种生产结果列表
+      res = await getPrebasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
+    } else if (formData.fromSeedLevel === 'Basic') {
+      // 当 fromSeedLevel 为 Basic 时，调用原种生产结果列表
+      res = await getBasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
+    } else {
+      // 如果没有选择种子等级，清空列表
+      productionBatchList.value = []
+      return
+    }
+    
     if (res.code === 200) {
       productionBatchList.value = res.rows || []
       // 调试信息：打印第一条数据查看remainingQuantity是否正确返回
@@ -406,21 +418,28 @@ const handleRemoveDetail = (index) => {
 }
 
 // 种子等级联动规则
-const handleSeedLevelChange = (value) => {
+const handleSeedLevelChange = async (value) => {
   // 清空目标种子等级
   formData.toSeedLevel = ''
   
   // 根据源种子等级设置目标种子等级可选值
   if (value === 'Basic') {
     toSeedLevelOptions.value = [{ label: 'C1', value: 'C1' }]
+    // 自动设置目标种子等级为 C1
+    formData.toSeedLevel = 'C1'
   } else if (value === 'Pre-Basic') {
     toSeedLevelOptions.value = [{ label: 'Basic', value: 'Basic' }]
+    // 自动设置目标种子等级为 Basic
+    formData.toSeedLevel = 'Basic'
   } else {
     toSeedLevelOptions.value = []
   }
+  
+  // 根据 fromSeedLevel 的值重新加载生产批次列表
+  await loadProductionBatchList()
 }
 
-// 生产批次变更时更新可分发量（实时从后端获取最新剩余量）
+// 生产批次变更时更新可分发量（使用已获取的数据）
 const handleBatchChange = async (index) => {
   const detail = formData.detailList[index]
   if (!detail.produceBatchId) {
@@ -432,82 +451,24 @@ const handleBatchChange = async (index) => {
     return
   }
 
-  try {
-    // 实时从后端获取批次详情，确保剩余量是最新的
-    const res = await getBreedSeedProduceDetail(detail.produceBatchId)
-    if (res.code === 200 && res.data) {
-      // 使用后端返回的最新剩余量
-      detail.maxQuantity = res.data.remainingQuantity || 0
-
-      // 同时更新缓存列表中的数据，以便下拉选项显示最新的剩余量
-        const batchIndex = productionBatchList.value.findIndex(
-          item => item.produceBatchId === detail.produceBatchId
-        )
-      if (batchIndex !== -1) {
-        productionBatchList.value[batchIndex].remainingQuantity = res.data.remainingQuantity
-      }
-    } else {
-      // 如果接口失败，回退到使用缓存的数据
-      const batch = productionBatchList.value.find(
-        item => item.produceBatchId === detail.produceBatchId
-      )
-      if (batch) {
-        detail.maxQuantity = batch.remainingQuantity || 0
-      } else {
-        detail.maxQuantity = null
-      }
-    }
-    
+  // 从已获取的生产批次列表中查找对应批次的数据
+  const selectedBatch = productionBatchList.value.find(
+    item => item.produceBatchId === detail.produceBatchId
+  )
+  
+  if (selectedBatch) {
+    // 使用已获取数据中的剩余量
+    detail.maxQuantity = selectedBatch.remainingQuantity || 0
     // 设置生产批次名称
-    const selectedBatch = productionBatchList.value.find(
-      item => item.produceBatchId === detail.produceBatchId
-    )
-    
-    if (selectedBatch) {
-      detail.produceBatchName = selectedBatch.produceBatchId ? 
-        `${selectedBatch.produceBatchId} - ${selectedBatch.cropType} (${selectedBatch.time})` : ''
-    } else {
-      detail.produceBatchName = ''
-    }
-    
-    // 根据produceBatchId获取breedBatchId，然后调用getBreedingBatchList获取相关信息
-    if (selectedBatch && selectedBatch.breedBatchId) {
-      // 调用getBreedingBatchList方法获取详细信息
-      const breedRes = await getBreedingBatchList({
-        batchId: selectedBatch.breedBatchId,
-        pageNum: 1,
-        pageSize: 10
-      })
-      
-      if (breedRes.code === 200 && breedRes.rows && breedRes.rows.length > 0) {
-        const breedBatch = breedRes.rows[0]
-        console.log('Breeding batch detail:', breedBatch)
-        detail.breedBatchName = breedBatch.batchName || ''
-        detail.parentalSeedSource = breedBatch.parentalSeedSource || ''
-        detail.varietyName = breedBatch.varietyName || ''
-      } else {
-        detail.breedBatchName = ''
-        detail.parentalSeedSource = ''
-        detail.varietyName = ''
-      }
-    } else {
-      detail.breedBatchName = ''
-      detail.parentalSeedSource = ''
-      detail.varietyName = ''
-    }
-  } catch (error) {
-    console.error('Failed to get batch detail:', error)
-    // 如果出错，回退到使用缓存的数据
-    const batch = productionBatchList.value.find(
-      item => item.produceBatchId === detail.produceBatchId
-    )
-    if (batch) {
-      detail.maxQuantity = batch.remainingQuantity || 0
-    } else {
-      detail.maxQuantity = null
-    }
-    
-    // 出错时清空新字段
+    detail.produceBatchName = selectedBatch.produceBatchId || ''
+    // 从已获取的数据中复制 breedBatchName 和 varietyName
+    detail.breedBatchName = selectedBatch.breedBatchName || ''
+    detail.varietyName = selectedBatch.varietyName || ''
+    // 也复制 parentalSeedSource（如果在结果列表中有这个字段）
+    detail.parentalSeedSource = selectedBatch.parentalSeedSource || ''
+  } else {
+    // 如果在列表中找不到对应的批次，清空相关字段
+    detail.maxQuantity = null
     detail.produceBatchName = ''
     detail.breedBatchName = ''
     detail.parentalSeedSource = ''
@@ -556,7 +517,8 @@ const handleSubmit = async () => {
 
 onMounted(() => {
   loadOseList()
-  loadProductionBatchList()
+  // 初始化时不需要加载生产批次列表，因为需要先选择 fromSeedLevel
+  // 生产批次列表会在用户选择 fromSeedLevel 后自动加载
 })
 </script>
 

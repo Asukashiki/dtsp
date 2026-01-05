@@ -72,6 +72,22 @@ export default {
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
 
+  prebasicSeedProduction: 'Pre-Basic Seed Batch Info',
+  prebasicSeedProductionAdd: 'Add Pre-basic Seed Production',
+  prebasicSeedProductionEdit: 'Edit Pre-basic Seed Production',
+  prebasicSeedProductionDetail: 'Pre-basic Seed Production Detail',
+
+  prebasicSeedProductionResult: 'Pre-Basic Seed Batch Data',
+  prebasicSeedProductionResultDetail: 'Production Result Detail',
+
+  basicSeedProduction: 'Basic Seed Batch Info',
+  basicSeedProductionAdd: 'Add Basic Seed Batch',
+  basicSeedProductionEdit: 'Edit Basic Seed Batch',
+  basicSeedProductionDetail: 'Basic Seed Batch Detail',
+
+  basicSeedProductionResult: 'Basic Seed Batch Data',
+  basicSeedProductionResultDetail: 'Basic Seed Batch Data Detail',
+
   oseManagement: 'OSE Maintenance',
   oseManagementAdd: 'Add OSE',
   oseManagementEdit: 'Edit OSE',
@@ -207,7 +223,7 @@ export default {
   // Input Circulation Management
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
-  oseReleaseToUnion: 'Release Seeds to Union',
+  oseReleaseToUnion: 'Release Agri Input to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',

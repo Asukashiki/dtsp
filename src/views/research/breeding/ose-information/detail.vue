@@ -73,13 +73,17 @@
                   <span class="value">{{ batchInfo.batchId }}</span>
                 </div>
                 <div class="info-item">
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.distributionId') }}</span>
+                  <span class="value">{{ batchInfo.distributionId || '-' }}</span>
+                </div>
+                <div class="info-item">
                   <span class="label">{{ $t('research.breeding.breedingBatch.form.breedingLevel') }}</span>
                   <span class="value">
                     <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
                   </span>
                 </div>
                 <div class="info-item full-width">
-                  <span class="label">{{ $t('research.breeding.batch.form.parentSeedSource') }}</span>
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.parentalSeedSource') }}</span>
                   <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
                 </div>
               </div>
@@ -196,6 +200,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail } from '@/api/breeding'
+import { useDict } from '@/hooks/useDict'
 import TrackingList from '../components/TrackingList.vue'
 import TestList from '../components/TestList.vue'
 
@@ -206,14 +211,8 @@ const { t } = useI18n()
 const activeTab = ref('basic')
 const batchInfo = ref(null)
 
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
+// 使用字典获取作物类型
+const { getLabelByValue } = useDict(['crop_type'])
 
 
 // 繁殖级别映射
@@ -253,7 +252,7 @@ const loadBatchDetail = async () => {
 
 // 获取作物类型名称
 const getCropTypeName = (type) => {
-  return cropTypeMap.value[type] || type
+  return getLabelByValue('crop_type', type) || type
 }
 
 // 获取繁殖级别名称

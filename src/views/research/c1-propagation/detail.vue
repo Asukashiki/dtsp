@@ -59,7 +59,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.varietyName') }}:</span>
@@ -160,6 +160,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -169,6 +170,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 获取状态类型
 const getStatusType = (status) => {

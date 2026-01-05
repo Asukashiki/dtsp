@@ -168,7 +168,10 @@
             <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.annualCapacity')" prop="annualCapacity">
-                  <el-input-number v-model="formData.annualCapacity" :min="0" :precision="2" style="width: 100%" :disabled="isView"></el-input-number>
+                  <div style="display: flex; align-items: center; gap: 8px; width: 100%">
+                    <el-input-number v-model="formData.annualCapacity" :min="0" :precision="2" style="flex: 1" :disabled="isView"></el-input-number>
+                    <span>kg</span>
+                  </div>
                 </el-form-item>
               </el-col>
             </el-row>
