@@ -107,4 +107,7 @@ export default {
     queryFailed: '获取详情失败',
     birthDate: '出生日期',
     invalidParams: '无效的参数',
+    // 标签页标签
+    aggregationResults: '汇聚结果',
+    farmerDemands: '农民需求'
   }

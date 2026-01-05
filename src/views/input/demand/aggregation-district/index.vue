@@ -667,10 +667,10 @@
     <el-dialog
       v-model="drillDown2RecordDetailVisible"
       :title="$t('districtAggregation.detailDialog.title')"
-      width="70%"
+      width="80%"
       top="5vh"
     >
-      <el-descriptions :column="2" border>
+      <el-descriptions :column="2" border style="margin-bottom: 20px;">
         <el-descriptions-item :label="$t('districtAggregation.columns.year')">
           {{ drillDown2RecordDetail.year }}
         </el-descriptions-item>
@@ -699,44 +699,160 @@
         </el-descriptions-item>
       </el-descriptions>
 
-      <!-- 汇聚结果列表 -->
-      <div class="aggregation-result-section">
-        <h4 class="section-title">{{ $t('districtAggregation.detailDialog.title') }}</h4>
-        <el-table
-          v-loading="drillDown2AggregationLoading"
-          :data="drillDown2AggregationData"
-          stripe
-          max-height="300px"
-        >
-          <el-table-column
-            prop="inputCategory"
-            :label="$t('districtAggregation.detailDialog.columns.inputCategory')"
-            min-width="150"
+      <!-- 标签页 -->
+      <el-tabs v-model="activeDetailTab" @tab-change="handleDetailTabChange">
+        <!-- 汇聚结果标签页 -->
+        <el-tab-pane :label="$t('common.aggregationResults')" name="aggregation">
+          <el-table
+            v-loading="drillDown2AggregationLoading"
+            :data="drillDown2AggregationData"
+            stripe
+            max-height="400px"
           >
-            <template #default="{ row }">
-              {{ getLabelByValue('input_category', row.inputCategory) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="inputType"
-            :label="$t('districtAggregation.detailDialog.columns.inputType')"
-            min-width="150"
-          >
-            <template #default="{ row }">
-              {{ getLabelByValue('input_type', row.inputType) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="totalQuantity"
-            :label="$t('districtAggregation.detailDialog.columns.totalQuantity')"
-            min-width="120"
+            <el-table-column
+              prop="inputCategory"
+              :label="$t('districtAggregation.detailDialog.columns.inputCategory')"
+              min-width="150"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('input_category', row.inputCategory) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="inputType"
+              :label="$t('districtAggregation.detailDialog.columns.inputType')"
+              min-width="150"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('input_type', row.inputType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="totalQuantity"
+              :label="$t('districtAggregation.detailDialog.columns.totalQuantity')"
+              min-width="120"
+            />
+          </el-table>
+          <el-empty
+            v-if="drillDown2AggregationData.length === 0 && !drillDown2AggregationLoading"
+            :description="$t('districtAggregation.detailDialog.noData')"
           />
-        </el-table>
-        <el-empty
-          v-if="drillDown2AggregationData.length === 0 && !drillDown2AggregationLoading"
-          :description="$t('districtAggregation.detailDialog.noData')"
-        />
-      </div>
+        </el-tab-pane>
+
+        <!-- 农民需求标签页 -->
+        <el-tab-pane :label="$t('common.farmerDemands')" name="farmers">
+          <!-- 搜索区域 -->
+          <div class="search-section" style="margin-bottom: 16px;">
+            <el-input
+              v-model="farmerSearchForm.farmerName"
+              :placeholder="$t('demandAudit.columns.farmerName')"
+              clearable
+              style="width: 200px; margin-right: 8px;"
+            />
+            <el-input
+              v-model="farmerSearchForm.farmerIdNumber"
+              :placeholder="$t('demandAudit.columns.farmerIdNumber')"
+              clearable
+              style="width: 200px; margin-right: 8px;"
+            />
+            <el-select
+              v-model="farmerSearchForm.status"
+              :placeholder="$t('demandAudit.columns.status')"
+              clearable
+              style="width: 150px; margin-right: 8px;"
+            >
+              <el-option :label="$t('demandAudit.status.draft')" value="0" />
+              <el-option :label="$t('demandAudit.status.submitted')" value="1" />
+              <el-option :label="$t('demandAudit.status.approved')" value="2" />
+              <el-option :label="$t('demandAudit.status.rejected')" value="3" />
+            </el-select>
+            <el-button type="primary" @click="handleFarmerSearch">
+              <i class="ri-search-line"></i>
+              {{ $t('common.search') }}
+            </el-button>
+            <el-button @click="handleFarmerSearchReset">
+              <i class="ri-refresh-line"></i>
+              {{ $t('common.reset') }}
+            </el-button>
+          </div>
+
+          <!-- 农民需求表格 -->
+          <el-table
+            v-loading="farmerDemandLoading"
+            :data="farmerDemandData"
+            stripe
+            max-height="400px"
+          >
+            <el-table-column
+              prop="batchNo"
+              :label="$t('demandAudit.columns.batchNo')"
+              min-width="150"
+            />
+            <el-table-column
+              prop="farmerName"
+              :label="$t('demandAudit.columns.farmerName')"
+              min-width="120"
+            />
+            <el-table-column
+              prop="farmerIdNumber"
+              :label="$t('demandAudit.columns.farmerIdNumber')"
+              min-width="150"
+            />
+            <el-table-column
+              prop="landArea"
+              :label="$t('demandAudit.columns.landArea')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                {{ row.landArea || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="status"
+              :label="$t('demandAudit.columns.status')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                <el-tag :type="getFarmerStatusType(row.status)" size="small">
+                  {{ getFarmerStatusLabel(row.status) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('common.actions')"
+              fixed="right"
+              width="100"
+            >
+              <template #default="{ row }">
+                <el-button link type="primary" @click="handleViewFarmerDemand(row)">
+                  <i class="ri-eye-line"></i>
+                  {{ $t('common.view') }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 分页 -->
+          <div v-if="farmerDemandPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
+            <el-pagination
+              v-model:current-page="farmerDemandPagination.currentPage"
+              v-model:page-size="farmerDemandPagination.pageSize"
+              :page-sizes="[10, 20, 50]"
+              :total="farmerDemandPagination.total"
+              layout="total, sizes, prev, pager, next"
+              background
+              small
+              @size-change="handleFarmerPageChange"
+              @current-change="handleFarmerPageChange"
+            />
+          </div>
+
+          <el-empty
+            v-if="farmerDemandData.length === 0 && !farmerDemandLoading"
+            :description="$t('districtAggregation.detailDialog.noData')"
+          />
+        </el-tab-pane>
+      </el-tabs>
 
       <template #footer>
         <el-button @click="drillDown2RecordDetailVisible = false">
@@ -760,6 +876,7 @@ import {
   updateVillageDemandSummaryMain,
   aggregateVillageInputDemand, getVillageAggregationDetail
 } from '@/api/villageAggregation'
+import { getFarmerDemandPage } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
@@ -838,6 +955,24 @@ const drillDown2RecordDetailVisible = ref(false)
 const drillDown2RecordDetail = ref({})
 const drillDown2AggregationLoading = ref(false)
 const drillDown2AggregationData = ref([])
+
+// 详情对话框标签页
+const activeDetailTab = ref('aggregation')
+
+// 农民需求数据
+const farmerDemandLoading = ref(false)
+const farmerDemandData = ref([])
+const farmerDemandPagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const farmerSearchForm = reactive({
+  farmerName: '',
+  farmerIdNumber: '',
+  status: ''
+})
 
 // 加载某一行已审批数量（已通过镇级记录数）
 const loadApprovedCountForRow = async (row) => {
@@ -1169,7 +1304,15 @@ const handleDrillDown2CurrentChange = () => {
 const handleDrillDown2Detail = async (row) => {
   drillDown2RecordDetail.value = row
   drillDown2RecordDetailVisible.value = true
+  activeDetailTab.value = 'aggregation'
   drillDown2AggregationData.value = []
+  farmerDemandData.value = []
+  
+  // 重置搜索表单
+  farmerSearchForm.farmerName = ''
+  farmerSearchForm.farmerIdNumber = ''
+  farmerSearchForm.status = ''
+  farmerDemandPagination.currentPage = 1
 
   // 加载汇聚结果数据
   drillDown2AggregationLoading.value = true
@@ -1189,6 +1332,108 @@ const handleDrillDown2Detail = async (row) => {
   }
 }
 
+// 标签页切换
+const handleDetailTabChange = (tabName) => {
+  if (tabName === 'farmers' && farmerDemandData.value.length === 0) {
+    loadFarmerDemandData()
+  }
+}
+
+// 加载农民需求数据
+const loadFarmerDemandData = async () => {
+  if (!drillDown2RecordDetail.value.sourceCode) return
+
+  farmerDemandLoading.value = true
+  try {
+    const params = {
+      pageNum: farmerDemandPagination.currentPage,
+      pageSize: farmerDemandPagination.pageSize,
+      kebele: drillDown2RecordDetail.value.sourceCode,
+      year: drillDown2RecordDetail.value.year,
+      farmerName: farmerSearchForm.farmerName || undefined,
+      farmerIdNumber: farmerSearchForm.farmerIdNumber || undefined,
+      status: farmerSearchForm.status || undefined,
+      orderByColumn: 'createdTime',
+      isAsc: 'desc'
+    }
+    
+    const res = await getFarmerDemandPage(params)
+    if (res.code === 200) {
+      farmerDemandData.value = res.data?.records || []
+      farmerDemandPagination.total = res.data?.total || 0
+    }
+  } catch (error) {
+    console.error('Failed to load farmer demand data:', error)
+    ElMessage.error(t('districtAggregation.messages.loadFailed'))
+  } finally {
+    farmerDemandLoading.value = false
+  }
+}
+
+// 农民需求搜索
+const handleFarmerSearch = () => {
+  farmerDemandPagination.currentPage = 1
+  loadFarmerDemandData()
+}
+
+// 重置搜索
+const handleFarmerSearchReset = () => {
+  farmerSearchForm.farmerName = ''
+  farmerSearchForm.farmerIdNumber = ''
+  farmerSearchForm.status = ''
+  farmerDemandPagination.currentPage = 1
+  loadFarmerDemandData()
+}
+
+// 农民需求分页变化
+const handleFarmerPageChange = () => {
+  loadFarmerDemandData()
+}
+
+// 查看农民需求详情
+const handleViewFarmerDemand = (row) => {
+  // 保存当前下钻状态到 sessionStorage
+  const navigationState = {
+    viewMode: viewMode.value,
+    kebeleCode: drillDown2RecordDetail.value.sourceCode,
+    year: drillDown2RecordDetail.value.year,
+    kebeleName: drillDown2RecordDetail.value.sourceName,
+    zoneCode: currentDrillDownRow.value?.sourceCode,
+    zoneName: currentDrillDownRow.value?.sourceName
+  }
+  sessionStorage.setItem('aggregation_nav_state', JSON.stringify(navigationState))
+  
+  router.push({
+    name: 'DemandAuditDetail',
+    params: { id: row.id },
+    query: {
+      returnPath: router.currentRoute.value.path
+    }
+  })
+}
+
+// 获取农民需求状态标签
+const getFarmerStatusLabel = (status) => {
+  const statusMap = {
+    0: t('demandAudit.status.draft'),
+    1: t('demandAudit.status.submitted'),
+    2: t('demandAudit.status.approved'),
+    3: t('demandAudit.status.rejected')
+  }
+  return statusMap[status] || '-'
+}
+
+// 获取农民需求状态类型
+const getFarmerStatusType = (status) => {
+  const typeMap = {
+    0: 'info',
+    1: 'warning',
+    2: 'success',
+    3: 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
 // 分页变化
 const handleSizeChange = () => {
   pagination.currentPage = 1
@@ -1202,6 +1447,43 @@ const handleCurrentChange = () => {
 // 初始化
 onMounted(() => {
   loadData()
+  
+  // 检查是否需要恢复下钻状态
+  const savedState = sessionStorage.getItem('aggregation_nav_state')
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState)
+      sessionStorage.removeItem('aggregation_nav_state')
+      
+      if (state.viewMode === 'drillDown2' && state.kebeleCode) {
+        // 设置下钻状态
+        currentDrillDownRow.value = {
+          sourceCode: state.zoneCode,
+          sourceName: state.zoneName
+        }
+        drillDown2RecordDetail.value = {
+          sourceCode: state.kebeleCode,
+          year: state.year,
+          sourceName: state.kebeleName
+        }
+        viewMode.value = 'drillDown2'
+        
+        // 加载数据并打开对话框
+        loadDrillDown2Data().then(() => {
+          setTimeout(() => {
+            handleDrillDown2Detail(drillDown2RecordDetail.value)
+            setTimeout(() => {
+              activeDetailTab.value = 'farmers'
+              loadFarmerDemandData()
+            }, 100)
+          }, 100)
+        })
+      }
+    } catch (e) {
+      console.error('Failed to restore navigation state:', e)
+      sessionStorage.removeItem('aggregation_nav_state')
+    }
+  }
 })
 </script>
 
