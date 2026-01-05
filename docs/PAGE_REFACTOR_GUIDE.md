@@ -358,15 +358,10 @@ const getActionButtons = () => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px 0;
-}
 </style>
 ```
+
+> **注意**：`.form-actions` 样式已在 `page-common.scss` 中统一定义，包含白色背景、圆角和阴影效果，无需在页面中重复定义。
 
 ### 页面模式判断逻辑
 
@@ -528,13 +523,6 @@ import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 // 表单页（新增/编辑）
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px 0;
-}
 </style>
 
 // 详情页
@@ -543,6 +531,8 @@ import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 @use '@/assets/styles/workflow-common.scss';
 </style>
 ```
+
+> **说明**：`.form-actions` 样式已在 `page-common.scss` 中统一定义，包含白色背景、圆角和阴影效果。
 
 ---
 
@@ -559,6 +549,7 @@ import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 | 表头字体颜色 | #009A44 |
 | 表单两列布局 | `el-row :gutter="20"` + `el-col :xs="24" :sm="12"` |
 | 详情两列布局 | `el-descriptions :column="2" border` |
+| 操作按钮区域 | 白色背景、圆角8px、阴影效果 |
 
 ---
 

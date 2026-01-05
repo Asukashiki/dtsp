@@ -335,9 +335,12 @@ $color-bg-lighter: #F8F9FA;
   display: flex;
   justify-content: center;
   gap: 16px;
-  padding: 24px 0;
-  margin-top: 24px;
-  border-top: 1px solid $color-border-lighter;
+  padding: 24px 20px;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid $color-border-lighter;
 }
 
 // ==================== 响应式设计 ====================

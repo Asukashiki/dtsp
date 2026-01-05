@@ -343,6 +343,8 @@ export default {
 
     form: {
       basicInfo: 'Trial Basic Information',
+      metadataInfo: 'Metadata Information',
+      rejectInfo: 'Rejection Information',
       trialId: 'Trial ID',
       batchId: 'Breeding Batch',
       batchName: 'Breeding Batch Name',

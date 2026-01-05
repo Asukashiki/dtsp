@@ -321,6 +321,8 @@ export default {
 
     form: {
       basicInfo: '试验基本信息',
+      metadataInfo: '元数据信息',
+      rejectInfo: '退回信息',
       trialId: '试验ID',
       batchName: '育种批次名称',
       trialName: '试验名称',
