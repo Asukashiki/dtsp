@@ -180,6 +180,12 @@
           "roles": ["agri-admin", "OSE"]
         },
         {
+          "index": "/research/breeding/ose-batch-collection",
+          "icon": "ri-database-2-line",
+          "titleKey": "research.menu.oseBatchCollection",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
           "index": "/research/c1-propagation",
           "icon": "ri-plant-line",
           "titleKey": "research.menu.c1SeedPropagationApplication",

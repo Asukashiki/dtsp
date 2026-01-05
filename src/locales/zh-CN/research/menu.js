@@ -112,6 +112,11 @@ export default {
   oseReceiveConfirmEdit: '编辑接收确认',
   oseReceiveConfirmDetail: '接收确认详情',
 
+  oseBatchCollection: 'OSE繁殖批次信息数据采集',
+  oseBatchCollectionAdd: '新增批次采集',
+  oseBatchCollectionEdit: '编辑批次采集',
+  oseBatchCollectionDetail: '批次采集详情',
+
   propagationBatchCollection: '种子扩繁批次信息采集',
   propagationBatchAdd: '新增种子扩繁批次',
   propagationBatchEdit: '编辑种子扩繁批次',
