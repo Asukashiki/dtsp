@@ -1,14 +1,15 @@
 <template>
-  <div class="workflow-action-buttons">
+  <div class="workflow-action-buttons" :class="{ 'is-table-mode': mode === 'list' }">
     <el-button
       v-for="button in visibleButtons"
       :key="button.action"
       :type="button.type"
+      :size="mode === 'list' ? 'small' : 'default'"
       :loading="loading && currentAction === button.action"
       :disabled="disabled || (loading && currentAction !== button.action)"
       @click="handleAction(button)">
       <i :class="button.icon"></i>
-      {{ $t(`common.${button.label}`) }}
+      <span class="btn-text">{{ $t(`common.${button.label}`) }}</span>
     </el-button>
   </div>
 </template>

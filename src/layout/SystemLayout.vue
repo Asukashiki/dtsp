@@ -8,7 +8,7 @@
           <div class="mobile-menu-btn" @click="toggleMobileMenu">
             <i class="ri-menu-line"></i>
           </div>
-          <i :class="config.icon + ' header-icon'"></i>
+          <i :class="config.icon + ' system-icon'"></i>
           <span class="system-name">{{ $t(config.systemName) }}</span>
         </div>
         <div class="header-right">
@@ -135,6 +135,9 @@
 
       <!-- 右侧内容区 -->
       <div class="system-content" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { marginLeft: menuWidth } : {}">
+        <!-- 全局标签页导航 -->
+        <PageBreadcrumb />
+        
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -151,6 +154,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import { useLocaleStore } from '@/store'
 import { useI18n } from 'vue-i18n'
+import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -343,7 +347,7 @@ const handleUserAction = (command) => {
   font-size: 24px;
 }
 
-.header-icon {
+.system-icon {
   font-size: 28px;
 }
 
@@ -568,7 +572,7 @@ const handleUserAction = (command) => {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px;
+  padding: 0;
   background-color: #f0f2f5;
   margin-left: 280px;
   transition: margin-left 0.3s;
@@ -609,7 +613,7 @@ const handleUserAction = (command) => {
   }
 
   .system-content {
-    padding: 16px;
+    padding: 0;
     margin-left: 200px;
   }
 
@@ -666,7 +670,7 @@ const handleUserAction = (command) => {
   }
 
   .system-content {
-    padding: 12px;
+    padding: 0;
     margin-left: 0 !important;
   }
 }
@@ -683,7 +687,7 @@ const handleUserAction = (command) => {
   }
 
   .system-content {
-    padding: 8px;
+    padding: 0;
   }
 }
 </style>

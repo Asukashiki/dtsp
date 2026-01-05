@@ -2,215 +2,189 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-list-check-2"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.batch.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.batch.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon="ri-user-line"
+        :title="$t('research.breedingData.batch.title')"
+        :subtitle="$t('research.breedingData.batch.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.breedingData.batch.list') }}</span>
+        <!-- 搜索卡片 - 无标题 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('research.breedingData.batch.columns.batchId')">
+              <el-input
+                v-model="queryParams.batchId"
+                :placeholder="$t('research.breedingData.batch.columns.batchId')"
+                clearable
+                class="search-input">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.breedingData.batch.columns.batchName')">
+              <el-input
+                v-model="queryParams.batchName"
+                :placeholder="$t('research.breedingData.batch.placeholder.batchName')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('research.breedingData.batch.columns.cropType')">
+              <el-select
+                v-model="queryParams.cropType"
+                :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
+                clearable
+                class="filter-select"
+                :loading="dictLoading">
+                <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.breedingData.batch.columns.varietyName')">
+              <el-input
+                v-model="queryParams.varietyName"
+                :placeholder="$t('research.breedingData.batch.placeholder.varietyName')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('research.breedingData.batch.columns.workflowStatus')">
+              <el-select
+                v-model="queryParams.workflowStatus"
+                :placeholder="$t('research.breedingData.batch.placeholder.workflowStatus')"
+                clearable
+                class="filter-select"
+                :loading="dictLoading">
+                <el-option v-for="item in options.flow_status" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 - 独立 -->
+        <InfoCard
+          :title="$t('research.breedingData.batch.list')"
+          icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('research.breedingData.batch.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="50" />
+              <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
+              <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
+                <template #default="{ row }">
+                  {{ getLabelByValue('crop_type', row.cropType) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
+              <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
+              <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="100">
+                <template #default="{ row }">
+                  <el-tag :type="getStatusType(row.status)" effect="plain">
+                    {{ row.status }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
+                <template #default="{ row }">
+                  <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
+                    {{ getLabelByValue('flow_status', row.workflowStatus) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="row.workflowStatus"
+                    mode="list"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
             </div>
-            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                {{ $t('research.breedingData.batch.add') }}
-              </el-button>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in dataList" :key="item.dataId" class="mobile-card">
+            <div class="mobile-card-header">
+              <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+              <div class="mobile-card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ item.batchName }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.batchId') }}:</span>
+                <span class="value">{{ item.batchId }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
+                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
+                <span class="value">{{ item.varietyName }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.objective') }}:</span>
+                <span class="value">{{ item.objective }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.breedingMethod') }}:</span>
+                <span class="value">{{ item.breedingMethod }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.year') }}:</span>
+                <span class="value">{{ item.year }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</span>
+                <el-tag :type="getWorkflowStatusType(item.workflowStatus)" effect="plain" size="small">
+                  {{ getLabelByValue('flow_status', item.workflowStatus) }}
+                </el-tag>
+              </div>
+            </div>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="item.workflowStatus"
+                mode="list"
+                @action="(action) => handleAction(item, action)" />
             </div>
           </div>
 
-          <div class="card-body">
-            <!-- 搜索筛选区 -->
-            <div class="search-section">
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.batchId') }}:</label>
-                <el-input
-                  v-model="queryParams.batchId"
-                  :placeholder="$t('research.breedingData.batch.columns.batchId')"
-                  clearable
-                  class="search-input"
-                >
-                  <template #prefix><i class="ri-search-line"></i></template>
-                </el-input>
-              </div>
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.batchName') }}:</label>
-                <el-input
-                  v-model="queryParams.batchName"
-                  :placeholder="$t('research.breedingData.batch.placeholder.batchName')"
-                  clearable
-                  class="search-input"
-                />
-              </div>
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.cropType') }}:</label>
-                <el-select
-                  v-model="queryParams.cropType"
-                  :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
-                  clearable
-                  class="filter-select"
-                  :loading="dictLoading"
-                >
-                  <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</label>
-                <el-input
-                  v-model="queryParams.varietyName"
-                  :placeholder="$t('research.breedingData.batch.placeholder.varietyName')"
-                  clearable
-                  class="search-input"
-                />
-              </div>
-              <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</label>
-                <el-select
-                  v-model="queryParams.workflowStatus"
-                  :placeholder="$t('research.breedingData.batch.placeholder.workflowStatus')"
-                  clearable
-                  class="filter-select"
-                  :loading="dictLoading"
-                >
-                  <el-option v-for="item in options.flow_status" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>
-                  {{ $t('common.search') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>
-                  {{ $t('common.reset') }}
-                </el-button>
-              </div>
-            </div>
-
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
-                <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
-            <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
-            <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
-            <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
-                <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
-                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="100">
-                  <template #default="{ row }">
-                    <el-tag :type="getStatusType(row.status)" effect="plain">
-                      {{ row.status }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
-                  <template #default="{ row }">
-                    <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
-                      {{ getLabelByValue('flow_status', row.workflowStatus) }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('research.breedingData.batch.columns.actions')" width="200" fixed="right">
-                  <template #default="{ row }">
-                    <ActionButtons
-                      :workflow-status="row.workflowStatus"
-                      mode="list"
-                      @action="(action) => handleAction(row, action)" />
-                  </template>
-                </el-table-column>
-              </el-table>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
-                  :page-sizes="[10, 20, 50]"
-                  :total="total"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  @size-change="getList"
-                  @current-change="getList"
-                />
-              </div>
-            </div>
-
-            <!-- 移动端卡片 -->
-            <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.dataId" class="mobile-card">
-                <div class="mobile-card-header">
-                  <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                  <div class="mobile-card-title">
-                    <i class="ri-seedling-line"></i>
-                    <span>{{ item.batchName }}</span>
-                  </div>
-                </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.batchId') }}:</span>
-                    <span class="value">{{ item.batchId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
-                    <span class="value">{{ item.varietyName }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.objective') }}:</span>
-                    <span class="value">{{ item.objective }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.breedingMethod') }}:</span>
-                    <span class="value">{{ item.breedingMethod }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.year') }}:</span>
-                    <span class="value">{{ item.year }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</span>
-                    <el-tag :type="getWorkflowStatusType(item.workflowStatus)" effect="plain" size="small">
-                      {{ getLabelByValue('flow_status', item.workflowStatus) }}
-                    </el-tag>
-                  </div>
-                </div>
-                <div class="mobile-card-footer">
-                  <ActionButtons
-                    :workflow-status="item.workflowStatus"
-                    mode="list"
-                    @action="(action) => handleAction(item, action)" />
-                </div>
-              </div>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                  v-model:current-page="queryParams.pageNum"
-                  v-model:page-size="queryParams.pageSize"
-                  :total="total"
-                  layout="prev, pager, next"
-                  small
-                  @current-change="getList"
-                />
-              </div>
-            </div>
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="queryParams.pageNum"
+              v-model:page-size="queryParams.pageSize"
+              :total="total"
+              layout="prev, pager, next"
+              small
+              @current-change="getList"
+            />
           </div>
         </div>
       </div>
@@ -225,6 +199,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import {
   getBreedingBatchList,
@@ -519,4 +494,5 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>
