@@ -107,6 +107,7 @@
                   <ActionButtons
                     :workflow-status="row.workflowStatus"
                     mode="list"
+                    :show-audit="false"
                     @action="(action) => handleAction(row, action)" />
                 </template>
               </el-table-column>
@@ -172,6 +173,7 @@
               <ActionButtons
                 :workflow-status="item.workflowStatus"
                 mode="list"
+                :show-audit="false"
                 @action="(action) => handleAction(item, action)" />
             </div>
           </div>
