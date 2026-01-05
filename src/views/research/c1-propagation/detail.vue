@@ -57,6 +57,12 @@
               <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
               <span class="value">{{ data.propagationBatchId }}</span>
             </div>
+            <div class="detail-item" v-if="data.sourceType">
+              <span class="label">{{ $t('research.c1Propagation.sourceType') }}:</span>
+              <el-tag :type="data.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                {{ data.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+              </el-tag>
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
               <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
@@ -79,7 +85,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
-              <span class="value">{{ data.demandQuantity || '-' }}</span>
+              <span class="value">{{ data.demandQuantity || '-' }} kg</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>

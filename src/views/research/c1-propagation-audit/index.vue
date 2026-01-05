@@ -129,6 +129,34 @@
               show-overflow-tooltip
             />
             <el-table-column
+              prop="demandQuantity"
+              :label="$t('research.c1Propagation.form.demandQuantity')"
+              min-width="120"
+              align="center"
+            >
+              <template #default="{ row }">
+                <span style="font-weight: 500; color: #009A44;">{{ row.demandQuantity || '-' }}</span>
+                <span v-if="row.demandQuantity" style="margin-left: 4px; color: #909399; font-size: 12px;">kg</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="sourceType"
+              :label="$t('research.c1Propagation.sourceType')"
+              min-width="140"
+              align="center"
+            >
+              <template #default="{ row }">
+                <el-tag
+                  v-if="row.sourceType"
+                  :type="row.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'"
+                  size="small"
+                >
+                  {{ row.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+                </el-tag>
+                <span v-else style="color: #909399;">-</span>
+              </template>
+            </el-table-column>
+            <el-table-column
               prop="applyDate"
               :label="$t('research.c1Propagation.columns.applyDate')"
               min-width="160"
@@ -203,6 +231,9 @@
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
                 <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+                <el-tag v-if="item.sourceType" :type="item.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                  {{ item.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+                </el-tag>
                 <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
@@ -210,6 +241,12 @@
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.c1Propagation.columns.varietyName') }}</span>
                   <span class="info-value">{{ item.varietyName }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.c1Propagation.form.demandQuantity') }}</span>
+                  <span class="info-value" style="color: #009A44; font-weight: 500;">
+                    {{ item.demandQuantity || '-' }}<span v-if="item.demandQuantity" style="color: #909399; font-size: 12px;"> kg</span>
+                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.c1Propagation.columns.applyDate') }}</span>

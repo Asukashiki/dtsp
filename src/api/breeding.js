@@ -800,6 +800,67 @@ export const getBreedingTestPageList = (data) => {
   })
 }
 
+// ==================== 11. OSE 繁殖批次信息数据采集 ====================
+
+/**
+ * 查询OSE繁殖批次采集列表
+ * Query OSE batch collection list
+ */
+export const getOseBatchCollectionList = (params) => {
+  return agricultureRequest({
+    url: '/seed/ose/batch/collection/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 获取OSE繁殖批次采集详情
+ * Get OSE batch collection detail
+ */
+export const getOseBatchCollectionDetail = (id) => {
+  return agricultureRequest({
+    url: `/seed/ose/batch/collection/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增OSE繁殖批次采集
+ * Add OSE batch collection
+ */
+export const addOseBatchCollection = (data) => {
+  return agricultureRequest({
+    url: '/seed/ose/batch/collection/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改OSE繁殖批次采集
+ * Update OSE batch collection
+ */
+export const updateOseBatchCollection = (data) => {
+  return agricultureRequest({
+    url: '/seed/ose/batch/collection/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除OSE繁殖批次采集
+ * Delete OSE batch collection
+ */
+export const deleteOseBatchCollection = (ids) => {
+  return agricultureRequest({
+    url: '/seed/ose/batch/collection/delete',
+    method: 'post',
+    data: ids
+  })
+}
+
 /**
  * 查询繁殖检测列表（不分页）
  * Query breeding test list without pagination

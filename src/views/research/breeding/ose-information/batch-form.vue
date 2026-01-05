@@ -55,33 +55,33 @@
                 <el-option
                   v-for="item in parentalSeedSourceOptions"
                   :key="item.parentalSeedSource"
-                  :label="item.parentalSeedSource"
+                  :label="item.produceBatchName || item.parentalSeedSource"
                   :value="item.parentalSeedSource"
                 />
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
-              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
-                <el-option
-                  v-for="item in options.crop_type"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
+              <el-input
+                v-model="cropTypeLabel"
+                :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')"
+                disabled
+              />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" readonly />
+              <el-input
+                v-model="formData.varietyName"
+                :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')"
+                disabled
+              />
             </el-form-item>
 
             <el-form-item label="Multiplication Level" prop="breedingLevel">
-              <el-select v-model="formData.breedingLevel" :placeholder="$t('common.pleaseSelect')" class="full-width">
-                <el-option label="Pre-Basic" value="Pre-Basic" />
-                <el-option label="Basic" value="Basic" />
-                <el-option label="C1" value="C1" />
-                <!-- <el-option label="C2" value="C2" /> -->
-              </el-select>
+              <el-input
+                v-model="formData.breedingLevel"
+                :placeholder="$t('common.pleaseSelect')"
+                disabled
+              />
             </el-form-item>
 
 
@@ -171,9 +171,14 @@ const loading = ref(false)
 const breedSeedProduceList = ref([])
 const confirmedDistributionList = ref([])
 const parentalSeedSourceOptions = ref([])
-const { options } = useDict(['crop_type'])
+const { getLabelByValue } = useDict(['crop_type'])
 
 const isEdit = computed(() => !!route.params.id)
+
+// 计算属性：作物类型显示 label
+const cropTypeLabel = computed(() => {
+  return formData.value.cropType ? getLabelByValue('crop_type', formData.value.cropType) : ''
+})
 
 const formData = ref({
   distributionId: '',
@@ -255,20 +260,28 @@ const handleDistributionIdChange = (value) => {
 
   if (selectedDistribution && selectedDistribution.distributeDetail?.detailList) {
     // 从detailList中提取并去重parentalSeedSource选项
+    // 只保留 Pre-Basic 等级的种子（Basic 等级的种子已经扩繁完成）
     const detailList = selectedDistribution.distributeDetail.detailList
     const uniqueOptions = []
-    const seenSources = new Set()
+    const seenBatches = new Set()
 
     detailList.forEach(detail => {
-      const source = detail.parentalSeedSource
-      if (source && !seenSources.has(source)) {
-        seenSources.add(source)
+      // 只处理 Pre-Basic 等级的种子
+      if (detail.seedType !== 'Pre-Basic') {
+        return
+      }
+
+      // Use breedSeedProduceBatchId as the unique key and display value
+      const batchId = detail.breedSeedProduceBatchId
+      if (batchId && !seenBatches.has(batchId)) {
+        seenBatches.add(batchId)
         uniqueOptions.push({
-          parentalSeedSource: source,
+          parentalSeedSource: batchId, // Use batch ID as parental seed source
           varietyName: detail.varietyName,
           cropType: detail.cropType,
           seedType: detail.seedType,
-          produceBatchId: detail.breedSeedProduceBatchId
+          produceBatchId: batchId,
+          produceBatchName: detail.produceBatchName || batchId
         })
       }
     })
@@ -276,8 +289,8 @@ const handleDistributionIdChange = (value) => {
     parentalSeedSourceOptions.value = uniqueOptions
     console.log('Parental seed source options:', uniqueOptions)
 
-    // 默认选择第一个选项
-    if (uniqueOptions.length > 0) {
+    // 如果只有一个选项，自动选择
+    if (uniqueOptions.length === 1) {
       formData.value.parentalSeedSource = uniqueOptions[0].parentalSeedSource
       formData.value.cropType = uniqueOptions[0].cropType || ''
       formData.value.varietyName = uniqueOptions[0].varietyName || ''
@@ -291,10 +304,11 @@ const handleParentalSeedSourceChange = (value) => {
   console.log('Parental seed source changed:', value)
 
   if (!value) {
-    // 如果清空选择，则清空cropType和varietyName
+    // 如果清空选择，则清空cropType、varietyName和breedingLevel
     formData.value.cropType = ''
     formData.value.varietyName = ''
-    console.log('Cleared cropType and varietyName')
+    formData.value.breedingLevel = ''
+    console.log('Cleared cropType, varietyName and breedingLevel')
     return
   }
 
@@ -306,13 +320,14 @@ const handleParentalSeedSourceChange = (value) => {
   console.log('Selected item:', selectedItem)
 
   if (selectedItem) {
-    // 自动填充cropType和varietyName
+    // 自动填充cropType、varietyName和breedingLevel
     formData.value.cropType = selectedItem.cropType || ''
     formData.value.varietyName = selectedItem.varietyName || ''
     formData.value.breedingLevel = selectedItem.seedType || ''
     console.log('Updated formData:', {
       cropType: formData.value.cropType,
-      varietyName: formData.value.varietyName
+      varietyName: formData.value.varietyName,
+      breedingLevel: formData.value.breedingLevel
     })
   } else {
     console.warn('No matching item found for value:', value)

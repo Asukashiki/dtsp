@@ -13,13 +13,24 @@
       </div>
 
       <div class="card-body">
-        <!-- 申请信息（只读） -->
+        <!-- 状态标签 -->
+        <div class="status-banner status-pending">
+          <el-tag type="warning" size="large">
+            {{ $t('research.c1Propagation.status.pending') }}
+          </el-tag>
+        </div>
+
+        <!-- 机构信息 -->
         <div class="detail-section">
           <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.c1Propagation.form.applicationInfo') }}
+            <i class="ri-building-line"></i>
+            {{ $t('research.c1Propagation.form.basicInfo') }}
           </div>
           <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.applicantOrgType') }}:</span>
+              <span class="value">{{ data.applicantOrgType ? $t(`research.c1Propagation.orgType.${data.applicantOrgType}`) : '-' }}</span>
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.applicantOrgName') }}:</span>
               <span class="value">{{ data.applicantOrgName }}</span>
@@ -27,6 +38,32 @@
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.applicantOrgId') }}:</span>
               <span class="value">{{ data.applicantOrgId }}</span>
+            </div>
+            <div class="detail-item" v-if="data.authId">
+              <span class="label">{{ $t('research.c1Propagation.columns.authId') }}:</span>
+              <span class="value">{{ data.authId }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 繁殖信息 -->
+        <div class="detail-section">
+          <div class="section-title">
+            <i class="ri-plant-line"></i>
+            {{ $t('research.c1Propagation.form.propagationInfo') }}
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
+              <span class="value">{{ data.propagationBatchId }}</span>
+            </div>
+            <div class="detail-item" v-if="data.sourceType">
+              <span class="label">{{ $t('research.c1Propagation.sourceType') }}:</span>
+              <span class="value">
+                <el-tag :type="data.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                  {{ data.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+                </el-tag>
+              </span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
@@ -37,12 +74,23 @@
               <span class="value">{{ data.varietyName }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
-              <span class="value">{{ data.propagationBatchId }}</span>
-            </div>
-            <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.applyDate') }}:</span>
               <span class="value">{{ data.applyDate }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
+              <span class="value">
+                <span style="font-weight: 500; color: #009A44;">{{ data.demandQuantity || '-' }}</span>
+                <span v-if="data.demandQuantity" style="margin-left: 4px; color: #909399; font-size: 13px;">kg</span>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>
+              <span class="value">{{ data.fromSeedType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.toSeedType') }}:</span>
+              <span class="value">{{ data.toSeedType || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.c1Propagation.form.applyDescription') }}:</span>
@@ -213,7 +261,7 @@ const handleCancel = () => {
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(64, 158, 255, 0.05) 0%, rgba(64, 158, 255, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
 }
 
 .card-title {
@@ -222,7 +270,7 @@ const handleCancel = () => {
   gap: 8px;
   font-size: 18px;
   font-weight: 600;
-  color: #409EFF;
+  color: #009A44;
 }
 
 .card-title i {
@@ -233,9 +281,27 @@ const handleCancel = () => {
   padding: 30px 24px;
 }
 
+.status-banner {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+.status-banner.status-pending {
+  background: linear-gradient(135deg, rgba(230, 162, 60, 0.1) 0%, rgba(230, 162, 60, 0.05) 100%);
+}
+
 .detail-section,
 .form-section {
   margin-bottom: 30px;
+}
+
+.detail-section:last-child,
+.form-section:last-child {
+  margin-bottom: 0;
 }
 
 .section-title {
@@ -246,22 +312,22 @@ const handleCancel = () => {
   font-weight: 600;
   color: #333;
   padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(64, 158, 255, 0.05) 0%, rgba(64, 158, 255, 0.02) 100%);
-  border-left: 4px solid #409EFF;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
+  border-left: 4px solid #009A44;
   margin-bottom: 20px;
   border-radius: 4px;
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .detail-item.full-width {
@@ -269,13 +335,14 @@ const handleCancel = () => {
 }
 
 .detail-item .label {
-  font-size: 13px;
-  color: #909399;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
 }
 
 .detail-item .value {
-  font-size: 14px;
-  color: #303133;
+  font-size: 15px;
+  color: #333;
 }
 
 .audit-radio-group {
