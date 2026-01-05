@@ -161,49 +161,21 @@
           </div>
 
           <!-- 工作流信息 -->
-          <div class="info-card" v-if="showWorkflowInfo">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-git-commit-line"></i>
-                <span>{{ $t('research.breedingData.batch.form.workflowInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- 审批意见输入框（仅在审批模式下显示） -->
-              <div v-if="pageMode === 'audit'">
-                <el-form-item :label="$t('research.breedingData.batch.form.approvalComment')" prop="approvalComment">
-                  <el-input 
-                    v-model="formData.approvalComment" 
-                    type="textarea" 
-                    :rows="4" 
-                    :placeholder="$t('research.breedingData.batch.placeholder.approvalComment')" 
-                  />
-                </el-form-item>
-              </div>
-
-              <!-- 历史审批信息 -->
-              <div class="mb-4">
-                <h4 class="mb-3">{{ $t('research.breedingData.batch.form.approvalHistory') }}</h4>
-                <el-table :data="approvalHistory" border stripe>
-                  <el-table-column :label="$t('research.breedingData.batch.form.approver')" prop="approver" width="200" />
-                  <el-table-column :label="$t('research.breedingData.batch.form.approvalTime')" prop="approvalTime" width="250" />
-                  <el-table-column :label="$t('research.breedingData.batch.form.comment')" prop="comment" />
-                </el-table>
-              </div>
-            </div>
-          </div>
+          <WorkflowInfo
+            :workflow-status="formData.workflowStatus"
+            :mode="pageMode"
+            :approval-history="approvalHistory"
+            v-model="formData.approvalComment"
+            comment-prop="approvalComment"
+            :comment-required="pageMode === 'audit'"
+            :hide-for-states="['S0', 'S10']" />
 
           <!-- 操作按钮 -->
-          <div class="form-actions">
-            <el-button 
-              v-for="button in getActionButtons()" 
-              :key="button.action"
-              :type="button.type" 
-              @click="handleAction(button.action)"
-              :loading="submitLoading && button.action === 'save'">
-              {{ button.label }}
-            </el-button>
-          </div>
+          <ActionButtons
+            :workflow-status="formData.workflowStatus"
+            :mode="pageMode"
+            :loading="submitLoading"
+            @action="handleAction" />
         </el-form>
       </div>
     </div>
@@ -218,6 +190,8 @@ import { ElMessage } from 'element-plus'
 import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
+import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -237,16 +211,6 @@ const userStore = useUserStore()
 const isEdit = computed(() => !!route.params.dataId)
 const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
 const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
-
-// 控制工作流信息部分的显示：仅在非草稿和非新建状态下显示
-const showWorkflowInfo = computed(() => {
-  // 新建模式下不显示
-  if (!isEdit.value && pageMode.value === 'add') {
-    return false
-  }
-  // 草稿状态(S0)和作废状态(S10)不显示
-  return !['S0', 'S10'].includes(formData.workflowStatus)
-})
 
 // 审批历史记录
 const approvalHistory = ref([])
@@ -333,43 +297,6 @@ const statusOptions = [
   { label: 'Ongoing', value: 'Ongoing' },
   { label: 'Finished', value: 'Finished' }
 ]
-
-const getActionButtons = () => {
-  const workflowStatus = formData.workflowStatus
-  const mode = pageMode.value
-  
-  // 新建/编辑模式
-  if (mode === 'add' || mode === 'edit') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'primary', label: 'save', action: 'save' }
-    ]
-  }
-  
-  // 审批模式
-  if (mode === 'audit') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'success', label: 'approve', action: 'approve' },
-      { type: 'danger', label: 'reject', action: 'reject' }
-    ]
-  }
-  
-  // 查看模式（已审批/已归档/作废状态）
-  if (mode === 'view') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'primary', label: 'archive', action: 'archive' },
-      { type: 'danger', label: 'cancelBatch', action: 'cancelBatch' }
-    ]
-  }
-  
-  // 默认按钮
-  return [
-    { type: '', label: 'cancel', action: 'cancel' },
-    { type: 'primary', label: 'save', action: 'save' }
-  ]
-}
 
 const handleAction = (action) => {
   switch (action) {
@@ -626,11 +553,5 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px 0;
-}
+@use '@/assets/styles/workflow-common.scss';
 </style>
