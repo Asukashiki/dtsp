@@ -146,38 +146,38 @@ const routes = [
         path: 'breeding-data/batch',
         name: 'BreedingBatchList',
         component: () => import('../views/research/breeding-data/batch/index.vue'),
-        meta: { title: '育种批次管理', requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/add',
         name: 'BreedingBatchAdd',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: '新增育种批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/edit/:dataId',
         name: 'BreedingBatchEdit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: '编辑育种批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/detail/:dataId',
         name: 'BreedingBatchDetail',
         component: () => import('../views/research/breeding-data/batch/detail.vue'),
-        meta: { title: '育种批次详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.detail', hideInMenu: true, requiresAuth: true }
       },
 
         {
         path: 'breeding-data/batch/audit/:dataId',
         name: 'BreedingBatchAudit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.audit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/approve',
         name: 'BreedingBatchApprove',
         component: () => import('../views/research/breeding-data/batch/approve.vue'),
-        meta: { title: '育种批次审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingBatch.approve', hideInMenu: true, requiresAuth: true }
       },
 
 
@@ -186,25 +186,25 @@ const routes = [
         path: 'breeding-data/plot',
         name: 'PlotInfoList',
         component: () => import('../views/research/breeding-data/plot/index.vue'),
-        meta: { title: '地块及播种信息管理', requiresAuth: true }
+        meta: { title: 'router.breedingData.plot.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/add',
         name: 'PlotInfoAdd',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
-        meta: { title: '新增地块信息', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.plot.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/edit/:plotId',
         name: 'PlotInfoEdit',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
-        meta: { title: '编辑地块信息', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.plot.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/detail/:plotId',
         name: 'PlotInfoDetail',
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
-        meta: { title: '地块信息详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.plot.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 地块及播种信息管理审核
@@ -212,7 +212,7 @@ const routes = [
         path: 'breeding-data/plot-audit',
         name: 'PlotAuditList',
         component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
-        meta: { title: '地块及播种信息管理审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.plot.audit', requiresAuth: true }
       },
 
       // 试验基础信息管理
@@ -220,25 +220,25 @@ const routes = [
         path: 'breeding-data/trial',
         name: 'TrialBasicList',
         component: () => import('../views/research/breeding-data/trial/index.vue'),
-        meta: { title: '试验基础信息管理', requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/add',
         name: 'TrialBasicAdd',
         component: () => import('../views/research/breeding-data/trial/form.vue'),
-        meta: { title: '新增试验信息', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/edit/:trialId',
         name: 'TrialBasicEdit',
         component: () => import('../views/research/breeding-data/trial/form.vue'),
-        meta: { title: '编辑试验信息', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/detail/:trialId',
         name: 'TrialBasicDetail',
         component: () => import('../views/research/breeding-data/trial/detail.vue'),
-        meta: { title: '试验信息详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农艺性状数据采集
@@ -246,38 +246,38 @@ const routes = [
         path: 'breeding-data/trait',
         name: 'AgronomicTraitDataList',
         component: () => import('../views/research/breeding-data/trait/index.vue'),
-        meta: { title: '农艺性状数据采集', requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.list', requiresAuth: true }
       },
       // 农艺性状数据采集
       {
         path: 'breeding-data/trait-audit',
         name: 'AgronomicTraitDataAudit',
         component: () => import('../views/research/breeding-data/trait-audit/index.vue'),
-        meta: { title: '农艺性状数据审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.audit', requiresAuth: true }
       },
       {
         path: 'breeding-data/trait-audit/review/:traitId',
         name: 'AgronomicTraitDataAuditReview',
         component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
-        meta: { title: '农艺性状数据审核页面', requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.auditReview', requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/add',
         name: 'AgronomicTraitDataAdd',
         component: () => import('../views/research/breeding-data/trait/form.vue'),
-        meta: { title: '新增农艺性状数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/edit/:traitId',
         name: 'AgronomicTraitDataEdit',
         component: () => import('../views/research/breeding-data/trait/form.vue'),
-        meta: { title: '编辑农艺性状数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/detail/:traitId',
         name: 'AgronomicTraitDataDetail',
         component: () => import('../views/research/breeding-data/trait/detail.vue'),
-        meta: { title: '农艺性状数据详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trait.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农事记录数据采集
@@ -285,25 +285,25 @@ const routes = [
         path: 'breeding-data/farming',
         name: 'FarmingRecordDataList',
         component: () => import('../views/research/breeding-data/farming/index.vue'),
-        meta: { title: '农事记录数据采集', requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/add',
         name: 'FarmingRecordDataAdd',
         component: () => import('../views/research/breeding-data/farming/form.vue'),
-        meta: { title: '新增农事记录', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/edit/:farmingId',
         name: 'FarmingRecordDataEdit',
         component: () => import('../views/research/breeding-data/farming/form.vue'),
-        meta: { title: '编辑农事记录', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/detail/:farmingId',
         name: 'FarmingRecordDataDetail',
         component: () => import('../views/research/breeding-data/farming/detail.vue'),
-        meta: { title: '农事记录详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农事记录数据采集审核 - 新增的审核路由
@@ -311,19 +311,19 @@ const routes = [
         path: 'breeding-data/farming/farming-index',
         name: 'FarmingRecordAuditIndex',
         component: () => import('../views/research/breeding-data/farming/farming-index.vue'),
-        meta: { title: '农事记录数据采集审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.auditIndex', requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/farming-detail/:farmingId',
         name: 'FarmingRecordAuditDetail',
         component: () => import('../views/research/breeding-data/farming/farming-detail.vue'),
-        meta: { title: '农事记录审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.auditDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/farming-form/:farmingId',
         name: 'FarmingRecordAuditForm',
         component: () => import('../views/research/breeding-data/farming/farming-form.vue'),
-        meta: { title: '农事记录审核操作', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.farming.auditForm', hideInMenu: true, requiresAuth: true }
       },
 
       // 环境属性数据采集
@@ -331,25 +331,25 @@ const routes = [
         path: 'breeding-data/environment',
         name: 'EnvironmentDataList',
         component: () => import('../views/research/breeding-data/environment/index.vue'),
-        meta: { title: '环境属性数据采集', requiresAuth: true }
+        meta: { title: 'router.breedingData.environment.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/add',
         name: 'EnvironmentDataAdd',
         component: () => import('../views/research/breeding-data/environment/form.vue'),
-        meta: { title: '新增环境数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.environment.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/edit/:envId',
         name: 'EnvironmentDataEdit',
         component: () => import('../views/research/breeding-data/environment/form.vue'),
-        meta: { title: '编辑环境数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.environment.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/detail/:envId',
         name: 'EnvironmentDataDetail',
         component: () => import('../views/research/breeding-data/environment/detail.vue'),
-        meta: { title: '环境数据详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.environment.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 田间检验数据采集
@@ -357,43 +357,43 @@ const routes = [
         path: 'breeding-data/field-inspection',
         name: 'FieldInspection',
         component: () => import('../views/research/data-collection/yield-data/index.vue'),
-        meta: { title: '田间检验数据采集', requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/add',
         name: 'FieldInspectionAdd',
         component: () => import('../views/research/data-collection/yield-data/form.vue'),
-        meta: { title: '新增田间检验数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/edit/:id',
         name: 'FieldInspectionEdit',
         component: () => import('../views/research/data-collection/yield-data/form.vue'),
-        meta: { title: '编辑田间检验数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/detail/:id',
         name: 'FieldInspectionDetail',
         component: () => import('../views/research/data-collection/yield-data/detail.vue'),
-        meta: { title: '田间检验数据详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.detail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/audit/:id',
         name: 'FieldInspectionAudit',
         component: () => import('../views/research/data-collection/yield-data/audit.vue'),
-        meta: { title: '田间检验数据审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.audit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/audit-detail/:id',
         name: 'FieldInspectionAuditDetail',
         component: () => import('../views/research/data-collection/yield-data/audit-detail.vue'),
-        meta: { title: '田间检验数据审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.auditDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection-audit',
         name: 'FieldInspectionAuditList',
         component: () => import('../views/research/data-collection/yield-data/audit-list.vue'),
-        meta: { title: '田间检验数据采集审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.fieldInspection.auditList', requiresAuth: true }
       },
 
       // 实验室测试数据采集
@@ -401,25 +401,25 @@ const routes = [
         path: 'breeding-data/laboratory-test',
         name: 'BreedingLabTest',
         component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
-        meta: { title: '实验室测试数据采集', requiresAuth: true }
+        meta: { title: 'router.breedingData.laboratoryTest.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/add',
         name: 'BreedingLabTestAdd',
         component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: '新增实验室测试数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.laboratoryTest.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/edit/:id',
         name: 'BreedingLabTestEdit',
         component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: '编辑实验室测试数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.laboratoryTest.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/detail/:id',
         name: 'BreedingLabTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
-        meta: { title: '实验室测试数据详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.laboratoryTest.detail', hideInMenu: true, requiresAuth: true }
       },
 
       // 实验室测试数据采集审核
@@ -428,7 +428,7 @@ const routes = [
         path: 'breeding-data/laboratory-test-audit',
         name: 'BreedingLabTestAudit',
         component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
-        meta: { title: '实验室测试数据采集审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.laboratoryTest.audit', requiresAuth: true }
       },
 
       // Breeder seed生产数据采集
@@ -437,76 +437,76 @@ const routes = [
         path: 'breeding-data/dataset-compilation',
         name: 'DatasetCompilation',
         component: () => import('../views/research/breeding-data/dataset-compilation/index.vue'),
-        meta: { title: '育种数据集编制', requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetCompilation.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/add',
         name: 'DatasetCompilationAdd',
         component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
-        meta: { title: '新增数据集', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetCompilation.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/edit/:id',
         name: 'DatasetCompilationEdit',
         component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
-        meta: { title: '编辑数据集', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetCompilation.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/detail/:id',
         name: 'DatasetCompilationDetail',
         component: () => import('../views/research/breeding-data/dataset-compilation/detail.vue'),
-        meta: { title: '数据集详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetCompilation.detail', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 育种数据集审核
       {
         path: 'breeding-data/dataset-audit',
         name: 'DatasetAudit',
         component: () => import('../views/research/breeding-data/dataset-audit/index.vue'),
-        meta: { title: '育种数据集审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetAudit.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-audit/review/:id',
         name: 'DatasetAuditReview',
         component: () => import('../views/research/breeding-data/dataset-audit/review.vue'),
-        meta: { title: '审核数据集', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.datasetAudit.review', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 试验基础信息管理审核
       {
         path: 'breeding-data/trial-audit',
         name: 'TrialBasicAudit',
         component: () => import('../views/research/breeding-data/trial-audit/index.vue'),
-        meta: { title: '试验基础信息管理审核', requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.audit', requiresAuth: true }
       },
       {
         path: 'breeding-data/trial-audit/review/:id',
         name: 'TrialBasicAuditReview',
         component: () => import('../views/research/breeding-data/trial-audit/review.vue'),
-        meta: { title: '审核试验', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.trial.auditReview', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 育种许可数据录入
       {
         path: 'breeding-data/breeding-license',
         name: 'BreedingLicense',
         component: () => import('../views/research/breeding-data/breeding-license/index.vue'),
-        meta: { title: '育种许可数据录入', requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingLicense.list', requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/add',
         name: 'BreedingLicenseAdd',
         component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
-        meta: { title: '新增许可', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingLicense.add', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/edit/:id',
         name: 'BreedingLicenseEdit',
         component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
-        meta: { title: '编辑许可', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingLicense.edit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/detail/:id',
         name: 'BreedingLicenseDetail',
         component: () => import('../views/research/breeding-data/breeding-license/detail.vue'),
-        meta: { title: '许可详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'router.breedingData.breedingLicense.detail', hideInMenu: true, requiresAuth: true }
       },
       // 数据采集 - 试验基础数据采集
       {

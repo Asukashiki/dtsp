@@ -335,9 +335,25 @@ $color-bg-lighter: #F8F9FA;
   display: flex;
   justify-content: center;
   gap: 16px;
-  padding: 24px 0;
-  margin-top: 24px;
-  border-top: 1px solid $color-border-lighter;
+  padding: 24px 20px;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid $color-border-lighter;
+}
+
+// ==================== 表单标签样式 ====================
+// 确保表单标签不换行，完整显示，右对齐
+.card-body {
+  .el-form-item {
+    .el-form-item__label {
+      white-space: nowrap;
+      text-align: right !important;
+      justify-content: flex-end !important;
+      flex-shrink: 0;
+    }
+  }
 }
 
 // ==================== 响应式设计 ====================

@@ -26,20 +26,19 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <!-- 2. Trial Name -->
+                <!-- Trial Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.trialName')" prop="trialName">
                     <el-input v-model="formData.trialName" :placeholder="$t('research.breedingData.trial.placeholder.trialName')" />
                   </el-form-item>
                 </el-col>
-                <!-- 1. Trial ID -->
+                <!-- Trial ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.trialId')">
                     <el-input v-model="formData.trialId" disabled :placeholder="'T_{cropType}_{year}_000001'" />
                   </el-form-item>
                 </el-col>
-
-                <!-- 3. Batch Name -->
+                <!-- Batch Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.batchName')" prop="batchId">
                     <el-select
@@ -47,47 +46,38 @@
                       :placeholder="$t('research.breedingData.trial.placeholder.batchName')"
                       filterable
                       style="width: 100%"
-                      @change="handleBatchChange"
-                    >
+                      @change="handleBatchChange">
                       <el-option
                         v-for="item in batchOptions"
                         :key="item.batchId"
                         :label="item.batchName"
-                        :value="item.batchId"
-                      >
+                        :value="item.batchId">
                         <div style="display: flex; justify-content: space-between;">
                           <span>{{ item.batchName }}</span>
-                          <!-- <el-tag :type="getStatusType(item.status)" size="small" effect="plain">
-                            {{ item.status }}
-                          </el-tag> -->
                         </div>
                       </el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 4. Crop Type -->
+                <!-- Crop Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.cropType')" prop="cropType">
-                    <el-input 
-                      v-model="cropTypeDisplay" 
-                      disabled 
-                      :placeholder="$t('research.breedingData.trial.placeholder.cropType')" 
-                    />
+                    <el-input v-model="cropTypeDisplay" disabled :placeholder="$t('research.breedingData.trial.placeholder.cropType')" />
                   </el-form-item>
                 </el-col>
-                <!-- 5. Variety Code -->
+                <!-- Variety Code -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Variety Code">
                     <el-input v-model="formData.varietyCode" disabled :placeholder="$t('research.breedingData.trial.placeholder.autoFilledFromBatch')" />
                   </el-form-item>
                 </el-col>
-                <!-- 6. Variety Name -->
+                <!-- Variety Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.varietyName')" prop="varietyName">
                     <el-input v-model="formData.varietyName" disabled :placeholder="$t('research.breedingData.trial.placeholder.varietyName')" />
                   </el-form-item>
                 </el-col>
-                <!-- 7. Location ID -->
+                <!-- Location ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.locationId')" prop="locationId">
                     <el-select
@@ -95,14 +85,12 @@
                       :placeholder="$t('research.breedingData.trial.placeholder.locationId')"
                       filterable
                       style="width: 100%"
-                      @change="handleLocationChange"
-                    >
+                      @change="handleLocationChange">
                       <el-option
                         v-for="item in locationOptions"
                         :key="item.locationId"
                         :label="`${item.locationName} (${item.locationId})`"
-                        :value="item.locationId"
-                      >
+                        :value="item.locationId">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                           <span>{{ item.locationName }}</span>
                           <span style="color: #8492a6; font-size: 13px;">{{ item.region }} - {{ item.zone }}</span>
@@ -111,27 +99,26 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 8. GPS Location (只读,自动填充) -->
+                <!-- GPS Location -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.gpsLocation')" prop="gpsLocation">
                     <el-input
                       v-model="formData.gpsLocation"
                       disabled
-                      :placeholder="$t('research.breedingData.trial.placeholder.gpsLocation')"
-                    >
+                      :placeholder="$t('research.breedingData.trial.placeholder.gpsLocation')">
                       <template #prepend>
                         <i class="ri-map-pin-line"></i>
                       </template>
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <!-- 9. Year -->
+                <!-- Year -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.year')" prop="year">
                     <el-date-picker v-model="formData.year" type="year" value-format="YYYY" style="width: 100%" :placeholder="$t('research.breedingData.trial.placeholder.year')" />
                   </el-form-item>
                 </el-col>
-                <!-- 10. Season -->
+                <!-- Season -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.season')" prop="season">
                     <el-select v-model="formData.season" :placeholder="$t('research.breedingData.trial.placeholder.season')" style="width: 100%">
@@ -139,7 +126,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 11. Design Type -->
+                <!-- Design Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.designType')" prop="designType">
                     <el-select v-model="formData.designType" :placeholder="$t('research.breedingData.trial.placeholder.designType')" style="width: 100%">
@@ -147,13 +134,13 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 12. Replications -->
+                <!-- Replications -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.trial.form.replications')" prop="replications">
                     <el-input-number v-model="formData.replications" :min="1" :max="10" :placeholder="$t('research.breedingData.trial.placeholder.replications')" style="width: 100%" />
                   </el-form-item>
                 </el-col>
-                
+
                 <!-- 以下字段仅在编辑模式下显示 -->
                 <template v-if="isEdit">
                   <!-- 创建人 -->
@@ -168,7 +155,6 @@
                       <el-input v-model="formData.createTime" disabled />
                     </el-form-item>
                   </el-col>
-                  
                   <!-- 修改人 -->
                   <el-col :xs="24" :sm="12">
                     <el-form-item :label="$t('research.breedingData.trial.form.modifiedName')">
@@ -181,7 +167,6 @@
                       <el-input v-model="formData.updateTime" disabled />
                     </el-form-item>
                   </el-col>
-                  
                   <!-- 审核人 -->
                   <el-col :xs="24" :sm="12">
                     <el-form-item :label="$t('research.breedingData.trial.form.approvedName')">
@@ -194,7 +179,6 @@
                       <el-input v-model="formData.approvedTime" disabled />
                     </el-form-item>
                   </el-col>
-                  
                   <!-- 退回原因 (仅在退回状态时显示) -->
                   <el-col v-if="formData.trialStatus === 'S3'" :xs="24" :sm="24">
                     <el-form-item :label="$t('research.breedingData.trial.form.rejectReason')">
@@ -245,10 +229,10 @@ const saveLoading = ref(false)
 const submitLoading = ref(false)
 const batchOptions = ref([])
 const locationOptions = ref([])
+
 // 使用 useDict hook 获取字典数据
-const { options, getLabelByValue, loading: dictLoading } = useDict([
-  'crop_type'
-])
+const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
+
 const isEdit = computed(() => !!route.params.trialId)
 
 const formData = reactive({
@@ -264,7 +248,7 @@ const formData = reactive({
   cropType: '',
   varietyCode: '',
   varietyName: '',
-  trialStatus: 'S0', // 默认草稿状态
+  trialStatus: 'S0',
   rejectedName: '',
   rejectedTime: '',
   rejectReason: ''
@@ -311,9 +295,7 @@ const loadBatchOptions = async () => {
   try {
     const res = await getBatchOptions()
     // 仅显示已批准和进行中的批次
-    batchOptions.value = (res.data || []).filter(item =>
-      item.workflowStatus === "S2"
-    )
+    batchOptions.value = (res.data || []).filter(item => item.workflowStatus === "S2")
   } catch (error) {
     console.error('获取批次选项失败:', error)
   }
@@ -337,22 +319,18 @@ const getStatusType = (status) => {
 }
 
 const handleBatchChange = (batchId) => {
-  // 根据选择的批次自动填充 cropType, varietyCode, varietyName
   const selectedBatch = batchOptions.value.find(item => item.batchId === batchId)
   if (selectedBatch) {
     formData.cropType = selectedBatch.cropType || ''
     formData.varietyCode = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
   }
-  // 批次变更时重新生成试验ID
   generateTrialId()
 }
 
 const handleLocationChange = (locationId) => {
-  // 根据选择的研究中心自动填充 GPS Location
   const selectedLocation = locationOptions.value.find(item => item.locationId === locationId)
   if (selectedLocation) {
-    // 组合经纬度为GPS Location格式
     if (selectedLocation.latitude && selectedLocation.longitude) {
       formData.gpsLocation = `${selectedLocation.latitude},${selectedLocation.longitude}`
     } else {
@@ -432,7 +410,7 @@ const handleSubmitAudit = async () => {
         await editTrialBasic(submitData)
       } else {
         const res = await addTrialBasic(submitData)
-        trialId = res.data // 后端返回的trialId直接在data字段中
+        trialId = res.data
         formData.trialId = trialId
       }
 
@@ -448,22 +426,18 @@ const handleSubmitAudit = async () => {
   }).catch(() => {})
 }
 
-// 生成 trialId: T_${cropType}_${year}_serial(6位)
+// 生成 trialId
 const generateTrialId = () => {
-  // 编辑模式下不自动生成
   if (isEdit.value) return
 
   const { cropType, year } = formData
-
   if (!cropType || !year) {
     formData.trialId = ''
     return
   }
 
-  // 生成6位流水号（这里暂时使用随机数，实际应该从后端获取最新的流水号）
   const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
   formData.trialId = `T_${cropType}_${year}_${serial}`
-
   console.log(formData.trialId,'formData.trialId')
 }
 
@@ -485,37 +459,4 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px 0;
-}
-
-.reject-content {
-  .reject-meta {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 8px;
-    font-size: 13px;
-    color: #909399;
-    
-    span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      
-      i {
-        font-size: 14px;
-      }
-    }
-  }
-  
-  .reject-reason-text {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #303133;
-  }
-}
 </style>

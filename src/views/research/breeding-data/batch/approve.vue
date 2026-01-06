@@ -204,14 +204,14 @@ const tabConfig = [
     icon: 'ri-time-line'
   },
   {
-    name: 'voided',
-    label: 'research.breedingData.batch.tabs.voided',
-    icon: 'ri-forbid-line'
-  },
-  {
     name: 'approved',
     label: 'research.breedingData.batch.tabs.approved',
     icon: 'ri-check-line'
+  },
+  {
+    name: 'voided',
+    label: 'research.breedingData.batch.tabs.voided',
+    icon: 'ri-forbid-line'
   }
 ]
 
