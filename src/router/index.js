@@ -19,17 +19,6 @@ const routeWhitelist = [
   '/notice',
 ]
 
-// 路由白名单
-const routeWhitelist = [
-  // 首页相关
-  '/home',
-  '/user',
-  '/dataList',
-  '/print/seed/breeding-certification',
-  '/print/seed/c1-breeding-certificate',
-  '/notice',
-]
-
 const routes = [
   // 打印页面（独立布局，不带侧边栏和导航）
   {
