@@ -9,13 +9,14 @@
       :disabled="disabled || (loading && currentAction !== button.action)"
       @click="handleAction(button)">
       <i :class="button.icon"></i>
-      <span class="btn-text">{{ $t(`common.${button.label}`) }}</span>
+      <span class="btn-text">{{ getButtonLabel(button) }}</span>
     </el-button>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 
 const props = defineProps({
@@ -74,10 +75,34 @@ const props = defineProps({
   customButtons: {
     type: Array,
     default: null
+  },
+
+  /**
+   * Actions to exclude by default
+   */
+  excludeActions: {
+    type: Array,
+    default: () => []
+  },
+
+  /**
+   * Whether to force show view button
+   */
+  forceView: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['action'])
+
+const { t } = useI18n()
+
+const getButtonLabel = (button) => {
+  if (button.rawLabel) return button.rawLabel
+  if (button.label && button.label.includes('.')) return t(button.label)
+  return t(`common.${button.label}`)
+}
 
 const userStore = useUserStore()
 const currentAction = ref('')
@@ -193,7 +218,20 @@ const getDefaultButtons = () => {
 
 // Compute visible buttons
 const visibleButtons = computed(() => {
-  return props.customButtons || getDefaultButtons()
+  let buttons = props.customButtons || getDefaultButtons()
+
+  // Force View if enabled and not present
+  if (props.forceView && !buttons.find(b => b.action === 'view')) {
+    buttons = [
+      { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
+      ...buttons
+    ]
+  }
+
+  if (props.excludeActions && props.excludeActions.length) {
+    return buttons.filter(b => !props.excludeActions.includes(b.action))
+  }
+  return buttons
 })
 
 const handleAction = (button) => {

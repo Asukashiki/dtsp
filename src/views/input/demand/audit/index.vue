@@ -2,55 +2,31 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-task-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('input.menu.KebeleAudit') }}</h1>
-            <p class="page-subtitle">{{ $t('demandAudit.subtitle') }}</p>
-          </div>
-        </div>
-        <div class="header-right">
+      <PageHeader
+        icon="ri-task-line"
+        :title="$t('input.menu.KebeleAudit')"
+        :subtitle="$t('demandAudit.subtitle')"
+      >
+        <template #actions>
           <el-button type="primary" @click="handleBack">
             <i class="ri-arrow-left-line"></i>
             {{ $t('demandAudit.actions.back') }}
           </el-button>
-        </div>
-      </div>
+        </template>
+      </PageHeader>
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-list-check"></i>
-              <span>{{ $t('demandAudit.list') }}</span>
-            </div>
-            <div class="header-actions">
-<!--              <el-button-->
-<!--                type="primary"-->
-<!--                @click="handleBatchApprove"-->
-<!--                :disabled="selectedRows.length === 0"-->
-<!--                v-if="activeTab === 'pending'"-->
-<!--              >-->
-<!--                <i class="ri-check-line"></i>-->
-<!--                {{ $t('demandAudit.actions.batchApprove') }}-->
-<!--              </el-button>-->
-<!--              <el-button-->
-<!--                type="danger"-->
-<!--                @click="handleBatchReject"-->
-<!--                :disabled="selectedRows.length === 0"-->
-<!--                v-if="activeTab === 'pending'"-->
-<!--              >-->
-<!--                <i class="ri-close-line"></i>-->
-<!--                {{ $t('demandAudit.actions.batchReject') }}-->
-<!--              </el-button>-->
-            </div>
-          </div>
+        <InfoCard
+          :title="$t('demandAudit.list')"
+          icon="ri-list-check"
+          :is-list="true"
+        >
+          <template #actions>
+            <!-- Reserved for header actions if needed -->
+          </template>
 
-          <div class="card-body">
+          <!-- Removed redundant card-body -->
 <!--            <el-tabs v-model="activeTab">-->
 <!--              <el-tab-pane :label="$t('demandAudit.tabs.pending')" name="pending" />-->
 <!--              <el-tab-pane :label="$t('demandAudit.tabs.approved')" name="approved" />-->
@@ -157,18 +133,12 @@
                 <el-table-column :label="$t('common.actions')" fixed="right" width="280">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>
-                        {{ $t('common.view') }}
-                      </el-button>
-<!--                      <el-button link type="success" v-if ="row.status === '1'"@click="handleApprove(row)">-->
-<!--                        <i class="ri-check-line"></i>-->
-<!--                        {{ $t('demandAudit.actions.approve') }}-->
-<!--                      </el-button>-->
-<!--                      <el-button link type="danger" v-if ="row.status === '1'" @click="handleReject(row)">-->
-<!--                        <i class="ri-close-line"></i>-->
-<!--                        {{ $t('demandAudit.actions.reject') }}-->
-<!--                      </el-button>-->
+                      <ActionButtons
+                        :custom-buttons="[{ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }]"
+                        mode="list"
+                        :show-audit="false"
+                        @action="handleView(row)"
+                      />
                     </div>
                   </template>
                 </el-table-column>
@@ -230,20 +200,15 @@
                   </div>
                 </div>
                 <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
-                    {{ $t('common.view') }}
-                  </el-button>
-                  <el-button type="success" size="small" @click="handleApprove(item)">
-                    {{ $t('demandAudit.actions.approve') }}
-                  </el-button>
-                  <el-button type="danger" size="small" @click="handleReject(item)">
-                    {{ $t('demandAudit.actions.reject') }}
-                  </el-button>
+                  <ActionButtons
+                        :custom-buttons="[{ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }]"
+                        mode="list"
+                        :show-audit="false"
+                        @action="handleView(item)"
+                      />
                 </div>
               </div>
             </div>
-            </div>
-
 
             <!-- 分页 -->
             <div v-if="activeTab === 'pending' && pagination.total > 0" class="pagination-wrapper">
@@ -265,6 +230,9 @@
               v-if="activeTab === 'pending' && tableData.length === 0 && !loading"
               :description="$t('demandAudit.messages.noData')"
             />
+
+            <!-- End of Pending Tab -->
+            </div>
 
             <!-- 已审核 Tab 内容 -->
             <div v-if="activeTab === 'approved'">
@@ -341,14 +309,12 @@
                   <el-table-column :label="$t('common.actions')" fixed="right" width="220">
                     <template #default="{ row }">
                       <div class="action-buttons">
-                        <el-button link type="primary" @click="handleView(row)">
-                          <i class="ri-eye-line"></i>
-                          {{ $t('common.view') }}
-                        </el-button>
-<!--                        <el-button link type="danger" @click="handleReject(row)">-->
-<!--                          <i class="ri-close-line"></i>-->
-<!--                          {{ $t('demandAudit.actions.reject') }}-->
-<!--                        </el-button>-->
+                        <ActionButtons
+                          :custom-buttons="[{ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }]"
+                          mode="list"
+                          :show-audit="false"
+                          @action="handleView(row)"
+                        />
                       </div>
                     </template>
                   </el-table-column>
@@ -394,12 +360,12 @@
                     </div>
                   </div>
                   <div class="mobile-card-actions">
-                    <el-button type="primary" size="small" @click="handleView(item)">
-                      {{ $t('common.view') }}
-                    </el-button>
-                    <el-button type="danger" size="small" @click="handleReject(item)">
-                      {{ $t('demandAudit.actions.reject') }}
-                    </el-button>
+                    <ActionButtons
+                          :custom-buttons="[{ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }]"
+                          mode="list"
+                          :show-audit="false"
+                          @action="handleView(item)"
+                        />
                   </div>
                 </div>
               </div>
@@ -425,8 +391,7 @@
                 :description="$t('demandAudit.messages.noData')"
               />
             </div>
-          </div>
-        </div>
+        </InfoCard>
       </div>
     </div>
 
@@ -467,6 +432,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getPendingDemandPage, approveDemand, rejectDemand, getApprovedDemandPage } from '@/api/demandAudit'
+import PageHeader from '@/components/common/PageHeader.vue'
+import InfoCard from '@/components/common/InfoCard.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -769,266 +737,6 @@ onMounted(() => {
   loadData()
 })
 </script>
-<style scoped>
-.page-container {
-  min-height: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-/* age-wrapper {
-  margin: 0 auto;
-} */
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-right {
-  flex-shrink: 0;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.info-card {
-  background: white;
-}
-
-.card-header {
-  padding: 24px;
-  border-bottom: 1px solid #e8f5e9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.card-title i {
-  font-size: 22px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.card-body {
-  padding: 24px;
-}
-
-.search-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  width: 300px;
-}
-
-.table-wrapper {
-  margin-bottom: 16px;
-}
-
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.mobile-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.mobile-card-header {
-  padding: 16px;
-  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.farmer-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  font-weight: 600;
-  color: #333;
-}
-
-.mobile-card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 120px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-actions {
-  padding: 12px 16px;
-  background: #fafafa;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .header-actions {
-    width: 100%;
-  }
-
-  .header-actions .el-button {
-    flex: 1;
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .search-section {
-    flex-direction: column;
-  }
-
-  .search-input {
-    width: 100%;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>
