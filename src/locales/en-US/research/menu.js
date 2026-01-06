@@ -58,6 +58,9 @@ export default {
   laboratoryTestDetail: 'Laboratory Test Detail',
   laboratoryTestAudit: 'Laboratory Test Data Audit',
 
+  fieldDetection: 'Field Detection',
+  labTesting: 'Lab Testing',
+
   breederSeedProduction: 'Seed Production Data',
   breederSeedProductionResult: 'Production Data Collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
@@ -68,6 +71,22 @@ export default {
   breederSeedDistributionAdd: 'Add Seed Distribution',
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
+
+  prebasicSeedProduction: 'Pre-Basic Seed Batch Info',
+  prebasicSeedProductionAdd: 'Add Pre-basic Seed Production',
+  prebasicSeedProductionEdit: 'Edit Pre-basic Seed Production',
+  prebasicSeedProductionDetail: 'Pre-basic Seed Production Detail',
+
+  prebasicSeedProductionResult: 'Pre-Basic Seed Batch Data',
+  prebasicSeedProductionResultDetail: 'Production Result Detail',
+
+  basicSeedProduction: 'Basic Seed Batch Info',
+  basicSeedProductionAdd: 'Add Basic Seed Batch',
+  basicSeedProductionEdit: 'Edit Basic Seed Batch',
+  basicSeedProductionDetail: 'Basic Seed Batch Detail',
+
+  basicSeedProductionResult: 'Basic Seed Batch Data',
+  basicSeedProductionResultDetail: 'Basic Seed Batch Data Detail',
 
   oseManagement: 'OSE Maintenance',
   oseManagementAdd: 'Add OSE',
@@ -140,12 +159,12 @@ export default {
   propagationOrgRegistrationEdit: 'Edit Organization Registration',
   propagationOrgRegistrationDetail: 'Organization Registration Detail',
 
-  institutionRegistration: 'Union/Cooperative Registration Application',
-  institutionRegistrationAdd: 'Add Union/Cooperative Registration Application',
-  institutionRegistrationEdit: 'Edit Union/Cooperative Registration Application',
-  institutionRegistrationDetail: 'Union/Cooperative Registration Application Detail',
+  institutionRegistration: 'Multiplier Registration Application',
+  institutionRegistrationAdd: 'Add Multiplier Registration Application',
+  institutionRegistrationEdit: 'Edit Multiplier Registration Application',
+  institutionRegistrationDetail: 'Multiplier Registration Application Detail',
 
-  institutionApproval: 'Union/Cooperative Registration Application Audit',
+  institutionApproval: 'Multiplier Registration Application Audit',
   institutionApprovalDetail: 'Audit Details',
 
   seedPromotionManagement: 'Seed Promotion Management',

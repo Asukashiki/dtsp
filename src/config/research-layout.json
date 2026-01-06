@@ -117,14 +117,7 @@
           "icon": "ri-checkbox-circle-line",
           "titleKey": "research.menu.datasetAudit",
           "roles": ["agri-admin", "OARI"]
-        }
-      ]
-    },
-    {
-      "index": "propagation-data-management",
-      "icon": "ri-plant-line",
-      "titleKey": "research.menu.propagationDataManagement",
-      "children": [
+        },
         {
           "index": "/research/breeding/seed-production",
           "icon": "ri-seedling-line",
@@ -138,11 +131,42 @@
           "roles": ["agri-admin", "RC"]
         },
         {
+          "index": "/research/breeding/prebasic-seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.prebasicSeedProduction",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/prebasic-seed-production-result",
+          "icon": "ri-bar-chart-line",
+          "titleKey": "research.menu.prebasicSeedProductionResult",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production",
+          "icon": "ri-seedling-line",
+          "titleKey": "research.menu.basicSeedProduction",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
+          "index": "/research/breeding/basic-seed-production-result",
+          "icon": "ri-bar-chart-line",
+          "titleKey": "research.menu.basicSeedProductionResult",
+          "roles": ["agri-admin", "OSE"]
+        },
+        {
           "index": "/research/breeding/seed-distribution",
           "icon": "ri-share-forward-line",
           "titleKey": "research.menu.breederSeedDistribution",
           "roles": ["agri-admin", "RC"]
-        },
+        }
+      ]
+    },
+    {
+      "index": "propagation-data-management",
+      "icon": "ri-plant-line",
+      "titleKey": "research.menu.propagationDataManagement",
+      "children": [
         {
           "index": "/research/breeding/ose-receive-confirm",
           "icon": "ri-checkbox-circle-line",
@@ -172,6 +196,18 @@
           "icon": "ri-folders-line",
           "titleKey": "research.menu.c1PropagationBatchCollection",
           "roles": ["agri-admin", "OSE", "Union", "Cooperative"]
+        },
+        {
+          "index": "/research/field-detection",
+          "icon": "ri-bar-chart-box-line",
+          "titleKey": "research.menu.fieldDetection",
+          "roles": ["agri-admin", "OSE", "Union", "Cooperative", "RC", "OARI"]
+        },
+        {
+          "index": "/research/lab-testing",
+          "icon": "ri-flask-line",
+          "titleKey": "research.menu.labTesting",
+          "roles": ["agri-admin", "OSE", "Union", "Cooperative", "RC", "OARI"]
         },
         {
           "index": "/research/c1-breeding-batch-audit",

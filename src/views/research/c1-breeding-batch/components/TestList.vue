@@ -138,14 +138,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test, checkRule } from '@/api/c1BreedingBatch'
+import { getTestList, getTestById, addTest, updateTest, deleteTest, checkRule } from '@/api/detection'
 import { useUserStore } from '@/store/user'
 
 const props = defineProps({
-  batchId: { type: String, required: true },
+  batchId: { type: String, required: false },  // 改为可选
+  seedClass: { type: String, default: 'C1' },  // 新增seedClass prop
   readonly: { type: Boolean, default: false }
 })
 
@@ -206,12 +207,25 @@ const rules = {
   testResult: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
+// 监听batchId变化，重新加载列表
+watch(() => props.batchId, (newBatchId) => {
+  if (newBatchId) {
+    loadList()
+  }
+})
+
 onMounted(() => loadList())
 
 const loadList = async () => {
+  if (!props.batchId) return  // 如果没有batchId，不加载
   loading.value = true
   try {
-    const response = await getC1TestList({ batchId: props.batchId, pageNum: 1, pageSize: 100 })
+    const response = await getTestList({
+      batchId: props.batchId,
+      seedClass: props.seedClass,  // 传递seedClass
+      pageNum: 1,
+      pageSize: 100
+    })
     if (response.code === 200) {
       tableData.value = response.data?.records || []
     }
@@ -231,14 +245,27 @@ const handleAdd = () => {
   const testOrgName = userInfo.organName || userInfo.ORGAN_NAME || ''
   // 自动生成lotId，直接使用批次号
   const lotId = props.batchId || ''
-  formData.value = { seedClass: '', lotId: lotId, testType: '', testItem: '', testDate: '', testValue: '', unit: '%', passStatus: 'FALSE', testResult: '', testDesc: '', tester: testerName, testOrg: testOrgName }
+  formData.value = {
+    seedClass: props.seedClass,  // 使用传入的seedClass
+    lotId: lotId,
+    testType: '',
+    testItem: '',
+    testDate: '',
+    testValue: '',
+    unit: '%',
+    passStatus: 'FALSE',
+    testResult: '',
+    testDesc: '',
+    tester: testerName,
+    testOrg: testOrgName
+  }
   currentView.value = 'form'
 }
 
 const handleEdit = async (row) => {
   isEdit.value = true
   editingId.value = row.id
-  const response = await getC1TestById(row.id)
+  const response = await getTestById(row.id)
   if (response.code === 200 && response.data) {
     formData.value = { ...response.data }
   }
@@ -277,7 +304,7 @@ const handleDelete = (id) => {
     cancelButtonText: t('common.cancel'),
     type: 'warning'
   }).then(async () => {
-    const response = await deleteC1Test([id])
+    const response = await deleteTest([id])
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       loadList()
@@ -292,9 +319,13 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        const data = { ...formData.value, batchId: props.batchId }
+        const data = {
+          ...formData.value,
+          batchId: props.batchId,
+          seedClass: props.seedClass  // 确保传递seedClass
+        }
         if (isEdit.value) data.id = editingId.value
-        const response = isEdit.value ? await updateC1Test(data) : await addC1Test(data)
+        const response = isEdit.value ? await updateTest(data) : await addTest(data)
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.addSuccess'))
           handleBack()

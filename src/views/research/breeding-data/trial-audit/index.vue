@@ -1,410 +1,173 @@
 <template>
-  <div class="trial-audit-container">
-    <!-- 页面头部：与试验基础信息管理保持一致风格 -->
-    <div class="page-header">
-      <div class="header-left">
-        <div class="header-icon">
-          <i class="ri-test-tube-line"></i>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-list-check-2"
+        :title="t('research.trialBasicAudit.audit.title')"
+        :subtitle="t('research.trialBasicAudit.audit.subtitle1')" />
+
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="resetQuery">
+            <SearchItem :label="t('research.trialBasicAudit.audit.list.trialName')">
+              <el-input
+                v-model="queryParams.trialName"
+                :placeholder="t('research.trialBasicAudit.list.searchPlaceholder')"
+                clearable
+                @keyup.enter="handleQuery"
+              />
+            </SearchItem>
+          </SearchForm>
         </div>
-        <div class="header-content">
-          <h1 class="page-title">{{ t('research.trialBasicAudit.audit.title') }}</h1>
-          <p class="page-subtitle">{{ t('research.trialBasicAudit.audit.subtitle1') }}</p>
+
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="t('research.trialBasicAudit.list.title')"
+          icon="ri-file-list-3-line"
+          :no-padding="true">
+          
+          <!-- 状态标签页 -->
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange" />
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table
+              v-loading="loading"
+              :data="auditList"
+              stripe
+            >
+              <el-table-column
+                prop="trialId"
+                :label="t('research.trialBasicAudit.list.trialId')"
+                min-width="180"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="trialName"
+                :label="t('research.trialBasicAudit.audit.list.trialName')"
+                min-width="200"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="batchId"
+                :label="t('research.trialBasicAudit.audit.list.batchName')"
+                min-width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                :label="t('research.trialBasicAudit.list.cropType')"
+                min-width="120"
+              >
+                <template #default="{ row }">
+                  {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="varietyName"
+                :label="t('research.trialBasicAudit.list.varietyName')"
+                min-width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="createdName"
+                :label="t('research.trialBasicAudit.list.createdBy')"
+                min-width="120"
+              />
+              <el-table-column
+                prop="createTime"
+                :label="t('research.trialBasicAudit.list.createdTime')"
+                min-width="180"
+              >
+                <template #default="{ row }">
+                  {{ formatDate(row.createTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="submitterName"
+                :label="t('research.trialBasicAudit.audit.list.submitter')"
+                min-width="120"
+              />
+              <el-table-column
+                prop="submitTime"
+                :label="t('research.trialBasicAudit.audit.list.submitTime')"
+                min-width="180"
+              >
+                <template #default="{ row }">
+                  {{ formatDate(row.submitTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="auditStatusDesc"
+                :label="t('research.trialBasicAudit.audit.list.workflowStatus')"
+                min-width="120"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="t('research.trialBasicAudit.list.operation')"
+                width="240"
+                fixed="right"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="row.workflowStatus || row.auditStatus"
+                    mode="list"
+                    :is-voided-tab="activeTab === 'voided'"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-if="total > 0"
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :total="total"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <AuditCard
+            v-for="item in auditList"
+            :key="item.auditId"
+            :audit="item"
+            :show-audit-button="activeTab === 'pendingApproval'"
+            @audit="handleAudit"
+            @view="handleView"
+            @void="handleVoid"
+          />
+          <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
+
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-if="total > 0"
+              v-model:current-page="queryParams.pageNum"
+              v-model:page-size="queryParams.pageSize"
+              :total="total"
+              layout="prev, pager, next"
+              small
+              @current-change="getList"
+            />
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-    <el-card class="search-card">
-      <el-form :model="queryParams" :inline="true" label-width="auto">
-        <el-form-item :label="t('research.trialBasicAudit.audit.list.trialName')">
-          <el-input
-            v-model="queryParams.trialName"
-            :placeholder="t('research.trialBasicAudit.list.searchPlaceholder')"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">
-            {{ t('research.trialBasicAudit.action.search') }}
-          </el-button>
-          <el-button :icon="Refresh" @click="resetQuery">
-            {{ t('research.trialBasicAudit.action.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <el-card class="table-card">
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.pending')" name="S1">
-          <!-- PC端表格 -->
-          <el-table
-            v-if="!isMobile"
-            v-loading="loading"
-            :data="auditList"
-            stripe
-          >
-            <el-table-column
-              prop="trialId"
-              :label="t('research.trialBasicAudit.list.trialId')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="trialName"
-              :label="t('research.trialBasicAudit.audit.list.trialName')"
-              min-width="200"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="batchId"
-              :label="t('research.trialBasicAudit.audit.list.batchName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.cropType')"
-              min-width="120"
-            >
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="varietyName"
-              :label="t('research.trialBasicAudit.list.varietyName')"
-              min-min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="createdName"
-              :label="t('research.trialBasicAudit.list.createdBy')"
-              min-width="120"
-            />
-            <el-table-column
-              prop="createTime"
-              :label="t('research.trialBasicAudit.list.createdTime')"
-              min-width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.createTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="submitterName"
-              :label="t('research.trialBasicAudit.audit.list.submitter')"
-              min-width="120"
-            />
-            <el-table-column
-              prop="submitTime"
-              :label="t('research.trialBasicAudit.audit.list.submitTime')"
-              min-width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.submitTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="auditStatusDesc"
-              :label="t('research.trialBasicAudit.audit.list.workflowStatus')"
-              min-width="120"
-              align="center"
-            >
-              <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.operation')"
-              min-width="150"
-              fixed="right"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-button
-                  type="primary"
-                  size="small"
-                  link
-                  @click="handleAudit(row)"
-                >
-                  {{ t('research.trialBasicAudit.action.audit') }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <!-- 移动端卡片 -->
-          <div v-else class="mobile-card-list">
-            <AuditCard
-              v-for="item in auditList"
-              :key="item.auditId"
-              :audit="item"
-              @audit="handleAudit"
-            />
-            <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
-          </div>
-        </el-tab-pane>
-
-        <!-- <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.voided')" name="S4"> -->
-          <!-- PC端表格 -->
-          <!-- <el-table
-            v-if="!isMobile"
-            v-loading="loading"
-            :data="auditList"
-            stripe
-          >
-            <el-table-column
-              prop="trialId"
-              :label="t('research.trialBasicAudit.list.trialId')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="trialName"
-              :label="t('research.trialBasicAudit.audit.list.trialName')"
-              min-width="200"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="batchId"
-              :label="t('research.trialBasicAudit.audit.list.batchName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.cropType')"
-              min-width="120"
-            >
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="varietyName"
-              :label="t('research.trialBasicAudit.list.varietyName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="auditorName"
-              :label="t('research.trialBasicAudit.audit.list.auditor')"
-              width="120"
-            />
-            <el-table-column
-              prop="auditTime"
-              :label="t('research.trialBasicAudit.audit.list.auditTime')"
-              width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.auditTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="auditStatusDesc"
-              :label="t('research.trialBasicAudit.audit.list.status')"
-              width="120"
-              align="center"
-            >
-              <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.operation')"
-              min-width="100"
-              fixed="right"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-button
-                  type="primary"
-                  size="small"
-                  link
-                  @click="handleView(row)"
-                >
-                  {{ t('research.trialBasicAudit.action.view') }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table> -->
-
-          <!-- 移动端卡片 -->
-          <!-- <div v-else class="mobile-card-list">
-            <AuditCard
-              v-for="item in auditList"
-              :key="item.auditId"
-              :audit="item"
-              :show-audit-button="false"
-              :show-void-button="false"
-              @view="handleView"
-            />
-            <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
-          </div> -->
-        <!-- </el-tab-pane> -->
-
-        <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.audited')" name="audited">
-          <!-- PC端表格 -->
-          <el-table
-            v-if="!isMobile"
-            v-loading="loading"
-            :data="auditList"
-            stripe
-          >
-            <el-table-column
-              prop="trialId"
-              :label="t('research.trialBasicAudit.list.trialId')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="trialName"
-              :label="t('research.trialBasicAudit.audit.list.trialName')"
-              min-width="200"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="batchId"
-              :label="t('research.trialBasicAudit.audit.list.batchName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.cropType')"
-              min-width="120"
-            >
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="varietyName"
-              :label="t('research.trialBasicAudit.list.varietyName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="createdName"
-              :label="t('research.trialBasicAudit.list.createdBy')"
-              min-width="120"
-            />
-            <el-table-column
-              prop="createTime"
-              :label="t('research.trialBasicAudit.list.createdTime')"
-              min-width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.createTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="modifiedName"
-              :label="t('research.trialBasicAudit.list.modifiedBy')"
-              min-width="120"
-            />
-            <el-table-column
-              prop="modifiedTime"
-              :label="t('research.trialBasicAudit.list.modifiedTime')"
-              min-width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.modifiedTime) }}
-              </template>
-            </el-table-column>
-            <!-- <el-table-column
-              prop="submitterName"
-              :label="t('research.trialBasicAudit.audit.list.submitter')"
-              width="120"
-            />
-            <el-table-column
-              prop="submitTime"
-              :label="t('research.trialBasicAudit.audit.list.submitTime')"
-              width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.submitTime) }}
-              </template>
-            </el-table-column> -->
-            <el-table-column
-              prop="auditorName"
-              :label="t('research.trialBasicAudit.audit.list.auditor')"
-              width="120"
-            />
-            <el-table-column
-              prop="auditTime"
-              :label="t('research.trialBasicAudit.audit.list.auditTime')"
-              width="180"
-            >
-              <template #default="{ row }">
-                {{ formatDate(row.auditTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="auditStatusDesc"
-              :label="t('research.trialBasicAudit.audit.list.status')"
-              width="120"
-              align="center"
-            >
-              <template #default="{ row }">
-                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="t('research.trialBasicAudit.list.operation')"
-              min-width="150"
-              fixed="right"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-button
-                  type="primary"
-                  size="small"
-                  link
-                  @click="handleView(row)"
-                >
-                  {{ t('research.trialBasicAudit.action.view') }}
-                </el-button>
-                <!-- <el-button
-                  v-if="row.auditStatus === 'S2'"
-                  type="danger"
-                  size="small"
-                  link
-                  @click="handleVoid(row)"
-                >
-                  {{ t('research.trialBasicAudit.action.void') }}
-                </el-button> -->
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <!-- 移动端卡片 -->
-          <div v-else class="mobile-card-list">
-            <AuditCard
-              v-for="item in auditList"
-              :key="item.auditId"
-              :audit="item"
-              :show-audit-button="false"
-              @view="handleView"
-              @void="handleVoid"
-            />
-            <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-
-      <!-- 分页 -->
-      <el-pagination
-        v-if="total > 0"
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        :layout="isMobile ? 'total, prev, pager, next' : 'total, sizes, prev, pager, next, jumper'"
-        @size-change="getList"
-        @current-change="getList"
-      />
-    </el-card>
     </div>
   </div>
 </template>
@@ -414,22 +177,42 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh } from '@element-plus/icons-vue'
 import { getAuditList, voidAudit } from '@/api/research/trialBasicAudit'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import StatusTag from '../trial/components/StatusTag.vue'
 import AuditCard from './components/AuditCard.vue'
-import { useResponsive } from '@/hooks/useResponsive'
 import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
 const router = useRouter()
-const { isMobile } = useResponsive()
 
 // 数据
 const loading = ref(false)
-const activeTab = ref('S1')
+const activeTab = ref('pendingApproval')
 const auditList = ref([])
 const total = ref(0)
+
+// Tab configuration
+const tabConfig = [
+  {
+    name: 'pendingApproval',
+    label: 'research.trialBasicAudit.audit.tabs.pending',
+    icon: 'ri-time-line'
+  },
+  {
+    name: 'audited',
+    label: 'research.trialBasicAudit.audit.tabs.audited',
+    icon: 'ri-check-line'
+  },
+  {
+    name: 'voided',
+    label: 'research.trialBasicAudit.audit.tabs.voided',
+    icon: 'ri-forbid-line'
+  }
+]
+
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict([
   'crop_type'
@@ -533,14 +316,26 @@ const resetQuery = () => {
 
 // Tab切换
 const handleTabChange = (tab) => {
-  if (tab === 'S1') {
+  if (tab === 'pendingApproval') {
     queryParams.auditStatus = 'S1'
-  } else if (tab === 'S4') {
-    queryParams.auditStatus = 'S4'
   } else if (tab === 'audited') {
     queryParams.auditStatus = 'S2'
+  } else if (tab === 'voided') {
+    queryParams.auditStatus = 'S10'
   }
   handleQuery()
+}
+
+// 处理操作
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'audit':
+      handleAudit(row)
+      break
+    case 'view':
+      handleView(row)
+      break
+  }
 }
 
 // 审核
@@ -589,45 +384,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.trial-audit-container {
-
-  .search-card {
-    margin-bottom: 20px;
-  }
-
-  .table-card {
-    .el-pagination {
-      margin-top: 20px;
-      justify-content: center;
-    }
-  }
-
-  .mobile-card-list {
-    min-height: 400px;
-  }
-}
-
-@media (max-width: 768px) {
-  .trial-audit-container {
-    padding: 10px;
-
-    .search-card {
-      margin-bottom: 10px;
-
-      :deep(.el-form) {
-        .el-form-item {
-          width: 100%;
-          margin-right: 0;
-
-          .el-input {
-            width: 100%;
-          }
-        }
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

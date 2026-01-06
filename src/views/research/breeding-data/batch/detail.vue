@@ -49,22 +49,11 @@
         </div>
 
         <!-- 工作流信息 -->
-        <div class="info-card" v-if="showWorkflowInfo">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-git-commit-line"></i><span>{{ $t('research.breedingData.batch.form.workflowInfo') }}</span></div>
-          </div>
-          <div class="card-body">
-            <!-- 历史审批信息 -->
-            <div class="mb-4">
-              <h4 class="mb-3">{{ $t('research.breedingData.batch.form.approvalHistory') }}</h4>
-              <el-table :data="approvalHistory" border stripe>
-                <el-table-column :label="$t('research.breedingData.batch.form.approver')" prop="approver" width="200" />
-                <el-table-column :label="$t('research.breedingData.batch.form.approvalTime')" prop="approvalTime" width="250" />
-                <el-table-column :label="$t('research.breedingData.batch.form.comment')" prop="comment" />
-              </el-table>
-            </div>
-          </div>
-        </div>
+        <WorkflowInfo
+          :workflow-status="detailData.workflowStatus"
+          mode="view"
+          :approval-history="approvalHistory"
+          :hide-for-states="['S0', 'S10']" />
       </div>
     </div>
   </div>
@@ -77,6 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { getBreedingBatchInfo, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -99,12 +89,6 @@ const displayCropType = computed(() => {
 const getWorkflowStatusLabel = (workflowStatus) => {
   return getLabelByValue('flow_status', workflowStatus) || workflowStatus
 }
-
-// 控制工作流信息部分的显示：仅在非草稿和非新建状态下显示
-const showWorkflowInfo = computed(() => {
-  // 草稿状态(S0)和作废状态(S10)不显示
-  return !['S0', 'S10'].includes(detailData.value.workflowStatus)
-})
 
 const getInfo = async () => {
   loading.value = true
@@ -226,4 +210,5 @@ onMounted(() => getInfo())
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

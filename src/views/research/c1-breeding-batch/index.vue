@@ -106,11 +106,11 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="trackingCount" :label="$t('research.c1BreedingBatch.columns.trackingCount')" min-width="100" align="center">
+          <!-- <el-table-column prop="trackingCount" :label="$t('research.c1BreedingBatch.columns.trackingCount')" min-width="100" align="center">
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.trackingCount || 0 }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column :label="$t('common.actions')" width="280" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id, row.auditStatus === 'approved')">{{ $t('common.view') }}</el-button>

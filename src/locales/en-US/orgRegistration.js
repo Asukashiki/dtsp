@@ -1,6 +1,6 @@
 export default {
   // 页面标题
-  title: 'Union/Cooperative Registration Application',
+  title: 'Multiplier Registration Application',
   subtitle: 'Manage Union and Cooperative registration applications and approvals',
   
   // 列表页
@@ -16,7 +16,7 @@ export default {
 
   // 审核列表页
   audit: {
-    title: 'Union/Cooperative Registration Application Audit',
+    title: 'Multiplier Registration Application Audit',
     subtitle: 'Review Union and Cooperative registration applications',
     listTitle: 'Pending Applications',
     noData: 'No pending applications'
@@ -25,7 +25,8 @@ export default {
   // 机构类型
   orgType: {
     UNION: 'Union',
-    COOPERATIVE: 'Cooperative'
+    COOPERATIVE: 'Cooperative',
+    PRIVATE: 'Private'
   },
 
   // 审核状态

@@ -3,6 +3,7 @@ export default {
     // 种子扩繁批次信息管理（统一模块）
   title: '种子扩繁批次信息管理',
   subtitle: '种子扩繁批次、跟踪记录、检测信息一体化管理',
+  relatedRecords: '相关记录',
   // 育种家种子模块 Breeder Seed Module
   seed: {
     // 生产数据采集

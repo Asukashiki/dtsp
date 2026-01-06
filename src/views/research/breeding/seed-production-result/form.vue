@@ -24,8 +24,7 @@
           <div class="form-section">
             <div class="section-title">
               <i class="ri-seedling-line"></i>
-              {{ $t('research.breeding.seed.production.result.section.productionBatchSelection')
-          }}
+              {{ $t('research.breeding.seed.production.result.productionBatchSelection') }}
             </div>
 
             <div class="form-row">
@@ -82,7 +81,7 @@
           <div class="form-section">
             <div class="section-title">
               <i class="ri-scales-3-line"></i>
-              {{ $t('research.breeding.seed.production.result.section.collectionData') }}
+              {{ $t('research.breeding.seed.production.result.collectionData') || 'Collection Data' }}
             </div>
 
             <div class="form-row">

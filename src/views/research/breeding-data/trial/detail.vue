@@ -8,9 +8,6 @@
             <h1 class="page-title">{{ $t('research.breedingData.trial.detail') }}</h1>
           </div>
         </div>
-        <div class="header-actions">
-          <el-button type="primary" @click="handleEdit"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-        </div>
       </div>
 
       <div class="content-wrapper" v-loading="loading">
@@ -66,7 +63,6 @@ const getInfo = async () => {
   }
 }
 
-const handleEdit = () => router.push(`/research/breeding-data/trial/edit/${route.params.trialId}`)
 const goBack = () => router.push('/research/breeding-data/trial')
 
 onMounted(() => getInfo())
