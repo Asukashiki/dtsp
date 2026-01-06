@@ -31,24 +31,32 @@ export default {
     },
     production: {
       name: 'Production Management',
-      desc: 'Farm records, production planning and crop monitoring',
+      desc: 'Production Management',
     },
     procurement: {
-      name: 'Procurement Management',
-      desc: 'Purchase orders, supplier management and contract management',
+      name: 'Processing Management',
+      desc: 'Processing Management',
     },
     traceability: {
-      name: 'Product Traceability',
-      desc: 'Full traceability, quality testing and traceability query',
+      name: 'Logistics Management',
+      desc: 'Logistics Management',
     },
     data: {
       name: 'Data Services',
       desc: 'Data collection, analysis display and decision support',
     },
     farm: {
-      name: 'Farm Management System',
-      desc: 'Farmer authentication, land information management and farm data services',
+      name: 'Farmland Management',
+      desc: 'Farmland Management',
     },
+    sustainability: {
+      name: 'Sustainability Management',
+      desc: 'Sustainability Management',
+    },
+    harvest: {
+      name: 'Harvest Management',
+      desc: 'Harvest Management',
+    }
   },
 
   // Operation Guide Section

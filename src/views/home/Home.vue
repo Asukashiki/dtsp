@@ -161,7 +161,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:31100/',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=farmland&redirect_uri=http://196.189.236.220:31100/farmland',
     external: true
   },
   production: {
@@ -169,24 +169,40 @@ const systemModules = computed(() => ({
     desc: t('home.modules.production.desc'),
     icon: 'ri-seedling-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
-    path: 'http://196.189.236.220:31100/',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=production&redirect_uri=http://196.189.236.220:31100/production',
     external: true
   },
   procurement: {
     name: t('home.modules.procurement.name'),
     desc: t('home.modules.procurement.desc'),
     icon: 'ri-shopping-cart-line',
-    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
-    path: '/procurement',
-    disabled: true // 禁用
+    gradient: 'linear-gradient(135deg, #1890FF 0%, #69C0FF 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=processing&redirect_uri=http://196.189.236.220:31100/processing',
+    external: true
   },
   traceability: {
     name: t('home.modules.traceability.name'),
     desc: t('home.modules.traceability.desc'),
-    icon: 'ri-qr-code-line',
-    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
-    path: '/traceability',
-    disabled: true // 禁用
+    icon: 'ri-map-pin-line',
+    gradient: 'linear-gradient(135deg, #722ED1 0%, #B37FEB 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=logistics&redirect_uri=http://196.189.236.220:31100/logistics',
+    external: true
+  },
+  sustainability: {
+    name: t('home.modules.sustainability.name'),
+    desc: t('home.modules.sustainability.desc'),
+    icon: 'ri-leaf-line',
+    gradient: 'linear-gradient(135deg, #13C2C2 0%, #5CDBD3 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=sustainability&redirect_uri=http://196.189.236.220:31100/sustainability',
+    external: true
+  },
+  harvest: {
+    name: t('home.modules.harvest.name'),
+    desc: t('home.modules.harvest.desc'),
+    icon: 'ri-shopping-basket-line',
+    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFC069 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=harvest&redirect_uri=http://196.189.236.220:31100/harvest',
+    external: true
   },
   data: {
     name: t('home.modules.data.name'),
@@ -196,14 +212,14 @@ const systemModules = computed(() => ({
     path: '/data',
     disabled: true // 禁用
   },
-  farm: {
-    name: t('home.modules.farm.name'),
-    desc: t('home.modules.farm.desc'),
-    icon: 'ri-landscape-line',
-    gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:31100/',
-    external: true
-  }
+  // farm: {
+  //   name: t('home.modules.farm.name'),
+  //   desc: t('home.modules.farm.desc'),
+  //   icon: 'ri-landscape-line',
+  //   gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+  //   path: 'http://196.189.236.220:31100/',
+  //   external: true
+  // }
 }))
 
 // 操作指南配置
