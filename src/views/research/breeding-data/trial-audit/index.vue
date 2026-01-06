@@ -205,6 +205,11 @@ const tabConfig = [
     name: 'audited',
     label: 'research.trialBasicAudit.audit.tabs.audited',
     icon: 'ri-check-line'
+  },
+  {
+    name: 'voided',
+    label: 'research.trialBasicAudit.audit.tabs.voided',
+    icon: 'ri-forbid-line'
   }
 ]
 
@@ -315,6 +320,8 @@ const handleTabChange = (tab) => {
     queryParams.auditStatus = 'S1'
   } else if (tab === 'audited') {
     queryParams.auditStatus = 'S2'
+  } else if (tab === 'voided') {
+    queryParams.auditStatus = 'S10'
   }
   handleQuery()
 }

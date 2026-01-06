@@ -179,6 +179,21 @@ const handleAction = (row, action) => {
 
 ## 三、审核列表页结构（带状态标签页）
 
+### 审核 Tabs 规范说明
+
+审核列表页包含以下标签页：
+
+| 标签页 | 说明 | 图标 | 状态 |
+|--------|------|------|------|
+| **待审批** (pendingApproval) | 显示待审批的数据 | `ri-time-line` | 必须实现 |
+| **已审批** (approved) | 显示已审批通过的数据 | `ri-check-line` | 必须实现 |
+| **已作废** (voided) | 显示已作废的数据 | `ri-forbid-line` | 如果存在已作废逻辑则保留，没有则暂时不需要对接接口 |
+
+> **重要提示**：
+> - 如果页面已经存在"已作废"标签页的逻辑，**不要删除或修改**，保持原有功能
+> - 如果页面没有"已作废"标签页，**暂时不需要添加**，等待后续接口对接
+> - 标签页的顺序建议为：待审批 → 已审批 → 已作废
+
 ```vue
 <template>
   <div class="page-container">
@@ -219,7 +234,7 @@ const handleAction = (row, action) => {
                   <ActionButtons
                     :workflow-status="row.workflowStatus"
                     mode="list"
-                    :is-voided-tab="activeTab === 'voided'"
+                    :show-audit="activeTab === 'pendingApproval'"
                     @action="(action) => handleAction(row, action)" />
                 </template>
               </el-table-column>
@@ -242,10 +257,16 @@ import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 // ⚠️ 保留原有的所有业务逻辑代码
 
-// 标签页配置（根据实际业务调整）
+// 标签页配置示例1：包含已作废（如果原页面有已作废逻辑）
 const tabConfig = [
   { name: 'pendingApproval', label: 'xxx.tabs.pendingApproval', icon: 'ri-time-line' },
-  { name: 'voided', label: 'xxx.tabs.voided', icon: 'ri-forbid-line' },
+  { name: 'approved', label: 'xxx.tabs.approved', icon: 'ri-check-line' },
+  { name: 'voided', label: 'xxx.tabs.voided', icon: 'ri-forbid-line' }
+]
+
+// 标签页配置示例2：不包含已作废（如果原页面没有已作废逻辑）
+const tabConfig = [
+  { name: 'pendingApproval', label: 'xxx.tabs.pendingApproval', icon: 'ri-time-line' },
   { name: 'approved', label: 'xxx.tabs.approved', icon: 'ri-check-line' }
 ]
 </script>
@@ -276,6 +297,45 @@ const tabConfig = [
   }
 ]
 ```
+
+### 审核标签页配置规范
+
+#### 标准配置（包含已作废）
+
+```javascript
+// 如果原页面已经有已作废逻辑，使用此配置
+const tabConfig = [
+  { name: 'pendingApproval', label: 'xxx.tabs.pendingApproval', icon: 'ri-time-line' },
+  { name: 'approved', label: 'xxx.tabs.approved', icon: 'ri-check-line' },
+  { name: 'voided', label: 'xxx.tabs.voided', icon: 'ri-forbid-line' }
+]
+```
+
+#### 简化配置（不包含已作废）
+
+```javascript
+// 如果原页面没有已作废逻辑，使用此配置
+const tabConfig = [
+  { name: 'pendingApproval', label: 'xxx.tabs.pendingApproval', icon: 'ri-time-line' },
+  { name: 'approved', label: 'xxx.tabs.approved', icon: 'ri-check-line' }
+]
+```
+
+#### ActionButtons 在审核页面的使用
+
+```vue
+<!-- 在待审批标签页显示"审核"按钮 -->
+<ActionButtons
+  :workflow-status="row.workflowStatus"
+  mode="list"
+  :show-audit="activeTab === 'pendingApproval'"
+  @action="(action) => handleAction(row, action)" />
+```
+
+> **注意**：
+> - `show-audit` 属性控制是否显示"审核"按钮
+> - 只在"待审批"标签页时设置为 `true`
+> - 其他标签页设置为 `false` 或根据 `activeTab` 动态判断
 
 ---
 
