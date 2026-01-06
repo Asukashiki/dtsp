@@ -123,5 +123,6 @@ export default {
     invalidParams: '无效的参数',
     // 标签页标签
     aggregationResults: '汇聚结果',
-    farmerDemands: '农民需求'
+    farmerDemands: '农民需求',
+    noPermissionDesc: '您没有权限访问此页面或执行此操作'
   }

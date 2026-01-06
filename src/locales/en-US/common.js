@@ -125,5 +125,6 @@ export default {
   invalidParams: 'Invalid parameters',
   // Tab labels
   aggregationResults: 'Aggregation Results',
-  farmerDemands: 'Farmer Demands'
+  farmerDemands: 'Farmer Demands',
+  noPermissionDesc: 'You do not have permission to access this page or perform this action'
 }

@@ -148,17 +148,17 @@ const handleConfirm = async () => {
     try {
       const res = await postUserUpdate(
         isPhone
-          ? { mobile: form.value.value, id: userStore.userInfo?.user?.ID || '' }
-          : { email: form.value.value, id: userStore.userInfo?.user?.ID || '' }
+          ? { phoneNumber: form.value.value, userId: userStore.userInfo?.userId || '' }
+          : { email: form.value.value, userId: userStore.userInfo?.userId || '' }
       )
       if (res.code === 200) {
         ElMessage.success(t('userInfo.modifySuccess'))
         await userStore.fetchUserInfo()
-        if (userStore.userInfo && userStore.userInfo.user) {
+        if (userStore.userInfo) {
           if (isPhone) {
-            userStore.userInfo.user.mobile = form.value.value
+            userStore.userInfo.phoneNumber = form.value.value
           } else {
-            userStore.userInfo.user.email = form.value.value
+            userStore.userInfo.email = form.value.value
           }
           userStore.setUserInfo(userStore.userInfo)
         }

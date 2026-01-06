@@ -298,7 +298,7 @@ const handleSubmit = async () => {
     try {
       const data = {
         ...form,
-        userId: userStore.userInfo?.user?.id || userStore.userInfo?.userId
+        userId: userStore.userInfo?.userId
       }
 
       const res = await submitFarmerCert(data)

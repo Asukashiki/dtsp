@@ -1,6 +1,13 @@
 <template>
   <div class="announcement-container">
+ 
     <div class="announcement-content-wrapper">
+      <div class="back-bar">
+        <el-button text @click="goBack" class="back-btn">
+          <i class="ri-arrow-left-line"></i>
+          {{ $t('common.back') || 'Back' }}
+        </el-button>
+      </div>
       <!-- Header -->
       <div class="announcement-header">
         <div class="header-icon">
@@ -17,7 +24,7 @@
         <div class="announcement-list">
           <div
             v-for="(item, index) in announcementList"
-            :key="index"
+            :key="item.noticeId || index"
             class="announcement-item"
             :class="{'unread': !item.isRead}"
             @click="handleAnnouncementClick(item)"
@@ -28,16 +35,16 @@
             </div>
             <div class="item-content">
               <div class="item-header">
-                <div class="item-title">{{ item.name || item.title }}</div>
+                <div class="item-title">{{ parseI18nValue(item.noticeTitle, locale, item.noticeTitle) }}</div>
                 <div v-if="!item.isRead" class="unread-badge">
                   {{ $t('dataList.unread') }}
                 </div>
               </div>
-              <div class="item-desc">{{ item.content }}</div>
+              <div class="item-desc" v-html="stripHtml(parseI18nValue(item.noticeContent, locale, item.noticeContent))"></div>
             </div>
             <div class="item-time">
               <i class="ri-time-line"></i>
-              <span>{{ item.publicTime || item.createTime }}</span>
+              <span>{{ item.createTime }}</span>
             </div>
           </div>
         </div>
@@ -68,26 +75,20 @@
         />
       </div>
     </div>
-
-    <!-- Announcement Detail Dialog -->
-    <announcement-detail
-      v-model:visible="detailDialogVisible"
-      :announcement="currentAnnouncement"
-    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import AnnouncementDetail from './AnnouncementDetail.vue'
-import { getNoticeList, postProcessList } from '@/api/home'
-import { useRoute } from 'vue-router'
+import { listPublicNotice } from '@/api/publicNotice'
+import { postProcessList } from '@/api/home'
+import { parseI18nValue } from '@/utils/i18nHelper'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 
-const { t } = useI18n()
-const detailDialogVisible = ref(false)
-const currentAnnouncement = ref({})
+const { t, locale } = useI18n()
+const router = useRouter()
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalItems = ref(0)
@@ -97,24 +98,11 @@ const route = useRoute()
 const name = route.query.name
 const userStore = useUserStore()
 
-const configUrl = ref({
-  systemAnnouncement: () => getNoticeList({
-    pageNum: currentPage.value,
-    pageSize: pageSize.value
-  }),
-  alreadyDone: () => postProcessList({
-    processorId: userStore.userInfo?.user?.ID || '',
-    pageNum: currentPage.value,
-    pageSize: pageSize.value,
-    status: '0'
-  }),
-  representative: () => postProcessList({
-    processorId: userStore.userInfo?.user?.ID || '',
-    pageNum: currentPage.value,
-    pageSize: pageSize.value,
-    status: '1'
-  })
-})
+// 移除 HTML 标签用于列表预览
+const stripHtml = (html) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '').substring(0, 100)
+}
 
 const configName = computed(() => ({
   systemAnnouncement: t('dataList.systemAnnouncement'),
@@ -156,10 +144,28 @@ const getItemIcon = () => {
 const getNoticeData = async () => {
   loading.value = true
   try {
-    const res = await configUrl.value[name]()
-    if (res.code === 200 && res.data) {
-      announcementList.value = res.data.data || []
-      totalItems.value = res.data.total || 0
+    if (name === 'systemAnnouncement') {
+      // 使用公开公告 API
+      const res = await listPublicNotice({
+        pageNum: currentPage.value,
+        pageSize: pageSize.value
+      })
+      if (res.code === 200) {
+        announcementList.value = res.rows || []
+        totalItems.value = res.total || 0
+      }
+    } else {
+      // 使用流程 API
+      const res = await postProcessList({
+        processorId: userStore.userInfo?.userId || '',
+        pageNum: currentPage.value,
+        pageSize: pageSize.value,
+        status: name === 'alreadyDone' ? '0' : '1'
+      })
+      if (res.code === 200 && res.data) {
+        announcementList.value = res.data.data || []
+        totalItems.value = res.data.total || 0
+      }
     }
   } catch (error) {
     console.log('error', error)
@@ -170,13 +176,16 @@ const getNoticeData = async () => {
 
 const handleAnnouncementClick = (item) => {
   item.isRead = true
-  currentAnnouncement.value = { ...item }
-  detailDialogVisible.value = true
+  router.push(`/notice/${item.noticeId}`)
 }
 
 const handlePageChange = async (page) => {
   currentPage.value = page
   await getNoticeData()
+}
+
+const goBack = () => {
+  router.back()
 }
 
 onMounted(() => {
@@ -191,12 +200,16 @@ onMounted(() => {
   padding: 24px;
 }
 
+
+.back-bar {
+  margin: 20px 0;
+}
+
+
 .announcement-content-wrapper {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
   min-height: calc(100vh - 63px - 194px - 48px);

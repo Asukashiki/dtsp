@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { getCurrentUserInfo, getLogout, oauth2LoginWithCode } from '@/api/user'
+import { getCurrentUserInfo, getLogout } from '@/api/user'
+import { getRouters, getInfo } from '@/api/system/login'
 import {
   getToken,
   setToken,
@@ -14,7 +15,11 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     // 添加响应式状态，初始化时从 localStorage 读取
     _token: getToken() || '',
-    _userInfo: getUserInfo() || {}
+    _userInfo: getUserInfo() || {},
+    menus: [],  // 后端返回的菜单数据
+    permissions: [], // 按钮权限
+    roles: [], // 角色列表
+    deptPath: [] // 区划路径链（从顶级区划到当前部门）
   }),
 
   getters: {
@@ -94,6 +99,10 @@ export const useUserStore = defineStore('user', {
       // 清除响应式状态
       this._token = ''
       this._userInfo = {}
+      this.menus = []
+      this.permissions = []
+      this.roles = []
+      this.validPaths = new Set() // 清除缓存的路径
       // 清除 localStorage
       removeToken()
       removeUserInfo()
@@ -133,64 +142,157 @@ export const useUserStore = defineStore('user', {
 
       console.log('fetchUserInfo: 开始获取用户信息')
       try {
-        const res = await getCurrentUserInfo()
-        console.log('fetchUserInfo: API响应:', JSON.stringify(res))
 
-        if (res.code === 200 && res.data) {
-          console.log('fetchUserInfo: 用户信息获取成功，准备保存')
-          this.setUserInfo(res.data)
-          console.log('fetchUserInfo: 用户信息已保存，hasUserInfo:', this.hasUserInfo)
-          return res.data
-        } else {
-          console.error('fetchUserInfo: 响应格式不正确或无数据')
+         const res = await getInfo()
+        if (res.code === 200) {
+          const { roles, permissions, deptPath } = res
+          this.roles = roles || []
+          this.permissions = permissions || []
+          this.deptPath = deptPath || []
+          this.setUserInfo(res.user)
+          console.log('权限信息已加载:', this.permissions.length, '个权限')
+          console.log('区划路径链已加载:', this.deptPath.length, '级')
+          return { roles, permissions, deptPath, ...res.user }
         }
+        return { roles: [], permissions: [] }
+        // const res = await getCurrentUserInfo()
+        // console.log('fetchUserInfo: API响应:', JSON.stringify(res))
+
+        // if (res.code === 200 && res.data) {
+        //   console.log('fetchUserInfo: 用户信息获取成功，准备保存')
+        //   
+        // this.setUserInfo(res.data)
+        //   console.log('fetchUserInfo: 用户信息已保存，hasUserInfo:', this.hasUserInfo)
+        //   return res.data
+        // } else {
+        //   console.error('fetchUserInfo: 响应格式不正确或无数据')
+        // }
       } catch (error) {
         console.error('fetchUserInfo: 请求失败:', error)
         throw error;
       }
     },
 
-    // OAuth2授权码登录
-    async Oauth2LoginWithCode(loginData) {
+    // OAuth2授权码登录 - 已废弃
+    // async Oauth2LoginWithCode(loginData) { ... }
+
+    // 获取用户权限信息
+    async getPermissions() {
       try {
-        const res = await oauth2LoginWithCode(
-          loginData.code,
-          loginData.redirectUri,
-          loginData.grantType
-        )
-        console.log('OAuth2登录响应:', JSON.stringify(res))
-
-        // 检查响应格式并提取 token
+        const res = await getInfo()
         if (res.code === 200) {
-          // 尝试多种可能的 token 位置
-          const token = res.token || res.data?.token || res.data?.access_token || res.access_token
+          const { roles, permissions } = res
+          this.roles = roles || []
+          this.permissions = permissions || []
+          this.setUserInfo(res.user)
+          console.log('权限信息已加载:', this.permissions.length, '个权限')
+          return { roles, permissions }
+        }
+        return { roles: [], permissions: [] }
+      } catch (error) {
+        console.error('获取权限失败:', error)
+        return { roles: [], permissions: [] }
+      }
+    },
 
-          if (token) {
-            console.log('Token提取成功，准备保存')
-            this.setToken(token)
+    // 获取菜单列表
+    async getMenus() {
+      try {
+        const res = await getRouters()
+        if (res.code === 200 && res.data) {
+          this.menus = res.data || []
+          // 生成扁平化的有效路径集合，用于权限检查
+          this.validPaths = new Set(this.flattenPaths(this.menus))
+          console.log('菜单数据已加载:', this.menus.length, '个根路由')
+          console.log('有效路径集合:', Array.from(this.validPaths))
+          return this.menus
+        }
+        return []
+      } catch (error) {
+        console.error('获取菜单失败:', error)
+        return []
+      }
+    },
 
-            // 获取用户信息
-            try {
-              const userInfo = await this.fetchUserInfo()
-              console.log('用户信息获取成功:', userInfo ? '有数据' : '无数据')
-              return true
-            } catch (error) {
-              console.error('获取用户信息失败:', error)
-              // 即使获取用户信息失败，token 已保存，返回 true
-              // 让路由守卫或 Layout 组件再次尝试
-              return true
-            }
-          } else {
-            console.error('响应中未找到 token')
-            return false
+    // 扁平化菜单路径（适配新的 getRouters 格式）
+    // 新格式中子菜单的 path 已经是完整相对路径（如 system/menu），只需加前导斜杠
+    flattenPaths(menus, parentPath = '') {
+      let paths = []
+      for (const menu of menus) {
+        let fullPath = menu.path || ''
+        // 新格式：path 可能是 /system（绝对路径）或 system/menu（相对路径）
+        // 相对路径只需要加前导斜杠，不需要拼接父路径
+        if (!fullPath.startsWith('/')) {
+          fullPath = `/${fullPath}`
+        }
+        
+        // 确保没有双斜杠 //
+        fullPath = fullPath.replace(/\/\//g, '/')
+        
+        paths.push(fullPath)
+        
+        if (menu.children && menu.children.length > 0) {
+          // 子菜单也使用同样的逻辑
+          paths = paths.concat(this.flattenPaths(menu.children, fullPath))
+        }
+      }
+      return paths
+    },
+
+    // 检查菜单权限（支持动态路径参数如 :id）
+    hasMenuPermission(path) {
+      if (!this.validPaths || this.validPaths.size === 0) {
+        // 如果 validPaths 为空，尝试从 menus 重新生成
+        if (this.menus && this.menus.length > 0) {
+          this.validPaths = new Set(this.flattenPaths(this.menus))
+        } else {
+          return false
+        }
+      }
+      // 处理传入路径可能没有前导 / 的情况
+      const normalizedPath = path.startsWith('/') ? path : `/${path}`
+      
+      // 精确匹配
+      if (this.validPaths.has(normalizedPath)) {
+        return true
+      }
+      
+      // 动态路径匹配（支持 :id, :type 等参数）
+      // 例如：菜单配置 /system/dict-data/:id 匹配实际路径 /system/dict-data/sys_user_sex
+      for (const menuPath of this.validPaths) {
+        if (menuPath.includes(':')) {
+          // 将菜单路径中的 :xxx 转换为正则表达式
+          // /system/dict-data/:id => /system/dict-data/[^/]+
+          const regexPattern = menuPath
+            .replace(/:[^/]+/g, '[^/]+')  // :id => [^/]+
+            .replace(/\//g, '\\/')        // / => \/
+          const regex = new RegExp(`^${regexPattern}$`)
+          if (regex.test(normalizedPath)) {
+            return true
           }
         }
-        console.error('登录失败，响应码:', res.code)
-        return false
-      } catch (error) {
-        console.error('OAuth2授权码登录失败', error)
-        throw error
       }
+      
+      // 子路由自动放行逻辑：如果父路径有权限，则 add/edit/detail 子路由自动放行
+      // 例如：有 /research/breeding-data/trial 权限，则自动放行：
+      //   - /research/breeding-data/trial/add
+      //   - /research/breeding-data/trial/edit/xxx
+      //   - /research/breeding-data/trial/detail/xxx
+      const subRoutePatterns = ['/add', '/edit/', '/detail/', '/form']
+      for (const pattern of subRoutePatterns) {
+        const patternIndex = normalizedPath.indexOf(pattern)
+        if (patternIndex > 0) {
+          // 提取父路径
+          const parentPath = normalizedPath.substring(0, patternIndex)
+          // 检查父路径是否有权限
+          if (this.validPaths.has(parentPath)) {
+            console.log(`路由守卫: 子路由自动放行 - 父路径 ${parentPath} 有权限，允许访问 ${normalizedPath}`)
+            return true
+          }
+        }
+      }
+      
+      return false
     }
   }
 }) 

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
-import { getTokenFromUrl, getToken } from '../utils/auth'
+import { getToken } from '../utils/auth'
 import { ElMessage } from 'element-plus'
 import farmLayoutConfig from '@/config/farm-layout.json'
 import inputLayoutConfig from '@/config/input-layout.json'
@@ -8,10 +8,16 @@ import researchLayoutConfig from '@/config/research-layout.json'
 import newFarmLayoutConfig from '@/config/new-farm-layout.json'
 import systemLayoutConfig from '@/config/system-layout.json'
 
-// 外部登录系统URL - 在实际部署时配置正确的SSO地址
-const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
-// 当前系统的应用ID - 用于SSO系统识别来源
-const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
+// 路由白名单
+const routeWhitelist = [
+  // 首页相关
+  '/home',
+  '/user',
+  '/dataList',
+  '/print/seed/breeding-certification',
+  '/print/seed/c1-breeding-certificate',
+  '/notice',
+]
 
 // 路由白名单
 const routeWhitelist = [
@@ -25,13 +31,6 @@ const routeWhitelist = [
 ]
 
 const routes = [
-  // OAuth2回调页面（不需要认证）
-  {
-    path: '/callback',
-    name: 'Callback',
-    component: () => import('../views/callback/index.vue'),
-    meta: { requiresAuth: false }
-  },
   // 打印页面（独立布局，不带侧边栏和导航）
   {
     path: '/print/seed/breeding-certification/:id',
@@ -135,12 +134,12 @@ const routes = [
         component: () => import('../views/home/components/dataList.vue'),
         meta: { title: '系统公告', hideInMenu: true, requiresAuth: false }
       },
-      // {
-      //   path: 'notice/:id',
-      //   name: 'NoticeDetail',
-      //   component: () => import('../views/home/components/NoticeDetail.vue'),
-      //   meta: { title: '公告详情', hideInMenu: true, requiresAuth: false }
-      // }
+      {
+        path: 'notice/:id',
+        name: 'NoticeDetail',
+        component: () => import('../views/home/components/NoticeDetail.vue'),
+        meta: { title: '公告详情', hideInMenu: true, requiresAuth: false }
+      }
     ]
   },
   // 研究与开发管理系统
@@ -1883,27 +1882,10 @@ router.beforeEach(async (to, from, next) => {
   }
   const userStore = useUserStore()
 
-  // 1. 先判断 URL 上有没有 token
-  const urlToken = getTokenFromUrl()
-
-  // 2. 判断 localStorage 有没有 token
+  // 1. 判断 localStorage 有没有 token
   const storedToken = getToken()
 
-  // 3. 处理不同情况
-  if (urlToken) {
-    userStore.setToken(urlToken)
-    try {
-      await userStore.fetchUserInfo()
-      if (window.location.hash.includes('token=') || window.location.search.includes('token=')) {
-        window.history.replaceState(null, '', window.location.pathname)
-        return next('/home')
-      }
-
-    } catch (error) {
-      redirectToLogin(to.fullPath, userStore)
-      return next(false)
-    }
-  } else if(!storedToken) {
+  if(!storedToken) {
     userStore.logoutAndRedirect(1000)
     return next(false)
   } else {
@@ -1914,6 +1896,10 @@ router.beforeEach(async (to, from, next) => {
       console.log('路由守卫: 用户信息不存在，开始获取')
       try {
         const result = await userStore.fetchUserInfo()
+        // 获取权限和菜单
+        await userStore.getPermissions()
+        await userStore.getMenus()
+        
         console.log('路由守卫: 用户信息获取完成:', result ? '成功' : '失败')
         console.log('路由守卫: 获取后状态 - hasUserInfo:', userStore.hasUserInfo)
       } catch (error) {
@@ -1923,8 +1909,54 @@ router.beforeEach(async (to, from, next) => {
         return next(false)
       }
     } else {
+      // 用户信息存在，但如果菜单或权限为空，也尝试获取一次
+      if (userStore.menus.length === 0) {
+        await userStore.getMenus()
+      }
+      if (userStore.permissions.length === 0) {
+        await userStore.getPermissions()
+      }
       console.log('路由守卫: 用户信息已存在，直接放行')
     }
+
+    // 检查路由权限
+    // 如果是白名单路由（如首页），直接放行
+    if (to.path === '/home' || to.path === '/user' || to.path === '/404' || to.path === '/401') {
+      return next()
+    }
+
+    // 检查是否有菜单权限
+    // 注意：这里假设所有受控路由都在菜单中定义。如果有一些隐藏路由不在菜单中但需要访问，
+    // 需要确保它们在 getRouters 返回的列表中（即使 hidden: true）
+    
+    // 检查是否在白名单中（前缀匹配）
+    const isInWhitelist = (path) => {
+      return routeWhitelist.some(prefix => path === prefix || path.startsWith(prefix + '/'))
+    }
+    
+    // 只有当路由需要认证时才检查权限
+    if (requiresAuth) {
+      // 首先检查白名单
+      if (isInWhitelist(to.path)) {
+        console.log('路由守卫: 白名单路径，允许访问:', to.path)
+        return next()
+      }
+      
+      // 如果用户没有任何菜单权限，阻止访问非白名单路由
+      if (userStore.menus.length === 0) {
+        console.warn('路由守卫: 用户没有任何菜单权限，无法访问:', to.path)
+        return next('/401')
+      }
+      
+      // 检查菜单权限
+      const hasPerm = userStore.hasMenuPermission(to.path)
+      if (!hasPerm) {
+        console.warn('路由守卫: 此路径未在菜单中找到:', to.path)
+        // 不在白名单也不是动态路由，拦截
+        return next('/401')
+      }
+    }
+
     next()
   }
 })

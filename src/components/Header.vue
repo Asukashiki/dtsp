@@ -87,6 +87,21 @@ const userDetailsInfo = ref({
   lastPasswordChange: ''
 })
 
+// 解析国际化标签
+const resolveI18nLabel = (label) => {
+  try {
+    if (!label) return ''
+    if (label.startsWith('{')) {
+      const names = JSON.parse(label)
+      const lang = locale.value === 'zh-CN' ? 'zh_CN' : 'en_US'
+      return names[lang] || names['zh_CN'] || label
+    }
+    return label
+  } catch (e) {
+    return label
+  }
+}
+
 // 从store获取用户信息
 const userName = computed(() => userStore.userInfo?.user?.name || 'user')
 const organName = computed(() => userStore.userInfo?.user?.organName || 'user')
@@ -167,14 +182,14 @@ watch(
 
 // 更新用户详情信息方法
 const updateUserDetails = () => {
-  const userInfo = userStore.userInfo?.user || {}
+  const userInfo = userStore.userInfo || {}
   userDetailsInfo.value = {
-    name: userInfo.name || '',
-    employeeId: userInfo.employeeId || '',
-    department: userInfo.organName || '',
-    phone: userInfo.mobile || '',
+    name: userInfo.nickName || userInfo.userName || '',
+    employeeId: userInfo.userId || '',
+    department: resolveI18nLabel(userInfo.dept?.deptName) || '',
+    phone: userInfo.phoneNumber || '',
     email: userInfo.email || '',
-    lastPasswordChange: userInfo.lastPasswordChange || ''
+    lastPasswordChange: userInfo.loginDate || ''
   }
 }
 
