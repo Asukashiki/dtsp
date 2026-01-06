@@ -1,14 +1,14 @@
 <template>
   <div class="seed-production-container">
     <div class="page-header">
+      <div class="header-left">
+          <div class="header-icon">
+            <i class="ri-seedling-line"></i>
+          </div>
+      </div>
       <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-seedling-line header-icon"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">{{ $t('research.breeding.seed.production.title') }}</h1>
-          <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
-        </div>
+        <h1 class="page-title">{{ $t('research.breeding.seed.production.title') }}</h1>
+        <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
       </div>
     </div>
 
@@ -66,8 +66,20 @@
         <div class="table-card pc-view">
           <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
             <el-table-column
-              prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.production.columns.breedSeedProduceBatchId')"
+              prop="produceBatchId"
+              :label="$t('research.breeding.seed.production.columns.produceBatchId')"
+              width="260"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="produceBatchName"
+              :label="$t('research.breeding.seed.production.columns.produceBatchName')"
+              width="210"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="breedBatchName"
+              :label="$t('research.breeding.seed.production.columns.breedBatchName')"
               width="200"
               show-overflow-tooltip
             />
@@ -82,7 +94,11 @@
               :label="$t('research.breeding.seed.production.columns.cropType')"
               min-width="120"
               align="center"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="time"
               :label="$t('research.breeding.seed.production.columns.time')"
@@ -104,15 +120,17 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="produceSeedQuantrity"
-              :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')"
-              width="190"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.produceSeedQuantrity }} kg
-              </template>
-            </el-table-column>
+              prop="fromSeedLevel"
+              :label="$t('research.breeding.seed.production.columns.fromSeedLevel')"
+              min-width="120"
+              align="center"
+            />
+            <el-table-column
+              prop="toSeedLevel"
+              :label="$t('research.breeding.seed.production.columns.toSeedLevel')"
+              min-width="120"
+              align="center"
+            />
             <el-table-column
               prop="operatorName"
               :label="$t('research.breeding.seed.production.columns.operatorName')"
@@ -126,21 +144,23 @@
             >
               <template #default="{ row }">
                 <el-tag type="success" size="small">
-                  {{ $t(`research.breeding.seed.production.status.${row.produceStatus}`) }}
+                  {{ row.produceStatus }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column
               :label="$t('research.breeding.seed.production.columns.actions')"
-              width="150"
+              width="220"
               fixed="right"
             >
               <template #default="{ row }">
                 <el-button link type="primary" @click="handleView(row)">
                   <i class="ri-eye-line"></i>
+                  {{ $t('common.view') }}
                 </el-button>
                 <el-button link type="danger" @click="handleDelete(row)">
                   <i class="ri-delete-bin-line"></i>
+                  {{ $t('common.delete') }}
                 </el-button>
               </template>
             </el-table-column>
@@ -164,19 +184,23 @@
           <div class="card-list">
             <div
               v-for="item in filteredList"
-              :key="item.breedSeedProduceBatchId"
+              :key="item.produceBatchName"
               class="production-card"
               @click="handleView(item)"
             >
               <div class="card-header">
-                <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+                <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
                 <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.production.status.${item.produceStatus}`) }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.varietyName }}</h3>
               <div class="card-info">
                 <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.breedSeedProduceBatchId') }}</span>
-                  <span class="info-value">{{ item.breedSeedProduceBatchId }}</span>
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchId') }}</span>
+                  <span class="info-value">{{ item.produceBatchId }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchName') }}</span>
+                  <span class="info-value">{{ item.produceBatchName }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.production.columns.time') }}</span>
@@ -189,6 +213,14 @@
                 <div class="info-item">
                   <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceSeedQuantrity') }}</span>
                   <span class="info-value">{{ item.produceSeedQuantrity }} kg</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.fromSeedLevel') }}</span>
+                  <span class="info-value">{{ item.fromSeedLevel }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.toSeedLevel') }}</span>
+                  <span class="info-value">{{ item.toSeedLevel }}</span>
                 </div>
               </div>
               <div class="card-footer">
@@ -247,10 +279,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedSeedProduceList, deleteBreedSeedProduce } from '@/api/breedSeed'
+import { useDict } from '@/hooks/useDict'
 import ProductionForm from './form.vue'
 import ProductionDetail from './detail.vue'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)
@@ -356,7 +392,7 @@ const handleDelete = (row) => {
   )
     .then(async () => {
       try {
-        const res = await deleteBreedSeedProduce(row.breedSeedProduceBatchId)
+        const res = await deleteBreedSeedProduce(row.produceBatchId)
         if (res.code === 200) {
           ElMessage.success(t('research.breeding.seed.production.deleteSuccess'))
           loadData()
@@ -383,62 +419,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.seed-production-container {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 24px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon {
-  font-size: 32px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-  min-width: 0;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0;
-}
-
 .search-bar {
   background: white;
   padding: 16px;

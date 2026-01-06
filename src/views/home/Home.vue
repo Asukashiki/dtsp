@@ -31,7 +31,7 @@
         </div>
         <div class="announcements-list">
           <div
-            v-for="(item, index) in announcementList.splice(0,2)"
+            v-for="(item, index) in announcementList.slice(0,2)"
             :key="index"
             class="announcement-item"
             @click="handleAnnouncementClick(item)"
@@ -65,7 +65,8 @@
             v-for="(module, key) in systemModules"
             :key="key"
             class="system-card"
-            @click="handleSystemClick(module)"
+            :class="{ 'disabled': module.disabled }"
+            @click="!module.disabled && handleSystemClick(module)"
           >
             <div class="system-icon-wrapper" :style="{ background: module.gradient }">
               <i :class="module.icon"></i>
@@ -74,7 +75,7 @@
               <h3 class="system-name">{{ module.name }}</h3>
               <p class="system-desc">{{ module.desc }}</p>
             </div>
-            <div class="system-arrow">
+            <div class="system-arrow" v-if="!module.disabled">
               <i class="ri-arrow-right-s-line"></i>
             </div>
           </div>
@@ -160,42 +161,48 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/new-farm'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   },
   production: {
     name: t('home.modules.production.name'),
     desc: t('home.modules.production.desc'),
     icon: 'ri-seedling-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
-    path: '/production'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   },
   procurement: {
     name: t('home.modules.procurement.name'),
     desc: t('home.modules.procurement.desc'),
     icon: 'ri-shopping-cart-line',
-    gradient: 'linear-gradient(135deg, #1890FF 0%, #40A9FF 100%)',
-    path: '/procurement'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/procurement',
+    disabled: true // 禁用
   },
   traceability: {
     name: t('home.modules.traceability.name'),
     desc: t('home.modules.traceability.desc'),
     icon: 'ri-qr-code-line',
-    gradient: 'linear-gradient(135deg, #722ED1 0%, #9254DE 100%)',
-    path: '/traceability'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/traceability',
+    disabled: true // 禁用
   },
   data: {
     name: t('home.modules.data.name'),
     desc: t('home.modules.data.desc'),
     icon: 'ri-bar-chart-box-line',
-    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFA940 100%)',
-    path: '/data'
+    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
+    path: '/data',
+    disabled: true // 禁用
   },
   farm: {
     name: t('home.modules.farm.name'),
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: '/new-farm'
+    path: 'http://196.189.236.220:31100/',
+    external: true
   }
 }))
 
@@ -258,7 +265,11 @@ const handleMoreAnnouncements = () => {
 const handleSystemClick = (module) => {
   console.log('点击系统模块:', module)
   if (module.path) {
-    router.push(module.path)
+    if (module.external) {
+      window.open(module.path, '_blank')
+    } else {
+      router.push(module.path)
+    }
   }
 }
 
@@ -507,6 +518,20 @@ const handleGuideClick = (guide) => {
   border: 2px solid rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.system-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.system-card.disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
 .system-card:hover {

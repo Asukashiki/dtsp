@@ -23,6 +23,10 @@
       <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="trackingId" :label="t('research.c1BreedingBatch.tracking.trackingId')" min-width="180"
           show-overflow-tooltip />
+        <el-table-column prop="seedClass" :label="t('research.c1BreedingBatch.tracking.seedClass')" min-width="100" align="center" />
+        <el-table-column prop="lotId" :label="t('research.c1BreedingBatch.tracking.lotId')" min-width="140" show-overflow-tooltip />
+        <el-table-column prop="stage" :label="t('research.c1BreedingBatch.tracking.stage')" min-width="120" align="center" />
+        <el-table-column prop="inspectionValue" :label="t('research.c1BreedingBatch.tracking.inspectionValue')" min-width="100" align="center" />
         <el-table-column prop="location" :label="t('research.c1BreedingBatch.tracking.location')" min-width="150"
           show-overflow-tooltip />
         <el-table-column prop="trackingResult" :label="t('research.c1BreedingBatch.tracking.result')" min-width="100"
@@ -56,6 +60,46 @@
 
       <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="tracking-form">
         <div class="form-grid">
+          <el-form-item :label="t('research.c1BreedingBatch.tracking.seedClass')" prop="seedClass">
+            <el-select v-model="formData.seedClass" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="Pre-Basic" value="Pre-Basic" />
+              <el-option label="Basic" value="Basic" />
+              <el-option label="C1" value="C1" />
+              <!-- <el-option label="C2" value="C2" /> -->
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.tracking.lotId')">
+            <el-input v-model="formData.lotId" disabled />
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.tracking.stage')">
+            <el-select v-model="formData.stage" :placeholder="t('common.pleaseSelect')" class="full-width" @change="handleStageChange">
+              <el-option label="Planting" value="PLANTING" />
+              <el-option label="Vegetative" value="VEGETATIVE" />
+              <el-option label="Flowering" value="FLOWERING" />
+              <el-option label="Purity" value="PURITY" />
+              <el-option label="Harvest" value="HARVEST" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.tracking.score')">
+            <el-select v-model="formData.score" :placeholder="t('common.pleaseSelect')" class="full-width" :disabled="!formData.stage">
+              <el-option 
+                v-for="item in scoreOptions" 
+                :key="item.value" 
+                :label="item.label" 
+                :value="item.value" 
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.tracking.inspectionValue')">
+            <el-input v-model="formData.inspectionValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur">
+              <template #append>{{ currentUnit }}</template>
+            </el-input>
+          </el-form-item>
+
           <el-form-item :label="t('research.c1BreedingBatch.tracking.result')" prop="trackingResult">
             <el-select v-model="formData.trackingResult" :placeholder="t('common.pleaseSelect')" class="full-width">
               <el-option :label="t('research.c1BreedingBatch.tracking.resultNormal')" value="01" />
@@ -80,7 +124,7 @@
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.tracking.operator')">
-            <el-input v-model="formData.operator" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.operator" :placeholder="t('common.pleaseEnter')" disabled />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.tracking.description')" class="full-width-item">
@@ -98,16 +142,50 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TrackingList, getC1TrackingById, addC1Tracking, updateC1Tracking, deleteC1Tracking } from '@/api/c1BreedingBatch'
+import { getTrackingList, getTrackingById, addTracking, updateTracking, deleteTracking, checkRule } from '@/api/detection'
+import { useUserStore } from '@/store/user'
+
+// Stage与Score的映射关系
+const stageScoreMap = {
+  'PURITY': [
+    { label: 'Purity', value: 'PURITY' },
+    { label: 'Insect Damage', value: 'INSECT_DAMAGE' },
+    { label: 'Disease', value: 'DISEASE' }
+  ],
+  'VEGETATIVE': [
+    { label: 'Plant Height', value: 'PLANT_HEIGHT' },
+    { label: 'Vigor', value: 'VIGOR' }
+  ],
+  'HARVEST': [
+    { label: 'Yield', value: 'YIELD' },
+    { label: 'Moisture', value: 'MOISTURE' }
+  ],
+  'LAND_PREPARATION': [],
+  'PLANTING': [],
+  'FLOWERING': []
+}
+
+// Score对应的单位
+const scoreUnitMap = {
+  'PURITY': '%',
+  'INSECT_DAMAGE': '%',
+  'DISEASE': '%',
+  'PLANT_HEIGHT': 'cm',
+  'VIGOR': '',
+  'YIELD': 'kg/ha',
+  'MOISTURE': '%'
+}
 const props = defineProps({
-  batchId: { type: String, required: true },
+  batchId: { type: String, required: false },  // 改为可选
+  seedClass: { type: String, default: 'C1' },  // 新增seedClass prop
   readonly: { type: Boolean, default: false }
 })
 const emit = defineEmits(['refresh'])
 const { t } = useI18n()
+const userStore = useUserStore()
 const loading = ref(false)
 const submitLoading = ref(false)
 const tableData = ref([])
@@ -116,6 +194,11 @@ const isEdit = ref(false)
 const editingId = ref(null)
 const formRef = ref(null)
 const formData = ref({
+  seedClass: '',
+  lotId: '',
+  stage: '',
+  score: '',
+  inspectionValue: '',
   location: '',
   startDate: '',
   endDate: '',
@@ -127,11 +210,38 @@ const rules = {
   location: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   trackingResult: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
+
+// 根据Stage获取可选的Score选项
+const scoreOptions = computed(() => {
+  const stage = formData.value.stage
+  return stageScoreMap[stage] || []
+})
+
+// 根据Score获取对应的单位
+const currentUnit = computed(() => {
+  const score = formData.value.score
+  return scoreUnitMap[score] || ''
+})
+
+// 监听batchId变化，重新加载列表
+watch(() => props.batchId, (newBatchId) => {
+  if (newBatchId) {
+    loadList()
+  }
+})
+
 onMounted(() => loadList())
+
 const loadList = async () => {
+  if (!props.batchId) return  // 如果没有batchId，不加载
   loading.value = true
   try {
-    const response = await getC1TrackingList({ batchId: props.batchId, pageNum: 1, pageSize: 100 })
+    const response = await getTrackingList({
+      batchId: props.batchId,
+      seedClass: props.seedClass,  // 传递seedClass
+      pageNum: 1,
+      pageSize: 100
+    })
     if (response.code === 200) {
       tableData.value = response.data?.records || []
     }
@@ -144,13 +254,40 @@ const loadList = async () => {
 const handleAdd = () => {
   isEdit.value = false
   editingId.value = null
-  formData.value = { location: '', startDate: '', endDate: '', trackingResult: '', trackingDesc: '', operator: '' }
+  // 从用户信息自动填充操作人
+  const userInfo = userStore.userInfo?.user || {}
+  const operatorName = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
+  // 自动生成lotId，格式: {batchId} (直接使用批次号作为lot_id)
+  const lotId = props.batchId || ''
+  // 自动设置seedClass
+  formData.value = {
+    seedClass: props.seedClass,  // 使用传入的seedClass
+    lotId: lotId,
+    stage: '',
+    score: '',
+    inspectionValue: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    trackingResult: '',
+    trackingDesc: '',
+    operator: operatorName
+  }
   currentView.value = 'form'
+}
+
+// 当stage变化时，清空score并自动选中第一个选项
+const handleStageChange = (val) => {
+  formData.value.score = ''
+  const options = stageScoreMap[val] || []
+  if (options.length > 0) {
+    formData.value.score = options[0].value
+  }
 }
 const handleEdit = async (row) => {
   isEdit.value = true
   editingId.value = row.id
-  const response = await getC1TrackingById(row.id)
+  const response = await getTrackingById(row.id)
   if (response.code === 200 && response.data) {
     formData.value = { ...response.data }
   }
@@ -166,7 +303,7 @@ const handleDelete = (id) => {
     cancelButtonText: t('common.cancel'),
     type: 'warning'
   }).then(async () => {
-    const response = await deleteC1Tracking([id])
+    const response = await deleteTracking([id])
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       loadList()
@@ -180,9 +317,13 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        const data = { ...formData.value, batchId: props.batchId }
+        const data = {
+          ...formData.value,
+          batchId: props.batchId,
+          seedClass: props.seedClass  // 确保传递seedClass
+        }
         if (isEdit.value) data.id = editingId.value
-        const response = isEdit.value ? await updateC1Tracking(data) : await addC1Tracking(data)
+        const response = isEdit.value ? await updateTracking(data) : await addTracking(data)
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.addSuccess'))
           handleBack()
@@ -197,6 +338,25 @@ const handleSubmit = async () => {
 }
 const getResultText = (result) => ({ '01': t('research.c1BreedingBatch.tracking.resultNormal'), '02': t('research.c1BreedingBatch.tracking.resultAbnormal'), '03': t('research.c1BreedingBatch.tracking.resultObserving') }[result] || result)
 const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': 'warning' }[result] || 'info')
+
+// 失焦时检查规则
+const checkRuleOnBlur = async () => {
+  const newValue = formData.value.inspectionValue
+  // 只有当score是Plant Height时才进行检查
+  try {
+    // 调用checkRule接口，传入Plant Height作为dictCode，inspectionValue作为value
+    const response = await checkRule(formData.value.score, parseFloat(newValue))
+    if (response.code === 200) {
+      // 根据返回结果自动设置Tracking Result
+      // true表示正常(01)，false表示异常(02)
+      formData.value.trackingResult = response.data ? '01' : '02'
+    }
+  } catch (error) {
+    console.error('检查规则失败:', error)
+    ElMessage.error(t('common.error.operationFailed'))
+  }
+
+}
 </script>
 <style scoped lang="scss">
 .tracking-list-component {
@@ -223,7 +383,6 @@ const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': '
   }
 
   .tracking-form {
-    max-width: 800px;
 
     .form-grid {
       display: grid;

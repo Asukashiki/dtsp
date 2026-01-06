@@ -305,6 +305,39 @@
           </el-row>
         </div>
 
+        <!-- 审核信息 (仅在退回状态时显示) -->
+        <div v-if="formData.workflowStatus === 'S3' && formData.rejectReason" class="form-section reject-info-section">
+          <div class="section-title reject-title">
+            <i class="ri-error-warning-line"></i>
+            {{ $t('research.dataCollection.trialBase.form.rejectInfo') }}
+          </div>
+
+          <el-alert
+            :title="$t('research.dataCollection.trialBase.form.rejectReason')"
+            type="error"
+            :closable="false"
+            show-icon
+          >
+            <template #default>
+              <div class="reject-content">
+                <div class="reject-meta">
+                  <span v-if="formData.rejectedName">
+                    <i class="ri-user-line"></i>
+                    {{ formData.rejectedName }}
+                  </span>
+                  <span v-if="formData.rejectedTime">
+                    <i class="ri-time-line"></i>
+                    {{ formData.rejectedTime }}
+                  </span>
+                </div>
+                <div class="reject-reason-text">
+                  {{ formData.rejectReason }}
+                </div>
+              </div>
+            </template>
+          </el-alert>
+        </div>
+
         <div class="form-actions">
           <el-button @click="goBack">
             {{ $t('common.cancel') }}
@@ -368,7 +401,11 @@ const formData = reactive({
   activityCode: '',
   kpiCode: '',
   season: '',
-  groundId: ''
+  groundId: '',
+  workflowStatus: '',
+  rejectedName: '',
+  rejectedTime: '',
+  rejectReason: ''
 })
 
 const rules = computed(() => ({
@@ -558,6 +595,48 @@ onMounted(() => {
 
 .section-title i {
   font-size: 20px;
+}
+
+.reject-info-section {
+  background: #fef2f2;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
+.reject-title {
+  color: #dc2626 !important;
+  border-bottom-color: #dc2626 !important;
+}
+
+.reject-content {
+  margin-top: 8px;
+}
+
+.reject-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.reject-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reject-meta i {
+  font-size: 14px;
+}
+
+.reject-reason-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1f2937;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .form-actions {

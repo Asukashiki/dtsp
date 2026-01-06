@@ -88,8 +88,8 @@ const userDetailsInfo = ref({
 })
 
 // 从store获取用户信息
-const userName = computed(() => userStore.userInfo?.user?.name || '用户')
-const organName = computed(() => userStore.userInfo?.user?.organName || '访客')
+const userName = computed(() => userStore.userInfo?.user?.name || 'user')
+const organName = computed(() => userStore.userInfo?.user?.organName || 'user')
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 当前语言标签

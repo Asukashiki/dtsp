@@ -2,7 +2,7 @@
   <el-card class="audit-card" shadow="hover">
     <div class="card-header">
       <div class="title">{{ audit.trialName }}</div>
-      <StatusTag :status="audit.auditStatus" />
+      <StatusTag :status="audit.workflowStatus || audit.auditStatus" type="workflow" />
     </div>
 
     <div class="card-content">
@@ -37,14 +37,23 @@
       >
         {{ t('trialBasicAudit.action.audit') }}
       </el-button>
-      <el-button
-        v-else
-        type="info"
-        size="small"
-        @click="handleView"
-      >
-        {{ t('trialBasicAudit.action.view') }}
-      </el-button>
+      <template v-else>
+        <el-button
+          type="info"
+          size="small"
+          @click="handleView"
+        >
+          {{ t('trialBasicAudit.action.view') }}
+        </el-button>
+        <el-button
+          v-if="audit.auditStatus === 'S2' && showVoidButton"
+          type="danger"
+          size="small"
+          @click="handleVoid"
+        >
+          {{ t('trialBasicAudit.action.void') }}
+        </el-button>
+      </template>
     </div>
   </el-card>
 </template>
@@ -61,10 +70,14 @@ const props = defineProps({
   showAuditButton: {
     type: Boolean,
     default: true
+  },
+  showVoidButton: {
+    type: Boolean,
+    default: true
   }
 })
 
-const emit = defineEmits(['audit', 'view'])
+const emit = defineEmits(['audit', 'view', 'void'])
 
 const { t } = useI18n()
 
@@ -86,6 +99,10 @@ const handleAudit = () => {
 
 const handleView = () => {
   emit('view', props.audit)
+}
+
+const handleVoid = () => {
+  emit('void', props.audit)
 }
 </script>
 

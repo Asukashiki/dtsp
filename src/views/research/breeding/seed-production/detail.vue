@@ -21,12 +21,20 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.breedSeedProduceBatchId') }}:</span>
-              <span class="value">{{ data.breedSeedProduceBatchId }}</span>
+              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchId') }}:</span>
+              <span class="value">{{ data.produceBatchId }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.breedBatchId') }}:</span>
-              <span class="value">{{ data.breedBatchId }}</span>
+              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchName') }}:</span>
+              <span class="value">{{ data.produceBatchName }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.breedBatchName') }}:</span>
+              <span class="value">{{ data.breedBatchName }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.trialName') }}:</span>
+              <span class="value">{{ data.trialName }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.varietyName') }}:</span>
@@ -34,7 +42,7 @@
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.time') }}:</span>
@@ -59,8 +67,12 @@
               <span class="value">{{ data.inputSeedQuantity }} kg</span>
             </div>
             <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.produceSeedQuantrity') }}:</span>
-              <span class="value">{{ data.produceSeedQuantrity }} kg</span>
+              <span class="label">{{ $t('research.breeding.seed.production.form.fromSeedLevel') }}:</span>
+              <span class="value">{{ data.fromSeedLevel }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.breeding.seed.production.form.toSeedLevel') }}:</span>
+              <span class="value">{{ data.toSeedLevel }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.operatorName') }}:</span>
@@ -69,7 +81,7 @@
             <div class="detail-item">
               <span class="label">{{ $t('research.breeding.seed.production.form.produceStatus') }}:</span>
               <el-tag type="success">
-                {{ $t(`research.breeding.seed.production.status.${data.produceStatus}`) }}
+                {{ data.produceStatus }}
               </el-tag>
             </div>
             <div class="detail-item">
@@ -89,6 +101,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -98,6 +111,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const handleBack = () => {
   emit('back')

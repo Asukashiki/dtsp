@@ -1,6 +1,7 @@
 // 品种管理国际化文件
 export default {
   // Variety Registration
+  cropType: 'Crop Type',
   registration: {
     title: 'Variety Registration',
     subtitle: 'Record seed variety basic information and submit registration application',
@@ -325,37 +326,53 @@ export default {
     searchTitle: 'Variety Query',
 
     // Search
-    searchPlaceholder: 'Search variety name',
+    searchPlaceholder: 'Search variety name, registration number',
     filterByYear: 'Filter by year',
     filterByCrop: 'Filter by crop type',
+    filterByDataType: 'Filter by data source',
     allYears: 'All Years',
     allCrops: 'All Crops',
+    allDataTypes: 'All Sources',
+    autoPublish: 'Auto Published',
+    registrationPublish: 'Registration Published',
 
     // List Columns
     columns: {
       publishNo: 'Publication No.',
-      registerNo: 'Registration No.',
+      registerNo: 'Reg. No. / License No.',
       varietyName: 'Variety Name',
       cropType: 'Crop Type',
       publishDate: 'Publication Date',
       publishDept: 'Publishing Department',
-      enterprise: 'Enterprise',
+      enterprise: 'Enterprise / Organization',
+      dataType: 'Data Source',
+      licenseNo: 'License No.',
+      approvalOrg: 'Approval Organization',
+      approvalDate: 'Approval Date',
+      validPeriod: 'Valid Period',
       actions: 'Actions',
     },
 
     // Detail Page
     detail: {
-      basicInfo: 'Variety Basic Information',
-      description: 'Variety Description',
-      photo: 'Variety Photo',
+      title: 'Variety Details',
+      basicInfo: 'Basic Information',
+      licenseInfo: 'License Information',
+      publishInfo: 'Publication Information',
+      publishDate: 'Publication Date',
+      publishDept: 'Publishing Department',
+      recommendedRegion: 'Recommended Region',
+      description: 'Description',
+      publicDescription: 'Public Description',
+      sowingGuide: 'Sowing Guide',
+      decisionExplanation: 'Decision Explanation',
       technicalInfo: 'Technical Characteristics Information',
       trialInfo: 'Trial Information',
-      publishInfo: 'Publication Information',
-      decisionExplanation: 'Decision Explanation',
-      publicDescription: 'Public Description',
-      recommendedRegion: 'Recommended Region',
-      sowingGuide: 'Sowing Guide',
       photos: 'Photos',
+      photo: 'Variety Photo',
+      promotionVideos: 'Promotion Videos',
+      noPromotionVideos: 'No promotion videos available',
+      watchVideo: 'Watch Video',
     },
 
     // Action Buttons

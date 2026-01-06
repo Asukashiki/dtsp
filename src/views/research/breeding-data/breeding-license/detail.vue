@@ -42,7 +42,7 @@
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.breedingLicense.form.cropType') }}</span>
-            <span class="value">{{ licenseDetail.cropType }}</span>
+            <span class="value">{{ getLabelByValue('crop_type', licenseDetail.cropType) || licenseDetail.cropType }}</span>
           </div>
           <div class="info-item">
             <span class="label">{{ $t('research.breedingLicense.form.varietyName') }}</span>
@@ -126,15 +126,11 @@
           </div>
           <div class="info-item full-width" v-if="licenseDetail.diseaseResistance">
             <span class="label">{{ $t('research.breedingLicense.form.diseaseResistance') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.diseaseResistance) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.diseaseResistance }}</span>
           </div>
           <div class="info-item full-width" v-if="licenseDetail.stressTolerance">
             <span class="label">{{ $t('research.breedingLicense.form.stressTolerance') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.stressTolerance) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.stressTolerance }}</span>
           </div>
           <div class="info-item full-width" v-if="licenseDetail.grainQualityTraits">
             <span class="label">{{ $t('research.breedingLicense.form.grainQualityTraits') }}</span>
@@ -142,9 +138,7 @@
           </div>
           <div class="info-item full-width" v-if="licenseDetail.otherTraits">
             <span class="label">{{ $t('research.breedingLicense.form.otherTraits') }}</span>
-            <span class="value">
-              <pre class="json-display">{{ formatJson(licenseDetail.otherTraits) }}</pre>
-            </span>
+            <span class="value">{{ licenseDetail.otherTraits }}</span>
           </div>
         </div>
       </div>
@@ -185,10 +179,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getLicenseById } from '@/api/breedingLicense'
 import { getFilePreviewUrl } from '@/api/file'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 字典数据
+const { getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
 
 // State
 const loading = ref(false)
@@ -206,18 +204,18 @@ const getStatusType = (status) => {
 
 // Get Status Text
 const getStatusText = (status) => {
-  return t(`research.breedingLicense.status.${status}`) || status
+  return getLabelByValue('license_status', status) || status
 }
 
-// Format JSON
-const formatJson = (jsonStr) => {
-  try {
-    const obj = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr
-    return JSON.stringify(obj, null, 2)
-  } catch (e) {
-    return jsonStr
-  }
-}
+// // Format JSON
+// const formatJson = (jsonStr) => {
+//   try {
+//     const obj = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr
+//     return JSON.stringify(obj, null, 2)
+//   } catch (e) {
+//     return jsonStr
+//   }
+// }
 
 // Fetch License Detail
 const fetchLicenseDetail = async () => {

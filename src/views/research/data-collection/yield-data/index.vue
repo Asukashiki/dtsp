@@ -60,6 +60,27 @@
                   :value="item.plotId"
                 />
               </el-select>
+              <!-- 状态 -->
+<!--              <el-select
+                v-model="searchForm.status"
+                :placeholder="$t('research.dataCollection.yieldData.columns.status')"
+                clearable
+                class="search-input"
+              >
+                <el-option :label="$t('common.all')" value="" />
+                <el-option label="submit" value="submit" />
+                <el-option label="approve" value="approve" />
+              </el-select>-->
+              <!-- 审核状态（字典 flow_status） -->
+              <el-select
+                v-model="searchForm.workflowStatus"
+                :placeholder="$t('research.dataCollection.yieldData.columns.auditStatus')"
+                clearable
+                class="search-input"
+              >
+                <el-option :label="$t('common.all')" value="" />
+                <el-option v-for="opt in options.flow_status || []" :key="opt.value" :label="opt.label" :value="opt.value" />
+              </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
                 {{ $t('common.search') }}
@@ -75,16 +96,19 @@
               <el-table v-loading="loading" :data="tableData" stripe>
                 <el-table-column
                   prop="batchId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.batchId')"
                   min-width="150"
                 />
                 <el-table-column
                   prop="trialId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.trialId')"
                   min-width="150"
                 />
                 <el-table-column
                   prop="plotId"
+                  show-overflow-tooltip
                   :label="$t('research.dataCollection.yieldData.columns.plotId')"
                   min-width="120"
                 />
@@ -108,6 +132,23 @@
                   :label="$t('research.dataCollection.yieldData.columns.scoreValue')"
                   min-width="120"
                 />
+<!--                <el-table-column
+                  prop="status"
+                  :label="$t('research.dataCollection.yieldData.columns.status')"
+                  min-width="120"
+                >
+                  <template #default="{ row }">
+                    <el-tag type="info">{{ mapStatus(row.status) }}</el-tag>
+                  </template>
+                </el-table-column>-->
+                <el-table-column
+                  :label="$t('research.dataCollection.yieldData.columns.auditStatus')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   :label="$t('common.actions')"
                   fixed="right"
@@ -119,14 +160,22 @@
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
+
+                      <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)">
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
+
+                      <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)">
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('research.dataCollection.yieldData.submitForReview') }}
                       </el-button>
+
+                      <el-button v-if="shouldShowVoidButton(row)" link type="danger" @click="handleVoid(row)">
+                        <i class="ri-close-circle-line"></i>
+                        {{ $t('research.dataCollection.yieldData.void') }}
+                      </el-button>
+
                     </div>
                   </template>
                 </el-table-column>
@@ -177,11 +226,14 @@
                   <el-button type="primary" size="small" @click="handleView(item)">
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button size="small" @click="handleEdit(item)">
+                  <el-button v-if="shouldShowEditButton(item)" size="small" @click="handleEdit(item)">
                     {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item)">
-                    {{ $t('common.delete') }}
+                  <el-button v-if="shouldShowSubmitButton(item)" type="warning" size="small" @click="handleSubmitForReview(item)">
+                    {{ $t('research.dataCollection.yieldData.submitForReview') }}
+                  </el-button>
+                  <el-button v-if="shouldShowVoidButton(item)" type="danger" size="small" @click="handleVoid(item)">
+                    {{ $t('research.dataCollection.yieldData.void') }}
                   </el-button>
                 </div>
               </div>
@@ -215,11 +267,21 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getYieldDataList, deleteYieldData } from '@/api/yieldData'
+import { getYieldDataList, deleteYieldData, submitYieldDataForReview, voidYieldData } from '@/api/yieldData'
 import { getPlotInfoList } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { options, getLabelByValue } = useDict(['flow_status'])
+
+// 将后端可能返回的 0/1 状态映射为 submit/approve，若已为英文状态则原样返回
+const mapStatus = (val) => {
+  if (val === '0' || val === 0) return 'submit'
+  if (val === '1' || val === 1) return 'approve'
+  if (val === 'submit' || val === 'approve') return val
+  return val || '-'
+}
 
 const loading = ref(false)
 const tableData = ref([])
@@ -239,7 +301,9 @@ const batchOptions = computed(() => {
 
 const searchForm = reactive({
   batchId: '',
-  plotId: ''
+  plotId: '',
+  status: '',
+  workflowStatus: ''
 })
 
 const pagination = reactive({
@@ -273,6 +337,8 @@ const handleSearch = async () => {
 const handleReset = () => {
   searchForm.batchId = ''
   searchForm.plotId = ''
+  searchForm.status = ''
+  searchForm.workflowStatus = ''
   pagination.currentPage = 1
   handleSearch()
 }
@@ -292,6 +358,11 @@ const handleAdd = () => {
   router.push({ name: 'FieldInspectionAdd' })
 }
 
+// 审核
+const handleAudit = (row) => {
+  router.push({ name: 'FieldInspectionAudit', params: { id: row.id } })
+}
+
 // 查看
 const handleView = (row) => {
   router.push({ name: 'FieldInspectionDetail', params: { id: row.id } })
@@ -300,6 +371,108 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push({ name: 'FieldInspectionEdit', params: { id: row.id } })
+}
+
+// 判断是否显示编辑按钮（只在审批状态为S0或S3时显示）
+const shouldShowEditButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S0' || status === 'S3'
+}
+
+// 判断是否显示提交审核按钮（只在审批状态为S0、或S3时显示）
+const shouldShowSubmitButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S0'  || status === 'S3'
+}
+
+// 判断是否显示作废按钮（只在审批状态为S0、S1或S3时显示）
+const shouldShowVoidButton = (row) => {
+  const status = row.workflowStatus
+  return status === 'S0' || status === 'S1' || status === 'S3'
+}
+
+// 提交审核
+const handleSubmitForReview = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to submit this record for review?',
+      'Confirm',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    const res = await submitYieldDataForReview({
+      id: row.id,
+      workflowStatus: 'S1' // 提交审核后状态应为S1
+    })
+    if (res.code === 200) {
+      ElMessage.success('Submit for review successfully')
+      handleSearch()
+    } else {
+      ElMessage.error(res.msg || 'Submit failed')
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit for review:', error)
+      ElMessage.error('Submit failed')
+    }
+  }
+}
+
+// 作废
+const handleVoid = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to void this record?',
+      'Confirm',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+
+    // 弹出输入框让用户输入作废原因
+    const { value: reason } = await ElMessageBox.prompt(
+      'Please enter the reason for voiding',
+      'Void Reason',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        inputType: 'textarea',
+        inputPlaceholder: 'Please enter the reason for voiding',
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') {
+            return 'Void reason is required'
+          }
+          return true
+        }
+      }
+    )
+
+    // 调用作废接口
+    const submitData = {
+      id: row.id,
+      remark: reason,
+      workflowStatus: 'S10' // 作废后状态应为S10
+    }
+
+    const res = await voidYieldData(submitData)
+    if (res.code === 200) {
+      ElMessage.success('Void successfully')
+      // 刷新列表
+      handleSearch()
+    } else {
+      ElMessage.error(res.msg || 'Operation failed')
+    }
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      console.error('Failed to void:', error)
+      ElMessage.error('Operation failed')
+    }
+  }
 }
 
 // 删除
@@ -349,68 +522,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 页面容器 */
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-wrapper {
-  margin: 0 auto;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
 
 /* 卡片 */
 .info-card {

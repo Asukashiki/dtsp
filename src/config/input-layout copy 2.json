@@ -1,0 +1,176 @@
+{
+  "systemName": "input.systemName",
+  "backToHome": "input.backToHome",
+  "icon": "ri-database-2-line",
+  "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
+  "menus": [
+    {
+      "index": "registration-management",
+      "icon": "ri-building-2-line",
+      "titleKey": "input.menu.registrationManagement",
+      "children": [
+        {
+          "index": "/input/registration",
+          "icon": "ri-file-add-line",
+          "titleKey": "input.menu.registration"
+        },
+        {
+          "index": "/input/registration/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "input.menu.registrationApproval"
+        }
+      ]
+    },
+    {
+      "index": "newFarmManagement",
+      "icon": "ri-plant-line",
+      "titleKey": "newFarm.moduleName",
+      "name": "农田管理",
+      "children": [
+        {
+          "index": "/input/da",
+          "icon": "ri-user-star-line",
+          "titleKey": "newFarm.menu.daManagement",
+          "name": "DA管理"
+        },
+        {
+          "index": "/input/farmer",
+          "icon": "ri-user-line",
+          "titleKey": "newFarm.menu.farmerManagement",
+          "name": "农民管理"
+        },
+        {
+          "index": "/input/land",
+          "icon": "ri-landscape-line",
+          "titleKey": "newFarm.menu.landManagement",
+          "name": "土地管理"
+        }
+      ]
+    },
+    {
+      "index": "input-management",
+      "icon": "ri-box-3-line",
+      "titleKey": "input.menu.inputManagement",
+      "children": [
+        {
+          "index": "/input/catalog",
+          "icon": "ri-list-check",
+          "titleKey": "input.menu.inputCatalog"
+        }
+      ]
+    },
+    {
+      "name": "投入品需求管理",
+      "index": "demand-management",
+      "icon": "ri-file-edit-line",
+      "titleKey": "input.menu.demandManagement",
+      "children": [
+        {
+          "index": "/input/demand/aggregation-state",
+          "icon": "ri-building-4-line",
+          "titleKey": "input.menu.stateAggregation"
+        },
+        {
+          "index": "/input/demand/farmer",
+          "icon": "ri-user-add-line",
+          "titleKey": "input.menu.farmerDemand"
+        },
+        {
+          "index": "/input/demand/aggregation",
+          "icon": "ri-database-2-line",
+          "titleKey": "input.menu.villageAggregation"
+        },
+        {
+          "index": "/input/demand/aggregation-town",
+          "icon": "ri-community-line",
+          "titleKey": "input.menu.townAggregation"
+        },
+        {
+          "index": "/input/demand/aggregation-district",
+          "icon": "ri-government-line",
+          "titleKey": "input.menu.districtAggregation"
+        },
+        {
+          "index": "/input/demand/demand-inquiry",
+          "icon": "ri-search-line",
+          "titleKey": "input.menu.demandInquiry"
+        }
+      ]
+    },
+    {
+      "name": "投入品流通管理",
+      "index": "input-circulation",
+      "icon": "ri-truck-line",
+      "titleKey": "research.menu.inputCirculation",
+      "children": [
+        {
+          "index": "/input/input-circulation/ose-release",
+          "icon": "ri-share-forward-line",
+          "titleKey": "research.menu.oseReleaseToUnion"
+        },
+        {
+          "index": "/input/input-circulation/union-receive",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "research.menu.unionReceiveConfirm"
+        },
+        {
+          "index": "/input/input-circulation/union-release",
+          "icon": "ri-send-plane-line",
+          "titleKey": "research.menu.unionReleaseToCooperative"
+        },
+        {
+          "index": "/input/input-circulation/woreda-receive",
+          "icon": "ri-check-double-line",
+          "titleKey": "research.menu.cooperativeReceiveConfirm"
+        },
+        {
+          "index": "/input/input-circulation/farmer-release",
+          "icon": "ri-user-received-line",
+          "titleKey": "research.menu.cooperativeReleaseToFarmer"
+        },
+        {
+          "index": "/input/input-circulation/farmer-receive",
+          "icon": "ri-user-follow-line",
+          "titleKey": "research.menu.farmerReceive"
+        }
+      ]
+    },
+    {
+      "index": "inventory-management",
+      "icon": "ri-archive-line",
+      "titleKey": "input.menu.inventoryManagement",
+      "children": [
+        {
+          "index": "/input/inventory/warehouse",
+          "icon": "ri-home-3-line",
+          "titleKey": "input.menu.warehouse"
+        },
+        {
+          "index": "/input/inventory/stock-in",
+          "icon": "ri-inbox-line",
+          "titleKey": "input.menu.stockIn"
+        },
+        {
+          "index": "/input/inventory/stock-out",
+          "icon": "ri-inbox-unarchive-line",
+          "titleKey": "input.menu.stockOut"
+        },
+        {
+          "index": "/input/inventory/stock",
+          "icon": "ri-stack-line",
+          "titleKey": "input.menu.stockQuery"
+        }
+      ]
+    },
+    {
+      "index": "/input/dashboard",
+      "icon": "ri-dashboard-line",
+      "titleKey": "input.menu.dashboard"
+    },
+    {
+      "index": "/input/feedback",
+      "icon": "ri-feedback-line",
+      "titleKey": "input.menu.feedback"
+    }
+  ]
+}

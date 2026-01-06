@@ -111,6 +111,32 @@
                 {{ $t('farmerDemand.form.addItem') }}
               </el-button>
             </div>
+
+            <!-- 显示季节耕地面积汇总和警告 -->
+            <div v-if="formData.inputItems.length > 0 && formData.landArea" class="crop-land-summary-wrapper">
+              <div class="summary-header">
+                <span class="summary-label">{{ $t('farmerDemand.realtime.totalLandArea') }}:</span>
+                <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
+              </div>
+
+              <!-- 按混合规则显示耕地面积汇总：种子按大类，化肥按小类 -->
+              <div v-if="Object.keys(mixedSummaries).length > 0" class="season-summaries-list">
+                <div v-for="(data, key) in mixedSummaries" :key="key"
+                     class="season-summary-item"
+                     :class="{ 'exceeded': data.sum > formData.landArea }">
+                  <span class="season-name">{{ getSeasonName(data.season) }} - {{ data.displayName }}</span>
+                  <span class="season-sum">{{ data.sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
+                  <i v-if="data.sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
+                </div>
+              </div>
+
+              <!-- 超出警告（汇总显示） -->
+              <div v-if="isSeasonCropLandExceeded" class="error-message">
+                <i class="ri-error-warning-line"></i>
+                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ isSeasonCropLandExceeded.displayName }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
+              </div>
+            </div>
+
             <div v-if="formData.inputItems.length === 0" class="no-items">
               <el-empty :description="$t('farmerDemand.form.noItems')"></el-empty>
             </div>
@@ -149,7 +175,44 @@
                       </div>
                     </el-form-item>
                   </el-col>
+
                 </el-row>
+
+                <!-- 季节 + 耕地面积 -->
+                <el-row :gutter="20" style="margin-bottom: 16px;">
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                        :label="$t('farmerDemand.form.season')"
+                        :prop="`inputItems.${index}.season`"
+                        :rules="rules.season"
+                    >
+                      <el-select v-model="item.season" :placeholder="$t('farmerDemand.placeholder.season')" style="width: 100%">
+                        <el-option
+                            v-for="seasonItem in options.agri_season"
+                            :key="seasonItem.value"
+                            :label="seasonItem.label"
+                            :value="seasonItem.value"
+                        ></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                        :label="$t('farmerDemand.form.cropLand')"
+                        :prop="`inputItems.${index}.cropLand`"
+                        :rules="rules.cropLand"
+                    >
+                      <el-input-number
+                          v-model="item.cropLand"
+                          :min="0"
+                          :precision="2"
+                          style="width: 100%"
+                          :placeholder="$t('farmerDemand.placeholder.cropLand')"
+                      ></el-input-number>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+
                 <!-- 单位 + 数量 -->
                 <el-row :gutter="20">
                   <el-col :xs="24" :sm="12">
@@ -159,7 +222,12 @@
                         :rules="rules.unit"
                     >
                       <el-select v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" style="width: 100%">
-                        <el-option label="kg" value="kg"></el-option>
+                        <el-option
+                            v-for="unitItem in options.agri_unit"
+                            :key="unitItem.value"
+                            :label="unitItem.label"
+                            :value="unitItem.value"
+                        ></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -218,7 +286,7 @@ const isEdit = computed(() => !!route.params.id)
 const farmerList = ref([])
 const farmerLoading = ref(false)
 const selectedFarmer = ref(null)
-const daId = ref('')
+const userId = ref('')
 
 // 当前年份
 const currentYear = new Date().getFullYear()
@@ -230,11 +298,14 @@ clearDictCache('input_category')
 // 初始化字典
 const {
   options: dictOptions,
+  options,
   loading: dictLoading,
   refresh: refreshDict
 } = useDict([
   'input_type',
-  'input_category'
+  'input_category',
+  'agri_unit',
+  'agri_season'
 ], {
   immediate: true,
   cache: true
@@ -287,6 +358,81 @@ const formData = reactive({
   inputItems: []
 })
 
+// 混合分组汇总逻辑：
+// - 种子(IN01)：按季节+大类(inputType)汇总，同一季节所有种子加在一起判断
+// - 化肥(IN02)：按季节+小类(inputCategory)分别判断，每种化肥单独判断
+const mixedSummaries = computed(() => {
+  const result = {}
+  formData.inputItems.forEach(item => {
+    if (item.season && item.inputType) {
+      let key, displayName
+      
+      if (item.inputType === 'IN01') {
+        // 种子：按季节+大类分组
+        key = `${item.season}_${item.inputType}`
+        displayName = getInputTypeName(item.inputType)
+      } else {
+        // 化肥及其他：按季节+小类分组
+        if (!item.inputCategory) return
+        key = `${item.season}_${item.inputCategory}`
+        displayName = getInputCategoryName(item.inputCategory)
+      }
+      
+      if (!result[key]) {
+        result[key] = { 
+          season: item.season, 
+          inputType: item.inputType,
+          inputCategory: item.inputCategory,
+          displayName: displayName,
+          sum: 0 
+        }
+      }
+      result[key].sum += (item.cropLand || 0)
+    }
+  })
+  return result
+})
+
+// 检查是否有任何分组的耕地面积超出土地面积
+const isSeasonCropLandExceeded = computed(() => {
+  if (!formData.landArea) return null
+
+  for (const [key, data] of Object.entries(mixedSummaries.value)) {
+    if (data.sum > formData.landArea) {
+      return { 
+        season: data.season, 
+        displayName: data.displayName,
+        sum: data.sum 
+      }
+    }
+  }
+  return null
+})
+
+// 获取季节名称（从字典中查找）
+const getSeasonName = (seasonValue) => {
+  if (!seasonValue) return ''
+  const agriSeason = options.agri_season || dictOptions.value.agri_season || []
+  const season = agriSeason.find(item => item.value === seasonValue)
+  return season ? season.label : seasonValue
+}
+
+// 获取投入品类型名称（从字典中查找，大类）
+const getInputTypeName = (typeValue) => {
+  if (!typeValue) return ''
+  const inputType = options.input_type || dictOptions.value.input_type || []
+  const type = inputType.find(item => item.value === typeValue)
+  return type ? type.label : typeValue
+}
+
+// 获取投入品小类名称（从字典中查找）
+const getInputCategoryName = (categoryValue) => {
+  if (!categoryValue) return ''
+  const inputCategory = options.input_category || dictOptions.value.input_category || []
+  const category = inputCategory.find(item => item.value === categoryValue)
+  return category ? category.label : categoryValue
+}
+
 // 表单验证规则
 const rules = reactive({
   farmerName: [
@@ -301,6 +447,16 @@ const rules = reactive({
     message: t('farmerDemand.rules.inputCategoryRequired'),
     trigger: 'change'
   }],
+  season: [{
+    required: true,
+    message: t('farmerDemand.rules.seasonRequired'),
+    trigger: 'change'
+  }],
+  // cropLand: [{
+  //   required: true,
+  //   message: t('farmerDemand.rules.cropLandRequired'),
+  //   trigger: 'blur'
+  // }],
   unit: [{
     required: true,
     message: t('farmerDemand.rules.unitRequired'),
@@ -326,25 +482,19 @@ const handleCascaderChange = (val, index) => {
 
 // 农民搜索方法
 const handleSearchFarmer = async (query) => {
-  if (!daId.value) {
-    farmerList.value = []
-    return
-  }
-
   farmerLoading.value = true
   try {
     const requestParams = {
-      daId: daId.value,
       farmerName: query.trim() || '',
       pageNum: 1,
-      pageSize: 40
+      pageSize: 9999999
     }
 
     const res = await getFarmerList(requestParams)
     farmerList.value = res.data?.records || res.data?.rows || []
 
     if (farmerList.value.length === 0) {
-      ElMessage.info(t('farmerDemand.tips.noFarmerFound', { daId: daId.value, query: query }))
+      ElMessage.info(t('farmerDemand.tips.noFarmerFound', { query: query }))
     }
   } catch (e) {
     ElMessage.error(t('common.loadFailed'))
@@ -370,6 +520,15 @@ const handleSelectFarmer = (farmer) => {
     return
   }
 
+  // 检查土地面积
+  const landArea = farmer.totalLandArea || farmer.landArea || 0
+  if (!landArea || landArea <= 0) {
+    ElMessage.warning(t('farmerDemand.messages.farmerNoLand'))
+    // 清空已选择的农民
+    selectedFarmer.value = null
+    return
+  }
+
   formData.farmerId = farmer.farmerId || ''
   formData.farmerName = farmer.farmerName || ''
   formData.farmerIdNumber = farmer.idCard || ''
@@ -379,16 +538,22 @@ const handleSelectFarmer = (farmer) => {
   formData.zoneName = farmer.zoneName || ''
   formData.woredaName = farmer.woredaName || ''
   formData.kebeleName = farmer.kebeleName || ''
-  formData.landArea = farmer.totalLandArea || null
+  formData.landArea = landArea
 }
 
 // 添加投入品明细
 const handleAddItem = () => {
+  // 获取 Unit 字典的第一个选项作为默认值
+  const unitOptions = options.agri_unit || dictOptions.value.agri_unit || []
+  const defaultUnit = unitOptions.length > 0 ? unitOptions[0].value : ''
+  
   formData.inputItems.push({
     cascadeValue: [],
     inputType: '',
     inputCategory: '',
-    unit: '',
+    season: '',
+    cropLand: null,
+    unit: defaultUnit,
     quantity: null
   })
 }
@@ -410,10 +575,23 @@ const loadData = async () => {
       }
 
       // 适配编辑态的级联选择器值
+      // 注意：后端返回的 inputCategory 是大类(IN01)，inputType 是小类(IN0101)
+      // 前端级联选择器需要 cascadeValue = [大类, 小类]
+      // 前端 inputType 存大类，inputCategory 存小类
       if (formData.inputItems && formData.inputItems.length > 0) {
         formData.inputItems.forEach(item => {
-          item.cascadeValue = item.inputType && item.inputCategory
-              ? [item.inputType, item.inputCategory]
+          // 后端返回：inputCategory=大类, inputType=小类
+          // 前端期望：inputType=大类, inputCategory=小类
+          const backendCategory = item.inputCategory  // 大类 IN01
+          const backendType = item.inputType  // 小类 IN0101
+          
+          // 修正字段映射
+          item.inputType = backendCategory  // 前端大类
+          item.inputCategory = backendType  // 前端小类
+          
+          // 设置级联选择器值 [大类, 小类]
+          item.cascadeValue = backendCategory && backendType
+              ? [backendCategory, backendType]
               : []
         })
       } else {
@@ -435,7 +613,7 @@ const loadData = async () => {
             formData.kebeleName = farmerRes.data.kebeleName
             formData.landArea = farmerRes.data.totalLandArea || farmerRes.data.landArea || formData.landArea
           } else {
-            const listRes = await getFarmerList({ daId: daId.value, farmerId: formData.farmerId, pageSize: 1 })
+            const listRes = await getFarmerList({ farmerId: formData.farmerId, pageSize: 1 })
             if (listRes.data?.records?.length) {
               selectedFarmer.value = listRes.data.records[0]
             }
@@ -457,12 +635,36 @@ const handleSubmit = async () => {
   if (!formRef.value) return
 
   try {
+    // 检查农民是否已选择且有土地产权
+    if (!formData.farmerId) {
+      ElMessage.warning(t('farmerDemand.rules.farmerNameRequired'))
+      return
+    }
+
+    // 再次验证土地面积（防止绕过选择检查）
+    if (!formData.landArea || formData.landArea <= 0) {
+      ElMessage.warning(t('farmerDemand.messages.farmerNoLand'))
+      return
+    }
+
     await formRef.value.validate()
 
     if (formData.inputItems.length === 0) {
       ElMessage.warning(t('farmerDemand.rules.itemsRequired'))
       return
     }
+
+    // 验证混合分组的耕地面积是否超过土地总面积
+    const exceeded = isSeasonCropLandExceeded.value
+    if (exceeded) {
+      const seasonName = getSeasonName(exceeded.season)
+      ElMessage.error(`${seasonName} - ${exceeded.displayName}: ${t('farmerDemand.messages.cropLandExceedsLandArea', {
+        totalCropLand: exceeded.sum.toFixed(2),
+        landArea: formData.landArea
+      })}`)
+      return
+    }
+
     const user = JSON.parse(localStorage.getItem('userInfo')).user
     formData.daUserId = user.ID;
     formData.daUserName = user.NAME;
@@ -472,6 +674,8 @@ const handleSubmit = async () => {
       inputItems: formData.inputItems.map(item => ({
         inputType: item.inputType,
         inputCategory: item.inputCategory,
+        season: item.season,
+        cropLand: item.cropLand,
         unit: item.unit,
         quantity: item.quantity
       }))
@@ -479,7 +683,7 @@ const handleSubmit = async () => {
 
     submitting.value = true
     const apiFunc = isEdit.value ? updateFarmerDemand : addFarmerDemand
-    const params = { ...submitData, daId: daId.value }
+    const params = { ...submitData }
 
     if (isEdit.value) {
       params.id = route.params.id
@@ -522,12 +726,13 @@ onMounted(async () => {
     labelWidth.value
   })
 
-  // 获取用户DA ID
+  // 获取用户ID
   try {
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr)
-      daId.value = userInfo.daId || 'DA202401001'
+      // 从 userInfo.userInfo.user.id 获取用户ID
+      userId.value = userInfo?.userInfo?.user?.id || userInfo?.user?.id || ''
     } else {
       ElMessage.warning(t('common.tips.noUserInfo'))
     }
@@ -540,9 +745,7 @@ onMounted(async () => {
   loadData()
 
   // 初始化农民列表
-  if (daId.value) {
-    handleSearchFarmer('')
-  }
+  handleSearchFarmer('')
 })
 </script>
 
@@ -632,6 +835,106 @@ onMounted(async () => {
   font-size: 22px;
 }
 
+/* 耕地面积汇总提示 - 新版 */
+.crop-land-summary-wrapper {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.summary-header {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #009A44 0%, #00b350 30%, #FEDD00 100%);
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-header .summary-label {
+  color: white;
+  font-weight: 600;
+}
+
+.summary-header .summary-value {
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.season-summaries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.season-summary-item {
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s;
+}
+
+.season-summary-item:hover {
+  border-color: #009A44;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.season-summary-item.exceeded {
+  background: #fef2f2;
+  border-color: #dc2626;
+  border-width: 2px;
+}
+
+.season-name {
+  font-weight: 600;
+  color: #1f2937;
+  flex-shrink: 0;
+}
+
+.season-sum {
+  font-weight: 600;
+  color: #009A44;
+  margin-left: auto;
+}
+
+.warning-icon {
+  color: #dc2626;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.error-message {
+  padding: 10px 12px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.error-message i {
+  font-size: 16px;
+}
+
 .no-items {
   text-align: center;
   padding: 40px 0;
@@ -716,5 +1019,35 @@ onMounted(async () => {
     font-size: 14px !important;
     padding: 8px 15px !important;
   }
+
+  .crop-land-summary-wrapper {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .summary-header {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .summary-header .summary-value {
+    font-size: 14px;
+  }
+
+  .season-summary-item {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .season-name,
+  .season-sum {
+    font-size: 13px;
+  }
+
+  .error-message {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
 }
 </style>

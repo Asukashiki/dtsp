@@ -2,12 +2,14 @@
   <div class="breeding-module-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-left header-icon">
         <i class="ri-seedling-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
+        <div class="header-text">
         <h1 class="page-title">{{ $t('research.breeding.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.breeding.subtitle') }}</p>
+      </div>
       </div>
     </div>
 
@@ -36,11 +38,12 @@
               @change="handleSearch"
           >
             <el-option :label="$t('research.breeding.batch.allCrops')" value="" />
-            <el-option label="Wheat" value="WHEAT" />
-            <el-option label="Corn" value="CORN" />
-            <el-option label="Rice" value="RICE" />
-            <el-option label="Soybean" value="SOYBEAN" />
-            <el-option label="Cotton" value="COTTON" />
+            <el-option
+              v-for="item in options.crop_type"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -87,9 +90,12 @@
         >
           <el-table-column prop="batchId" :label="$t('research.breeding.batch.columns.batchId')" width="220" fixed="left" />
           <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" />
-          <el-table-column prop="breedingMethodName" :label="'Breeding methods'" min-width="140" align="center" />
-          <el-table-column prop="breedingLevelName" :label="$t('research.breeding.batch.columns.breedingLevel')" width="160" align="center" />
+          <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center" >
+            <template #default="{ row }">
+              <span>{{getLabelByValue('crop_type', row.cropType) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="breedingLevelName" :label="$t('research.breeding.breedingBatch.form.breedingLevel')" width="160" align="center" />
           <el-table-column prop="startDate" :label="$t('research.breeding.batch.columns.startDate')" width="120" align="center" />
           <el-table-column prop="statusName" :label="$t('research.breeding.batch.columns.status')" width="100" align="center">
             <template #default="{ row }">
@@ -98,7 +104,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="trackingCount" :label="$t('research.breeding.batch.columns.trackingCount')" min-width="140" align="center">
+          <!-- <el-table-column prop="trackingCount" :label="$t('research.breeding.batch.columns.trackingCount')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.trackingCount || 0 }}</el-tag>
             </template>
@@ -107,7 +113,7 @@
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.testCount || 0 }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column :label="$t('common.actions')" width="260" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id)">{{ $t('common.view') }}</el-button>
@@ -193,8 +199,15 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedingBatchPageList, deleteBreedingBatchPage } from '@/api/breeding'
 
+import { useDict } from '@/hooks/useDict'
+
+const { getLabelByValue } = useDict(['crop_type']);
+
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用字典获取作物类型 
+  const { options } = useDict(['crop_type'])
 
 // 数据
 const loading = ref(false)
@@ -207,15 +220,6 @@ const queryData = ref({
   pageNum: 1,
   pageSize: 10
 })
-
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
 
 // 繁育方法映射
 const breedingMethodMap = computed(() => ({
@@ -259,7 +263,7 @@ const handleSearch = async () => {
       // 添加显示名称
       tableData.value = records.map(item => ({
         ...item,
-        cropTypeName: cropTypeMap.value[item.cropType] || item.cropType,
+        cropTypeName: getLabelByValue('crop_type', item.cropType) || item.cropType,
         breedingMethodName: breedingMethodMap.value[item.breedingMethod] || item.breedingMethod,
         breedingLevelName: breedingLevelMap.value[item.breedingLevel] || item.breedingLevel,
         statusName: statusMap.value[item.batchStatus] || item.batchStatus
@@ -341,42 +345,7 @@ const getStatusTagType = (status) => {
 </script>
 
 <style scoped lang="scss">
-.breeding-module-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
 
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-icon-wrapper {
-    font-size: 40px;
-    margin-right: 20px;
-  }
-
-  .header-text {
-    flex: 1;
-
-    .page-title {
-      margin: 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .page-subtitle {
-      margin: 5px 0 0 0;
-      opacity: 0.9;
-      font-size: 14px;
-    }
-  }
-}
 
 .content-wrapper {
   .search-bar {

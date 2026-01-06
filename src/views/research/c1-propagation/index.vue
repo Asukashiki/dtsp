@@ -1,14 +1,12 @@
 <template>
   <div class="c1-propagation-container">
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-seedling-line header-icon"></i>
+        <div class="header-left header-icon">
+          <i class="ri-seedling-line"></i>
         </div>
-        <div class="header-text">
+      <div class="header-content">
           <h1 class="page-title">{{ $t('research.c1Propagation.title') }}</h1>
           <p class="page-subtitle">{{ $t('research.c1Propagation.subtitle') }}</p>
-        </div>
       </div>
     </div>
 
@@ -85,11 +83,25 @@
               show-overflow-tooltip
             />
             <el-table-column
+              prop="authId"
+              :label="$t('research.c1Propagation.columns.authId')"
+              min-width="140"
+              show-overflow-tooltip
+            >
+              <template #default="{ row }">
+                {{ row.authId || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
               prop="cropType"
               :label="$t('research.c1Propagation.columns.cropType')"
               min-width="160"
               align="center"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="$t('research.c1Propagation.columns.varietyName')"
@@ -160,7 +172,8 @@
                 <el-tag :type="getStatusType(item.applyStatus)" size="small">
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
-                <el-tag type="info" size="small">{{ item.cropType }}</el-tag>
+                <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+                <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
               <div class="card-info">
@@ -233,10 +246,14 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1PropagationList, deleteC1Propagation } from '@/api/c1Propagation'
+import { useDict } from '@/hooks/useDict'
 import PropagationForm from './form.vue'
 import PropagationDetail from './detail.vue'
 
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据状态
 const loading = ref(false)
@@ -374,62 +391,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.c1-propagation-container {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 24px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon {
-  font-size: 32px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-  min-width: 0;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0;
-}
-
 .search-bar {
   background: white;
   padding: 16px;

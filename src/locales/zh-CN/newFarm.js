@@ -185,6 +185,7 @@ export default {
       editSuccess: '编辑成功',
       deleteSuccess: '删除成功',
       resetPasswordSuccess: '密码重置成功',
+      accountUnavailable: '账号已存在，请更换其他账号',
     },
     // 提示
     tips: {

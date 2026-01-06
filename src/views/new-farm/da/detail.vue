@@ -92,18 +92,18 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">{{ $t('newFarm.common.zoneName') }}:</span>
-              <span class="value">{{ detail.zoneName || '-' }}</span>
+              <span class="value">{{ zoneName }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('newFarm.common.woredaName') }}:</span>
-              <span class="value">{{ detail.woredaName || '-' }}</span>
+              <span class="value">{{ woredaName }}</span>
             </div>
             <div class="info-item full-width">
               <span class="label">{{ $t('newFarm.da.form.kebeleCodes') }}:</span>
               <span class="value">
-                <template v-if="detail.kebeleNames">
+                <template v-if="kebeleNames.length > 0">
                   <el-tag
-                    v-for="(name, index) in detail.kebeleNames.split(',')"
+                    v-for="(name, index) in kebeleNames"
                     :key="index"
                     size="small"
                     class="kebele-tag"
@@ -189,11 +189,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getDaDetail } from '@/api/newFarm'
+import { getRegionTree } from '@/api/orgRegistration'
+import { listSubRegionByCode } from '@/api/application'
 
 const router = useRouter()
 const route = useRoute()
@@ -201,6 +203,10 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detail = ref(null)
+
+// 区域相关状态
+const regionTreeData = ref([])
+const kebeleOptions = ref([])
 
 // 返回
 const goBack = () => {
@@ -218,6 +224,89 @@ const formatArea = (area) => {
   return `${parseFloat(area).toFixed(2)} ha`
 }
 
+// 递归查找区域节点
+const findRegionNode = (tree, code) => {
+  for (const node of tree) {
+    if (node.value === code || node.code === code) {
+      return node
+    }
+    if (node.children && node.children.length > 0) {
+      const found = findRegionNode(node.children, code)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+// 递归查找区域路径（包含所有父节点）
+const findRegionPath = (tree, code, path = []) => {
+  for (const node of tree) {
+    const currentPath = [...path, node]
+    if (node.value === code || node.code === code) {
+      return currentPath
+    }
+    if (node.children && node.children.length > 0) {
+      const found = findRegionPath(node.children, code, currentPath)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+// 计算 Woreda 名称
+const woredaName = computed(() => {
+  if (!detail.value?.woredaCode || regionTreeData.value.length === 0) return '-'
+  const node = findRegionNode(regionTreeData.value, detail.value.woredaCode)
+  return node?.label || node?.name || detail.value.woredaCode
+})
+
+// 计算 Zone 名称（从 Woreda 的父节点获取）
+const zoneName = computed(() => {
+  if (!detail.value?.woredaCode || regionTreeData.value.length === 0) return '-'
+  const path = findRegionPath(regionTreeData.value, detail.value.woredaCode)
+  if (path && path.length >= 2) {
+    // path 中倒数第二个是 Zone（假设层级是 Region > Zone > Woreda）
+    const zoneNode = path[path.length - 2]
+    return zoneNode?.label || zoneNode?.name || '-'
+  }
+  return '-'
+})
+
+// 计算 Kebele 名称
+const kebeleNames = computed(() => {
+  if (!detail.value?.kebeleCodes || kebeleOptions.value.length === 0) return []
+  const codes = detail.value.kebeleCodes.split(',').filter(c => c)
+  return codes.map(code => {
+    const kebele = kebeleOptions.value.find(k => k.code === code || k.id === code)
+    return kebele?.name || code
+  })
+})
+
+// 加载区域树
+const loadRegionTree = async () => {
+  try {
+    const res = await getRegionTree()
+    if (res.code === 200 && res.data) {
+      regionTreeData.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load region tree:', error)
+  }
+}
+
+// 加载 Kebele 列表
+const loadKebeleOptions = async (woredaCode) => {
+  if (!woredaCode) return
+  try {
+    const res = await listSubRegionByCode({ regionCode: woredaCode })
+    if (res.code === 200) {
+      kebeleOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load kebele options:', error)
+  }
+}
+
 // 加载详情
 const loadDetail = async () => {
   loading.value = true
@@ -225,6 +314,10 @@ const loadDetail = async () => {
     const res = await getDaDetail(route.params.id)
     if (res.code === 200) {
       detail.value = res.data
+      // 加载 Kebele 选项
+      if (res.data.woredaCode) {
+        await loadKebeleOptions(res.data.woredaCode)
+      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -234,7 +327,8 @@ const loadDetail = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadRegionTree()
   loadDetail()
 })
 </script>

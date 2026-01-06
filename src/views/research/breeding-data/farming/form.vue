@@ -65,10 +65,10 @@
                   <el-form-item label="Activity Date" prop="activityDate">
                     <el-date-picker
                       v-model="formData.activityDate"
-                      type="date"
-                      value-format="YYYY-MM-DD"
+                      type="datetime"
+                      value-format="YYYY-MM-DD HH:mm:ss"
                       style="width: 100%"
-                      placeholder="Select activity date"
+                      placeholder="Select activity date and time"
                     />
                   </el-form-item>
                 </el-col>
@@ -101,12 +101,13 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Unit">
                     <el-select v-model="formData.unit" placeholder="Please select unit" style="width: 100%">
-                      <el-option label="kg" value="kg" />
+                      <el-option label="Kg/ha" value="Kg/ha" />
                       <el-option label="g" value="g" />
                       <el-option label="L" value="L" />
                       <el-option label="mL" value="mL" />
                       <el-option label="bags" value="bags" />
                       <el-option label="pieces" value="pieces" />
+                      <el-option label="cm" value="cm" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -123,7 +124,7 @@
                         v-for="item in farmerOptions"
                         :key="item.farmerId"
                         :label="`${item.farmerName} (${item.farmerId})`"
-                        :value="item.farmerId"
+                        :value="String(item.farmerId)"
                       >
                         <div style="display: flex; justify-content: space-between;">
                           <span>{{ item.farmerName }}</span>
@@ -148,6 +149,56 @@
             </div>
           </div>
 
+          <!-- Audit Information (仅编辑模式显示) -->
+          <div class="info-card" v-if="isEdit">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-info-line"></i>
+                <span>Audit Information</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Creator">
+                    <el-input v-model="formData.creator" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Created Time">
+                    <el-input v-model="formData.createTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Modifier">
+                    <el-input v-model="formData.modifier" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Modified Time">
+                    <el-input v-model="formData.updateTime" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Auditor">
+                    <el-input v-model="formData.auditBy" placeholder="Enter auditor name" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item label="Audited Time">
+                    <el-date-picker
+                      v-model="formData.auditTime"
+                      type="datetime"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%"
+                      placeholder="Select audited date and time"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
@@ -160,12 +211,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
 import { getFarmerOptions } from '@/api/newFarm'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -184,7 +236,7 @@ const formData = reactive({
   plotId: '',
   trialId: '',
   batchId: '',
-  activityDate: new Date().toISOString().split('T')[0], // 默认当前日期
+  activityDate: null, // 初始化为null，后续在onMounted中设置默认值
   activityType: '',
   inputName: '',
   quantity: null,
@@ -200,6 +252,26 @@ const rules = {
   operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }]
 }
 
+// 将日期对象格式化为 'YYYY-MM-DD HH:mm:ss'
+const formatNow = () => {
+  const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
+  const d = new Date()
+  const Y = d.getFullYear()
+  const M = pad(d.getMonth() + 1)
+  const D = pad(d.getDate())
+  const h = pad(d.getHours())
+  const m = pad(d.getMinutes())
+  const s = pad(d.getSeconds())
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`
+}
+
+// 解析当前用户的可用操作员ID，优先 farmerId，其次 userId/id
+const resolveOperatorId = () => {
+  const ui = getUserInfo() || {}
+  const candidate = ui.farmerId ?? ui.userId ?? ui.id ?? ui?.user?.userId ?? ui?.user?.id
+  return candidate != null && candidate !== '' ? String(candidate) : ''
+}
+
 const loadPlotOptions = async () => {
   try {
     const res = await getPlotOptions()
@@ -213,6 +285,21 @@ const loadFarmerOptions = async () => {
   try {
     const res = await getFarmerOptions()
     farmerOptions.value = res.data || []
+
+    // 确保当前用户在选项中，以便默认值能正确显示
+    const opId = resolveOperatorId()
+    if (opId) {
+      const exists = farmerOptions.value.some((x) => String(x.farmerId) === String(opId))
+      if (!exists) {
+        const ui = getUserInfo() || {}
+        const displayName = ui?.user?.name || ''
+        farmerOptions.value.unshift({ farmerId: opId, farmerName: displayName || String(opId) })
+      }
+      // 若为新建且尚未设置，赋默认值
+      if (!isEdit.value && !formData.operatorId) {
+        formData.operatorId = String(opId)
+      }
+    }
   } catch (error) {
     console.error('Failed to load farmer options:', error)
   }
@@ -228,7 +315,16 @@ const handlePlotChange = (plotId) => {
 }
 
 const getInfo = async () => {
-  if (!isEdit.value) return
+  if (!isEdit.value) {
+    // 新建模式下确保activityDate有默认值
+    formData.activityDate = formatNow()
+    // 新建模式下默认操作员为当前用户
+    if (!formData.operatorId) {
+      const opId = resolveOperatorId()
+      if (opId) formData.operatorId = opId
+    }
+    return
+  }
   loading.value = true
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
@@ -248,10 +344,20 @@ const handleSubmit = async () => {
   try {
     const submitData = { ...formData }
 
+    // 自动设置操作员ID为登录用户
+    if (!submitData.operatorId) {
+      const userInfo = getUserInfo()
+      if (userInfo && userInfo.userId) {
+        submitData.operatorId = userInfo.userId
+      }
+    }
+
     if (isEdit.value) {
       await editFarmingRecord(submitData)
       ElMessage.success('Farming record updated successfully')
     } else {
+      // 新建时设置初始审核状态为S1:待审批
+      submitData.auditStatus = 'S1'
       await addFarmingRecord(submitData)
       ElMessage.success('Farming record added successfully')
     }
@@ -271,6 +377,21 @@ onMounted(() => {
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
+
+  // 确保新建模式下activityDate有默认值
+  if (!isEdit.value) {
+    // 延迟设置默认值，确保组件已挂载
+    nextTick(() => {
+      if (!formData.activityDate) {
+        formData.activityDate = formatNow()
+      }
+      // 兜底：若未设置操作员则默认当前用户
+      if (!formData.operatorId) {
+        const opId = resolveOperatorId()
+        if (opId) formData.operatorId = opId
+      }
+    })
+  }
 })
 </script>
 

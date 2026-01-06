@@ -39,6 +39,10 @@
               <span class="label">{{ $t('research.c1Propagation.form.applicantOrgId') }}:</span>
               <span class="value">{{ data.applicantOrgId }}</span>
             </div>
+            <div class="detail-item" v-if="data.authId">
+              <span class="label">{{ $t('research.c1Propagation.columns.authId') }}:</span>
+              <span class="value">{{ data.authId }}</span>
+            </div>
           </div>
         </div>
 
@@ -53,25 +57,38 @@
               <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
               <span class="value">{{ data.propagationBatchId }}</span>
             </div>
+            <div class="detail-item" v-if="data.sourceType">
+              <span class="label">{{ $t('research.c1Propagation.sourceType') }}:</span>
+              <el-tag :type="data.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                {{ data.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+              </el-tag>
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.varietyName') }}:</span>
               <span class="value">{{ data.varietyName }}</span>
             </div>
-            <!-- <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.varietyCode') }}:</span>
-              <span class="value">{{ data.varietyCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.species') }}:</span>
-              <span class="value">{{ data.species || '-' }}</span>
-            </div> -->
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.applyDate') }}:</span>
               <span class="value">{{ data.applyDate }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
+              <span class="value">
+                <span style="font-weight: 500; color: #009A44;">{{ data.demandQuantity || '-' }}</span>
+                <span v-if="data.demandQuantity" style="margin-left: 4px; color: #909399; font-size: 13px;">kg</span>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>
+              <span class="value">{{ data.fromSeedType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.toSeedType') }}:</span>
+              <span class="value">{{ data.toSeedType || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.c1Propagation.form.applyDescription') }}:</span>
@@ -144,6 +161,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -153,6 +171,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 获取状态类型
 const getStatusType = (status) => {
@@ -187,7 +208,7 @@ const handleBack = () => {
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(64, 158, 255, 0.05) 0%, rgba(64, 158, 255, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
 }
 
 .card-title {
@@ -196,7 +217,7 @@ const handleBack = () => {
   gap: 8px;
   font-size: 18px;
   font-weight: 600;
-  color: #409EFF;
+  color: #009A44;
 }
 
 .card-title i {
@@ -244,8 +265,8 @@ const handleBack = () => {
   font-weight: 600;
   color: #333;
   padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(64, 158, 255, 0.05) 0%, rgba(64, 158, 255, 0.02) 100%);
-  border-left: 4px solid #409EFF;
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
+  border-left: 4px solid #009A44;
   margin-bottom: 20px;
   border-radius: 4px;
 }

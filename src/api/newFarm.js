@@ -22,14 +22,15 @@ export const getDaList = async (params = {}) => {
       phone: params.phone || '',
       woredaCode: params.woredaCode || '',
       kebeleCode: params.kebeleCode || '',
-      accountStatus: params.accountStatus || ''
+      accountStatus: params.accountStatus || '',
+      searchValue: params.searchValue || ''
     }
   })
   return {
     ...res,
     data: {
       ...res,
-      records:res.rows
+      records: res.rows
     }
   }
 }
@@ -119,6 +120,20 @@ export const getDaOptions = (kebeleCode = '') => {
   })
 }
 
+/**
+ * 检查DA账号是否可用
+ * @param {string} account - 账号
+ * @param {string} excludeDaId - 排除的DA编码（编辑时使用）
+ * @returns {Promise} - true-可用，false-已存在
+ */
+export const checkDaAccountUnique = (account, excludeDaId = '') => {
+  return request({
+    url: '/farmland/da/checkAccount',
+    method: 'get',
+    params: { account, excludeDaId }
+  })
+}
+
 // ==================== 农民管理 API ====================
 
 /**
@@ -138,7 +153,9 @@ export const getFarmerList = async (params = {}) => {
       gender: params.gender || '',
       phone: params.phone || '',
       kebeleCode: params.kebeleCode || '',
-      daId: params.daId || ''
+      daId: params.daId || '',
+      searchValue: params.searchValue || '',
+      kebeleName: params.kebeleName || ''
     }
   })
   return {
@@ -291,10 +308,12 @@ export const getLandList = async (params = {}) => {
       landId: params.landId || '',
       farmerId: params.farmerId || '',
       farmerName: params.farmerName || '',
+      farmerPhone: params.farmerPhone || '',
       kebeleCode: params.kebeleCode || '',
       landType: params.landType || '',
       currentStatus: params.currentStatus || '',
-      daId: params.daId || ''
+      daId: params.daId || '',
+      searchValue: params.searchValue || ''
     }
   })
   return {

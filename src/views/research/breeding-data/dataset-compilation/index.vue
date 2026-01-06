@@ -23,7 +23,7 @@
               <span>{{ $t('research.datasetCompilation.list') }}</span>
             </div>
             <el-button type="primary" @click="handleAdd">
-              <i class="ri-file-edit-line"></i>
+              <i class="ri-add-line"></i>
               {{ $t('common.add') }}
             </el-button>
           </div>
@@ -47,12 +47,12 @@
                 clearable
                 class="search-select"
               >
-                <el-option :label="$t('research.datasetCompilation.allStatus')" value="" />
                 <el-option :label="$t('research.datasetCompilation.status.draft')" value="draft" />
                 <el-option :label="$t('research.datasetCompilation.status.submitted')" value="submitted" />
                 <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
                 <el-option :label="$t('research.datasetCompilation.status.approved')" value="approved" />
                 <el-option :label="$t('research.datasetCompilation.status.rejected')" value="rejected" />
+                <el-option :label="$t('research.datasetCompilation.status.needs_revision')" value="needs_revision" />
               </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
@@ -70,9 +70,24 @@
                 <el-table-column
                   prop="datasetCode"
                   :label="$t('research.datasetCompilation.columns.datasetCode')"
-                  min-width="150"
+                  min-width="180"
                   show-overflow-tooltip
-                />
+>
+                  <template #default="{ row }">
+                    <template v-if="row.datasetCode">
+                      <span class="dataset-code">{{ row.datasetCode }}</span>
+                    </template>
+                    <template v-else>
+                      <el-tooltip :content="$t('research.datasetCompilation.tooltip.codeAfterApproval')"
+                        placement="top">
+                        <span class="temp-tag">
+                          <i class="ri-time-line"></i>
+                          {{ $t('research.datasetCompilation.pendingCode') }}
+                        </span>
+                      </el-tooltip>
+                    </template>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.datasetCompilation.columns.trialId')"
@@ -94,7 +109,11 @@
                   prop="cropType"
                   :label="$t('research.datasetCompilation.columns.cropType')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="varietyName"
                   :label="$t('research.datasetCompilation.columns.varietyName')"
@@ -156,15 +175,6 @@
                         <i class="ri-send-plane-line"></i>
                         {{ $t('research.datasetCompilation.actions.submit') }}
                       </el-button>
-                      <el-button
-                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
-                        link
-                        type="danger"
-                        @click="handleDelete(row)"
-                      >
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
-                      </el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -190,7 +200,7 @@
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
                     <i class="ri-database-2-line"></i>
-                    <span>{{ item.batchName }}</span>
+                    <span>{{ item.varietyName }}</span>
                   </div>
                   <el-tag :type="getStatusType(item.datasetStatus)" size="small">
                     {{ getStatusLabel(item.datasetStatus) }}
@@ -215,7 +225,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
@@ -253,14 +263,7 @@
                   >
                     {{ $t('research.datasetCompilation.actions.submit') }}
                   </el-button>
-                  <el-button
-                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
-                    type="danger"
-                    size="small"
-                    @click="handleDelete(item)"
-                  >
-                    {{ $t('common.delete') }}
-                  </el-button>
+
                 </div>
               </div>
 
@@ -294,9 +297,11 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDatasetList, deleteDataset, submitDataset } from '@/api/dataset'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+const { getLabelByValue } = useDict(['crop_type'])
 
 const loading = ref(false)
 const tableData = ref([])
@@ -317,7 +322,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getDatasetList({
-      batchName: searchForm.keyword,
+      varietyName: searchForm.keyword,
       datasetStatus: searchForm.datasetStatus,
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize
@@ -450,68 +455,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 页面容器 */
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-wrapper {
-  margin: 0 auto;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
 
 /* 卡片 */
 .info-card {
@@ -578,6 +521,34 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+/* Dataset Code 样式 */
+.dataset-code {
+  color: #009A44;
+  font-weight: 600;
+}
+
+.temp-code {
+  display: inline-flex;
+  align-items: center;
+}
+
+.temp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  color: #999;
+  font-size: 12px;
+  cursor: help;
+}
+
+.temp-tag i {
+  font-size: 14px;
+  color: #faad14;
+}
 /* 分页 */
 .pagination-wrapper {
   display: flex;

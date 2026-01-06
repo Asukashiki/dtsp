@@ -9,8 +9,8 @@
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ detailData.main?.releaseId }}</el-descriptions-item>
         <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ detailData.main?.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetId')">{{ detailData.main?.targetId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.targetContact')">{{ detailData.main?.targetContact }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.unionId')">{{ detailData.main?.targetId }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('inputCirculation.unionContact')">{{ detailData.main?.targetContact }}</el-descriptions-item>
 <!--        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ detailData.main?.targetPhone }}</el-descriptions-item>-->
         <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ detailData.main?.releaseDate }}</el-descriptions-item>
 <!--        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ detailData.main?.releaseBy }}</el-descriptions-item>-->
@@ -47,7 +47,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" />
-        <el-table-column prop="unit" :label="$t('inputCirculation.unit')" />
+        <el-table-column :label="$t('inputCirculation.unit')">
+          <template #default="{ row }">
+            {{ getLabelByValue('agri_unit', row.unit) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" />
       </el-table>
     </el-card>
@@ -63,7 +67,7 @@ import { getOseReleaseDetail } from '@/api/inputCirculation'
 import { getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
-const { getLabelByValue } = useDict(['input_type', 'input_category'])
+const { getLabelByValue } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()

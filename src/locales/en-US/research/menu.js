@@ -15,12 +15,13 @@ export default {
   breedingBatchEdit: 'Edit Breeding Batch',
   breedingBatchDetail: 'Breeding Batch Detail',
 
-  breedingBatchApprove: 'Breeding Batch Approve',
+  breedingBatchApprove: 'Breeding Batch Audit',
 
   plotInfoManagement: 'Plot and Sowing Information ',
   plotInfoAdd: 'Add Plot Information',
   plotInfoEdit: 'Edit Plot Information',
   plotInfoDetail: 'Plot Information Detail',
+  plotInfoAudit: 'Plot and Sowing Information Audit',
 
   trialBasicManagement: 'Trial Basic Information',
   trialBasicAdd: 'Add Trial Information',
@@ -29,6 +30,7 @@ export default {
   trialBasicAudit: 'Trial Basic Information Audit',
 
   agronomicTraitDataCollection: 'Agronomic Trait Data Collection',
+  agronomicTraitDataAudit: 'Agronomic Trait Data Audit',
   agronomicTraitDataAdd: 'Add Agronomic Trait Data',
   agronomicTraitDataEdit: 'Edit Agronomic Trait Data',
   agronomicTraitDataDetail: 'Agronomic Trait Data Detail',
@@ -37,6 +39,7 @@ export default {
   farmingRecordDataAdd: 'Add Farming Record',
   farmingRecordDataEdit: 'Edit Farming Record',
   farmingRecordDataDetail: 'Farming Record Detail',
+  farmingRecordDataAudit: 'Farming Record Data Collection Audit',
 
   environmentDataCollection: 'Environment Data Collection',
   environmentDataAdd: 'Add Environment Data',
@@ -47,13 +50,19 @@ export default {
   fieldInspectionAdd: 'Add Field Inspection',
   fieldInspectionEdit: 'Edit Field Inspection',
   fieldInspectionDetail: 'Field Inspection Detail',
+  fieldInspectionAudit: 'Field Inspection Data Collection Audit',
 
   laboratoryTest: 'Laboratory Test Data Collection',
   laboratoryTestAdd: 'Add Laboratory Test',
   laboratoryTestEdit: 'Edit Laboratory Test',
   laboratoryTestDetail: 'Laboratory Test Detail',
+  laboratoryTestAudit: 'Laboratory Test Data Audit',
+
+  fieldDetection: 'Field Detection',
+  labTesting: 'Lab Testing',
 
   breederSeedProduction: 'Seed Production Data',
+  breederSeedProductionResult: 'Production Data Collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',
@@ -62,6 +71,22 @@ export default {
   breederSeedDistributionAdd: 'Add Seed Distribution',
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
+
+  prebasicSeedProduction: 'Pre-Basic Seed Batch Info',
+  prebasicSeedProductionAdd: 'Add Pre-basic Seed Production',
+  prebasicSeedProductionEdit: 'Edit Pre-basic Seed Production',
+  prebasicSeedProductionDetail: 'Pre-basic Seed Production Detail',
+
+  prebasicSeedProductionResult: 'Pre-Basic Seed Batch Data',
+  prebasicSeedProductionResultDetail: 'Production Result Detail',
+
+  basicSeedProduction: 'Basic Seed Batch Info',
+  basicSeedProductionAdd: 'Add Basic Seed Batch',
+  basicSeedProductionEdit: 'Edit Basic Seed Batch',
+  basicSeedProductionDetail: 'Basic Seed Batch Detail',
+
+  basicSeedProductionResult: 'Basic Seed Batch Data',
+  basicSeedProductionResultDetail: 'Basic Seed Batch Data Detail',
 
   oseManagement: 'OSE Maintenance',
   oseManagementAdd: 'Add OSE',
@@ -81,17 +106,23 @@ export default {
   environmentNewData: 'Environment Monitoring Data',
   environmentNewDataAdd: 'Add Environment Data',
   environmentNewDataEdit: 'Edit Environment Data',
-  environmentNewDataDetail: 'Environment Data Detail',
+  environmentNewDataDetail: 'Environment Monitoring Data Detail',
+  environmentNewDataApprove: 'Environment Monitoring Data Approval',
 
   oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
   oseReceiveConfirmAdd: 'Add Receipt Confirmation',
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
 
-  propagationBatchCollection: 'Seed Multiplication Batch Information',
-  propagationBatchAdd: 'Add Propagation Batch',
-  propagationBatchEdit: 'Edit Propagation Batch',
-  propagationBatchDetail: 'Propagation Batch Detail',
+  oseBatchCollection: 'Seed Multiplication Batch Data',
+  oseBatchCollectionAdd: 'Add Batch Data',
+  oseBatchCollectionEdit: 'Edit Batch Data',
+  oseBatchCollectionDetail: 'Batch Data Detail',
+
+  propagationBatchCollection: 'Seed Multiplication Batch Info',
+  propagationBatchAdd: 'Add Seed Multiplication Batch',
+  propagationBatchEdit: 'Edit Seed Multiplication Batch',
+  propagationBatchDetail: 'Seed Multiplication Batch Detail',
 
   propagationTrackingCollection: 'Multiplication  Tracking Information',
   propagationTrackingAdd: 'Add Tracking Information',
@@ -103,12 +134,12 @@ export default {
   c1PropagationBatchEdit: 'Edit Propagation Batch',
   c1PropagationBatchDetail: 'Propagation Batch Detail',
 
-  seedCertificationApplication: 'Seed Certification Application',
+  seedCertificationApplication: 'Seed Multiplication Application Audit',
   seedCertificationApplicationAdd: 'Add Certification Application',
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',
 
-  c1SeedPropagationApplication: 'Seed Propagation Application',
+  c1SeedPropagationApplication: 'Seed Multiplication Application',
   c1SeedPropagationApplicationAdd: 'Add Propagation Application',
   c1SeedPropagationApplicationEdit: 'Edit Propagation Application',
   c1SeedPropagationApplicationDetail: 'Propagation Application Detail',
@@ -116,7 +147,7 @@ export default {
   c1SeedPropagationApplicationAudit: 'Seed Multiplication Application Audit',
   c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
 
-  c1BatchAudit: 'Breeding Seed Audit',
+  c1BatchAudit: 'Seed Multiplication Audit',
   c1BatchAuditDetail: 'Breeding Seed Audit Detail',
 
   c1BatchCertificate: 'Seed Certificate Issuance',
@@ -133,12 +164,12 @@ export default {
   propagationOrgRegistrationEdit: 'Edit Organization Registration',
   propagationOrgRegistrationDetail: 'Organization Registration Detail',
 
-  institutionRegistration: 'Union/Cooperative Registration Application',
-  institutionRegistrationAdd: 'Add Union/Cooperative Registration Application',
-  institutionRegistrationEdit: 'Edit Union/Cooperative Registration Application',
-  institutionRegistrationDetail: 'Union/Cooperative Registration Application Detail',
+  institutionRegistration: 'Multiplier Registration Application',
+  institutionRegistrationAdd: 'Add Multiplier Registration Application',
+  institutionRegistrationEdit: 'Edit Multiplier Registration Application',
+  institutionRegistrationDetail: 'Multiplier Registration Application Detail',
 
-  institutionApproval: 'Union/Cooperative Registration Application Audit',
+  institutionApproval: 'Multiplier Registration Application Audit',
   institutionApprovalDetail: 'Audit Details',
 
   seedPromotionManagement: 'Seed Promotion Management',
@@ -159,14 +190,14 @@ export default {
   breedingManagement: 'Breeding Management',
   breedingPlan: 'Breeding Plan Management',
   breedingMaterial: 'Breeding Material Registration',
-  breedingModule: 'Multiplication Batch Information',
-  breedingBatch: 'Breeding Batch Information Collection',
-  breedingTracking: 'Multiplication  Tracking Information',
-  breedingTest: 'Breeding Test Information Collection',
+  breedingModule: 'Seed Multiplication Batch Info Management',
+  breedingBatch: 'Seed Multiplication Batch Info',
+  breedingTracking: 'Seed Multiplication Tracking Information',
+  breedingTest: 'Seed Multiplication Test Information Collection',
   breedingTracking: 'Breeding Tracking Management',
   breedingSeed: 'Breeding Seed Management',
   breedingCertification: 'Breeding Seed Certification Application',
-  breedingAudit: 'Breeding Seed Audit',
+  breedingAudit: 'Seed Multiplication Audit',
   breedingCertificate: 'Seed Certificate Issuance',
   breedingDataManagement: 'Breeding Data Management',
   fieldInspection: 'Field Inspection Data Collection',
@@ -185,6 +216,7 @@ export default {
   agronomicData: 'Agronomic Data Collection',
   farmingRecord: 'Farming Record Collection',
   environmentData: 'Environment & Soil Data Collection',
+
   farmerData: 'Farmer & Plot Data Collection',
   labData: 'Laboratory Test Data Collection',
   yieldData: 'Yield Data Collection',
@@ -196,11 +228,13 @@ export default {
   // Input Circulation Management
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
-  oseReleaseToUnion: 'Release Seeds to Union',
+  oseReleaseToUnion: 'Release Agri Input to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',
-  woredaReleaseToFarmer: 'Woreda Distribution to Farmer',
+  unionReleaseToCooperative: 'Union Distribution to Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',
+  cooperativeReleaseToFarmer: 'Cooperative Distribution to Farmer',
   farmerReceive: 'Farmer Receive List'
 
 }

@@ -70,7 +70,7 @@
           <el-table-column type="index" width="50" />
 
           <!-- 投入品类型选择 -->
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
                 @change="handleInputTypeChange(scope.$index)" style="width: 100%">
@@ -80,7 +80,7 @@
           </el-table-column>
 
           <!-- 投入品类别选择 -->
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputCategory" :placeholder="$t('common.pleaseSelect')"
                 @change="handleInputCategoryChange(scope.$index)" style="width: 100%">
@@ -91,35 +91,43 @@
           </el-table-column>
 
           <!-- 需求数量 -->
-          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="100">
+          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
             <template #default="scope">
               {{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('inputCirculation.quantity')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
+            <template #default="scope">
+              <span>{{ scope.row.currentStock }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column :label="$t('inputCirculation.quantity')" min-width="160">
             <template #default="scope">
               <el-input-number v-model="scope.row.quantity" :min="0" :max="scope.row.maxQuantity || 999999"
-                :precision="2" @change="validateQuantity(scope.$index)" />
+                :precision="2" @change="validateQuantity(scope.$index)" style="width: 100%" />
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
             <template #default="scope">
-              <el-input v-model="scope.row.unit" :placeholder="$t('common.pleaseInput')" />
+              <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
+                <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="140">
             <template #default="scope">
               <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2"
-                @change="calculateTotalPrice(scope.$index)" />
+                @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="140">
             <template #default="scope">
-              <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly />
+              <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
             </template>
           </el-table-column>
 
@@ -150,7 +158,7 @@ import { useUserStore } from '@/store/user'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -182,7 +190,7 @@ const formData = reactive({
   releaseDate: new Date().toISOString().split('T')[0],
   releaseBy: '',
   releaseOrg: '',
-  receiveStatus: 'pending',
+  receiveStatus: 'completed',
   details: []
 })
 
@@ -260,6 +268,29 @@ const handleInputCategoryChange = (index) => {
   const detail = formData.details[index]
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.maxQuantity = maxQty || 999999
+  fetchStock(index)
+}
+
+// 获取库存
+const fetchStock = async (index) => {
+  const detail = formData.details[index]
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.currentStock = 0
+    return
+  }
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (res.code === 200 && res.data) {
+      detail.currentStock = res.data.availableStock || 0
+    } else {
+      detail.currentStock = 0
+    }
+  } catch (error) {
+    console.error('Failed to fetch stock:', error)
+    detail.currentStock = 0
+  }
 }
 
 // 获取需求数量
@@ -272,20 +303,20 @@ const getDemandQuantity = (inputType, inputCategory) => {
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
   if (!detail.inputType) return
-  
+
   // 校验需求量
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (typeof maxQty === 'number' && detail.quantity > maxQty) {
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
     detail.quantity = maxQty
   }
-  
+
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
-    .filter(d => d.inputType === detail.inputType && 
+    .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
-  
+
   try {
     const organCode = userStore.userInfo?.user?.organCode
     const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
@@ -301,7 +332,7 @@ const validateQuantity = async (index) => {
   } catch (error) {
     console.error('Failed to validate stock:', error)
   }
-  
+
   calculateTotalPrice(index)
 }
 
@@ -323,7 +354,7 @@ const fetchDetail = async () => {
         formData.releaseYear = String(formData.releaseYear)
       }
       formData.details = response.data.details || []
-      
+
       // 从农民列表填充手机号和地址
       if (formData.farmerId) {
         const farmer = farmerList.value.find(f => f.farmerId === formData.farmerId)
@@ -347,10 +378,13 @@ const addDetail = () => {
     inputType: '',
     inputCategory: '',
     quantity: 0,
-    unit: 'kg',
+    unit: '',
+    unitPrice: 0,
+    totalPrice: 0,
     unitPrice: 0,
     totalPrice: 0,
     maxQuantity: null,
+    currentStock: 0,
     releaseTime: new Date().toISOString()
   })
 }
@@ -379,7 +413,7 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
-    
+
     // 库存校验
     loading.value = true
     try {
@@ -392,7 +426,7 @@ const handleSubmit = async () => {
         }
         quantityByType[key].quantity += (detail.quantity || 0)
       }
-      
+
       // 检查每种类型的可用库存
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
@@ -406,7 +440,7 @@ const handleSubmit = async () => {
           }
         }
       }
-      
+
       const submitData = {
         ...formData,
         releaseYear: formData.releaseYear ? parseInt(formData.releaseYear, 10) : null,
@@ -450,6 +484,7 @@ onMounted(async () => {
     formData.releaseBy = userInfo.userName || userInfo.nickName || userInfo.name ||
       userInfo.user?.userName || userInfo.user?.nickName ||
       userInfo.user?.name || ''
+    formData.releaseOrg = userInfo.user.ORGANNAME || userInfo.organCode || ''
   }
 
   if (isEdit.value) {

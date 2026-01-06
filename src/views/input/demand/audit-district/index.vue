@@ -195,7 +195,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getVillageDemandSummaryMainList, getSummaryDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import {
+  getVillageDemandSummaryMainList,
+  getSummaryDetail,
+  updateVillageDemandSummaryMain,
+  getVillageDemandSummaryMainListSub
+} from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])

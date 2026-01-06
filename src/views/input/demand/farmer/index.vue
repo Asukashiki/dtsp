@@ -80,11 +80,16 @@
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe @selection-change="handleSelectionChange">
+              <el-table v-loading="loading" :data="tableData" stripe @selection-change="handleSelectionChange" :default-sort="{ prop: 'createdTime', order: 'descending' }">
                 <el-table-column
                   type="selection"
                   width="55"
                   :selectable="rowSelectable"
+                />
+                <el-table-column
+                  prop="year"
+                  :label="$t('Year')"
+                  min-width="120"
                 />
                 <el-table-column
                   prop="batchNo"
@@ -141,7 +146,7 @@
                   :label="$t('farmerDemand.columns.createdTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="320">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="380">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">
@@ -174,7 +179,7 @@
                       >
                         <i class="ri-delete-bin-line"></i>
                         {{ $t('common.delete') }}
-                      </el-button>
+                      </el-button>  
                     </div>
                   </template>
                 </el-table-column>
@@ -356,7 +361,9 @@ const loadData = async () => {
       farmerName: searchForm.keyword,
       farmerIdNumber: searchForm.keyword,
       village: searchForm.keyword,
-      status: searchForm.status
+      status: searchForm.status,
+      orderByColumn: 'createdTime',
+      isAsc: 'desc'
     })
     if (res.code === 200) {
       tableData.value = res.data?.records || res.data?.list || []
@@ -400,6 +407,11 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push({ name: 'FarmerDemandEdit', params: { id: row.id } })
+}
+
+// 审批
+const handleApprove = (row) => {
+  router.push({ name: 'FarmerDemandApprove', params: { id: row.id } })
 }
 
 // 判断行是否可选择（只有草稿(0)和驳回(3)状态可以提交审核）

@@ -8,7 +8,7 @@
         </div>
         <div class="header-content">
           <h1 class="page-title">{{ t('research.trialBasicAudit.audit.title') }}</h1>
-          <p class="page-subtitle">{{ t('research.breedingData.trial.subtitle1') }}</p>
+          <p class="page-subtitle">{{ t('research.trialBasicAudit.audit.subtitle1') }}</p>
         </div>
       </div>
     </div>
@@ -65,10 +65,13 @@
               show-overflow-tooltip
             />
             <el-table-column
-              prop="cropType"
               :label="t('research.trialBasicAudit.list.cropType')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="t('research.trialBasicAudit.list.varietyName')"
@@ -105,17 +108,17 @@
             </el-table-column>
             <el-table-column
               prop="auditStatusDesc"
-              :label="t('research.trialBasicAudit.audit.list.status')"
+              :label="t('research.trialBasicAudit.audit.list.workflowStatus')"
               min-width="120"
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
               </template>
             </el-table-column>
             <el-table-column
               :label="t('research.trialBasicAudit.list.operation')"
-              min-width="100"
+              min-width="150"
               fixed="right"
               align="center"
             >
@@ -144,6 +147,103 @@
           </div>
         </el-tab-pane>
 
+        <!-- <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.voided')" name="S4"> -->
+          <!-- PC端表格 -->
+          <!-- <el-table
+            v-if="!isMobile"
+            v-loading="loading"
+            :data="auditList"
+            stripe
+          >
+            <el-table-column
+              prop="trialId"
+              :label="t('research.trialBasicAudit.list.trialId')"
+              min-width="180"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="trialName"
+              :label="t('research.trialBasicAudit.audit.list.trialName')"
+              min-width="200"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="batchId"
+              :label="t('research.trialBasicAudit.audit.list.batchName')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              :label="t('research.trialBasicAudit.list.cropType')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="varietyName"
+              :label="t('research.trialBasicAudit.list.varietyName')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="auditorName"
+              :label="t('research.trialBasicAudit.audit.list.auditor')"
+              width="120"
+            />
+            <el-table-column
+              prop="auditTime"
+              :label="t('research.trialBasicAudit.audit.list.auditTime')"
+              width="180"
+            >
+              <template #default="{ row }">
+                {{ formatDate(row.auditTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="auditStatusDesc"
+              :label="t('research.trialBasicAudit.audit.list.status')"
+              width="120"
+              align="center"
+            >
+              <template #default="{ row }">
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="t('research.trialBasicAudit.list.operation')"
+              min-width="100"
+              fixed="right"
+              align="center"
+            >
+              <template #default="{ row }">
+                <el-button
+                  type="primary"
+                  size="small"
+                  link
+                  @click="handleView(row)"
+                >
+                  {{ t('research.trialBasicAudit.action.view') }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table> -->
+
+          <!-- 移动端卡片 -->
+          <!-- <div v-else class="mobile-card-list">
+            <AuditCard
+              v-for="item in auditList"
+              :key="item.auditId"
+              :audit="item"
+              :show-audit-button="false"
+              :show-void-button="false"
+              @view="handleView"
+            />
+            <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
+          </div> -->
+        <!-- </el-tab-pane> -->
+
         <el-tab-pane :label="t('research.trialBasicAudit.audit.tabs.audited')" name="audited">
           <!-- PC端表格 -->
           <el-table
@@ -171,10 +271,13 @@
               show-overflow-tooltip
             />
             <el-table-column
-              prop="cropType"
               :label="t('research.trialBasicAudit.list.cropType')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="varietyName"
               :label="t('research.trialBasicAudit.list.varietyName')"
@@ -209,7 +312,7 @@
                 {{ formatDate(row.modifiedTime) }}
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="submitterName"
               :label="t('research.trialBasicAudit.audit.list.submitter')"
               width="120"
@@ -222,7 +325,7 @@
               <template #default="{ row }">
                 {{ formatDate(row.submitTime) }}
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               prop="auditorName"
               :label="t('research.trialBasicAudit.audit.list.auditor')"
@@ -244,12 +347,12 @@
               align="center"
             >
               <template #default="{ row }">
-                <StatusTag :status="row.auditStatus" />
+                <StatusTag :status="row.workflowStatus || row.auditStatus" type="workflow" />
               </template>
             </el-table-column>
             <el-table-column
               :label="t('research.trialBasicAudit.list.operation')"
-              width="100"
+              min-width="150"
               fixed="right"
               align="center"
             >
@@ -262,6 +365,15 @@
                 >
                   {{ t('research.trialBasicAudit.action.view') }}
                 </el-button>
+                <!-- <el-button
+                  v-if="row.auditStatus === 'S2'"
+                  type="danger"
+                  size="small"
+                  link
+                  @click="handleVoid(row)"
+                >
+                  {{ t('research.trialBasicAudit.action.void') }}
+                </el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -274,6 +386,7 @@
               :audit="item"
               :show-audit-button="false"
               @view="handleView"
+              @void="handleVoid"
             />
             <el-empty v-if="!loading && auditList.length === 0" :description="t('common.noData')" />
           </div>
@@ -300,12 +413,13 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh } from '@element-plus/icons-vue'
-import { getAuditList } from '@/api/research/trialBasicAudit'
+import { getAuditList, voidAudit } from '@/api/research/trialBasicAudit'
 import StatusTag from '../trial/components/StatusTag.vue'
 import AuditCard from './components/AuditCard.vue'
 import { useResponsive } from '@/hooks/useResponsive'
+import { useDict } from '@/hooks/useDict'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -316,7 +430,10 @@ const loading = ref(false)
 const activeTab = ref('S1')
 const auditList = ref([])
 const total = ref(0)
-
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type'
+])
 const queryParams = reactive({
   auditStatus: 'S1',
   trialName: '',
@@ -418,8 +535,10 @@ const resetQuery = () => {
 const handleTabChange = (tab) => {
   if (tab === 'S1') {
     queryParams.auditStatus = 'S1'
-  } else {
-    queryParams.auditStatus = '' // 已审核包含 S2 和 S3
+  } else if (tab === 'S4') {
+    queryParams.auditStatus = 'S4'
+  } else if (tab === 'audited') {
+    queryParams.auditStatus = 'S2'
   }
   handleQuery()
 }
@@ -439,6 +558,30 @@ const handleView = (row) => {
     params: { id: row.auditId },
     query: { readonly: true }
   })
+}
+
+// 作废
+const handleVoid = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.trialBasicAudit.action.voidConfirm'),
+      t('research.trialBasicAudit.action.void'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    await voidAudit(row.auditId, 'Voided by user')
+    ElMessage.success(t('research.trialBasicAudit.action.voidSuccess'))
+    getList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('作废审核记录失败:', error)
+      ElMessage.error(t('research.trialBasicAudit.action.voidFailed'))
+    }
+  }
 }
 
 onMounted(() => {

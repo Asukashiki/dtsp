@@ -2,10 +2,10 @@
   <div class="c1-breeding-batch-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-left header-icon">
         <i class="ri-seedling-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
         <h1 class="page-title">{{ $t('research.c1BreedingBatch.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.c1BreedingBatch.subtitle') }}</p>
       </div>
@@ -88,7 +88,11 @@
         >
           <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
           <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center" />
+          <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center">
+            <template #default="{ row }">
+              {{ getLabelByValue('crop_type', row.cropType) }}
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="breedingLevel" :label="$t('research.c1BreedingBatch.columns.breedingLevel')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag size="small">{{ getBreedingLevelName(row.breedingLevel) }}</el-tag>
@@ -102,16 +106,15 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="trackingCount" :label="$t('research.c1BreedingBatch.columns.trackingCount')" min-width="100" align="center">
+          <!-- <el-table-column prop="trackingCount" :label="$t('research.c1BreedingBatch.columns.trackingCount')" min-width="100" align="center">
             <template #default="{ row }">
               <el-tag type="info" size="small">{{ row.trackingCount || 0 }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column :label="$t('common.actions')" width="280" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id, row.auditStatus === 'approved')">{{ $t('common.view') }}</el-button>
               <el-button v-if="row.auditStatus !== 'approved'" link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
-              <el-button v-if="row.auditStatus !== 'approved'" link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
               <el-tag v-if="row.auditStatus === 'approved'" type="success" size="small" style="margin-left: 8px;">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
             </template>
           </el-table-column>
@@ -151,7 +154,7 @@
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.c1BreedingBatch.columns.cropType') }}:</span>
-              <span class="value">{{ item.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.c1BreedingBatch.columns.startDate') }}:</span>
@@ -177,9 +180,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1BreedingBatchList, deleteC1BreedingBatch } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 数据
 const loading = ref(false)
@@ -307,42 +314,6 @@ const getStatusTagType = (status) => {
 </script>
 
 <style scoped lang="scss">
-.c1-breeding-batch-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-icon-wrapper {
-    font-size: 40px;
-    margin-right: 20px;
-  }
-
-  .header-text {
-    flex: 1;
-
-    .page-title {
-      margin: 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .page-subtitle {
-      margin: 5px 0 0 0;
-      opacity: 0.9;
-      font-size: 14px;
-    }
-  }
-}
 
 .content-wrapper {
   .search-bar {

@@ -102,7 +102,7 @@ const queryParams = reactive({
   allocationName: '',
   year: '',
   zone: '',
-  level: 2, // woreda level
+  level: 'woreda', // woreda level
   pageNum: 1,
   pageSize: 10
 })

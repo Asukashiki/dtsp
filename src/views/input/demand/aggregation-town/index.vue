@@ -12,201 +12,345 @@
             <p class="page-subtitle">{{ $t('townAggregation.subtitle') }}</p>
           </div>
         </div>
-        <div class="header-right">
-          <el-button type="primary" size="large" @click="handleAddYear">
-            <i class="ri-add-line"></i>
-            {{ $t('townAggregation.actions.addYear') }}
-          </el-button>
-        </div>
+<!--        <div class="header-right">-->
+<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
+<!--            <i class="ri-add-line"></i>-->
+<!--            {{ $t('townAggregation.actions.addYear') }}-->
+<!--          </el-button>-->
+<!--        </div>-->
       </div>
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
         <div class="info-card">
-          <!-- PC端表格 -->
-          <div class="table-wrapper pc-only">
-            <el-table
-              v-loading="loading"
-              :data="tableData"
-              stripe
-              empty-text=""
-            >
-              <el-table-column
-                prop="year"
-                :label="$t('townAggregation.columns.year')"
-                min-width="100"
-              />
-              <!-- <el-table-column
-                prop="sourceCode"
-                :label="$t('townAggregation.columns.sourceCode')"
-                min-width="140"
-              /> -->
-              <el-table-column
-                prop="sourceName"
-                :label="$t('WoredaName')"
-                min-width="140"
-              />
-              <!-- <el-table-column
-                prop="targetCode"
-                :label="$t('townAggregation.columns.targetCode')"
-                min-width="140"
-              />
-              <el-table-column
-                prop="targetName"
-                :label="$t('townAggregation.columns.targetName')"
-                min-width="140"
-              /> -->
-              <el-table-column
-                prop="subQuantity"
-                :label="$t('townAggregation.columns.subQuantity')"
-                min-width="140"
+          <!-- 主列表视图 -->
+          <template v-if="viewMode === 'main'">
+            <!-- PC端表格 -->
+            <div class="table-wrapper pc-only">
+              <el-table
+                v-loading="loading"
+                :data="tableData"
+                stripe
+                empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
-                <template #default="{ row }">
-                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="status"
-                :label="$t('townAggregation.columns.status')"
-                min-width="100"
-              >
-                <template #default="{ row }">
-                  <el-tag v-if="row.status === '0'" type="info">
+                <el-table-column
+                  prop="year"
+                  :label="$t('townAggregation.columns.year')"
+                  min-width="100"
+                />
+                <!-- <el-table-column
+                  prop="sourceCode"
+                  :label="$t('townAggregation.columns.sourceCode')"
+                  min-width="140"
+                /> -->
+                <el-table-column
+                  prop="sourceName"
+                  :label="$t('WoredaName')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    <el-button link type="primary" @click="handleDrillDown(row)">
+                      {{ row.sourceName }}
+                    </el-button>
+                  </template>
+                </el-table-column>
+                <!-- <el-table-column
+                  prop="targetCode"
+                  :label="$t('townAggregation.columns.targetCode')"
+                  min-width="140"
+                />
+                <el-table-column
+                  prop="targetName"
+                  :label="$t('townAggregation.columns.targetName')"
+                  min-width="140"
+                /> -->
+                <el-table-column
+                  prop="subQuantity"
+                  :label="$t('townAggregation.columns.subQuantity')"
+                  min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="unsubmitQuantity"
+                    :label="$t('Unsubmit Quantity')"
+                    min-width="140"
+                />
+                <el-table-column
+                    prop="submitQuantity"
+                    :label="$t('Submit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="auditQuantity"
+                    :label="$t('Audit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="status"
+                  :label="$t('townAggregation.columns.status')"
+                  min-width="100"
+                >
+                  <template #default="{ row }">
+                    <el-tag v-if="row.status === '0'" type="info">
+                      {{ $t('townAggregation.status.draft') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '1'" type="warning">
+                      {{ $t('townAggregation.status.pending') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '2'" type="success">
+                      {{ $t('townAggregation.status.approved') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '3'" type="danger">
+                      {{ $t('townAggregation.status.rejected') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+  <!--              <el-table-column-->
+  <!--                prop="creator"-->
+  <!--                :label="$t('townAggregation.columns.creator')"-->
+  <!--                min-width="120"-->
+  <!--              />-->
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('townAggregation.columns.createTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  :label="$t('townAggregation.columns.actions')"
+                  fixed="right"
+                  width="340"
+                >
+                  <template #default="{ row }">
+                    <div class="action-buttons">
+                      <el-button link type="primary" @click="handleApprove(row)">
+                        <i class="ri-file-list-3-line"></i>
+                        {{ $t('townAggregation.actions.approve') }}
+                      </el-button>
+                      <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
+                        <i class="ri-upload-cloud-line"></i>
+                        {{ $t('townAggregation.actions.submit') }}
+                      </el-button>
+                      <el-button link type="info" @click="handleDetail(row)">
+                        <i class="ri-list-check"></i>
+                        {{ $t('Aggregation detail') }}
+                      </el-button>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+
+            <!-- 移动端卡片 -->
+            <div class="mobile-cards mobile-only">
+              <div v-for="item in tableData" :key="item.id" class="mobile-card">
+                <div class="mobile-card-header">
+                  <div class="year-badge">
+                    <i class="ri-calendar-line"></i>
+                    <span>{{ item.year }}</span>
+                  </div>
+                  <el-tag v-if="item.status === '0'" type="info" size="small">
                     {{ $t('townAggregation.status.draft') }}
                   </el-tag>
-                  <el-tag v-else-if="row.status === '1'" type="warning">
+                  <el-tag v-else-if="item.status === '1'" type="warning" size="small">
                     {{ $t('townAggregation.status.pending') }}
                   </el-tag>
-                  <el-tag v-else-if="row.status === '2'" type="success">
+                  <el-tag v-else-if="item.status === '2'" type="success" size="small">
                     {{ $t('townAggregation.status.approved') }}
                   </el-tag>
-                  <el-tag v-else-if="row.status === '3'" type="danger">
+                  <el-tag v-else-if="item.status === '3'" type="danger" size="small">
                     {{ $t('townAggregation.status.rejected') }}
                   </el-tag>
-                </template>
-              </el-table-column>
-<!--              <el-table-column-->
-<!--                prop="creator"-->
-<!--                :label="$t('townAggregation.columns.creator')"-->
-<!--                min-width="120"-->
-<!--              />-->
-              <el-table-column
-                prop="createTime"
-                :label="$t('townAggregation.columns.createTime')"
-                min-width="160"
-              />
-              <el-table-column
-                :label="$t('townAggregation.columns.actions')"
-                fixed="right"
-                width="340"
-              >
-                <template #default="{ row }">
-                  <div class="action-buttons">
-                    <el-button link type="primary" @click="handleApprove(row)">
-                      <i class="ri-file-list-3-line"></i>
-                      {{ $t('townAggregation.actions.approve') }}
-                    </el-button>
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
-                      <i class="ri-upload-cloud-line"></i>
-                      {{ $t('townAggregation.actions.submit') }}
-                    </el-button>
-                    <el-button link type="info" @click="handleDetail(row)">
-                      <i class="ri-list-check"></i>
-                      {{ $t('townAggregation.actions.detail') }}
-                    </el-button>
+                </div>
+                <div class="mobile-card-body">
+                  <!-- <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.sourceCode') }}:</span>
+                    <span class="value">{{ item.sourceCode }}</span>
+                  </div> -->
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.sourceName') }}:</span>
+                    <span class="value">{{ item.sourceName }}</span>
                   </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-
-          <!-- 移动端卡片 -->
-          <div class="mobile-cards mobile-only">
-            <div v-for="item in tableData" :key="item.id" class="mobile-card">
-              <div class="mobile-card-header">
-                <div class="year-badge">
-                  <i class="ri-calendar-line"></i>
-                  <span>{{ item.year }}</span>
+                  <!-- <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.targetCode') }}:</span>
+                    <span class="value">{{ item.targetCode }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.targetName') }}:</span>
+                    <span class="value">{{ item.targetName }}</span>
+                  </div> -->
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.subQuantity') }}:</span>
+                    <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
+                  </div>
+  <!--                <div class="mobile-card-row">-->
+  <!--                  <span class="label">{{ $t('townAggregation.columns.creator') }}:</span>-->
+  <!--                  <span class="value">{{ item.creator }}</span>-->
+  <!--                </div>-->
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('townAggregation.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime }}</span>
+                  </div>
                 </div>
-                <el-tag v-if="item.status === '0'" type="info" size="small">
-                  {{ $t('townAggregation.status.draft') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '1'" type="warning" size="small">
-                  {{ $t('townAggregation.status.pending') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '2'" type="success" size="small">
-                  {{ $t('townAggregation.status.approved') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '3'" type="danger" size="small">
-                  {{ $t('townAggregation.status.rejected') }}
-                </el-tag>
-              </div>
-              <div class="mobile-card-body">
-                <!-- <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.sourceCode') }}:</span>
-                  <span class="value">{{ item.sourceCode }}</span>
-                </div> -->
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.sourceName') }}:</span>
-                  <span class="value">{{ item.sourceName }}</span>
+                <div class="mobile-card-actions">
+                  <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
+                    {{ $t('townAggregation.actions.approve') }}
+                  </el-button>
+                  <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
+                    {{ $t('townAggregation.actions.submit') }}
+                  </el-button>
+                  <el-button type="info" size="small" @click="handleDetail(item)">
+                    {{ $t('townAggregation.actions.detail') }}
+                  </el-button>
                 </div>
-                <!-- <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.targetCode') }}:</span>
-                  <span class="value">{{ item.targetCode }}</span>
-                </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.targetName') }}:</span>
-                  <span class="value">{{ item.targetName }}</span>
-                </div> -->
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.subQuantity') }}:</span>
-                  <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
-                </div>
-<!--                <div class="mobile-card-row">-->
-<!--                  <span class="label">{{ $t('townAggregation.columns.creator') }}:</span>-->
-<!--                  <span class="value">{{ item.creator }}</span>-->
-<!--                </div>-->
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('townAggregation.columns.createTime') }}:</span>
-                  <span class="value">{{ item.createTime }}</span>
-                </div>
-              </div>
-              <div class="mobile-card-actions">
-                <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
-                  {{ $t('townAggregation.actions.approve') }}
-                </el-button>
-                <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
-                  {{ $t('townAggregation.actions.submit') }}
-                </el-button>
-                <el-button type="info" size="small" @click="handleDetail(item)">
-                  {{ $t('townAggregation.actions.detail') }}
-                </el-button>
               </div>
             </div>
-          </div>
 
-          <!-- 分页 -->
-          <div v-if="pagination.total > 0" class="pagination-wrapper">
-            <el-pagination
-              :current-page="pagination.currentPage"
-              :page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              :total="pagination.total"
-              layout="total, sizes, prev, pager, next, jumper"
-              background
-              small
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              @update:current-page="pagination.currentPage = $event"
-              @update:page-size="pagination.pageSize = $event"
+            <!-- 分页 -->
+            <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
+              <el-pagination
+                :current-page="pagination.currentPage"
+                :page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="pagination.total"
+                layout="total, sizes, prev, pager, next, jumper"
+                background
+                small
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                @update:current-page="pagination.currentPage = $event"
+                @update:page-size="pagination.pageSize = $event"
+              />
+            </div> -->
+
+            <!-- 空状态 -->
+            <el-empty
+              v-if="tableData.length === 0 && !loading"
+              :description="$t('townAggregation.messages.noData')"
             />
-          </div>
+          </template>
 
-          <!-- 空状态 -->
-          <el-empty
-            v-if="tableData.length === 0 && !loading"
-            :description="$t('townAggregation.messages.noData')"
-          />
+          <!-- 下钻列表视图 -->
+          <template v-else-if="viewMode === 'drillDown'">
+            <!-- 返回按钮和面包屑 -->
+            <div class="drill-down-header">
+              <el-button type="primary" plain @click="handleBackToMain">
+                <i class="ri-arrow-left-line"></i>
+                {{ $t('common.back') }}
+              </el-button>
+              <el-breadcrumb separator="/" class="breadcrumb">
+                <el-breadcrumb-item>{{ $t('townAggregation.title') }}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{ currentDrillDownRow?.sourceName }} ({{ currentDrillDownRow?.year }})</el-breadcrumb-item>
+              </el-breadcrumb>
+            </div>
+
+            <!-- 下钻表格 -->
+            <div class="table-wrapper">
+              <el-table
+                v-loading="drillDownLoading"
+                :data="drillDownData"
+                stripe
+                empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
+              >
+                <el-table-column
+                  prop="year"
+                  :label="$t('townAggregation.columns.year')"
+                  min-width="100"
+                />
+                <el-table-column
+                  prop="sourceName"
+                  :label="$t('Kebele Name')"
+                  min-width="140"
+                />
+                <el-table-column
+                    prop="subQuantity"
+                    :label="$t('townAggregation.columns.subQuantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="unsubmitQuantity"
+                    :label="$t('Unsubmit Quantity')"
+                    min-width="140"
+                />
+                <el-table-column
+                    prop="submitQuantity"
+                    :label="$t('Submit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="auditQuantity"
+                    :label="$t('Audit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="status"
+                  :label="$t('townAggregation.columns.status')"
+                  min-width="100"
+                >
+                  <template #default="{ row }">
+                    <el-tag v-if="row.status === '0'" type="info">
+                      {{ $t('townAggregation.status.draft') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '1'" type="warning">
+                      {{ $t('townAggregation.status.pending') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '2'" type="success">
+                      {{ $t('townAggregation.status.approved') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '3'" type="danger">
+                      {{ $t('townAggregation.status.rejected') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('townAggregation.columns.createTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  :label="$t('townAggregation.columns.actions')"
+                  fixed="right"
+                  width="120"
+                >
+                  <template #default="{ row }">
+                    <el-button link type="primary" @click="handleDrillDownDetail(row)">
+                      <i class="ri-eye-line"></i>
+                      {{ $t('common.view') }}
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+
+            <!-- 下钻分页 -->
+            <div v-if="drillDownPagination.total > 0" class="pagination-wrapper">
+              <el-pagination
+                :current-page="drillDownPagination.currentPage"
+                :page-size="drillDownPagination.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="drillDownPagination.total"
+                layout="total, sizes, prev, pager, next"
+                background
+                small
+                @size-change="handleDrillDownSizeChange"
+                @current-change="handleDrillDownCurrentChange"
+                @update:current-page="drillDownPagination.currentPage = $event"
+                @update:page-size="drillDownPagination.pageSize = $event"
+              />
+            </div>
+
+            <!-- 空状态 -->
+            <el-empty
+              v-if="drillDownData.length === 0 && !drillDownLoading"
+              :description="$t('townAggregation.messages.noData')"
+            />
+          </template>
         </div>
       </div>
     </div>
@@ -309,6 +453,205 @@
         </el-button>
       </template>
     </el-dialog>
+
+
+    <!-- 下钻记录详情对话框 -->
+    <el-dialog
+      v-model="drillDownRecordDetailVisible"
+      :title="$t('townAggregation.detailDialog.title')"
+      width="80%"
+      top="5vh"
+    >
+      <el-descriptions :column="2" border style="margin-bottom: 20px;">
+        <el-descriptions-item :label="$t('townAggregation.columns.year')">
+          {{ drillDownRecordDetail.year }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('Kebele Name')">
+          {{ drillDownRecordDetail.sourceName }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('Kebele Code')">
+          {{ drillDownRecordDetail.sourceCode }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('townAggregation.columns.status')">
+          <el-tag v-if="drillDownRecordDetail.status === '0'" type="info">
+            {{ $t('townAggregation.status.draft') }}
+          </el-tag>
+          <el-tag v-else-if="drillDownRecordDetail.status === '1'" type="warning">
+            {{ $t('townAggregation.status.pending') }}
+          </el-tag>
+          <el-tag v-else-if="drillDownRecordDetail.status === '2'" type="success">
+            {{ $t('townAggregation.status.approved') }}
+          </el-tag>
+          <el-tag v-else-if="drillDownRecordDetail.status === '3'" type="danger">
+            {{ $t('townAggregation.status.rejected') }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('townAggregation.columns.createTime')">
+          {{ drillDownRecordDetail.createTime }}
+        </el-descriptions-item>
+      </el-descriptions>
+
+      <!-- 标签页 -->
+      <el-tabs v-model="activeDetailTab" @tab-change="handleDetailTabChange">
+        <!-- 汇聚结果标签页 -->
+        <el-tab-pane :label="$t('common.aggregationResults')" name="aggregation">
+          <el-table
+            v-loading="drillDownAggregationLoading"
+            :data="drillDownAggregationData"
+            stripe
+            max-height="400px"
+          >
+            <el-table-column
+              prop="inputCategory"
+              :label="$t('townAggregation.detailDialog.columns.inputCategory')"
+              min-width="150"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('input_category', row.inputCategory) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="inputType"
+              :label="$t('townAggregation.detailDialog.columns.inputType')"
+              min-width="150"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('input_type', row.inputType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="totalQuantity"
+              :label="$t('townAggregation.detailDialog.columns.totalQuantity')"
+              min-width="120"
+            />
+          </el-table>
+          <el-empty
+            v-if="drillDownAggregationData.length === 0 && !drillDownAggregationLoading"
+            :description="$t('townAggregation.detailDialog.noData')"
+          />
+        </el-tab-pane>
+
+        <!-- 农民需求标签页 -->
+        <el-tab-pane :label="$t('common.farmerDemands')" name="farmers">
+          <!-- 搜索区域 -->
+          <div class="search-section" style="margin-bottom: 16px;">
+            <el-input
+              v-model="farmerSearchForm.farmerName"
+              :placeholder="$t('demandAudit.columns.farmerName')"
+              clearable
+              style="width: 200px; margin-right: 8px;"
+            />
+            <el-input
+              v-model="farmerSearchForm.farmerIdNumber"
+              :placeholder="$t('demandAudit.columns.farmerIdNumber')"
+              clearable
+              style="width: 200px; margin-right: 8px;"
+            />
+            <el-select
+              v-model="farmerSearchForm.status"
+              :placeholder="$t('demandAudit.columns.status')"
+              clearable
+              style="width: 150px; margin-right: 8px;"
+            >
+              <el-option :label="$t('demandAudit.status.draft')" value="0" />
+              <el-option :label="$t('demandAudit.status.submitted')" value="1" />
+              <el-option :label="$t('demandAudit.status.approved')" value="2" />
+              <el-option :label="$t('demandAudit.status.rejected')" value="3" />
+            </el-select>
+            <el-button type="primary" @click="handleFarmerSearch">
+              <i class="ri-search-line"></i>
+              {{ $t('common.search') }}
+            </el-button>
+            <el-button @click="handleFarmerSearchReset">
+              <i class="ri-refresh-line"></i>
+              {{ $t('common.reset') }}
+            </el-button>
+          </div>
+
+          <!-- 农民需求表格 -->
+          <el-table
+            v-loading="farmerDemandLoading"
+            :data="farmerDemandData"
+            stripe
+            max-height="400px"
+          >
+            <el-table-column
+              prop="batchNo"
+              :label="$t('demandAudit.columns.batchNo')"
+              min-width="150"
+            />
+            <el-table-column
+              prop="farmerName"
+              :label="$t('demandAudit.columns.farmerName')"
+              min-width="120"
+            />
+            <el-table-column
+              prop="farmerIdNumber"
+              :label="$t('demandAudit.columns.farmerIdNumber')"
+              min-width="150"
+            />
+            <el-table-column
+              prop="landArea"
+              :label="$t('demandAudit.columns.landArea')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                {{ row.landArea || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="status"
+              :label="$t('demandAudit.columns.status')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                <el-tag :type="getFarmerStatusType(row.status)" size="small">
+                  {{ getFarmerStatusLabel(row.status) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('common.actions')"
+              fixed="right"
+              width="100"
+            >
+              <template #default="{ row }">
+                <el-button link type="primary" @click="handleViewFarmerDemand(row)">
+                  <i class="ri-eye-line"></i>
+                  {{ $t('common.view') }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 分页 -->
+          <div v-if="farmerDemandPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
+            <el-pagination
+              v-model:current-page="farmerDemandPagination.currentPage"
+              v-model:page-size="farmerDemandPagination.pageSize"
+              :page-sizes="[10, 20, 50]"
+              :total="farmerDemandPagination.total"
+              layout="total, sizes, prev, pager, next"
+              background
+              small
+              @size-change="handleFarmerPageChange"
+              @current-change="handleFarmerPageChange"
+            />
+          </div>
+
+          <el-empty
+            v-if="farmerDemandData.length === 0 && !farmerDemandLoading"
+            :description="$t('townAggregation.detailDialog.noData')"
+          />
+        </el-tab-pane>
+      </el-tabs>
+
+      <template #footer>
+        <el-button @click="drillDownRecordDetailVisible = false">
+          {{ $t('common.close') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -317,7 +660,15 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateTownInputDemand, getTownAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
+import {
+  createVillageDemandSummaryMain,
+  getVillageDemandSummaryMainList,
+  aggregateTownInputDemand,
+  getTownAggregationDetail,
+  updateVillageDemandSummaryMain,
+  getVillageAggregationDetail
+} from '@/api/villageAggregation'
+import { getFarmerDemandPage } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
@@ -328,10 +679,13 @@ const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref([])
 
+// 视图模式: 'main' 主列表, 'drillDown' 下钻列表
+const viewMode = ref('main')
+
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
+  pageSize: 999999,
   total: 0
 })
 
@@ -358,6 +712,41 @@ const detailPagination = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0
+})
+
+// 下钻列表
+const drillDownLoading = ref(false)
+const drillDownData = ref([])
+const currentDrillDownRow = ref(null)
+
+const drillDownPagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+// 下钻记录详情
+const drillDownRecordDetailVisible = ref(false)
+const drillDownRecordDetail = ref({})
+const drillDownAggregationLoading = ref(false)
+const drillDownAggregationData = ref([])
+
+// 详情对话框标签页
+const activeDetailTab = ref('aggregation')
+
+// 农民需求数据
+const farmerDemandLoading = ref(false)
+const farmerDemandData = ref([])
+const farmerDemandPagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const farmerSearchForm = reactive({
+  farmerName: '',
+  farmerIdNumber: '',
+  status: ''
 })
 
 // 加载某一行已审批数量（已通过村级记录数）
@@ -392,7 +781,10 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: "1",
+      orderByColumn: 'year',
+      isAsc: 'desc'
       // sourceCode:'huangshan'
       // TODO: Add user context filters
     }
@@ -553,6 +945,192 @@ const handleDetailCurrentChange = () => {
   loadDetailData()
 }
 
+// 下钻 - 点击WoreName列
+const handleDrillDown = async (row) => {
+  currentDrillDownRow.value = row
+  viewMode.value = 'drillDown'
+  drillDownPagination.currentPage = 1
+  await loadDrillDownData()
+}
+
+// 返回主列表
+const handleBackToMain = () => {
+  viewMode.value = 'main'
+  currentDrillDownRow.value = null
+  drillDownData.value = []
+}
+
+// 加载下钻列表数据
+const loadDrillDownData = async () => {
+  if (!currentDrillDownRow.value) return
+
+  drillDownLoading.value = true
+  try {
+    const params = {
+      page: drillDownPagination.currentPage,
+      pageSize: drillDownPagination.pageSize,
+      targetCode: currentDrillDownRow.value.sourceCode,
+      year: currentDrillDownRow.value.year,
+      level: 0,
+      orderByColumn: 'year',
+      isAsc: 'desc'
+    }
+    const res = await getVillageDemandSummaryMainList(params)
+
+    if (res.code === 200) {
+      drillDownData.value = res.data?.list || []
+      drillDownPagination.total = res.data?.total || 0
+    }
+  } catch (error) {
+    console.error('Failed to load drill down data:', error)
+    ElMessage.error(t('townAggregation.messages.loadFailed'))
+  } finally {
+    drillDownLoading.value = false
+  }
+}
+
+// 下钻分页变化
+const handleDrillDownSizeChange = () => {
+  drillDownPagination.currentPage = 1
+  loadDrillDownData()
+}
+
+const handleDrillDownCurrentChange = () => {
+  loadDrillDownData()
+}
+
+// 查看下钻记录详情
+const handleDrillDownDetail = async (row) => {
+  drillDownRecordDetail.value = row
+  drillDownRecordDetailVisible.value = true
+  activeDetailTab.value = 'aggregation'
+  drillDownAggregationData.value = []
+  farmerDemandData.value = []
+  
+  // 重置搜索表单
+  farmerSearchForm.farmerName = ''
+  farmerSearchForm.farmerIdNumber = ''
+  farmerSearchForm.status = ''
+  farmerDemandPagination.currentPage = 1
+
+  // 加载汇聚结果数据
+  drillDownAggregationLoading.value = true
+  try {
+    const res = await getVillageAggregationDetail({
+      sourceCode: row.sourceCode,
+      year: row.year
+    })
+    if (res.code === 200) {
+      drillDownAggregationData.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load aggregation data:', error)
+    ElMessage.error(t('townAggregation.detailDialog.loadFailed排名'))
+  } finally {
+    drillDownAggregationLoading.value = false
+  }
+}
+
+// 标签页切换
+const handleDetailTabChange = (tabName) => {
+  if (tabName === 'farmers' && farmerDemandData.value.length === 0) {
+    loadFarmerDemandData()
+  }
+}
+
+// 加载农民需求数据
+const loadFarmerDemandData = async () => {
+  if (!drillDownRecordDetail.value.sourceCode) return
+
+  farmerDemandLoading.value = true
+  try {
+    const params = {
+      pageNum: farmerDemandPagination.currentPage,
+      pageSize: farmerDemandPagination.pageSize,
+      kebele: drillDownRecordDetail.value.sourceCode,
+      year: drillDownRecordDetail.value.year,
+      farmerName: farmerSearchForm.farmerName || undefined,
+      farmerIdNumber: farmerSearchForm.farmerIdNumber || undefined,
+      status: farmerSearchForm.status || undefined,
+      orderByColumn: 'createdTime',
+      isAsc: 'desc'
+    }
+    
+    const res = await getFarmerDemandPage(params)
+    if (res.code === 200) {
+      farmerDemandData.value = res.data?.records || []
+      farmerDemandPagination.total = res.data?.total || 0
+    }
+  } catch (error) {
+    console.error('Failed to load farmer demand data:', error)
+    ElMessage.error(t('townAggregation.messages.loadFailed'))
+  } finally {
+    farmerDemandLoading.value = false
+  }
+}
+
+// 农民需求搜索
+const handleFarmerSearch = () => {
+  farmerDemandPagination.currentPage = 1
+  loadFarmerDemandData()
+}
+
+// 重置搜索
+const handleFarmerSearchReset = () => {
+  farmerSearchForm.farmerName = ''
+  farmerSearchForm.farmerIdNumber = ''
+  farmerSearchForm.status = ''
+  farmerDemandPagination.currentPage = 1
+  loadFarmerDemandData()
+}
+
+// 农民需求分页变化
+const handleFarmerPageChange = () => {
+  loadFarmerDemandData()
+}
+
+// 查看农民需求详情
+const handleViewFarmerDemand = (row) => {
+  // 保存当前下钻状态到 sessionStorage
+  const navigationState = {
+    viewMode: viewMode.value,
+    kebeleCode: drillDownRecordDetail.value.sourceCode,
+    year: drillDownRecordDetail.value.year,
+    kebeleName: drillDownRecordDetail.value.sourceName
+  }
+  sessionStorage.setItem('aggregation_nav_state', JSON.stringify(navigationState))
+  
+  router.push({
+    name: 'DemandAuditDetail',
+    params: { id: row.id },
+    query: {
+      returnPath: router.currentRoute.value.path
+    }
+  })
+}
+
+// 获取农民需求状态标签
+const getFarmerStatusLabel = (status) => {
+  const statusMap = {
+    0: t('demandAudit.status.draft'),
+    1: t('demandAudit.status.submitted'),
+    2: t('demandAudit.status.approved'),
+    3: t('demandAudit.status.rejected')
+  }
+  return statusMap[status] || '-'
+}
+
+// 获取农民需求状态类型
+const getFarmerStatusType = (status) => {
+  const typeMap = {
+    0: 'info',
+    1: 'warning',
+    2: 'success',
+    3: 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
 // 分页变化
 const handleSizeChange = () => {
   pagination.currentPage = 1
@@ -566,6 +1144,44 @@ const handleCurrentChange = () => {
 // 初始化
 onMounted(() => {
   loadData()
+  
+  // 检查是否需要恢复下钻状态
+  const savedState = sessionStorage.getItem('aggregation_nav_state')
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState)
+      // 清除保存的状态
+      sessionStorage.removeItem('aggregation_nav_state')
+      
+      // 恢复下钻状态
+      if (state.viewMode === 'drillDown' && state.kebeleCode) {
+        // 设置下钻记录详情
+        drillDownRecordDetail.value = {
+          sourceCode: state.kebeleCode,
+          year: state.year,
+          sourceName: state.kebeleName
+        }
+        viewMode.value = 'drillDown'
+        drillDownRecordDetailVisible.value = true
+        activeDetailTab.value = 'farmers'
+        
+        // 加载汇聚数据
+        loadDrillDownData().then(() => {
+          // 打开详情对话框并切换到农民需求标签页
+          setTimeout(() => {
+            handleDrillDownDetail(drillDownRecordDetail.value)
+            setTimeout(() => {
+              activeDetailTab.value = 'farmers'
+              loadFarmerDemandData()
+            }, 100)
+          }, 100)
+        })
+      }
+    } catch (e) {
+      console.error('Failed to restore navigation state:', e)
+      sessionStorage.removeItem('aggregation_nav_state')
+    }
+  }
 })
 </script>
 
@@ -636,6 +1252,36 @@ onMounted(() => {
 
 .table-wrapper {
   margin-bottom: 16px;
+}
+
+.drill-down-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.drill-down-header .breadcrumb {
+  font-size: 14px;
+}
+
+.drill-down-header .el-button i {
+  margin-right: 4px;
+}
+
+.aggregation-result-section {
+  margin-top: 24px;
+}
+
+.aggregation-result-section .section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #009A44;
 }
 
 .action-buttons {

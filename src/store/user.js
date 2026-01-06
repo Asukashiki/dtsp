@@ -51,10 +51,10 @@ export const useUserStore = defineStore('user', {
       }
     },
     // 检查用户是否有状态操作权限
-    hasStatusPermission() {
-      return (statusAction) => {
+    hasWorkflowStatusPermission() {
+      return (workflowStatusAction) => {
         // 状态操作权限映射
-        const statusPermissions = {
+        const workflowStatusPermissions = {
           'create': ['agri-admin', 'OARI', 'RC'], // 创建
           'edit': ['agri-admin', 'OARI', 'RC'], // 编辑
           'submit': ['agri-admin', 'OARI', 'RC'], // 提交审核
@@ -65,7 +65,7 @@ export const useUserStore = defineStore('user', {
           'view': ['agri-admin', 'OARI', 'RC', 'OSE', 'Union', 'Cooperative', 'OIA'] // 查看
         }
         
-        const requiredRoles = statusPermissions[statusAction] || []
+        const requiredRoles = workflowStatusPermissions[workflowStatusAction] || []
         return this.hasRole(requiredRoles)
       }
     }

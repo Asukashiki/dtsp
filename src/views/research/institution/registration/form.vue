@@ -5,347 +5,329 @@
       <div class="page-header">
         <div class="header-left">
           <div class="header-icon">
-            <i class="ri-file-edit-line"></i>
+            <i class="ri-edit-box-line"></i>
           </div>
           <div class="header-content">
-            <h1 class="page-title">{{ isEdit ? $t('registration.application.edit') : $t('registration.application.add') }}</h1>
-            <p class="page-subtitle">{{ $t('registration.application.subtitle') }}</p>
+            <h1 class="page-title">{{ pageTitle }}</h1>
+            <p class="page-subtitle">{{ $t('orgRegistration.subtitle') }}</p>
           </div>
         </div>
       </div>
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="200px" label-position="top">
-          <!-- 基础信息 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-information-line"></i>
-                <span>{{ $t('registration.application.form.basicInfo') }}</span>
-              </div>
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="rules"
+          :label-width="labelWidth"
+          :label-position="labelPosition"
+          class="registration-form"
+        >
+          <!-- 基本信息 -->
+          <div class="form-section">
+            <div class="section-title">
+              <i class="ri-information-line"></i>
+              {{ $t('orgRegistration.form.basicInfo') }}
             </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.enterpriseName')" prop="enterpriseName">
-                    <el-input
-                      v-model="formData.enterpriseName"
-                      :placeholder="$t('registration.application.placeholder.enterpriseName')"
-                      maxlength="200"
-                      show-word-limit
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.orgType')" prop="orgType">
+                  <el-select v-model="formData.orgType" :placeholder="$t('orgRegistration.placeholder.orgType')" style="width: 100%" :disabled="isView">
+                    <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
+                    <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
+                    <el-option value="PRIVATE" :label="$t('orgRegistration.orgType.PRIVATE')"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.orgName')" prop="orgName">
+                  <el-input v-model="formData.orgName" :placeholder="$t('orgRegistration.placeholder.orgName')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.unifiedCode')" prop="unifiedCode">
+                  <el-input v-model="formData.unifiedCode" :placeholder="$t('orgRegistration.placeholder.unifiedCode')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.licenseNumber')" prop="licenseNumber">
+                  <el-input v-model="formData.licenseNumber" :placeholder="$t('orgRegistration.placeholder.licenseNumber')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.licenseStart')" prop="licenseStart">
+                  <el-date-picker
+                    v-model="formData.licenseStart"
+                    type="date"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                    :placeholder="$t('orgRegistration.placeholder.licenseStart')"
+                    style="width: 100%"
+                    :disabled="isView"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.licenseEnd')" prop="licenseEnd">
+                  <el-date-picker
+                    v-model="formData.licenseEnd"
+                    type="date"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                    :placeholder="$t('orgRegistration.placeholder.licenseEnd')"
+                    style="width: 100%"
+                    :disabled="isView"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.variety.cropType')" prop="cropTypes">
+                  <el-select
+                    v-model="cropTypesArray"
+                    :placeholder="$t('research.variety.cropType')"
+                    style="width: 100%"
+                    multiple
+                    :disabled="isView"
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="item in options.crop_type"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+
+          <!-- 位置信息 -->
+          <div class="form-section">
+            <div class="section-title">
+              <i class="ri-map-pin-line"></i>
+              {{ $t('orgRegistration.form.locationInfo') }}
+            </div>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.regionCode')" prop="regionCode">
+                  <el-cascader
+                    v-model="regionCodePath"
+                    :options="regionTreeOptions"
+                    :placeholder="$t('orgRegistration.placeholder.regionCode')"
+                    :props="{ checkStrictly: true, emitPath: false }"
+                    filterable
+                    clearable
+                    style="width: 100%"
+                    :disabled="isView"
+                    v-loading="regionTreeLoading"
+                    @change="handleRegionChange"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :xs="24">
+                <el-form-item :label="$t('orgRegistration.form.fullAddress')" prop="fullAddress">
+                  <el-input v-model="formData.fullAddress" :placeholder="$t('orgRegistration.placeholder.fullAddress')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.gpsLat')" prop="gpsLat">
+                  <el-input v-model="formData.gpsLat" :placeholder="$t('orgRegistration.placeholder.gpsLat')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.gpsLng')" prop="gpsLng">
+                  <el-input v-model="formData.gpsLng" :placeholder="$t('orgRegistration.placeholder.gpsLng')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+
+          <!-- 证照信息 -->
+          <div class="form-section">
+            <div class="section-title">
+              <i class="ri-file-text-line"></i>
+              {{ $t('orgRegistration.form.certificateInfo') }}
+            </div>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.businessLicenseUrl')" prop="businessLicenseUrl">
+                  <!-- 查看模式显示图片 -->
+                  <template v-if="isView">
+                    <el-image
+                      v-if="businessLicensePreviewUrl"
+                      :src="businessLicensePreviewUrl"
+                      :preview-src-list="[businessLicensePreviewUrl]"
+                      fit="contain"
+                      style="width: 120px; height: 120px; border-radius: 8px"
                     />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.orgType')" prop="orgType">
-                    <el-select v-model="formData.orgType" :placeholder="$t('registration.application.placeholder.orgType')" class="w-full">
-                      <el-option value="union" :label="$t('registration.application.orgType.union')"></el-option>
-                      <el-option value="cooperative" :label="$t('registration.application.orgType.cooperative')"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.enterpriseType')" prop="enterpriseType">
-                    <el-input
-                      v-model="formData.enterpriseType"
-                      :placeholder="$t('registration.application.placeholder.enterpriseType')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.enterpriseRegistrationId')" prop="enterpriseRegistrationId">
-                    <el-input
-                      v-model="formData.enterpriseRegistrationId"
-                      :placeholder="$t('registration.application.placeholder.enterpriseRegistrationId')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.unifiedSocialCreditCode')" prop="unifiedSocialCreditCode">
-                    <el-input
-                      v-model="formData.unifiedSocialCreditCode"
-                      :placeholder="$t('registration.application.placeholder.unifiedSocialCreditCode')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.seedEnterpriseLicenseNumber')" prop="seedEnterpriseLicenseNumber">
-                    <el-input
-                      v-model="formData.seedEnterpriseLicenseNumber"
-                      :placeholder="$t('registration.application.placeholder.seedEnterpriseLicenseNumber')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.licenseValidityStart')" prop="licenseValidityStart">
-                    <el-date-picker
-                      v-model="formData.licenseValidityStart"
-                      type="date"
-                      :placeholder="$t('registration.application.placeholder.licenseValidityStart')"
-                      value-format="YYYY-MM-DD"
-                      class="w-full"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.licenseValidityEnd')" prop="licenseValidityEnd">
-                    <el-date-picker
-                      v-model="formData.licenseValidityEnd"
-                      type="date"
-                      :placeholder="$t('registration.application.placeholder.licenseValidityEnd')"
-                      value-format="YYYY-MM-DD"
-                      class="w-full"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.inputTypes')" prop="inputTypes">
-                    <el-select
-                      v-model="formData.inputTypes"
-                      multiple
-                      :placeholder="$t('registration.application.placeholder.inputTypes')"
-                      class="w-full"
+                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+                  </template>
+                  <!-- 编辑模式上传组件 -->
+                  <template v-else>
+                    <el-upload
+                      class="upload-demo"
+                      :http-request="handleBusinessLicenseUpload"
+                      :on-success="handleBusinessLicenseSuccess"
+                      :on-error="handleUploadError"
+                      :before-upload="beforeUpload"
+                      :file-list="businessLicenseFileList"
+                      list-type="picture-card"
+                      :limit="1"
+                      accept=".jpg,.jpeg,.png"
                     >
-                      <el-option value="seed" :label="$t('registration.application.inputType.seed')"></el-option>
-                      <el-option value="fertilizer" :label="$t('registration.application.inputType.fertilizer')"></el-option>
-                      <el-option value="pesticide" :label="$t('registration.application.inputType.pesticide')"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.salesRegions')" prop="salesRegions">
-                    <el-input
-                      v-model="formData.salesRegions"
-                      :placeholder="$t('registration.application.placeholder.salesRegions')"
+                      <i class="ri-upload-cloud-line"></i>
+                      <div class="upload-text">{{ $t('common.upload') }}</div>
+                    </el-upload>
+                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
+                  </template>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.taxCertUrl')" prop="taxCertUrl">
+                  <!-- 查看模式显示图片 -->
+                  <template v-if="isView">
+                    <el-image
+                      v-if="taxCertPreviewUrl"
+                      :src="taxCertPreviewUrl"
+                      :preview-src-list="[taxCertPreviewUrl]"
+                      fit="contain"
+                      style="width: 120px; height: 120px; border-radius: 8px"
                     />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24">
-                  <el-form-item :label="$t('registration.application.form.remark')" prop="remark">
-                    <el-input
-                      v-model="formData.remark"
-                      type="textarea"
-                      :rows="3"
-                      :placeholder="$t('registration.application.placeholder.remark')"
-                      maxlength="500"
-                      show-word-limit
-                    />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
+                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
+                  </template>
+                  <!-- 编辑模式上传组件 -->
+                  <template v-else>
+                    <el-upload
+                      class="upload-demo"
+                      :http-request="handleTaxCertUpload"
+                      :on-success="handleTaxCertSuccess"
+                      :on-error="handleUploadError"
+                      :before-upload="beforeUpload"
+                      :file-list="taxCertFileList"
+                      list-type="picture-card"
+                      :limit="1"
+                      accept=".jpg,.jpeg,.png"
+                    >
+                      <i class="ri-upload-cloud-line"></i>
+                      <div class="upload-text">{{ $t('common.upload') }}</div>
+                    </el-upload>
+                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
+                  </template>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
 
-          <!-- 位置运营信息 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-map-pin-line"></i>
-                <span>{{ $t('registration.application.form.locationInfo') }}</span>
-              </div>
+          <!-- 联系信息 -->
+          <div class="form-section">
+            <div class="section-title">
+              <i class="ri-contacts-line"></i>
+              {{ $t('orgRegistration.form.contactInfo') }}
             </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.region')" prop="location.region">
-                    <el-input
-                      v-model="formData.location.region"
-                      :placeholder="$t('registration.application.placeholder.region')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.zone')" prop="location.zone">
-                    <el-input
-                      v-model="formData.location.zone"
-                      :placeholder="$t('registration.application.placeholder.zone')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.woreda')" prop="location.woreda">
-                    <el-input
-                      v-model="formData.location.woreda"
-                      :placeholder="$t('registration.application.placeholder.woreda')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.kebele')" prop="location.kebele">
-                    <el-input
-                      v-model="formData.location.kebele"
-                      :placeholder="$t('registration.application.placeholder.kebele')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.gpsLatitude')" prop="location.gpsLatitude">
-                    <el-input
-                      v-model="formData.location.gpsLatitude"
-                      :placeholder="$t('registration.application.placeholder.gpsLatitude')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12" :lg="8">
-                  <el-form-item :label="$t('registration.application.form.gpsLongitude')" prop="location.gpsLongitude">
-                    <el-input
-                      v-model="formData.location.gpsLongitude"
-                      :placeholder="$t('registration.application.placeholder.gpsLongitude')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24">
-                  <el-form-item :label="$t('registration.application.form.fullAddress')" prop="location.fullAddress">
-                    <el-input
-                      v-model="formData.location.fullAddress"
-                      type="textarea"
-                      :rows="2"
-                      :placeholder="$t('registration.application.placeholder.fullAddress')"
-                      maxlength="500"
-                      show-word-limit
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('registration.application.form.businessScope')" prop="location.businessScope">
-                    <el-input
-                      v-model="formData.location.businessScope"
-                      type="textarea"
-                      :rows="2"
-                      :placeholder="$t('registration.application.placeholder.businessScope')"
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('registration.application.form.annualProductionCapacity')" prop="location.annualProductionCapacity">
-                    <el-input
-                      v-model="formData.location.annualProductionCapacity"
-                      type="number"
-                      :placeholder="$t('registration.application.placeholder.annualProductionCapacity')"
-                    />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="8">
+                <el-form-item :label="$t('orgRegistration.form.contactName')" prop="contactName">
+                  <el-input v-model="formData.contactName" :placeholder="$t('orgRegistration.placeholder.contactName')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="8">
+                <el-form-item :label="$t('orgRegistration.form.contactMobile')" prop="contactMobile">
+                  <el-input v-model="formData.contactMobile" :placeholder="$t('orgRegistration.placeholder.contactMobile')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="8">
+                <el-form-item :label="$t('orgRegistration.form.contactEmail')" prop="contactEmail">
+                  <el-input v-model="formData.contactEmail" :placeholder="$t('orgRegistration.placeholder.contactEmail')" :disabled="isView"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
 
-          <!-- 许可证件信息 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-file-list-2-line"></i>
-                <span>{{ $t('registration.application.form.licenseInfo') }}</span>
-              </div>
-              <el-button type="primary" @click="handleAddLicense">
-                <i class="ri-add-line"></i>
-                {{ $t('registration.application.form.addLicense') }}
-              </el-button>
+          <!-- 账号信息（仅新增时显示） -->
+          <div class="form-section" v-if="!isView">
+            <div class="section-title">
+              <i class="ri-user-settings-line"></i>
+              {{ $t('orgRegistration.form.accountInfo') }}
             </div>
-            <div class="card-body">
-              <div v-for="(license, index) in formData.licenses" :key="index" class="license-item">
-                <div class="license-header">
-                  <span class="license-title">{{ $t('registration.application.form.licenses') }} {{ index + 1 }}</span>
-                  <el-button type="danger" link @click="handleRemoveLicense(index)">
-                    <i class="ri-delete-bin-line"></i>
-                    {{ $t('registration.application.form.removeLicense') }}
-                  </el-button>
-                </div>
-                <el-row :gutter="20">
-                  <el-col :xs="24" :sm="12" :lg="6">
-                    <el-form-item :label="$t('registration.application.form.licenseType')" :prop="`licenses.${index}.licenseType`" :rules="rules.licenseType">
-                      <el-select v-model="license.licenseType" :placeholder="$t('registration.application.placeholder.licenseType')" class="w-full">
-                        <el-option value="business_license" :label="$t('registration.application.licenseType.businessLicense')"></el-option>
-                        <el-option value="seed_license" :label="$t('registration.application.licenseType.seedLicense')"></el-option>
-                        <el-option value="tax_certificate" :label="$t('registration.application.licenseType.taxCertificate')"></el-option>
-                        <el-option value="factory_permit" :label="$t('registration.application.licenseType.factoryPermit')"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.applyUsername')" prop="applyUsername">
+                  <el-input 
+                    v-model="formData.applyUsername" 
+                    :placeholder="$t('orgRegistration.placeholder.applyUsername')"
+                    @blur="checkUsername"
+                  >
+                    <template #append v-if="usernameCheckResult !== null">
+                      <i :class="usernameCheckResult ? 'ri-check-line text-success' : 'ri-close-line text-danger'"></i>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" v-if="!isEdit">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.applyPassword')" prop="applyPassword">
+                  <el-input v-model="formData.applyPassword" type="password" show-password :placeholder="$t('orgRegistration.placeholder.applyPassword')"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('orgRegistration.form.confirmPassword')" prop="confirmPassword">
+                  <el-input v-model="formData.confirmPassword" type="password" show-password :placeholder="$t('orgRegistration.placeholder.confirmPassword')"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
 
-                  <el-col :xs="24" :sm="12" :lg="6">
-                    <el-form-item :label="$t('registration.application.form.licenseNumber')" :prop="`licenses.${index}.licenseNumber`">
-                      <el-input
-                        v-model="license.licenseNumber"
-                        :placeholder="$t('registration.application.placeholder.licenseNumber')"
-                      />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :xs="24" :sm="12" :lg="6">
-                    <el-form-item :label="$t('registration.application.form.issueDate')" :prop="`licenses.${index}.issueDate`">
-                      <el-date-picker
-                        v-model="license.issueDate"
-                        type="date"
-                        :placeholder="$t('registration.application.placeholder.issueDate')"
-                        value-format="YYYY-MM-DD"
-                        class="w-full"
-                      />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :xs="24" :sm="12" :lg="6">
-                    <el-form-item :label="$t('registration.application.form.expiryDate')" :prop="`licenses.${index}.expiryDate`">
-                      <el-date-picker
-                        v-model="license.expiryDate"
-                        type="date"
-                        :placeholder="$t('registration.application.placeholder.expiryDate')"
-                        value-format="YYYY-MM-DD"
-                        class="w-full"
-                      />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :xs="24">
-                    <el-form-item :label="$t('registration.application.form.licenseFile')" :prop="`licenses.${index}.licenseFileUrl`" >
-                      <el-upload
-                        :http-request="(options) => handleUploadFile(options, index)"
-                        :on-remove="() => handleRemoveFile(index)"
-                        :file-list="license.fileList || []"
-                        list-type="picture-card"
-                        :limit="1"
-                        accept="image/jpeg,image/png,application/pdf"
-                      >
-                        <i class="ri-upload-cloud-line"></i>
-                        <div class="upload-text">{{ $t('common.upload') }}</div>
-                      </el-upload>
-                      <div class="upload-tip">{{ $t('registration.application.messages.uploadTip') }}</div>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </div>
-
-              <el-empty v-if="formData.licenses.length === 0" :description="$t('registration.application.messages.noData')" />
+          <!-- 审核历史（详情页显示） -->
+          <div class="form-section" v-if="isView && auditLogs.length > 0">
+            <div class="section-title">
+              <i class="ri-history-line"></i>
+              {{ $t('orgRegistration.form.auditHistory') }}
             </div>
+            <el-timeline>
+              <el-timeline-item
+                v-for="log in auditLogs"
+                :key="log.id"
+                :type="log.auditResult === 1 ? 'success' : 'danger'"
+                :timestamp="log.auditTime"
+                placement="top"
+              >
+                <el-card>
+                  <div class="audit-log-item">
+                    <div class="audit-result">
+                      <el-tag :type="log.auditResult === 1 ? 'success' : 'danger'">
+                        {{ log.auditResult === 1 ? $t('orgRegistration.status.approved') : $t('orgRegistration.status.rejected') }}
+                      </el-tag>
+                    </div>
+                    <div class="audit-info">
+                      <span class="auditor">{{ $t('orgRegistration.form.auditorName') }}: {{ log.auditorName }}</span>
+                    </div>
+                    <div class="audit-comment" v-if="log.auditComment">
+                      {{ log.auditComment }}
+                    </div>
+                  </div>
+                </el-card>
+              </el-timeline-item>
+            </el-timeline>
           </div>
 
           <!-- 操作按钮 -->
           <div class="form-actions">
-            <el-button @click="handleCancel">
-              <i class="ri-close-line"></i>
-              {{ $t('common.cancel') }}
-            </el-button>
-            <el-button type="primary" :loading="saving" @click="handleSave">
-              <i class="ri-save-line"></i>
-              {{ $t('common.save') }}
+            <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="submitting" v-if="!isView">
+              {{ $t('common.submit') }}
             </el-button>
           </div>
         </el-form>
@@ -355,340 +337,368 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addRegistration, updateRegistration, getRegistrationDetail } from '@/api/registration'
-import { uploadFile } from '@/api/file'
+import { 
+  submitRegistration, 
+  getRegistrationDetail, 
+  checkUsernameUnique, 
+  getRegionTree, 
+  buildRegionPath 
+} from '@/api/breedingOrgRegistration'
+import { useDict } from '@/hooks/useDict'
+import { uploadFile, getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-const formRef = ref(null)
-const saving = ref(false)
+// 响应式标签宽度
+const labelWidth = computed(() => {
+  const isMobile = window.innerWidth <= 768
+  return isMobile ? '120px' : '220px'
+})
 
-const isEdit = computed(() => !!route.params.id)
+// 响应式标签位置（移动端在上方）
+const labelPosition = computed(() => {
+  const isMobile = window.innerWidth <= 768
+  return isMobile ? 'top' : 'right'
+})
+
+// 页面模式
+const isEdit = computed(() => route.name === 'RegistrationEdit')
+const isView = computed(() => route.name === 'RegistrationDetail')
+
+// 页面标题
+const pageTitle = computed(() => {
+  if (isView.value) return t('orgRegistration.form.title.view')
+  if (isEdit.value) return t('orgRegistration.form.title.edit')
+  return t('orgRegistration.form.title.add')
+})
+
+// 表单相关
+const formRef = ref(null)
+const submitting = ref(false)
+const auditLogs = ref([])
+const usernameCheckResult = ref(null)
+
+// 行政区划树
+const regionTreeOptions = ref([])
+const regionTreeLoading = ref(false)
+const regionCodePath = ref(null)
+
+// 初始化字典
+const { options, loading: dictLoading } = useDict(['crop_type'], {
+  immediate: true,
+  cache: true
+})
+
+// 种子/作物类型数组（用于多选）
+const cropTypesArray = ref([])
+
+// 文件上传相关
+const businessLicenseFileList = ref([])
+const taxCertFileList = ref([])
+const businessLicensePreviewUrl = ref('')
+const taxCertPreviewUrl = ref('')
+
+// 监听 cropTypesArray 变化，同步到 formData.cropTypes
+watch(cropTypesArray, (val) => {
+  formData.cropTypes = val.join(',')
+})
 
 // 表单数据
 const formData = reactive({
   id: null,
-  version: 1,
-  enterpriseName: '',
-  enterpriseRegistrationId: '',
-  unifiedSocialCreditCode: '',
-  seedEnterpriseLicenseNumber: '',
-  licenseValidityStart: '',
-  licenseValidityEnd: '',
-  enterpriseType: '',
   orgType: '',
-  inputTypes: [],
-  salesRegions: '',
-  remark: '',
-  location: {
-    region: '',
-    zone: '',
-    woreda: '',
-    kebele: '',
-    fullAddress: '',
-    gpsLatitude: '',
-    gpsLongitude: '',
-    businessScope: '',
-    annualProductionCapacity: ''
-  },
-  licenses: []
+  orgName: '',
+  unifiedCode: '',
+  licenseNumber: '',
+  licenseStart: '',
+  licenseEnd: '',
+  cropTypes: '',
+  regionCode: '',
+  regionName: '',
+  fullAddress: '',
+  gpsLat: '',
+  gpsLng: '',
+  businessLicenseUrl: '',
+  taxCertUrl: '',
+  otherCertsJson: '',
+  applyUsername: '',
+  applyPassword: '',
+  confirmPassword: '',
+  contactName: '',
+  contactMobile: '',
+  contactEmail: ''
 })
 
-// 表单验证规则
-const rules = {
-  enterpriseName: [
-    { required: true, message: t('registration.application.rules.enterpriseNameRequired'), trigger: 'blur' },
-    { min: 2, max: 200, message: t('registration.application.rules.enterpriseNameLength'), trigger: 'blur' }
-  ],
-  orgType: [
-    { required: true, message: t('registration.application.rules.orgTypeRequired'), trigger: 'change' }
-  ],
-  enterpriseType: [
-    { required: true, message: t('registration.application.rules.enterpriseTypeRequired'), trigger: 'blur' }
-  ],
-  seedEnterpriseLicenseNumber: [
-    { required: true, message: t('registration.application.rules.seedEnterpriseLicenseNumberRequired'), trigger: 'blur' }
-  ],
-  licenseValidityStart: [
-    { required: true, message: t('registration.application.rules.licenseValidityStartRequired'), trigger: 'change' }
-  ],
-  licenseValidityEnd: [
-    { required: true, message: t('registration.application.rules.licenseValidityEndRequired'), trigger: 'change' },
-    {
-      validator: (rule, value, callback) => {
-        if (value && formData.licenseValidityStart && new Date(value) < new Date(formData.licenseValidityStart)) {
-          callback(new Error(t('registration.application.rules.licenseValidityInvalid')))
-        } else if (value && new Date(value) < new Date()) {
-          callback(new Error(t('registration.application.rules.licenseExpired')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'change'
-    }
-  ],
-  inputTypes: [
-    { required: true, message: t('registration.application.rules.inputTypesRequired'), trigger: 'change' }
-  ],
-  salesRegions: [
-    { required: true, message: t('registration.application.rules.salesRegionsRequired'), trigger: 'blur' }
-  ],
-  'location.woreda': [
-    { required: true, message: t('registration.application.rules.woredaRequired'), trigger: 'blur' }
-  ],
-  'location.kebele': [
-    { required: true, message: t('registration.application.rules.kebeleRequired'), trigger: 'blur' }
-  ],
-  'location.fullAddress': [
-    { required: true, message: t('registration.application.rules.fullAddressRequired'), trigger: 'blur' },
-    { min: 5, max: 500, message: t('registration.application.rules.fullAddressLength'), trigger: 'blur' }
-  ],
-  'location.gpsLatitude': [
-    {
-      validator: (rule, value, callback) => {
-        if (value && (isNaN(value) || value < -90 || value > 90)) {
-          callback(new Error(t('registration.application.rules.gpsLatitudeInvalid')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ],
-  'location.gpsLongitude': [
-    {
-      validator: (rule, value, callback) => {
-        if (value && (isNaN(value) || value < -180 || value > 180)) {
-          callback(new Error(t('registration.application.rules.gpsLongitudeInvalid')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ],
-  licenseType: [
-    { required: true, message: t('registration.application.rules.licenseTypeRequired'), trigger: 'change' }
-  ],
-  licenseFileUrl: [
-    { required: true, message: t('registration.application.rules.licenseFileRequired'), trigger: 'change' }
-  ]
-}
-
-// 添加许可证件
-const handleAddLicense = () => {
-  formData.licenses.push({
-    licenseType: '',
-    licenseNumber: '',
-    licenseFileUrl: '',
-    licenseFileName: '',
-    issueDate: '',
-    expiryDate: '',
-    fileList: []
-  })
-}
-
-// 移除许可证件
-const handleRemoveLicense = (index) => {
-  formData.licenses.splice(index, 1)
-}
-
-// 自定义文件上传处理
-const handleUploadFile = async (options, index) => {
-  const { file, onSuccess, onError } = options
-
-  const isLt5M = file.size / 1024 / 1024 < 5
-  if (!isLt5M) {
-    ElMessage.error(t('common.uploadSizeError'))
-    onError && onError(new Error('File size exceeds 5MB'))
-    return
+// 密码确认验证
+const validateConfirmPassword = (rule, value, callback) => {
+  if (!isEdit.value && formData.applyPassword && value !== formData.applyPassword) {
+    callback(new Error(t('orgRegistration.rules.passwordMismatch')))
+  } else {
+    callback()
   }
+}
 
+// 表单验证规则
+const rules = reactive({
+  orgType: [{ required: true, message: t('orgRegistration.rules.orgTypeRequired'), trigger: 'change' }],
+  orgName: [{ required: true, message: t('orgRegistration.rules.orgNameRequired'), trigger: 'blur' }],
+  licenseNumber: [{ required: true, message: t('orgRegistration.rules.licenseNumberRequired'), trigger: 'blur' }],
+  licenseStart: [{ required: true, message: t('orgRegistration.rules.licenseStartRequired'), trigger: 'change' }],
+  licenseEnd: [{ required: true, message: t('orgRegistration.rules.licenseEndRequired'), trigger: 'change' }],
+  cropTypes: [{ required: true, message: t('research.variety.cropType'), trigger: 'change' }],
+  regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }],
+  applyUsername: [{ required: true, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
+  applyPassword: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' }],
+  confirmPassword: [
+    { required: !isEdit.value, message: t('orgRegistration.rules.confirmPasswordRequired'), trigger: 'blur' },
+    { validator: validateConfirmPassword, trigger: 'blur' }
+  ]
+})
+
+// 加载行政区划树
+const loadRegionTree = async () => {
+  regionTreeLoading.value = true
   try {
-    // 直接传递文件对象，uploadFile函数内部会创建FormData
-    const res = await uploadFile(file)
-    if (res.code === 200) {
-      const fileData = res.data
-      const dataId = fileData.id || fileData.dataId
-
-      // 构建预览URL用于显示图片 - 使用完整的URL路径
-      const baseUrl = import.meta.env.VITE_APP_AGRICULTURE_API_URL || ''
-      const previewUrl = `${baseUrl}/doc/preview/${dataId}`
-
-      // 更新文件列表用于显示
-      // 使用 URL.createObjectURL 创建本地预览
-      const localPreviewUrl = URL.createObjectURL(file)
-
-      const fileObj = {
-        name: file.name,
-        uid: file.uid,
-        fileId: dataId,
-        dataId: dataId,
-        url: localPreviewUrl,  // 使用本地预览URL以立即显示
-        serverUrl: previewUrl   // 保存服务器URL供后续使用
-      }
-      formData.licenses[index].fileList = [fileObj]
-
-      // 存储文件ID到表单数据
-      formData.licenses[index].licenseFileUrl = dataId
-      formData.licenses[index].licenseFileName = file.name
-
-      ElMessage.success(t('common.uploadSuccess'))
-      onSuccess && onSuccess(res)
-    } else {
-      ElMessage.error(res.msg || t('common.uploadFailed'))
-      onError && onError(new Error(res.msg || 'Upload failed'))
+    const res = await getRegionTree()
+    if (res.code === 200 && res.data) {
+      regionTreeOptions.value = res.data
     }
   } catch (error) {
-    console.error('File upload failed:', error)
-    ElMessage.error(t('common.uploadFailed'))
-    onError && onError(error)
+    console.error('Failed to load region tree:', error)
+  } finally {
+    regionTreeLoading.value = false
   }
 }
 
-// 文件移除处理
-const handleRemoveFile = (index) => {
-  // 释放本地预览URL内存
-  const fileList = formData.licenses[index].fileList
-  if (fileList && fileList.length > 0 && fileList[0].url) {
-    URL.revokeObjectURL(fileList[0].url)
+// 处理区域选择变化
+const handleRegionChange = (value) => {
+  if (value) {
+    // 使用 buildRegionPath 获取最后一级
+    const { regionCode, regionName } = buildRegionPath(regionTreeOptions.value, value)
+    formData.regionCode = regionCode
+    formData.regionName = regionName
+  } else {
+    formData.regionCode = ''
+    formData.regionName = ''
   }
+}
 
-  formData.licenses[index].licenseFileUrl = ''
-  formData.licenses[index].licenseFileName = ''
-  formData.licenses[index].fileList = []
+// 上传前验证
+const beforeUpload = (file) => {
+  const isValidType = ['image/jpeg', 'image/png'].includes(file.type)
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isValidType) {
+    ElMessage.error(t('orgRegistration.uploadTip'))
+    return false
+  }
+  if (!isLt2M) {
+    ElMessage.error(t('orgRegistration.uploadSizeLimit'))
+    return false
+  }
+  return true
+}
+
+// 上传错误处理
+const handleUploadError = (error) => {
+  console.error('Upload failed:', error)
+  ElMessage.error(error?.message || t('common.uploadFailed'))
+}
+
+// 营业执照上传处理
+const handleBusinessLicenseUpload = async (options) => {
+  try {
+    const res = await uploadFile(options.file)
+    if (res.code === 200 && res.data) {
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.msg || t('common.uploadFailed')))
+    }
+  } catch (error) {
+    options.onError(error)
+  }
+}
+
+// 营业执照上传成功
+const handleBusinessLicenseSuccess = async (response) => {
+  if (response.code === 200 && response.data) {
+    formData.businessLicenseUrl = response.data.id
+    try {
+      const previewRes = await getFilePreviewUrl(response.data.id)
+      const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      businessLicensePreviewUrl.value = previewUrl
+      businessLicenseFileList.value = [{
+        name: response.data.originalFileName || 'license',
+        url: previewUrl,
+        uid: response.data.id
+      }]
+    } catch (error) {
+      console.error('Get preview URL failed:', error)
+      businessLicenseFileList.value = [{
+        name: response.data.originalFileName || 'license',
+        uid: response.data.id
+      }]
+    }
+    ElMessage.success(t('common.uploadSuccess'))
+  }
+}
+
+// 税务证上传处理
+const handleTaxCertUpload = async (options) => {
+  try {
+    const res = await uploadFile(options.file)
+    if (res.code === 200 && res.data) {
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.msg || t('common.uploadFailed')))
+    }
+  } catch (error) {
+    options.onError(error)
+  }
+}
+
+// 税务证上传成功
+const handleTaxCertSuccess = async (response) => {
+  if (response.code === 200 && response.data) {
+    formData.taxCertUrl = response.data.id
+    try {
+      const previewRes = await getFilePreviewUrl(response.data.id)
+      const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+      taxCertPreviewUrl.value = previewUrl
+      taxCertFileList.value = [{
+        name: response.data.originalFileName || 'tax_cert',
+        url: previewUrl,
+        uid: response.data.id
+      }]
+    } catch (error) {
+      console.error('Get preview URL failed:', error)
+      taxCertFileList.value = [{
+        name: response.data.originalFileName || 'tax_cert',
+        uid: response.data.id
+      }]
+    }
+    ElMessage.success(t('common.uploadSuccess'))
+  }
+}
+
+// 检查用户名唯一性
+const checkUsername = async () => {
+  if (!formData.applyUsername) {
+    usernameCheckResult.value = null
+    return
+  }
+  try {
+    const res = await checkUsernameUnique(formData.applyUsername, formData.id)
+    if (res.code === 200) {
+      usernameCheckResult.value = res.data
+      if (!res.data) {
+        ElMessage.warning(t('orgRegistration.messages.usernameUnavailable'))
+      } else {
+        ElMessage.success(t('orgRegistration.messages.usernameAvailable'))
+      }
+    }
+  } catch (error) {
+    console.error('Check username failed:', error)
+  }
 }
 
 // 加载详情
-const loadDetail = async () => {
+const loadData = async () => {
+  const id = route.params.id
+  if (!id) return
+  
   try {
-    const res = await getRegistrationDetail(route.params.id)
+    const res = await getRegistrationDetail(id)
     if (res.code === 200 && res.data) {
-      const data = res.data
-      console.log(data.inputTypes)
-      // 基础信息
-      formData.id = data.id
-      formData.version = data.version
-      formData.enterpriseName = data.enterpriseName
-      formData.enterpriseRegistrationId = data.enterpriseRegistrationId
-      formData.unifiedSocialCreditCode = data.unifiedSocialCreditCode
-      formData.seedEnterpriseLicenseNumber = data.seedEnterpriseLicenseNumber
-      formData.licenseValidityStart = data.licenseValidityStart
-      formData.licenseValidityEnd = data.licenseValidityEnd
-      formData.enterpriseType = data.enterpriseType
-      formData.orgType = data.orgType
-      formData.inputTypes = data.inputTypes
-      formData.salesRegions = data.salesRegions
-      formData.remark = data.remark
-
-      // 位置信息
-      if (data.location) {
-        formData.location = { ...data.location }
+      const { baseInfo, auditLogs: logs } = res.data
+      Object.assign(formData, baseInfo)
+      formData.id = baseInfo.id
+      auditLogs.value = logs || []
+      
+      // 解析 cropTypes 到数组
+      if (baseInfo.cropTypes) {
+        cropTypesArray.value = baseInfo.cropTypes.split(',').filter(Boolean)
       }
-
-      // 许可证件
-      if (data.licenses && data.licenses.length > 0) {
-        // 使用Promise.all并行加载所有许可证件的文件
-        const { downloadFile } = await import('@/api/file')
-
-        const licensePromises = data.licenses.map(async (license) => {
-          if (!license.licenseFileUrl) {
-            return { ...license, fileList: [] }
-          }
-
-          try {
-            // 通过下载接口获取文件数据
-            console.log('正在加载许可证文件:', license.licenseFileUrl)
-            const response = await downloadFile(license.licenseFileUrl)
-            console.log('文件下载响应:', response)
-
-            // 判断文件类型，创建对应的blob
-            const contentType = response.headers?.['content-type'] || 'image/jpeg'
-            const blob = new Blob([response.data], { type: contentType })
-            const blobUrl = URL.createObjectURL(blob)
-
-            console.log('创建的 Blob URL:', blobUrl, 'Content-Type:', contentType)
-
-            return {
-              ...license,
-              fileList: [{
-                name: license.licenseFileName || 'file',
-                url: blobUrl,
-                uid: license.licenseFileUrl,
-                fileId: license.licenseFileUrl,
-                status: 'success'
-              }]
-            }
-          } catch (error) {
-            console.error('加载许可证文件失败:', license.licenseFileUrl, error)
-            ElMessage.warning(`文件 ${license.licenseFileName || license.licenseFileUrl} 加载失败`)
-            // 如果下载失败，返回空文件列表
-            return {
-              ...license,
-              fileList: []
-            }
-          }
-        })
-
-        formData.licenses = await Promise.all(licensePromises)
+      
+      // 设置区域选择器的值
+      if (baseInfo.regionCode) {
+        regionCodePath.value = baseInfo.regionCode
+      }
+      
+      // 回显营业执照图片
+      if (baseInfo.businessLicenseUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(baseInfo.businessLicenseUrl)
+          const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+          businessLicensePreviewUrl.value = previewUrl
+          businessLicenseFileList.value = [{
+            name: 'Business License',
+            url: previewUrl,
+            uid: baseInfo.businessLicenseUrl
+          }]
+        } catch (error) {
+          console.error('Failed to load business license preview:', error)
+        }
+      }
+      
+      // 回显税务证图片
+      if (baseInfo.taxCertUrl) {
+        try {
+          const previewRes = await getFilePreviewUrl(baseInfo.taxCertUrl)
+          const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
+          taxCertPreviewUrl.value = previewUrl
+          taxCertFileList.value = [{
+            name: 'Tax Certificate',
+            url: previewUrl,
+            uid: baseInfo.taxCertUrl
+          }]
+        } catch (error) {
+          console.error('Failed to load tax cert preview:', error)
+        }
       }
     }
   } catch (error) {
-    console.error('Failed to load detail:', error)
-    ElMessage.error(t('common.loadFailed'))
+    console.error('Load data failed:', error)
+    ElMessage.error(t('orgRegistration.messages.loadFailed'))
   }
 }
 
-// 保存
-const handleSave = async () => {
+// 提交表单
+const handleSubmit = async () => {
+  if (!formRef.value) return
+  
   try {
-    const valid = await formRef.value.validate()
-    if (!valid) return
-
-    // 验证至少有一个许可证件
-    if (formData.licenses.length === 0) {
-      ElMessage.error(t('registration.application.rules.licenseItemsRequired'))
+    await formRef.value.validate()
+    
+    // 用户名唯一性检查
+    if (usernameCheckResult.value === false) {
+      ElMessage.warning(t('orgRegistration.rules.usernameExists'))
       return
     }
-
-    saving.value = true
-
-    // 准备提交数据
-    const submitData = {
-      ...formData,
-      inputTypes: formData.inputTypes.join(','),
-      location: {
-        ...formData.location,
-        gpsLatitude: formData.location.gpsLatitude ? parseFloat(formData.location.gpsLatitude) : null,
-        gpsLongitude: formData.location.gpsLongitude ? parseFloat(formData.location.gpsLongitude) : null,
-        annualProductionCapacity: formData.location.annualProductionCapacity ? parseFloat(formData.location.annualProductionCapacity) : null
-      },
-      licenses: formData.licenses.map(({ fileList, licenseFileName, ...license }) => license)
-    }
-
-    const res = isEdit.value
-      ? await updateRegistration(submitData)
-      : await addRegistration(submitData)
-
+    
+    submitting.value = true
+    
+    const submitData = { ...formData }
+    delete submitData.confirmPassword
+    
+    const res = await submitRegistration(submitData)
     if (res.code === 200) {
-      ElMessage.success(isEdit.value ? t('registration.application.editSuccess') : t('registration.application.addSuccess'))
-      router.push({ name: 'Registration' })
+      ElMessage.success(t('orgRegistration.messages.submitSuccess'))
+      router.push({ name: 'InstitutionRegistration' })
     } else {
-      ElMessage.error(res.msg || t('common.saveFailed'))
+      ElMessage.error(res.msg || t('orgRegistration.messages.submitFailed'))
     }
   } catch (error) {
-    if (error !== false) {
-      console.error('Failed to save:', error)
-      ElMessage.error(t('common.saveFailed'))
-    }
+    console.error('Submit failed:', error)
+    ElMessage.error(t('orgRegistration.messages.submitFailed'))
   } finally {
-    saving.value = false
+    submitting.value = false
   }
 }
 
@@ -699,14 +709,14 @@ const handleCancel = () => {
 
 // 初始化
 onMounted(() => {
-  if (isEdit.value) {
-    loadDetail()
+  loadRegionTree()
+  if (isEdit.value || isView.value) {
+    loadData()
   }
 })
 </script>
 
 <style scoped>
-/* 页面容器 */
 .page-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
@@ -714,11 +724,9 @@ onMounted(() => {
 }
 
 .page-wrapper {
-  max-width: 1400px;
   margin: 0 auto;
 }
 
-/* 页面头部 */
 .page-header {
   background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
   border-radius: 16px;
@@ -762,95 +770,37 @@ onMounted(() => {
   margin: 0;
 }
 
-/* 内容区域 */
 .content-wrapper {
   background: white;
   border-radius: 16px;
+  padding: 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 24px;
 }
 
-/* 卡片 */
-.info-card {
-  background: white;
-  border: 1px solid #e8f5e9;
-  border-radius: 12px;
-  margin-bottom: 24px;
-  overflow: hidden;
+.registration-form {
+  max-width: 100%;
 }
 
-.info-card:last-of-type {
-  margin-bottom: 0;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
+.form-section {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
   border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
 }
 
-.card-title {
+.section-title {
   font-size: 18px;
   font-weight: 600;
   color: #009A44;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.card-title i {
+.section-title i {
   font-size: 22px;
 }
 
-.card-body {
-  padding: 24px;
-}
-
-/* 许可证件 */
-.license-item {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 16px;
-  background: #fafafa;
-}
-
-.license-item:last-child {
-  margin-bottom: 0;
-}
-
-.license-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.license-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-/* 上传提示 */
-.upload-text {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #666;
-}
-
-.upload-tip {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #999;
-}
-
-/* 操作按钮 */
 .form-actions {
   display: flex;
   justify-content: center;
@@ -860,12 +810,66 @@ onMounted(() => {
   border-top: 1px solid #e8f5e9;
 }
 
-/* 工具类 */
-.w-full {
-  width: 100%;
+.audit-log-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* 响应式 */
+.audit-result {
+  margin-bottom: 8px;
+}
+
+.audit-info {
+  color: #666;
+  font-size: 14px;
+}
+
+.audit-comment {
+  color: #333;
+  margin-top: 8px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.text-success {
+  color: #67c23a;
+}
+
+.text-danger {
+  color: #f56c6c;
+}
+
+/* 上传组件 */
+.upload-demo :deep(.el-upload) {
+  width: 120px;
+  height: 120px;
+}
+
+.upload-demo :deep(.el-upload-list__item) {
+  width: 120px;
+  height: 120px;
+}
+
+.upload-text {
+  font-size: 12px;
+  color: #606266;
+  margin-top: 4px;
+}
+
+.upload-tip {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 8px;
+}
+
+.no-image {
+  color: #909399;
+  font-size: 14px;
+}
+
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
   .page-container {
     padding: 12px;
@@ -886,40 +890,13 @@ onMounted(() => {
     font-size: 24px;
   }
 
-  .page-subtitle {
-    font-size: 14px;
-  }
-
   .content-wrapper {
-    padding: 16px;
+    padding: 20px;
     border-radius: 12px;
   }
 
-  .card-header {
-    padding: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .license-item {
-    padding: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-  }
-
   :deep(.el-form-item__label) {
-    font-size: 14px;
+    font-size: 14px !important;
   }
 }
 </style>

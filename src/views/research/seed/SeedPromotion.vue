@@ -2,10 +2,10 @@
   <div class="seed-promotion-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-icon header-left">
         <i class="ri-movie-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
         <h1 class="page-title">{{ $t('research.seedPromotion.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.seedPromotion.subtitle') }}</p>
       </div>
@@ -104,14 +104,14 @@
         </el-table-column>
         <el-table-column
           :label="$t('research.seedPromotion.columns.actions')"
-          width="240"
+          width="180"
           fixed="right"
         >
           <template #default="{ row }">
             <div class="action-buttons">
-              <el-button link type="primary" @click="handleViewVideo(row)">
-                <i class="ri-play-circle-line"></i>
-                {{ $t('common.preview') }}
+              <el-button link type="primary" @click="handleViewDetail(row)">
+                <i class="ri-eye-line"></i>
+                {{ $t('common.view') }}
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)">
                 <i class="ri-delete-bin-line"></i>
@@ -180,8 +180,8 @@
           </div>
         </div>
         <div class="card-actions">
-          <el-button link type="primary" size="small" @click="handleViewVideo(item)">
-            <i class="ri-play-circle-line"></i> {{ $t('common.preview') }}
+          <el-button link type="primary" size="small" @click="handleViewDetail(item)">
+            <i class="ri-eye-line"></i> {{ $t('common.view') }}
           </el-button>
           <el-button link type="danger" size="small" @click="handleDelete(item)">
             <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
@@ -208,38 +208,19 @@
       v-model="showUploadDialog"
       @success="handleUploadSuccess"
     />
-
-    <!-- 视频预览对话框 -->
-    <el-dialog
-      v-model="showVideoDialog"
-      :title="currentVideo.title"
-      width="80%"
-      class="video-dialog"
-    >
-      <video
-        v-if="currentVideo.videoUrl"
-        :src="currentVideo.videoUrl"
-        controls
-        class="video-player"
-      >
-        Your browser does not support the video tag.
-      </video>
-      <div v-if="currentVideo.promotionSummary" class="video-summary">
-        <h4>{{ $t('research.seedPromotion.form.promotionSummary') }}</h4>
-        <p>{{ currentVideo.promotionSummary }}</p>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getPromotionList, deletePromotion } from '@/api/seedPromotion'
 import { useUserStore } from '@/store'
 import UploadDialog from './components/UploadDialog.vue'
 
+const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
 
@@ -253,12 +234,6 @@ const searchQuery = ref('')
 
 // 对话框状态
 const showUploadDialog = ref(false)
-const showVideoDialog = ref(false)
-const currentVideo = ref({
-  title: '',
-  videoUrl: '',
-  promotionSummary: ''
-})
 
 // 加载推广内容列表
 const loadPromotionList = async () => {
@@ -326,14 +301,12 @@ const handleCopyLink = async (link) => {
   }
 }
 
-// 预览视频
-const handleViewVideo = (row) => {
-  currentVideo.value = {
-    title: row.title,
-    videoUrl: row.videoUrl,
-    promotionSummary: row.promotionSummary
-  }
-  showVideoDialog.value = true
+// 查看详情 - 跳转到详情页
+const handleViewDetail = (row) => {
+  router.push({
+    name: 'SeedPromotionDetail',
+    params: { promotionId: row.promotionId }
+  })
 }
 
 // 删除推广内容
@@ -385,56 +358,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.seed-promotion-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  min-height: calc(100vh - 60px);
-}
-
-/* 页面头部 */
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 32px;
-  padding: 32px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.2);
-
-  .header-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 24px;
-
-    i {
-      font-size: 40px;
-      color: white;
-    }
-  }
-
-  .header-text {
-    flex: 1;
-    color: white;
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-    }
-
-    .page-subtitle {
-      font-size: 16px;
-      opacity: 0.95;
-      margin: 0;
-    }
-  }
-}
-
 /* 工具栏 */
 .toolbar {
   margin-bottom: 24px;
@@ -590,34 +513,6 @@ onMounted(() => {
       margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid #EBEEF5;
-    }
-  }
-}
-
-/* 视频对话框 */
-.video-dialog {
-  .video-player {
-    width: 100%;
-    max-height: 500px;
-    border-radius: 8px;
-  }
-
-  .video-summary {
-    margin-top: 16px;
-    padding: 16px;
-    background: #F5F7FA;
-    border-radius: 8px;
-
-    h4 {
-      margin: 0 0 8px 0;
-      color: #303133;
-      font-size: 16px;
-    }
-
-    p {
-      margin: 0;
-      color: #606266;
-      line-height: 1.6;
     }
   }
 }

@@ -75,7 +75,7 @@
       </el-button>
       <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
         <el-icon><Delete /></el-icon>
-        {{ t('batchDelete') }}
+        {{ t('common.batchDelete') }}
       </el-button>
     </el-card>
 
@@ -105,20 +105,20 @@
             {{ formatDateTime(row.releaseDate) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
-          <template #default="scope">
-            <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
-              {{ getStockStatusText(scope.row.stockStatus) }}
+        <!-- <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="130">
+          <template #default="{ row }">
+            <el-tag :type="row.stockStatus === 'completed' ? 'success' : 'warning'">
+              {{ row.stockStatus }}
             </el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column prop="releaseOrg" :label="t('releaseOrg')" min-width="150" />
         <el-table-column :label="t('actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row.id)">{{ t('detail') }}</el-button>
-            <el-button link type="primary" @click="handleEdit(row.id)">{{ t('edit') }}</el-button>
-            <el-button link type="danger" @click="handleDelete(row.id)">{{ t('delete') }}</el-button>
+            <el-button link type="primary" @click="handleDetail(row.id)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+            <el-button link type="primary" @click="handleEdit(row.id)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row.id)"><i class="ri-delete-bin-line"></i>{{ $t('common.void') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -268,10 +268,10 @@ const getStockStatusTag = (status) => {
   return map[status] || 'info'
 }
 
-// 获取出入库状态文本
-const getStockStatusText = (status) => {
-  return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
-}
+// // 获取出入库状态文本
+// const getStockStatusText = (status) => {
+//   return t(`inputCirculation.stockStatus_${status || 'notProcessed'}`)
+// }
 
 // 重置查询
 const handleReset = () => {
@@ -302,7 +302,7 @@ const handleDetail = (id) => {
 
 // 删除
 const handleDelete = (id) => {
-  ElMessageBox.confirm(t('deleteConfirm'), t('warning'), {
+  ElMessageBox.confirm(t('common.deleteConfirm'), t('warning'), {
     confirmButtonText: t('confirm'),
     cancelButtonText: t('cancel'),
     type: 'warning'

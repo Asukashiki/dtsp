@@ -34,7 +34,7 @@
     <!-- 工具栏 -->
     <el-card class="toolbar-card">
       <el-button type="primary" @click="handleAdd"><el-icon><Plus /></el-icon>{{ $t('common.add') }}</el-button>
-      <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch"><el-icon><Delete /></el-icon>{{ $t('common.batchDelete') }}</el-button>
+      <!-- <el-button type="danger" :disabled="!selectedIds.length" @click="handleDeleteBatch"><el-icon><Delete /></el-icon>{{ $t('common.batchDelete') }}</el-button> -->
     </el-card>
 
     <!-- 数据表格 - 桌面端 -->
@@ -43,8 +43,8 @@
         <el-table-column type="selection" width="55" />
         <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" />
         <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" />
-        <el-table-column prop="targetId" :label="$t('inputCirculation.targetId')" min-width="150" />
-        <el-table-column prop="targetContact" :label="$t('inputCirculation.targetContact')" min-width="160" />
+        <el-table-column prop="targetId" :label="$t('Union')" min-width="150" />
+        <el-table-column prop="targetContact" :label="$t('Union Contact')" min-width="160" />
         <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" min-width="160" />
         <el-table-column prop="status" :label="$t('inputCirculation.status')" min-width="120" />
         <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">
@@ -58,9 +58,9 @@
         <el-table-column prop="auditBy" :label="$t('inputCirculation.auditBy')" min-width="160" />
         <el-table-column :label="$t('common.actions')" min-width="200" fixed="right">
           <template #default="scope">
-            <el-button type="primary" link @click="handleView(scope.row)">{{ $t('common.view') }}</el-button>
-            <el-button type="primary" link @click="handleEdit(scope.row)">{{ $t('common.edit') }}</el-button>
-            <el-button type="danger" link @click="handleDelete(scope.row)">{{ $t('common.delete') }}</el-button>
+            <el-button type="primary" link @click="handleView(scope.row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+            <el-button type="primary" link @click="handleEdit(scope.row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+            <el-button type="danger" link @click="handleDelete(scope.row)"><i class="ri-delete-bin-line"></i>{{ $t('common.void') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

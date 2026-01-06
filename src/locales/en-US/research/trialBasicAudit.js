@@ -1,12 +1,19 @@
 export default {
-  // Status
-  status: {
+  // Workflow Status
+  workflowStatus: {
     S0: 'Draft',
     S1: 'Pending Approval',
     S2: 'Approved',
     S3: 'Rejected',
+    S4: 'Voided',
     S9: 'Archived',
     S10: 'Cancelled'
+  },
+
+  // Business Status
+  status: {
+    '01': 'Ongoing',
+    '02': 'Finished'
   },
 
   // Actions
@@ -16,6 +23,7 @@ export default {
     view: 'View',
     submit: 'Submit',
     cancel: 'Cancel',
+    void: 'Void',
     archive: 'Archive',
     audit: 'Audit',
     delete: 'Delete',
@@ -34,7 +42,12 @@ export default {
     cancelConfirm: 'Are you sure to cancel this trial?',
     cancelSuccess: 'Cancelled successfully',
     archiveConfirm: 'Are you sure to archive this trial?',
-    archiveSuccess: 'Archived successfully'
+    archiveSuccess: 'Archived successfully',
+    voidConfirm: 'Are you sure to void this audit record?',
+    voidSuccess: 'Voided successfully',
+    voidFailed: 'Failed to void',
+    voidReasonPlaceholder: 'Please enter void reason',
+    voidReasonRequired: 'Void reason is required'
   },
 
   // List Page
@@ -80,10 +93,12 @@ export default {
 
   // Audit Page
   audit: {
-    title: 'Trial Information Audit',
+    title: 'Trial Basic Information Audit',
+    subtitle1: 'Review the submitted test data',
     tabs: {
       pending: 'Pending Audit',
-      audited: 'Audited'
+      audited: 'Audited',
+      voided: 'Voided'
     },
     list: {
       trialName: 'Trial Name',
@@ -93,6 +108,8 @@ export default {
       auditor: 'Auditor',
       auditTime: 'Audit Time',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
+      voidReason: 'Void Reason',
       operation: 'Operation'
     },
     detail: {

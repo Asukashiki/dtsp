@@ -57,7 +57,7 @@
               </div>
               <div class="cert-row">
                 <span class="cert-label">Crop Type:</span>
-                <span class="cert-value">{{ batchData.cropType }}</span>
+                <span class="cert-value">{{ getLabelByValue('crop_type', batchData.cropType) }}</span>
               </div>
             </div>
 
@@ -115,6 +115,10 @@
                 <span class="cert-value">{{ batchData.auditor || '-' }}</span>
               </div>
               <div class="cert-row">
+                <span class="cert-label">Certifying Agency:</span>
+                <span class="cert-value">{{ batchData.auditorOrgName || '-' }}</span>
+              </div>
+              <div class="cert-row">
                 <span class="cert-label">Audit Time:</span>
                 <span class="cert-value">{{ batchData.auditTime || '-' }}</span>
               </div>
@@ -163,10 +167,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, recordC1BatchPrint } from '@/api/c1BreedingBatch'
 import VueQr from 'vue-qr/src/packages/vue-qr.vue'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const loading = ref(false)
 const batchData = ref(null)

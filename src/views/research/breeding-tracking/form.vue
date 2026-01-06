@@ -56,6 +56,36 @@
               </el-select>
             </el-form-item>
 
+            <!-- 标准化检测字段 -->
+            <el-form-item :label="$t('research.c1BreedingBatch.tracking.seedClass')" prop="seedClass">
+              <el-select v-model="formData.seedClass" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Basic" value="Basic" />
+                <el-option label="C1" value="C1" />
+                <!-- <el-option label="C2" value="C2" /> -->
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.tracking.lotId')">
+              <el-input v-model="formData.lotId" :placeholder="$t('common.pleaseEnter')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.tracking.stage')">
+              <el-select v-model="formData.stage" :placeholder="$t('common.pleaseSelect')" class="full-width">
+                <el-option label="Purity" value="PURITY" />
+                <el-option label="Germination" value="GERMINATION" />
+                <el-option label="Moisture" value="MOISTURE" />
+                <el-option label="Health" value="HEALTH" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.tracking.score')">
+              <el-input v-model="formData.score" :placeholder="$t('common.pleaseEnter')" clearable />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.c1BreedingBatch.tracking.inspectionValue')">
+              <el-input v-model="formData.inspectionValue" :placeholder="$t('common.pleaseEnter')" clearable />
+            </el-form-item>
+
             <el-form-item :label="$t('research.breeding.breedingTracking.form.location')" prop="location" class="full-width-item">
               <el-input v-model="formData.location" :placeholder="$t('research.breeding.breedingTracking.form.locationPlaceholder')" clearable />
             </el-form-item>
@@ -177,6 +207,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingTrackingPageDetail, addBreedingTrackingPage, updateBreedingTrackingPage } from '@/api/breeding'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
@@ -184,6 +215,7 @@ const { t } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -192,6 +224,11 @@ const formData = ref({
   cropType: '',
   stageName: '',
   trackingResult: '',
+  seedClass: '',
+  lotId: '',
+  stage: '',
+  score: '',
+  inspectionValue: '',
   location: '',
   startDate: '',
   completeDate: '',
@@ -216,6 +253,11 @@ const rules = computed(() => ({
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充组织信息
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
+  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   if (isEdit.value) {
     await loadDetail()
   }

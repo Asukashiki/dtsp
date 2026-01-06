@@ -19,7 +19,7 @@
       :link="link"
       @click="handleView"
     >
-      {{ t('research.trialBasicAudit.action.view') }}
+      <i class="ri-eye-line"></i> {{ t('research.trialBasicAudit.action.view') }}
     </el-button>
 
     <!-- 提交 -->
@@ -41,18 +41,7 @@
       :link="link"
       @click="handleCancel"
     >
-      {{ t('research.trialBasicAudit.action.cancel') }}
-    </el-button>
-
-    <!-- 归档 -->
-    <el-button
-      v-if="showArchive"
-      type="warning"
-      :size="size"
-      :link="link"
-      @click="handleArchive"
-    >
-      {{ t('research.trialBasicAudit.action.archive') }}
+      {{ t('research.trialBasicAudit.action.void') }}
     </el-button>
   </div>
 </template>
@@ -76,24 +65,23 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'view', 'submit', 'cancel', 'archive'])
+const emit = defineEmits(['edit', 'view', 'submit', 'cancel'])
 
 const { t } = useI18n()
 
-// 根据状态显示不同按钮
-const status = computed(() => props.trial.trialStatus || 'S0')
+// 根据状态显示不同按钮（兼容 workflowStatus 字段）
+const status = computed(() => props.trial.trialStatus || props.trial.workflowStatus || 'S0')
 
 const showEdit = computed(() => status.value === 'S0' || status.value === 'S3')
-const showView = computed(() => status.value === 'S1' || status.value === 'S9' || status.value === 'S10')
+const showView = computed(() => status.value === 'S0' ||status.value === 'S1' || status.value === 'S2' || status.value === 'S3' || status.value === 'S9' || status.value === 'S10')
 const showSubmit = computed(() => status.value === 'S0' || status.value === 'S3')
-const showCancel = computed(() => status.value === 'S0' || status.value === 'S3')
-const showArchive = computed(() => status.value === 'S2')
+// 只有草稿(S0)和待审批(S1)状态显示作废按钮
+const showCancel = computed(() => status.value === 'S0' || status.value === 'S1')
 
 const handleEdit = () => emit('edit', props.trial)
 const handleView = () => emit('view', props.trial)
 const handleSubmit = () => emit('submit', props.trial)
 const handleCancel = () => emit('cancel', props.trial)
-const handleArchive = () => emit('archive', props.trial)
 </script>
 
 <style scoped lang="scss">

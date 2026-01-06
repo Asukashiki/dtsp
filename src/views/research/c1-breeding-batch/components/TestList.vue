@@ -22,8 +22,13 @@
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="testId" :label="t('research.c1BreedingBatch.test.testId')" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="seedClass" :label="t('research.c1BreedingBatch.test.seedClass')" min-width="100" align="center" />
+        <el-table-column prop="lotId" :label="t('research.c1BreedingBatch.test.lotId')" min-width="140" show-overflow-tooltip />
+        <el-table-column prop="testType" :label="t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
         <el-table-column prop="testItem" :label="t('research.c1BreedingBatch.test.testItem')" min-width="140" show-overflow-tooltip />
         <el-table-column prop="testDate" :label="t('research.c1BreedingBatch.test.testDate')" min-width="120" align="center" />
+        <el-table-column prop="testValue" :label="t('research.c1BreedingBatch.test.testValue')" min-width="100" align="center" />
+        <el-table-column prop="unit" :label="t('research.c1BreedingBatch.test.unit')" min-width="80" align="center" />
         <el-table-column prop="testResult" :label="t('research.c1BreedingBatch.test.testResult')" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getResultTagType(row.testResult)" size="small">
@@ -52,16 +57,50 @@
 
       <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="test-form">
         <div class="form-grid">
-          <el-form-item :label="t('research.c1BreedingBatch.test.testItem')" prop="testItem">
-            <el-input v-model="formData.testItem" :placeholder="t('common.pleaseEnter')" />
+          <el-form-item :label="t('research.c1BreedingBatch.test.seedClass')" prop="seedClass">
+            <el-select v-model="formData.seedClass" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="Pre-Basic" value="Pre-Basic" />
+              <el-option label="Basic" value="Basic" />
+              <el-option label="C1" value="C1" />
+            </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('research.c1BreedingBatch.test.testDate')" prop="testDate">
-            <el-date-picker v-model="formData.testDate" type="date" :placeholder="t('common.pleaseSelect')" value-format="YYYY-MM-DD" style="width: 100%" />
+          <el-form-item :label="t('research.c1BreedingBatch.test.lotId')">
+            <el-input v-model="formData.lotId" disabled />
           </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.testType')">
+            <el-select v-model="formData.testType" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="Germination" value="GERMINATION" />
+              <el-option label="Purity" value="PURITY" />
+              <el-option label="Moisture" value="MOISTURE" />
+              <el-option label="Seed Health" value="SEED_HEALTH" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.testItem')" prop="testItem">
+            <el-select v-model="formData.testItem" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option 
+                v-for="item in testItemOptions" 
+                :key="item.value" 
+                :label="item.label" 
+                :value="item.value" 
+              />
+            </el-select>
+          </el-form-item>
+
+ 
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testValue')">
-            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.testValue" :placeholder="t('common.pleaseEnter')" @blur="checkRuleOnBlur" />
+          </el-form-item>
+
+          <el-form-item :label="t('research.c1BreedingBatch.test.unit')">
+            <el-select v-model="formData.unit" :placeholder="t('common.pleaseSelect')" class="full-width">
+              <el-option label="%" value="%" />
+              <el-option label="kg" value="kg" />
+              <el-option label="g" value="g" />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testResult')" prop="testResult">
@@ -72,12 +111,16 @@
             </el-select>
           </el-form-item>
 
+         <el-form-item :label="t('research.c1BreedingBatch.test.testDate')" prop="testDate">
+            <el-date-picker v-model="formData.testDate" type="date" :placeholder="t('common.pleaseSelect')" value-format="YYYY-MM-DD" style="width: 100%" />
+          </el-form-item>
+
           <el-form-item :label="t('research.c1BreedingBatch.test.tester')">
-            <el-input v-model="formData.tester" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.tester" :placeholder="t('common.pleaseEnter')" disabled />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.testOrg')">
-            <el-input v-model="formData.testOrg" :placeholder="t('common.pleaseEnter')" />
+            <el-input v-model="formData.testOrg" :placeholder="t('common.pleaseEnter')" disabled />
           </el-form-item>
 
           <el-form-item :label="t('research.c1BreedingBatch.test.description')" class="full-width-item">
@@ -95,18 +138,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getC1TestList, getC1TestById, addC1Test, updateC1Test, deleteC1Test } from '@/api/c1BreedingBatch'
+import { getTestList, getTestById, addTest, updateTest, deleteTest, checkRule } from '@/api/detection'
+import { useUserStore } from '@/store/user'
 
 const props = defineProps({
-  batchId: { type: String, required: true },
+  batchId: { type: String, required: false },  // 改为可选
+  seedClass: { type: String, default: 'C1' },  // 新增seedClass prop
   readonly: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['refresh'])
 const { t } = useI18n()
+const userStore = useUserStore()
+
+// TestType与TestItem的映射关系
+const testTypeItemMap = {
+  'GERMINATION': [
+    { label: 'DTE', value: 'DTE' },
+    { label: 'Emergence', value: 'Emergence' },
+    { label: 'Vigor Score', value: 'Vigor Score' }
+  ],
+  'PURITY': [
+    { label: 'Purity', value: 'PURITY' }
+  ],
+  'MOISTURE': [
+    { label: 'Moisture', value: 'MOISTURE' }
+  ],
+  'SEED_HEALTH': [
+    { label: 'Health Test', value: 'HEALTH_TEST' }
+  ]
+}
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -117,13 +181,24 @@ const editingId = ref(null)
 const formRef = ref(null)
 
 const formData = ref({
+  seedClass: '',
+  lotId: '',
+  testType: '',
   testItem: '',
   testDate: '',
   testValue: '',
+  unit: '',
+  passStatus: 'FALSE',
   testResult: '',
   testDesc: '',
   tester: '',
   testOrg: ''
+})
+
+// 根据testType获取可选的testItem选项
+const testItemOptions = computed(() => {
+  const testType = formData.value.testType
+  return testTypeItemMap[testType] || []
 })
 
 const rules = {
@@ -132,12 +207,25 @@ const rules = {
   testResult: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
+// 监听batchId变化，重新加载列表
+watch(() => props.batchId, (newBatchId) => {
+  if (newBatchId) {
+    loadList()
+  }
+})
+
 onMounted(() => loadList())
 
 const loadList = async () => {
+  if (!props.batchId) return  // 如果没有batchId，不加载
   loading.value = true
   try {
-    const response = await getC1TestList({ batchId: props.batchId, pageNum: 1, pageSize: 100 })
+    const response = await getTestList({
+      batchId: props.batchId,
+      seedClass: props.seedClass,  // 传递seedClass
+      pageNum: 1,
+      pageSize: 100
+    })
     if (response.code === 200) {
       tableData.value = response.data?.records || []
     }
@@ -151,14 +239,33 @@ const loadList = async () => {
 const handleAdd = () => {
   isEdit.value = false
   editingId.value = null
-  formData.value = { testItem: '', testDate: '', testValue: '', testResult: '', testDesc: '', tester: '', testOrg: '' }
+  // 从用户信息自动填充检测员和检测机构
+  const userInfo = userStore.userInfo?.user || {}
+  const testerName = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
+  const testOrgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  // 自动生成lotId，直接使用批次号
+  const lotId = props.batchId || ''
+  formData.value = {
+    seedClass: props.seedClass,  // 使用传入的seedClass
+    lotId: lotId,
+    testType: '',
+    testItem: '',
+    testDate: '',
+    testValue: '',
+    unit: '%',
+    passStatus: 'FALSE',
+    testResult: '',
+    testDesc: '',
+    tester: testerName,
+    testOrg: testOrgName
+  }
   currentView.value = 'form'
 }
 
 const handleEdit = async (row) => {
   isEdit.value = true
   editingId.value = row.id
-  const response = await getC1TestById(row.id)
+  const response = await getTestById(row.id)
   if (response.code === 200 && response.data) {
     formData.value = { ...response.data }
   }
@@ -170,13 +277,34 @@ const handleBack = () => {
   editingId.value = null
 }
 
+// 失焦时检查规则
+const checkRuleOnBlur = async () => {
+  const newValue = formData.value.testValue
+  const testItem = formData.value.testItem
+  // 只有当testValue和testItem都有值时才进行检查
+  if (newValue && testItem) {
+    try {
+      // 调用checkRule接口，传入testItem作为dictCode，testValue作为value
+      const response = await checkRule(testItem, parseFloat(newValue))
+      if (response.code === 200) {
+        // 根据返回结果自动设置Test Result
+        // true表示正常(01)，false表示异常(02)
+        formData.value.testResult = response.data ? '01' : '02'
+      }
+    } catch (error) {
+      console.error('检查规则失败:', error)
+      ElMessage.error(t('common.error.operationFailed'))
+    }
+  }
+}
+
 const handleDelete = (id) => {
   ElMessageBox.confirm(t('research.c1BreedingBatch.test.deleteConfirm'), t('common.warning'), {
     confirmButtonText: t('common.confirm'),
     cancelButtonText: t('common.cancel'),
     type: 'warning'
   }).then(async () => {
-    const response = await deleteC1Test([id])
+    const response = await deleteTest([id])
     if (response.code === 200) {
       ElMessage.success(t('common.deleteSuccess'))
       loadList()
@@ -191,9 +319,13 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        const data = { ...formData.value, batchId: props.batchId }
+        const data = {
+          ...formData.value,
+          batchId: props.batchId,
+          seedClass: props.seedClass  // 确保传递seedClass
+        }
         if (isEdit.value) data.id = editingId.value
-        const response = isEdit.value ? await updateC1Test(data) : await addC1Test(data)
+        const response = isEdit.value ? await updateTest(data) : await addTest(data)
         if (response.code === 200) {
           ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.addSuccess'))
           handleBack()
@@ -240,7 +372,6 @@ const getResultTagType = (result) => ({ '01': 'success', '02': 'danger', '03': '
   }
 
   .test-form {
-    max-width: 800px;
 
     .form-grid {
       display: grid;

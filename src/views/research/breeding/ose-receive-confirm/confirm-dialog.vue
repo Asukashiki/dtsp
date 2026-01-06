@@ -30,14 +30,30 @@
           min-width="140"
         >
           <template #default="{ row }">
-            {{ row.cropType || '-' }}
+            {{ getLabelByValue('crop_type', row.cropType) || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="seedType"
+            :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
+            min-width="140"
+        >
+
+          <template #default="{ row }">
+            {{ row.seedType || '-' }}
           </template>
         </el-table-column>
         <el-table-column
           prop="breedSeedProduceBatchId"
-          :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+          :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')"
           min-width="220"
           show-overflow-tooltip
+        />
+        <el-table-column
+            prop="produceBatchName"
+            :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+            min-width="220"
+            show-overflow-tooltip
         />
         <el-table-column
           prop="distributeQuantity"
@@ -84,6 +100,7 @@
           :placeholder="$t('research.breeding.seed.receiveConfirm.placeholder.confirmPeople')"
           clearable
           maxlength="50"
+          disabled
         />
       </el-form-item>
 
@@ -115,6 +132,8 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { confirmOseReceive } from '@/api/breedSeed'
+import { useUserStore } from '@/store/user'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   modelValue: {
@@ -129,6 +148,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const submitting = ref(false)
@@ -168,7 +191,11 @@ watch(() => props.modelValue, (newVal) => {
   if (newVal) {
     // 默认当前时间
     formData.confirmTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
-    formData.confirmPeople = ''
+    
+    // 自动填充确认人
+    const userInfo = userStore.userInfo?.user || {}
+    formData.confirmPeople = userInfo.nickName || userInfo.NICK_NAME || userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
+    
     formData.remark = ''
   }
 })

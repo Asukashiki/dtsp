@@ -32,6 +32,12 @@
               <el-descriptions-item :label="$t('research.breedingData.trial.form.gpsLocation')">{{ detailData.gpsLocation }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.designType')">{{ detailData.designType }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.replications')">{{ detailData.replications }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.createdName')">{{ detailData.createdName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.createTime')">{{ detailData.createTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.modifiedName')">{{ detailData.modifiedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.updateTime')">{{ detailData.updateTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.approvedName')">{{ detailData.approvedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.approvedTime')">{{ detailData.approvedTime || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>

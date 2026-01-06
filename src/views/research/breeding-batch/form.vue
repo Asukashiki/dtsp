@@ -2,16 +2,15 @@
   <div class="breeding-batch-form-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+        <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('research.breeding.breedingBatch.edit') : $t('research.breeding.breedingBatch.add') }}</h1>
-        </div>
+      </div>
+      <div class="header-content">
+        <h1 class="page-title">{{ isEdit ? $t('research.breeding.breedingBatch.edit') :
+          $t('research.breeding.breedingBatch.add') }}</h1>
       </div>
     </div>
 
@@ -26,7 +25,7 @@
           </div>
           <div class="form-grid">
             <el-form-item :label="$t('research.breeding.breedingBatch.form.cropType')" prop="cropType">
-              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width">
+              <el-select v-model="formData.cropType" :placeholder="$t('research.breeding.breedingBatch.form.cropTypePlaceholder')" class="full-width" @change="handleCropTypeChange">
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.wheat')" value="WHEAT" />
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.corn')" value="CORN" />
                 <el-option :label="$t('research.breeding.breedingBatch.cropType.rice')" value="RICE" />
@@ -36,14 +35,18 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" clearable />
+              <el-input v-model="formData.varietyName" :placeholder="$t('research.breeding.breedingBatch.form.varietyNamePlaceholder')" clearable @blur="generateVarietyCode" />
+            </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.varietyCode')" prop="varietyCode">
+              <el-input v-model="formData.varietyCode" :placeholder="$t('research.breeding.breedingBatch.form.varietyCodePlaceholder')" clearable />
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')" prop="breedingLevel">
               <el-select v-model="formData.breedingLevel" :placeholder="$t('research.breeding.breedingBatch.form.breedingLevelPlaceholder')" class="full-width">
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.original')" value="01" />
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.foundation')" value="02" />
-                <el-option :label="$t('research.breeding.breedingBatch.breedingLevel.certified')" value="03" />
+                <el-option label="Basic" value="Basic" />
+                <el-option label="C1" value="C1" />
+                <!-- <el-option label="C2" value="C2" /> -->
               </el-select>
             </el-form-item>
 
@@ -63,6 +66,10 @@
             <el-form-item :label="$t('research.breeding.breedingBatch.form.expectedYield')" prop="expectedYield">
               <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.breeding.breedingBatch.form.expectedYieldPlaceholder')" type="number" clearable />
             </el-form-item>
+
+            <el-form-item :label="$t('research.breeding.breedingBatch.form.quantityToMultiply')">
+              <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
+            </el-form-item>
           </div>
         </div>
 
@@ -78,7 +85,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.breeding.breedingBatch.form.orgName')" prop="orgName">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" clearable />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.breeding.breedingBatch.form.orgNamePlaceholder')" disabled />
             </el-form-item>
           </div>
         </div>
@@ -111,12 +118,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
 
 const formRef = ref(null)
 const loading = ref(false)
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -127,6 +136,7 @@ const formData = ref({
   parentSeedSource: '',
   startDate: '',
   expectedYield: '',
+  quantityToMultiply: '',
   orgId: '',
   orgName: '',
   remark: ''
@@ -142,6 +152,11 @@ const rules = {
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充组织信息
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
+  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   if (isEdit.value) {
     await loadDetail()
   }
@@ -200,52 +215,12 @@ const goBack = () => {
 
 <style scoped lang="scss">
 .breeding-batch-form-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-content {
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .header-left {
-      margin-right: auto;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-    }
-  }
-}
 
 .form-wrapper {
   background: white;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .breeding-batch-form {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
 
   .form-block {
     margin-bottom: 30px;

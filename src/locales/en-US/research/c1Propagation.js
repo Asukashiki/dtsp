@@ -1,9 +1,9 @@
 // C1种子繁殖申请国际化文件 - English
 export default {
   // Page titles
-  title: 'Seed Propagation Application',
+  title: 'Seed Multiplication Application',
   subtitle: 'Union/Cooperative applies for seed propagation',
-  auditTitle: 'Seed Propagation Audit',
+  auditTitle: 'Seed Multiplication Application Audit',
   auditSubtitle: 'OIA reviews seed propagation applications',
 
   // Actions
@@ -47,6 +47,9 @@ export default {
     applyDate: 'Application Date',
     applyDescription: 'Application Description',
     applyStatus: 'Application Status',
+    demandQuantity: 'Demand Quantity',
+    fromSeedType: 'From Seed Type',
+    toSeedType: 'To Seed Type',
 
     // Audit fields
     auditResult: 'Audit Result',
@@ -75,7 +78,10 @@ export default {
     applyDate: 'Please select application date',
     applyDescription: 'Please enter application description',
     auditResult: 'Please select audit result',
-    auditOpinion: 'Please enter audit opinion'
+    auditOpinion: 'Please enter audit opinion',
+    demandQuantity: 'Please enter demand quantity',
+    fromSeedType: 'Please select from seed type',
+    toSeedType: 'Please select to seed type'
   },
 
   // Validation rules
@@ -87,12 +93,18 @@ export default {
     cropTypeRequired: 'Please select crop type',
     varietyNameRequired: 'Please enter variety name',
     auditResultRequired: 'Please select audit result',
-    auditOpinionRequired: 'Please enter audit opinion'
+    auditOpinionRequired: 'Please enter audit opinion',
+    demandQuantityRequired: 'Please enter demand quantity',
+    demandQuantityMinRequired: 'Demand quantity must be greater than 0',
+    demandQuantityExceedMax: 'Demand quantity cannot exceed maximum available {max} kg',
+    fromSeedTypeRequired: 'Please select from seed type',
+    toSeedTypeRequired: 'Please select to seed type'
   },
 
   // Table columns
   columns: {
     applicantOrgName: 'Organization Name',
+    authId: 'Auth ID',
     cropType: 'Crop Type',
     varietyName: 'Variety Name',
     applyDate: 'Application Date',
@@ -114,5 +126,20 @@ export default {
   auditResult: {
     approved: 'Approved',
     rejected: 'Rejected'
-  }
+  },
+
+  // Seed selection related
+  batchId: 'Batch ID',
+  sourceType: 'Data Source',
+  sourceOseReceive: 'OSE Receive Confirm',
+  sourceOseBatch: 'OSE Batch Collection',
+  varietyName: 'Variety Name',
+  cropType: 'Crop Type',
+  totalQuantity: 'Total Quantity',
+  appliedQuantity: 'Applied Quantity',
+  availableQuantity: 'Available Quantity',
+  parentalSeedSource: 'Parental Seed Source',
+  maxAvailable: 'Max Available',
+  unit: 'Unit',
+  selectBasicSeed: 'Please select Basic seed batch'
 }

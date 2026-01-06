@@ -27,7 +27,7 @@ export default {
     reject: 'Reject',
     batchApprove: 'Batch Approve',
     batchReject: 'Batch Reject',
-    submit: 'Submit for Audit',
+    submit: 'Submit',
     lockBatch: 'Lock Batch',
     aggregationSubmit: 'Submit Aggregation',
     aggregationDetail: 'Aggregation Detail',
@@ -44,6 +44,7 @@ export default {
     village: 'Village',
     landArea: 'Land Area',
     currentAuditLevel: 'Current Audit Level',
+    status: 'Status',
     submitTime: 'Submit Time',
     actions: 'Actions',
   },
@@ -75,6 +76,13 @@ export default {
     confirmMessage: 'Are you sure to reject {count} selected demand(s)?',
     success: 'Rejected successfully',
     auditOpinionRequired: 'Please enter rejection reason',
+  },
+
+  // Unified Audit Dialog
+  auditDialog: {
+    title: 'Audit',
+    auditOpinion: 'Audit Opinion',
+    auditOpinionPlaceholder: 'Please enter audit opinion (optional)',
   },
 
   lockBatchDialog: {

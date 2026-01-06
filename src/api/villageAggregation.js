@@ -102,6 +102,19 @@ export const getTownAggregationDetail = (data) => {
 }
 
 /**
+ * 查询区级汇聚统计（明细按钮）
+ * @param {Object} data - 查询参数 { sourceCode }
+ * @returns {Promise}
+ */
+export const getZoneAggregationDetail = (data) => {
+  return request({
+    url: '/demand/input/summary/getAggregateZone',
+    method: 'post',
+    data,
+  })
+}
+
+/**
  * 镇级汇聚提交
  * @param {Object} data - 汇聚参数 { sourceCode, summaryId }
  * @returns {Promise}

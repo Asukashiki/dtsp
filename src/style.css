@@ -205,8 +205,9 @@ body {
 }
 
 .el-button--danger:hover {
-  background: linear-gradient(135deg, #C10F17 0%, #DA121A 100%);
+  background: linear-gradient(135deg, #C10F17 0%, #DA121A 100%) !important;
   box-shadow: 0 4px 12px rgba(218, 18, 26, 0.3);
+  color: #fff !important;
 }
 
 /* 信息按钮 */

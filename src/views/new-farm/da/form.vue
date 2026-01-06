@@ -89,7 +89,13 @@
                   :placeholder="$t('newFarm.da.placeholder.account')"
                   :disabled="isEdit"
                   maxlength="50"
-              />
+                  @blur="checkAccount"
+              >
+                <template #append v-if="!isEdit && accountCheckResult !== null">
+                  <i :class="accountCheckResult ? 'ri-check-line' : 'ri-close-line'" 
+                     :style="{ color: accountCheckResult ? '#67c23a' : '#f56c6c' }"></i>
+                </template>
+              </el-input>
             </el-form-item>
 
             <el-form-item v-if="!isEdit" :label="$t('newFarm.da.form.password')" prop="password">
@@ -121,39 +127,32 @@
             <h3>{{ $t('newFarm.da.sections.regionInfo') }}</h3>
           </div>
           <div class="form-grid">
-            <!-- 区划信息区域 -->
-            <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode" :disabled="isRegionDisabled">
-              <el-input
-                  v-model="zoneName"
-                  :placeholder="$t('newFarm.common.selectZone')"
-                  :disabled="isRegionDisabled"
-              maxlength="50"
+            <!-- 行政区划级联选择 (只能选择Woreda级别: orgType='1' && orgGrade=4) -->
+            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
+              <el-cascader
+                v-model="regionCodePath"
+                :options="regionTreeOptions"
+                :placeholder="$t('newFarm.common.selectWoreda')"
+                :props="cascaderProps"
+                filterable
+                clearable
+                style="width: 100%"
+                v-loading="regionTreeLoading"
+                @change="handleRegionChange"
               />
-              <input type="hidden" v-model="formData.zoneCode" />
             </el-form-item>
 
-            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode" :disabled="isRegionDisabled">
-              <el-input
-                  v-model="woredaName"
-                  :placeholder="$t('newFarm.common.selectWoreda')"
-                  :disabled="isRegionDisabled"
-              maxlength="50"
-              />
-              <input type="hidden" v-model="formData.woredaCode" />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes" class="full-width-item" :disabled="isRegionDisabled">
+            <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes">
               <el-select
                   v-model="formData.kebeleCodes"
-                  :placeholder="$t('newFarm.da.placeholder.kebeleCodes').replace('多选', '选择')"
-                  maxlength="500"
-                  :disabled="isRegionDisabled">
-              <el-option
-                  v-for="item in kebeleOptions"
-                  :key="item.code || item.id"
-                  :label="item.name"
-                  :value="item.code || item.id"
-              />
+                  :placeholder="$t('newFarm.da.placeholder.kebeleCodes')"
+                  :disabled="kebeleOptions.length === 0">
+                <el-option
+                    v-for="item in kebeleOptions"
+                    :key="item.code || item.id"
+                    :label="item.name"
+                    :value="item.code || item.id"
+                />
               </el-select>
             </el-form-item>
           </div>
@@ -197,9 +196,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import CryptoJS from 'crypto-js'
-import { getDaDetail, addDa, updateDa } from '@/api/newFarm'
-import { listSubRegionByCode, listRegionNameById } from '@/api/application'
-import { registerDa } from '@/api/application'
+import { getDaDetail, addDa, updateDa, checkDaAccountUnique } from '@/api/newFarm'
+import { listSubRegionByCode } from '@/api/application'
+import { getRegionTree, buildRegionPath } from '@/api/orgRegistration'
 
 const router = useRouter()
 const route = useRoute()
@@ -214,14 +213,29 @@ const saveLoading = ref(false)
 const pageLoading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
+// 账号唯一性检查
+const accountCheckResult = ref(null)
+
 // User info storage
 const userInfo = ref(null)
 
 // Region related state
 const regionLoading = ref(false)
-const zoneName = ref('') // Zone display name
-const woredaName = ref('') // Woreda display name
-const kebeleOptions = ref([]) // Kebele dropdown options
+const regionTreeOptions = ref([]) // 区域树结构
+const regionTreeLoading = ref(false)
+const regionCodePath = ref(null) // 级联选择器的值
+const kebeleOptions = ref([]) // Kebele下拉选项
+
+// 级联选择器配置 - 只允许选择Woreda级别 (orgType='1' && orgGrade=4)
+const cascaderProps = {
+  checkStrictly: true,
+  emitPath: false,
+  // 禁用非Woreda级别的节点选择
+  disabled: (data) => {
+    // 只有 orgType='1' 且 orgGrade=4 的节点可以被选择
+    return !(data.orgType === '1' && data.orgGrade === 4)
+  }
+}
 
 // Form data
 const formData = reactive({
@@ -281,6 +295,25 @@ const goBack = () => {
   router.back()
 }
 
+// 检查账号唯一性
+const checkAccount = async () => {
+  if (!formData.account || isEdit.value) {
+    accountCheckResult.value = null
+    return
+  }
+  try {
+    const res = await checkDaAccountUnique(formData.account, '')
+    if (res.code === 200) {
+      accountCheckResult.value = res.data
+      if (!res.data) {
+        ElMessage.warning(t('newFarm.da.messages.accountUnavailable'))
+      }
+    }
+  } catch (error) {
+    console.error('Check account failed:', error)
+  }
+}
+
 // AES encrypt password
 const encryptPassword = (password) => {
   if (!password) return ''
@@ -310,18 +343,27 @@ const loadDetail = async () => {
       formData.zoneCode = data.zoneCode || ''
       formData.woredaCode = data.woredaCode || ''
 
-      // Adapt Kebele single selection (convert array/string to single value)
+      // 设置级联选择器的值
+      if (formData.woredaCode) {
+        regionCodePath.value = formData.woredaCode
+        // 加载Kebele列表
+        try {
+          const kebeleRes = await listSubRegionByCode({ regionCode: formData.woredaCode })
+          if (kebeleRes.code === 200) {
+            kebeleOptions.value = kebeleRes.data || []
+          }
+        } catch (error) {
+          console.error('Failed to load kebele list:', error)
+        }
+      }
+
+      // Adapt Kebele single selection
       if (data.kebeleCodes) {
         formData.kebeleCodes = Array.isArray(data.kebeleCodes)
             ? data.kebeleCodes[0] || ''
             : data.kebeleCodes.split(',')[0] || ''
       }
       formData.remark = data.remark || ''
-
-      // Fill region name
-      if (formData.woredaCode) {
-        await loadRegionInfo(formData.woredaCode, data.woredaName)
-      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -331,74 +373,55 @@ const loadDetail = async () => {
   }
 }
 
-// Load region info
-const loadRegionInfo = async (regionCode, regionName) => {
-  regionLoading.value = true
+// 加载行政区划树
+const loadRegionTree = async () => {
+  regionTreeLoading.value = true
   try {
-    // Set Woreda info
-    woredaName.value = regionName || ''
-    formData.woredaCode = regionCode || ''
-
-    // Get Kebele list
-    const firstRes = await listSubRegionByCode({ regionCode: regionCode })
-    if (firstRes.code === 200) {
-      kebeleOptions.value = firstRes.data || []
-
-      // Get Zone info
-      const firstKebele = kebeleOptions.value[0] || {}
-      const parentIdsArr = firstKebele.regParentIds.split(',').filter(item => item)
-      const parentCode = parentIdsArr[3] || ''
-
-      if (parentCode) {
-        const secondRes = await listRegionNameById({ code: parentCode })
-        if (secondRes.code === 200) {
-          zoneName.value = secondRes.data || ''
-          formData.zoneCode = parentCode
-        }
-      }
+    const res = await getRegionTree()
+    if (res.code === 200 && res.data) {
+      regionTreeOptions.value = res.data
     }
   } catch (error) {
-    console.error('Failed to load region info:', error)
-    ElMessage.closeAll()
-    // 错误提示英文更新
-    ElMessage.error('For DA registration, please use a Woreda Level account; otherwise, the registration cannot be completed.')
-    // 设为禁用状态
-    isRegionDisabled.value = true
-    // 清空错误数据和选项
-    zoneName.value = ''
-    woredaName.value = ''
-    kebeleOptions.value = []
-    formData.zoneCode = ''
-    formData.woredaCode = ''
-    formData.kebeleCodes = ''
-    return Promise.resolve()
-  }finally {
-    regionLoading.value = false
+    console.error('Failed to load region tree:', error)
+  } finally {
+    regionTreeLoading.value = false
   }
 }
 
-// Parse user info and load region data
-const parseUserInfoAndLoadRegion = () => {
-  isRegionDisabled.value = false
+// 处理区域选择变化
+const handleRegionChange = async (value) => {
+  if (value) {
+    const { regionCode, regionName } = buildRegionPath(regionTreeOptions.value, value)
+    formData.woredaCode = regionCode
+    formData.zoneCode = '' // 从选中节点父级解析
+    
+    // 加载Kebele列表
+    try {
+      const kebeleRes = await listSubRegionByCode({ regionCode: regionCode })
+      if (kebeleRes.code === 200) {
+        kebeleOptions.value = kebeleRes.data || []
+        // 清空已选Kebele
+        formData.kebeleCodes = ''
+      }
+    } catch (error) {
+      console.error('Failed to load kebele list:', error)
+      kebeleOptions.value = []
+    }
+  } else {
+    formData.woredaCode = ''
+    formData.zoneCode = ''
+    kebeleOptions.value = []
+    formData.kebeleCodes = ''
+  }
+}
+
+// Parse user info
+const parseUserInfo = () => {
   const userInfoStr = localStorage.getItem('userInfo')
   if (userInfoStr) {
     try {
       const parsedUserInfo = JSON.parse(userInfoStr)
       userInfo.value = parsedUserInfo
-      const user = parsedUserInfo.user || {}
-      const region_code = user.region_code || ''
-      const regionName = user.regionName || ''
-
-      // Load region info in add mode
-      if (!isEdit.value && region_code && regionName) {
-        loadRegionInfo(region_code, regionName)
-      }
-
-      // Set default DA name
-      const defaultDaName = user.NAME || ''
-      if (defaultDaName) {
-        // Reserved DA name matching logic
-      }
     } catch (error) {
       console.error('Failed to parse user info:', error)
     }
@@ -411,26 +434,9 @@ const handleSubmit = async () => {
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      // Validate mandatory organization/region info for registration API
-      const orgCode = userInfo.value?.user?.orgCode || ''
-      const orgName = userInfo.value?.user?.orgName || ''
-      const regionCode = userInfo.value?.user?.regionCode || ''
-      const regionName = userInfo.value?.user?.regionName || ''
-
-      if (!orgCode) {
-        ElMessage.error(t('newFarm.da.rules.orgCodeRequired'))
-        return
-      }
-      if (!orgName) {
-        ElMessage.error(t('newFarm.da.rules.orgNameRequired'))
-        return
-      }
-      if (!regionCode) {
-        ElMessage.error(t('newFarm.da.rules.regionCodeRequired'))
-        return
-      }
-      if (!regionName) {
-        ElMessage.error(t('newFarm.da.rules.regionNameRequired'))
+      // 检查账号唯一性
+      if (!isEdit.value && accountCheckResult.value === false) {
+        ElMessage.warning(t('newFarm.da.messages.accountUnavailable'))
         return
       }
 
@@ -461,27 +467,8 @@ const handleSubmit = async () => {
           // Edit DA info
           res = await updateDa(route.params.id, submitData)
         } else {
-          // Add DA info
+          // Add DA info (后端会自动同步到用户中心)
           res = await addDa(submitData)
-
-          // Call registration API
-          if (res.code === 200) {
-            const registerData = {
-              account: formData.account,
-              name: formData.daName,
-              password: encryptPassword(formData.password),
-              mobile: formData.phone,
-              email: formData.email,
-              gender: formData.gender === 'MALE' ? 'M' : 'F',
-              identityNum: formData.idCard,
-              address: formData.address,
-              orgCode: orgCode,
-              orgName: orgName,
-              regionCode: regionCode,
-              regionName: regionName
-            }
-            await registerDa(registerData)
-          }
         }
 
         if (res.code === 200) {
@@ -501,11 +488,14 @@ const handleSubmit = async () => {
 }
 
 // Page mount logic
-onMounted(() => {
+onMounted(async () => {
+  // 加载区域树
+  await loadRegionTree()
+  
+  parseUserInfo()
+  
   if (isEdit.value) {
     loadDetail()
-  } else {
-    parseUserInfoAndLoadRegion()
   }
 })
 </script>

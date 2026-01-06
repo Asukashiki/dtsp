@@ -27,67 +27,132 @@
               {{ $t('research.breeding.seed.production.form.basicInfo') }}
             </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchId')" prop="breedBatchId">
-              <el-select
-                v-model="formData.breedBatchId"
-                :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchId')"
-                filterable
-                clearable
-                style="width: 100%"
-                @change="handleBatchChange"
-              >
-                <el-option
-                  v-for="batch in breedBatchList"
-                  :key="batch.batchId"
-                  :label="batch.batchId"
-                  :value="batch.batchId"
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
+                <el-input
+                  v-model="formData.produceBatchName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
+                  clearable
+                  style="width: 100%"
+                />
+              </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
+                <el-select
+                  v-model="formData.breedBatchName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleBatchChange"
                 >
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>{{ batch.batchId }}</span>
-                    <el-tag type="success" size="small" effect="plain">
-                      {{ batch.status }}
-                    </el-tag>
-                  </div>
-                </el-option>
-              </el-select>
-            </el-form-item>
+                  <el-option
+                    v-for="batch in breedBatchList"
+                    :key="batch.batchId"
+                    :label="batch.batchName"
+                    :value="batch.batchId"
+                  >
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>{{ batch.batchName }}</span>
+                      <el-tag type="success" size="small" effect="plain">
+                        {{ batch.status }}
+                      </el-tag>
+                    </div>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
-              <el-input
-                v-model="formData.varietyName"
-                disabled
-                :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
-              <el-date-picker
-                v-model="formData.time"
-                type="datetime"
-                :placeholder="$t('research.breeding.seed.production.placeholder.time')"
-                format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.trialName')" prop="trialName">
               <el-select
-                v-model="formData.landName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                v-model="formData.trialId"
+                :placeholder="$t('research.breeding.seed.production.placeholder.trialName')"
                 filterable
                 clearable
                 style="width: 100%"
-                @change="handleLandChange"
+                @change="handleTrialChange"
               >
                 <el-option
-                  v-for="land in landList"
-                  :key="land.landId"
-                  :label="land.landName"
-                  :value="land.landName"
+                  v-for="trial in trialList"
+                  :key="trial.trialId"
+                  :label="trial.trialName"
+                  :value="trial.trialId"
                 />
               </el-select>
             </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
+                <el-input
+                  v-model="formData.varietyName"
+                  disabled
+                  :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
+                />
+              </el-form-item>
+            </div>
+
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
+                <el-select
+                  v-model="formData.fromSeedLevel"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
+                  clearable
+                  style="width: 100%"
+                  @change="handleSeedLevelChange"
+                >
+                  <el-option label="Pre-Basic" value="Pre-Basic" />
+                  <el-option label="Breeder" value="Breeder" />
+                </el-select>
+              </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
+                <el-select
+                  v-model="formData.toSeedLevel"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
+                  clearable
+                  style="width: 100%"
+                  :disabled="!formData.fromSeedLevel"
+                >
+                  <el-option
+                    v-for="option in toSeedLevelOptions"
+                    :key="option.value"
+                    :label="option.label"
+                    :value="option.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </div>
+
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
+                <el-date-picker
+                  v-model="formData.time"
+                  type="datetime"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.time')"
+                  format="YYYY-MM-DD HH:mm:ss"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  style="width: 100%"
+                />
+              </el-form-item>
+
+              <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
+                <el-select
+                  v-model="formData.landName"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                  filterable
+                  clearable
+                  style="width: 100%"
+                  @change="handleLandChange"
+                >
+                  <el-option
+                    v-for="land in landList"
+                    :key="land.landId"
+                    :label="land.landName"
+                    :value="land.landName"
+                  />
+                </el-select>
+              </el-form-item>
+            </div>
           </div>
 
           <!-- 生产信息 -->
@@ -97,25 +162,20 @@
               {{ $t('research.breeding.seed.production.form.productionInfo') }}
             </div>
 
-            <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
-              <el-input-number
-                v-model="formData.inputSeedQuantity"
-                :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
-                :min="0"
-                :precision="2"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.production.form.produceSeedQuantrity')" prop="produceSeedQuantrity">
-              <el-input-number
-                v-model="formData.produceSeedQuantrity"
-                :placeholder="$t('research.breeding.seed.production.placeholder.produceSeedQuantrity')"
-                :min="0"
-                :precision="2"
-                style="width: 100%"
-              />
-            </el-form-item>
+            <div class="form-row">
+              <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
+                <el-input-number
+                  v-model="formData.inputSeedQuantity"
+                  :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
+                  :min="0"
+                  :precision="2"
+                  style="width: 100%"
+                />
+              </el-form-item>
+              
+              <!-- 占位元素，保持布局一致性 -->
+              <div></div>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -136,7 +196,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getLandList } from '@/api/newFarm'
-import { getBatchOptions } from '@/api/breedingData'
+import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
 
 const { t } = useI18n()
 
@@ -148,7 +208,11 @@ const submitting = ref(false)
 
 // 表单数据
 const formData = reactive({
+  produceBatchName: '',
   breedBatchId: '',
+  breedBatchName: '',
+  trialId: '',
+  trialName: '',
   varietyId: '',
   varietyName: '',
   cropType: '',
@@ -156,13 +220,18 @@ const formData = reactive({
   landId: '',
   landName: '',
   inputSeedQuantity: null,
-  produceSeedQuantrity: null
+  fromSeedLevel: '',
+  toSeedLevel: ''
 })
+
+// 种子等级联动规则
+const toSeedLevelOptions = ref([])
 
 // 下拉选项
 const breedBatchList = ref([])
 const varietyList = ref([])
 const landList = ref([])
+const trialList = ref([])
 
 // 表单验证规则
 const rules = computed(() => ({
@@ -171,6 +240,12 @@ const rules = computed(() => ({
   ],
   varietyName: [
     { required: true, message: t('research.breeding.seed.production.rules.varietyNameRequired'), trigger: 'change' }
+  ],
+  fromSeedLevel: [
+    { required: true, message: t('research.breeding.seed.production.rules.fromSeedLevelRequired'), trigger: 'change' }
+  ],
+  toSeedLevel: [
+    { required: true, message: t('research.breeding.seed.production.rules.toSeedLevelRequired'), trigger: 'change' }
   ],
   time: [
     { required: true, message: t('research.breeding.seed.production.rules.timeRequired'), trigger: 'change' }
@@ -181,28 +256,25 @@ const rules = computed(() => ({
   inputSeedQuantity: [
     { required: true, message: t('research.breeding.seed.production.rules.inputSeedQuantityRequired'), trigger: 'blur' },
     { type: 'number', min: 0.01, message: t('research.breeding.seed.production.rules.inputSeedQuantityMin'), trigger: 'blur' }
-  ],
-  produceSeedQuantrity: [
-    { required: true, message: t('research.breeding.seed.production.rules.produceSeedQuantrityRequired'), trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        if (value < formData.inputSeedQuantity) {
-          callback(new Error(t('research.breeding.seed.production.rules.produceSeedQuantrityMin')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
   ]
 }))
 
 // 加载批次选项
 const loadBatchOptions = async () => {
   try {
-    const res = await getBatchOptions()
-    // 仅显示状态为 done 的批次
-    breedBatchList.value = (res.data || []).filter(item => item.status === 'done')
+    // 参数
+    const params = {
+      pageNum: 1,
+      pageSize: 1000,
+      status: 'Finished'
+    }
+    const res = await getBreedingBatchList(params)
+    // 格式化数据用于下拉框：使用batchName作为标签，batchId作为值
+    breedBatchList.value = (res.rows || []).map(item => ({
+      ...item,
+      label: item.batchName,
+      value: item.batchId
+    }))
     console.log('Loaded batches:', breedBatchList.value.length, breedBatchList.value)
   } catch (error) {
     console.error('Failed to load batch options:', error)
@@ -250,15 +322,41 @@ const loadLandList = async () => {
   }
 }
 
+// 加载实验数据
+const loadTrialData = async (batchId) => {
+  try {
+    const params = {
+      pageNum: 1,
+      pageSize: 1000,
+      batchId: batchId
+    }
+    const res = await getTrialBasicList(params)
+    // 格式化数据用于下拉框：使用trialName作为标签，trialId作为值
+    trialList.value = (res.rows || []).map(item => ({
+      ...item,
+      label: item.trialName,
+      value: item.trialId
+    }))
+    console.log('Loaded trial data:', trialList.value.length, trialList.value)
+  } catch (error) {
+    console.error('Failed to load trial options:', error)
+  }
+}
+
 // 批次选择变化时，自动填充品种信息和作物类型
 const handleBatchChange = (batchId) => {
   console.log('handleBatchChange called with:', batchId)
   console.log('Current breedBatchList:', breedBatchList.value)
 
   if (!batchId) {
+    formData.breedBatchId = ''
+    formData.breedBatchName = ''
+    formData.trialId = ''
+    formData.trialName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
+    trialList.value = []
     console.log('Cleared batch related fields')
     return
   }
@@ -267,19 +365,32 @@ const handleBatchChange = (batchId) => {
   console.log('Found batch:', selectedBatch)
 
   if (selectedBatch) {
+    formData.breedBatchId = selectedBatch.batchId || ''
+    formData.breedBatchName = selectedBatch.batchName || ''
     formData.varietyId = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
     formData.cropType = selectedBatch.cropType || ''
+    
+    // 加载实验数据
+    loadTrialData(selectedBatch.batchId)
+    
     console.log('Updated formData:', {
+      breedBatchId: formData.breedBatchId,
+      breedBatchName: formData.breedBatchName,
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType
     })
   } else {
     console.warn('Batch not found:', batchId)
+    formData.breedBatchId = ''
+    formData.breedBatchName = ''
+    formData.trialId = ''
+    formData.trialName = ''
     formData.varietyId = ''
     formData.varietyName = ''
     formData.cropType = ''
+    trialList.value = []
   }
 }
 
@@ -310,6 +421,51 @@ const handleLandChange = (landName) => {
   }
 }
 
+// 种子等级联动规则
+const handleSeedLevelChange = (value) => {
+  // 清空目标种子等级
+  formData.toSeedLevel = ''
+  
+  // 根据源种子等级设置目标种子等级可选值
+  if (value === 'Breeder') {
+    toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
+  } else if (value === 'Pre-Basic') {
+    toSeedLevelOptions.value = [{ label: 'Basic', value: 'Basic' }]
+  } else {
+    toSeedLevelOptions.value = []
+  }
+}
+
+// 试验选择变化时，根据试验ID查找并记录试验名称
+const handleTrialChange = (trialId) => {
+  console.log('handleTrialChange called with:', trialId)
+  console.log('Current trialList:', trialList.value)
+
+  if (!trialId) {
+    formData.trialId = ''
+    formData.trialName = ''
+    console.log('Cleared trial fields')
+    return
+  }
+
+  const selected = trialList.value.find(item => item.trialId === trialId)
+  console.log('Found trial:', selected)
+
+  if (selected) {
+    formData.trialId = selected.trialId
+    formData.trialName = selected.trialName
+    console.log('Updated formData:', {
+      trialId: formData.trialId,
+      trialName: formData.trialName
+    })
+  } else {
+    console.warn('Trial not found:', trialId)
+    console.warn('Available trials:', trialList.value.map(t => t.trialName))
+    formData.trialId = ''
+    formData.trialName = ''
+  }
+}
+
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -331,7 +487,11 @@ const handleSubmit = async () => {
 
     // 提交数据，包含从接口读取的完整字段
     const submitData = {
+      produceBatchName: formData.produceBatchName,
       breedBatchId: formData.breedBatchId,
+      breedBatchName: formData.breedBatchName,
+      trialId: formData.trialId,
+      trialName: formData.trialName,
       varietyId: formData.varietyId,
       varietyName: formData.varietyName,
       cropType: formData.cropType,
@@ -339,7 +499,8 @@ const handleSubmit = async () => {
       landId: formData.landId,
       landName: formData.landName,
       inputSeedQuantity: formData.inputSeedQuantity,
-      produceSeedQuantrity: formData.produceSeedQuantrity
+      fromSeedLevel: formData.fromSeedLevel,
+      toSeedLevel: formData.toSeedLevel
     }
 
     console.log('Submitting data:', submitData)
@@ -428,6 +589,18 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+/* 两列布局 */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-row > .el-form-item {
+  flex: 1;
+  margin-bottom: 0;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -448,6 +621,12 @@ onMounted(() => {
 
   .form-actions button {
     width: 100%;
+  }
+  
+  /* 移动端单列布局 */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
   }
 }
 </style>

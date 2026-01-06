@@ -2,10 +2,10 @@
   <div class="variety-query-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-icon-wrapper">
+      <div class="header-icon header-left">
         <i class="ri-search-eye-line"></i>
       </div>
-      <div class="header-text">
+      <div class="header-content">
         <h1 class="page-title">{{ $t('research.variety.query.title') }}</h1>
         <p class="page-subtitle">{{ $t('research.variety.query.subtitle') }}</p>
       </div>
@@ -47,11 +47,22 @@
           @change="handleSearch"
         >
           <el-option :label="$t('research.variety.query.allCrops')" value="" />
-          <el-option label="Wheat" value="Wheat" />
-          <el-option label="Maize" value="Maize" />
-          <el-option label="Barley" value="Barley" />
-          <el-option label="Teff" value="Teff" />
-          <el-option label="Sorghum" value="Sorghum" />
+          <el-option :label="$t('common.cropTypes.wheat')" value="Wheat" />
+          <el-option :label="$t('common.cropTypes.maize')" value="Maize" />
+          <el-option :label="$t('common.cropTypes.barley')" value="Barley" />
+          <el-option :label="$t('common.cropTypes.teff')" value="Teff" />
+          <el-option :label="$t('common.cropTypes.sorghum')" value="Sorghum" />
+        </el-select>
+        <el-select
+          v-model="filterDataType"
+          :placeholder="$t('research.variety.query.filterByDataType')"
+          clearable
+          class="filter-select"
+          @change="handleSearch"
+        >
+          <el-option :label="$t('research.variety.query.allDataTypes')" value="" />
+          <el-option :label="$t('research.variety.query.autoPublish')" value="license" />
+          <el-option :label="$t('research.variety.query.registrationPublish')" value="registration" />
         </el-select>
       </div>
 
@@ -65,6 +76,22 @@
           :empty-text="$t('home.noData')"
         >
           <el-table-column
+            :label="$t('research.variety.query.columns.dataType')"
+            width="120"
+            align="center"
+          >
+            <template #default="{ row }">
+              <el-tag v-if="row.dataType === 'license'" type="warning" size="small" effect="dark">
+                <i class="ri-checkbox-circle-line"></i>
+                {{ $t('research.variety.query.autoPublish') }}
+              </el-tag>
+              <el-tag v-else type="success" size="small" effect="dark">
+                <i class="ri-file-list-line"></i>
+                {{ $t('research.variety.query.registrationPublish') }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="registerNo"
             :label="$t('research.variety.query.columns.registerNo')"
             min-width="150"
@@ -77,13 +104,32 @@
           <el-table-column
             prop="varietyType"
             :label="$t('research.variety.query.columns.cropType')"
-            min-width="120"
+            min-width="100"
           />
           <el-table-column
             prop="enterpriseName"
             :label="$t('research.variety.query.columns.enterprise')"
-            min-width="180"
+            min-width="160"
           />
+          <el-table-column
+            :label="$t('research.variety.query.columns.approvalOrg')"
+            min-width="150"
+          >
+            <template #default="{ row }">
+              {{ row.approvalOrg || '-' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('research.variety.query.columns.validPeriod')"
+            min-width="180"
+          >
+            <template #default="{ row }">
+              <span v-if="row.validStartDate && row.validEndDate">
+                {{ row.validStartDate }} ~ {{ row.validEndDate }}
+              </span>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
           <el-table-column
             :label="$t('research.variety.query.columns.actions')"
             width="120"
@@ -126,7 +172,15 @@
         >
           <div class="card-header">
             <div class="variety-name">{{ item.varietyName }}</div>
-            <el-tag type="success" size="small">{{ item.varietyType }}</el-tag>
+            <div class="card-tags">
+              <el-tag v-if="item.dataType === 'license'" type="warning" size="small">
+                {{ $t('research.variety.query.autoPublish') }}
+              </el-tag>
+              <el-tag v-else type="success" size="small">
+                {{ $t('research.variety.query.registrationPublish') }}
+              </el-tag>
+              <el-tag type="info" size="small">{{ item.varietyType }}</el-tag>
+            </div>
           </div>
           <div class="card-body">
             <div class="card-row">
@@ -136,6 +190,14 @@
             <div class="card-row">
               <span class="label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
               <span class="value">{{ item.enterpriseName }}</span>
+            </div>
+            <div v-if="item.approvalOrg" class="card-row">
+              <span class="label">{{ $t('research.variety.query.columns.approvalOrg') }}:</span>
+              <span class="value">{{ item.approvalOrg }}</span>
+            </div>
+            <div v-if="item.validStartDate && item.validEndDate" class="card-row">
+              <span class="label">{{ $t('research.variety.query.columns.validPeriod') }}:</span>
+              <span class="value">{{ item.validStartDate }} ~ {{ item.validEndDate }}</span>
             </div>
           </div>
           <div class="card-footer">
@@ -160,75 +222,17 @@
         </div>
       </div>
     </div>
-
-    <!-- 详情对话框 -->
-    <el-dialog
-      v-model="showDetailDialog"
-      :title="currentVariety.varietyName"
-      width="800px"
-      class="variety-detail-dialog"
-    >
-      <div v-loading="detailLoading" class="detail-content">
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.variety.query.detail.basicInfo') }}
-          </h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="detail-label">{{ $t('research.variety.query.columns.registerNo') }}:</span>
-              <span class="detail-value">{{ currentVariety.registerNo }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">{{ $t('research.variety.query.columns.varietyName') }}:</span>
-              <span class="detail-value">{{ currentVariety.varietyName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">{{ $t('research.variety.query.columns.cropType') }}:</span>
-              <span class="detail-value">{{ currentVariety.varietyType }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
-              <span class="detail-value">{{ currentVariety.enterpriseName }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="currentVariety.baseInfo" class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-file-text-line"></i>
-            {{ $t('research.variety.query.detail.description') }}
-          </h3>
-          <div class="detail-description">
-            {{ currentVariety.baseInfo }}
-          </div>
-        </div>
-
-        <div v-if="currentVariety.photoUrl" class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-image-line"></i>
-            {{ $t('research.variety.query.detail.photo') }}
-          </h3>
-          <div class="detail-photo">
-            <el-image
-              :src="currentVariety.photoUrl"
-              :preview-src-list="[currentVariety.photoUrl]"
-              fit="cover"
-              class="variety-image"
-            />
-          </div>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getVarietyPublicList, getVarietyPublicDetail, recordQueryBehavior } from '@/api/seedPromotion'
+import { getVarietyPublicList } from '@/api/seedPromotion'
 
+const router = useRouter()
 const { t } = useI18n()
 
 // 防抖定时器
@@ -236,7 +240,7 @@ let searchDebounceTimer = null
 
 // 列表数据
 const loading = ref(false)
-const varietyList = ref([])
+const rawVarietyList = ref([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -245,11 +249,15 @@ const pageSize = ref(10)
 const searchQuery = ref('')
 const filterYear = ref('')
 const filterCrop = ref('')
+const filterDataType = ref('')
 
-// 详情对话框
-const showDetailDialog = ref(false)
-const detailLoading = ref(false)
-const currentVariety = ref({})
+// 前端过滤后的列表
+const varietyList = computed(() => {
+  if (!filterDataType.value) {
+    return rawVarietyList.value
+  }
+  return rawVarietyList.value.filter(item => item.dataType === filterDataType.value)
+})
 
 // 加载品种列表
 const loadVarietyList = async () => {
@@ -264,13 +272,10 @@ const loadVarietyList = async () => {
     }
 
     const response = await getVarietyPublicList(params)
-    // 处理新的响应格式 { code: 0, msg: "", rows: [], total: 10 }
+    // 处理响应格式 { code: 200, msg: "", rows: [], total: 10 }
     if (response.code === 200) {
-      varietyList.value = response.rows || []
+      rawVarietyList.value = response.rows || []
       total.value = response.total || 0
-
-      // 记录查询行为
-      // recordQuery()
     } else {
       ElMessage.error(response.msg || t('research.variety.query.messages.loadFailed'))
     }
@@ -279,20 +284,6 @@ const loadVarietyList = async () => {
     ElMessage.error(t('research.variety.query.messages.loadFailed'))
   } finally {
     loading.value = false
-  }
-}
-
-// 记录查询行为
-const recordQuery = async () => {
-  try {
-    // await recordQueryBehavior({
-    //   queryKeyword: searchQuery.value || filterYear.value || filterCrop.value || 'all',
-    //   ipAddress: '', // 后端可以从请求中获取
-    //   queryResultCount: varietyList.value.length,
-    //   viewedPublishId: null
-    // })
-  } catch (error) {
-    console.error('Failed to record query behavior:', error)
   }
 }
 
@@ -322,27 +313,12 @@ const handlePageChange = (newPage) => {
   loadVarietyList()
 }
 
-// 查看详情
-const handleView = async (row) => {
-  showDetailDialog.value = true
-  detailLoading.value = true
-  currentVariety.value = { ...row }
-
-  try {
-    const response = await getVarietyPublicDetail(row.publishId)
-    // 统一使用 code: 0 表示成功
-    if (response.code === 200 && response.data) {
-      currentVariety.value = response.data
-
-    } else if (response.code !== 200) {
-      ElMessage.error(response.msg || t('research.variety.query.messages.loadDetailFailed'))
-    }
-  } catch (error) {
-    console.error('Failed to load variety detail:', error)
-    ElMessage.error(t('research.variety.query.messages.loadDetailFailed'))
-  } finally {
-    detailLoading.value = false
-  }
+// 查看详情 - 跳转到详情页面
+const handleView = (row) => {
+  router.push({
+    name: 'VarietyDetailPage',
+    params: { publishId: row.publishId }
+  })
 }
 
 // 页面加载时获取数据
@@ -359,56 +335,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-.variety-query-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  min-height: calc(100vh - 60px);
-}
-
-/* 页面头部 */
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 32px;
-  padding: 32px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(254, 221, 0, 0.3);
-
-  .header-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 24px;
-
-    i {
-      font-size: 40px;
-      color: white;
-    }
-  }
-
-  .header-text {
-    flex: 1;
-    color: white;
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .page-subtitle {
-      font-size: 16px;
-      opacity: 0.95;
-      margin: 0;
-    }
-  }
-}
 
 /* 列表区域 */
 .list-section {
@@ -426,11 +352,11 @@ onUnmounted(() => {
 
   .search-input {
     flex: 1;
-    min-width: 250px;
+    min-width: 200px;
   }
 
   .filter-select {
-    width: 200px;
+    width: 180px;
   }
 }
 
@@ -501,6 +427,12 @@ onUnmounted(() => {
         color: #303133;
         flex: 1;
       }
+
+      .card-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
     }
 
     .card-body {
@@ -533,79 +465,6 @@ onUnmounted(() => {
       padding-top: 12px;
       border-top: 1px solid #e4e7ed;
       text-align: right;
-    }
-  }
-}
-
-/* 详情对话框 */
-.variety-detail-dialog {
-  .detail-content {
-    min-height: 200px;
-  }
-
-  .detail-section {
-    margin-bottom: 24px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #303133;
-      margin: 0 0 16px 0;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #e8f5e9;
-
-      i {
-        font-size: 20px;
-        color: #FEDD00;
-      }
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-
-      .detail-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-
-        .detail-label {
-          font-size: 12px;
-          color: #909399;
-        }
-
-        .detail-value {
-          font-size: 14px;
-          color: #303133;
-          font-weight: 500;
-        }
-      }
-    }
-
-    .detail-description {
-      font-size: 14px;
-      color: #606266;
-      line-height: 1.8;
-      background: #F5F7FA;
-      padding: 16px;
-      border-radius: 8px;
-    }
-
-    .detail-photo {
-      .variety-image {
-        width: 100%;
-        max-height: 400px;
-        border-radius: 8px;
-        overflow: hidden;
-      }
     }
   }
 }
@@ -666,17 +525,6 @@ onUnmounted(() => {
 
   .mobile-only {
     display: flex !important;
-  }
-
-  .variety-detail-dialog {
-    :deep(.el-dialog) {
-      width: 95% !important;
-      margin: 0 auto;
-    }
-
-    .detail-grid {
-      grid-template-columns: 1fr;
-    }
   }
 }
 </style>

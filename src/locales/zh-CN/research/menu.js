@@ -3,7 +3,7 @@ export default {
   systemName: '研究与开发管理系统',
   systemDesc: '品种管理、育种管理及种子信息服务',
   backToHome: '返回首页',
-  
+
   breedingDataManagement: '育种数据管理',
   propagationDataManagement: '繁殖数据管理',
   seedInstitutionManagement: '种子机构管理',
@@ -20,6 +20,7 @@ export default {
   plotInfoAdd: '新增地块信息',
   plotInfoEdit: '编辑地块信息',
   plotInfoDetail: '地块信息详情',
+  plotInfoAudit: '地块及播种信息管理审核',
 
   trialBasicManagement: '试验基础信息管理',
   trialBasicAdd: '新增试验信息',
@@ -28,6 +29,7 @@ export default {
   trialBasicAudit: '试验基础信息管理审核',
 
   agronomicTraitDataCollection: '农艺性状数据采集',
+  agronomicTraitDataAudit: '农艺性状数据审核',
   agronomicTraitDataAdd: '新增农艺性状数据',
   agronomicTraitDataEdit: '编辑农艺性状数据',
   agronomicTraitDataDetail: '农艺性状数据详情',
@@ -36,6 +38,7 @@ export default {
   farmingRecordDataAdd: '新增农事记录',
   farmingRecordDataEdit: '编辑农事记录',
   farmingRecordDataDetail: '农事记录详情',
+  farmingRecordDataAudit: '农事记录数据采集审核',
 
   environmentDataCollection: '环境属性数据采集',
   environmentDataAdd: '新增环境数据',
@@ -46,11 +49,16 @@ export default {
   fieldInspectionAdd: '新增田间检验',
   fieldInspectionEdit: '编辑田间检验',
   fieldInspectionDetail: '田间检验详情',
+  fieldInspectionAudit: '田间检验数据采集审核',
 
   laboratoryTest: '实验室测试数据采集',
   laboratoryTestAdd: '新增实验室测试',
   laboratoryTestEdit: '编辑实验室测试',
   laboratoryTestDetail: '实验室测试详情',
+  laboratoryTestAudit: '实验室测试数据采集审核',
+
+  fieldDetection: '田间检测',
+  labTesting: '实验室检测',
 
   breederSeedProduction: 'Breeder able seed生产数据采集',
   breederSeedProductionAdd: '新增育种家种子生产',
@@ -62,7 +70,23 @@ export default {
   breederSeedDistributionEdit: '编辑种子分发',
   breederSeedDistributionDetail: '种子分发详情',
 
-  oseManagement: 'OSE维护',
+  prebasicSeedProduction: 'PreBasic繁殖批次信息',
+  prebasicSeedProductionAdd: '新增原原种生产',
+  prebasicSeedProductionEdit: '编辑原原种生产',
+  prebasicSeedProductionDetail: '原原种生产详情',
+
+  prebasicSeedProductionResult: 'PreBasic繁殖批次数据采集',
+  prebasicSeedProductionResultDetail: '生产结果详情',
+
+  basicSeedProduction: 'Basic繁殖批次',
+  basicSeedProductionAdd: '新增Basic繁殖批次',
+  basicSeedProductionEdit: '编辑Basic繁殖批次',
+  basicSeedProductionDetail: 'Basic繁殖批次详情',
+
+  basicSeedProductionResult: 'Basic繁殖批次数据采集',
+  basicSeedProductionResultDetail: 'Basic繁殖批次数据采集详情',
+
+  breederSeedProductionResult: '生产数据采集详情',
   oseManagementAdd: '新增OSE',
   oseManagementEdit: '编辑OSE',
   oseManagementDetail: 'OSE详情',
@@ -81,16 +105,22 @@ export default {
   environmentNewDataAdd: '新增环境监测数据',
   environmentNewDataEdit: '编辑环境监测数据',
   environmentNewDataDetail: '环境监测数据详情',
+  environmentNewDataApprove: '环境监测数据审批',
 
   oseReceiveConfirm: 'OSE确认接收育种家种子',
   oseReceiveConfirmAdd: '新增接收确认',
   oseReceiveConfirmEdit: '编辑接收确认',
   oseReceiveConfirmDetail: '接收确认详情',
 
-  propagationBatchCollection: 'OSE繁殖批次信息采集',
-  propagationBatchAdd: '新增繁殖批次',
-  propagationBatchEdit: '编辑繁殖批次',
-  propagationBatchDetail: '繁殖批次详情',
+  oseBatchCollection: 'OSE繁殖批次信息数据采集',
+  oseBatchCollectionAdd: '新增批次采集',
+  oseBatchCollectionEdit: '编辑批次采集',
+  oseBatchCollectionDetail: '批次采集详情',
+
+  propagationBatchCollection: '种子扩繁批次信息采集',
+  propagationBatchAdd: '新增种子扩繁批次',
+  propagationBatchEdit: '编辑种子扩繁批次',
+  propagationBatchDetail: '种子扩繁批次详情',
 
   propagationTrackingCollection: '繁殖跟踪信息采集',
   propagationTrackingAdd: '新增跟踪信息',
@@ -102,17 +132,17 @@ export default {
   c1PropagationBatchEdit: '编辑繁殖批次',
   c1PropagationBatchDetail: '繁殖批次详情',
 
-  seedCertificationApplication: '繁殖种子认证申请',
+  seedCertificationApplication: '繁殖种子认证申请审核',
   seedCertificationApplicationAdd: '新增认证申请',
   seedCertificationApplicationEdit: '编辑认证申请',
   seedCertificationApplicationDetail: '认证申请详情',
 
-  c1SeedPropagationApplication: 'C1种子繁殖申请',
+  c1SeedPropagationApplication: '种子繁殖申请',
   c1SeedPropagationApplicationAdd: '新增繁殖申请',
   c1SeedPropagationApplicationEdit: '编辑繁殖申请',
   c1SeedPropagationApplicationDetail: '繁殖申请详情',
 
-  c1SeedPropagationApplicationAudit: 'C1种子繁殖申请审核',
+  c1SeedPropagationApplicationAudit: '种子繁殖申请审核',
   c1SeedPropagationApplicationAuditDetail: '审核申请详情',
 
   c1BatchAudit: 'C1繁殖批次审核',
@@ -158,10 +188,10 @@ export default {
   breedingManagement: '育种管理',
   breedingPlan: '育种计划管理',
   breedingMaterial: '育种材料登记',
-  breedingModule: '繁殖信息管理',
-  breedingBatch: '繁殖批次信息采集',
-  breedingTracking: '繁殖跟踪信息采集',
-  breedingTest: '繁殖检测信息采集',
+  breedingModule: '种子扩繁批次信息管理',
+  breedingBatch: '种子扩繁批次信息采集',
+  breedingTracking: '种子扩繁跟踪信息采集',
+  breedingTest: '种子扩繁检测信息采集',
   breedingTracking: '育种跟踪管理',
   breedingSeed: '繁殖种子管理',
   breedingCertification: '繁殖种子认证申请',
@@ -206,6 +236,8 @@ export default {
   unionReceiveConfirm: 'Union确认接收',
   unionReleaseToWoreda: 'Union分发投入品到Woreda',
   woredaReceiveConfirm: 'Woreda确认接收',
-  woredaReleaseToFarmer: 'Woreda分发投入品到农民',
+  unionReleaseToCooperative: 'Union分发投入品到Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative确认接收',
+  cooperativeReleaseToFarmer: 'Cooperative分发投入品到农民',
   farmerReceive: '农民领用列表'
 }

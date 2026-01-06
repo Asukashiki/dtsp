@@ -2,14 +2,13 @@
   <div class="batch-detail-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button @click="goBack">
+        <div class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
+      </div>
+      <div class="header-content">
           <h1 class="page-title">{{ $t('research.c1BreedingBatch.detail.title') }}</h1>
           <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
         </div>
@@ -17,8 +16,7 @@
           <el-button type="primary" @click="handleEdit" v-if="batchInfo && !isReadonly">
             <i class="ri-edit-line"></i>
             {{ $t('common.edit') }}
-          </el-button>
-        </div>
+        </el-button>
       </div>
     </div>
 
@@ -43,7 +41,7 @@
                 <div class="overview-content">
                   <span class="overview-label">{{ $t('research.c1BreedingBatch.form.cropType') }}</span>
                   <span class="overview-value">
-                    <el-tag size="small">{{ batchInfo.cropType }}</el-tag>
+                    <el-tag size="small">{{ getLabelByValue('crop_type', batchInfo.cropType) }}</el-tag>
                   </span>
                 </div>
               </div>
@@ -82,10 +80,10 @@
                   <span class="label">{{ $t('research.c1BreedingBatch.form.parentSeedSource') }}</span>
                   <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
                 </div> -->
-                <div class="info-item full-width">
+                <!-- <div class="info-item full-width">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.location') }}</span>
                   <span class="value">{{ batchInfo.location || '-' }}</span>
-                </div>
+                </div> -->
               </div>
             </div>
 
@@ -128,13 +126,13 @@
                     <span class="unit" v-if="batchInfo.expectedYield">kg</span>
                   </span>
                 </div>
-                <div class="info-item highlight">
+                <!-- <div class="info-item highlight">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.actualYield') }}</span>
                   <span class="value metric">
                     <span class="number">{{ batchInfo.actualYield || '-' }}</span>
                     <span class="unit" v-if="batchInfo.actualYield">kg</span>
                   </span>
-                </div>
+                </div> -->
                 <div class="info-item">
                   <span class="label">{{ $t('research.c1BreedingBatch.form.plantingArea') }}</span>
                   <span class="value">{{ batchInfo.plantingArea || '-' }} ha</span>
@@ -175,20 +173,6 @@
             <el-skeleton :rows="5" animated />
           </div>
         </el-tab-pane>
-
-        <!-- Tab 2: 跟踪记录 -->
-        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.trackingRecords')" name="tracking">
-          <div class="tab-content">
-            <TrackingList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
-          </div>
-        </el-tab-pane>
-
-        <!-- Tab 3: 检测记录 -->
-        <el-tab-pane :label="$t('research.c1BreedingBatch.detail.tabs.testRecords')" name="test">
-          <div class="tab-content">
-            <TestList v-if="batchInfo" :batch-id="batchInfo.batchId" :readonly="isReadonly" @refresh="loadBatchDetail" />
-          </div>
-        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -200,12 +184,16 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 import TrackingList from './components/TrackingList.vue'
 import TestList from './components/TestList.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const activeTab = ref('basic')
 const batchInfo = ref(null)
@@ -273,6 +261,28 @@ const handleEdit = () => {
   router.push(`/research/c1-breeding-batch/edit/${route.params.id}`)
 }
 
+// 前往田间检测页面
+const goToFieldDetection = () => {
+  router.push({
+    path: '/research/field-detection',
+    query: {
+      batchId: batchInfo.value.batchId,
+      seedClass: 'C1'
+    }
+  })
+}
+
+// 前往实验室检测页面
+const goToLabTesting = () => {
+  router.push({
+    path: '/research/lab-testing',
+    query: {
+      batchId: batchInfo.value.batchId,
+      seedClass: 'C1'
+    }
+  })
+}
+
 // 返回
 const goBack = () => {
   router.back()
@@ -280,52 +290,6 @@ const goBack = () => {
 </script>
 
 <style scoped lang="scss">
-.batch-detail-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 12px;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.2);
-
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .header-left, .header-right {
-      min-width: 80px;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .batch-id {
-        margin: 5px 0 0 0;
-        font-size: 14px;
-        opacity: 0.9;
-      }
-    }
-
-    .header-right {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-}
 
 .content-wrapper {
   background: white;
@@ -339,6 +303,29 @@ const goBack = () => {
     }
 
     .tab-content {
+      .tab-action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%);
+        border-radius: 8px;
+        border: 1px solid #ffeaa7;
+        margin-bottom: 20px;
+
+        .hint-text {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #e67e22;
+          font-size: 14px;
+
+          i {
+            font-size: 18px;
+          }
+        }
+      }
+
       .status-overview-card {
         display: flex;
         background: linear-gradient(135deg, #f0f9f4 0%, #e6f7ed 100%);
@@ -554,6 +541,20 @@ const goBack = () => {
   }
 
   .content-wrapper .batch-tabs .tab-content {
+    .tab-action-bar {
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+
+      .hint-text {
+        justify-content: center;
+      }
+
+      .el-button {
+        width: 100%;
+      }
+    }
+
     .status-overview-card {
       flex-direction: column;
       gap: 12px;

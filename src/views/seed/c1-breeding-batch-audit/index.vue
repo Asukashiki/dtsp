@@ -2,15 +2,13 @@
   <div class="c1-batch-audit-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-audit-line header-icon"></i>
+        <div class="header-left header-icon">
+          <i class="ri-checkbox-circle-line"></i>
         </div>
-        <div class="header-text">
+        <div class="header-content">
           <h1 class="page-title">{{ $t('seed.c1BatchAudit.title') }}</h1>
           <p class="page-subtitle">{{ $t('seed.c1BatchAudit.subtitle') }}</p>
         </div>
-      </div>
     </div>
 
     <!-- 内容区域 -->
@@ -82,7 +80,11 @@
         >
           <el-table-column prop="batchId" :label="$t('seed.c1BatchAudit.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
           <el-table-column prop="varietyName" :label="$t('seed.c1BatchAudit.columns.varietyName')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="cropType" :label="$t('seed.c1BatchAudit.columns.cropType')" min-width="100" align="center" />
+          <el-table-column prop="cropType" :label="$t('seed.c1BatchAudit.columns.cropType')" min-width="100" align="center">
+            <template #default="{ row }">
+              {{ getLabelByValue('crop_type', row.cropType) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="orgName" :label="$t('seed.c1BatchAudit.columns.orgName')" min-width="180" show-overflow-tooltip />
           <el-table-column prop="startDate" :label="$t('seed.c1BatchAudit.columns.startDate')" min-width="120" align="center" />
           <el-table-column prop="batchStatus" :label="$t('seed.c1BatchAudit.columns.batchStatus')" min-width="100" align="center">
@@ -147,7 +149,7 @@
               </div>
               <div class="info-item">
                 <span class="info-label">{{ $t('seed.c1BatchAudit.columns.cropType') }}</span>
-                <span class="info-value">{{ item.cropType }}</span>
+                <span class="info-value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
               </div>
               <div class="info-item full">
                 <span class="info-label">{{ $t('seed.c1BatchAudit.columns.orgName') }}</span>
@@ -236,11 +238,17 @@ import { ElMessage } from 'element-plus'
 import {
   getC1BreedingBatchList,
   approveC1Batch,
-  rejectC1Batch
+  rejectC1Batch,
+  getC1TrackingList,
+  getC1TestList
 } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const searchParams = reactive({
   keyword: '',
@@ -354,6 +362,14 @@ const handleAuditSubmit = async () => {
   try {
     await auditFormRef.value.validate()
 
+    // 只有在审核通过时才需要校验跟踪记录和检测记录
+    if (auditForm.result === 'approved') {
+      const isValid = await validateBatchData(currentAuditRow.value.batchId)
+      if (!isValid) {
+        return
+      }
+    }
+
     auditSubmitting.value = true
 
     const data = {
@@ -380,21 +396,61 @@ const handleAuditSubmit = async () => {
   }
 }
 
+// 校验批次数据：跟踪记录和检测记录
+const validateBatchData = async (batchId) => {
+  try {
+    // 获取跟踪记录列表
+    const trackingRes = await getC1TrackingList({
+      batchId: batchId,
+      pageNum: 1,
+      pageSize: 1000
+    })
+
+    // 获取检测记录列表
+    const testRes = await getC1TestList({
+      batchId: batchId,
+      pageNum: 1,
+      pageSize: 1000
+    })
+
+    // 校验跟踪记录
+    if (!trackingRes.data || trackingRes.data.total === 0) {
+      ElMessage.error(t('seed.c1BatchAudit.error.noTrackingRecord'))
+      return false
+    }
+
+    // 校验每条记录的 trackingResult 是否为 '01'
+    const hasInvalidTracking = trackingRes.data.records.some(item => item.trackingResult !== '01')
+    if (hasInvalidTracking) {
+      ElMessage.error(t('seed.c1BatchAudit.error.invalidTrackingResult'))
+      return false
+    }
+
+    // 校验检测记录
+    if (!testRes.data || testRes.data.total === 0) {
+      ElMessage.error(t('seed.c1BatchAudit.error.noTestRecord'))
+      return false
+    }
+
+    // 校验每条记录的 testResult 是否为 '01'
+    const hasInvalidTest = testRes.data.records.some(item => item.testResult !== '01')
+    if (hasInvalidTest) {
+      ElMessage.error(t('seed.c1BatchAudit.error.invalidTestResult'))
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('Data validation error:', error)
+    ElMessage.error(t('seed.c1BatchAudit.error.validationFailed'))
+    return false
+  }
+}
+
 onMounted(() => loadData())
 </script>
 
 <style scoped>
-.c1-batch-audit-container { min-height: calc(100vh - 120px); position: relative; }
-
-/* 页面头部 */
-.page-header { background: linear-gradient(135deg, #009A44 0%, #00b350 100%); padding: 24px 0; margin: -24px 0 24px 0; border-radius: 0 0 16px 16px; }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-.header-icon-wrapper { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-shrink: 0; }
-.header-icon { font-size: 32px; color: white; }
-.header-text { flex: 1; color: white; min-width: 0; }
-.page-title { font-size: 24px; font-weight: 600; margin: 0 0 4px 0; }
-.page-subtitle { font-size: 14px; opacity: 0.9; margin: 0; }
-
 /* 搜索栏 */
 .search-bar { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
 .search-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }

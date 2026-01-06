@@ -37,12 +37,12 @@
             @change="handleSearch"
           >
             <el-option :label="$t('research.environmentNewData.allParameters')" value="" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.TMIN')" value="TMIN" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.HUMIDITY')" value="HUMIDITY" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.WIND_SPEED')" value="WIND_SPEED" />
-            <el-option :label="$t('research.environmentNewData.parameterCode.SOLAR_RAD')" value="SOLAR_RAD" />
+            <el-option
+              v-for="item in options.env_parameter_code || []"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
 
           <el-select
@@ -59,6 +59,23 @@
               :key="item.batchId"
               :label="item.batchName || item.batchId"
               :value="item.batchId"
+            />
+          </el-select>
+
+          <!-- Audit Status -->
+          <el-select
+            v-model="searchForm.workflowStatus"
+            :placeholder="$t('research.environmentNewData.columns.auditStatus')"
+            class="filter-select"
+            clearable
+            @change="handleSearch"
+          >
+            <el-option :label="$t('common.all')" value="" />
+            <el-option
+              v-for="opt in options.flow_status || []"
+              :key="opt.value"
+              :label="opt.label"
+              :value="opt.value"
             />
           </el-select>
         </div>
@@ -91,7 +108,10 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" fixed="left" />
+          <el-table-column prop="plotId" :label="$t('research.environmentNewData.columns.plotId')" min-width="120" />
+          <el-table-column prop="batchId" :label="$t('research.environmentNewData.columns.batchId')" min-width="120" />
+          <el-table-column prop="trialId" :label="$t('research.environmentNewData.columns.trialId')" min-width="120" />
+          <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" />
           <el-table-column prop="parameterCode" :label="$t('research.environmentNewData.columns.parameterCode')" min-width="140" align="center">
             <template #default="{ row }">
               <el-tag :type="getParameterTag(row.parameterCode)" size="small">
@@ -103,16 +123,21 @@
           <el-table-column prop="unit" :label="$t('research.environmentNewData.columns.unit')" min-width="80" align="center" />
           <el-table-column prop="timestamp" :label="$t('research.environmentNewData.columns.timestamp')" min-width="160" align="center" />
           <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
+          <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getWorkflowStatusType(row.workflowStatus)">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="200" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
-              </el-button>
-              <el-button link type="primary" @click="handleEdit(row)">
-                <i class="ri-edit-line"></i>
-              </el-button>
-              <el-button link type="danger" @click="handleDelete(row)">
-                <i class="ri-delete-bin-line"></i>
+              <el-button 
+                v-for="button in getActionButtons(row)" 
+                :key="button.action"
+                link 
+                :type="button.type" 
+                @click="handleAction(row, button.action)">
+                <i :class="button.icon"></i>
+                {{ button.label }}
               </el-button>
             </template>
           </el-table-column>
@@ -160,6 +185,18 @@
               </div>
 
               <div class="info-row">
+                <i class="ri-flask-line info-icon"></i>
+                <span class="info-label">{{ $t('research.environmentNewData.columns.trialId') }}:</span>
+                <span class="info-value">{{ item.trialId || '-' }}</span>
+              </div>
+
+              <div class="info-row">
+                <i class="ri-map-pin-line info-icon"></i>
+                <span class="info-label">{{ $t('research.environmentNewData.columns.plotId') }}:</span>
+                <span class="info-value">{{ item.plotId || '-' }}</span>
+              </div>
+
+              <div class="info-row">
                 <i class="ri-database-2-line info-icon"></i>
                 <span class="info-label">{{ $t('research.environmentNewData.columns.source') }}:</span>
                 <span class="info-value">{{ item.source || '-' }}</span>
@@ -167,11 +204,13 @@
             </div>
 
             <div class="card-footer" @click.stop>
-              <el-button link type="primary" size="small" @click="handleEdit(item)">
-                <i class="ri-edit-line"></i> {{ $t('common.edit') }}
-              </el-button>
-              <el-button link type="danger" size="small" @click="handleDelete(item)">
-                <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
+              <el-button 
+                v-for="button in getActionButtons(item)" 
+                :key="button.action"
+                size="small"
+                :type="button.type === 'primary' ? 'primary' : ''" 
+                @click="handleAction(item, button.action)">
+                <i :class="button.icon"></i> {{ button.label }}
               </el-button>
             </div>
           </div>
@@ -207,20 +246,38 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getEnvironmentNewDataPage, deleteEnvironmentNewData } from '@/api/environment-new-data'
+import { getEnvironmentNewDataPage, deleteEnvironmentNewData, submitEnvironmentNewDataForAudit } from '@/api/environment-new-data'
 import { getBreedingBatchList } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
+const { options, getLabelByValue } = useDict(['flow_status', 'env_parameter_code'])
 
 const loading = ref(false)
 const tableData = ref([])
 const batchOptions = ref([])
 
+// 获取工作流状态标签类型
+const getWorkflowStatusType = (workflowStatus) => {
+  const workflowStatusMap = {
+    'S0': 'info',      // 草稿 - 灰色
+    'S1': 'warning',   // 待审批 - 橙色
+    'S2': 'primary',   // 审核通过 - 蓝色
+    'S3': 'danger',    // 审核驳回 - 红色
+    'S9': 'danger',    // 已作废 - 深红色
+    'S10': 'danger'    // 异常 - 深红色
+  }
+  return workflowStatusMap[workflowStatus] || 'info'
+}
+
 const searchForm = reactive({
   stationId: '',
   parameterCode: '',
-  batchId: ''
+  batchId: '',
+  workflowStatus: ''
 })
 
 const pagination = reactive({
@@ -242,17 +299,51 @@ const getParameterTag = (code) => {
   return tagMap[code] || ''
 }
 
-// 获取参数名称
+// 获取参数名称（使用字典）
 const getParameterName = (code) => {
-  const codeMap = {
-    'RAIN_DAILY': t('research.environmentNewData.parameterCode.RAIN_DAILY'),
-    'TMAX': t('research.environmentNewData.parameterCode.TMAX'),
-    'TMIN': t('research.environmentNewData.parameterCode.TMIN'),
-    'HUMIDITY': t('research.environmentNewData.parameterCode.HUMIDITY'),
-    'WIND_SPEED': t('research.environmentNewData.parameterCode.WIND_SPEED'),
-    'SOLAR_RAD': t('research.environmentNewData.parameterCode.SOLAR_RAD')
+  return getLabelByValue('env_parameter_code', code) || code || '-'
+}
+
+// 获取操作按钮
+const getActionButtons = (row) => {
+  const workflowStatus = row.workflowStatus
+  const buttons = []
+  
+  // 根据状态显示不同的操作按钮，并检查用户权限
+  switch (workflowStatus) {
+    case 'S0': // 草稿
+      if (userStore.hasWorkflowStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
+      }
+      if (userStore.hasWorkflowStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
+      }
+      break
+    case 'S1': // 待审批
+      if (userStore.hasWorkflowStatusPermission('approve')) {
+        buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
+      }
+      break
+    case 'S2': // 审核通过
+      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
+      break
+    case 'S3': // 审核驳回
+      if (userStore.hasWorkflowStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
+      }
+      if (userStore.hasWorkflowStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
+      }
+      break
+    case 'S9': // 已归档
+      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
+      break
+    case 'S10': // 已作废
+      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
+      break
   }
-  return codeMap[code] || code || '-'
+  
+  return buttons
 }
 
 // 加载数据
@@ -300,6 +391,7 @@ const handleReset = () => {
   searchForm.stationId = ''
   searchForm.parameterCode = ''
   searchForm.batchId = ''
+  searchForm.workflowStatus = ''
   pagination.pageNum = 1
   loadData()
 }
@@ -341,6 +433,52 @@ const handleDelete = (row) => {
       ElMessage.error(t('common.failed'))
     }
   }).catch(() => {})
+}
+
+// 处理操作按钮点击
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmitForAudit(row)
+      break
+  }
+}
+
+// 提交审核
+const handleSubmitForAudit = async (row) => {
+  try {
+    // 检查权限
+    if (!userStore.hasWorkflowStatusPermission('submit')) {
+      ElMessage.error(t('common.noPermission'))
+      return
+    }
+
+    await ElMessageBox.confirm(
+      t('research.environmentNewData.submitForAuditConfirm'),
+      t('common.prompt'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await submitEnvironmentNewDataForAudit(row.envRecordId)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.submitForAuditSuccess'))
+      loadData()
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit for audit:', error)
+      ElMessage.error(t('research.environmentNewData.submitForAuditFailed'))
+    }
+  }
 }
 
 // 切换每页条数

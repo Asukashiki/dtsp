@@ -41,6 +41,11 @@ export default {
       season: 'Season',
       createTime: 'Created Time',
       createBy: 'Created By',
+      auditInfo: 'Audit Information',
+      rejectedBy: 'Rejected By',
+      rejectedTime: 'Rejected Time',
+      rejectReason: 'Reject Reason',
+      rejectInfo: 'Reject Information',
     },
 
     placeholder: {
@@ -494,6 +499,7 @@ export default {
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
     editSuccess: 'Updated successfully',
+    auditInfo: 'Audit Information',
 
     searchPlaceholder: 'Search batch ID, sample ID',
     filterByBatch: 'Filter by breeding batch',
@@ -502,15 +508,18 @@ export default {
     form: {
       basicInfo: 'Basic Information',
       sampleInfo: 'Sample Information',
+      paramInfo: 'Parameter Information',
       testInfo: 'Test Information',
       testData: 'Test Data',
       qualityInfo: 'Quality Information',
       healthTraceability: 'Health & Traceability',
       testingInfo: 'Testing Information',
       operatorInfo: 'Operator Information',
+      auditStatus: 'Audit Status',
 
       batchId: 'Breeding Batch ID',
       trialId: 'Trial ID',
+      plotId: 'Plot ID',
       testDate: 'Test Date',
       sampleId: 'Sample ID',
       sampleCondition: 'Sample Condition',
@@ -528,17 +537,24 @@ export default {
       testerName: 'Tester Name',
       sampleType: 'Sample Type',
       labParameter: 'Lab Parameter',
+      expectedRange: 'Expected Range',
       resultValue: 'Result Value',
       passFailFlag: 'Pass/Fail Flag',
+      testStatus: 'Test Status',
       remark: 'Remark',
       createTime: 'Created Time',
       createBy: 'Created By',
+      updateBy: 'Updated By',
+      updateTime: 'Updated Time',
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
     },
 
     placeholder: {
       batchId: 'Please select breeding batch',
       batchIdAuto: 'Auto-filled based on trial ID',
       trialId: 'Please select trial',
+      plotId: 'Please select plot ID',
       testDate: 'Please select test date',
       sampleId: 'Please enter sample ID',
       sampleStatus: 'Please enter sample status',
@@ -557,11 +573,60 @@ export default {
       resultValue: 'Please enter result value',
       passFailFlag: 'Please select pass/fail flag',
       remark: 'Please enter remark (optional)',
+      auditOpinion: 'Please enter audit opinion'
     },
+
+    // Audit related
+    auditTitle: 'Laboratory Test Data Audit',
+    auditSubtitle: 'Review and approve laboratory test data',
+    auditList: 'Audit List',
+    audit: 'Audit',
+    pendingAudit: 'Pending Audit',
+    audited: 'Audited',
+    canceled: 'Voided',
+    auditOpinion: 'Audit Opinion',
+    auditCanceled: 'Audit Record Canceled',
+    cancelType: 'Cancel Type',
+    dataCanceled: 'Data Canceled',
+
+    // Actions
+    submit: 'Submit',
+    approve: 'Approve',
+    reject: 'Reject',
+    return: 'Return',
+    archive: 'Archive',
+    cancel: 'void',
+
+    // Rejection info
+    rejected: 'Rejected',
+    rejectionInfo: 'Rejection Information',
+    rejectBy: 'Rejected By',
+    rejectOrg: 'Organization',
+    rejectTime: 'Rejected Time',
+    rejectReason: 'Reason',
+
+    // Confirmation messages
+    approveConfirm: 'Are you sure to approve this data?',
+    rejectConfirm: 'Are you sure to reject this data?',
+    cancelConfirm: 'Are you sure to cancel this audit record?',
+    submitConfirm: 'Are you sure to submit for approval?',
+    archiveConfirm: 'Are you sure to archive this data?',
+    cancelDataConfirm: 'Are you sure to cancel this data?',
+
+    // Success messages
+    approveSuccess: 'Approved successfully',
+    rejectSuccess: 'Rejected successfully',
+    cancelSuccess: 'Canceled successfully',
+    submitSuccess: 'Submitted successfully',
+    archiveSuccess: 'Archived successfully',
+
+    // Validation messages
+    rejectOpinionRequired: 'Audit opinion is required when rejecting',
 
     rules: {
       batchIdRequired: 'Please select breeding batch',
       trialIdRequired: 'Please select trial',
+      plotIdRequired: 'Please select plot ID',
       testDateRequired: 'Please select test date',
       testOrganizationRequired: 'Please enter test organization',
       testerNameRequired: 'Please enter tester name',
@@ -613,6 +678,15 @@ export default {
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
     editSuccess: 'Updated successfully',
+    submitForReview: 'Submit',
+    submitForReviewSuccess: 'Submit for review successfully',
+    submitForReviewConfirm: 'Are you sure you want to submit for review?',
+    void: 'Void',
+    voidSuccess: 'Void successfully',
+    voidConfirm: 'Are you sure you want to void this data?',
+    voidReason: 'Void Reason',
+    voidReasonPlaceholder: 'Please enter the reason for voiding',
+    voidReasonRequired: 'Void reason is required',
 
     searchPlaceholder: 'Search batch ID, plot ID',
     filterByBatch: 'Filter by breeding batch',
@@ -623,7 +697,10 @@ export default {
       plotInfo: 'Plot Information',
       yieldInfo: 'Yield Information',
       operatorInfo: 'Operator Information',
-
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
+      updateTime: 'Update Time',
+      updateBy: 'Updated By',
       batchId: 'Breeding Batch ID',
       trialId: 'Trial ID',
       harvestDate: 'Harvest Date',
@@ -694,7 +771,16 @@ export default {
       yieldQtPerHaRequired: 'Please enter yield',
       yieldQtPerHaMin: 'Yield must be greater than 0',
       moistureContentRange: 'Moisture content must be between 0-100',
+      // dynamic fields
+      inspectionTypeRequired: 'Please select inspection type',
+      scoreCodeRequired: 'Please select score code',
     },
+
+    // dynamic messages (used by custom validators)
+    pleaseSelectCodeFirst: 'Please select score code first',
+    percentRange: 'Percentage must be between 0 - 100',
+    scaleRange: 'Score must be between {min}-{max}',
+    numberNonNegative: 'Please enter a non-negative number',
 
     columns: {
       batchId: 'Batch ID',
@@ -710,7 +796,181 @@ export default {
       scoreCode: 'Score Code',
       scoreValue: 'Score Value',
       createTime: 'Created Time',
+      status: 'Status',
+      auditStatus: 'Audit Status',
       actions: 'Actions',
     },
   },
-}
+
+  // Field Inspection Data Audit
+  fieldInspectionAudit: {
+    title: 'Field Inspection Data Audit',
+    subtitle: 'Audit field inspection data',
+    list: 'Pending Field Inspection Data List',
+    audit: 'Audit',
+
+    // Form fields
+    form: {
+      basicInfo: 'Basic Information',
+      inspectionInfo: 'Inspection Information',
+      auditInfo: 'Audit Information',
+      batchId: 'Breeding Batch ID',
+      trialId: 'Trial ID',
+      plotId: 'Plot ID',
+      auditBy: 'Audited By',
+      auditTime: 'Audited Time',
+      inspectionDate: 'Inspection Date',
+      inspectionType: 'Inspection Type',
+      scoreCode: 'Score Code',
+      scoreValue: 'Score Value',
+      auditComment: 'Audit Comment',
+      auditor: 'Auditor',
+      auditDepartment: 'Audit Department',
+      approvalTime: 'Approval Time',
+    },
+
+    // Form placeholders
+    placeholder: {
+      auditComment: 'Please enter audit comment',
+      auditor: 'Please enter auditor',
+      auditDepartment: 'Please enter audit department',
+      approvalTime: 'Please select approval time',
+      inspectionDate: 'Please select inspection date',
+    },
+
+    // Form validation
+    rules: {
+      auditCommentRequired: 'Audit comment is required',
+    },
+
+    // Action buttons
+    approve: 'Approve',
+    reject: 'Reject',
+
+    // Confirmation prompts
+    confirmApprove: 'Are you sure to approve this audit?',
+    confirmReject: 'Are you sure to reject this audit?',
+
+    // Operation results
+    approveSuccess: 'Audit approved',
+    rejectSuccess: 'Audit rejected',
+
+    // Void related
+    void: 'Void',
+    voidReason: 'Void Reason',
+    confirmVoid: 'Are you sure to void this audit?',
+    voidSuccess: 'Void successful',
+
+    // Form placeholders
+    placeholder: {
+      voidReason: 'Please enter void reason',
+    },
+
+    // Form validation
+    rules: {
+      voidReasonRequired: 'Void reason is required',
+    },
+  },
+
+  // Farming Record Data Collection Audit
+  farmingRecordAudit: {
+    title: 'Farming Record Data Collection Audit',
+    subtitle: 'Audit management for farming record data',
+    detailTitle: 'Farming Record Audit Detail',
+    auditTitle: 'Farming Record Audit Operation',
+    searchPlaceholder: 'Please enter keywords to search',
+    
+    // Status options
+    status: {
+      placeholder: 'Please select audit status',
+      S1: 'Pending Approval',
+      S2: 'Approved',
+      S3: 'Rejected',
+      S10: 'Cancelled'
+    },
+    
+    // Management practice options
+    practices: {
+      placeholder: 'Please select activity type',
+      fertilization: 'Fertilization',
+      irrigation: 'Irrigation',
+      weeding: 'Weeding',
+      pest_control: 'Pest Control',
+      planting: 'Planting/Tillage',
+      harvesting: 'Harvesting'
+    },
+    
+    // List page
+    columns: {
+      managementPractice: 'Management Practice',
+      workflowStatus: 'Audit Status',
+      fertilizerType: 'Fertilizer Type',
+      irrigationType: 'Irrigation Type',
+      createBy: 'Created By',
+      createTime: 'Create Time',
+      auditBy: 'Audited By',
+      auditTime: 'Audit Time'
+    },
+    
+    // Form fields
+    form: {
+      managementPractice: 'Management Practice',
+      workflowStatus: 'Audit Status',
+      activityDatetime: 'Activity Date Time',
+      fertilizerType: 'Fertilizer Type',
+      fertilizerRateKg: 'Fertilizer Rate (kg)',
+      ureaRateKg: 'Urea Rate (kg)',
+      pesticideType: 'Pesticide Type',
+      irrigationType: 'Irrigation Type',
+      irrigationFrequency: 'Irrigation Frequency',
+      weedingDate: 'Weeding Date',
+      herbicideUsed: 'Herbicide Used',
+      seedSource: 'Seed Source',
+      createBy: 'Created By',
+      createTime: 'Create Time',
+      auditBy: 'Audited By',
+      auditTime: 'Audit Time',
+      auditRemark: 'Audit Remark'
+    },
+    
+    // Section titles
+    sections: {
+      basicInfo: 'Basic Information',
+      fertilizerInfo: 'Fertilizer Information',
+      irrigationInfo: 'Irrigation Information',
+      weedingInfo: 'Weeding Information',
+      pesticideInfo: 'Pesticide Information',
+      createInfo: 'Creation Information',
+      auditInfo: 'Audit Information',
+      remarkInfo: 'Remark Information'
+    },
+    
+    // Placeholders
+    placeholder: {
+      auditRemark: 'Please enter audit remark, required field',
+      auditBy: 'Please enter auditor',
+      auditTime: 'Please select audit time'
+    },
+    
+    // Validation rules
+    rules: {
+      auditRemarkRequired: 'Audit remark cannot be empty'
+    },
+    
+    // Action buttons
+    audit: 'Audit',
+    approve: 'Approve',
+    reject: 'Reject',
+    cancel: 'void',
+    
+    // Confirmation messages
+    confirmApprove: 'Are you sure to approve this farming record?',
+    confirmReject: 'Are you sure to reject this farming record?',
+    cancelConfirm: 'Are you sure to cancel this farming record? This action cannot be undone!',
+    
+    // Success messages
+    approveSuccess: 'Audit approved successfully',
+    rejectSuccess: 'Audit rejected successfully',
+    cancelSuccess: 'Cancelled successfully'
+  },
+};

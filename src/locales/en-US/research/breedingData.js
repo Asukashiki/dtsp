@@ -16,6 +16,14 @@ export default {
     form: {
       basicInfo: 'Batch Basic Information',
       identityInfo: 'Variety Identification Information',
+      metadataInfo: 'Metadata Information',
+      workflowInfo: 'Workflow Information',
+      approvalHistory: 'Approval History',
+      currentApproval: 'Current Approval',
+      approver: 'Approver',
+      approvalTime: 'Approval Time',
+      comment: 'Comment',
+      approvalComment: 'Approval Comment',
       batchName: 'Batch Name',
       batchId: 'Batch ID',
       batchTime: 'Batch Time',
@@ -24,12 +32,15 @@ export default {
       varietyName: 'Variety Name',
       year: 'Year',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
       species: 'Species',
       genus: 'Genus',
       family: 'Family',
       breedingMethod: 'Breeding Method',
+      germplasmSource: 'Germplasm Source',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      status: 'Status',
       description: 'Batch Description',
       batchSize: 'Batch Size',
       expectedEndDate: 'Expected End Date',
@@ -42,6 +53,41 @@ export default {
       startDate: 'Plan Start Date',
       endDate: 'Plan End Date',
       remarks: 'Remarks',
+      createBy: 'Created By',
+      createTime: 'Creation Time',
+      updateBy: 'Updated By',
+      updateTime: 'Update Time',
+    },
+
+    actions: {
+      submitForReview: 'Submit',
+      edit: 'Edit',
+      submit: 'Submit',
+      approve: 'Approve',
+      reject: 'Reject',
+      archive: 'Archive',
+      void: 'Void'
+    },
+
+    prompt: 'Prompt',
+    warning: 'Warning',
+    confirmButton: 'Confirm',
+    cancelButton: 'Cancel',
+
+    confirm: {
+      submitForReview: 'Are you sure you want to submit for review?',
+      approve: 'Are you sure you want to approve?',
+      reject: 'Are you sure you want to reject?',
+      archive: 'Are you sure you want to archive?',
+      cancel: 'Are you sure you want to cancel? This action cannot be undone!'
+    },
+
+    success: {
+      submitForReview: 'Submit for review successfully',
+      approve: 'Approve successfully',
+      reject: 'Reject successfully',
+      archive: 'Archive successfully',
+      cancel: 'Cancel successfully'
     },
 
     placeholder: {
@@ -52,12 +98,15 @@ export default {
       varietyName: 'Please enter variety name',
       year: 'Please select year',
       status: 'Please select status',
+      workflowStatus: 'Please select workflow status',
       species: 'Please enter species',
       genus: 'Please enter genus',
       family: 'Please enter family',
       breedingMethod: 'Please select breeding method',
+      germplasmSource: 'Please select germplasm source',
       parentalSeedSource: 'Please enter parental seed source',
       objective: 'Please enter objective',
+      status: 'Please select status',
       description: 'Please enter batch description',
       batchSize: 'Please enter batch size',
       expectedEndDate: 'Please select expected end date',
@@ -70,6 +119,7 @@ export default {
       startDate: 'Please select plan start date',
       endDate: 'Please select plan end date',
       remarks: 'Please enter remarks (optional)',
+      approvalComment: 'Please enter approval comment',
     },
 
     columns: {
@@ -79,14 +129,17 @@ export default {
       varietyCode: 'Variety Code',
       varietyName: 'Variety Name',
       breedingMethod: 'Breeding Method',
+      germplasmSource: 'Germplasm Source',
       parentalSeedSource: 'Parental Seed Source',
       objective: 'Objective',
+      status: 'Status',
       description: 'Batch Description',
       batchSize: 'Batch Size',
       expectedEndDate: 'Expected End Date',
       location: 'Location',
       year: 'Year',
       status: 'Status',
+      workflowStatus: 'Workflow Status',
       personInCharge: 'Person in Charge',
       startDate: 'Start Date',
       endDate: 'End Date',
@@ -94,7 +147,7 @@ export default {
       actions: 'Actions',
     },
 
-    status: {
+    workflowStatus: {
       draft: 'Draft',
       pendingApproval: 'Pending Approval',
       approved: 'Approved',
@@ -106,6 +159,11 @@ export default {
       archived: 'Archived',
       cancelled: 'Cancelled',
       exception: 'Exception',
+    },
+
+    status: {
+      Ongoing: 'Ongoing',
+      Finished: 'Finished',
     },
 
     actions: {
@@ -127,9 +185,19 @@ export default {
       myCreated: 'My Created',
       pendingApproval: 'Pending Approval',
       approved: 'Approved',
-      completed: 'Completed'
+      completed: 'Completed',
+      voided: 'Voided'
+    },
+
+    audit: {
+      title: 'Breeding Batch Audit',
+      subtitle: 'Manage breeding batch audit records',
+      list: 'Audit List',
+      detail: 'Audit Details',
     },
   },
+
+  
 
   // Plot and Sowing Information Management
   plot: {
@@ -140,6 +208,34 @@ export default {
     add: 'Add Plot Information',
     edit: 'Edit Plot Information',
     detail: 'Plot Details',
+    auditTitle: 'Plot and Sowing Information Audit',
+    auditSubtitle: 'Audit plot and sowing information',
+    auditList: 'Audit List',
+    pendingAudit: 'Pending Audit',
+    audited: 'Audited',
+    canceled: 'Voided',
+    cancelType: 'Cancel Type',
+    auditCanceled: 'Audit Canceled',
+    dataCanceled: 'Data Canceled',
+    submitAudit: 'Submit',
+    submit: 'Submit',
+    approve: 'Approve',
+    reject: 'Reject',
+    archive: 'Archive',
+    cancel: 'Void',
+    auditOpinion: 'Audit Opinion',
+    auditHistory: 'Audit History',
+    submitConfirm: 'Are you sure to submit for audit?',
+    approveConfirm: 'Are you sure to approve?',
+    rejectConfirm: 'Are you sure to reject?',
+    archiveConfirm: 'Are you sure to archive?',
+    cancelConfirm: 'Are you sure to void?',
+    submitSuccess: 'Submitted successfully',
+    approveSuccess: 'Approved successfully',
+    rejectSuccess: 'Rejected successfully',
+    archiveSuccess: 'Archived successfully',
+    cancelSuccess: 'Voided successfully',
+    rejectOpinionRequired: 'Audit opinion is required for rejection',
 
     form: {
       basicInfo: 'Plot Basic Information',
@@ -167,7 +263,7 @@ export default {
       season: 'Season',
       activityCode: 'Activity Code',
       kpiCode: 'KPI Code',
-      seedQuantity: 'Seed Quantity (kg)',
+      seedQuantity: 'Seed Quantity (g)',
       sowingMethod: 'Sowing Method',
       sowingTime: 'Sowing Time',
     },
@@ -196,6 +292,8 @@ export default {
       seedQuantity: 'Please enter seed quantity',
       sowingMethod: 'Please enter sowing method',
       sowingTime: 'Please select sowing time',
+      auditStatus: 'Please select audit status',
+      auditOpinion: 'Please enter audit opinion',
     },
 
     columns: {
@@ -208,13 +306,20 @@ export default {
         gpsLocation: 'GPS Location',
         season: 'Season',
         sowingCount: 'Sowing Records',
+        auditStatus: 'Audit Status',
+        workflowStatus: 'Workflow Status',
+        createdBy: 'Created By',
+        modifiedBy: 'Modified By',
+        auditedBy: 'Audited By',
         createTime: 'Created Time',
+        updateTime: 'Update Time',
+        auditTime: 'Audit Time',
         actions: 'Actions',
     },
 
       // Sowing information sub-object
       sowing: {
-          seedQuantity: 'Seed Quantity (kg)',
+          seedQuantity: 'Seed Quantity (g)',
           sowingMethod: 'Sowing Method',
           sowingTime: 'Sowing Time',
       },
@@ -240,6 +345,7 @@ export default {
       basicInfo: 'Trial Basic Information',
       trialId: 'Trial ID',
       batchId: 'Breeding Batch',
+      batchName: 'Breeding Batch Name',
       trialName: 'Trial Name',
       locationId: 'Location ID',
       gpsLocation: 'GPS Location',
@@ -249,6 +355,16 @@ export default {
       replications: 'Replications',
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
+      createdBy: 'Created By',
+      createdName: 'Created By',
+      createTime: 'Created Time',
+      modifiedBy: 'Modified By',
+      modifiedName: 'Modified By',
+      updateTime: 'Update Time',
+      approvedBy: 'Approved By',
+      approvedName: 'Approved By',
+      approvedTime: 'Approved Time',
+      rejectReason: 'Reject Reason',
     },
 
     placeholder: {
@@ -263,6 +379,7 @@ export default {
       replications: 'Please enter replications',
       cropType: 'Auto-filled from breeding batch',
       varietyName: 'Please enter variety name',
+      auditStatus: 'Please select audit status',
     },
 
     columns: {
@@ -277,7 +394,14 @@ export default {
       cropType: 'Crop Type',
       varietyName: 'Variety Name',
       status: 'Status',
+      auditStatus: 'Audit Status',
+      workflowStatus: 'Workflow Status',
+      createdName: 'Created By',
       createTime: 'Created Time',
+      modifiedName: 'Modified By',
+      updateTime: 'Update Time',
+      approvedName: 'Approved By',
+      approvedTime: 'Approved Time',
       actions: 'Actions',
     },
 
@@ -354,11 +478,13 @@ export default {
   // Farming Record
   farming: {
     title: 'Farming Record Data Collection',
+    titleAudit: 'Farming Record Data Collection Audit',
     subtitle: 'Record fertilization, irrigation, pest control and other farming operations',
     list: 'Farming Record List',
     add: 'Add Farming Record',
     edit: 'Edit Farming Record',
     detail: 'Farming Record Details',
+    detailAudit: 'Farming Record Details (Audit)',
 
     operationType: {
       fertilization: 'Fertilization',

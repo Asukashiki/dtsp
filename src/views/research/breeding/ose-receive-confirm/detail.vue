@@ -16,6 +16,10 @@
         </div>
         <div class="info-grid">
           <div class="info-item">
+            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.distributeId') }}</span>
+            <span class="value">{{ data.distributeId }}</span>
+          </div>
+          <div class="info-item">
             <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.oseName') }}</span>
             <span class="value">{{ data.oseName }}</span>
           </div>
@@ -63,12 +67,33 @@
               prop="cropType"
               :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
               min-width="140"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('crop_type', row.cropType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+                prop="seedType"
+                :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
+                min-width="140"
             />
             <el-table-column
               prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+              :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')"
               min-width="220"
               show-overflow-tooltip
+            />
+              <el-table-column
+              prop="parentalSeedSource"
+              :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <el-table-column
+                prop="produceBatchName"
+                :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+                min-width="220"
+                show-overflow-tooltip
             />
             <el-table-column
               prop="distributeQuantity"
@@ -111,6 +136,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   modelValue: {
@@ -124,6 +150,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'close'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const dialogVisible = computed({
   get: () => props.modelValue,

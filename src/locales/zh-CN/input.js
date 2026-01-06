@@ -28,6 +28,7 @@ export default {
 
     // 菜单导航
     menu: {
+      demandInquiry:'需求查询',
       dashboard: '数据概览',
       registrationManagement: '注册管理',
       registration: 'Union/Cooperative注册申请',
@@ -552,7 +553,7 @@ export default {
         warehouseType: '仓库类型',
         location: '仓库位置',
         capacity: '仓库容量',
-        warehouseArea: '仓库面积',
+        warehouseArea: '仓库容积',
         usedCapacity: '已用容量',
         availableCapacity: '可用容量',
         belongs: '所属单位',
@@ -567,7 +568,9 @@ export default {
         createPeople: '创建人',
         createTime: '创建时间',
         updatePeople: '修改人',
-        updateTime: '更新时间'
+        updateTime: '更新时间',
+        usedWarehouseArea: '已用容积',
+        availableWarehouseArea: '可用容积'
       },
       placeholder: {
         warehouseCode: '请输入仓库编码',
@@ -575,7 +578,7 @@ export default {
         warehouseType: '请选择仓库类型',
         location: '请输入仓库位置',
         capacity: '请输入仓库容量',
-        warehouseArea: '请输入仓库面积',
+        warehouseArea: '请输入仓库容积',
         organName: '请输入仓库归属部门',
         contactPerson: '请输入联系人',
         contactPhone: '请输入联系电话',
@@ -599,7 +602,7 @@ export default {
         warehouseName: '仓库名称',
         warehouseType: '仓库类型',
         location: '仓库位置',
-        warehouseArea: '仓库面积',
+        warehouseArea: '仓库容积',
         belongs: '所属单位',
         organName: '仓库归属部门',
         supplierName: '供应商名称',
@@ -608,7 +611,8 @@ export default {
         contactPerson: '联系人',
         contactPhone: '联系电话',
         status: '状态',
-        actions: '操作'
+        actions: '操作',
+        usedWarehouseArea: '容积'
       },
       status: {
         enabled: '启用',
@@ -698,7 +702,7 @@ export default {
       addInput: '添加投入品',
       noMaterials: '暂无物料明细',
         noDistributionDetails: '该分发单暂无明细信息',
-        distributionLoaded: '分发单明细已成功加载',
+        distributionLoaded: 'The distribution list details have been successfully loaded',
         loadDistributionFailed: '加载分发单明细失败',
       searchPlaceholder: '搜索入库单号、批次号',
       filterByWarehouse: '按仓库筛选',
@@ -884,7 +888,8 @@ export default {
       status: {
         pending: '待审核',
         completed: '已完成',
-        cancelled: '已取消'
+        cancelled: '已取消',
+        rejected: '已拒绝'
       },
       auditInfo: '审核信息',
       form: {
@@ -946,7 +951,7 @@ export default {
         batchNo: '请选择批次号',
         quantity: '请输入出库数量',
         specModel: '请输入规格型号(选填)',
-        unitOfMeasure: '请输入计量单位(选填)',
+        unitOfMeasure: '请选择计量单位',
         itemRemarks: '请输入明细备注',
         auditRemark: '请输入审核意见',
         inputCategory: '投入品品类（自动填充）',
@@ -967,7 +972,8 @@ export default {
         quantityExceeds: '出库数量不能超过可用库存',
         itemsRequired: '请至少添加一条出库商品明细',
         detailsRequired: '请至少添加一条出库明细',
-        auditRemarkRequired: '请输入审核意见'
+        auditRemarkRequired: '请输入审核意见',
+        unitOfMeasureRequired: '请选择计量单位'
       },
       columns: {
         outboundOrderId: '出库单号',
@@ -1064,16 +1070,24 @@ export default {
 
   // 数据大屏
   dashboard: {
-    title: '农业投入品供应管理大屏',
-    subtitle: '实时数据监控与可视化分析',
+    title: '农业投入品管理大屏',
+    subtitle: '需求、分配与分发流通实时监控',
     lastUpdate: '最后更新',
     autoRefresh: '自动刷新',
+    refreshInterval: '刷新间隔',
+    systemStatus: '系统正常',
     fullscreen: '全屏',
     exitFullscreen: '退出全屏',
     overview: {
+      totalDemands: '需求申报',
+      allocated: '已分配',
+      satisfactionRate: '需求满足率',
+      allocationRate: '分配完成率',
+      arrivalRate: '流通到达率',
+      certifiedSuppliers: '认证供应商',
+      pendingSuppliers: '待审核',
+      activeWarehouses: '活跃仓库',
       totalSuppliers: '供应商总数',
-      certifiedSuppliers: '已认证供应商',
-      pendingSuppliers: '待审核供应商',
       rejectedSuppliers: '未通过供应商',
       totalInputs: '投入品总数',
       seedInputs: '种子类',
@@ -1149,6 +1163,23 @@ export default {
       count: '数量',
       stockQuantity: '库存量',
       percentage: '占比'
+    },
+    demandByType: {
+      title: '需求类型分布'
+    },
+    demandByRegion: {
+      title: '需求地区分布 (TOP 10)'
+    },
+    allocationProgress: {
+      title: '分配进度',
+      overall: '总体'
+    },
+    circulation: {
+      title: '流通分发状态'
+    },
+    recentActivities: {
+      title: '最新动态',
+      noData: '暂无最新动态'
     },
     warnings: {
       title: '预警信息',
@@ -1342,7 +1373,9 @@ export default {
       titleRequired: '请输入反馈标题',
       titleLength: '反馈标题最多200字符',
       contentRequired: '请输入反馈内容',
+      contactNameRequired: '请输入联系人姓名',
       contactNameLength: '联系人姓名最多100字符',
+      contactPhoneRequired: '请输入联系电话',
       contactPhoneLength: '联系电话最多20字符',
       contactPhoneFormat: '请输入正确的电话号码',
       contactEmailFormat: '请输入正确的邮箱地址',

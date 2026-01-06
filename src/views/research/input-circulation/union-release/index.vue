@@ -48,7 +48,7 @@
       </el-button>
       <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
         <el-icon><Delete /></el-icon>
-        {{ t('batchDelete') }}
+        {{ t('common.batchDelete') }}
       </el-button>
     </el-card>
 
@@ -81,9 +81,9 @@
         <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
         <el-table-column :label="t('actions')" width="280" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row.id)">{{ t('detail') }}</el-button>
-            <el-button link type="primary" @click="handleEdit(row.id)">{{ t('edit') }}</el-button>
-            <el-button link type="danger" @click="handleDelete(row.id)">{{ t('delete') }}</el-button>
+            <el-button link type="primary" @click="handleDetail(row.id)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
+            <el-button link type="primary" @click="handleEdit(row.id)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row.id)"><i class="ri-delete-bin-line"></i>{{ $t('common.void') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -256,7 +256,7 @@ const handleDetail = (id) => {
 
 // 删除
 const handleDelete = (id) => {
-  ElMessageBox.confirm(t('deleteConfirm'), t('warning'), {
+  ElMessageBox.confirm(t('common.deleteConfirm'), t('warning'), {
     confirmButtonText: t('confirm'),
     cancelButtonText: t('cancel'),
     type: 'warning'

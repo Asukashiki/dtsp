@@ -27,7 +27,7 @@ export default {
     reject: '驳回',
     batchApprove: '批量通过',
     batchReject: '批量驳回',
-    submit: '提交审核',
+    submit: '提交',
     lockBatch: '锁定批次',
     aggregationSubmit: '汇聚数据提交',
     aggregationDetail: '汇聚数据详情',
@@ -44,6 +44,7 @@ export default {
     village: '村庄',
     landArea: '地块面积',
     currentAuditLevel: '当前审核层级',
+    status: '状态',
     submitTime: '提交时间',
     actions: '操作',
   },
@@ -75,6 +76,13 @@ export default {
     confirmMessage: '确定驳回选中的 {count} 条需求吗？',
     success: '驳回成功',
     auditOpinionRequired: '请输入驳回原因',
+  },
+
+  // 统一审核对话框
+  auditDialog: {
+    title: '审核',
+    auditOpinion: '审核意见',
+    auditOpinionPlaceholder: '请输入审核意见(选填)',
   },
 
   lockBatchDialog: {

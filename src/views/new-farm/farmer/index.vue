@@ -102,9 +102,9 @@
 
             <el-col :xs="24" :sm="12" :md="6">
               <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.common.kebeleCode') }}</label>
+                <label class="filter-label">{{ $t('newFarm.common.kebeleName') }}</label>
                 <el-input
-                  v-model="searchFilters.kebeleCode"
+                  v-model="searchFilters.kebeleName"
                   :placeholder="$t('newFarm.common.selectKebele')"
                   clearable
                   @clear="handleSearch"
@@ -113,7 +113,41 @@
             </el-col>
           </el-row>
         </div>
+
+        <div class="action-row">
+          <div class="action-left">
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              <span class="btn-text">{{ $t('common.add') }}</span>
+            </el-button>
+            <el-button type="success" plain @click="handleImport">
+              <i class="ri-upload-2-line"></i>
+              <span class="btn-text">{{ $t('newFarm.farmer.actions.import') }}</span>
+            </el-button>
+            <el-button type="primary" plain @click="handleSearch">
+              <i class="ri-search-line"></i>
+              <span class="btn-text">{{ $t('common.search') }}</span>
+            </el-button>
+            <el-button @click="handleReset">
+              <i class="ri-restart-line"></i>
+              <span class="btn-text">{{ $t('common.reset') }}</span>
+            </el-button>
+            <el-button
+                v-if="selectedIds.length > 0"
+                type="danger"
+                plain
+                @click="handleBatchDelete"
+            >
+              <i class="ri-delete-bin-line"></i>
+              <span class="btn-text">{{ $t('newFarm.farmer.actions.batchDelete') }} ({{ selectedIds.length }})</span>
+            </el-button>
+          </div>
+        </div>
+
+
       </div>
+
+
 
       <!-- PC端：数据表格 -->
       <div class="table-card pc-view">
@@ -158,7 +192,7 @@
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)">
                 <i class="ri-delete-bin-line"></i>
-                {{ $t('common.delete') }}
+                {{ $t('common.void') }}
               </el-button>
             </template>
           </el-table-column>
@@ -317,6 +351,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store'
 import {
   getFarmerList,
   deleteFarmer,
@@ -335,7 +370,7 @@ const searchFilters = reactive({
   phone: '',
   idCard: '',
   gender: '',
-  kebeleCode: '',
+  kebeleName: '',
   daId: ''
 })
 
@@ -365,12 +400,22 @@ const fetchData = async () => {
     const params = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      farmerName: searchFilters.farmerName || searchFilters.keyword,
-      phone: searchFilters.phone,
-      idCard: searchFilters.idCard,
-      gender: searchFilters.gender,
       kebeleCode: searchFilters.kebeleCode,
-      daId: searchFilters.daId
+      daId: searchFilters.daId,
+      searchValue: searchFilters.keyword,
+      kebeleName: searchFilters.kebeleName
+    }
+
+    // 核心逻辑：
+    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
+    // 此时忽略 farmerName/phone/idCard 等单个字段的严格筛选
+    if (searchFilters.keyword) {
+      params.searchValue = searchFilters.keyword
+    } else {
+      // 当顶部搜索框为空时，使用具体的字段筛选
+      if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
+      if (searchFilters.phone) params.phone = searchFilters.phone
+      if (searchFilters.idCard) params.idCard = searchFilters.idCard
     }
 
     const res = await getFarmerList(params)
@@ -399,7 +444,7 @@ const handleReset = () => {
   searchFilters.phone = ''
   searchFilters.idCard = ''
   searchFilters.gender = ''
-  searchFilters.kebeleCode = ''
+  searchFilters.kebeleName = ''
   searchFilters.daId = ''
   handleSearch()
 }
@@ -525,19 +570,25 @@ const handleExceed = () => {
 const handleDownloadTemplate = async () => {
   try {
     const res = await downloadFarmerImportTemplate()
-    // 创建Blob URL并下载
-    const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+
+    // res 现在应该是 Blob 对象
+    const blob = res instanceof Blob ? res : new Blob([res], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    })
+
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'farmer_import_template.xlsx'
+    link.download = 'Farmer_Import_Template.xlsx'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
+
+    ElMessage.success(t('common.downloadSuccess') || 'Download successful')
   } catch (error) {
     console.error('Download template failed:', error)
-    ElMessage.error(t('common.failed'))
+    ElMessage.error(t('common.downloadFailed') || 'Download failed')
   }
 }
 

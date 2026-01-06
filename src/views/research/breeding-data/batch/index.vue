@@ -60,8 +60,9 @@
                   :placeholder="$t('research.breedingData.batch.placeholder.cropType')"
                   clearable
                   class="filter-select"
+                  :loading="dictLoading"
                 >
-                  <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                  <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </div>
               <div class="search-item">
@@ -74,14 +75,15 @@
                 />
               </div>
               <div class="search-item">
-                <label class="search-label">{{ $t('research.breedingData.batch.columns.status') }}:</label>
+                <label class="search-label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</label>
                 <el-select
-                  v-model="queryParams.status"
-                  :placeholder="$t('research.breedingData.batch.placeholder.status')"
+                  v-model="queryParams.workflowStatus"
+                  :placeholder="$t('research.breedingData.batch.placeholder.workflowStatus')"
                   clearable
                   class="filter-select"
+                  :loading="dictLoading"
                 >
-                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+                  <el-option v-for="item in options.flow_status" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
               </div>
               <div class="search-actions">
@@ -104,17 +106,24 @@
             <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
             <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
               <template #default="{ row }">
-                {{ getCropTypeLabel(row.cropType) }}
+                {{ getLabelByValue('crop_type', row.cropType) }}
               </template>
             </el-table-column>
             <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="objective" :label="$t('research.breedingData.batch.columns.objective')" min-width="120" show-overflow-tooltip />
                 <el-table-column prop="breedingMethod" :label="$t('research.breedingData.batch.columns.breedingMethod')" min-width="100" />
                 <el-table-column prop="year" :label="$t('research.breedingData.batch.columns.year')" min-width="80" />
-                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="120">
+                <el-table-column prop="status" :label="$t('research.breedingData.batch.columns.status')" min-width="100">
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.status)" effect="plain">
-                      {{ getStatusLabel(row.status) }}
+                      {{ row.status }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="workflowStatus" :label="$t('research.breedingData.batch.columns.workflowStatus')" min-width="120">
+                  <template #default="{ row }">
+                    <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
+                      {{ getLabelByValue('flow_status', row.workflowStatus) }}
                     </el-tag>
                   </template>
                 </el-table-column>
@@ -165,7 +174,7 @@
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                    <span class="value">{{ getCropTypeLabel(item.cropType) }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
@@ -184,9 +193,9 @@
                     <span class="value">{{ item.year }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.batch.columns.status') }}:</span>
-                    <el-tag :type="getStatusType(item.status)" effect="plain" size="small">
-                      {{ getStatusLabel(item.status) }}
+                    <span class="label">{{ $t('research.breedingData.batch.columns.workflowStatus') }}:</span>
+                    <el-tag :type="getWorkflowStatusType(item.workflowStatus)" effect="plain" size="small">
+                      {{ getLabelByValue('flow_status', item.workflowStatus) }}
                     </el-tag>
                   </div>
                 </div>
@@ -199,9 +208,9 @@
                     @click="handleAction(item, button.action)">
                     <i :class="button.icon"></i>{{ button.label }}
                   </el-button>
-                  <el-button size="small" type="danger" @click="handleDelete(item)">
+                  <!-- <el-button size="small" type="danger" @click="handleDelete(item)">
                     <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button>
+                  </el-button> -->
                 </div>
               </div>
 
@@ -229,6 +238,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
+import { useDict } from '@/hooks/useDict'
 import {
   getBreedingBatchList,
   deleteBreedingBatch,
@@ -243,6 +253,12 @@ const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
 
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict([
+  'crop_type',
+  'flow_status'
+])
+
 const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
@@ -256,29 +272,18 @@ const queryParams = reactive({
   batchName: '',
   cropType: '',
   varietyName: '',
-  status: ''
+  workflowStatus: ''
 })
 
-const cropTypeOptions = [
-  { label: 'wheat', value: 'T01' },
-  { label: 'corn', value: 'T02' },
-  { label: 'teff', value: 'T03' }
-]
 
-const statusOptions = [
-  { label: t('research.breedingData.batch.status.draft'), value: 'S0' },
-  { label: t('research.breedingData.batch.status.pendingApproval'), value: 'S1' },
-  { label: t('research.breedingData.batch.status.approved'), value: 'S2' },
-  { label: t('research.breedingData.batch.status.rejected'), value: 'S3' },
-  { label: t('research.breedingData.batch.status.archived'), value: 'S9' },
-  { label: t('research.breedingData.batch.status.void'), value: 'S10' }
-]
 
 const getList = async () => {
   loading.value = true
   try {
     const res = await getBreedingBatchList(queryParams)
-    dataList.value = res.rows || []
+    // 过滤掉 S10 状态的数据
+    const filteredRows = (res.rows || []).filter(row => row.workflowStatus !== 'S10')
+    dataList.value = filteredRows
     total.value = res.total || 0
   } catch (error) {
     console.error('Failed to fetch breeding batch list:', error)
@@ -299,12 +304,12 @@ const handleReset = () => {
   queryParams.batchName = ''
   queryParams.cropType = ''
   queryParams.varietyName = ''
-  queryParams.status = ''
+  queryParams.workflowStatus = ''
   getList()
 }
 
-const getStatusType = (status) => {
-  const statusMap = {
+const getWorkflowStatusType = (workflowStatus) => {
+  const workflowStatusMap = {
     'S0': 'info',      // 草稿 - 灰色
     'S1': 'warning',   // 待审批 - 橙色
     'S2': 'primary',   // 审核通过 - 蓝色
@@ -312,29 +317,19 @@ const getStatusType = (status) => {
     'S9': 'danger',    // 已作废 - 深红色
     'S10': 'danger'    // 异常 - 深红色
   }
+  return workflowStatusMap[workflowStatus] || 'info'
+}
+
+// 批次状态类型映射
+const getStatusType = (status) => {
+  const statusMap = {
+    'Ongoing': 'info',   // 进行中 - 蓝色
+    'Finished': 'success'   // 已完成 - 绿色
+  }
   return statusMap[status] || 'info'
 }
 
-const getStatusLabel = (status) => {
-  const statusLabelMap = {
-    'S0': t('research.breedingData.batch.status.draft'),
-    'S1': t('research.breedingData.batch.status.pendingApproval'),
-    'S2': t('research.breedingData.batch.status.approved'),
-    'S3': t('research.breedingData.batch.status.rejected'),
-    'S9': t('research.breedingData.batch.status.archived'),
-    'S10': t('research.breedingData.batch.status.void')
-  }
-  return statusLabelMap[status] || status
-}
 
-const getCropTypeLabel = (code) => {
-  const cropMap = {
-    'T01': 'wheat',
-    'T02': 'corn',
-    'T03': 'teff'
-  }
-  return cropMap[code] || code
-}
 
 const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map(item => item.dataId)
@@ -387,52 +382,61 @@ const handleTabChange = (tabName) => {
   // 根据标签页设置不同的查询参数
   switch (tabName) {
     case 'myCreated':
-      queryParams.status = '' // 我的创建显示所有状态
+      queryParams.workflowStatus = '' // 我的创建显示所有状态
       break
     case 'pendingApproval':
-      queryParams.status = 'S1' // 待审批
+      queryParams.workflowStatus = 'S1' // 待审批
       break
     case 'approved':
-      queryParams.status = 'S2' // 审核通过
+      queryParams.workflowStatus = 'S2' // 审核通过
       break
     case 'completed':
-      queryParams.status = 'S9' // 已归档
+      queryParams.workflowStatus = 'S9' // 已归档
       break
   }
   getList()
 }
 
 const getActionButtons = (row) => {
-  const status = row.status
+  const workflowStatus = row.workflowStatus
   const buttons = []
   
   // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (status) {
+  switch (workflowStatus) {
     case 'S0': // 草稿
-      if (userStore.hasStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('research.breedingData.batch.actions.edit'), icon: 'ri-edit-line' })
+      if (userStore.hasWorkflowStatusPermission('edit')) {
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
-      if (userStore.hasStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
+      if (userStore.hasWorkflowStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S1': // 待审批
-      if (userStore.hasStatusPermission('approve')) {
+      if (userStore.hasWorkflowStatusPermission('approve')) {
         buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S2': // 审核通过
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-      if (userStore.hasStatusPermission('archive')) {
-        buttons.push({ type: 'success', action: 'archive', label: 'archive', icon: 'ri-archive-line' })
-      }
       break
     case 'S3': // 审核驳回
-      if (userStore.hasStatusPermission('edit')) {
+      if (userStore.hasWorkflowStatusPermission('edit')) {
         buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       }
-      if (userStore.hasStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.breedingData.batch.actions.submitApproval'), icon: 'ri-send-plane-line' })
+      if (userStore.hasWorkflowStatusPermission('submit')) {
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+      }
+      // 添加作废按钮
+      if (userStore.hasWorkflowStatusPermission('cancel')) {
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
     case 'S9': // 已归档
@@ -478,7 +482,7 @@ const handleAction = (row, action) => {
 const handleSubmitForAudit = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('submit')) {
+    if (!userStore.hasWorkflowStatusPermission('submit')) {
       ElMessage.error('You do not have permission to submit for approval')
       return
     }
@@ -497,7 +501,7 @@ const handleSubmitForAudit = async (row) => {
 const handleApprove = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('approve')) {
+    if (!userStore.hasWorkflowStatusPermission('approve')) {
       ElMessage.error('You do not have permission to approve')
       return
     }
@@ -515,7 +519,7 @@ const handleApprove = async (row) => {
 const handleReject = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('reject')) {
+    if (!userStore.hasWorkflowStatusPermission('reject')) {
       ElMessage.error('You do not have permission to reject')
       return
     }
@@ -533,7 +537,7 @@ const handleReject = async (row) => {
 const handleArchive = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('archive')) {
+    if (!userStore.hasWorkflowStatusPermission('archive')) {
       ElMessage.error('You do not have permission to archive')
       return
     }
@@ -551,7 +555,7 @@ const handleArchive = async (row) => {
 const handleCancelBatch = async (row) => {
   try {
     // 检查权限
-    if (!userStore.hasStatusPermission('cancel')) {
+    if (!userStore.hasWorkflowStatusPermission('cancel')) {
       ElMessage.error('You do not have permission to cancel')
       return
     }

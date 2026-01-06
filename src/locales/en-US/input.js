@@ -28,6 +28,7 @@ export default {
 
   // 菜单导航
   menu: {
+    demandInquiry:'Demand Inquiry',
     dashboard: 'Data Overview',
     registrationManagement: 'Registration Management',
     registration: 'Union/Cooperative Registration Application',
@@ -551,7 +552,7 @@ export default {
         warehouseType: 'Warehouse Type',
         location: 'Warehouse Location',
         capacity: 'Warehouse Capacity',
-        warehouseArea: 'Warehouse Area',
+        warehouseArea: 'Warehouse Volume',
         usedCapacity: 'Used Capacity',
         availableCapacity: 'Available Capacity',
         belongs: 'Affiliated Unit',
@@ -566,7 +567,9 @@ export default {
         createPeople: 'Creator',
         createTime: 'Creation Time',
         updatePeople: 'Modifier',
-        updateTime: 'Update Time'
+        updateTime: 'Update Time',
+        usedWarehouseArea: 'Used Warehouse Volume',
+        availableWarehouseArea: 'Available Warehouse Volume'
       },
       placeholder: {
         warehouseCode: 'Enter warehouse code',
@@ -574,7 +577,7 @@ export default {
         warehouseType: 'Select warehouse type',
         location: 'Enter warehouse location',
         capacity: 'Enter warehouse capacity',
-        warehouseArea: 'Enter warehouse area',
+        warehouseArea: 'Enter warehouse volume',
         organName: 'Enter warehouse affiliation department',
         contactPerson: 'Enter contact person',
         contactPhone: 'Enter contact phone',
@@ -598,7 +601,7 @@ export default {
         warehouseName: 'Warehouse Name',
         warehouseType: 'Warehouse Type',
         location: 'Location',
-        warehouseArea: 'Warehouse Area',
+        warehouseArea: 'Warehouse Volume',
         belongs: 'Affiliated Unit',
         organName: 'Affiliation Department',
         supplierName: 'Supplier Name',
@@ -607,7 +610,8 @@ export default {
         contactPerson: 'Contact Person',
         contactPhone: 'Contact Phone',
         status: 'Status',
-        actions: 'Actions'
+        actions: 'Actions',
+        usedWarehouseArea: 'Volume'
       },
       status: {
         enabled: 'Enabled',
@@ -873,7 +877,8 @@ export default {
       status: {
         pending: 'Pending Audit',
         completed: 'Completed',
-        cancelled: 'Cancelled'
+        cancelled: 'Cancelled',
+        rejected: 'Rejected'
       },
       auditInfo: 'Audit Information',
       form: {
@@ -935,7 +940,7 @@ export default {
         batchNo: 'Select batch number',
         quantity: 'Enter stock out quantity',
         specModel: 'Enter specification model (optional)',
-        unitOfMeasure: 'Enter Unit (optional)',
+        unitOfMeasure: 'Select unit of measure',
         itemRemarks: 'Enter item remarks',
         auditRemark: 'Enter audit opinion',
         inputCategory: 'Category (auto-filled)',
@@ -956,7 +961,8 @@ export default {
         quantityExceeds: 'Stock out quantity cannot exceed available inventory',
         itemsRequired: 'Please add at least one stock out product detail',
         detailsRequired: 'Please add at least one stock out detail',
-        auditRemarkRequired: 'Please enter audit opinion'
+        auditRemarkRequired: 'Please enter audit opinion',
+        unitOfMeasureRequired: 'Please select unit of measure'
       },
       columns: {
         outboundOrderId: 'Stock Out Order Number',
@@ -1053,16 +1059,24 @@ export default {
 
   // 数据大屏
   dashboard: {
-    title: 'Agricultural Input Supply Management Dashboard',
-    subtitle: 'Real-time data monitoring and visual analysis',
+    title: 'Agricultural Input Management Dashboard',
+    subtitle: 'Real-time monitoring of demand, allocation and distribution',
     lastUpdate: 'Last Updated',
     autoRefresh: 'Auto Refresh',
+    refreshInterval: 'Refresh Interval',
+    systemStatus: 'System Normal',
     fullscreen: 'Full Screen',
     exitFullscreen: 'Exit Full Screen',
     overview: {
-      totalSuppliers: 'Total Suppliers',
+      totalDemands: 'Total Demands',
+      allocated: 'Allocated',
+      satisfactionRate: 'Satisfaction Rate',
+      allocationRate: 'Allocation Rate',
+      arrivalRate: 'Arrival Rate',
       certifiedSuppliers: 'Certified Suppliers',
-      pendingSuppliers: 'Pending Approval Suppliers',
+      pendingSuppliers: 'Pending',
+      activeWarehouses: 'Active Warehouses',
+      totalSuppliers: 'Total Suppliers',
       rejectedSuppliers: 'Rejected Suppliers',
       totalInputs: 'Total Inputs',
       seedInputs: 'Seeds',
@@ -1138,6 +1152,23 @@ export default {
       count: 'Count',
       stockQuantity: 'Inventory Quantity',
       percentage: 'Proportion'
+    },
+    demandByType: {
+      title: 'Demand by Input Type'
+    },
+    demandByRegion: {
+      title: 'Demand by Region (TOP 10)'
+    },
+    allocationProgress: {
+      title: 'Allocation Progress',
+      overall: 'Overall'
+    },
+    circulation: {
+      title: 'Distribution Flow Status'
+    },
+    recentActivities: {
+      title: 'Recent Activities',
+      noData: 'No recent activities'
     },
     warnings: {
       title: 'Alert Information',
@@ -1331,7 +1362,9 @@ export default {
       titleRequired: 'Please enter feedback title',
       titleLength: 'Feedback title cannot exceed 200 characters',
       contentRequired: 'Please enter feedback content',
+      contactNameRequired: 'Please enter contact person name',
       contactNameLength: 'Contact person name cannot exceed 100 characters',
+      contactPhoneRequired: 'Please enter contact phone',
       contactPhoneLength: 'Contact phone cannot exceed 20 characters',
       contactPhoneFormat: 'Please enter valid phone number',
       contactEmailFormat: 'Please enter valid email address',

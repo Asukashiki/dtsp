@@ -104,3 +104,16 @@ export function getAuditHistory(trialId, params) {
     params
   })
 }
+
+/**
+ * 作废审核记录
+ * @param {string} auditId - 审核ID
+ * @param {string} voidReason - 作废原因
+ */
+export function voidAudit(auditId, voidReason) {
+  return request({
+    url: `${API_BASE_URL}/breeding/trial/audit/void/${auditId}`,
+    method: 'post',
+    params: { voidReason }
+  })
+}

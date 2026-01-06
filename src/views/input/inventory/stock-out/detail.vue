@@ -110,12 +110,24 @@
             <el-table :data="detailData.details || []" stripe style="width: 100%">
               <el-table-column type="index" label="#" width="60" />
               <el-table-column prop="material_name" :label="$t('input.inventory.stockOut.form.inputName')" min-width="150" />
-              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.form.inputType')" width="120" />
-              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockOut.form.inputCategory')" width="120" />
+              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.form.inputType')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_type', scope.row.material_type) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockOut.form.inputCategory')" width="120">
+                <template #default="scope">
+                  {{ getLabelByValue('input_category', scope.row.agricultural_input_type) || scope.row.agricultural_input_type }}
+                </template>
+              </el-table-column>
               <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockOut.form.batchNo')" width="150" />
               <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
               <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
-              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100" />
+              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100">
+                <template #default="scope">
+                  {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
+                </template>
+              </el-table-column>
               <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
                 <template #default="{ row }">
                   <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
@@ -136,15 +148,15 @@
                 <span class="item-index">#{{ index + 1 }}</span>
                 <h4 class="item-name">{{ item.material_name }}</h4>
               </div>
-              <div class="item-info">
-                <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
-                  <span class="value">{{ item.material_type || '-' }}</span>
-                </div>
-                <div v-if="item.agricultural_input_type" class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.inputCategory') }}:</span>
-                  <span class="value">{{ item.agricultural_input_type }}</span>
-                </div>
+               <div class="item-info">
+                 <div class="info-row">
+                   <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
+                   <span class="value">{{ getLabelByValue('input_type', item.material_type) || item.material_type || '-' }}</span>
+                 </div>
+                 <div v-if="item.agricultural_input_type" class="info-row">
+                   <span class="label">{{ $t('input.inventory.stockOut.form.inputCategory') }}:</span>
+                   <span class="value">{{ getLabelByValue('input_category', item.agricultural_input_type) || item.agricultural_input_type }}</span>
+                 </div>
                 <div v-if="item.material_batch_id" class="info-row">
                   <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
                   <span class="value">{{ item.material_batch_id }}</span>
@@ -159,7 +171,7 @@
                 </div>
                 <div v-if="item.unit_of_measure" class="info-row">
                   <span class="label">{{ $t('input.inventory.stockOut.form.unitOfMeasure') }}:</span>
-                  <span class="value">{{ item.unit_of_measure }}</span>
+                  <span class="value">{{ getLabelByValue('input_material_unit', item.unit_of_measure) || item.unit_of_measure }}</span>
                 </div>
               </div>
               <div v-if="item.batch_splits && item.batch_splits.length > 0" class="item-footer">
@@ -199,10 +211,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getOutboundOrderDetail } from '@/api/outbound'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+// 初始化字典
+const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input_category', 'input_material_unit'])
 
 const loading = ref(false)
 const detailData = ref(null)
@@ -246,22 +262,30 @@ const hasBatchSplits = computed(() => {
   return detailData.value.details.some(detail => detail.batch_splits && detail.batch_splits.length > 0)
 })
 
-// 获取类型标签
+// 获取出库类型标签
 const getTypeTag = (type) => {
   const typeMap = {
     1: 'success',
-    2: 'warning'
+    2: 'warning',
+    'sale': 'success',
+    'transfer': 'warning',
+    'cancelled': 'info',
+    'rejected': 'danger'
   }
   return typeMap[type] || 'info'
 }
 
-// 获取类型文本
+// 获取出库类型文本
 const getTypeText = (type) => {
   const typeMap = {
     1: t('input.inventory.stockOut.type.sale'),
-    2: t('input.inventory.stockOut.type.transfer')
+    2: t('input.inventory.stockOut.type.transfer'),
+    'sale': t('input.inventory.stockOut.type.sale'),
+    'transfer': t('input.inventory.stockOut.type.transfer'),
+    'cancelled': t('input.inventory.stockOut.status.cancelled'),
+    'rejected': t('input.inventory.stockOut.status.rejected')
   }
-  return typeMap[type] || '-'
+  return typeMap[type] || type
 }
 
 // 获取状态标签
@@ -269,7 +293,8 @@ const getStatusTag = (status) => {
   const statusMap = {
     'pending': 'warning',
     'completed': 'success',
-    'cancelled': 'info'
+    'cancelled': 'info',
+    'rejected': 'danger'
   }
   return statusMap[status] || 'info'
 }
@@ -279,7 +304,8 @@ const getStatusText = (status) => {
   const statusMap = {
     'pending': t('input.inventory.stockOut.status.pending'),
     'completed': t('input.inventory.stockOut.status.completed'),
-    'cancelled': t('input.inventory.stockOut.status.cancelled')
+    'cancelled': t('input.inventory.stockOut.status.cancelled'),
+    'rejected': t('input.inventory.stockOut.status.rejected')
   }
   return statusMap[status] || '-'
 }

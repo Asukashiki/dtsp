@@ -39,6 +39,10 @@
               <span class="label">{{ $t('research.c1Propagation.form.applicantOrgId') }}:</span>
               <span class="value">{{ data.applicantOrgId }}</span>
             </div>
+            <div class="detail-item" v-if="data.authId">
+              <span class="label">{{ $t('research.c1Propagation.columns.authId') }}:</span>
+              <span class="value">{{ data.authId }}</span>
+            </div>
           </div>
         </div>
 
@@ -53,9 +57,15 @@
               <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
               <span class="value">{{ data.propagationBatchId }}</span>
             </div>
+            <div class="detail-item" v-if="data.sourceType">
+              <span class="label">{{ $t('research.c1Propagation.sourceType') }}:</span>
+              <el-tag :type="data.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                {{ data.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
+              </el-tag>
+            </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
-              <span class="value">{{ data.cropType }}</span>
+              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
             </div>
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.varietyName') }}:</span>
@@ -72,6 +82,18 @@
             <div class="detail-item">
               <span class="label">{{ $t('research.c1Propagation.form.applyDate') }}:</span>
               <span class="value">{{ data.applyDate }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
+              <span class="value">{{ data.demandQuantity || '-' }} kg</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>
+              <span class="value">{{ data.fromSeedType || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ $t('research.c1Propagation.form.toSeedType') }}:</span>
+              <span class="value">{{ data.toSeedType || '-' }}</span>
             </div>
             <div class="detail-item full-width">
               <span class="label">{{ $t('research.c1Propagation.form.applyDescription') }}:</span>
@@ -144,6 +166,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -153,6 +176,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 // 获取状态类型
 const getStatusType = (status) => {

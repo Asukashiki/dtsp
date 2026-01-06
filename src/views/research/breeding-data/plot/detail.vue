@@ -31,6 +31,7 @@
               <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
               <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Irrigation Count">{{ irrigationCount }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -42,9 +43,26 @@
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item label="Seed Quantity (kg)">{{ detailData.seedQuantity || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Seed Quantity (g)">{{ detailData.seedQuantity || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Sowing Method">{{ detailData.sowingMethod || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Sowing Time">{{ detailData.sowingTime || '-' }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
+
+        <!-- Audit Information -->
+        <div class="info-card" v-if="detailData.auditStatus && detailData.auditStatus !== 'S0'">
+          <div class="card-header">
+            <div class="card-title"><i class="ri-file-check-line"></i><span>Audit Information</span></div>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="Audit Status">
+                <dict-tag :options="dictOptions.flow_status" :value="detailData.auditStatus" />
+              </el-descriptions-item>
+              <el-descriptions-item label="Audited By">{{ detailData.auditedName || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audit Time">{{ detailData.auditTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Audit Opinion" :span="2">{{ detailData.auditOpinion || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -57,19 +75,33 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPlotInfo } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+const { options: dictOptions } = useDict('flow_status')
 
 const getInfo = async () => {
   loading.value = true
   try {
     const res = await getPlotInfo(route.params.plotId)
     detailData.value = res.data || {}
+    // 获取灌溉次数
+    await loadIrrigationCount()
   } finally {
     loading.value = false
+  }
+}
+
+const loadIrrigationCount = async () => {
+  try {
+    const res = await getIrrigationCount()
+    const countMap = res.data || {}
+    irrigationCount.value = countMap[route.params.plotId] || 0
+  } catch (error) {
+    console.error('获取灌溉次数失败:', error)
   }
 }
 

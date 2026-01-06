@@ -39,13 +39,25 @@
             <span class="info-value">{{ data.organ }}</span>
           </div>
           <div class="info-item">
+            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeName') }}:</span>
+            <span class="info-value">{{ data.distributeName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.fromSeedLevel') }}:</span>
+            <span class="info-value">{{ data.fromSeedLevel }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.toSeedLevel') }}:</span>
+            <span class="info-value">{{ data.toSeedLevel }}</span>
+          </div>
+          <div class="info-item">
             <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.totalDistributeQuantity') }}:</span>
             <span class="info-value highlight">{{ data.totalDistributeQuantity }} kg</span>
           </div>
           <div class="info-item">
             <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeStatus') }}:</span>
             <span class="info-value">
-              <el-tag type="success" size="small">{{ $t(`research.breeding.seed.distribution.status.${data.distributeStatus}`) }}</el-tag>
+              <el-tag type="success" size="small">{{ data.distributeStatus }}</el-tag>
             </span>
           </div>
           <div class="info-item full-width" v-if="data.remark">
@@ -64,22 +76,29 @@
         <div class="detail-table">
           <el-table :data="data.detailList" stripe border style="width: 100%">
             <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
+            
             <el-table-column
-              prop="varietyName"
-              :label="$t('research.breeding.seed.distribution.detailColumns.varietyName')"
+              prop="produceBatchName"
+              :label="$t('research.breeding.seed.distribution.detailColumns.produceBatchName')"
+              min-width="180"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="breedBatchName"
+              :label="$t('research.breeding.seed.distribution.detailColumns.breedBatchName')"
               min-width="150"
               show-overflow-tooltip
             />
             <el-table-column
-              prop="cropType"
-              :label="$t('research.breeding.seed.distribution.detailColumns.cropType')"
-              width="120"
-              align="center"
+              prop="parentalSeedSource"
+              :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
+              min-width="150"
+              show-overflow-tooltip
             />
             <el-table-column
-              prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.distribution.detailColumns.breedSeedProduceBatchId')"
-              width="180"
+              prop="varietyName"
+              :label="$t('research.breeding.seed.distribution.detailColumns.varietyName')"
+              min-width="150"
               show-overflow-tooltip
             />
             <el-table-column
@@ -115,13 +134,25 @@
           <div v-for="(item, index) in data.detailList" :key="item.distributeDetailId" class="mobile-detail-card">
             <div class="card-header">
               <el-tag type="primary" size="small">{{ $t('common.index') }} {{ index + 1 }}</el-tag>
-              <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
             </div>
             <h4 class="card-title">{{ item.varietyName }}</h4>
             <div class="card-info">
               <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.breedSeedProduceBatchId') }}:</span>
-                <span class="value">{{ item.breedSeedProduceBatchId }}</span>
+                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeDetailId') }}:</span>
+                <span class="value">{{ item.distributeDetailId }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.produceBatchName') }}:</span>
+                <span class="value">{{ item.produceBatchName }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.breedBatchName') }}:</span>
+                <span class="value">{{ item.breedBatchName }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.parentalSeedSource') }}:</span>
+                <span class="value">{{ item.parentalSeedSource }}</span>
               </div>
               <div class="info-row">
                 <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeQuantity') }}:</span>
@@ -167,6 +198,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import { useDict } from '@/hooks/useDict'
 
 const props = defineProps({
   data: {
@@ -177,6 +209,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
+
+// 使用 useDict hook 获取字典数据
+const { getLabelByValue } = useDict(['crop_type'])
 
 const handleBack = () => {
   emit('back')

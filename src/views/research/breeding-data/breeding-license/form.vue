@@ -16,11 +16,11 @@
     <!-- Form Content -->
     <div class="form-content">
       <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="200px"
-        v-loading="loading"
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="200px"
+          v-loading="loading"
       >
         <!-- Basic Information Section -->
         <div class="form-section">
@@ -31,56 +31,56 @@
 
           <el-form-item :label="$t('research.breedingLicense.form.batchId')" prop="batchId">
             <el-select
-              v-model="formData.batchId"
-              :placeholder="$t('research.breedingLicense.placeholder.batchId')"
-              filterable
-              clearable
-              disabled
-              style="width: 100%"
-              @change="handleBatchChange"
+                v-model="formData.batchId"
+                :placeholder="$t('research.breedingLicense.placeholder.batchId')"
+                filterable
+                clearable
+                disabled
+                style="width: 100%"
+                @change="handleBatchChange"
             >
               <el-option
-                v-for="batch in batchList"
-                :key="batch.id"
-                :label="batch.batchName"
-                :value="batch.id"
+                  v-for="batch in batchList"
+                  :key="batch.id"
+                  :label="batch.batchName"
+                  :value="batch.id"
               />
             </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.datasetId')" prop="datasetId">
             <el-select
-              v-model="formData.datasetId"
-              :placeholder="$t('research.breedingLicense.placeholder.datasetId')"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="handleDatasetChange"
+                v-model="formData.datasetId"
+                :placeholder="$t('research.breedingLicense.placeholder.datasetId')"
+                filterable
+                clearable
+                style="width: 100%"
+                @change="handleDatasetChange"
             >
               <el-option
-                v-for="dataset in datasetList"
-                :key="dataset.id"
-                :label="`${dataset.datasetCode} - ${dataset.batchName}`"
-                :value="dataset.id"
+                  v-for="dataset in datasetList"
+                  :key="dataset.id"
+                  :label="`${dataset.datasetCode}`"
+                  :value="dataset.id"
               />
             </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.cropType')" prop="cropType">
             <el-input
-              v-model="formData.cropType"
-              :placeholder="$t('research.breedingLicense.placeholder.cropType')"
-              clearable
-              disabled
+                v-model="formData.cropType"
+                :placeholder="$t('research.breedingLicense.placeholder.cropType')"
+                clearable
+                disabled
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.varietyName')" prop="varietyName">
             <el-input
-              v-model="formData.varietyName"
-              :placeholder="$t('research.breedingLicense.placeholder.varietyName')"
-              clearable
-              disabled
+                v-model="formData.varietyName"
+                :placeholder="$t('research.breedingLicense.placeholder.varietyName')"
+                clearable
+                disabled
             />
           </el-form-item>
         </div>
@@ -94,62 +94,62 @@
 
           <el-form-item :label="$t('research.breedingLicense.form.licenseNo')" prop="licenseNo">
             <el-input
-              v-model="formData.licenseNo"
-              :placeholder="$t('research.breedingLicense.placeholder.licenseNo')"
-              clearable
+                v-model="formData.licenseNo"
+                :placeholder="$t('research.breedingLicense.placeholder.licenseNo')"
+                clearable
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.approvalOrg')" prop="approvalOrg">
             <el-input
-              v-model="formData.approvalOrg"
-              :placeholder="$t('research.breedingLicense.placeholder.approvalOrg')"
-              clearable
+                v-model="formData.approvalOrg"
+                :placeholder="$t('research.breedingLicense.placeholder.approvalOrg')"
+                clearable
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.approvalDate')" prop="approvalDate">
             <el-date-picker
-              v-model="formData.approvalDate"
-              type="date"
-              :placeholder="$t('research.breedingLicense.placeholder.approvalDate')"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
+                v-model="formData.approvalDate"
+                type="date"
+                :placeholder="$t('research.breedingLicense.placeholder.approvalDate')"
+                format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.validStartDate')" prop="validStartDate">
             <el-date-picker
-              v-model="formData.validStartDate"
-              type="date"
-              :placeholder="$t('research.breedingLicense.placeholder.validStartDate')"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
+                v-model="formData.validStartDate"
+                type="date"
+                :placeholder="$t('research.breedingLicense.placeholder.validStartDate')"
+                format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.validEndDate')" prop="validEndDate">
             <el-date-picker
-              v-model="formData.validEndDate"
-              type="date"
-              :placeholder="$t('research.breedingLicense.placeholder.validEndDate')"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
+                v-model="formData.validEndDate"
+                type="date"
+                :placeholder="$t('research.breedingLicense.placeholder.validEndDate')"
+                format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.certificateFile')" prop="certificateFile">
             <el-upload
-              class="doc-upload"
-              :http-request="handleUploadFile"
-              :file-list="certificateFileList"
-              :on-remove="handleRemoveFile"
-              :on-preview="handlePreviewFile"
-              :limit="1"
-              accept=".pdf"
+                class="doc-upload"
+                :http-request="handleUploadFile"
+                :file-list="certificateFileList"
+                :on-remove="handleRemoveFile"
+                :on-preview="handlePreviewFile"
+                :limit="1"
+                accept=".pdf"
             >
               <el-button type="primary" link>
                 <i class="ri-upload-2-line"></i>
@@ -160,9 +160,9 @@
 
           <el-form-item :label="$t('research.breedingLicense.form.licenseStatus')" prop="licenseStatus">
             <el-select
-              v-model="formData.licenseStatus"
-              :placeholder="$t('research.breedingLicense.placeholder.licenseStatus')"
-              style="width: 100%"
+                v-model="formData.licenseStatus"
+                :placeholder="$t('research.breedingLicense.placeholder.licenseStatus')"
+                style="width: 100%"
             >
               <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
             </el-select>
@@ -170,16 +170,16 @@
 
           <el-form-item :label="$t('research.breedingLicense.form.remark')" prop="remark">
             <el-input
-              v-model="formData.remark"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breedingLicense.placeholder.remark')"
+                v-model="formData.remark"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('research.breedingLicense.placeholder.remark')"
             />
           </el-form-item>
         </div>
 
         <!-- Variety Traits Section -->
-        <!-- <div class="form-section">
+        <div class="form-section">
           <h2 class="section-title">
             <i class="ri-plant-line"></i>
             {{ $t('research.breedingLicense.form.varietyTraits') }}
@@ -187,83 +187,83 @@
 
           <el-form-item :label="$t('research.breedingLicense.form.minYieldPotential')" prop="minYieldPotential">
             <el-input-number
-              v-model="formData.minYieldPotential"
-              :placeholder="$t('research.breedingLicense.placeholder.minYieldPotential')"
-              :min="0"
-              :precision="2"
-              :step="0.1"
-              style="width: 100%"
+                v-model="formData.minYieldPotential"
+                :placeholder="$t('research.breedingLicense.placeholder.minYieldPotential')"
+                :min="0"
+                :precision="2"
+                :step="0.1"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.maxYieldPotential')" prop="maxYieldPotential">
             <el-input-number
-              v-model="formData.maxYieldPotential"
-              :placeholder="$t('research.breedingLicense.placeholder.maxYieldPotential')"
-              :min="0"
-              :precision="2"
-              :step="0.1"
-              style="width: 100%"
+                v-model="formData.maxYieldPotential"
+                :placeholder="$t('research.breedingLicense.placeholder.maxYieldPotential')"
+                :min="0"
+                :precision="2"
+                :step="0.1"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.diseaseResistance')" prop="diseaseResistance">
             <el-input
-              v-model="formData.diseaseResistance"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breedingLicense.placeholder.diseaseResistance')"
+                v-model="formData.diseaseResistance"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('research.breedingLicense.placeholder.diseaseResistance')"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.stressTolerance')" prop="stressTolerance">
             <el-input
-              v-model="formData.stressTolerance"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breedingLicense.placeholder.stressTolerance')"
+                v-model="formData.stressTolerance"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('research.breedingLicense.placeholder.stressTolerance')"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.maturityDays')" prop="maturityDays">
             <el-input-number
-              v-model="formData.maturityDays"
-              :placeholder="$t('research.breedingLicense.placeholder.maturityDays')"
-              :min="0"
-              :step="1"
-              style="width: 100%"
+                v-model="formData.maturityDays"
+                :placeholder="$t('research.breedingLicense.placeholder.maturityDays')"
+                :min="0"
+                :step="1"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.plantHeight')" prop="plantHeight">
             <el-input-number
-              v-model="formData.plantHeight"
-              :placeholder="$t('research.breedingLicense.placeholder.plantHeight')"
-              :min="0"
-              :precision="2"
-              :step="1"
-              style="width: 100%"
+                v-model="formData.plantHeight"
+                :placeholder="$t('research.breedingLicense.placeholder.plantHeight')"
+                :min="0"
+                :precision="2"
+                :step="1"
+                style="width: 100%"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.grainQualityTraits')" prop="grainQualityTraits">
             <el-input
-              v-model="formData.grainQualityTraits"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breedingLicense.placeholder.grainQualityTraits')"
+                v-model="formData.grainQualityTraits"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('research.breedingLicense.placeholder.grainQualityTraits')"
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.breedingLicense.form.otherTraits')" prop="otherTraits">
             <el-input
-              v-model="formData.otherTraits"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breedingLicense.placeholder.otherTraits')"
+                v-model="formData.otherTraits"
+                type="textarea"
+                :rows="3"
+                :placeholder="$t('research.breedingLicense.placeholder.otherTraits')"
             />
           </el-form-item>
-        </div> -->
+        </div>
 
         <!-- Form Actions -->
         <div class="form-actions">
@@ -321,7 +321,7 @@ const formData = reactive({
   certificateFileName: '',  // 新增:保存原始文件名
   licenseStatus: 'valid',
   remark: '',
-  // Variety Traits
+  // Variety Traits（已存在，无需新增）
   traitsId: '',
   minYieldPotential: null,
   maxYieldPotential: null,
@@ -336,19 +336,19 @@ const formData = reactive({
 // 认证文件列表
 const certificateFileList = ref([])
 
-// JSON Validator
-const validateJson = (rule, value, callback) => {
-  if (!value) {
-    callback()
-    return
-  }
-  try {
-    JSON.parse(value)
-    callback()
-  } catch (e) {
-    callback(new Error(t('research.breedingLicense.rules.jsonFormat')))
-  }
-}
+// // JSON Validator
+// const validateJson = (rule, value, callback) => {
+//   if (!value) {
+//     callback()
+//     return
+//   }
+//   try {
+//     JSON.parse(value)
+//     callback()
+//   } catch (e) {
+//     callback(new Error(t('research.breedingLicense.rules.jsonFormat')))
+//   }
+// }
 
 // Form Rules
 const formRules = computed(() => ({
@@ -386,13 +386,13 @@ const formRules = computed(() => ({
     { type: 'number', min: 0, message: t('research.breedingLicense.rules.maxYieldPotentialMin'), trigger: 'change' }
   ],
   diseaseResistance: [
-    { validator: validateJson, trigger: 'blur' }
+
   ],
   stressTolerance: [
-    { validator: validateJson, trigger: 'blur' }
+
   ],
   otherTraits: [
-    { validator: validateJson, trigger: 'blur' }
+
   ],
   maturityDays: [
     { type: 'number', min: 0, message: t('research.breedingLicense.rules.maturityDaysMin'), trigger: 'change' }
@@ -579,11 +579,11 @@ const handleSubmit = async () => {
     const submitData = {
       ...formData,
       certificateFile: certificateFileList.value.length > 0
-        ? (certificateFileList.value[0].dataId || certificateFileList.value[0].fileId || '')
-        : '',
+          ? (certificateFileList.value[0].dataId || certificateFileList.value[0].fileId || '')
+          : '',
       certificateFileName: certificateFileList.value.length > 0
-        ? certificateFileList.value[0].name
-        : ''
+          ? certificateFileList.value[0].name
+          : ''
     }
 
     const apiFunc = isEdit.value ? updateLicense : addLicense
@@ -591,9 +591,9 @@ const handleSubmit = async () => {
 
     if (res.code === 200) {
       ElMessage.success(
-        isEdit.value
-          ? t('research.breedingLicense.message.updateSuccess')
-          : t('research.breedingLicense.message.addSuccess')
+          isEdit.value
+              ? t('research.breedingLicense.message.updateSuccess')
+              : t('research.breedingLicense.message.addSuccess')
       )
       router.back()
     } else {
@@ -602,7 +602,7 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.log('error',error)
-      ElMessage.error(t('common.submitFailed'))
+    ElMessage.error(t('common.submitFailed'))
   } finally {
     submitting.value = false
   }

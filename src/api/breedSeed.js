@@ -32,11 +32,11 @@ export const getBreedSeedProduceDetail = (breedSeedProduceBatchId) => {
 
 /**
  * 获取生产批次的剩余量（用于实时查询）
- * Get remaining quantity of production batch
+ * Get remaining quantity of production batch (returns detail with remainingQuantity)
  */
 export const getBreedSeedProduceRemainingQuantity = (breedSeedProduceBatchId) => {
   return agricultureRequest({
-    url: `/seed/breed/produce/detail/${breedSeedProduceBatchId}`,
+    url: `/seed/breed/produce/remaining/${breedSeedProduceBatchId}`,
     method: 'get'
   })
 }
@@ -62,6 +62,52 @@ export const deleteBreedSeedProduce = (breedSeedProduceBatchId) => {
     url: '/seed/breed/produce/delete',
     method: 'get',
     params: { breedSeedProduceBatchId }
+  })
+}
+
+/**
+ * 提交生产结果
+ * Submit production result
+ */
+export const addBreedSeedProduceResult = (data) => {
+  return agricultureRequest({
+    url: '/seed/breed/produce/result/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询生产结果列表
+ * Get result list
+ */
+export const getBreedSeedProduceResultList = (query) => {
+  return agricultureRequest({
+    url: '/seed/breed/produce/result/list',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
+ * 获取生产结果详情
+ * Get result detail
+ */
+export const getBreedSeedProduceResult = (resultId) => {
+  return agricultureRequest({
+    url: '/seed/breed/produce/result/' + resultId,
+    method: 'get'
+  })
+}
+
+/**
+ * 删除生产结果
+ * Delete result
+ */
+export const deleteBreedSeedProduceResult = (resultIds) => {
+  return agricultureRequest({
+    url: '/seed/breed/produce/result/' + resultIds,
+    method: 'delete'
   })
 }
 

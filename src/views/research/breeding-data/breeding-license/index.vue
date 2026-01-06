@@ -50,7 +50,7 @@
                 <el-option :label="$t('research.breedingLicense.allStatus')" value="" />
                 <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
                 <el-option :label="$t('research.breedingLicense.status.expired')" value="expired" />
-                <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />
+<!--                <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />-->
               </el-select>
               <el-button type="primary" @click="handleSearch">
                 <i class="ri-search-line"></i>
@@ -70,16 +70,20 @@
                   :label="$t('research.breedingLicense.columns.licenseNo')"
                   min-width="150"
                 />
-                <el-table-column
+                <!-- <el-table-column
                   prop="batchName"
                   :label="$t('research.breedingLicense.columns.batchName')"
                   min-width="150"
-                />
+                /> -->
                 <el-table-column
                   prop="cropType"
                   :label="$t('research.breedingLicense.columns.cropType')"
                   min-width="120"
-                />
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('crop_type', row.cropType) || row.cropType }}
+                  </template>
+                </el-table-column>
                 <el-table-column
                   prop="varietyName"
                   :label="$t('research.breedingLicense.columns.varietyName')"
@@ -117,10 +121,10 @@
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row.id)">
+                      <!-- <el-button link type="danger" @click="handleDelete(row.id)">
                         <i class="ri-delete-bin-line"></i>
                         {{ $t('common.delete') }}
-                      </el-button>
+                      </el-button> -->
                     </div>
                   </template>
                 </el-table-column>
@@ -153,13 +157,13 @@
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
-                  <div class="mobile-card-row">
+                  <!-- <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.batchName') }}:</span>
                     <span class="value">{{ item.batchName }}</span>
-                  </div>
+                  </div> -->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.cropType') }}:</span>
-                    <span class="value">{{ item.cropType }}</span>
+                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('research.breedingLicense.columns.varietyName') }}:</span>
@@ -181,9 +185,9 @@
                   <el-button size="small" @click="handleEdit(item.id)">
                     {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item.id)">
+                  <!-- <el-button type="danger" size="small" @click="handleDelete(item.id)">
                     {{ $t('common.delete') }}
-                  </el-button>
+                  </el-button> -->
                 </div>
               </div>
 
@@ -217,9 +221,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLicenseList, deleteLicense } from '@/api/breedingLicense'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 字典数据
+const { options, getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
 
 const loading = ref(false)
 const licenseList = ref([])
@@ -234,7 +242,7 @@ const queryParams = reactive({
   approvalDateEnd: ''
 })
 
-// 获取状态类型
+// 获取状态类型 - 使用字典
 const getStatusType = (status) => {
   const typeMap = {
     valid: 'success',
@@ -244,9 +252,9 @@ const getStatusType = (status) => {
   return typeMap[status] || 'info'
 }
 
-// 获取状态文本
+// 获取状态文本 - 使用字典
 const getStatusText = (status) => {
-  return t(`research.breedingLicense.status.${status}`) || status
+  return getLabelByValue('license_status', status) || status
 }
 
 // 加载数据
@@ -343,68 +351,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 页面容器 */
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-wrapper {
-  margin: 0 auto;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
 
 /* 卡片 */
 .info-card {

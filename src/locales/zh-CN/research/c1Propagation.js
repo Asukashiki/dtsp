@@ -36,9 +36,9 @@ export default {
     operatorInfo: '操作人信息',
 
     // 字段
-    applicantOrgType: '申请机构类型',
-    applicantOrgName: '申请机构名称',
-    applicantOrgId: '申请机构ID',
+    applicantOrgType: '申请组织类型',
+    applicantOrgName: '申请组织名称',
+    applicantOrgId: '申请组织ID',
     propagationBatchId: '繁育批次ID',
     cropType: '作物种类',
     varietyName: '品种名称',
@@ -47,6 +47,9 @@ export default {
     applyDate: '申请日期',
     applyDescription: '申请描述',
     applyStatus: '申请状态',
+    demandQuantity: '需求数量',
+    fromSeedType: '从种子类型',
+    toSeedType: '到种子类型',
 
     // 审核字段
     auditResult: '审核结果',
@@ -75,7 +78,10 @@ export default {
     applyDate: '请选择申请日期',
     applyDescription: '请输入申请描述',
     auditResult: '请选择审核结果',
-    auditOpinion: '请输入审核意见'
+    auditOpinion: '请输入审核意见',
+    demandQuantity: '请输入需求数量',
+    fromSeedType: '请选择从种子类型',
+    toSeedType: '请选择到种子类型'
   },
 
   // 验证规则
@@ -87,12 +93,18 @@ export default {
     cropTypeRequired: '请选择作物种类',
     varietyNameRequired: '请输入品种名称',
     auditResultRequired: '请选择审核结果',
-    auditOpinionRequired: '请输入审核意见'
+    auditOpinionRequired: '请输入审核意见',
+    demandQuantityRequired: '请输入需求数量',
+    demandQuantityMinRequired: '需求数量必须大于0',
+    demandQuantityExceedMax: '需求数量不能超过最大可用数量 {max} kg',
+    fromSeedTypeRequired: '请选择从种子类型',
+    toSeedTypeRequired: '请选择到种子类型'
   },
 
   // 表格列
   columns: {
-    applicantOrgName: '机构名称',
+    applicantOrgName: '组织名称',
+    authId: '授权ID',
     cropType: '作物种类',
     varietyName: '品种名称',
     applyDate: '申请日期',
@@ -114,5 +126,20 @@ export default {
   auditResult: {
     approved: '通过',
     rejected: '拒绝'
-  }
+  },
+
+  // 种子选择相关
+  batchId: '批次ID',
+  sourceType: '数据来源',
+  sourceOseReceive: 'OSE接收确认',
+  sourceOseBatch: 'OSE批次采集',
+  varietyName: '品种名称',
+  cropType: '作物类型',
+  totalQuantity: '总数量',
+  appliedQuantity: '已申请数量',
+  availableQuantity: '可用数量',
+  parentalSeedSource: '亲本种子来源',
+  maxAvailable: '最大可用',
+  unit: '单位',
+  selectBasicSeed: '请选择Basic种子批次'
 }

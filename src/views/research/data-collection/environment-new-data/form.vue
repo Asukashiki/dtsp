@@ -44,6 +44,7 @@
               clearable
               style="width: 100%"
               :loading="plotLoading"
+              :disabled="isReadOnly || isAuditMode"
               @change="handlePlotChange"
             >
               <el-option
@@ -80,11 +81,22 @@
           </div>
 
           <el-form-item :label="$t('research.environmentNewData.form.stationId')" prop="stationId">
-            <el-input
+            <el-select
               v-model="formData.stationId"
               :placeholder="$t('research.environmentNewData.placeholder.stationId')"
-              maxlength="50"
-            />
+              filterable
+              clearable
+              style="width: 100%"
+              :loading="dictLoading"
+              :disabled="isReadOnly || isAuditMode"
+            >
+              <el-option
+                v-for="item in options.weather_station"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.timestamp')" prop="timestamp">
@@ -95,7 +107,14 @@
               format="YYYY-MM-DD HH:mm"
               value-format="YYYY-MM-DD HH:mm"
               style="width: 100%"
+              :disabled="isReadOnly || isAuditMode"
+              :default-value="new Date()"
             />
+          </el-form-item>
+
+          <!-- Observer Name (disabled, default to current user name) -->
+          <el-form-item :label="$t('research.environmentNewData.form.observerId')">
+            <el-input v-model="observerName" disabled />
           </el-form-item>
         </div>
 
@@ -111,13 +130,20 @@
               v-model="formData.parameterCode"
               :placeholder="$t('research.environmentNewData.placeholder.parameterCode')"
               style="width: 100%"
+              :disabled="isReadOnly || isAuditMode"
+              @change="handleParameterCodeChange"
             >
-              <el-option :label="$t('research.environmentNewData.parameterCode.RAIN_DAILY')" value="RAIN_DAILY" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.TMAX')" value="TMAX" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.TMIN')" value="TMIN" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.HUMIDITY')" value="HUMIDITY" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.WIND_SPEED')" value="WIND_SPEED" />
-              <el-option :label="$t('research.environmentNewData.parameterCode.SOLAR_RAD')" value="SOLAR_RAD" />
+              <el-option
+                v-for="item in options.env_parameter_code || []"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+                <div style="display: flex; justify-content: space-between;">
+                  <span>{{ item.label }}</span>
+                  <span style="color: #8492a6; font-size: 12px;">{{ item.actualValue }}</span>
+                </div>
+              </el-option>
             </el-select>
           </el-form-item>
 
@@ -129,25 +155,31 @@
                 :precision="2"
                 :controls="false"
                 style="width: 100%"
+                :disabled="isReadOnly || isAuditMode"
               />
               <span class="unit-hint">{{ formData.unit || '-' }}</span>
             </div>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.unit')" prop="unit">
-            <el-input
+            <el-select
               v-model="formData.unit"
               :placeholder="$t('research.environmentNewData.placeholder.unit')"
               maxlength="20"
+              disabled
             />
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.source')" prop="source">
-            <el-input
+            <el-select
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
-              maxlength="100"
-            />
+              style="width: 100%"
+              :disabled="isReadOnly || isAuditMode"
+            >
+              <el-option label="IOT" value="IOT" />
+              <el-option label="Metrology" value="metrology" />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="$t('research.environmentNewData.form.remark')" prop="remark">
@@ -158,20 +190,40 @@
               :placeholder="$t('research.environmentNewData.placeholder.remark')"
               maxlength="500"
               show-word-limit
+              :disabled="isReadOnly || isAuditMode"
+            />
+          </el-form-item>
+        </div>
+
+        <!-- 审批意见 (仅在审批模式下显示) -->
+        <div v-if="pageMode === 'audit'" class="form-section">
+          <div class="section-title">
+            <i class="ri-discuss-line"></i>
+            {{ $t('research.environmentNewData.form.approvalComment') }}
+          </div>
+
+          <el-form-item :label="$t('research.environmentNewData.form.approvalComment')" prop="approvalComment">
+            <el-input 
+              v-model="formData.approvalComment" 
+              type="textarea" 
+              :rows="4" 
+              :placeholder="$t('research.environmentNewData.placeholder.approvalComment')" 
+              :disabled="isReadOnly"
             />
           </el-form-item>
         </div>
 
         <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="handleCancel">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            <i class="ri-save-line"></i>
-            {{ $t('common.save') }}
-          </el-button>
-        </div>
+          <div class="form-actions">
+            <el-button 
+              v-for="button in getActionButtons()" 
+              :key="button.action"
+              :type="button.type" 
+              @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ button.label }}
+            </el-button>
+          </div>
       </el-form>
     </div>
   </div>
@@ -182,20 +234,68 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData } from '@/api/environment-new-data'
+import { getEnvironmentNewDataDetail, addEnvironmentNewData, updateEnvironmentNewData, approveEnvironmentNewData, rejectEnvironmentNewData } from '@/api/environment-new-data'
 import { getPlotInfoList } from '@/api/breedingData'
+import { getUserInfo } from '@/utils/auth'
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const formRef = ref(null)
+
+/**
+ * 根据工作流状态获取操作按钮
+ */
+const getActionButtons = () => {
+  const workflowStatus = formData.workflowStatus
+  const mode = pageMode.value
+  
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+  
+  // 审批模式
+  if (mode === 'audit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'success', label: 'approve', action: 'approve' },
+      { type: 'danger', label: 'reject', action: 'reject' }
+    ]
+  }
+  
+  // 查看模式（已审批/已归档/作废状态）
+  if (mode === 'view') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'archive', action: 'archive' },
+      { type: 'danger', label: 'cancelBatch', action: 'cancelBatch' }
+    ]
+  }
+  
+  // 默认按钮
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
 const loading = ref(false)
 const submitting = ref(false)
 const plotLoading = ref(false)
 const plotOptions = ref([])
+const { options, loading: dictLoading, getActualValueByValue } = useDict(['weather_station', 'env_parameter_code'])
 
 const isEdit = computed(() => !!route.params.envRecordId)
+const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
+const isReadOnly = computed(() => pageMode.value === 'view')
+const isAuditMode = computed(() => pageMode.value === 'audit')
 
 const formData = reactive({
   envRecordId: '',
@@ -208,16 +308,25 @@ const formData = reactive({
   value: null,
   unit: '',
   source: '',
-  remark: ''
+  remark: '',
+  observerId: '',
+  workflowStatus: '',
+  approvalComment: '' // 添加审批意见字段
 })
+
+// 观察员名称（用于显示）
+const observerName = ref('')
+
+const unitOptions = ref([
+  { value: '°C', label: '°C' },
+])
 
 const rules = reactive({
   plotId: [
     { required: true, message: t('research.environmentNewData.rules.plotIdRequired') || 'Please select a plot', trigger: 'change' }
   ],
   stationId: [
-    { required: true, message: t('research.environmentNewData.rules.stationIdRequired'), trigger: 'blur' },
-    { max: 50, message: t('research.environmentNewData.rules.stationIdLength'), trigger: 'blur' }
+    { required: true, message: t('research.environmentNewData.rules.stationIdRequired'), trigger: 'change' }
   ],
   timestamp: [
     { required: true, message: t('research.environmentNewData.rules.timestampRequired'), trigger: 'change' }
@@ -231,6 +340,9 @@ const rules = reactive({
   unit: [
     { required: true, message: t('research.environmentNewData.rules.unitRequired'), trigger: 'blur' },
     { max: 20, message: t('research.environmentNewData.rules.unitLength'), trigger: 'blur' }
+  ],
+  approvalComment: [
+    { required: true, message: t('research.environmentNewData.rules.approvalCommentRequired') || '请填写审批意见', trigger: 'blur' }
   ]
 })
 
@@ -263,6 +375,17 @@ const handlePlotChange = (plotId) => {
   }
 }
 
+// 参数代码选择变化时，自动填充单位
+const handleParameterCodeChange = (parameterCode) => {
+  if (!parameterCode) {
+    formData.unit = ''
+    return
+  }
+  // 从字典的 actualValue 获取单位
+  const unit = getActualValueByValue('env_parameter_code', parameterCode)
+  formData.unit = unit || ''
+}
+
 // 加载详情数据
 const loadDetail = async () => {
   if (!isEdit.value) return
@@ -272,6 +395,23 @@ const loadDetail = async () => {
     const res = await getEnvironmentNewDataDetail(route.params.envRecordId)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      // 设置观察员名称
+      if (res.data.observerName) {
+        observerName.value = res.data.observerName
+      } else if (res.data.observerId) {
+        // 如果后端没有返回observerName，尝试从当前用户信息获取
+        try {
+          const u = getUserInfo()
+          if (u && u.user && u.user.id === res.data.observerId) {
+            // 优先使用 name，然后是 nickName，最后是 userName
+            observerName.value = u.user.name || u.user.nickName || u.user.userName || res.data.observerId
+          } else {
+            observerName.value = res.data.observerId
+          }
+        } catch (e) {
+          observerName.value = res.data.observerId
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to load detail:', error)
@@ -284,6 +424,28 @@ const loadDetail = async () => {
 // 取消
 const handleCancel = () => {
   router.back()
+}
+
+/**
+ * 处理不同按钮操作
+ */
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      handleCancel()
+      break
+    case 'save':
+      handleSubmit()
+      break
+    case 'approve':
+      handleApprove()
+      break
+    case 'reject':
+      handleReject()
+      break
+    default:
+      console.warn(`Unknown action: ${action}`)
+  }
 }
 
 // 提交
@@ -315,8 +477,70 @@ const handleSubmit = async () => {
   }
 }
 
+// 审核通过
+const handleApprove = async () => {
+  try {
+    // 审核通过时审批意见可选，不强制验证
+    const res = await approveEnvironmentNewData(formData.envRecordId, formData.approvalComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.approveSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(t('research.environmentNewData.approveFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to approve:', error)
+    ElMessage.error(t('research.environmentNewData.approveFailed'))
+  }
+}
+
+// 驳回 - 驳回时应验证审批意见已填
+const handleReject = async () => {
+  try {
+    // 驳回时必须填写审批意见
+    if (!formData.approvalComment || formData.approvalComment.trim() === '') {
+      ElMessage.warning(t('research.environmentNewData.rules.approvalCommentRequired') || '驳回时必须填写审批意见')
+      return
+    }
+
+    const res = await rejectEnvironmentNewData(formData.envRecordId, formData.approvalComment)
+    if (res.code === 200) {
+      ElMessage.success(t('research.environmentNewData.rejectSuccess'))
+      router.back()
+    } else {
+      ElMessage.error(t('research.environmentNewData.rejectFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to reject:', error)
+    ElMessage.error(t('research.environmentNewData.rejectFailed'))
+  }
+}
+
 onMounted(() => {
   loadPlotOptions()
+  // 先设置默认值，再加载详情（这样编辑模式下会被覆盖）
+  // 设置 Observer ID 为当前登录用户（仅新增时，且为空时）
+  try {
+    const u = getUserInfo()
+    if (!isEdit.value && u && u.user && u.user.id) {
+      formData.observerId = u.user.id
+      // 优先使用 name，然后是 nickName，最后是 userName
+      observerName.value = u.user.name || u.user.nickName || u.user.userName || u.user.id
+    }
+    // 设置采集时间默认值为当前时间（仅新增时）
+    if (!isEdit.value && !formData.timestamp) {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const day = String(now.getDate()).padStart(2, '0')
+      const hours = String(now.getHours()).padStart(2, '0')
+      const minutes = String(now.getMinutes()).padStart(2, '0')
+      formData.timestamp = `${year}-${month}-${day} ${hours}:${minutes}`
+    }
+  } catch (e) {
+    // ignore
+  }
+  // 加载详情数据（编辑模式）
   loadDetail()
 })
 </script>

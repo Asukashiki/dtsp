@@ -132,12 +132,15 @@
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>
+                {{ $t('common.view') }}
               </el-button>
               <el-button link type="primary" @click="handleEdit(row)" v-if="row.status === '0'">
                 <i class="ri-edit-line"></i>
+                {{ $t('common.edit') }}
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)" v-if="row.status === '0'">
                 <i class="ri-delete-bin-line"></i>
+                {{ $t('common.delete') }}
               </el-button>
             </template>
           </el-table-column>

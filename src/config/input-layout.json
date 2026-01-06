@@ -4,28 +4,50 @@
   "icon": "ri-database-2-line",
   "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "menus": [
-      {
+    {
+      "index": "registration-management",
+      "icon": "ri-building-2-line",
+      "titleKey": "input.menu.registrationManagement",
+      "children": [
+        {
+          "index": "/input/registration",
+          "icon": "ri-file-add-line",
+          "titleKey": "input.menu.registration"
+        },
+        {
+          "index": "/input/registration/approval",
+          "icon": "ri-checkbox-circle-line",
+          "titleKey": "input.menu.registrationApproval"
+        }
+      ]
+    },
+    {
       "index": "newFarmManagement",
       "icon": "ri-plant-line",
       "titleKey": "newFarm.moduleName",
       "name": "农田管理",
       "children": [
         {
+          "index": "/input/da",
+          "icon": "ri-user-star-line",
+          "titleKey": "newFarm.menu.daManagement",
+          "name": "DA管理"
+        },
+        {
           "index": "/input/farmer",
           "icon": "ri-user-line",
           "titleKey": "newFarm.menu.farmerManagement",
-            "name": "农民管理"
+          "name": "农民管理"
         },
         {
           "index": "/input/land",
           "icon": "ri-landscape-line",
           "titleKey": "newFarm.menu.landManagement",
-            "name": "土地管理"
+          "name": "土地管理"
         }
       ]
     },
-
-       {
+    {
       "index": "input-management",
       "icon": "ri-box-3-line",
       "titleKey": "input.menu.inputManagement",
@@ -43,6 +65,11 @@
       "icon": "ri-file-edit-line",
       "titleKey": "input.menu.demandManagement",
       "children": [
+        {
+          "index": "/input/demand/aggregation-state",
+          "icon": "ri-building-4-line",
+          "titleKey": "input.menu.stateAggregation"
+        },
         {
           "index": "/input/demand/farmer",
           "icon": "ri-user-add-line",
@@ -62,29 +89,6 @@
           "index": "/input/demand/aggregation-district",
           "icon": "ri-government-line",
           "titleKey": "input.menu.districtAggregation"
-        },
-        {
-          "index": "/input/demand/aggregation-state",
-          "icon": "ri-building-4-line",
-          "titleKey": "input.menu.stateAggregation"
-        }
-      ]
-    },
-    {
-      "name": "投入品分配额度管理",
-      "index": "quota-allocation",
-      "icon": "ri-slice-line",
-      "titleKey": "allocation.menu.quotaAllocation",
-      "children": [
-        {
-          "index": "/input/allocation/zone",
-          "icon": "ri-community-line",
-          "titleKey": "allocation.menu.zoneAllocation"
-        },
-        {
-          "index": "/input/allocation/woreda",
-          "icon": "ri-community-line",
-          "titleKey": "allocation.menu.woredaAllocation"
         }
       ]
     },
@@ -107,17 +111,17 @@
         {
           "index": "/input/input-circulation/union-release",
           "icon": "ri-send-plane-line",
-          "titleKey": "research.menu.unionReleaseToWoreda"
+          "titleKey": "research.menu.unionReleaseToCooperative"
         },
         {
           "index": "/input/input-circulation/woreda-receive",
           "icon": "ri-check-double-line",
-          "titleKey": "research.menu.woredaReceiveConfirm"
+          "titleKey": "research.menu.cooperativeReceiveConfirm"
         },
         {
           "index": "/input/input-circulation/farmer-release",
           "icon": "ri-user-received-line",
-          "titleKey": "research.menu.woredaReleaseToFarmer"
+          "titleKey": "research.menu.cooperativeReleaseToFarmer"
         },
         {
           "index": "/input/input-circulation/farmer-receive",

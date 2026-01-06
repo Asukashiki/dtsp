@@ -114,3 +114,31 @@ export const auditC1Propagation = (data) => {
     data
   })
 }
+
+// ==================== 种子选择相关接口 ====================
+
+/**
+ * 获取可用的Basic种子列表
+ * 聚合OSE接收确认和批次采集两个数据源
+ * Get available Basic seed list
+ * Aggregates OSE receive confirm and batch collection data sources
+ */
+export const getAvailableBasicSeeds = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-propagation/available-seeds',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 获取指定批次的可用数量
+ * Get available quantity for specific batch
+ */
+export const getAvailableQuantity = (batchId, sourceType) => {
+  return agricultureRequest({
+    url: `/seed/c1-propagation/available-quantity/${batchId}`,
+    method: 'get',
+    params: { sourceType }
+  })
+}

@@ -45,6 +45,19 @@
                   :value="item.batchId"
                 />
               </el-select>
+              <el-select
+                v-model="searchForm.workflowStatus"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
+                clearable
+                class="search-input"
+              >
+                <el-option
+                  v-for="opt in options.flow_status"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value"
+                />
+              </el-select>
               <el-input
                 v-model="searchForm.sampleType"
                 :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleType')"
@@ -57,7 +70,7 @@
               </el-input>
               <el-select
                 v-model="searchForm.passFailFlag"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                :placeholder="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                 clearable
                 class="search-input"
               >
@@ -91,20 +104,27 @@
                   prop="batchId"
                   :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
                   prop="trialId"
                   :label="$t('research.dataCollection.laboratoryTest.form.trialId')"
                   min-width="150"
+                  show-overflow-tooltip
                 />
                 <el-table-column
+                  prop="workflowStatus"
+                  :label="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    <el-tag>{{ getLabelByValue('flow_status', row.workflowStatus) || '-' }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                 show-overflow-tooltip
                   prop="sampleId"
                   :label="$t('research.dataCollection.laboratoryTest.form.sampleId')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="sampleCondition"
-                  :label="$t('research.dataCollection.laboratoryTest.form.sampleCondition')"
                   min-width="120"
                 />
                 <el-table-column
@@ -124,7 +144,7 @@
                 />
                 <el-table-column
                   prop="passFailFlag"
-                  :label="$t('research.dataCollection.laboratoryTest.form.passFailFlag')"
+                  :label="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                   min-width="120"
                 >
                   <template #default="{ row }">
@@ -174,20 +194,92 @@
                   :label="$t('research.dataCollection.laboratoryTest.form.testDate')"
                   min-width="120"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
+                <el-table-column
+                  prop="createdByName"
+                  :label="$t('common.createdBy')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="createdTime"
+                  :label="$t('common.createdTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  prop="updateBy"
+                  :label="$t('common.updateBy')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="updatedTime"
+                  :label="$t('common.updatedTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  prop="approveByName"
+                  :label="$t('common.approver')"
+                  min-width="120"
+                />
+                <el-table-column
+                  prop="approveTime"
+                  :label="$t('common.approveTime')"
+                  min-width="160"
+                />
+                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
                   <template #default="{ row }">
                     <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
+                      <!-- 查看按钮 - 非草稿状态显示 -->
+                      <el-button
+                        v-if="row.workflowStatus !== 'S0'"
+                        link
+                        type="primary"
+                        @click="handleView(row)"
+                      >
                         <i class="ri-eye-line"></i>
                         {{ $t('common.view') }}
                       </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
+
+                      <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                      <el-button
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
+                        link
+                        type="primary"
+                        @click="handleEdit(row)"
+                      >
                         <i class="ri-edit-line"></i>
                         {{ $t('common.edit') }}
                       </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>
-                        {{ $t('common.delete') }}
+
+                      <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                      <el-button
+                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
+                        link
+                        type="success"
+                        @click="handleSubmit(row)"
+                      >
+                        <i class="ri-send-plane-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.submit') }}
+                      </el-button>
+
+                      <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
+                      <!-- <el-button
+                        v-if="row.workflowStatus === 'S2'"
+                        link
+                        type="warning"
+                        @click="handleArchive(row)"
+                      >
+                        <i class="ri-archive-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.archive') }}
+                      </el-button> -->
+
+                      <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
+                      <el-button
+                        v-if="row.workflowStatus === 'S0'"
+                        link
+                        type="danger"
+                        @click="handleCancel(row)"
+                      >
+                        <i class="ri-close-circle-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.cancel') }}
                       </el-button>
                     </div>
                   </template>
@@ -223,6 +315,12 @@
                     <span class="value">{{ item.batchId }}</span>
                   </div>
                   <div class="mobile-card-row">
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.auditStatus') }}:</span>
+                    <span class="value">
+                      {{ getLabelByValue('flow_status', item.workflowStatus) || '-' }}
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
                     <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
                     <span class="value">{{ item.trialId }}</span>
                   </div>
@@ -243,7 +341,7 @@
                     <span class="value">{{ item.resultValue || '-' }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.passFailFlag') }}:</span>
+                    <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
                     <span class="value">
                       <el-tag v-if="item.passFailFlag === 'true' || item.passFailFlag === true" type="success" size="small">Pass</el-tag>
                       <el-tag v-else-if="item.passFailFlag === 'false' || item.passFailFlag === false" type="danger" size="small">Fail</el-tag>
@@ -266,16 +364,79 @@
                     <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
                     <span class="value">{{ item.testDate || '-' }}</span>
                   </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.createdBy') }}:</span>
+                    <span class="value">{{ item.createdByName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.createdTime') }}:</span>
+                    <span class="value">{{ item.createdTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.updateBy') }}:</span>
+                    <span class="value">{{ item.updateBy || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.updatedTime') }}:</span>
+                    <span class="value">{{ item.updatedTime || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.approver') }}:</span>
+                    <span class="value">{{ item.approveByName || '-' }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('common.approveTime') }}:</span>
+                    <span class="value">{{ item.approveTime || '-' }}</span>
+                  </div>
                 </div>
                 <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
+                  <!-- 查看按钮 - 非草稿状态显示 -->
+                  <el-button
+                    v-if="item.workflowStatus !== 'S0'"
+                    type="primary"
+                    size="small"
+                    @click="handleView(item)"
+                  >
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button size="small" @click="handleEdit(item)">
+
+                  <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                  <el-button
+                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
+                    size="small"
+                    @click="handleEdit(item)"
+                  >
                     {{ $t('common.edit') }}
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(item)">
-                    {{ $t('common.delete') }}
+
+                  <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
+                  <el-button
+                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
+                    type="success"
+                    size="small"
+                    @click="handleSubmit(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.submit') }}
+                  </el-button>
+
+                  <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
+                  <el-button
+                    v-if="item.workflowStatus === 'S2'"
+                    type="warning"
+                    size="small"
+                    @click="handleArchive(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.archive') }}
+                  </el-button>
+
+                  <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
+                  <el-button
+                    v-if="item.workflowStatus === 'S0'"
+                    type="danger"
+                    size="small"
+                    @click="handleCancel(item)"
+                  >
+                    {{ $t('research.dataCollection.laboratoryTest.cancel') }}
                   </el-button>
                 </div>
               </div>
@@ -309,8 +470,9 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLabTestList, deleteLabTest } from '@/api/labTest'
+import { getLabTestList, deleteLabTest, submitLabTest, archiveLabTest, cancelLabTest } from '@/api/labTest'
 import { getBatchOptions } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -318,9 +480,12 @@ const { t } = useI18n()
 const loading = ref(false)
 const tableData = ref([])
 const batchOptions = ref([])
+// 字典：流程状态
+const { options, getLabelByValue } = useDict(['flow_status'])
 
 const searchForm = reactive({
   batchId: '',
+  workflowStatus: '',
   sampleType: '',
   passFailFlag: null,
   sampleId: ''
@@ -350,6 +515,7 @@ const loadData = async () => {
   try {
     const res = await getLabTestList({
       batchId: searchForm.batchId,
+      workflowStatus: searchForm.workflowStatus,
       sampleType: searchForm.sampleType,
       passFailFlag: searchForm.passFailFlag,
       sampleId: searchForm.sampleId,
@@ -357,8 +523,9 @@ const loadData = async () => {
       pageSize: pagination.pageSize
     })
     if (res.code === 200) {
-      tableData.value = res.data?.list || res.data || []
-      pagination.total = res.data?.total || res.total || 0
+      // 支持多种返回格式：rows(TableDataInfo), list, 或直接data数组
+      tableData.value = res.rows || res.data?.rows || res.data?.list || res.data || []
+      pagination.total = res.total || res.data?.total || 0
     }
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -377,6 +544,7 @@ const handleSearch = () => {
 // 重置
 const handleReset = () => {
   searchForm.batchId = ''
+  searchForm.workflowStatus = ''
   searchForm.sampleType = ''
   searchForm.passFailFlag = null
   searchForm.sampleId = ''
@@ -425,6 +593,87 @@ const handleDelete = async (row) => {
   }
 }
 
+// 提交审核
+const handleSubmit = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.submitConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await submitLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.submitSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to submit:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  }
+}
+
+// 归档
+const handleArchive = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.archiveConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await archiveLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.archiveSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to archive:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  }
+}
+
+// 作废
+const handleCancel = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('research.dataCollection.laboratoryTest.cancelDataConfirm'),
+      t('common.confirm'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+    const res = await cancelLabTest({ dataId: row.dataId })
+    if (res.code === 200) {
+      ElMessage.success(t('research.dataCollection.laboratoryTest.cancelSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('common.operationFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to cancel:', error)
+      ElMessage.error(t('common.operationFailed'))
+    }
+  }
+}
+
 // 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
@@ -444,67 +693,6 @@ onMounted(() => {
 
 <style scoped>
 /* 页面容器 */
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-wrapper {
-  margin: 0 auto;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
 
 /* 卡片 */
 .info-card {

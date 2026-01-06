@@ -2,16 +2,15 @@
   <div class="batch-form-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
         <div class="header-left">
-          <el-button link @click="goBack">
+        <div class="back-btn" link @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
-          </el-button>
+          {{ $t('common.back') }}
         </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('research.c1BreedingBatch.edit') : $t('research.c1BreedingBatch.add') }}</h1>
-        </div>
+      </div>
+      <div class="header-content">
+        <h1 class="page-title">{{ isEdit ? $t('research.c1BreedingBatch.edit') : $t('research.c1BreedingBatch.add') }}
+        </h1>
       </div>
     </div>
 
@@ -45,11 +44,12 @@
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
               <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" class="full-width" disabled>
-                <el-option label="Wheat" value="Wheat" />
-                <el-option label="Maize" value="Maize" />
-                <el-option label="Teff" value="Teff" />
-                <el-option label="Sorghum" value="Sorghum" />
-                <el-option label="Barley" value="Barley" />
+                <el-option
+                  v-for="item in options.crop_type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
 
@@ -57,14 +57,14 @@
               <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable  disabled/>
             </el-form-item>
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">
+            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">
               <el-select v-model="formData.breedingMethod" :placeholder="$t('research.c1BreedingBatch.placeholder.breedingMethod')" class="full-width">
                 <el-option label="Hybridization" value="hybridization" />
                 <el-option label="Selection" value="selection" />
                 <el-option label="Mutation" value="mutation" />
                 <el-option label="Other" value="other" />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.parentSeedSource')" class="full-width-item">
               <el-input v-model="formData.parentSeedSource" :placeholder="$t('research.c1BreedingBatch.placeholder.parentSeedSource')" clearable />
@@ -98,14 +98,14 @@
               <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.c1BreedingBatch.placeholder.expectedYield')" type="number" clearable />
             </el-form-item>
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.actualYield')">
-              <el-input v-model.number="formData.actualYield" :placeholder="$t('research.c1BreedingBatch.placeholder.actualYield')" type="number" clearable />
+            <el-form-item :label="$t('research.c1BreedingBatch.form.quantityToMultiply')">
+              <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
             </el-form-item>
 
 
-            <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
+            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
               <el-input v-model="formData.location" :placeholder="$t('research.c1BreedingBatch.placeholder.location')" clearable />
-            </el-form-item>
+            </el-form-item> -->
           </div>
         </div>
 
@@ -119,12 +119,13 @@
             <el-form-item :label="$t('research.c1BreedingBatch.form.orgType')">
               <el-select v-model="formData.orgType" :placeholder="$t('common.pleaseSelect')" class="full-width">
                 <el-option label="Union" value="union" />
+                <el-option label="OSE" value="ose" />
                 <el-option label="Cooperative" value="cooperative" />
               </el-select>
             </el-form-item>
 
             <el-form-item :label="$t('research.c1BreedingBatch.form.orgName')">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" clearable />
+              <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" disabled />
             </el-form-item>
           </div>
         </div>
@@ -158,14 +159,20 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, addC1BreedingBatch, updateC1BreedingBatch, getApprovedPropagations } from '@/api/c1BreedingBatch'
+import { useUserStore } from '@/store/user'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
+// 使用 useDict hook 获取字典数据
+const { options } = useDict(['crop_type'])
+
 const formRef = ref(null)
 const loading = ref(false)
 const propagationList = ref([])
+const userStore = useUserStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -181,6 +188,7 @@ const formData = ref({
   endDate: '',
   expectedYield: '',
   actualYield: '',
+  quantityToMultiply: '',
   plantingArea: '',
   orgId: '',
   orgName: '',
@@ -198,6 +206,11 @@ const rules = computed(() => ({
 
 // 初始化
 onMounted(async () => {
+  // 从用户信息自动填充组织信息
+  const userInfo = userStore.userInfo?.user || {}
+  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
+  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  
   await loadPropagations()
   if (isEdit.value) {
     await loadDetail()
@@ -281,53 +294,12 @@ const goBack = () => {
 </script>
 
 <style scoped lang="scss">
-.batch-form-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 8px;
-  color: white;
-
-  .header-content {
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .header-left {
-      margin-right: auto;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-    }
-  }
-}
 
 .form-wrapper {
   background: white;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .batch-form {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
 
   .form-block {
     margin-bottom: 30px;

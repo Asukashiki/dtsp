@@ -67,7 +67,7 @@
             :header-cell-style="{ textAlign: 'center' }"
             :cell-style="{ textAlign: 'center' }">
           <el-table-column :label="$t('inputCirculation.releaseDetailId')" type="index" width="80" />
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputType"
                          :placeholder="$t('common.pleaseSelect')"
@@ -77,7 +77,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
             <template #default="scope">
               <el-select v-model="scope.row.inputCategory"
                          :placeholder="$t('common.pleaseSelect')"
@@ -88,9 +88,14 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="120">
+          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
             <template #default="scope">
               <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
+            <template #default="scope">
+              <span>{{ scope.row.currentStock }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
@@ -100,17 +105,20 @@
                 :min="0" 
                 :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                 :precision="2"
-                @change="validateQuantity(scope.$index)" />
+                @change="validateQuantity(scope.$index)" 
+                style="width: 100%" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
+          <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
             <template #default="scope">
-              <el-input v-model="scope.row.unit" :placeholder="$t('common.pleaseInput')" />
+              <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
+                <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
             <template #default="scope">
-              <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" />
+              <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
@@ -135,6 +143,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application'
@@ -142,7 +151,7 @@ import { getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store/user'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -223,30 +232,23 @@ const getSubRegionByCode = async (code) => {
 
 // Zone变化处理
 const handleZoneChange = async (value) => {
-  await getAllCoorList(value)
+  // 清空目标相关字段
+  formData.targetId = ''
+  formData.targetAddress = ''
+  formData.targetContact = ''
+  formData.targetPhone = ''
+  await getAllCoopList(value)
   await loadDemandList(value)
 }
 
-const getAllCoorList = async (value) => {
-  loading.value = true
-  try {
-    const response = await getOrgansRegionByCode({regionCode: value})
-    if (response.code === 200) {
-      coorList.value = response.data
-    }
-  } catch (error) {
-    ElMessage.error(t('inputCirculation.queryCoorListFailed'))
-  } finally {
-    loading.value = false
-  }
-}
+// This method is now consolidated into getAllCoopList below
 
 // 加载需求列表
-const loadDemandList = async (regionCode) => {
+const loadDemandList = async (code) => {
   demandLoading.value = true
   try {
     const response = await getTownAggregationDetail({ 
-      sourceCode: regionCode,
+      sourceCode: code,
       year: formData.releaseYear || new Date().getFullYear().toString()
     })
     if (response.code === 200) {
@@ -272,8 +274,8 @@ const getCoorInfo = async (value) => {
   try {
     const response = await getUnionDetailByUnionId(value)
     if (response.code === 200 && response.data) {
-      formData.targetAddress = response.data.fullAddress
-      formData.targetContact = response.data.operator
+      formData.targetAddress = response.data.baseInfo?.fullAddress || response.data.fullAddress
+      formData.targetContact = response.data.baseInfo?.contactName || response.data.operator
     }
   } catch (error) {
     ElMessage.error(t('union.getUnionInfoFailed'))
@@ -295,6 +297,29 @@ const handleInputCategoryChange = (index) => {
   const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.quantity = 0
   detail.maxQuantity = demandQty
+  fetchStock(index)
+}
+
+// 获取库存
+const fetchStock = async (index) => {
+  const detail = formData.details[index]
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.currentStock = 0
+    return
+  }
+  
+  try {
+    const organCode = userStore.userInfo?.user?.organCode
+    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
+    if (res.code === 200 && res.data) {
+      detail.currentStock = res.data.availableStock || 0
+    } else {
+      detail.currentStock = 0
+    }
+  } catch (error) {
+    console.error('Failed to fetch stock:', error)
+    detail.currentStock = 0
+  }
 }
 
 // 根据投入品类型过滤投入品类别
@@ -365,13 +390,21 @@ const fetchDetail = async () => {
 }
 
 const addDetail = () => {
+  // 检查是否有需求数据
+  if (!demandList.value || demandList.value.length === 0) {
+    ElMessage.warning(t('inputCirculation.noDemandCannotAdd'))
+    return
+  }
+  // 默认选择第一个单位
+  const defaultUnit = options.value.agri_unit?.[0]?.value || ''
   formData.details.push({
     inputType: '',
     inputCategory: '',
     quantity: 0,
-    unit: 'Kg',
+    unit: defaultUnit,
     unitPrice: 0,
-    maxQuantity: 0
+    maxQuantity: 0,
+    currentStock: 0
   })
 }
 
@@ -383,6 +416,14 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
+    
+    // 验证分发数量不能为0
+    const zeroQuantityDetail = formData.details.find(d => !d.quantity || d.quantity <= 0)
+    if (zeroQuantityDetail) {
+      ElMessage.warning(t('inputCirculation.quantityCannotBeZero'))
+      return
+    }
+    
     loading.value = true
     try {
       // 库存校验
@@ -422,6 +463,34 @@ const handleSubmit = async () => {
       loading.value = false
     }
   })
+}
+
+const regionCode = ref('')
+
+const getAllCoopList = async (value) => {
+  loading.value = true
+  regionCode.value = value
+  try {
+    const response = await getRegistrationList({
+      regionCode: value,
+      orgType: 'COOPERATIVE',
+      auditStatus: 1,
+      page: 1,
+      pageSize: 10000
+    })
+    console.log('Cooperative List Response:', response)
+    if (response.code === 200) {
+      const list = response.data.records || response.data.rows || response.data.list || []
+      coorList.value = list.map(item => ({
+        code: item.id,
+        name: item.orgName
+      }))
+    }
+  } catch (error) {
+    ElMessage.error(t('inputCirculation.queryCoorListFailed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleBack = () => {

@@ -80,8 +80,20 @@
             <span class="value">{{ detailData.createTime || '-' }}</span>
           </div>
           <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.updateBy') }}</span>
+            <span class="value">{{ detailData.updateBy || '-' }}</span>
+          </div>
+          <div class="info-item">
             <span class="label">{{ $t('research.environmentNewData.columns.updateTime') }}</span>
             <span class="value">{{ detailData.updateTime || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.auditBy') }}</span>
+            <span class="value">{{ detailData.auditBy || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('research.environmentNewData.columns.auditTime') }}</span>
+            <span class="value">{{ detailData.auditTime || '-' }}</span>
           </div>
         </div>
       </div>
@@ -103,7 +115,11 @@
           <i class="ri-arrow-left-line"></i>
           {{ $t('common.back') }}
         </el-button>
-        <el-button type="primary" @click="handleEdit">
+        <!-- 查看页面不应该有编辑按钮，只有草稿(S0)和驳回(S3)状态才显示编辑按钮 -->
+        <el-button 
+          v-if="canEdit" 
+          type="primary" 
+          @click="handleEdit">
           <i class="ri-edit-line"></i>
           {{ $t('common.edit') }}
         </el-button>
@@ -113,15 +129,19 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getEnvironmentNewDataDetail } from '@/api/environment-new-data'
+import { useDict } from '@/hooks/useDict'
+import { useUserStore } from '@/store'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
+const { getLabelByValue } = useDict(['env_parameter_code'])
 
 const loading = ref(false)
 const detailData = reactive({
@@ -141,7 +161,18 @@ const detailData = reactive({
   remark: '',
   createBy: '',
   createTime: '',
-  updateTime: ''
+  updateTime: '',
+  updateBy: '',
+  auditBy: '',
+  auditTime: '',
+  workflowStatus: ''
+})
+
+// 判断是否可以编辑：只有草稿(S0)和驳回(S3)状态才可以编辑
+const canEdit = computed(() => {
+  const editableStatuses = ['S0', 'S3']
+  const hasPermission = userStore.hasWorkflowStatusPermission ? userStore.hasWorkflowStatusPermission('edit') : true
+  return editableStatuses.includes(detailData.workflowStatus) && hasPermission
 })
 
 // 获取参数类型标签
@@ -157,17 +188,9 @@ const getParameterTag = (code) => {
   return tagMap[code] || ''
 }
 
-// 获取参数名称
+// 获取参数名称（使用字典）
 const getParameterName = (code) => {
-  const codeMap = {
-    'RAIN_DAILY': t('research.environmentNewData.parameterCode.RAIN_DAILY'),
-    'TMAX': t('research.environmentNewData.parameterCode.TMAX'),
-    'TMIN': t('research.environmentNewData.parameterCode.TMIN'),
-    'HUMIDITY': t('research.environmentNewData.parameterCode.HUMIDITY'),
-    'WIND_SPEED': t('research.environmentNewData.parameterCode.WIND_SPEED'),
-    'SOLAR_RAD': t('research.environmentNewData.parameterCode.SOLAR_RAD')
-  }
-  return codeMap[code] || code || '-'
+  return getLabelByValue('env_parameter_code', code) || code || '-'
 }
 
 // 加载详情

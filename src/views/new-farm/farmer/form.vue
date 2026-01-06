@@ -416,7 +416,7 @@ const handleWoredaChange = async (woredaCode) => {
       formData.cooperativeId = orgName
     }
   } catch (error) {
-    ElMessage.error(t('newFarm.common.loadWoredaFailed') || '加载Woreda关联信息失败')
+    ElMessage.error(t('newFarm.common.loadWoredaFailed') || 'Failed to load the Woreda association information')
   } finally {
     woredaLoading.value = false
   }
@@ -441,7 +441,9 @@ const loadDaOptions = async () => {
       if (userInfoStr) {
         try {
           const userInfo = JSON.parse(userInfoStr)
-          defaultDaName.value = userInfo.user.NAME || ''
+          // 兼容 userInfo.userInfo.user 和 userInfo.user 两种结构
+          const user = userInfo?.userInfo?.user || userInfo?.user
+          defaultDaName.value = user?.NAME || user?.name || ''
           if (defaultDaName.value) {
             const targetDa = daOptions.value.find(item => item.daName === defaultDaName.value)
             if (targetDa) {
@@ -459,64 +461,89 @@ const loadDaOptions = async () => {
 }
 
 // 加载详情（编辑模式）
-// 加载详情（编辑模式）
 const loadDetail = async () => {
   pageLoading.value = true
   try {
     const res = await getFarmerDetail(route.params.id)
     if (res.code === 200 && res.data) {
       const data = res.data
+      
+      // 先赋值基础字段
       formData.farmerName = data.farmerName || ''
       formData.idCard = data.idCard || ''
       formData.gender = data.gender || 'MALE'
-      formData.birthDate = data.birthDate || ''
+      formData.birthday = data.birthday || ''
       formData.createTime = data.createTime ? data.createTime.split(' ')[0] : formData.createTime
       formData.youthCategory = data.youthCategory || ''
       formData.phone = data.phone || ''
       formData.email = data.email || ''
       formData.address = data.address || ''
       formData.unionId = data.unionId || ''
-      formData.cooperativeId = data.cooperativeId || ''
-      formData.daId = data.daId || ''
-      formData.zoneCode = data.zoneCode || ''
-      formData.woredaCode = data.woredaCode || ''
-      formData.kebeleCode = data.kebeleCode || ''
       formData.remark = data.remark || ''
-      console.log('formData',formData)
+
+      // 保存原始的三级联动值
+      const savedZoneCode = data.zoneCode || ''
+      const savedWoredaCode = data.woredaCode || ''
+      const savedKebeleCode = data.kebeleCode || ''
+      const savedDaId = data.daId || ''
+
       // 编辑模式回显联动数据：Zone→Woreda→Kebele
-      if (formData.zoneCode) {
+      if (savedZoneCode) {
         await loadZoneOptions()
-        await handleZoneChange(zoneCode)
-        formData.woredaCode = cacheWoredaCode
-        if (formData.woredaCode) {
-          await handleWoredaChange(formData.woredaCode)
-          formData.kebeleCode = cacheKebeleCode
-          if (formData.kebeleCode) {
-            await handleKebeleChange(formData.kebeleCode)
+        
+        // 加载Woreda选项（不使用handleZoneChange，避免清空数据）
+        woredaLoading.value = true
+        try {
+          const woredaRes = await listSubRegionByCode({ regionCode: savedZoneCode })
+          if (woredaRes.code === 200) {
+            woredaOptions.value = woredaRes.data || []
+          }
+        } catch (error) {
+          ElMessage.error(t('newFarm.common.loadWoredaFailed'))
+        } finally {
+          woredaLoading.value = false
+        }
+
+        // 如果有Woreda，加载Kebele选项和Cooperative信息
+        if (savedWoredaCode) {
+          woredaLoading.value = true
+          try {
+            // 加载Kebele选项
+            const kebeleRes = await listSubRegionByCode({ regionCode: savedWoredaCode })
+            if (kebeleRes.code === 200) {
+              kebeleOptions.value = kebeleRes.data || []
+            }
+
+            // 加载Cooperative信息
+            const coopRes = await allTree({ rootId: savedWoredaCode })
+            if (coopRes.code === 200) {
+              const orgName = Array.isArray(coopRes.data)
+                  ? (coopRes.data[0]?.children[0]?.orgName || '')
+                  : (coopRes.data?.children[0]?.orgName || '')
+              formData.cooperativeId = orgName || data.cooperativeId || ''
+            }
+          } catch (error) {
+            ElMessage.error(t('newFarm.common.loadWoredaFailed'))
+          } finally {
+            woredaLoading.value = false
           }
         }
+
+        // 最后恢复三级联动的值
+        formData.zoneCode = savedZoneCode
+        formData.woredaCode = savedWoredaCode
+        formData.kebeleCode = savedKebeleCode
+
+        // 如果有Kebele，加载DA选项
+        if (savedKebeleCode) {
+          await loadDaOptions()
+          // 恢复DA值
+          formData.daId = savedDaId
+        }
       }
-
-      // 3. 最后赋值基础字段（此时日期选择器已挂载完成，能捕获到值）
-      formData.farmerName = baseFields.farmerName
-      formData.idCard = baseFields.idCard
-      formData.gender = baseFields.gender
-      formData.birthday = baseFields.birthday // 关键：延后赋值
-      formData.createTime = baseFields.createTime
-      formData.youthCategory = baseFields.youthCategory
-      formData.phone = baseFields.phone
-      formData.email = baseFields.email
-      formData.address = baseFields.address
-      formData.unionId = baseFields.unionId
-      formData.cooperativeId = baseFields.cooperativeId
-      formData.daId = baseFields.daId
-      formData.remark = baseFields.remark
-      // 联动字段兜底赋值
-      formData.zoneCode = zoneCode
-
-      console.log('最终birthday值:', formData.birthday) // 验证赋值结果
     }
   } catch (error) {
+    console.error('Failed to load detail:', error)
     ElMessage.error(t('common.failed'))
   } finally {
     pageLoading.value = false

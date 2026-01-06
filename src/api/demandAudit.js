@@ -22,7 +22,7 @@ export const submitDemandAudit = (ids) => {
  */
 export const getPendingDemandPage = (data) => {
   return request({
-    url: '/seed/demand/audit/pending/page',
+    url: '/seed/demand/audit/page',
     method: 'post',
     data
   })
@@ -74,7 +74,7 @@ export const lockBatch = (data) => {
  */
 export const getApprovedDemandPage = (data) => {
   return request({
-    url: '/seed/demand/audit/approved/page',
+    url: '/seed/demand/audit/page',
     method: 'post',
     data
   })

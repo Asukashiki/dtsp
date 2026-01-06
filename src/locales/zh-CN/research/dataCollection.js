@@ -43,6 +43,11 @@ export default {
       season: '季节',
       createTime: '创建时间',
       createBy: '创建人',
+      auditInfo: '审核信息',
+      rejectedBy: '退回人',
+      rejectedTime: '退回时间',
+      rejectReason: '退回原因',
+      rejectInfo: '退回信息',
     },
 
     // 表单占位符
@@ -324,8 +329,8 @@ export default {
       biomassWeightKg: '请输入生物量重量',
       spikeDensity: '请输入穗密度',
       grainWeightPerSpike: '请输入每穗粒重',
-      diseaseScore: '请输入疾病评分(JSON格式)',
-      stressIndicators: '请输入压力指标(JSON格式)',
+      diseaseScore: '请输入疾病评分',
+      stressIndicators: '请输入压力指标',
       pestObservation: '请输入害虫观察',
     },
 
@@ -527,6 +532,7 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
+    auditInfo: '审核信息',
 
     // 搜索筛选
     searchPlaceholder: '搜索育种批次ID、样本编号',
@@ -537,15 +543,18 @@ export default {
     form: {
       basicInfo: '基础信息',
       sampleInfo: '样本信息',
+      paramInfo: '实验参数',
       testInfo: '测试信息',
       testData: '测试数据',
       qualityInfo: '质量信息',
       healthTraceability: '健康与追溯',
       testingInfo: '检测信息',
       operatorInfo: '操作信息',
+      auditStatus: '审核状态',
 
       batchId: '育种批次ID',
       trialId: '试验ID',
+      plotId: '地块编号',
       testDate: '检测日期',
       sampleId: '样本编号',
       sampleCondition: '样本状态',
@@ -563,8 +572,10 @@ export default {
       testerName: '检测人员',
       sampleType: '样本类型',
       labParameter: '实验参数',
+      expectedRange: '预期范围',
       resultValue: '实验结果值',
       passFailFlag: '实验结果标识',
+      testStatus: '测试状态',
       remark: '备注',
       createTime: '创建时间',
       createBy: '创建人',
@@ -575,6 +586,7 @@ export default {
       batchId: '请选择育种批次',
       batchIdAuto: '将根据试验ID自动填充',
       trialId: '请选择试验',
+      plotId: '请选择地块编号',
       testDate: '请选择检测日期',
       sampleId: '请输入样本编号',
       sampleStatus: '请输入样本状态',
@@ -593,12 +605,61 @@ export default {
       resultValue: '请输入实验结果值',
       passFailFlag: '请选择实验结果标识',
       remark: '请输入备注(选填)',
+      auditOpinion: '请输入审核意见'
     },
+
+    // 审核相关
+    auditTitle: '实验室测试数据采集审核',
+    auditSubtitle: '审核和批准实验室测试数据',
+    auditList: '审核列表',
+    audit: '审核',
+    pendingAudit: '待审核',
+    audited: '已审核',
+    canceled: '已作废',
+    auditOpinion: '审核意见',
+    auditCanceled: '审核记录作废',
+    cancelType: '作废类型',
+    dataCanceled: '数据作废',
+
+    // 操作
+    submit: '提交',
+    approve: '通过',
+    reject: '退回',
+    return: '返回',
+    archive: '归档',
+    cancel: '作废',
+
+    // 退回信息
+    rejected: '已退回',
+    rejectionInfo: '退回信息',
+    rejectBy: '退回人',
+    rejectOrg: '退回机构',
+    rejectTime: '退回时间',
+    rejectReason: '退回原因',
+
+    // 确认消息
+    approveConfirm: '确定审核通过该数据吗？',
+    rejectConfirm: '确定退回该数据吗？',
+    cancelConfirm: '确定作废该审核记录吗？',
+    submitConfirm: '确定提交审核吗？',
+    archiveConfirm: '确定归档该数据吗？',
+    cancelDataConfirm: '确定作废该数据吗？',
+
+    // 成功消息
+    approveSuccess: '审核通过成功',
+    rejectSuccess: '退回成功',
+    cancelSuccess: '作废成功',
+    submitSuccess: '提交审核成功',
+    archiveSuccess: '归档成功',
+
+    // 验证消息
+    rejectOpinionRequired: '退回时必须填写审核意见',
 
     // 表单验证
     rules: {
       batchIdRequired: '请选择育种批次',
       trialIdRequired: '请选择试验',
+      plotIdRequired: '请选择地块编号',
       testDateRequired: '请选择检测日期',
       testOrganizationRequired: '请输入检测机构',
       testerNameRequired: '请输入检测人员',
@@ -651,6 +712,15 @@ export default {
     deleteSuccess: '删除成功',
     addSuccess: '新增成功',
     editSuccess: '编辑成功',
+    submitForReview: '提交',
+    submitForReviewSuccess: '提交审核成功',
+    submitForReviewConfirm: '确定要提交审核吗？',
+    void: '作废',
+    voidSuccess: '作废成功',
+    voidConfirm: '确定要作废该数据吗？',
+    voidReason: '作废原因',
+    voidReasonPlaceholder: '请输入作废原因',
+    voidReasonRequired: '作废原因不能为空',
 
     // 搜索筛选
     searchPlaceholder: '搜索育种批次ID、地块编号',
@@ -681,6 +751,10 @@ export default {
       remark: '备注',
       createTime: '创建时间',
       createBy: '创建人',
+      updateBy: '修改人',
+      updateTime: '修改时间',
+      auditBy: '审核人',
+      auditTime: '审核时间',
     },
 
     // 检验类型选项
@@ -736,7 +810,17 @@ export default {
       yieldQtPerHaRequired: '请输入产量',
       yieldQtPerHaMin: '产量必须大于0',
       moistureContentRange: '含水量范围为0-100',
+      recorderNameRequired: '请输入记录人员',
+      // 动态检验字段
+      inspectionTypeRequired: '请选择检验类型',
+      scoreCodeRequired: '请选择评分代码',
     },
+
+    // 动态提示文案（用于表单内自定义校验消息）
+    pleaseSelectCodeFirst: '请先选择评分代码',
+    percentRange: '百分比范围为 0 - 100',
+    scaleRange: '评分范围为 {min}-{max}',
+    numberNonNegative: '请输入非负数字',
 
     // 列表列
     columns: {
@@ -753,7 +837,191 @@ export default {
       scoreCode: '评分代码',
       scoreValue: '评分值',
       createTime: '创建时间',
+      status: '状态',
+      auditStatus: '审核状态',
       actions: '操作',
     },
+  },
+
+  // 田间检验数据采集审核
+  fieldInspectionAudit: {
+    title: '田间检验数据采集审核',
+    subtitle: '对田间检验数据进行审核操作',
+    list: '待审核田间检验数据列表',
+    audit: '审核',
+    
+    // 搜索筛选
+    searchPlaceholder: '搜索育种批次ID、地块编号',
+    filterByBatch: '按育种批次筛选',
+    allBatches: '全部批次',
+    
+    // 表单字段
+    form: {
+      basicInfo: '基础信息',
+      plotInfo: '地块信息',
+      inspectionInfo: '检验信息',
+      auditInfo: '审核信息',
+      systemInfo: '系统信息',
+      batchId: '育种批次ID',
+      trialId: '试验ID',
+      plotId: '地块编号',
+      inspectionDate: '检验日期',
+      inspectionType: '检验类型',
+      scoreCode: '评分代码',
+      scoreValue: '评分值',
+      auditComment: '审核意见',
+      auditor: '审核人',
+      auditDepartment: '审核部门',
+      approvalTime: '审批时间',
+    },
+    
+    // 表单占位符
+    placeholder: {
+      batchId: '请选择育种批次',
+      plotId: '请选择地块编号',
+      auditComment: '请输入审核意见',
+      auditor: '请输入审核人',
+      auditDepartment: '请输入审核部门',
+      approvalTime: '请选择审批时间',
+      inspectionDate: '请选择检验日期',
+    },
+    
+    // 表单验证
+    rules: {
+      auditCommentRequired: '审核意见为必填项',
+    },
+    
+    // 操作按钮
+    approve: '同意',
+    reject: '不同意',
+    back: '返回',
+    view: '查看',
+    audit: '审核',
+    
+    // 确认提示
+    confirmApprove: '确定同意该审核吗？',
+    confirmReject: '确定不同意该审核吗？',
+    
+    // 操作结果
+    approveSuccess: '审核已通过',
+    rejectSuccess: '审核已退回',
+
+    // 作废相关
+    void: '作废',
+    voidReason: '作废原因',
+    confirmVoid: '确定作废该审核吗？',
+    voidSuccess: '作废成功',
+
+    // 表单占位符
+    placeholder: {
+      voidReason: '请输入作废原因',
+    },
+
+    // 表单验证
+    rules: {
+      voidReasonRequired: '作废原因为必填项',
+    },
+  },
+
+  // 农事记录数据采集审核
+  farmingRecordAudit: {
+    title: '农事记录数据采集审核',
+    subtitle: '对农事记录数据进行审核管理',
+    detailTitle: '农事记录审核详情',
+    auditTitle: '农事记录审核操作',
+    searchPlaceholder: '请输入关键词搜索',
+    
+    // 状态选项
+    status: {
+      placeholder: '请选择审核状态',
+      S1: '待审批',
+      S2: '已审批', 
+      S3: '已退回',
+      S10: '作废'
+    },
+    
+    // 管理措施选项
+    practices: {
+      placeholder: '请选择活动类型',
+      fertilization: '施肥',
+      irrigation: '灌溉',
+      weeding: '除草',
+      pest_control: '病虫害防治',
+      planting: '播种/整地',
+      harvesting: '收获'
+    },
+    
+    // 列表页面
+    columns: {
+      managementPractice: '管理措施',
+      workflowStatus: '审核状态',
+      fertilizerType: '肥料类型',
+      irrigationType: '灌溉类型',
+      createBy: '创建人',
+      createTime: '创建时间',
+      auditBy: '审核人',
+      auditTime: '审核时间'
+    },
+    
+    // 表单字段
+    form: {
+      managementPractice: '管理措施',
+      workflowStatus: '审核状态',
+      activityDatetime: '活动日期时间',
+      fertilizerType: '肥料类型',
+      fertilizerRateKg: '肥料施用量(公斤)',
+      ureaRateKg: '尿素施用量(公斤)',
+      pesticideType: '农药类型',
+      irrigationType: '灌溉类型',
+      irrigationFrequency: '灌溉频率',
+      weedingDate: '除草日期',
+      herbicideUsed: '除草剂使用',
+      seedSource: '种子来源',
+      createBy: '创建人',
+      createTime: '创建时间',
+      auditBy: '审核人',
+      auditTime: '审核时间',
+      auditRemark: '审核意见'
+    },
+    
+    // 分节标题
+    sections: {
+      basicInfo: '基础信息',
+      fertilizerInfo: '肥料信息',
+      irrigationInfo: '灌溉信息',
+      weedingInfo: '除草信息',
+      pesticideInfo: '农药信息',
+      createInfo: '创建信息',
+      auditInfo: '审核信息',
+      remarkInfo: '备注信息'
+    },
+    
+    // 占位符
+    placeholder: {
+      auditRemark: '请输入审核意见，必填项',
+      auditBy: '请输入审核人',
+      auditTime: '请选择审核时间'
+    },
+    
+    // 验证规则
+    rules: {
+      auditRemarkRequired: '审核意见不能为空'
+    },
+    
+    // 操作按钮
+    audit: '审批',
+    approve: '同意',
+    reject: '不同意',
+    cancel: '作���',
+    
+    // 确认消息
+    confirmApprove: '确定要同意这条农事记录吗？',
+    confirmReject: '确定要退回这条农事记录吗？',
+    cancelConfirm: '确定要作废这条农事记录吗？作废后不可恢复！',
+    
+    // 成功消息
+    approveSuccess: '审核通过成功',
+    rejectSuccess: '审核退回成功',
+    cancelSuccess: '作废成功'
   },
 };

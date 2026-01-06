@@ -73,13 +73,17 @@
                   <span class="value">{{ batchInfo.batchId }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.breedingLevel') }}</span>
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.distributionId') }}</span>
+                  <span class="value">{{ batchInfo.distributionId || '-' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.breedingLevel') }}</span>
                   <span class="value">
                     <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
                   </span>
                 </div>
                 <div class="info-item full-width">
-                  <span class="label">{{ $t('research.breeding.batch.form.parentSeedSource') }}</span>
+                  <span class="label">{{ $t('research.breeding.breedingBatch.form.parentalSeedSource') }}</span>
                   <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
                 </div>
               </div>
@@ -125,41 +129,11 @@
                   </span>
                 </div>
                 <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.actualYield') }}</span>
+                  <span class="label">{{ $t('research.breeding.batch.form.toMultiplyQuantity') }}</span>
                   <span class="value metric">
-                    <span class="number">{{ batchInfo.actualYield || '-' }}</span>
-                    <span class="unit" v-if="batchInfo.actualYield">kg</span>
+                    <span class="number">{{ batchInfo.toMultiplyQuantity || '-' }}</span>
+                    <span class="unit" v-if="batchInfo.toMultiplyQuantity">kg</span>
                   </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 统计信息 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-file-list-line"></i>
-                <span>{{ $t('research.breeding.detail.relatedRecords') }}</span>
-              </div>
-              <div class="stats-grid">
-                <div class="stat-card" @click="activeTab = 'tracking'">
-                  <div class="stat-icon tracking">
-                    <i class="ri-map-pin-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.trackingCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.trackingCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
-                </div>
-                <div class="stat-card" @click="activeTab = 'test'">
-                  <div class="stat-icon test">
-                    <i class="ri-test-tube-line"></i>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-value">{{ batchInfo.testCount || 0 }}</div>
-                    <div class="stat-label">{{ $t('research.breeding.detail.testCount') }}</div>
-                  </div>
-                  <i class="ri-arrow-right-s-line stat-arrow"></i>
                 </div>
               </div>
             </div>
@@ -215,24 +189,6 @@
             <el-skeleton :rows="5" animated />
           </div>
         </el-tab-pane>
-
-        <!-- Tab 2: 跟踪记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.trackingRecords')" name="tracking">
-          <TrackingList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
-        </el-tab-pane>
-
-        <!-- Tab 3: 检测记录 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.testRecords')" name="test">
-          <TestList
-            v-if="batchInfo"
-            :batch-id="batchInfo.batchId"
-            @refresh="loadBatchDetail"
-          />
-        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -244,6 +200,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail } from '@/api/breeding'
+import { useDict } from '@/hooks/useDict'
 import TrackingList from '../components/TrackingList.vue'
 import TestList from '../components/TestList.vue'
 
@@ -254,14 +211,8 @@ const { t } = useI18n()
 const activeTab = ref('basic')
 const batchInfo = ref(null)
 
-// 作物类型映射
-const cropTypeMap = computed(() => ({
-  'wheat': t('research.breeding.cropType.wheat'),
-  'corn': t('research.breeding.cropType.corn'),
-  'rice': t('research.breeding.cropType.rice'),
-  'soybean': t('research.breeding.cropType.soybean'),
-  'cotton': t('research.breeding.cropType.cotton')
-}))
+// 使用字典获取作物类型
+const { getLabelByValue } = useDict(['crop_type'])
 
 
 // 繁殖级别映射
@@ -301,7 +252,7 @@ const loadBatchDetail = async () => {
 
 // 获取作物类型名称
 const getCropTypeName = (type) => {
-  return cropTypeMap.value[type] || type
+  return getLabelByValue('crop_type', type) || type
 }
 
 // 获取繁殖级别名称

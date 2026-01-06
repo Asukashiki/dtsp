@@ -120,50 +120,71 @@
           <div class="items-list">
             <div v-for="(item, index) in formData.details" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item
-                  :label="$t('input.inventory.stockOut.form.inputId')"
-                  :prop="`details.${index}.inputId`"
-                  :rules="detailRules.inputId"
-                >
-                  <el-select
-                    v-model="item.inputId"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.inputId')"
-                    filterable
-                    clearable
-                    class="full-width"
-                    :loading="inputLoading"
-                    @change="handleMaterialChange(index)"
-                  >
-                    <el-option
-                      v-for="input in inputList"
-                      :key="input.inputId"
-                      :label="input.inputName"
-                      :value="input.inputId"
-                    />
-                  </el-select>
-                </el-form-item>
+
 
                 <el-form-item
                   :label="$t('input.inventory.stockIn.form.inputType')"
                   :prop="`details.${index}.inputType`"
                   :rules="detailRules.inputType"
                 >
-                  <el-input
+                  <el-select
                     v-model="item.inputType"
                     :placeholder="$t('input.inventory.stockIn.placeholder.inputType')"
-                    readonly
-                  />
+                    class="full-width"
+                    @change="handleItemTypeChange(item, index)"
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="typeItem in options.input_type"
+                      :key="typeItem.value"
+                      :label="typeItem.label"
+                      :value="typeItem.value"
+                    />
+                  </el-select>
                 </el-form-item>
 
                 <el-form-item
                   :label="$t('input.inventory.stockOut.form.inputCategory')"
                   :prop="`details.${index}.agriculturalInputType`"
                 >
-                  <el-input
+                  <el-select
                     v-model="item.agriculturalInputType"
                     :placeholder="$t('input.inventory.stockOut.placeholder.inputCategory')"
-                    readonly
-                  />
+                    class="full-width"
+                    @change="handleItemCategoryChange(item, index)"
+                    v-loading="dictLoading"
+                  >
+                    <el-option
+                      v-for="categoryItem in getFilteredCategories(item.inputType)"
+                      :key="categoryItem.value"
+                      :label="categoryItem.label"
+                      :value="categoryItem.value"
+                    />
+                  </el-select>
+                </el-form-item>
+
+
+                <el-form-item
+                    :label="$t('input.inventory.stockOut.form.inputId')"
+                    :prop="`details.${index}.inputId`"
+                    :rules="detailRules.inputId"
+                >
+                  <el-select
+                      v-model="item.inputId"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.inputId')"
+                      filterable
+                      clearable
+                      class="full-width"
+                      :loading="inputLoading"
+                      @change="handleMaterialChange(index)"
+                  >
+                    <el-option
+                        v-for="input in getFilteredInputs(item)"
+                        :key="input.inputId"
+                        :label="input.inputName"
+                        :value="input.inputId"
+                    />
+                  </el-select>
                 </el-form-item>
 
 <!--                <el-form-item
@@ -181,11 +202,21 @@
                   :label="$t('input.inventory.stockOut.form.batchNo')"
                   :prop="`details.${index}.materialBatchId`"
                 >
-                  <el-input
+                  <el-select
                     v-model="item.materialBatchId"
                     :placeholder="$t('input.inventory.stockOut.placeholder.batchNo')"
-                    readonly
-                  />
+                    filterable
+                    clearable
+                    class="full-width"
+                    @change="handleBatchChange(item, index)"
+                  >
+                    <el-option
+                      v-for="batch in item.batchList || []"
+                      :key="batch.materialBatchId"
+                      :label="`${batch.materialBatchId} (Available: ${batch.capacityKg || 0} KG, ${batch.volumeL || 0} L)`"
+                      :value="batch.materialBatchId"
+                    />
+                  </el-select>
                 </el-form-item>
 
                 <el-form-item
@@ -200,6 +231,7 @@
                     :step="1"
                     :precision="2"
                     class="full-width"
+                    @change="handleQuantityChange(item, index)"
                   />
                   <span v-if="item.available_quantity !== undefined" class="available-hint">
                     {{ $t('input.inventory.stockOut.form.availableQuantity') }}: {{ item.available_quantity || 0 }}
@@ -207,24 +239,37 @@
                 </el-form-item>
 
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.specModel')"
-                  :prop="`details.${index}.specModel`"
+                  :label="$t('input.inventory.stockOut.form.unitOfMeasure')"
+                  :prop="`details.${index}.unitOfMeasure`"
+                  :rules="detailRules.unitOfMeasure"
                 >
-                  <el-input
-                    v-model="item.specModel"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.specModel')"
-                    clearable
-                  />
+                  <el-select
+                    v-model="item.unitOfMeasure"
+                    :placeholder="$t('input.inventory.stockOut.placeholder.unitOfMeasure')"
+                    class="full-width"
+                    v-loading="dictLoading"
+                    @change="handleUnitChange(item, index)"
+                  >
+                    <el-option
+                      v-for="unitItem in options.input_material_unit"
+                      :key="unitItem.value"
+                      :label="unitItem.label"
+                      :value="unitItem.value"
+                    />
+                  </el-select>
+                  <span v-if="item.capacityWarning" class="capacity-warning">
+                    {{ item.capacityWarning }}
+                  </span>
                 </el-form-item>
 
                 <el-form-item
-                  :label="$t('input.inventory.stockOut.form.unitOfMeasure')"
-                  :prop="`details.${index}.unitOfMeasure`"
+                    :label="$t('input.inventory.stockOut.form.specModel')"
+                    :prop="`details.${index}.specModel`"
                 >
                   <el-input
-                    v-model="item.unitOfMeasure"
-                    :placeholder="$t('input.inventory.stockOut.placeholder.unitOfMeasure')"
-                    clearable
+                      v-model="item.specModel"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.specModel')"
+                      clearable
                   />
                 </el-form-item>
               </div>
@@ -308,7 +353,8 @@ const {
   refresh: refreshDict
 } = useDict([
   'input_type',
-  'input_category'
+  'input_category',
+  'input_material_unit'
 ], {
   immediate: true,
   cache: true
@@ -448,10 +494,14 @@ const formData = reactive({
       agriculturalInputType: '',
       variety: '',
       materialBatchId: '',
+      batchList: [], // 批次号列表
       quantity: null,
       specModel: '',
       unitOfMeasure: '',
-      available_quantity: 0
+      available_quantity: 0,
+      available_capacity_kg: 0, // 可用容量(KG)
+      available_volume_l: 0, // 可用容积(L)
+      capacityWarning: '' // 容量校验警告信息
     }
   ]
 })
@@ -475,21 +525,12 @@ const detailRules = computed(() => ({
   inputType: [
     { required: true, message: t('input.inventory.stockOut.rules.materialTypeRequired'), trigger: 'blur' }
   ],
+  unitOfMeasure: [
+    { required: true, message: t('input.inventory.stockOut.rules.unitOfMeasureRequired'), trigger: 'change' }
+  ],
   quantity: [
     { required: true, message: t('input.inventory.stockOut.rules.quantityRequired'), trigger: 'blur' },
-    { type: 'number', min: 0.01, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        const index = parseInt(rule.field.split('.')[1])
-        const detail = formData.details[index]
-        if (value && detail.available_quantity > 0 && value > detail.available_quantity) {
-          callback(new Error(t('input.inventory.stockOut.rules.quantityExceeds')))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
+    { type: 'number', min: 0.01, message: t('input.inventory.stockOut.rules.quantityPositive'), trigger: 'blur' }
   ]
 }))
 
@@ -575,63 +616,185 @@ const handleDistributionChange = async (distributionId) => {
 
       // 遍历分发单中的每个投入品明细
       for (const detail of details) {
-        // 从当前仓库的投入品列表中查找对应的投入品信息
+        const detailInputType = detail.inputType || detail.input_type_from_input || '';
+        const detailAgriculturalInputType = detail.inputCategory || detail.agricultural_input_type_from_input || '';
 
-        console.log(materialList);
-        console.log('detail.inputId:', detail.inputId, 'type:', typeof detail.inputId);
-        // 使用更灵活的匹配方式，处理可能的类型不匹配问题
-        const material = materialList.value.find(m => {
-          // 确保两边都是字符串进行比较
-          const materialId = String(m.inputId);
-          const inputId = String(detail.inputId);
-          console.log('Comparing:', materialId, 'with', inputId, 'result:', materialId === inputId);
-          return materialId === inputId;
-        });
-
-        // 检查投入品是否存在或库存是否充足
-        if (!material || material.available_quantity <= 0) {
-          // 如果投入品不存在或库存不足，将其添加到库存不足列表
-          insufficientItems.push({
-            name: detail.variety || detail.cropType || detail.inputId, // 投入品名称，优先使用品种，其次是作物类型，最后是ID
-            required: detail.required || detail.quantity // 所需数量
+        // 通过投入品类型和品类查询库存
+        try {
+          const stockRes = await getStockList({
+            warehouseId: formData.warehouse_id,
+            materialType: detailInputType,
+            agriculturalInputType: detailAgriculturalInputType,
+            page: 1,
+            pageSize: 1000
           })
-        } else {
-          // 如果库存充足，创建出库明细并添加到新明细列表
-          newDetails.push({
-            inputId: detail.inputId || '', // 投入品ID
-            inputName: material.inputName || '', // 投入品名称
-            inputType: getInputTypeText(material.inputType || ''), // 使用getInputTypeText函数处理投入品类型
-            agriculturalInputType: getAgriculturalInputTypeText(detail.cropType || ''), // 使用getAgriculturalInputTypeText函数处理农资类型
-            variety: detail.variety || '', // 品种
-            materialBatchId: material.materialBatchId || '', // 物料批次号
-            quantity: detail.required || detail.quantity || null, // 出库数量
-            specModel: '', // 规格型号
-            unitOfMeasure: detail.unit || '', // 计量单位
-            available_quantity: material.available_quantity || 0 // 可用库存数量
+
+          let totalAvailable = 0
+          let totalCapacityKg = 0
+          let totalVolumeL = 0
+          let batchList = []
+          let firstBatchId = ''
+          let firstStockItem = null // 保存第一个有库存的库存项，用于提取投入品信息
+          if (stockRes.code === 200 && stockRes.data && stockRes.data.items) {
+            // 过滤有库存的项
+            const availableItems = stockRes.data.items.filter(item => item.quantity > 0)
+
+            // 计算总可用库存，并收集批次信息
+            const batches = availableItems
+              .map(item => ({
+                materialBatchId: item.material_batch_id,
+                quantity: item.quantity,
+                capacityKg: item.capacity || 0,
+                volumeL: item.warehouse_area || 0,
+                expiryDate: item.expiry_date,
+                createdAt: item.created_at,
+                stockItem: item // 保存完整的库存项信息
+              }))
+              .sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0)
+                const dateB = new Date(b.createdAt || 0)
+                return dateA - dateB
+              })
+
+            batchList = batches
+            totalAvailable = batches.reduce((sum, batch) => sum + batch.quantity, 0)
+            totalCapacityKg = batches.reduce((sum, batch) => sum + batch.capacityKg, 0)
+            totalVolumeL = batches.reduce((sum, batch) => sum + batch.volumeL, 0)
+            if (batches.length > 0) {
+              firstBatchId = batches[0].materialBatchId
+              firstStockItem = batches[0].stockItem // 获取第一个批次对应的库存项
+            }
+          }
+
+          // 检查库存是否充足（数量、容量、容积）
+          const requiredQuantity = detail.required || detail.quantity || 0
+          const requiredCapacityKg = detail.requiredCapacityKg || 0
+          const requiredVolumeL = detail.requiredVolumeL || 0
+          
+          let isInsufficient = false
+          let insufficientReason = ''
+          
+          if (totalAvailable <= 0 || totalAvailable < requiredQuantity) {
+            isInsufficient = true
+            insufficientReason = `Quantity insufficient (Required: ${requiredQuantity}, Available: ${totalAvailable})`
+          } else if (requiredCapacityKg > 0 && totalCapacityKg < requiredCapacityKg) {
+            isInsufficient = true
+            insufficientReason = `Capacity insufficient (Required: ${requiredCapacityKg} KG, Available: ${totalCapacityKg} KG)`
+          } else if (requiredVolumeL > 0 && totalVolumeL < requiredVolumeL) {
+            isInsufficient = true
+            insufficientReason = `Volume insufficient (Required: ${requiredVolumeL} L, Available: ${totalVolumeL} L)`
+          }
+          
+          if (isInsufficient) {
+            // 库存不足
+            insufficientItems.push({
+              name: detail.variety || detail.cropType || detailInputType + '-' + detailAgriculturalInputType,
+              required: requiredQuantity,
+              reason: insufficientReason,
+              availableCapacityKg: totalCapacityKg,
+              availableVolumeL: totalVolumeL
+            })
+          } else {
+            // 库存充足，创建出库明细
+            // 从第一个库存项中获取投入品信息
+            const stockMaterialId = firstStockItem?.material_id || detail.input_id || ''
+            const stockMaterialName = firstStockItem?.material_name || detail.variety || detail.cropType || ''
+            const stockSpecModel = firstStockItem?.spec_model || ''
+            const stockUnitOfMeasure = firstStockItem?.unit_of_measure || detail.unit || ''
+
+            // 尝试从投入品列表中匹配，获取更完整的信息
+            let matchedInput = null
+            if (stockMaterialId) {
+              matchedInput = inputList.value.find(input => input.inputId === stockMaterialId)
+
+              // 如果在inputList中找不到匹配的投入品，则创建一个新的投入品对象
+              if (!matchedInput) {
+                matchedInput = {
+                  inputId: stockMaterialId,
+                  inputName: stockMaterialName,
+                  type: detailInputType,
+                  agriculturalInputType: detailAgriculturalInputType,
+                  variety: detail.variety || '',
+                  specModel: stockSpecModel,
+                  unitOfMeasure: stockUnitOfMeasure
+                }
+                // 将新投入品添加到inputList中，确保下拉框能找到它
+                inputList.value.push(matchedInput)
+              }
+            }
+
+            newDetails.push({
+              inputId: stockMaterialId,
+              inputName: matchedInput?.inputName || stockMaterialName,
+              inputType: detailInputType,
+              agriculturalInputType: detailAgriculturalInputType,
+              variety: matchedInput?.variety || detail.variety || '',
+              materialBatchId: firstBatchId,
+              batchList: batchList.map(b => ({
+                materialBatchId: b.materialBatchId,
+                quantity: b.quantity,
+                capacityKg: b.capacityKg,
+                volumeL: b.volumeL,
+                expiryDate: b.expiryDate,
+                createdAt: b.createdAt
+              })),
+              quantity: requiredQuantity,
+              specModel: matchedInput?.specModel || stockSpecModel,
+              unitOfMeasure: matchedInput?.unitOfMeasure || stockUnitOfMeasure,
+              available_quantity: batchList.length > 0 ? batchList[0].quantity : 0,
+              available_capacity_kg: batchList.length > 0 ? batchList[0].capacityKg : 0,
+              available_volume_l: batchList.length > 0 ? batchList[0].volumeL : 0,
+              capacityWarning: ''
+            })
+          }
+        } catch (error) {
+          console.error('Failed to query stock for detail:', error)
+          // 查询失败，视为库存不足
+          insufficientItems.push({
+            name: detail.variety || detail.cropType || detailInputType + '-' + detailAgriculturalInputType,
+            required: detail.required || detail.quantity || 0,
+            reason: 'Failed to query stock'
           })
         }
       }
 
       // 检查是否有库存不足的投入品
       if (insufficientItems.length > 0) {
-        // 将库存不足的投入品名称和需求量组合成字符串
-        const itemNames = insufficientItems.map(item => `${item.name}(Demand：${item.required})`).join('、')
+        // 将库存不足的投入品名称、需求量和原因组合成字符串
+        const itemNames = insufficientItems.map(item => {
+          let info = `${item.name} (Required: ${item.required})`
+          if (item.reason) {
+            info += ` - ${item.reason}`
+          }
+          if (item.availableCapacityKg !== undefined) {
+            info += ` [Available: ${item.availableCapacityKg} KG, ${item.availableVolumeL} L]`
+          }
+          return info
+        }).join('<br/>')
 
         // 显示确认对话框，询问用户是否继续处理有库存不足的出库单
         ElMessageBox.confirm(
-            `The following inputs are currently in insufficient stock in the warehouse：${itemNames}。Whether to continue？`,
+            `<div>The following inputs are currently in insufficient stock in the warehouse:<br/>${itemNames}<br/><br/>Whether to continue?</div>`,
             'Insufficient stock prompt',
             {
-              confirmButtonText: 'continue', // 确认按钮文本
-              cancelButtonText: 'cancel', // 取消按钮文本
-              type: 'warning' // 消息类型为警告
+              confirmButtonText: 'Continue',
+              cancelButtonText: 'Cancel',
+              type: 'warning',
+              dangerouslyUseHTMLString: true
             }
         ).then(() => {
           // 用户选择继续处理
           if (newDetails.length > 0) {
             // 如果有可以出库的投入品，更新表单明细
             formData.details = newDetails
-            ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`) // 显示成功消息
+            ElMessage.success(`Automatically brought in ${newDetails.length} item details`)
+
+            // 对每个明细进行容量校验
+            newDetails.forEach((detail, index) => {
+              if (detail.unitOfMeasure && detail.quantity) {
+                handleUnitChange(detail, index)
+              }
+            })
           } else {
             // 如果没有任何投入品可以出库，显示警告消息
             ElMessage.warning('There is no inventory of any of the inputs listed in this distribution order in the current warehouse')
@@ -643,7 +806,14 @@ const handleDistributionChange = async (distributionId) => {
       } else {
         // 所有投入品库存都充足，直接替换表单明细
         formData.details = newDetails
-        ElMessage.success(`Automatically brought in${newDetails.length}Itemized details`) // 显示成功消息
+        ElMessage.success(`Automatically brought in ${newDetails.length} item details`)
+
+        // 对每个明细进行容量校验
+        newDetails.forEach((detail, index) => {
+          if (detail.unitOfMeasure && detail.quantity) {
+            handleUnitChange(detail, index)
+          }
+        })
       }
     }
   } catch (error) {
@@ -679,45 +849,166 @@ const handleWarehouseChange = (warehouseId) => {
 // 投入品变更时,自动填充投入品名称、类型、农资类型、品种
 const handleMaterialChange = (index) => {
   const detail = formData.details[index]
+
+  if (!detail.inputId) {
+    detail.inputName = ''
+    // 不再清空类型和品类，保持用户选择
+    detail.variety = ''
+    detail.materialBatchId = ''
+    detail.batchList = []
+    detail.available_quantity = 0
+    return
+  }
+
   const selectedInput = inputList.value.find(i => i.inputId === detail.inputId)
 
   if (selectedInput) {
     detail.inputName = selectedInput.inputName
-    detail.inputType = getInputTypeText(selectedInput.type)
-    // 使用getAgriculturalInputTypeText函数处理农资类型
-    detail.agriculturalInputType = getAgriculturalInputTypeText(selectedInput.agriculturalInputType || selectedInput.agricultural_input_type)
+    // 如果用户没有手动选择类型和品类，则自动填充
+    if (!detail.inputType) {
+      detail.inputType = selectedInput.type || ''
+    }
+    if (!detail.agriculturalInputType) {
+      detail.agriculturalInputType = selectedInput.agriculturalInputType || selectedInput.agricultural_input_type || ''
+    }
     detail.variety = selectedInput.variety || ''
-  } else {
-    detail.inputName = ''
-    detail.inputType = ''
-    detail.agriculturalInputType = ''
-    detail.variety = ''
   }
 
-  // 如果已选择仓库，则加载该投入品的库存信息
-  if (formData.warehouse_id && detail.inputId) {
-    loadStockForMaterial(detail)
+  // 如果已选择仓库，则加载批次号列表
+  if (formData.warehouse_id && (detail.inputId || (detail.inputType && detail.agriculturalInputType))) {
+    loadBatchList(detail)
   } else {
     detail.materialBatchId = ''
+    detail.batchList = []
     detail.available_quantity = 0
   }
 }
 
-// 加载特定投入品的库存信息
-const loadStockForMaterial = async (detail) => {
-  if (!formData.warehouse_id || !detail.inputId) {
+// 加载批次号列表
+const loadBatchList = async (detail) => {
+  if (!formData.warehouse_id || (!detail.inputId && (!detail.inputType || !detail.agriculturalInputType))) {
+    detail.batchList = []
     detail.materialBatchId = ''
     detail.available_quantity = 0
     return
   }
 
   try {
-    const res = await getStockList({
+    // 构造查询参数
+    const queryParams = {
       warehouseId: formData.warehouse_id,
-      materialId: detail.inputId, // 使用materialId而不是inputId
       page: 1,
       pageSize: 1000
-    })
+    }
+
+    // 优先使用投入品ID查询，否则使用类型和品类
+    if (detail.inputId) {
+      queryParams.materialId = detail.inputId
+    } else {
+      queryParams.materialType = detail.inputType
+      queryParams.agriculturalInputType = detail.agriculturalInputType
+    }
+
+    const res = await getStockList(queryParams)
+
+    if (res.code === 200 && res.data && res.data.items) {
+      // 过滤有库存的批次，并按创建时间正序排序
+      const batches = res.data.items
+        .filter(item => item.quantity > 0)
+        .map(item => ({
+          materialBatchId: item.material_batch_id,
+          quantity: item.quantity,
+          capacityKg: item.capacity || 0, // 总容量(KG)
+          volumeL: item.warehouse_area || 0, // 总容积(L)
+          expiryDate: item.expiry_date,
+          createdAt: item.created_at
+        }))
+        .sort((a, b) => {
+          // 按创建时间正序排序（早的在前）
+          const dateA = new Date(a.createdAt || 0)
+          const dateB = new Date(b.createdAt || 0)
+          return dateA - dateB
+        })
+
+      detail.batchList = batches
+
+      // 默认选择第一个批次号
+      if (batches.length > 0) {
+        detail.materialBatchId = batches[0].materialBatchId
+        detail.available_quantity = batches[0].quantity
+        detail.available_capacity_kg = batches[0].capacityKg
+        detail.available_volume_l = batches[0].volumeL
+      } else {
+        detail.materialBatchId = ''
+        detail.available_quantity = 0
+        detail.available_capacity_kg = 0
+        detail.available_volume_l = 0
+      }
+    } else {
+      detail.batchList = []
+      detail.materialBatchId = ''
+      detail.available_quantity = 0
+      detail.available_capacity_kg = 0
+      detail.available_volume_l = 0
+    }
+  } catch (error) {
+    console.error('Failed to load batch list:', error)
+    detail.batchList = []
+    detail.materialBatchId = ''
+    detail.available_quantity = 0
+    detail.available_capacity_kg = 0
+    detail.available_volume_l = 0
+  }
+}
+
+// 处理批次号变化
+const handleBatchChange = (item, index) => {
+  if (!item.materialBatchId) {
+    item.available_quantity = 0
+    item.available_capacity_kg = 0
+    item.available_volume_l = 0
+    return
+  }
+
+  // 从批次列表中找到对应的批次，更新可用库存
+  const selectedBatch = item.batchList.find(batch => batch.materialBatchId === item.materialBatchId)
+  if (selectedBatch) {
+    item.available_quantity = selectedBatch.quantity
+    item.available_capacity_kg = selectedBatch.capacityKg || 0
+    item.available_volume_l = selectedBatch.volumeL || 0
+  } else {
+    item.available_quantity = 0
+    item.available_capacity_kg = 0
+    item.available_volume_l = 0
+  }
+}
+
+// 加载特定投入品的库存信息
+const loadStockForMaterial = async (detail) => {
+  if (!formData.warehouse_id || (!detail.inputId && (!detail.inputType || !detail.agriculturalInputType))) {
+    detail.materialBatchId = ''
+    detail.available_quantity = 0
+    return
+  }
+
+  try {
+    // 构造查询参数
+    const queryParams = {
+      warehouseId: formData.warehouse_id,
+      page: 1,
+      pageSize: 1000
+    };
+
+    // 如果有inputId，优先使用inputId查询
+    if (detail.inputId) {
+      queryParams.materialId = detail.inputId;
+    } else {
+      // 否则使用投入品类型和农资类型查询
+      queryParams.materialType = detail.inputType;
+      queryParams.agriculturalInputType = detail.agriculturalInputType;
+    }
+
+    const res = await getStockList(queryParams)
 
     if (res.code === 200 && res.data && res.data.items) {
       // 计算总库存
@@ -779,6 +1070,239 @@ const getAgriculturalInputTypeText = (type) => {
   return categoryItem ? categoryItem.label : '-'
 }
 
+// 根据类型筛选品类选项
+const getFilteredCategories = (inputType) => {
+  const categoryList = options.value.input_category || []
+  if (!inputType) return []
+
+  if (inputType === 'IN01') {
+    return categoryList.filter(item => item.value.startsWith('IN01'))
+  } else if (inputType === 'IN02') {
+    return categoryList.filter(item => item.value.startsWith('IN02'))
+  }
+
+  return []
+}
+
+// 根据类型和品类筛选投入品列表
+const getFilteredInputs = (item) => {
+  let filteredList = inputList.value
+
+  // 如果选择了投入品类型，则筛选类型
+  if (item.inputType) {
+    filteredList = filteredList.filter(input => input.type === item.inputType)
+  }
+
+  // 如果选择了投入品品类，则进一步筛选品类
+  if (item.agriculturalInputType) {
+    filteredList = filteredList.filter(input => input.agriculturalInputType === item.agriculturalInputType)
+  }
+
+  return filteredList
+}
+
+// 处理投入品类型变化
+const handleItemTypeChange = (item, index) => {
+  // 清空品类和投入品名称
+  item.agriculturalInputType = ''
+  item.inputId = ''
+  item.inputName = ''
+  item.variety = ''
+  item.materialBatchId = ''
+  item.batchList = []
+  item.available_quantity = 0
+}
+
+// 处理投入品品类变化
+const handleItemCategoryChange = (item, index) => {
+  // 清空投入品名称和批次信息
+  item.inputId = ''
+  item.inputName = ''
+  item.variety = ''
+  item.materialBatchId = ''
+  item.batchList = []
+  item.available_quantity = 0
+  item.capacityWarning = ''
+
+  // 不在此处加载批次号，应该等用户选择投入品后再加载
+  // 因为同一类型+品类可能对应多个不同的投入品，批次应该属于具体的投入品
+}
+
+/**
+ * 解析计量单位字符串，提取数值和单位
+ * 支持格式：KG, g, ml, L, Package/10kg, Bottle/500ml 等
+ * @param {string} unitLabel 计量单位标签（如 Package/50kg）
+ * @returns {object} { value: 数值, unit: 单位, unitType: 'weight'|'volume', convertedValue: 转换后的值(KG或L) }
+ */
+const parseUnitString = (unitLabel) => {
+  if (!unitLabel) {
+    return { success: false, message: '计量单位为空' }
+  }
+
+  const trimmedString = unitLabel.trim().toLowerCase()
+
+  // 处理纯单位的情况
+  if (trimmedString === 'kg') {
+    return { success: true, value: 1, unit: 'kg', unitType: 'weight', convertedValue: 1 }
+  } else if (trimmedString === 'g') {
+    return { success: true, value: 1, unit: 'g', unitType: 'weight', convertedValue: 0.001 }
+  } else if (trimmedString === 'ml') {
+    return { success: true, value: 1, unit: 'ml', unitType: 'volume', convertedValue: 0.001 }
+  } else if (trimmedString === 'l') {
+    return { success: true, value: 1, unit: 'l', unitType: 'volume', convertedValue: 1 }
+  }
+
+  // 正则匹配带数值的格式：Package/10kg, Bottle/500ml 等
+  const pattern = /(?:.*[/\s])?(\d+(?:\.\d+)?)(kg|g|l|ml)/i
+  const match = unitLabel.match(pattern)
+
+  if (!match) {
+    return { success: false, message: '无法解析计量单位格式' }
+  }
+
+  const value = parseFloat(match[1])
+  const unit = match[2].toLowerCase()
+
+  let unitType, convertedValue
+
+  switch (unit) {
+    case 'kg':
+      unitType = 'weight'
+      convertedValue = value
+      break
+    case 'g':
+      unitType = 'weight'
+      convertedValue = value / 1000
+      break
+    case 'l':
+      unitType = 'volume'
+      convertedValue = value
+      break
+    case 'ml':
+      unitType = 'volume'
+      convertedValue = value / 1000
+      break
+    default:
+      return { success: false, message: '不支持的计量单位' }
+  }
+
+  return { success: true, value, unit, unitType, convertedValue }
+}
+
+/**
+ * 根据字典值获取计量单位标签
+ * @param {string} dictValue 字典值（如 U101）
+ * @returns {string} 字典标签（如 Package/10kg）
+ */
+const getUnitLabel = (dictValue) => {
+  if (!dictValue || !options.value.input_material_unit) return ''
+  const unitItem = options.value.input_material_unit.find(item => item.value === dictValue)
+  return unitItem ? unitItem.label : ''
+}
+
+/**
+ * 计算出库所需的总容量
+ * @param {string} unitOfMeasure 计量单位字典值
+ * @param {number} quantity 出库数量
+ * @returns {object} { success, unitType, requiredAmount, message }
+ */
+const calculateRequiredCapacity = (unitOfMeasure, quantity) => {
+  if (!unitOfMeasure || !quantity || quantity <= 0) {
+    return { success: false, message: '计量单位或数量无效' }
+  }
+
+  const unitLabel = getUnitLabel(unitOfMeasure)
+  if (!unitLabel) {
+    return { success: false, message: '未找到计量单位' }
+  }
+
+  const parseResult = parseUnitString(unitLabel)
+  if (!parseResult.success) {
+    return { success: false, message: parseResult.message }
+  }
+
+  const requiredAmount = parseResult.convertedValue * quantity
+
+  return {
+    success: true,
+    unitType: parseResult.unitType,
+    requiredAmount,
+    unitLabel,
+    perUnitValue: parseResult.convertedValue,
+    unit: parseResult.unitType === 'weight' ? 'KG' : 'L'
+  }
+}
+
+/**
+ * 处理计量单位变化，校验库存容量是否满足
+ */
+const handleUnitChange = async (item, index) => {
+  // 清空之前的警告
+  item.capacityWarning = ''
+
+  if (!item.unitOfMeasure || !item.quantity || item.quantity <= 0) {
+    return
+  }
+
+  // 必须有批次号才能校验
+  if (!item.materialBatchId) {
+    return
+  }
+
+  // 计算所需容量
+  const calcResult = calculateRequiredCapacity(item.unitOfMeasure, item.quantity)
+  if (!calcResult.success) {
+    item.capacityWarning = calcResult.message
+    return
+  }
+
+  // 校验库存容量 - 通过批次号查询
+  try {
+    const validateRes = await validateStock({
+      warehouseId: formData.warehouse_id,
+      details: [{
+        materialBatchId: item.materialBatchId,
+        quantity: item.quantity,
+        unitOfMeasure: item.unitOfMeasure
+      }]
+    })
+    if (validateRes.data && !validateRes.data.valid) {
+      const insufficientItems = validateRes.data.insufficient_items || []
+      if (insufficientItems.length > 0) {
+        const insufficientItem = insufficientItems[0]
+        const maxAvailable = insufficientItem.max_available_by_unit || 0
+        let warningMessage = ''
+        if (insufficientItem.unit_type === 'weight') {
+          warningMessage = `Insufficient inventory capacity! Required: ${calcResult.requiredAmount.toFixed(2)} KG, Available: ${insufficientItem.available_capacity_kg || 0} KG (Max quantity available: ${maxAvailable})`
+        } else if (insufficientItem.unit_type === 'volume') {
+          warningMessage = `Insufficient inventory volume! Required: ${calcResult.requiredAmount.toFixed(2)} L, Available: ${insufficientItem.available_volume_l || 0} L (Max quantity available: ${maxAvailable})`
+        } else {
+          warningMessage = `Insufficient inventory! Max quantity available: ${maxAvailable}`
+        }
+
+        // Clear the quantity and show warning
+        item.quantity = null
+        item.capacityWarning = warningMessage
+        ElMessage.warning(warningMessage)
+      }
+    } else {
+      // Stock is sufficient, clear warning
+      item.capacityWarning = ''
+    }
+  } catch (error) {
+    console.error('Failed to validate stock capacity:', error)
+  }
+}
+
+/**
+ * 处理数量变化，重新校验库存容量
+ */
+const handleQuantityChange = (item, index) => {
+  if (item.unitOfMeasure) {
+    handleUnitChange(item, index)
+  }
+}
+
 // 添加明细
 const addDetail = () => {
   formData.details.push({
@@ -788,10 +1312,14 @@ const addDetail = () => {
     agriculturalInputType: '',
     variety: '',
     materialBatchId: '',
+    batchList: [], // 批次号列表
     quantity: null,
     specModel: '',
     unitOfMeasure: '',
-    available_quantity: 0
+    available_quantity: 0,
+    available_capacity_kg: 0, // 可用容量(KG)
+    available_volume_l: 0, // 可用容积(L)
+    capacityWarning: '' // 容量校验警告信息
   })
 }
 
@@ -805,6 +1333,45 @@ const removeDetail = (index) => {
 }
 
 // 提交表单
+// 校验批次号数量是否超出库存
+const validateBatchQuantity = () => {
+  // 按批次号分组统计出库数量
+  const batchMap = new Map()
+
+  formData.details.forEach((detail, index) => {
+    if (!detail.materialBatchId) {
+      return // 跳过没有批次号的明细
+    }
+
+    const batchId = detail.materialBatchId
+    const quantity = Number(detail.quantity || 0)
+    const availableQuantity = Number(detail.available_quantity || 0)
+
+    if (!batchMap.has(batchId)) {
+      batchMap.set(batchId, {
+        totalQuantity: 0,
+        availableQuantity: availableQuantity,
+        inputName: detail.inputName || `${detail.inputType}-${detail.agriculturalInputType}`,
+        details: []
+      })
+    }
+
+    const batchInfo = batchMap.get(batchId)
+    batchInfo.totalQuantity += quantity
+    batchInfo.details.push({ index: index + 1, quantity })
+  })
+
+  // 检查每个批次号的总数量是否超出可用库存
+  for (const [batchId, info] of batchMap.entries()) {
+    if (info.totalQuantity > info.availableQuantity) {
+      const detailIndexes = info.details.map(d => `Line ${d.index} (Qty: ${d.quantity})`).join(', ')
+      return `Batch "${batchId}" (${info.inputName}): Total outbound quantity ${info.totalQuantity} exceeds available stock ${info.availableQuantity}. Details: ${detailIndexes}. Please adjust the quantity or select another batch.`
+    }
+  }
+
+  return null // 校验通过
+}
+
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate()
@@ -816,23 +1383,30 @@ const handleSubmit = async () => {
 
     // 检查所有明细是否完整
     const hasIncompleteDetail = formData.details.some(
-      detail => !detail.inputId || !detail.inputType || !detail.quantity
+      detail => (!detail.inputId && (!detail.inputType || !detail.agriculturalInputType)) || !detail.quantity
     )
     if (hasIncompleteDetail) {
       ElMessage.warning(t('input.inventory.stockOut.rules.detailsRequired'))
       return
     }
 
+    // 检查所有明细是否填写了计量单位
+    const hasEmptyUnit = formData.details.some(detail => !detail.unitOfMeasure)
+    if (hasEmptyUnit) {
+      ElMessage.warning(t('input.inventory.stockOut.rules.unitOfMeasureRequired'))
+      return
+    }
+
     submitLoading.value = true
 
-    // 提交前校验库存是否充足
+    // 提交前校验库存是否充足（基于批次号和计量单位计算容量）
     try {
       const validateRes = await validateStock({
         warehouseId: formData.warehouse_id,
         details: formData.details.map(detail => ({
-          materialId: detail.inputId,
-          materialName: detail.inputName,
-          quantity: detail.quantity
+          materialBatchId: detail.materialBatchId || '',
+          quantity: detail.quantity,
+          unitOfMeasure: detail.unitOfMeasure
         }))
       })
 
@@ -840,13 +1414,20 @@ const handleSubmit = async () => {
       if (!validateRes.data.valid) {
         const insufficientItems = validateRes.data.insufficient_items || []
         if (insufficientItems.length > 0) {
-          const itemList = insufficientItems.map(item =>
-            `${item.material_name}(Demand：${item.required_quantity}，Available：${item.available_quantity}，Lacking：${item.shortage})`
-          ).join('<br/>')
+          // 根据单位类型显示不同的提示信息
+          const itemList = insufficientItems.map(item => {
+            if (item.unit_type === 'weight') {
+              return `${item.material_name || item.material_batch_id}(Required：${item.required_capacity_kg} KG，Available：${item.available_capacity_kg} KG，Max available: ${item.max_available_by_unit})`
+            } else if (item.unit_type === 'volume') {
+              return `${item.material_name || item.material_batch_id}(Required：${item.required_volume_l} L，Available：${item.available_volume_l} L，Max available: ${item.max_available_by_unit})`
+            } else {
+              return `${item.material_name || item.material_batch_id}(Demand：${item.required_quantity}，Available：${item.available_quantity}，Max available: ${item.max_available_by_unit || 0})`
+            }
+          }).join('<br/>')
 
           await ElMessageBox.confirm(
             `<div>The inventory of the following inputs is insufficient：<br/>${itemList}<br/><br/>Is it still necessary to submit the outbound order？</div>`,
-            '库存不足警告',
+            'Insufficient inventory warning',
             {
               confirmButtonText: 'Still need to be submitted',
               cancelButtonText: 'Return to modify',
@@ -869,7 +1450,7 @@ const handleSubmit = async () => {
       console.error('Stock validation error:', validateError)
       // 校验失败不中断提交流程，继续提交
     }
-  debugger;
+
     // 转换为驼峰形式
     const data = {
       outboundType: formData.outbound_type,
@@ -882,7 +1463,7 @@ const handleSubmit = async () => {
       operator: formData.operator,
       remark: formData.remark || undefined,
       details: formData.details.map(detail => ({
-        materialId: detail.inputId,
+        materialId: detail.inputId || undefined, // 可能为空
         materialName: detail.inputName,
         materialType: detail.inputType,
         agriculturalInputType: detail.agriculturalInputType || undefined,
@@ -1049,6 +1630,14 @@ onMounted(() => {
   font-size: 12px;
   color: #909399;
   margin-left: 8px;
+}
+
+.capacity-warning {
+  display: block;
+  font-size: 12px;
+  color: #E6A23C;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 .form-actions {

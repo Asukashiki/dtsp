@@ -42,7 +42,6 @@ $color-bg-light: #f5f7fa;
   display: flex;
   align-items: center;
   gap: 16px;
-  flex: 1;
 }
 
 .header-icon {
@@ -92,9 +91,11 @@ $color-bg-light: #f5f7fa;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
     color: white;
   }
 }
@@ -179,6 +180,7 @@ $color-bg-light: #f5f7fa;
   gap: 8px;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 // ==================== 分页 ====================

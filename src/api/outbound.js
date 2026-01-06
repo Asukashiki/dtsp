@@ -213,8 +213,8 @@ export const validateStock = (data) => {
     data: {
       warehouseId: data.warehouseId,
       details: data.details?.map(detail => ({
-        materialId: detail.materialId,
-        materialName: detail.materialName,
+        materialBatchId: detail.materialBatchId,
+        unitOfMeasure: detail.unitOfMeasure,
         quantity: detail.quantity
       }))
     }

@@ -12,12 +12,12 @@
             <p class="page-subtitle">{{ $t('villageAggregation.subtitle') }}</p>
           </div>
         </div>
-        <div class="header-right">
-          <el-button type="primary" size="large" @click="handleAddYear">
-            <i class="ri-add-line"></i>
-            {{ $t('villageAggregation.actions.addYear') }}
-          </el-button>
-        </div>
+<!--        <div class="header-right">-->
+<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
+<!--            <i class="ri-add-line"></i>-->
+<!--            {{ $t('villageAggregation.actions.addYear') }}-->
+<!--          </el-button>-->
+<!--        </div>-->
       </div>
 
       <!-- 内容区域 -->
@@ -30,6 +30,7 @@
               :data="tableData"
               stripe
               empty-text=""
+              :default-sort="{ prop: 'year', order: 'descending' }"
             >
               <el-table-column
                 prop="year"
@@ -61,9 +62,24 @@
                 :label="$t('villageAggregation.columns.subQuantity')"
                 min-width="140"
               >
-                <template #default="{ row }">
-                  {{ (row.approvedQuantity || 0) + '/' + (row.subQuantity || 0) }}
-                </template>
+              </el-table-column>
+              <el-table-column
+                  prop="unsubmitQuantity"
+                  :label="$t('Unsubmit Quantity')"
+                  min-width="140"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="submitQuantity"
+                  :label="$t('Submit Quantity')"
+                  min-width="140"
+              >
+              </el-table-column>
+              <el-table-column
+                  prop="auditQuantity"
+                  :label="$t('Audit Quantity')"
+                  min-width="140"
+              >
               </el-table-column>
               <el-table-column
                 prop="status"
@@ -112,7 +128,7 @@
                     </el-button>
                     <el-button link type="info" @click="handleDetail(row)">
                       <i class="ri-list-check"></i>
-                      {{ $t('villageAggregation.actions.detail') }}
+                      {{ $t('Aggregation detail') }}
                     </el-button>
                   </div>
                 </template>
@@ -162,6 +178,7 @@
                   <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
                   <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                 </div>
+
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
                   <span class="value">{{ item.creator }}</span>
@@ -186,7 +203,7 @@
           </div>
 
           <!-- 分页 -->
-          <div v-if="pagination.total > 0" class="pagination-wrapper">
+          <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
             <el-pagination
               :current-page="pagination.currentPage"
               :page-size="pagination.pageSize"
@@ -200,7 +217,7 @@
               @update:current-page="pagination.currentPage = $event"
               @update:page-size="pagination.pageSize = $event"
             />
-          </div>
+          </div> -->
 
           <!-- 空状态 -->
           <el-empty
@@ -282,7 +299,7 @@
       </el-table>
 
       <!-- 分页 -->
-      <div v-if="detailPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
+      <!-- <div v-if="detailPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
         <el-pagination
           :current-page="detailPagination.currentPage"
           :page-size="detailPagination.pageSize"
@@ -296,7 +313,7 @@
           @update:current-page="detailPagination.currentPage = $event"
           @update:page-size="detailPagination.pageSize = $event"
         />
-      </div>
+      </div> -->
 
       <el-empty
         v-if="detailData.length === 0 && !detailLoading"
@@ -333,7 +350,7 @@ const tableData = ref([])
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
+  pageSize: 9999999,
   total: 0
 })
 
@@ -387,7 +404,10 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: 0,
+      orderByColumn: 'year',
+      isAsc: 'desc'
       // sourceCode:'huangshan'
       // TODO: Add user context filters
       // sourceCode: 'KB001'

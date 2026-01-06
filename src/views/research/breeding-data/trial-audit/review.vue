@@ -36,7 +36,7 @@
             {{ trialInfo.year }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('research.trialBasicAudit.list.status')">
-            <StatusTag :status="auditData.auditStatus" />
+            <StatusTag :status="auditData.workflowStatus || auditData.auditStatus" type="workflow" />
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -121,11 +121,11 @@
           {{ t('research.trialBasicAudit.action.return') }}
         </el-button>
         <template v-if="auditData.auditStatus === 'S1' && !isReadonly">
-          <el-button type="danger" @click="handleReject">
-            {{ t('research.trialBasicAudit.action.reject') }}
-          </el-button>
           <el-button type="success" @click="handleApprove">
             {{ t('research.trialBasicAudit.action.approve') }}
+          </el-button>
+          <el-button type="danger" @click="handleReject">
+            {{ t('research.trialBasicAudit.action.reject') }}
           </el-button>
         </template>
       </div>

@@ -2,14 +2,12 @@
   <div class="c1-certificate-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-award-line header-icon"></i>
+        <div class="header-icon header-left">
+          <i class="ri-award-line "></i>
         </div>
-        <div class="header-text">
+        <div class="header-content">
           <h1 class="page-title">{{ $t('seed.c1Certificate.title') }}</h1>
           <p class="page-subtitle">{{ $t('seed.c1Certificate.subtitle') }}</p>
-        </div>
       </div>
     </div>
 
@@ -44,12 +42,14 @@
                   :placeholder="$t('common.pleaseSelect')"
                   clearable
                   style="width: 100%"
+                  :loading="dictLoading"
                 >
-                  <el-option label="Wheat" value="Wheat" />
-                  <el-option label="Maize" value="Maize" />
-                  <el-option label="Teff" value="Teff" />
-                  <el-option label="Sorghum" value="Sorghum" />
-                  <el-option label="Barley" value="Barley" />
+                  <el-option
+                    v-for="item in options.crop_type"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -113,10 +113,12 @@
           <el-table-column prop="varietyName" :label="$t('seed.c1Certificate.columns.varietyName')" min-width="120" />
           <el-table-column prop="cropType" :label="$t('seed.c1Certificate.columns.cropType')" width="120" align="center">
             <template #default="{ row }">
-              <el-tag type="success" size="small">{{ row.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', row.cropType) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="startDate" :label="$t('seed.c1Certificate.columns.startDate')" width="120" align="center" />
+          <el-table-column prop="auditor" :label="$t('seed.c1Certificate.columns.auditor')" width="120" align="center" />
+          <el-table-column prop="auditorOrgName" :label="$t('seed.c1Certificate.columns.auditorOrg')" min-width="150" show-overflow-tooltip />
           <el-table-column prop="auditTime" :label="$t('seed.c1Certificate.columns.auditTime')" width="160" align="center" />
           <el-table-column prop="printCount" :label="$t('seed.c1Certificate.columns.printCount')" width="100" align="center">
             <template #default="{ row }">
@@ -224,7 +226,7 @@
           <div class="card-header">
             <div class="header-left">
               <div class="batch-id">{{ item.batchId }}</div>
-              <el-tag type="success" size="small">{{ item.cropType }}</el-tag>
+              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
             </div>
             <div class="header-right">
               <el-tag :type="item.printCount > 0 ? 'info' : 'success'" size="small">
@@ -245,6 +247,14 @@
             <div class="info-row">
               <span class="label">{{ $t('seed.c1Certificate.columns.startDate') }}:</span>
               <span class="value">{{ item.startDate }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ $t('seed.c1Certificate.columns.auditor') }}:</span>
+              <span class="value">{{ item.auditor || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ $t('seed.c1Certificate.columns.auditorOrg') }}:</span>
+              <span class="value">{{ item.auditorOrgName || '-' }}</span>
             </div>
             <div class="info-row">
               <span class="label">{{ $t('seed.c1Certificate.columns.auditTime') }}:</span>
@@ -288,9 +298,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getApprovedC1BatchList, recordC1BatchPrint } from '@/api/c1BreedingBatch'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const { t } = useI18n()
+
+// 使用 useDict hook 获取字典数据
+const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
 
 // 搜索参数
 const searchParams = reactive({
@@ -422,68 +436,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.c1-certificate-container {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 24px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon {
-  font-size: 32px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-  min-width: 0;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* PC端视图 */
-.pc-view {
-  display: block;
-  padding: 0 24px;
-}
 
 .mobile-view {
   display: none;

@@ -29,6 +29,10 @@ export default {
   targetAddress: '分发对象收获地址',
   targetContact: '分发对象联系人',
   targetPhone: '分发对象联系电话',
+  unionId: 'Union',
+  unionAddress: 'Union收获地址',
+  unionContact: 'Union联系人',
+  unionPhone: 'Union联系电话',
   releaseYear: '分发年度',
   releaseDate: '分发日期',
   status: '状态',
@@ -56,6 +60,8 @@ export default {
   quantity: '分发数量',
   demandQuantity: '需求数量',
   quantityExceedsDemand: '分发数量不能超过需求数量',
+  quantityCannotBeZero: '分发数量不能为0',
+  noDemandCannotAdd: '没有需求数据，无法添加分发明细',
   unitPrice: '单价',
   releaseTime: '分发时间',
   detailInfo: '明细信息',
@@ -105,6 +111,7 @@ export default {
   receiveName: '接收单名称',
 
   // 提示信息
+  confirmReceiveMessage: '确认接收此分发单吗？',
   confirmReceiveSuccess: '接收确认成功',
   confirmReceiveFailed: '接收确认失败',
   addReleaseSuccess: '分发单新增成功',
@@ -122,9 +129,9 @@ export default {
   inputQuotaView: '投入品配额查看',
   oseReleaseToUnion: 'OSE分发种子到Union',
   unionReceiveConfirm: 'Union确认接收',
-  unionReleaseToWoreda: 'Union分发投入品到Woreda',
-  woredaReceiveConfirm: 'Woreda确认接收',
-  woredaReleaseToFarmer: 'Woreda分发投入品到农民',
+  unionReleaseToCooperative: 'Union分发投入品到Cooperative',
+  cooperativeReceiveConfirm: 'Cooperative确认接收',
+  cooperativeReleaseToFarmer: 'Cooperative分发投入品到农民',
 
   // 通用
   pleaseSelectInputType: '请选择投入品类别',
