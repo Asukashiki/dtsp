@@ -42,14 +42,14 @@ const handleOAuth2Callback = async () => {
     // 构建登录数据
     const loginData = {
       code: code,
-      redirectUri: window.location.origin + '/agriculture/#/callback',
+      redirectUri: window.location.origin + window.location.pathname + '#/callback',
       grantType: 'bsp'
     }
 
     // 使用授权码换取token
-    const success = await userStore.Oauth2LoginWithCode(loginData)
-
-    if (success) {
+    const result = await userStore.Oauth2LoginWithCode(loginData)
+    console.log('OAuth2登录结果:', result)
+    if (result.success) {
       console.log('登录成功，检查用户信息状态')
       console.log('hasUserInfo:', userStore.hasUserInfo)
       console.log('userInfo:', JSON.stringify(userStore.userInfo))

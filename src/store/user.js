@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getCurrentUserInfo, getLogout } from '@/api/user'
+import { getCurrentUserInfo, getLogout, oauth2LoginWithCode } from '@/api/user'
 import { getRouters, getInfo } from '@/api/system/login'
 import {
   getToken,
@@ -8,7 +8,8 @@ import {
   getUserInfo,
   setUserInfo,
   removeUserInfo,
-  redirectToLogin
+  redirectToLogin,
+  getLoginMode
 } from '@/utils/auth'
 
 export const useUserStore = defineStore('user', {
@@ -173,8 +174,45 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    // OAuth2授权码登录 - 已废弃
-    // async Oauth2LoginWithCode(loginData) { ... }
+    // OAuth2授权码登录 (SSO模式使用)
+    async Oauth2LoginWithCode(loginData) {
+      try {
+        const res = await oauth2LoginWithCode(
+          loginData.code,
+          loginData.redirectUri,
+          loginData.grantType || 'authorization_code'
+        )
+
+        console.log('OAuth2 API响应:', res)
+
+        // 检查响应格式：token可能在 res.access_token 或 res.data.access_token
+        if (res.code === 200) {
+          // 优先从根对象获取token（当前API返回格式）
+          const token = res.access_token || res.token || (res.data && res.data.access_token)
+
+          if (token) {
+            this.setToken(token)
+            console.log('OAuth2登录成功，token已保存:', token)
+
+            // 获取用户信息
+            await this.fetchUserInfo()
+            await this.getPermissions()
+            await this.getMenus()
+
+            return { success: true, token }
+          } else {
+            console.error('OAuth2登录失败: 响应中未找到token', res)
+            return { success: false, message: res.msg || '未返回token' }
+          }
+        } else {
+          console.error('OAuth2登录失败:', res.msg || '未知错误')
+          return { success: false, message: res.msg || '登录失败' }
+        }
+      } catch (error) {
+        console.error('OAuth2登录异常:', error)
+        return { success: false, message: error.message || '登录异常' }
+      }
+    },
 
     // 获取用户权限信息
     async getPermissions() {

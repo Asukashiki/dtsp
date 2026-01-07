@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
-import { getToken } from '../utils/auth'
+import { getToken, getTokenFromUrl, getLoginMode } from '../utils/auth'
 import { ElMessage } from 'element-plus'
 import farmLayoutConfig from '@/config/farm-layout.json'
 import inputLayoutConfig from '@/config/input-layout.json'
@@ -20,6 +20,13 @@ const routeWhitelist = [
 ]
 
 const routes = [
+  // OAuth2回调页面（不需要认证）- SSO模式下使用
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/callback/index.vue'),
+    meta: { requiresAuth: false }
+  },
   // 打印页面（独立布局，不带侧边栏和导航）
   {
     path: '/print/seed/breeding-certification/:id',
@@ -1871,10 +1878,34 @@ router.beforeEach(async (to, from, next) => {
   }
   const userStore = useUserStore()
 
-  // 1. 判断 localStorage 有没有 token
+  // 1. 先判断 URL 上有没有 token (SSO模式)
+  const loginMode = getLoginMode()
+  const urlToken = loginMode === 'sso' ? getTokenFromUrl() : null
+
+  // 2. 判断 localStorage 有没有 token
   const storedToken = getToken()
 
-  if(!storedToken) {
+  // 3. 处理不同情况
+  if (urlToken && loginMode === 'sso') {
+    // SSO模式下，URL中有token
+    userStore.setToken(urlToken)
+    try {
+      await userStore.fetchUserInfo()
+      await userStore.getPermissions()
+      await userStore.getMenus()
+
+      // 清理URL中的token参数
+      if (window.location.hash.includes('token=') || window.location.search.includes('token=')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.hash.split('?')[0])
+        return next('/home')
+      }
+    } catch (error) {
+      console.error('路由守卫: SSO登录后获取用户信息失败:', error)
+      userStore.logoutAndRedirect(1000)
+      return next(false)
+    }
+  } else if(!storedToken) {
+    // 没有token，跳转登录
     userStore.logoutAndRedirect(1000)
     return next(false)
   } else {
