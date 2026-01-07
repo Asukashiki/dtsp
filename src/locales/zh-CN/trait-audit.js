@@ -37,6 +37,13 @@ export default {
     rejected: "已驳回"
   },
 
+  // 标签页
+  tabs: {
+    pendingApproval: "待审批",
+    approved: "已审批",
+    voided: "已作废"
+  },
+
   // 移动端标签文案
   mobileLabels: {
     plotId: "地块ID",

@@ -195,6 +195,12 @@ const routes = [
         component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
         meta: { title: 'router.breedingData.plot.audit', requiresAuth: true }
       },
+      {
+        path: 'breeding-data/plot-audit/review/:plotId',
+        name: 'PlotAuditReview',
+        component: () => import('../views/research/breeding-data/plot-audit/review.vue'),
+        meta: { title: 'router.breedingData.plot.auditReview', hideInMenu: true, requiresAuth: true }
+      },
 
       // 试验基础信息管理
       {

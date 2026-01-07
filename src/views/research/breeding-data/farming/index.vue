@@ -1,169 +1,141 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon"><i class="ri-plant-line"></i></div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.farming.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.farming.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-plant-line"
+        :title="$t('research.breedingData.farming.title')"
+        :subtitle="$t('research.breedingData.farming.subtitle')" />
 
+      <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-file-list-3-line"></i><span>{{ $t('research.breedingData.farming.list') }}</span></div>
-            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>{{ $t('research.breedingData.farming.add') }}
-              </el-button>
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem label="Plot ID">
+              <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select">
+                <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
+              </el-select>
+            </SearchItem>
+            <SearchItem label="Activity Type">
+              <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select">
+                <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
+            <SearchItem label="Activity Date">
+              <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" style="width: 100%" />
+            </SearchItem>
+            <SearchItem label="Audit Status">
+              <el-select v-model="queryParams.auditStatus" placeholder="Please select Audit Status" clearable class="filter-select">
+                <el-option
+                  v-for="dict in dictOptions.flow_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.breedingData.farming.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('research.breedingData.farming.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="180" show-overflow-tooltip />
+              <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="activityDate" label="Activity Date" min-width="160">
+                <template #default="{ row }">
+                  {{ formatDateTime(row.activityDate) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="activityType" label="Activity Type" min-width="160" />
+              <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="quantity" label="Quantity" min-width="160" />
+              <el-table-column prop="unit" label="Unit" min-width="80" />
+              <el-table-column prop="auditStatus" label="Audit Status" min-width="160">
+                <template #default="{ row }">
+                  <dict-tag :options="dictOptions.flow_status" :value="row.workflowStatus || row.auditStatus" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="creator" label="Creator" min-width="120" />
+              <el-table-column prop="createTime" label="Created Time" min-width="160">
+                <template #default="{ row }">
+                  {{ formatDateTime(row.createTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="modifier" label="Modifier" min-width="120" />
+              <el-table-column prop="updateTime" label="Modified Time" min-width="160">
+                <template #default="{ row }">
+                  {{ formatDateTime(row.updateTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="auditor" label="Auditor" min-width="120" />
+              <el-table-column prop="auditedDatetime" label="Audited Time" min-width="160">
+                <template #default="{ row }">
+                  {{ formatDateTime(row.auditedDatetime) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="row.workflowStatus || row.auditStatus || 'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :page-sizes="[10, 20, 50]" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
             </div>
           </div>
+        </InfoCard>
 
-          <div class="card-body">
-            <div class="search-section">
-              <div class="search-item">
-                <span class="search-label">Plot ID:</span>
-                <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select">
-                  <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">Activity Type:</span>
-                <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select">
-                  <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">Activity Date:</span>
-                <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" />
-              </div>
-              <div class="search-item">
-                <span class="search-label">Audit Status:</span>
-                <el-select v-model="queryParams.auditStatus" placeholder="Please select Audit Status" clearable class="filter-select">
-                  <el-option
-                    v-for="dict in dictOptions.flow_status"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>{{ $t('common.search') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
-                </el-button>
-              </div>
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
+            <div class="mobile-card-header">
+              <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+              <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ formatDateTime(item.activityDate) }}</span></div>
             </div>
-
-            <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
-                <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="180" show-overflow-tooltip />
-                <el-table-column prop="plotId" label="Plot ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" label="Trial ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" label="Batch ID" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="activityDate" label="Activity Date" min-width="160">
-                  <template #default="{ row }">
-                    {{ formatDateTime(row.activityDate) }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="activityType" label="Activity Type" min-width="160" />
-                <el-table-column prop="inputName" label="Input Name" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="quantity" label="Quantity" min-width="160" />
-                <el-table-column prop="unit" label="Unit" min-width="80" />
-                <!-- 新增的审计字段 -->
-                <el-table-column prop="auditStatus" label="Audit Status" min-width="160">
-                  <template #default="{ row }">
-                    <dict-tag :options="dictOptions.flow_status" :value="row.auditStatus" />
-                  </template>
-                </el-table-column>
-                <el-table-column prop="creator" label="Creator" min-width="120" />
-                      <el-table-column prop="createTime" label="Created Time" min-width="160">
-                  <template #default="{ row }">
-                    {{ formatDateTime(row.createTime) }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="modifier" label="Modifier" min-width="120" />
-                 <el-table-column prop="updateTime" label="Modified Time" min-width="160">
-                  <template #default="{ row }">
-                    {{ formatDateTime(row.updateTime) }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="auditor" label="Auditor" min-width="120" />
-                <el-table-column prop="auditedDatetime" label="Audited Time" min-width="160">
-                  <template #default="{ row }">
-                    {{ formatDateTime(row.auditedDatetime) }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="280" fixed="right">
-                  <template #default="{ row }">
-                    <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 5px;">
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                        <el-button v-if="shouldShowEditButton(row)" link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                      </div>
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button v-if="shouldShowSubmitButton(row)" link type="warning" @click="handleSubmitForReview(row)">
-                          <i class="ri-send-plane-line"></i>
-                          {{ $t('farmerDemand.actions.submit') }}
-                        </el-button>
-                        <el-button v-if="shouldShowCancelButton(row)" link type="danger" @click="handleCancel(row)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
-                      </div>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-
-              <div class="pagination-wrapper">
-                <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :page-sizes="[10, 20, 50]" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
-              </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
+              <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
+              <div class="mobile-card-row"><span class="label">Trial ID:</span><span class="value">{{ item.trialId }}</span></div>
+              <div class="mobile-card-row"><span class="label">Batch ID:</span><span class="value">{{ item.batchId }}</span></div>
+              <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
+              <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
+              <div class="mobile-card-row"><span class="label">Audit Status:</span><span class="value"><dict-tag :options="dictOptions.flow_status" :value="item.workflowStatus || item.auditStatus" /></span></div>
+              <div class="mobile-card-row"><span class="label">Creator:</span><span class="value">{{ item.creator }}</span></div>
+              <div class="mobile-card-row"><span class="label">Modifier:</span><span class="value">{{ item.modifier }}</span></div>
+              <div class="mobile-card-row"><span class="label">Auditor:</span><span class="value">{{ item.auditor }}</span></div>
+              <div class="mobile-card-row"><span class="label">Created Time:</span><span class="value">{{ formatDateTime(item.createTime) }}</span></div>
+              <div class="mobile-card-row"><span class="label">Modified Time:</span><span class="value">{{ formatDateTime(item.updateTime) }}</span></div>
+              <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
             </div>
-
-            <div class="mobile-card-list mobile-only">
-                <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
-                  <div class="mobile-card-header">
-                    <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                    <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ formatDateTime(item.activityDate) }}</span></div>
-                  </div>
-                  <div class="mobile-card-body">
-                    <div class="mobile-card-row"><span class="label">Farming Record ID:</span><span class="value">{{ item.farmingRecordId }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Plot ID:</span><span class="value">{{ item.plotId }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Trial ID:</span><span class="value">{{ item.trialId }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Batch ID:</span><span class="value">{{ item.batchId }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Input Name:</span><span class="value">{{ item.inputName }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Quantity:</span><span class="value">{{ item.quantity }} {{ item.unit }}</span></div>
-                    <!-- 新增的审计字段 -->
-                    <div class="mobile-card-row"><span class="label">Audit Status:</span><span class="value"><dict-tag :options="dictOptions.flow_status" :value="item.auditStatus" /></span></div>
-                    <div class="mobile-card-row"><span class="label">Creator:</span><span class="value">{{ item.creator }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Modifier:</span><span class="value">{{ item.modifier }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Auditor:</span><span class="value">{{ item.auditor }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Created Time:</span><span class="value">{{ formatDateTime(item.createTime) }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Modified Time:</span><span class="value">{{ formatDateTime(item.updateTime) }}</span></div>
-                    <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
-                  </div>
-                  <div class="mobile-card-footer">
-                    <div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%;">
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button size="small" @click="handleView(item)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-                        <el-button v-if="shouldShowEditButton(item)" size="small" type="primary" @click="handleEdit(item)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-                      </div>
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button v-if="shouldShowSubmitButton(item)" size="small" type="warning" @click="handleSubmitForReview(item)"><i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}</el-button>
-                        <el-button v-if="shouldShowCancelButton(item)" size="small" type="danger" @click="handleCancel(item)"><i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}</el-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <div class="pagination-wrapper">
-                <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :total="total" layout="prev, pager, next" small @current-change="getList" />
-              </div>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="item.workflowStatus || item.auditStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                @action="(action) => handleAction(item, action)" />
             </div>
+          </div>
+          <div class="pagination-wrapper">
+            <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :total="total" layout="prev, pager, next" small @current-change="getList" />
           </div>
         </div>
       </div>
@@ -176,6 +148,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions, submitFarmingRecordForReview } from '@/api/breedingData'
 import { cancelFarmingRecord } from '@/api/farmingRecordAudit'
 import { useDict } from '@/hooks/useDict'
@@ -284,22 +258,22 @@ const handleAdd = () => router.push('/research/breeding-data/farming/add')
 const handleView = (row) => router.push(`/research/breeding-data/farming/detail/${row.farmingId}`)
 const handleEdit = (row) => router.push(`/research/breeding-data/farming/edit/${row.farmingId}`)
 
-// 判断是否显示编辑按钮（只在审核状态为S0或S3时显示）
-const shouldShowEditButton = (row) => {
-  const status = row.auditStatus || row.workflowStatus
-  return status === 'S0' || status === 'S3'
-}
-
-// 判断是否显示提交审核按钮（只在审核状态为S0或S3时显示）
-const shouldShowSubmitButton = (row) => {
-  const status = row.auditStatus || row.workflowStatus
-  return status === 'S0' || status === 'S3'
-}
-
-// 判断是否显示作废按钮（只在审核状态为S0、S1或S3时显示）
-const shouldShowCancelButton = (row) => {
-  const status = row.auditStatus || row.workflowStatus
-  return status === 'S0' || status === 'S1' || status === 'S3'
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmitForReview(row)
+      break
+    case 'cancelBatch':
+      handleCancel(row)
+      break
+  }
 }
 
 // 提交审核
@@ -372,67 +346,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-
-    .filter-select {
-      width: 180px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .search-section {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 80px;
-      }
-
-      .search-input,
-      .filter-select {
-        flex: 1;
-        width: auto;
-      }
-    }
-
-    .search-actions {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

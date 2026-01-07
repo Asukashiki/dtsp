@@ -299,11 +299,4 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px 0;
-}
 </style>

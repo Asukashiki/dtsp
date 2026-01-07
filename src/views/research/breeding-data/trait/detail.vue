@@ -1,15 +1,15 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
+      <!-- 页面头部 -->
       <div class="page-header">
         <div class="header-left">
-          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ $t('trait.detail') }}</h1>
           </div>
-        </div>
-        <div class="header-actions">
-          <el-button type="primary" @click="handleEdit"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
         </div>
       </div>
 
@@ -109,7 +109,10 @@
         <!-- 审核信息 -->
         <div class="info-card" v-if="detailData.auditBy">
           <div class="card-header">
-            <div class="card-title"><i class="ri-history-line"></i><span>{{ $t('common.auditInfo') }}</span></div>
+            <div class="card-title">
+              <i class="ri-history-line"></i>
+              <span>{{ $t('common.auditInfo') }}</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -122,7 +125,10 @@
         <!-- 创建和更新信息 -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-time-line"></i><span>{{ $t('common.systemInfo') }}</span></div>
+            <div class="card-title">
+              <i class="ri-time-line"></i>
+              <span>{{ $t('common.systemInfo') }}</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -229,10 +235,6 @@ const getUserName = (userId) => {
   return userNames.value[userId] || userId
 }
 
-const handleEdit = () => {
-  const recordId = route.params.traitId || route.query.traitId
-  router.push(`/research/breeding-data/trait/edit/${recordId}`)
-}
 const goBack = () => router.push('/research/breeding-data/trait')
 
 onMounted(() => getInfo())
@@ -240,6 +242,7 @@ onMounted(() => getInfo())
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
 // 移动端性状明细卡片
 .trait-detail-list {
@@ -306,18 +309,6 @@ onMounted(() => getInfo())
             margin-left: 4px;
           }
         }
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .card-body {
-    padding: 16px;
-
-    :deep(.el-descriptions) {
-      .el-descriptions__label {
-        width: 100px;
       }
     }
   }

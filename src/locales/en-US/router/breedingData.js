@@ -14,7 +14,8 @@ export default {
     add: 'Add Plot Information',
     edit: 'Edit Plot Information',
     detail: 'Plot Information Detail',
-    audit: 'Plot and Sowing Information Audit'
+    audit: 'Plot and Sowing Information Audit',
+    auditReview: 'Review Plot'
   },
   // Trial Basic Information Management
   trial: {

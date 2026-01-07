@@ -2,198 +2,150 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-leaf-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('trait-audit.title') }}</h1>
-            <p class="page-subtitle">{{ $t('trait-audit.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon="ri-leaf-line"
+        :title="$t('trait-audit.title')"
+        :subtitle="$t('trait-audit.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('trait-audit.listName') }}</span>
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('trait.growthStage')">
+              <el-select
+                v-model="queryParams.growthStage"
+                :placeholder="$t('trait-audit.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option v-for="item in options.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="$t('trait-audit.listName')"
+          icon="ri-file-list-3-line"
+          :no-padding="true">
+          <!-- 状态标签页 -->
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange" />
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="plotId" :label="$t('trait-audit.plotId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="trialId" :label="$t('trait-audit.trialId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="batchId" :label="$t('trait-audit.batchId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="observationDate" :label="$t('trait-audit.observationDate')" min-width="160" />
+              <el-table-column prop="growthStage" :label="$t('trait-audit.growthStage')" min-width="120">
+                <template #default="{ row }">
+                  {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
+                </template>
+              </el-table-column>
+              <!-- 性状数量列 -->
+              <el-table-column :label="$t('trait-audit.traitCount')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag type="success" v-loading="detailLoading[row.recordId || row.traitId]">
+                    {{ row.traitDetailLength || 0 }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('trait-audit.auditStatus')" min-width="140">
+                <template #default="{ row }">
+                  <el-tag :type="getWorkflowStatusType(mapStatusToWorkflowStatus(row.auditStatus))" effect="plain">
+                    {{ getLabelByValue('flow_status', mapStatusToWorkflowStatus(row.auditStatus)) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="createBy" :label="$t('trait-audit.submitter')" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="createTime" :label="$t('trait-audit.submitTime')" min-width="160" />
+              <el-table-column :label="$t('trait-audit.operations')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="mapStatusToWorkflowStatus(row.auditStatus)"
+                    mode="list"
+                    :is-voided-tab="activeTab === 'voided'"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
             </div>
           </div>
 
-          <div class="card-body">
-            <!-- 搜索筛选区 -->
-            <div class="search-section">
-              <div class="search-item">
-                <span class="search-label">{{ $t('trait.growthStage') }}:</span>
-                <el-select
-                    v-model="queryParams.growthStage"
-                    :placeholder="$t('trait-audit.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in options.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-for="item in dataList" :key="item.recordId" class="mobile-card">
+              <div class="mobile-card-header">
+                <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+                <div class="mobile-card-title">
+                  <i class="ri-plant-line"></i>
+                  <span>{{ item.recordId }}</span>
+                </div>
               </div>
-              <div class="search-item">
-                <span class="search-label">{{ $t('trait-audit.auditStatusLabel') }}:</span>
-                <el-select
-                    v-model="queryParams.auditStatus"
-                    :placeholder="$t('trait-audit.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option :label="$t('trait-audit.status.pending')" value="pending" />
-                  <el-option :label="$t('trait-audit.status.approved')" value="approved" />
-                  <!-- 删除已驳回选项，避免误选 -->
-                  <!-- <el-option :label="$t('trait-audit.status.rejected')" value="rejected" /> -->
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>{{ $t('trait-audit.queryBtn') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>{{ $t('trait-audit.resetBtn') }}
-                </el-button>
-              </div>
-            </div>
-
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading">
-                <el-table-column prop="plotId" :label="$t('trait-audit.plotId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('trait-audit.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('trait-audit.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="observationDate" :label="$t('trait-audit.observationDate')" min-width="160" />
-                <el-table-column prop="growthStage" :label="$t('trait-audit.growthStage')" min-width="120">
-                  <template #default="{ row }">
-                    {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
-                  </template>
-                </el-table-column>
-                <!-- 性状数量列 -->
-                <el-table-column :label="$t('trait-audit.traitCount')" min-width="100" align="center">
-                  <template #default="{ row }">
-                    <el-tag type="success" v-loading="detailLoading[row.recordId || row.traitId]">
-                      {{ row.traitDetailLength || 0 }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('trait-audit.auditStatus')" min-width="140">
-                  <template #default="{ row }">
-                    <el-tag :type="getAuditStatusType(row.auditStatus)">
-                      {{ row.auditStatus === 'pending' ? $t('trait-audit.status.pending') : row.auditStatus === 'approved' ? $t('trait-audit.status.approved') : $t('trait-audit.status.rejected') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="createBy" :label="$t('trait-audit.submitter')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="createTime" :label="$t('trait-audit.submitTime')" min-width="160" />
-                <el-table-column :label="$t('trait-audit.operations')" width="200" fixed="right">
-                  <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button
-                          link
-                          type="primary"
-                          @click="handleView(row)"
-                      >
-                        <i class="ri-eye-line"></i>{{ $t('trait-audit.viewBtn') }}
-                      </el-button>
-                      <el-button
-                          v-if="row.auditStatus === 'pending'"
-                          link
-                          type="success"
-                          @click="handleAudit(row)"
-                      >
-                        <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                    v-model:current-page="queryParams.pageNum"
-                    v-model:page-size="queryParams.pageSize"
-                    :page-sizes="[10, 20, 50]"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    @size-change="getList"
-                    @current-change="getList"
-                />
-              </div>
-            </div>
-
-            <!-- 移动端卡片 -->
-            <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.recordId" class="mobile-card">
-                <div class="mobile-card-header">
-                  <div class="mobile-card-title">
-                    <i class="ri-plant-line"></i>
-                    <span>{{ item.recordId }}</span>
-                  </div>
-                  <el-tag :type="getAuditStatusType(item.auditStatus)" size="small">
-                    {{ item.auditStatus === 'pending' ? $t('trait-audit.status.pending') : item.auditStatus === 'approved' ? $t('trait-audit.status.approved') : $t('trait-audit.status.rejected') }}
+              <div class="mobile-card-body">
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('trait-audit.mobileLabels.plotId') }}:</span>
+                  <span class="value">{{ item.plotId }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('trait-audit.mobileLabels.observationDate') }}:</span>
+                  <span class="value">{{ item.observationDate }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('trait-audit.mobileLabels.growthStage') }}:</span>
+                  <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('trait-audit.mobileLabels.traitCount') }}:</span>
+                  <span class="value" v-loading="detailLoading[item.recordId || item.traitId]">
+                    {{ item.traitDetailLength || 0 }}
+                  </span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('trait-audit.auditStatus') }}:</span>
+                  <el-tag :type="getWorkflowStatusType(mapStatusToWorkflowStatus(item.auditStatus))" effect="plain" size="small">
+                    {{ getLabelByValue('flow_status', mapStatusToWorkflowStatus(item.auditStatus)) }}
                   </el-tag>
                 </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait-audit.mobileLabels.plotId') }}:</span>
-                    <span class="value">{{ item.plotId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait-audit.mobileLabels.observationDate') }}:</span>
-                    <span class="value">{{ item.observationDate }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait-audit.mobileLabels.growthStage') }}:</span>
-                    <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait-audit.mobileLabels.traitCount') }}:</span>
-                    <span class="value" v-loading="detailLoading[item.recordId || item.traitId]">
-                      {{ item.traitDetailLength || 0 }}
-                    </span>
-                  </div>
-                </div>
-                <div class="mobile-card-footer">
-                  <el-button
-                      size="small"
-                      type="primary"
-                      @click="handleView(item)"
-                  >
-                    <i class="ri-eye-line"></i>{{ $t('trait-audit.viewBtn') }}
-                  </el-button>
-                  <el-button
-                      v-if="item.auditStatus === 'pending'"
-                      size="small"
-                      type="success"
-                      @click="handleAudit(item)"
-                  >
-                    <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                  </el-button>
-                </div>
               </div>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                    v-model:current-page="queryParams.pageNum"
-                    v-model:page-size="queryParams.pageSize"
-                    :total="total"
-                    layout="prev, pager, next"
-                    small
-                    @current-change="getList"
-                />
+              <div class="mobile-card-footer">
+                <ActionButtons
+                  :workflow-status="mapStatusToWorkflowStatus(item.auditStatus)"
+                  mode="list"
+                  :is-voided-tab="activeTab === 'voided'"
+                  @action="(action) => handleAction(item, action)" />
               </div>
             </div>
 
-            <!-- 空状态 -->
-            <el-empty v-if="dataList.length === 0 && !loading" :description="$t('trait-audit.emptyData')" />
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :total="total"
+                layout="prev, pager, next"
+                small
+                @current-change="getList"
+              />
+            </div>
           </div>
-        </div>
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -201,15 +153,19 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { getAgronomicTraitAuditList, getBatchOptions, getTrialOptions, getTraitRecordInfo } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
-import { useI18n } from 'vue-i18n'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
-const { options, getLabelByValue } = useDict(['growth_cycle'])
+const { options, getLabelByValue } = useDict(['growth_cycle', 'flow_status'])
 
 const loading = ref(false)
 const dataList = ref([])
@@ -218,6 +174,27 @@ const batchOptions = ref([])
 const trialOptions = ref([])
 const detailLoading = ref({})
 const traitDetailLengthCache = ref({})
+const selectedIds = ref([])
+const activeTab = ref('pendingApproval')
+
+// Tab configuration
+const tabConfig = [
+  {
+    name: 'pendingApproval',
+    label: 'trait-audit.tabs.pendingApproval',
+    icon: 'ri-time-line'
+  },
+  {
+    name: 'approved',
+    label: 'trait-audit.tabs.approved',
+    icon: 'ri-check-line'
+  },
+  {
+    name: 'voided',
+    label: 'trait-audit.tabs.voided',
+    icon: 'ri-forbid-line'
+  }
+]
 
 const queryParams = reactive({
   pageNum: 1,
@@ -228,18 +205,47 @@ const queryParams = reactive({
   auditStatus: ''
 })
 
-// 审核状态标签类型映射
-const getAuditStatusType = (status) => {
-  const typeMap = {
-    pending: 'warning',
-    approved: 'success',
-    rejected: 'danger'
+/**
+ * 将后端返回的字符串状态映射为标准工作流状态码
+ * @param {string} status - 后端返回的状态（pending, approved, rejected, voided 等）
+ * @returns {string} 标准状态码（S0-S10）
+ */
+const mapStatusToWorkflowStatus = (status) => {
+  const statusMap = {
+    'pending': 'S1',      // 待审批
+    'submitted': 'S1',    // 已提交（待审批）
+    'approved': 'S2',     // 已审批
+    'rejected': 'S3',     // 已驳回
+    'voided': 'S10',      // 已作废
+    'invalid': 'S10',     // 已作废
+    'cancelled': 'S10'    // 已作废
   }
-  return typeMap[status] || ''
+  return statusMap[status] || 'S1'
+}
+
+// 工作流状态标签类型映射
+const getWorkflowStatusType = (workflowStatus) => {
+  const workflowStatusMap = {
+    'S0': 'info',
+    'S1': 'warning',
+    'S2': 'primary',
+    'S3': 'danger',
+    'S9': 'danger',
+    'S10': 'danger'
+  }
+  return workflowStatusMap[workflowStatus] || 'info'
 }
 
 // 获取性状审核列表
 const getList = async () => {
+  // 已作废标签页暂不对接接口
+  if (activeTab.value === 'voided') {
+    dataList.value = []
+    total.value = 0
+    loading.value = false
+    return
+  }
+
   loading.value = true
   try {
     const res = await getAgronomicTraitAuditList(queryParams)
@@ -312,15 +318,67 @@ const handleReset = () => {
   queryParams.batchId = ''
   queryParams.trialId = ''
   queryParams.growthStage = ''
-  queryParams.auditStatus = ''
+  setQueryParamsByTab(activeTab.value)
   getList()
+}
+
+// 根据标签页设置查询参数
+const setQueryParamsByTab = (tabName) => {
+  switch (tabName) {
+    case 'pendingApproval':
+      queryParams.auditStatus = 'pending'
+      break
+    case 'approved':
+      queryParams.auditStatus = 'approved'
+      break
+    case 'voided':
+      // 已作废标签页：暂不对接接口，保留UI结构
+      queryParams.auditStatus = 'voided'
+      break
+  }
+}
+
+// 标签页切换
+const handleTabChange = (tabName) => {
+  setQueryParamsByTab(tabName)
+  getList()
+}
+
+// 表格选择变化
+const handleSelectionChange = (selection) => {
+  selectedIds.value = selection.map(item => item.recordId || item.traitId)
+}
+
+// 移动端选择
+const handleMobileSelect = (item) => {
+  const id = item.recordId || item.traitId
+  if (item.checked) {
+    if (!selectedIds.value.includes(id)) {
+      selectedIds.value.push(id)
+    }
+  } else {
+    selectedIds.value = selectedIds.value.filter(selectedId => selectedId !== id)
+  }
+}
+
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'audit':
+      handleAudit(row)
+      break
+  }
 }
 
 // 进入审核页面
 const handleAudit = (row) => {
   router.push({
     name: 'AgronomicTraitDataAuditReview',
-    params: { traitId: row.traitId || row.recordId }
+    params: { traitId: row.traitId || row.recordId },
+    query: { from: '/research/breeding-data/trait-audit', tab: activeTab.value }
   })
 }
 
@@ -328,258 +386,24 @@ const handleAudit = (row) => {
 const handleView = (row) => {
   router.push({
     name: 'AgronomicTraitDataAuditReview',
-    params: { traitId: row.traitId || row.recordId }
+    params: { traitId: row.traitId || row.recordId },
+    query: { from: '/research/breeding-data/trait-audit', tab: activeTab.value }
   })
 }
 
 onMounted(() => {
+  if (route.query.tab) {
+    activeTab.value = route.query.tab
+  }
+  setQueryParamsByTab(activeTab.value)
   loadBatchOptions()
   loadTrialOptions()
   getList()
 })
 </script>
 
-<style scoped>
-
-
-.info-card {
-  background: white;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title i {
-  font-size: 22px;
-}
-
-.card-body {
-  padding: 24px;
-}
-
-/* 搜索区域样式 */
-.search-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.search-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.search-label {
-  font-size: 14px;
-  color: #606266;
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.filter-select {
-  width: 180px;
-  flex-shrink: 0;
-}
-
-.search-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.table-wrapper {
-  margin-top: 16px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
-}
-
-.mobile-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 16px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.mobile-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.mobile-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  flex: 1;
-}
-
-.mobile-card-title i {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.mobile-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-footer {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.mobile-card-footer .el-button {
-  flex: 1;
-}
-
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-/* 响应式适配 */
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .content-wrapper {
-    border-radius: 12px;
-  }
-
-  .card-header {
-    padding: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .search-section {
-    flex-direction: column;
-  }
-
-  .search-item {
-    width: 100%;
-  }
-
-  .filter-select {
-    width: 100%;
-    flex: 1;
-  }
-
-  .search-actions {
-    width: 100%;
-  }
-
-  .search-actions .el-button {
-    flex: 1;
-    width: 100%;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

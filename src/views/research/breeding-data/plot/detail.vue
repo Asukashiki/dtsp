@@ -1,23 +1,27 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
       <div class="page-header">
         <div class="header-left">
-          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ $t('research.breedingData.plot.detail') }}</h1>
           </div>
         </div>
-        <div class="header-actions">
-          <el-button type="primary" @click="handleEdit"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-        </div>
       </div>
 
+      <!-- 内容区域 -->
       <div class="content-wrapper" v-loading="loading">
         <!-- Plot Basic Information -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-information-line"></i><span>Plot Basic Information</span></div>
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>Plot Basic Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -39,7 +43,10 @@
         <!-- Sowing Information -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-seedling-line"></i><span>Sowing Information</span></div>
+            <div class="card-title">
+              <i class="ri-seedling-line"></i>
+              <span>Sowing Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -53,7 +60,10 @@
         <!-- Audit Information -->
         <div class="info-card" v-if="detailData.auditStatus && detailData.auditStatus !== 'S0'">
           <div class="card-header">
-            <div class="card-title"><i class="ri-file-check-line"></i><span>Audit Information</span></div>
+            <div class="card-title">
+              <i class="ri-file-check-line"></i>
+              <span>Audit Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -74,13 +84,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getPlotInfo } from '@/api/breedingData'
+import { getPlotInfo, getIrrigationCount } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+const irrigationCount = ref(0)
 const { options: dictOptions } = useDict('flow_status')
 
 const getInfo = async () => {
@@ -105,7 +116,6 @@ const loadIrrigationCount = async () => {
   }
 }
 
-const handleEdit = () => router.push(`/research/breeding-data/plot/edit/${route.params.plotId}`)
 const goBack = () => router.push('/research/breeding-data/plot')
 
 onMounted(() => getInfo())
@@ -113,4 +123,5 @@ onMounted(() => getInfo())
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

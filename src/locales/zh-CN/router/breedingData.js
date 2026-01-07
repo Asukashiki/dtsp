@@ -14,7 +14,8 @@ export default {
     add: '新增地块信息',
     edit: '编辑地块信息',
     detail: '地块信息详情',
-    audit: '地块及播种信息管理审核'
+    audit: '地块及播种信息管理审核',
+    auditReview: '审核地块'
   },
   // 试验基础信息管理
   trial: {

@@ -40,7 +40,13 @@
               v-loading="loading"
               :data="auditList"
               stripe
+              @selection-change="handleSelectionChange"
             >
+              <el-table-column
+                type="selection"
+                width="55"
+                align="center"
+              />
               <el-table-column
                 prop="trialId"
                 :label="t('research.trialBasicAudit.list.trialId')"
@@ -129,7 +135,6 @@
 
             <div class="pagination-wrapper">
               <el-pagination
-                v-if="total > 0"
                 v-model:current-page="queryParams.pageNum"
                 v-model:page-size="queryParams.pageSize"
                 :total="total"
@@ -157,7 +162,6 @@
 
           <div class="pagination-wrapper">
             <el-pagination
-              v-if="total > 0"
               v-model:current-page="queryParams.pageNum"
               v-model:page-size="queryParams.pageSize"
               :total="total"
@@ -193,6 +197,7 @@ const loading = ref(false)
 const activeTab = ref('pendingApproval')
 const auditList = ref([])
 const total = ref(0)
+const selectedRows = ref([]) // 选中的行数据
 
 // Tab configuration
 const tabConfig = [
@@ -312,6 +317,11 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryParams.trialName = ''
   handleQuery()
+}
+
+// 处理表格选择变化
+const handleSelectionChange = (selection) => {
+  selectedRows.value = selection
 }
 
 // Tab切换
