@@ -106,6 +106,19 @@
                   </template>
                 </el-table-column>
               </el-table>
+
+              <!-- PC pagination -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :total="pagination.total"
+                  :page-sizes="[10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
             </div>
 
             <!-- 移动端卡片 -->
@@ -153,6 +166,20 @@
                       @action="(action) => handleAction(item, action)"
                     />
                 </div>
+              </div>
+
+              <!-- Mobile pagination -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50]"
+                  :total="pagination.total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
 
@@ -623,7 +650,7 @@ const viewMode = ref('main')
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 999999,
+  pageSize: 10,
   total: 0
 })
 
@@ -729,7 +756,7 @@ const loadData = async () => {
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      tableData.value = res.data.list || []
+      tableData.value = res.data.records || []
       pagination.total = res.data.total || 0
 
       // 为每一行加载已审批数量
@@ -916,7 +943,7 @@ const loadDrillDownData = async () => {
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      drillDownData.value = res.data?.list || []
+      drillDownData.value = res.data?.records || []
       drillDownPagination.total = res.data?.total || 0
     }
   } catch (error) {
@@ -983,7 +1010,7 @@ const loadFarmerDemandData = async () => {
   farmerDemandLoading.value = true
   try {
     const params = {
-      pageNum: farmerDemandPagination.currentPage,
+      page: farmerDemandPagination.currentPage, // 修正为 page
       pageSize: farmerDemandPagination.pageSize,
       kebele: drillDownRecordDetail.value.sourceCode,
       year: drillDownRecordDetail.value.year,

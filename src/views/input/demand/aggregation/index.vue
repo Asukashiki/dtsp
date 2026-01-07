@@ -102,6 +102,19 @@
                   </template>
                 </el-table-column>
               </el-table>
+
+              <!-- PC pagination -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :total="pagination.total"
+                  :page-sizes="[5, 10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
             </div>
 
             <!-- 移动端卡片 -->
@@ -152,6 +165,20 @@
                     @action="(action) => handleTableAction(item, action)"
                   />
                 </div>
+              </div>
+
+              <!-- Mobile pagination -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[5, 10, 20, 50]"
+                  :total="pagination.total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
 
@@ -267,7 +294,7 @@ const tableData = ref([])
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 9999999,
+  pageSize: 5,
   total: 0
 })
 
@@ -358,19 +385,21 @@ const handleTableAction = (row, action) => {
 const loadData = async () => {
   loading.value = true
   try {
+    console.log('currentPage',pagination.currentPage)
+    console.log('pageSize',pagination.pageSize)
     const params = {
-      page: pagination.currentPage,
+      page: pagination.currentPage, // 修正为 page
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      level: 0,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: '0',
       orderByColumn: 'year',
       isAsc: 'desc'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      tableData.value = res.data.list || []
-      pagination.total = res.data.total || 0
+      tableData.value = res.data?.records || []
+      pagination.total = res.data?.total || 0
 
       // 为每行加载已审批数量
       await Promise.all(tableData.value.map(item => loadApprovedCountForRow(item)))
@@ -521,7 +550,7 @@ const handleDetailCurrentChange = () => {
   loadDetailData()
 }
 
-// 分页变化
+// 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
   loadData()
@@ -539,6 +568,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
 
 // 自定义样式可以根据需要添加，大部分已包含在通用样式中
