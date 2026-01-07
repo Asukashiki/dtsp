@@ -341,7 +341,7 @@ const getCustomButtons = (row) => {
     type: 'primary', 
     action: 'detail', 
     rawLabel: t('Aggregation detail'), 
-    icon: 'ri-eye-line' 
+    icon: 'ri-list-check' 
   })
 
   return buttons
