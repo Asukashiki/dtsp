@@ -1,225 +1,162 @@
 <template>
-  <div class="variety-query-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon header-left">
-        <i class="ri-search-eye-line"></i>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('research.variety.query.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.variety.query.subtitle') }}</p>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader icon="ri-search-eye-line" :title="$t('research.variety.query.title')"
+        :subtitle="$t('research.variety.query.subtitle')" />
 
-    <!-- 列表区域 -->
-    <div class="list-section">
-      <!-- 搜索筛选区 -->
-      <div class="search-section">
-        <el-input
-          v-model="searchQuery"
-          :placeholder="$t('research.variety.query.searchPlaceholder')"
-          clearable
-          class="search-input"
-          @input="handleSearch"
-        >
-          <template #prefix>
-            <i class="ri-search-line"></i>
-          </template>
-        </el-input>
-        <el-select
-          v-model="filterYear"
-          :placeholder="$t('research.variety.query.filterByYear')"
-          clearable
-          class="filter-select"
-          @change="handleSearch"
-        >
-          <el-option :label="$t('research.variety.query.allYears')" value="" />
-          <el-option label="2025" value="2025" />
-          <el-option label="2024" value="2024" />
-          <el-option label="2023" value="2023" />
-          <el-option label="2022" value="2022" />
-        </el-select>
-        <el-select
-          v-model="filterCrop"
-          :placeholder="$t('research.variety.query.filterByCrop')"
-          clearable
-          class="filter-select"
-          @change="handleSearch"
-        >
-          <el-option :label="$t('research.variety.query.allCrops')" value="" />
-          <el-option :label="$t('common.cropTypes.wheat')" value="Wheat" />
-          <el-option :label="$t('common.cropTypes.maize')" value="Maize" />
-          <el-option :label="$t('common.cropTypes.barley')" value="Barley" />
-          <el-option :label="$t('common.cropTypes.teff')" value="Teff" />
-          <el-option :label="$t('common.cropTypes.sorghum')" value="Sorghum" />
-        </el-select>
-        <el-select
-          v-model="filterDataType"
-          :placeholder="$t('research.variety.query.filterByDataType')"
-          clearable
-          class="filter-select"
-          @change="handleSearch"
-        >
-          <el-option :label="$t('research.variety.query.allDataTypes')" value="" />
-          <el-option :label="$t('research.variety.query.autoPublish')" value="license" />
-          <el-option :label="$t('research.variety.query.registrationPublish')" value="registration" />
-        </el-select>
-      </div>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索区域 -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleSearch">
+            <SearchItem :label="$t('research.variety.query.columns.varietyName')">
+              <el-input v-model="searchQuery" :placeholder="$t('research.variety.query.searchPlaceholder')" clearable
+                @input="handleSearch">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
 
-      <!-- PC端表格 -->
-      <div class="table-container pc-only">
-        <el-table
-          v-loading="loading"
-          :data="varietyList"
-          stripe
-          style="width: 100%"
-          :empty-text="$t('home.noData')"
-        >
-          <el-table-column
-            :label="$t('research.variety.query.columns.dataType')"
-            width="120"
-            align="center"
-          >
-            <template #default="{ row }">
-              <el-tag v-if="row.dataType === 'license'" type="warning" size="small" effect="dark">
-                <i class="ri-checkbox-circle-line"></i>
-                {{ $t('research.variety.query.autoPublish') }}
-              </el-tag>
-              <el-tag v-else type="success" size="small" effect="dark">
-                <i class="ri-file-list-line"></i>
-                {{ $t('research.variety.query.registrationPublish') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="registerNo"
-            :label="$t('research.variety.query.columns.registerNo')"
-            min-width="150"
-          />
-          <el-table-column
-            prop="varietyName"
-            :label="$t('research.variety.query.columns.varietyName')"
-            min-width="150"
-          />
-          <el-table-column
-            prop="varietyType"
-            :label="$t('research.variety.query.columns.cropType')"
-            min-width="100"
-          />
-          <el-table-column
-            prop="enterpriseName"
-            :label="$t('research.variety.query.columns.enterprise')"
-            min-width="160"
-          />
-          <el-table-column
-            :label="$t('research.variety.query.columns.approvalOrg')"
-            min-width="150"
-          >
-            <template #default="{ row }">
-              {{ row.approvalOrg || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('research.variety.query.columns.validPeriod')"
-            min-width="180"
-          >
-            <template #default="{ row }">
-              <span v-if="row.validStartDate && row.validEndDate">
-                {{ row.validStartDate }} ~ {{ row.validEndDate }}
-              </span>
-              <span v-else>-</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('research.variety.query.columns.actions')"
-            width="120"
-            fixed="right"
-          >
-            <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.view') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+            <SearchItem :label="$t('research.variety.query.filterByYear')">
+              <el-select v-model="filterYear" :placeholder="$t('research.variety.query.filterByYear')" clearable
+                class="filter-select" @change="handleSearch">
+                <el-option :label="$t('research.variety.query.allYears')" value="" />
+                <el-option v-for="year in yearOptions" :key="year" :label="year" :value="year" />
+              </el-select>
+            </SearchItem>
 
-        <!-- 分页 -->
-        <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="currentPage"
-            v-model:page-size="pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
-          />
+            <SearchItem :label="$t('research.variety.query.filterByCrop')">
+              <el-select v-model="filterCrop" :placeholder="$t('research.variety.query.filterByCrop')" clearable
+                class="filter-select" v-loading="dictLoading" @change="handleSearch">
+                <el-option :label="$t('research.variety.query.allCrops')" value="" />
+                <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.variety.query.filterByDataType')">
+              <el-select v-model="filterDataType" :placeholder="$t('research.variety.query.filterByDataType')" clearable
+                class="filter-select" @change="handleSearch">
+                <el-option :label="$t('research.variety.query.allDataTypes')" value="" />
+                <el-option :label="$t('research.variety.query.autoPublish')" value="license" />
+                <el-option :label="$t('research.variety.query.registrationPublish')" value="registration" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
-      </div>
 
-      <!-- 移动端卡片 -->
-      <div class="card-container mobile-only">
-        <div v-if="varietyList.length === 0 && !loading" class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('home.noData') }}</p>
-        </div>
-        <div
-          v-for="item in varietyList"
-          :key="item.publishId"
-          class="variety-card"
-          @click="handleView(item)"
-        >
-          <div class="card-header">
-            <div class="variety-name">{{ item.varietyName }}</div>
-            <div class="card-tags">
-              <el-tag v-if="item.dataType === 'license'" type="warning" size="small">
-                {{ $t('research.variety.query.autoPublish') }}
-              </el-tag>
-              <el-tag v-else type="success" size="small">
-                {{ $t('research.variety.query.registrationPublish') }}
-              </el-tag>
-              <el-tag type="info" size="small">{{ item.varietyType }}</el-tag>
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.variety.query.title')" icon="ri-file-list-3-line">
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table v-loading="loading" :data="varietyList" stripe style="width: 100%"
+              :empty-text="$t('home.noData')">
+              <el-table-column :label="$t('research.variety.query.columns.dataType')" width="140" align="center">
+                <template #default="{ row }">
+                  <el-tag v-if="row.dataType === 'license'" type="warning" size="small" effect="plain">
+                    <i class="ri-checkbox-circle-line"></i>
+                    {{ $t('research.variety.query.autoPublish') }}
+                  </el-tag>
+                  <el-tag v-else type="success" size="small" effect="plain">
+                    <i class="ri-file-list-line"></i>
+                    {{ $t('research.variety.query.registrationPublish') }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="registerNo" :label="$t('research.variety.query.columns.registerNo')"
+                min-width="150" show-overflow-tooltip />
+              <el-table-column prop="varietyName" :label="$t('research.variety.query.columns.varietyName')"
+                min-width="150" show-overflow-tooltip />
+              <el-table-column :label="$t('research.variety.query.columns.cropType')" min-width="120">
+                <template #default="{ row }">
+                  {{ getLabelByValue('crop_type', row.varietyType) || row.varietyType || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="enterpriseName" :label="$t('research.variety.query.columns.enterprise')"
+                min-width="160" show-overflow-tooltip />
+              <el-table-column :label="$t('research.variety.query.columns.approvalOrg')" min-width="150"
+                show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ row.approvalOrg || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('research.variety.query.columns.validPeriod')" min-width="180">
+                <template #default="{ row }">
+                  <span v-if="row.validStartDate && row.validEndDate">
+                    {{ row.validStartDate }} ~ {{ row.validEndDate }}
+                  </span>
+                  <span v-else>-</span>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('common.actions')" width="120" fixed="right">
+                <template #default="{ row }">
+                  <div class="action-buttons">
+                    <el-button link type="primary" @click="handleView(row)">
+                      <i class="ri-eye-line"></i>
+                      {{ $t('common.view') }}
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <!-- 分页 -->
+            <div class="pagination-wrapper">
+              <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
+                :page-sizes="[10, 20, 50, 100]" :total="total" layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange" @current-change="handlePageChange" />
             </div>
           </div>
-          <div class="card-body">
-            <div class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.registerNo') }}:</span>
-              <span class="value">{{ item.registerNo }}</span>
-            </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
-              <span class="value">{{ item.enterpriseName }}</span>
-            </div>
-            <div v-if="item.approvalOrg" class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.approvalOrg') }}:</span>
-              <span class="value">{{ item.approvalOrg }}</span>
-            </div>
-            <div v-if="item.validStartDate && item.validEndDate" class="card-row">
-              <span class="label">{{ $t('research.variety.query.columns.validPeriod') }}:</span>
-              <span class="value">{{ item.validStartDate }} ~ {{ item.validEndDate }}</span>
-            </div>
-          </div>
-          <div class="card-footer">
-            <el-button link type="primary" size="small">
-              <i class="ri-arrow-right-line"></i> {{ $t('research.variety.query.actions.viewDetail') }}
-            </el-button>
-          </div>
-        </div>
 
-        <!-- 移动端分页 -->
-        <div v-if="total > 0" class="pagination-wrapper mobile-pagination">
-          <el-pagination
-            v-model:current-page="currentPage"
-            v-model:page-size="pageSize"
-            :page-sizes="[10, 20, 50]"
-            :total="total"
-            layout="total, prev, pager, next"
-            small
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
-          />
-        </div>
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-if="varietyList.length === 0 && !loading" class="empty-status">
+              <i class="ri-inbox-line"></i>
+              <p>{{ $t('home.noData') }}</p>
+            </div>
+            <div v-for="item in varietyList" :key="item.publishId" class="mobile-card" @click="handleView(item)">
+              <div class="mobile-card-header">
+                <div class="mobile-card-title">{{ item.varietyName }}</div>
+                <div class="card-tags">
+                  <el-tag v-if="item.dataType === 'license'" type="warning" size="small" effect="plain">
+                    {{ $t('research.variety.query.autoPublish') }}
+                  </el-tag>
+                  <el-tag v-else type="success" size="small" effect="plain">
+                    {{ $t('research.variety.query.registrationPublish') }}
+                  </el-tag>
+                </div>
+              </div>
+              <div class="mobile-card-body">
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.variety.query.columns.registerNo') }}:</span>
+                  <span class="value">{{ item.registerNo }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.variety.query.columns.cropType') }}:</span>
+                  <span class="value">{{ getLabelByValue('crop_type', item.varietyType) || item.varietyType || '-'
+                  }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.variety.query.columns.enterprise') }}:</span>
+                  <span class="value">{{ item.enterpriseName }}</span>
+                </div>
+              </div>
+              <div class="mobile-card-footer">
+                <el-button link type="primary" size="small">
+                  <i class="ri-eye-line"></i> {{ $t('common.view') }}
+                </el-button>
+              </div>
+            </div>
+
+            <!-- 移动端分页 -->
+            <div v-if="total > 0" class="pagination-wrapper">
+              <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
+                layout="prev, pager, next" small @current-change="handlePageChange" />
+            </div>
+          </div>
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -231,6 +168,19 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getVarietyPublicList } from '@/api/seedPromotion'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import { useDict } from '@/hooks/useDict'
+
+const { options, loading: dictLoading, getLabelByValue } = useDict(['crop_type'])
+
+const yearOptions = computed(() => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  for (let y = currentYear; y >= 2020; y--) {
+    years.push(y.toString())
+  }
+  return years
+})
 
 const router = useRouter()
 const { t } = useI18n()
@@ -335,196 +285,16 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-/* 列表区域 */
-.list-section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+.filter-select {
+  width: 100%;
 }
 
-.search-section {
+.card-tags {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-
-  .search-input {
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .filter-select {
-    width: 180px;
-  }
-}
-
-.table-container {
-  overflow: auto;
-}
-
-/* 分页 */
-.pagination-wrapper {
-  margin-top: 24px;
-  display: flex;
-  justify-content: flex-end;
-
-  &.mobile-pagination {
-    justify-content: center;
-  }
-}
-
-/* 移动端卡片 */
-.card-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #909399;
-
-    i {
-      font-size: 64px;
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    p {
-      font-size: 16px;
-      margin: 0;
-    }
-  }
-
-  .variety-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: 1px solid #e4e7ed;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(254, 221, 0, 0.2);
-      transform: translateY(-2px);
-      border-color: #FEDD00;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #e4e7ed;
-
-      .variety-name {
-        font-size: 18px;
-        font-weight: 600;
-        color: #303133;
-        flex: 1;
-      }
-
-      .card-tags {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-    }
-
-    .card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
-
-      .card-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        font-size: 14px;
-
-        .label {
-          color: #909399;
-          flex-shrink: 0;
-        }
-
-        .value {
-          color: #303133;
-          text-align: right;
-          font-weight: 500;
-        }
-      }
-    }
-
-    .card-footer {
-      padding-top: 12px;
-      border-top: 1px solid #e4e7ed;
-      text-align: right;
-    }
-  }
-}
-
-/* 响应式控制 */
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none !important;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 768px) {
-  .variety-query-page {
-    padding: 16px;
-  }
-
-  .page-header {
-    padding: 20px;
-    flex-direction: column;
-    text-align: center;
-
-    .header-icon-wrapper {
-      margin-right: 0;
-      margin-bottom: 16px;
-    }
-
-    .header-text {
-      .page-title {
-        font-size: 22px;
-      }
-
-      .page-subtitle {
-        font-size: 14px;
-      }
-    }
-  }
-
-  .list-section {
-    padding: 16px;
-  }
-
-  .search-section {
-    flex-direction: column;
-
-    .search-input,
-    .filter-select {
-      width: 100%;
-    }
-  }
-
-  /* 移动端显示卡片 */
-  .pc-only {
-    display: none !important;
-  }
-
-  .mobile-only {
-    display: flex !important;
-  }
+  gap: 8px;
 }
 </style>

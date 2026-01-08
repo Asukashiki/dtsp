@@ -36,7 +36,7 @@ export default {
       promotionSummary: 'Promotion Summary',
       recommendedVarieties: 'Recommended Varieties',
       publishTime: 'Publish Time',
-      validPeriod: 'Valid Period (Days)',
+      validPeriod: 'Valid Period',
       shareLink: 'Share Link',
       visitCount: 'Visit Count',
       createTime: 'Create Time',

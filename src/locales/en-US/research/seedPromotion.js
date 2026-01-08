@@ -8,6 +8,7 @@ export default {
   generateLink: 'Generate Share Link',
   copyLink: 'Copy Link',
   shareLink: 'Share Link',
+  shareTip: 'You can share this link with customers to let them know more about your varieties',
   linkCopied: 'Link copied to clipboard',
 
   // Search and Filter
@@ -27,7 +28,7 @@ export default {
     title: 'Title',
     recommendedVarieties: 'Recommended Varieties',
     publishTime: 'Publish Time',
-    validPeriod: 'Valid Period (Days)',
+    validPeriod: 'Valid Period',
     visitCount: 'Visits',
     shareLink: 'Share Link',
     actions: 'Actions',
@@ -40,7 +41,7 @@ export default {
     videoFile: 'Promotional Video',
     promotionSummary: 'Promotion Summary',
     recommendedVarieties: 'Recommended Varieties',
-    validPeriod: 'Valid Period (Days)',
+    validPeriod: 'Valid Period',
     selectVideo: 'Select Video File',
     videoTips: 'Only MP4 format supported, file size ≤ 100MB',
     varietiesTips: 'Separate multiple varieties with commas',

@@ -1,136 +1,153 @@
 <template>
-  <div class="breeding-batch-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-left">
-        <div class="back-btn" @click="handleCancel">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </div>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('batchCollection.add') }}</h1>
-      </div>
-    </div>
-
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="breeding-batch-form">
-        <!-- 批次信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-seedling-line"></i>
-            <h3>{{ $t('batchCollection.form.batchInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <!-- Breeding Batch ID -->
-            <el-form-item
-              :label="$t('batchCollection.form.breedingBatchId')"
-              prop="breedingBatchId"
-              class="full-width-item"
-            >
-              <el-select
-                v-model="formData.breedingBatchId"
-                :placeholder="$t('batchCollection.placeholder.breedingBatchId')"
-                filterable
-                clearable
-                class="full-width"
-                @change="handleBatchChange"
-              >
-                <el-option
-                  v-for="batch in breedingBatchList"
-                  :key="batch.id"
-                  :label="`${batch.batchId} - ${batch.varietyName} (${batch.breedingLevel})`"
-                  :value="batch.id"
-                >
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>{{ batch.batchId }}</span>
-                    <span style="color: #606266; font-size: 13px; margin: 0 8px;">{{ batch.varietyName }}</span>
-                    <el-tag size="small" type="success">{{ batch.breedingLevel }}</el-tag>
-                  </div>
-                </el-option>
-              </el-select>
-            </el-form-item>
-
-            <!-- Variety Name -->
-            <el-form-item :label="$t('batchCollection.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" disabled />
-            </el-form-item>
-
-            <!-- Crop Type -->
-            <el-form-item :label="$t('batchCollection.form.cropType')" prop="cropType">
-              <el-input v-model="cropTypeLabel" disabled />
-            </el-form-item>
-
-            <!-- Breeding Level -->
-            <el-form-item :label="$t('batchCollection.form.breedingLevel')" prop="breedingLevel">
-              <el-input v-model="formData.breedingLevel" disabled />
-            </el-form-item>
-
-            <!-- Parental Seed Source -->
-            <el-form-item
-              :label="$t('batchCollection.form.parentalSeedSource')"
-              prop="parentalSeedSource"
-              class="full-width-item"
-            >
-              <el-input v-model="formData.parentalSeedSource" disabled />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 采集数据 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-scales-3-line"></i>
-            <h3>{{ $t('batchCollection.form.collectionInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <!-- To Multiply Quantity -->
-            <el-form-item :label="$t('batchCollection.form.toMultiplyQuantity')" prop="toMultiplyQuantity">
-              <el-input-number
-                v-model="formData.toMultiplyQuantity"
-                :min="0"
-                :precision="2"
-                style="width: 100%"
-                :placeholder="$t('batchCollection.placeholder.toMultiplyQuantity')"
-              />
-            </el-form-item>
-
-            <!-- Operator -->
-            <el-form-item :label="$t('batchCollection.form.operator')">
-              <el-input v-model="operatorName" disabled />
-            </el-form-item>
-
-            <!-- Collection Date -->
-            <el-form-item :label="$t('batchCollection.form.collectionDate')" prop="collectionDate">
-              <el-date-picker
-                v-model="formData.collectionDate"
-                type="datetime"
-                :placeholder="$t('batchCollection.placeholder.collectionDate')"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <!-- Remarks -->
-            <el-form-item :label="$t('common.remarks')" prop="remark" class="full-width-item">
-              <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="4"
-                :placeholder="$t('batchCollection.placeholder.remark')"
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 表单操作 -->
-        <div class="form-actions">
-          <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ $t('common.submit') }}
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleCancel">
+            <i class="ri-arrow-left-line"></i>
           </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('batchCollection.add') }}</h1>
+          </div>
         </div>
-      </el-form>
+      </div>
+
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="submitting">
+
+          <!-- 批次信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ $t('batchCollection.form.batchInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="24">
+                  <el-form-item
+                    :label="$t('batchCollection.form.breedingBatchId')"
+                    prop="breedingBatchId"
+                  >
+                    <el-select
+                      v-model="formData.breedingBatchId"
+                      :placeholder="$t('batchCollection.placeholder.breedingBatchId')"
+                      filterable
+                      clearable
+                      class="full-width"
+                      @change="handleBatchChange"
+                    >
+                      <el-option
+                        v-for="batch in breedingBatchList"
+                        :key="batch.id"
+                        :label="`${batch.batchId} - ${batch.varietyName} (${batch.breedingLevel})`"
+                        :value="batch.id"
+                      >
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <span>{{ batch.batchId }}</span>
+                          <span style="color: #606266; font-size: 13px; margin: 0 8px;">{{ batch.varietyName }}</span>
+                          <el-tag size="small" type="success">{{ batch.breedingLevel }}</el-tag>
+                        </div>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.varietyName')" prop="varietyName">
+                    <el-input v-model="formData.varietyName" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.cropType')" prop="cropType">
+                    <el-input v-model="cropTypeLabel" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.breedingLevel')" prop="breedingLevel">
+                    <el-input v-model="formData.breedingLevel" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                    :label="$t('batchCollection.form.parentalSeedSource')"
+                    prop="parentalSeedSource"
+                  >
+                    <el-input v-model="formData.parentalSeedSource" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 采集数据卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-scales-3-line"></i>
+                <span>{{ $t('batchCollection.form.collectionInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.toMultiplyQuantity')" prop="toMultiplyQuantity">
+                    <el-input-number
+                      v-model="formData.toMultiplyQuantity"
+                      :min="0"
+                      :precision="2"
+                      style="width: 100%"
+                      :placeholder="$t('batchCollection.placeholder.toMultiplyQuantity')"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.operator')">
+                    <el-input v-model="operatorName" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('batchCollection.form.collectionDate')" prop="collectionDate">
+                    <el-date-picker
+                      v-model="formData.collectionDate"
+                      type="datetime"
+                      :placeholder="$t('batchCollection.placeholder.collectionDate')"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('common.remarks')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="4"
+                      :placeholder="$t('batchCollection.placeholder.remark')"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作按钮区域 -->
+          <div class="form-actions">
+            <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="submitting">
+              {{ $t('common.submit') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -283,145 +300,16 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-/* ========== 表单区域 ========== */
-.form-wrapper {
-  margin: 0 auto;
-  padding: 0 32px 32px;
-  background: white;
-  border-radius: 16px;
-}
+@use '@/assets/styles/page-common.scss';
 
-.breeding-batch-form {
-  padding: 32px 0;
-}
-
-/* ========== 表单块 ========== */
-.form-block {
-  margin-bottom: 32px;
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  border-left: 4px solid #009A44;
-  border-radius: 4px;
-
-  i {
-    font-size: 20px;
-    color: #009A44;
-    margin-right: 10px;
-  }
-
-  h3 {
-    margin: 0;
-    font-size: 16px;
-    color: #333;
-    font-weight: 600;
-  }
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-
-  .full-width-item {
-    grid-column: 1 / -1;
-  }
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-form-item__label) {
-    font-weight: 500;
-    color: #606266;
-    margin-bottom: 8px;
-  }
-}
-
-.full-width {
-  width: 100%;
-}
-
-/* ========== 表单操作 ========== */
 .form-actions {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-
-  button {
-    min-width: 120px;
-    height: 40px;
-  }
+  padding: 24px 0;
 }
 
-/* ========== 响应式设计 ========== */
-@media screen and (max-width: 768px) {
-  .page-header {
-    padding: 16px;
-    margin-bottom: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header-left {
-    width: 100%;
-  }
-
-  .header-content {
-    text-align: left;
-    padding-top: 12px;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-
-  .form-wrapper {
-    padding: 0 16px 16px;
-    margin: 0 16px;
-    border-radius: 12px;
-  }
-
-  .breeding-batch-form {
-    padding: 20px 0;
-  }
-
-  .form-block {
-    margin-bottom: 24px;
-  }
-
-  .block-header {
-    padding: 10px 12px;
-
-    h3 {
-      font-size: 15px;
-    }
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-    padding-top: 20px;
-
-    button {
-      width: 100%;
-    }
-  }
+.full-width {
+  width: 100%;
 }
 </style>

@@ -2,12 +2,12 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <PageHeader icon="ri-checkbox-circle-line" :title="$t('orgRegistration.form.title.audit')"
-        :subtitle="$t('orgRegistration.subtitle')" shadow show-back @back="handleCancel" />
+      <PageHeader :title="$t('orgRegistration.form.title.view')" :subtitle="$t('orgRegistration.subtitle')" shadow
+        show-back @back="handleBack" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper" v-loading="loading">
-        <!-- 基本信息（只读） -->
+        <!-- 基本信息 -->
         <InfoCard :title="$t('orgRegistration.form.basicInfo')" icon="ri-information-line">
           <el-descriptions :column="2" border>
             <el-descriptions-item :label="$t('orgRegistration.form.orgType')">
@@ -24,23 +24,50 @@
             <el-descriptions-item :label="$t('orgRegistration.form.licenseNumber')">
               {{ registrationData.licenseNumber || '-' }}
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.regionCode')">
-              {{ formatRegionName(registrationData.regionName) }}
+            <el-descriptions-item :label="$t('orgRegistration.form.licenseStart')">
+              {{ registrationData.licenseStart || '-' }}
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('research.variety.cropType')">
+            <el-descriptions-item :label="$t('orgRegistration.form.licenseEnd')">
+              {{ registrationData.licenseEnd || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.cropType')" :span="2">
               {{ getCropTypesLabel(registrationData.cropTypes) }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.applyUsername')">
-              {{ registrationData.applyUsername || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.contactMobile')">
-              {{ registrationData.contactMobile || '-' }}
             </el-descriptions-item>
           </el-descriptions>
         </InfoCard>
 
-        <!-- 证照预览 -->
-        <InfoCard :title="$t('orgRegistration.form.certificateInfo')" icon="ri-image-line">
+        <!-- 位置及联系信息 -->
+        <InfoCard :title="$t('orgRegistration.form.locationInfo')" icon="ri-map-pin-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('orgRegistration.form.regionCode')">
+              {{ formatRegionName(registrationData.regionName) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.fullAddress')">
+              {{ registrationData.fullAddress || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.gpsLat')">
+              {{ registrationData.gpsLat || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.gpsLng')">
+              {{ registrationData.gpsLng || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.contactName')">
+              {{ registrationData.contactName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.contactMobile')">
+              {{ registrationData.contactMobile || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.contactEmail')">
+              {{ registrationData.contactEmail || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('orgRegistration.form.applyUsername')">
+              {{ registrationData.applyUsername || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
+
+        <!-- 证照信息 -->
+        <InfoCard :title="$t('orgRegistration.form.certificateInfo')" icon="ri-file-text-line">
           <div class="certificate-display">
             <div class="cert-item">
               <div class="cert-label">{{ $t('orgRegistration.form.businessLicenseUrl') }}</div>
@@ -57,31 +84,32 @@
           </div>
         </InfoCard>
 
-        <!-- 审核操作 -->
-        <InfoCard :title="$t('orgRegistration.form.auditInfo')" icon="ri-checkbox-multiple-line">
-          <el-form ref="formRef" :model="auditForm" :rules="rules" label-width="160px" class="audit-form-content">
-            <el-form-item :label="$t('orgRegistration.form.auditResult')" prop="auditResult">
-              <el-radio-group v-model="auditForm.auditResult">
-                <el-radio :label="1">
-                  <el-tag type="success" effect="plain">{{ $t('orgRegistration.auditResultOptions.approve') }}</el-tag>
-                </el-radio>
-                <el-radio :label="2">
-                  <el-tag type="danger" effect="plain">{{ $t('orgRegistration.auditResultOptions.reject') }}</el-tag>
-                </el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item :label="$t('orgRegistration.form.auditComment')" prop="auditComment">
-              <el-input v-model="auditForm.auditComment" type="textarea" :rows="4"
-                :placeholder="$t('orgRegistration.placeholder.auditComment')" />
-            </el-form-item>
-          </el-form>
+        <!-- 审核历史 -->
+        <InfoCard v-if="auditLogs.length > 0" :title="$t('orgRegistration.form.auditHistory')" icon="ri-history-line">
+          <el-timeline>
+            <el-timeline-item v-for="(log, index) in auditLogs" :key="index"
+              :type="log.auditResult === 1 ? 'success' : 'danger'" :timestamp="log.auditTime" placement="top">
+              <el-card shadow="hover" class="audit-log-card">
+                <div class="audit-log-header">
+                  <el-tag :type="log.auditResult === 1 ? 'success' : 'danger'">
+                    {{ log.auditResult === 1 ? $t('orgRegistration.status.approved') :
+                      $t('orgRegistration.status.rejected') }}
+                  </el-tag>
+                  <span class="auditor-name">{{ $t('orgRegistration.form.auditorName') }}: {{ log.auditorName || '-'
+                  }}</span>
+                </div>
+                <div class="audit-comment" v-if="log.auditComment">
+                  {{ log.auditComment }}
+                </div>
+              </el-card>
+            </el-timeline-item>
+          </el-timeline>
         </InfoCard>
 
-        <!-- 操作按钮 -->
         <div class="form-actions">
-          <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ $t('common.submit') }}
+          <el-button @click="handleBack">{{ $t('common.back') }}</el-button>
+          <el-button type="primary" v-if="registrationData.auditStatus === 2" @click="handleEdit">
+            {{ $t('common.edit') }}
           </el-button>
         </div>
       </div>
@@ -90,11 +118,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getRegistrationDetail, auditRegistration } from '@/api/breedingOrgRegistration'
+import { ElMessage } from 'element-plus'
+import { getRegistrationDetail } from '@/api/breedingOrgRegistration'
 import { useDict } from '@/hooks/useDict'
 import { getFilePreviewUrl } from '@/api/file'
 import { PageHeader, InfoCard } from '@/components/common'
@@ -103,21 +131,21 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-const formRef = ref(null)
 const loading = ref(false)
-const submitting = ref(false)
 const registrationData = ref({})
+const auditLogs = ref([])
 
-// 证照预览
+// 证照预览 URL
 const businessLicensePreviewUrl = ref('')
 const taxCertPreviewUrl = ref('')
 
-// 字典逻辑
+// 获取种子/作物类型字典
 const { getLabelByValue } = useDict(['crop_type'], {
   immediate: true,
   cache: true
 })
 
+// 格式化作物类型
 const getCropTypesLabel = (cropTypes) => {
   if (!cropTypes) return '-'
   return cropTypes.split(',')
@@ -126,21 +154,11 @@ const getCropTypesLabel = (cropTypes) => {
     .join(', ')
 }
 
+// 格式化区域名称
 const formatRegionName = (regionName) => {
   if (!regionName) return '-'
   return regionName.split('#').join(' > ')
 }
-
-// 审核表单
-const auditForm = reactive({
-  registrationId: null,
-  auditResult: null,
-  auditComment: ''
-})
-
-const rules = reactive({
-  auditResult: [{ required: true, message: t('orgRegistration.rules.auditResultRequired'), trigger: 'change' }]
-})
 
 const loadData = async () => {
   const id = route.params.id
@@ -151,8 +169,9 @@ const loadData = async () => {
     const res = await getRegistrationDetail(id)
     if (res.code === 200 && res.data) {
       registrationData.value = res.data.baseInfo || {}
-      auditForm.registrationId = registrationData.value.id
+      auditLogs.value = res.data.auditLogs || []
 
+      // 加载图片预览
       if (registrationData.value.businessLicenseUrl) {
         getFilePreviewUrl(registrationData.value.businessLicenseUrl).then(pres => {
           if (pres.code === 200) businessLicensePreviewUrl.value = pres.msg
@@ -165,44 +184,19 @@ const loadData = async () => {
       }
     }
   } catch (error) {
-    console.error('Load detail failed:', error)
+    console.error('Failed to load detail:', error)
     ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
   }
 }
 
-const handleSubmit = async () => {
-  if (!formRef.value) return
-
-  try {
-    await formRef.value.validate()
-
-    await ElMessageBox.confirm(
-      auditForm.auditResult === 1 ? t('orgRegistration.messages.confirmApprove') : t('orgRegistration.messages.confirmReject'),
-      t('common.tip'),
-      { type: 'warning' }
-    )
-
-    submitting.value = true
-    const res = await auditRegistration(auditForm)
-    if (res.code === 200) {
-      ElMessage.success(t('orgRegistration.messages.auditSuccess'))
-      router.back()
-    } else {
-      ElMessage.error(res.msg || t('orgRegistration.messages.auditFailed'))
-    }
-  } catch (error) {
-    if (error !== 'cancel') {
-      console.error('Audit failed:', error)
-    }
-  } finally {
-    submitting.value = false
-  }
+const handleBack = () => {
+  router.back()
 }
 
-const handleCancel = () => {
-  router.back()
+const handleEdit = () => {
+  router.push({ name: 'RegistrationEdit', params: { id: registrationData.value.id } })
 }
 
 onMounted(() => {
@@ -216,9 +210,8 @@ onMounted(() => {
 
 .certificate-display {
   display: flex;
-  gap: 32px;
+  gap: 48px;
   flex-wrap: wrap;
-  justify-content: center;
   padding: 16px 0;
 }
 
@@ -228,19 +221,21 @@ onMounted(() => {
   .cert-label {
     font-size: 14px;
     color: #666;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: 500;
   }
 
   .cert-image {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     border-radius: 8px;
     border: 1px solid #ebeef5;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
   }
 
   .no-cert {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -251,10 +246,36 @@ onMounted(() => {
   }
 }
 
+.audit-log-card {
+  margin-bottom: 8px;
+
+  .audit-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .auditor-name {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+
+  .audit-comment {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    background: #f8f9fa;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: center;
   gap: 16px;
-  padding: 24px 0;
+  padding: 32px 0 16px;
 }
 </style>

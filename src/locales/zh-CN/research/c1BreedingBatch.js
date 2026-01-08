@@ -135,7 +135,7 @@ export default {
     add: '新增跟踪记录',
     edit: '编辑跟踪记录',
     detail: '跟踪记录详情',
-    deleteConfirm: '确定要删除该跟踪记录吗？',
+    deleteConfirm: '确定要删除该跟踪记录吗?',
     trackingId: '跟踪编号',
     location: '地点',
     result: '跟踪结论',
@@ -150,7 +150,8 @@ export default {
     lotId: '批次号',
     stage: '检测阶段',
     score: '评分项',
-    inspectionValue: '检测值'
+    inspectionValue: '检测值',
+    remarks: '备注'
   },
 
   // 检测记录
@@ -158,7 +159,7 @@ export default {
     add: '新增检测记录',
     edit: '编辑检测记录',
     detail: '检测记录详情',
-    deleteConfirm: '确定要删除该检测记录吗？',
+    deleteConfirm: '确定要删除该检测记录吗?',
     testId: '检测编号',
     testItem: '检测项目',
     testDate: '检测日期',
@@ -166,6 +167,7 @@ export default {
     testResult: '检测结论',
     tester: '检测人',
     testOrg: '检测机构',
+    testLocation: '检测地点',
     description: '检测描述',
     resultPass: '合格',
     resultFail: '不合格',
@@ -175,8 +177,10 @@ export default {
     testType: '测试类型',
     unit: '单位',
     passStatus: '是否通过',
+    passed: '通过',
+    failed: '未通过',
     passTrue: '通过',
-    passFalse: '未通过'
+    passFalse: '未通过',
+    remarks: '备注'
   }
 }
-

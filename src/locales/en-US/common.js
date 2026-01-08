@@ -92,6 +92,7 @@ export default {
   detail: 'Detail',
   all: 'All',
   currentUser: 'Current User',
+  basicInfo: 'Basic Information',
   systemInfo: 'System Information',
   // Error Messages
   error: {
@@ -111,5 +112,6 @@ export default {
   invalidParams: 'Invalid parameters',
   // Tab labels
   aggregationResults: 'Aggregation Results',
-  farmerDemands: 'Farmer Demands'
+  farmerDemands: 'Farmer Demands',
+  dateRange: 'Date Range'
 }

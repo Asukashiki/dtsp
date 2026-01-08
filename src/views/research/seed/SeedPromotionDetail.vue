@@ -1,128 +1,87 @@
 <template>
-  <div class="seed-promotion-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-movie-line"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">{{ detailData.title || $t('research.seedPromotion.detail.title') }}</h1>
-          <p class="page-subtitle">{{ detailData.enterpriseName }}</p>
-        </div>
-      </div>
-      <div class="header-actions">
-        <el-button @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader icon="ri-movie-line" :title="detailData.title || $t('research.seedPromotion.detail.title')" shadow
+        show-back @back="handleBack">
+        <template #subtitle>
+          <div class="header-subtitle">{{ detailData.enterpriseName }}</div>
+        </template>
+      </PageHeader>
 
-    <!-- 详情内容 -->
-    <div class="detail-content" v-loading="loading">
-      <!-- 视频预览区 -->
-      <!-- <div class="detail-section video-section">
-        <h2 class="section-title">
-          <i class="ri-play-circle-line"></i>
-          {{ $t('research.seedPromotion.detail.videoPreview') }}
-        </h2>
-        <div class="video-container">
-          <video
-            v-if="videoPreviewUrl"
-            :src="videoPreviewUrl"
-            controls
-            class="video-player"
-            @error="handleVideoError"
-          >
-            Your browser does not support the video tag.
-          </video>
-          <div v-else class="no-video">
-            <i class="ri-video-off-line"></i>
-            <p>{{ $t('research.seedPromotion.detail.noVideo') }}</p>
-          </div>
-        </div>
-      </div> -->
+      <!-- 详情内容 -->
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息 -->
+        <InfoCard :title="$t('research.seedPromotion.detail.basicInfo')" icon="ri-information-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.seedPromotion.columns.promotionId')">
+              {{ detailData.promotionId || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.columns.title')">
+              <span class="highlight-text">{{ detailData.title || '-' }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.columns.recommendedVarieties')">
+              {{ detailData.recommendedVarieties || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.columns.publishTime')">
+              {{ detailData.publishTime || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.columns.validPeriod')">
+              {{ detailData.validPeriod }} {{ $t('common.days') }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.card.validUntil')">
+              {{ formatValidUntil(detailData.publishTime, detailData.validPeriod) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.seedPromotion.form.promotionSummary')" :span="2">
+              <div class="summary-box">{{ detailData.promotionSummary || '-' }}</div>
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
 
-      <!-- 基本信息 -->
-      <div class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-information-line"></i>
-          {{ $t('research.seedPromotion.detail.basicInfo') }}
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.seedPromotion.columns.promotionId') }}</span>
-            <span class="value">{{ detailData.promotionId || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.seedPromotion.columns.title') }}</span>
-            <span class="value">{{ detailData.title || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.seedPromotion.columns.recommendedVarieties') }}</span>
-            <span class="value">{{ detailData.recommendedVarieties || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.seedPromotion.columns.publishTime') }}</span>
-            <span class="value">{{ detailData.publishTime || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.seedPromotion.columns.validPeriod') }}</span>
-            <span class="value">{{ detailData.validPeriod }} {{ $t('research.seedPromotion.columns.validPeriod') }}</span>
-          </div>
-          <div class="info-item full-width" v-if="detailData.promotionSummary">
-            <span class="label">{{ $t('research.seedPromotion.form.promotionSummary') }}</span>
-            <span class="value description">{{ detailData.promotionSummary }}</span>
-          </div>
-        </div>
-      </div>
+        <!-- 统计与分享 -->
+        <el-row :gutter="20">
+          <el-col :md="12" :sm="24">
+            <InfoCard :title="$t('research.seedPromotion.detail.statistics')" icon="ri-bar-chart-line">
+              <div class="statistics-grid">
+                <div class="stat-item">
+                  <div class="stat-icon-box blue">
+                    <i class="ri-eye-line"></i>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-label">{{ $t('research.seedPromotion.columns.visitCount') }}</div>
+                    <div class="stat-value">{{ detailData.visitCount || 0 }}</div>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon-box green">
+                    <i class="ri-calendar-event-line"></i>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-label">{{ $t('research.seedPromotion.columns.publishTime') }}</div>
+                    <div class="stat-value small">{{ detailData.publishTime || '-' }}</div>
+                  </div>
+                </div>
+              </div>
+            </InfoCard>
+          </el-col>
+          <el-col :md="12" :sm="24">
+            <InfoCard :title="$t('research.seedPromotion.shareLink')" icon="ri-share-line" v-if="detailData.shareLink">
+              <div class="share-container">
+                <el-input :model-value="detailData.shareLink" readonly class="share-input">
+                  <template #append>
+                    <el-button type="primary" @click="handleCopyLink(detailData.shareLink)">
+                      <i class="ri-file-copy-line"></i> {{ $t('research.seedPromotion.copyLink') }}
+                    </el-button>
+                  </template>
+                </el-input>
+                <div class="share-tip">{{ $t('research.seedPromotion.shareTip') }}</div>
+              </div>
+            </InfoCard>
+          </el-col>
+        </el-row>
 
-      <!-- 统计信息 -->
-      <div class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-bar-chart-line"></i>
-          {{ $t('research.seedPromotion.detail.statistics') }}
-        </h2>
-        <div class="statistics-cards">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ri-eye-line"></i>
-              {{ $t('common.view') }}
-            </div>
-            <div class="stat-content">
-              <div class="stat-label">{{ $t('research.seedPromotion.columns.visitCount') }}</div>
-              <div class="stat-value">{{ detailData.visitCount || 0 }}</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ri-calendar-line"></i>
-            </div>
-            <div class="stat-content">
-              <div class="stat-label">{{ $t('research.seedPromotion.card.validUntil') }}</div>
-              <div class="stat-value">{{ formatValidUntil(detailData.publishTime, detailData.validPeriod) }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 分享链接 -->
-      <div class="detail-section" v-if="detailData.shareLink">
-        <h2 class="section-title">
-          <i class="ri-share-line"></i>
-          {{ $t('research.seedPromotion.shareLink') }}
-        </h2>
-        <div class="share-link-box">
-          <el-input
-            :model-value="detailData.shareLink"
-            readonly
-            class="share-input"
-          />
-          <el-button type="primary" @click="handleCopyLink(detailData.shareLink)">
-            <i class="ri-file-copy-line"></i>
-            {{ $t('research.seedPromotion.copyLink') }}
-          </el-button>
+        <div class="form-actions">
+          <el-button @click="handleBack">{{ $t('common.back') }}</el-button>
         </div>
       </div>
     </div>
@@ -130,12 +89,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getPromotionDetail, updateVisitCount } from '@/api/seedPromotion'
-import { getFilePreviewUrl } from '@/api/file'
+import { PageHeader, InfoCard } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
@@ -143,7 +102,6 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref({})
-const videoPreviewUrl = ref('')
 
 // 获取详情
 const fetchDetail = async () => {
@@ -159,11 +117,6 @@ const fetchDetail = async () => {
     const response = await getPromotionDetail(promotionId)
     if (response.code === 200 && response.data) {
       detailData.value = response.data
-
-      // 获取视频预览URL
-      if (detailData.value.videoUrl) {
-        await loadVideoPreviewUrl(detailData.value.videoUrl)
-      }
 
       // 更新访问次数
       updateVisitCount(promotionId).catch(err => {
@@ -182,25 +135,6 @@ const fetchDetail = async () => {
   }
 }
 
-// 加载视频预览URL
-const loadVideoPreviewUrl = async (fileId) => {
-  // try {
-  //   const res = await getFilePreviewUrl(fileId)
-  //   if (res.code === 200 && res.msg) {
-  //     videoPreviewUrl.value = res.msg
-  //   } else {
-  //     console.error('Failed to get video preview URL:', res.msg)
-  //   }
-  // } catch (error) {
-  //   console.error('Failed to get video preview URL:', error)
-  // }
-}
-
-// 处理视频加载错误
-const handleVideoError = () => {
-  ElMessage.warning(t('common.videoLoadFailed'))
-}
-
 // 返回
 const handleBack = () => {
   router.back()
@@ -213,7 +147,6 @@ const handleCopyLink = async (link) => {
     ElMessage.success(t('research.seedPromotion.linkCopied'))
   } catch (error) {
     console.error('Failed to copy link:', error)
-    // 降级方案
     const textarea = document.createElement('textarea')
     textarea.value = link
     document.body.appendChild(textarea)
@@ -241,311 +174,121 @@ onMounted(() => {
 })
 </script>
 
+<script>
+// For i18n detection if needed
+export default {
+  name: 'SeedPromotionDetail'
+}
+</script>
+
 <style scoped lang="scss">
-.seed-promotion-detail-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  min-height: calc(100vh - 60px);
+@use '@/assets/styles/page-common.scss';
+
+.header-subtitle {
+  margin-top: 4px;
+  font-size: 15px;
+  color: var(--el-text-color-regular);
 }
 
-/* 页面头部 */
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding: 32px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.2);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex: 1;
-}
-
-.header-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  i {
-    font-size: 40px;
-    color: white;
-  }
-}
-
-.header-text {
-  color: white;
-  flex: 1;
-
-  .page-title {
-    font-size: 28px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .page-subtitle {
-    font-size: 16px;
-    opacity: 0.95;
-    margin: 0;
-  }
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-/* 详情内容 */
-.detail-content {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.detail-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e4e7ed;
-
-  &:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  &.video-section {
-    .video-container {
-      width: 100%;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-
-      .video-player {
-        width: 100%;
-        max-height: 600px;
-        display: block;
-      }
-
-      .no-video {
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: #909399;
-
-        i {
-          font-size: 80px;
-          margin-bottom: 16px;
-        }
-
-        p {
-          font-size: 16px;
-          margin: 0;
-        }
-      }
-    }
-  }
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
+.highlight-text {
+  color: var(--el-color-primary);
   font-weight: 600;
-  color: #303133;
-  margin: 0 0 20px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e8f5e9;
-
-  i {
-    font-size: 22px;
-    color: #009A44;
-  }
 }
 
-.info-grid {
+.summary-box {
+  padding: 12px 16px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  line-height: 1.8;
+  color: #475569;
+}
+
+.statistics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  &.full-width {
-    grid-column: 1 / -1;
-  }
-
-  .label {
-    font-size: 13px;
-    color: #909399;
-    font-weight: 500;
-  }
-
-  .value {
-    font-size: 15px;
-    color: #303133;
-    font-weight: 500;
-    word-break: break-word;
-
-    &.description {
-      line-height: 1.8;
-      padding: 12px;
-      background: #f5f7fa;
-      border-radius: 8px;
-    }
-  }
-}
-
-/* 统计卡片 */
-.statistics-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.stat-card {
+.stat-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  gap: 12px;
+  padding: 16px;
+  background-color: #f8fafc;
   border-radius: 12px;
-  border: 1px solid #e4e7ed;
-  transition: all 0.3s;
+  border: 1px solid #e2e8f0;
 
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .stat-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border-radius: 12px;
+  .stat-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 24px;
+    color: white;
 
-    i {
-      font-size: 32px;
-      color: white;
+    &.blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    &.green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
   }
 
-  .stat-content {
-    flex: 1;
-
+  .stat-info {
     .stat-label {
-      font-size: 13px;
-      color: #909399;
-      margin-bottom: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
     }
 
     .stat-value {
-      font-size: 24px;
-      font-weight: 600;
-      color: #303133;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+
+      &.small {
+        font-size: 14px;
+      }
     }
   }
 }
 
-/* 分享链接 */
-.share-link-box {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-
+.share-container {
   .share-input {
-    flex: 1;
+    :deep(.el-input-group__append) {
+      background-color: var(--el-color-primary);
+      color: white;
+      border: none;
+      padding: 0 20px;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .share-tip {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &::before {
+      content: 'ℹ';
+      display: inline-block;
+    }
   }
 }
 
-/* 响应式 */
-@media screen and (max-width: 768px) {
-  .seed-promotion-detail-page {
-    padding: 16px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 20px;
-  }
-
-  .header-content {
-    gap: 12px;
-  }
-
-  .header-icon-wrapper {
-    width: 60px;
-    height: 60px;
-
-    i {
-      font-size: 32px;
-    }
-  }
-
-  .header-text .page-title {
-    font-size: 22px;
-  }
-
-  .header-actions {
-    width: 100%;
-
-    .el-button {
-      flex: 1;
-    }
-  }
-
-  .detail-content {
-    padding: 20px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .statistics-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .share-link-box {
-    flex-direction: column;
-
-    .share-input {
-      width: 100%;
-    }
-
-    .el-button {
-      width: 100%;
-    }
-  }
-
-  .video-container .no-video {
-    height: 300px;
-
-    i {
-      font-size: 60px;
-    }
-  }
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
 }
 </style>

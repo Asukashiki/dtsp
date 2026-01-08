@@ -13,12 +13,20 @@ export default {
   audit: 'Audit',
   detail: 'Application Details',
   auditDetail: 'Audit Details',
+  list: 'Application List',
   searchPlaceholder: 'Search organization name, variety name',
   deleteConfirm: 'Are you sure to delete this application?',
   deleteSuccess: 'Deleted Successfully',
   addSuccess: 'Added Successfully',
   updateSuccess: 'Updated Successfully',
   auditSuccess: 'Audit Submitted Successfully',
+
+  // Tabs
+  tabs: {
+    pending: 'Pending',
+    approved: 'Approved',
+    rejected: 'Rejected'
+  },
 
   // Status
   status: {
