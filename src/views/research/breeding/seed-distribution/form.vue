@@ -1,264 +1,239 @@
-dtsp/src/views/research/breeding/seed-distribution/form.vue<template>
-  <div class="distribution-form-container">
-    <div class="form-header">
-      <div class="header-left">
-        <el-button link @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
-      </div>
-      <h2 class="form-title">{{ $t('research.breeding.seed.distribution.add') }}</h2>
-    </div>
-
-    <div class="form-content">
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-width="180px"
-        class="distribution-form"
-      >
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.breeding.seed.distribution.form.basicInfo') }}
+<template>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.seed.distribution.add') }}</h1>
           </div>
-
-          <div class="form-row">
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.distributeName')" prop="distributeName">
-              <el-input
-                v-model="formData.distributeName"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.distributeName')"
-                clearable
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.oseId')" prop="oseId">
-              <el-select
-                v-model="formData.oseId"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.oseId')"
-                filterable
-                clearable
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="ose in oseList"
-                  :key="ose.oseId"
-                  :label="`${ose.oseName} (${ose.oseCode})`"
-                  :value="ose.oseId"
-                />
-              </el-select>
-            </el-form-item>
-          </div>
-
-          <div class="form-row">
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.time')" prop="time">
-              <el-date-picker
-                v-model="formData.time"
-                type="datetime"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.time')"
-                format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.people')" prop="people">
-              <el-input
-                v-model="formData.people"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.people')"
-                readonly
-              />
-            </el-form-item>
-          </div>
-
-          <div class="form-row">
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.organ')" prop="organ">
-              <el-input
-                v-model="formData.organ"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.organ')"
-                readonly
-              />
-            </el-form-item>
-
-            <!-- 占位元素，保持布局一致性 -->
-            <div></div>
-          </div>
-
-          <div class="form-row">
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.fromSeedLevel')" prop="fromSeedLevel">
-              <el-select
-                v-model="formData.fromSeedLevel"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.fromSeedLevel')"
-                clearable
-                style="width: 100%"
-                @change="handleSeedLevelChange"
-              >
-              <el-option label="Pre-Basic" value="Pre-Basic" />
-              <el-option label="Basic" value="Basic" />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.breeding.seed.distribution.form.toSeedLevel')" prop="toSeedLevel">
-              <el-select
-                v-model="formData.toSeedLevel"
-                :placeholder="$t('research.breeding.seed.distribution.placeholder.toSeedLevel')"
-                clearable
-                style="width: 100%"
-                :disabled="!formData.fromSeedLevel"
-              >
-                <el-option
-                  v-for="option in toSeedLevelOptions"
-                  :key="option.value"
-                  :label="option.label"
-                  :value="option.value"
-                />
-              </el-select>
-            </el-form-item>
-          </div>
-
-          <el-form-item :label="$t('research.breeding.seed.distribution.form.remark')" prop="remark">
-            <el-input
-              v-model="formData.remark"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.breeding.seed.distribution.placeholder.remark')"
-              maxlength="500"
-              show-word-limit
-            />
-          </el-form-item>
         </div>
+      </div>
 
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-list-check"></i>
-            {{ $t('research.breeding.seed.distribution.form.detailList') }}
-            <el-button type="primary" size="small" @click="handleAddDetail" style="margin-left: 16px">
-              <i class="ri-add-line"></i>
-              {{ $t('research.breeding.seed.distribution.addDetail') }}
-            </el-button>
-          </div>
-
-          <div class="detail-list">
-            <div
-              v-for="(detail, index) in formData.detailList"
-              :key="index"
-              class="detail-item"
-            >
-              <div class="detail-header">
-                <span class="detail-index">{{ $t('research.breeding.seed.distribution.detailIndex', { index: index + 1 }) }}</span>
-                <el-button
-                  link
-                  type="danger"
-                  size="small"
-                  @click="handleRemoveDetail(index)"
-                  :disabled="formData.detailList.length === 1"
-                >
-                  <i class="ri-delete-bin-line"></i>
-                  {{ $t('common.delete') }}
-                </el-button>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="rules"
+          :label-width="isMobile ? 'auto' : '160px'"
+          :label-position="isMobile ? 'top' : 'right'"
+          v-loading="submitting">
+          
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.breeding.seed.distribution.form.basicInfo') }}</span>
               </div>
-
-              <el-form-item
-                :label="$t('research.breeding.seed.distribution.form.produceBatchId')"
-                :prop="`detailList.${index}.produceBatchId`"
-                :rules="rules.produceBatchId"
-              >
-                <el-select
-                  v-model="detail.produceBatchId"
-                  :placeholder="$t('research.breeding.seed.distribution.placeholder.produceBatchId')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleBatchChange(index)"
-                >
-                  <el-option
-                    v-for="batch in productionBatchList"
-                    :key="batch.produceBatchId"
-                    :label="`${batch.produceBatchId}`"
-                    :value="batch.produceBatchId"
-                  >
-                    <div style="display: flex; justify-content: space-between">
-                      <span>{{ batch.produceBatchId }}</span>
-                    </div>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-
-              
-
-              <!-- 新增字段 -->
-              <el-form-item
-                :label="$t('research.breeding.seed.distribution.form.breedBatchName')"
-                :prop="`detailList.${index}.breedBatchName`"
-              >
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.distributeName')" prop="distributeName">
+                    <el-input
+                      v-model="formData.distributeName"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.distributeName')"
+                      clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.oseId')" prop="oseId">
+                    <el-select
+                      v-model="formData.oseId"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.oseId')"
+                      filterable
+                      clearable
+                      style="width: 100%">
+                      <el-option
+                        v-for="ose in oseList"
+                        :key="ose.oseId"
+                        :label="`${ose.oseName} (${ose.oseCode})`"
+                        :value="ose.oseId" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.time')" prop="time">
+                    <el-date-picker
+                      v-model="formData.time"
+                      type="datetime"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.time')"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.people')" prop="people">
+                    <el-input v-model="formData.people" readonly />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.organ')" prop="organ">
+                    <el-input v-model="formData.organ" readonly />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.fromSeedLevel')" prop="fromSeedLevel">
+                    <el-select
+                      v-model="formData.fromSeedLevel"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.fromSeedLevel')"
+                      clearable
+                      style="width: 100%"
+                      @change="handleSeedLevelChange">
+                      <el-option label="Pre-Basic" value="Pre-Basic" />
+                      <el-option label="Basic" value="Basic" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.toSeedLevel')" prop="toSeedLevel">
+                    <el-select
+                      v-model="formData.toSeedLevel"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.toSeedLevel')"
+                      clearable
+                      style="width: 100%"
+                      :disabled="!formData.fromSeedLevel">
+                      <el-option
+                        v-for="option in toSeedLevelOptions"
+                        :key="option.value"
+                        :label="option.label"
+                        :value="option.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-form-item :label="$t('research.breeding.seed.distribution.form.remark')" prop="remark">
                 <el-input
-                  v-model="detail.breedBatchName"
-                  :placeholder="$t('research.breeding.seed.distribution.placeholder.breedBatchName')"
-                  readonly
-                  style="width: 100%"
-                />
-              </el-form-item>
-
-                            <el-form-item
-                :label="$t('research.breeding.seed.distribution.form.parentalSeedSource')"
-                :prop="`detailList.${index}.parentalSeedSource`"
-              >
-                <el-input
-                  v-model="detail.parentalSeedSource"
-                  :placeholder="$t('research.breeding.seed.distribution.placeholder.parentalSeedSource')"
-                  readonly
-                  style="width: 100%"
-                />
-              </el-form-item>
-
-              <el-form-item
-                :label="$t('research.breeding.seed.distribution.form.varietyName')"
-                :prop="`detailList.${index}.varietyName`"
-              >
-                <el-input
-                  v-model="detail.varietyName"
-                  :placeholder="$t('research.breeding.seed.distribution.placeholder.varietyName')"
-                  readonly
-                  style="width: 100%"
-                />
-              </el-form-item>
-
-              <el-form-item
-                :label="$t('research.breeding.seed.distribution.form.distributeQuantity')"
-                :prop="`detailList.${index}.distributeQuantity`"
-                :rules="rules.distributeQuantity"
-              >
-                <el-input-number
-                  v-model="detail.distributeQuantity"
-                  :min="0"
-                  :max="detail.maxQuantity || 999999"
-                  :precision="2"
-                  :placeholder="$t('research.breeding.seed.distribution.placeholder.distributeQuantity')"
-                  style="width: 100%"
-                />
-                <div v-if="detail.maxQuantity" class="help-text">
-                  {{ $t('research.breeding.seed.distribution.maxQuantity') }}: {{ detail.maxQuantity }} kg
-                </div>
+                  v-model="formData.remark"
+                  type="textarea"
+                  :rows="3"
+                  :placeholder="$t('research.breeding.seed.distribution.placeholder.remark')"
+                  maxlength="500"
+                  show-word-limit />
               </el-form-item>
             </div>
-
-            <el-empty
-              v-if="formData.detailList.length === 0"
-              :description="$t('research.breeding.seed.distribution.noDetail')"
-              :image-size="100"
-            />
           </div>
-        </div>
 
-        <div class="form-footer">
-          <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ $t('common.submit') }}
-          </el-button>
-        </div>
-      </el-form>
+          <!-- 分发明细 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-list-check"></i>
+                <span>{{ $t('research.breeding.seed.distribution.form.detailList') }}</span>
+              </div>
+              <el-button type="primary" size="small" @click="handleAddDetail">
+                <i class="ri-add-line"></i>
+                {{ $t('research.breeding.seed.distribution.addDetail') }}
+              </el-button>
+            </div>
+            <div class="card-body">
+              <div
+                v-for="(detail, index) in formData.detailList"
+                :key="index"
+                class="detail-section-item">
+                <div class="detail-item-header">
+                  <span class="index-badge">{{ index + 1 }}</span>
+                  <el-button
+                    link
+                    type="danger"
+                    size="small"
+                    @click="handleRemoveDetail(index)"
+                    :disabled="formData.detailList.length === 1">
+                    <i class="ri-delete-bin-line"></i>
+                    {{ $t('common.delete') }}
+                  </el-button>
+                </div>
+                <el-row :gutter="20">
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                      :label="$t('research.breeding.seed.distribution.form.produceBatchId')"
+                      :prop="`detailList.${index}.produceBatchId`"
+                      :rules="rules.produceBatchId">
+                      <el-select
+                        v-model="detail.produceBatchId"
+                        :placeholder="$t('research.breeding.seed.distribution.placeholder.produceBatchId')"
+                        filterable
+                        clearable
+                        style="width: 100%"
+                        @change="handleBatchChange(index)">
+                        <el-option
+                          v-for="batch in productionBatchList"
+                          :key="batch.produceBatchId"
+                          :label="`${batch.produceBatchId}`"
+                          :value="batch.produceBatchId">
+                          <div class="select-option-content">
+                            <span>{{ batch.produceBatchId }}</span>
+                            <span class="option-desc" v-if="batch.varietyName">({{ batch.varietyName }})</span>
+                          </div>
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                      :label="$t('research.breeding.seed.distribution.form.varietyName')"
+                      :prop="`detailList.${index}.varietyName`">
+                      <el-input v-model="detail.varietyName" readonly />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                      :label="$t('research.breeding.seed.distribution.form.breedBatchName')"
+                      :prop="`detailList.${index}.breedBatchName`">
+                      <el-input v-model="detail.breedBatchName" readonly />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                      :label="$t('research.breeding.seed.distribution.form.parentalSeedSource')"
+                      :prop="`detailList.${index}.parentalSeedSource`">
+                      <el-input v-model="detail.parentalSeedSource" readonly />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="12">
+                    <el-form-item
+                      :label="$t('research.breeding.seed.distribution.form.distributeQuantity')"
+                      :prop="`detailList.${index}.distributeQuantity`"
+                      :rules="rules.distributeQuantity">
+                      <el-input-number
+                        v-model="detail.distributeQuantity"
+                        :min="0"
+                        :max="detail.maxQuantity || 999999"
+                        :precision="2"
+                        controls-position="right"
+                        style="width: 100%" />
+                      <div v-if="detail.maxQuantity" class="help-text">
+                        {{ $t('research.breeding.seed.distribution.maxQuantity') }}: <span class="text-primary font-bold">{{ detail.maxQuantity }}</span> kg
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </div>
+
+              <el-empty
+                v-if="formData.detailList.length === 0"
+                :description="$t('research.breeding.seed.distribution.noDetail')"
+                :image-size="80" />
+            </div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="submitting">
+              {{ $t('common.submit') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -275,10 +250,12 @@ import { getBreedSeedProduceDetail } from '@/api/breedSeed'
 import { getBreedingBatchList } from '@/api/breedingData'
 import { getPrebasicSeedProduceResultList } from '@/api/prebasicSeed'
 import { getBasicSeedProduceResultList } from '@/api/basicSeed'
+import { useResponsive } from '@/hooks/useResponsive'
 
 const { t } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
 const userStore = useUserStore()
+const { isMobile } = useResponsive()
 
 const formRef = ref(null)
 const submitting = ref(false)
@@ -387,10 +364,6 @@ const loadProductionBatchList = async () => {
     
     if (res.code === 200) {
       productionBatchList.value = res.rows || []
-      // 调试信息：打印第一条数据查看remainingQuantity是否正确返回
-      if (productionBatchList.value.length > 0) {
-        console.log('Production batch list loaded, sample data:', productionBatchList.value[0])
-      }
     }
   } catch (error) {
     console.error('Failed to load production batch list:', error)
@@ -517,147 +490,93 @@ const handleSubmit = async () => {
 
 onMounted(() => {
   loadOseList()
-  // 初始化时不需要加载生产批次列表，因为需要先选择 fromSeedLevel
-  // 生产批次列表会在用户选择 fromSeedLevel 后自动加载
 })
 </script>
 
-<style scoped>
-.distribution-form-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
-.form-header {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.header-left {
-  margin-bottom: 8px;
-}
-
-.form-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #009A44;
-  margin: 0;
-}
-
-.form-content {
-  padding: 24px;
-}
-
-.form-section {
-  margin-bottom: 32px;
-}
-
-.form-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-}
-
-.section-title i {
-  font-size: 18px;
-  color: #009A44;
-}
-
-/* 两列布局 */
-.form-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.form-row > .el-form-item {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.detail-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.detail-item {
+.detail-section-item {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 16px;
-}
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  transition: all 0.3s ease;
 
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e9ecef;
-}
+  &:hover {
+    border-color: #009A44;
+    box-shadow: 0 4px 12px rgba(0, 154, 68, 0.08);
+  }
 
-.detail-index {
-  font-weight: 600;
-  color: #009A44;
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .detail-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9ecef;
+
+    .index-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #009A44;
+      color: white;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
 }
 
 .help-text {
   font-size: 12px;
   color: #909399;
   margin-top: 4px;
+  line-height: 1.4;
 }
 
-.form-footer {
+.select-option-content {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .option-desc {
+    font-size: 12px;
+    color: #909399;
+    margin-left: 8px;
+  }
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.text-primary {
+  color: #009A44;
+}
+
+:deep(.el-form-item__label) {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  padding-bottom: 0 !important;
 }
 
 @media screen and (max-width: 768px) {
-  .form-content {
+  .detail-section-item {
     padding: 16px;
-  }
-
-  .distribution-form {
-    :deep(.el-form-item__label) {
-      width: 100% !important;
-      text-align: left;
-      margin-bottom: 8px;
-    }
-
-    :deep(.el-form-item__content) {
-      margin-left: 0 !important;
-    }
-  }
-
-  .form-footer {
-    flex-direction: column-reverse;
-  }
-
-  .form-footer .el-button {
-    width: 100%;
-  }
-  
-  /* 移动端单列布局 */
-  .form-row {
-    flex-direction: column;
-    gap: 0;
   }
 }
 </style>

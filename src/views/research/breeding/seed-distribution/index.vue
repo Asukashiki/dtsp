@@ -1,235 +1,207 @@
 <template>
-  <div class="seed-distribution-container">
-    <div class="page-header">
-        <div class="header-left header-icon">
-          <i class="ri-share-forward-line"></i>
-        </div>
-      <div class="header-content">
-        <div class="header-text">
-          <h1 class="page-title">{{ $t('research.breeding.seed.distribution.title') }}</h1>
-          <p class="page-subtitle">{{ $t('research.breeding.seed.distribution.subtitle') }}</p>
-        </div>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper" v-if="!showForm && !showDetail">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-share-forward-line"
+        :title="$t('research.breeding.seed.distribution.title')"
+        :subtitle="$t('research.breeding.seed.distribution.subtitle')" />
 
-    <div class="content-wrapper">
-      <!-- 列表视图 -->
-      <div v-if="!showForm && !showDetail" class="list-view">
-        <div class="search-bar">
-          <div class="search-row">
-            <el-input
-              v-model="searchQuery"
-              :placeholder="$t('research.breeding.seed.distribution.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @clear="loadData"
-              @keyup.enter="loadData"
-            >
-              <template #prefix>
-                <i class="ri-search-line"></i>
-              </template>
-            </el-input>
-
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-              range-separator="-"
-              :start-placeholder="$t('common.startDate')"
-              :end-placeholder="$t('common.endDate')"
-              class="date-filter"
-              clearable
-              @change="loadData"
-            />
-          </div>
-
-          <div class="action-row">
-            <div class="action-left">
-              <el-button type="primary" @click="loadData">
-                <i class="ri-search-line"></i>
-                <span class="btn-text">{{ $t('common.search') }}</span>
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-restart-line"></i>
-                <span class="btn-text">{{ $t('common.reset') }}</span>
-              </el-button>
-            </div>
-            <div class="action-right">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                <span class="btn-text">{{ $t('research.breeding.seed.distribution.add') }}</span>
-              </el-button>
-            </div>
-          </div>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索区域 -->
+        <div class="search-card">
+          <SearchForm @search="loadData" @reset="handleReset">
+            <SearchItem :label="$t('research.breeding.seed.distribution.searchPlaceholder')">
+              <el-input
+                v-model="searchQuery"
+                :placeholder="$t('research.breeding.seed.distribution.searchPlaceholder')"
+                clearable
+                @clear="loadData"
+                @keyup.enter="loadData">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
+            <SearchItem :label="$t('common.dateRange')">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
+                clearable
+                @change="loadData" />
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <!-- PC端表格 -->
-        <div class="table-card pc-view">
-          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading" scrollbar-always-on>
-            <el-table-column
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.breeding.seed.distribution.title')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('Add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="filteredList" stripe v-loading="loading">
+              <el-table-column
                 prop="distributeId"
                 :label="$t('research.breeding.seed.distribution.columns.distributeId')"
                 min-width="150"
-                show-overflow-tooltip
-            />
-            <el-table-column
-              prop="distributeName"
-              :label="$t('research.breeding.seed.distribution.columns.distributeName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="oseName"
-              :label="$t('research.breeding.seed.distribution.columns.oseName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="fromSeedLevel"
-              :label="$t('research.breeding.seed.distribution.columns.fromSeedLevel')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="toSeedLevel"
-              :label="$t('research.breeding.seed.distribution.columns.toSeedLevel')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="time"
-              :label="$t('research.breeding.seed.distribution.columns.time')"
-              min-width="150"
-            />
-            <el-table-column
-              prop="totalDistributeQuantity"
-              :label="$t('research.breeding.seed.distribution.columns.totalDistributeQuantity')"
-              width="150"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.totalDistributeQuantity }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="distributeStatus"
-              :label="$t('research.breeding.seed.distribution.columns.distributeStatus')"
-              width="120"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tag type="success" size="small">{{ row.distributeStatus }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('research.breeding.seed.distribution.columns.actions')"
-              width="150"
-              fixed="right"
-            >
-              <template #default="{ row }">
-                <el-button link type="primary" @click="handleView(row)">
-                  <i class="ri-eye-line"></i>
-                  {{ $t('common.view') }}
-                </el-button>
-                <el-button link type="danger" @click="handleDelete(row)">
-                  <i class="ri-delete-bin-line"></i>
-                  {{ $t('common.delete') }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+                show-overflow-tooltip />
+              <el-table-column
+                prop="distributeName"
+                :label="$t('research.breeding.seed.distribution.columns.distributeName')"
+                min-width="150"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="oseName"
+                :label="$t('research.breeding.seed.distribution.columns.oseName')"
+                min-width="150"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="fromSeedLevel"
+                :label="$t('research.breeding.seed.distribution.columns.fromSeedLevel')"
+                min-width="120"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="toSeedLevel"
+                :label="$t('research.breeding.seed.distribution.columns.toSeedLevel')"
+                min-width="120"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="time"
+                :label="$t('research.breeding.seed.distribution.columns.time')"
+                width="160"
+                align="center" />
+              <el-table-column
+                prop="totalDistributeQuantity"
+                :label="$t('research.breeding.seed.distribution.columns.totalDistributeQuantity')"
+                width="150"
+                align="right">
+                <template #default="{ row }">
+                  <span class="font-bold text-primary">{{ row.totalDistributeQuantity }} kg</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="distributeStatus"
+                :label="$t('research.breeding.seed.distribution.columns.distributeStatus')"
+                width="120"
+                align="center">
+                <template #default="{ row }">
+                  <el-tag type="success" size="small">{{ row.distributeStatus }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('common.actions')"
+                width="180"
+                fixed="right"
+                align="center">
+                <template #default="{ row }">
+                  <ActionButtons
+                    class="table-actions"
+                    mode="list"
+                    :workflow-status="row.distributeStatus === 'Finalized' ? 'S2' : 'S0'"
+                    :show-audit="false"
+                    :exclude-actions="['submit', 'edit']"
+                    :force-view="true"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
 
-          <div class="pagination-wrapper">
-            <el-pagination
-              v-model:current-page="currentPage"
-              v-model:page-size="pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
-          </div>
-        </div>
-
-        <!-- 移动端卡片 -->
-        <div class="mobile-view" v-loading="loading">
-          <div class="card-list">
-            <div
-              v-for="item in filteredList"
-              :key="item.distributeId"
-              class="distribution-card"
-              @click="handleView(item)"
-            >
-              <div class="card-header">
-                <el-tag type="success" size="small">{{ item.distributeName }}</el-tag>
-                <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.distribution.status.${item.distributeStatus}`) }}</el-tag>
-              </div>
-              <h3 class="card-title">{{ item.oseName }}</h3>
-              <div class="card-info">
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.fromSeedLevel') }}</span>
-                  <span class="info-value">{{ item.fromSeedLevel }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.toSeedLevel') }}</span>
-                  <span class="info-value">{{ item.toSeedLevel }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.time') }}</span>
-                  <span class="info-value">{{ item.time }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.totalDistributeQuantity') }}</span>
-                  <span class="info-value">{{ item.totalDistributeQuantity }} kg</span>
-                </div>
-              </div>
-              <div class="card-footer">
-                <span class="create-time">{{ item.createTime }}</span>
-                <div class="card-actions" @click.stop>
-                  <el-button link type="danger" size="small" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
-                  </el-button>
-                </div>
-              </div>
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
             </div>
           </div>
 
-          <div v-if="filteredList.length === 0 && !loading" class="empty-state">
-            <i class="ri-inbox-line"></i>
-            <p>{{ $t('home.noData') }}</p>
-          </div>
+          <!-- 移动端视图 -->
+          <div class="mobile-card-list mobile-only">
+            <div
+              v-for="item in filteredList"
+              :key="item.distributeId"
+              class="mobile-card"
+              @click="handleView(item)">
+              <div class="mobile-card-header">
+                <el-tag type="success" size="small">{{ item.distributeStatus }}</el-tag>
+                <div class="time-tag">
+                   <i class="ri-time-line"></i>
+                   <span>{{ item.time }}</span>
+                </div>
+              </div>
+              <div class="mobile-card-body">
+                <h3 class="card-title">{{ item.distributeName }}</h3>
+                <div class="info-grid">
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.columns.oseName') }}:</span>
+                    <span class="value">{{ item.oseName }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.columns.fromSeedLevel') }}:</span>
+                    <span class="value">{{ item.fromSeedLevel }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.columns.toSeedLevel') }}:</span>
+                    <span class="value">{{ item.toSeedLevel }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.columns.totalDistributeQuantity') }}:</span>
+                    <span class="value font-bold text-primary">{{ item.totalDistributeQuantity }} kg</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-card-footer">
+                <ActionButtons
+                  class="table-actions"
+                  mode="list"
+                  :workflow-status="item.distributeStatus === 'Finalized' ? 'S2' : 'S0'"
+                  :show-audit="false"
+                  :exclude-actions="['submit', 'edit']"
+                  :force-view="true"
+                  @action="(action) => handleAction(item, action)" />
+              </div>
+            </div>
 
-          <div class="mobile-pagination">
-            <el-pagination
-              v-model:current-page="currentPage"
-              :total="total"
-              :page-size="pageSize"
-              layout="prev, pager, next"
-              small
-              @current-change="handleCurrentChange"
-            />
+            <div v-if="filteredList.length === 0 && !loading" class="empty-state">
+              <el-empty :description="$t('common.noData')" />
+            </div>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="currentPage"
+                :total="total"
+                :page-size="pageSize"
+                layout="prev, pager, next"
+                small
+                @current-change="handleCurrentChange" />
+            </div>
           </div>
-        </div>
+        </InfoCard>
       </div>
-
-      <!-- 新增表单视图 -->
-      <DistributionForm
-        v-if="showForm"
-        @cancel="showForm = false"
-        @success="handleFormSuccess"
-      />
-
-      <!-- 详情视图 -->
-      <DistributionDetail
-        v-if="showDetail"
-        :data="currentRow"
-        @back="showDetail = false"
-      />
     </div>
 
-    <div class="mobile-fab" @click="handleAdd" v-if="!showForm && !showDetail">
-      <i class="ri-add-line"></i>
-    </div>
+    <!-- 子视图内容 -->
+    <DistributionForm
+      v-if="showForm"
+      @cancel="showForm = false"
+      @success="handleFormSuccess" />
+
+    <DistributionDetail
+      v-if="showDetail"
+      :data="currentRow"
+      @back="showDetail = false" />
   </div>
 </template>
 
@@ -238,6 +210,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedSeedDistributeList } from '@/api/breedSeed'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import DistributionForm from './form.vue'
 import DistributionDetail from './detail.vue'
 
@@ -338,284 +312,97 @@ const handleFormSuccess = () => {
   loadData()
 }
 
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'cancelBatch':
+      handleDelete(row)
+      break
+  }
+}
+
 onMounted(() => {
   loadData()
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.search-bar {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-}
-
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-filter {
-  width: 300px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left,
-.action-right {
-  display: flex;
-  gap: 8px;
-}
-
-.table-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mobile-view,
-.mobile-fab {
-  display: none;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.distribution-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.distribution-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 16px;
+.font-bold {
   font-weight: 600;
-  color: #303133;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
 }
 
-.card-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
+.text-primary {
+  color: #009A44;
 }
 
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.info-label {
-  font-size: 12px;
-  color: #909399;
-}
-
-.info-value {
-  font-size: 14px;
-  color: #606266;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.create-time {
-  font-size: 12px;
-  color: #909399;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.mobile-pagination {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
-
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-    padding: 20px 0;
-  }
-  .header-content {
-    padding: 0 16px;
-  }
+.table-actions {
+  flex-wrap: nowrap !important;
+  justify-content: center !important;
 }
 
 @media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-    padding: 16px 0;
-  }
-  .header-content {
-    padding: 0 12px;
-    gap: 12px;
-  }
-  .header-icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-  }
-  .header-icon {
-    font-size: 24px;
-  }
-  .page-title {
-    font-size: 18px;
-  }
-  .page-subtitle {
-    display: none;
-  }
+  .mobile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
-  .search-row {
-    flex-direction: column;
-  }
-  .date-filter {
-    width: 100%;
-  }
-  .action-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .action-left,
-  .action-right {
-    justify-content: stretch;
-  }
-  .action-left .el-button,
-  .action-right .el-button {
-    flex: 1;
-  }
-  .action-right {
-    display: none;
-  }
+    .mobile-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
 
-  .pc-view {
-    display: none;
-  }
-  .mobile-view {
-    display: block;
-  }
+      .time-tag {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: #909399;
+      }
+    }
 
-  .mobile-fab {
-    display: flex;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    cursor: pointer;
-    z-index: 50;
-    transition: all 0.3s ease;
-  }
-  .mobile-fab:active {
-    transform: scale(0.9);
-  }
-}
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 8px 0;
+      color: #303133;
+    }
 
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-    padding: 12px 0;
-  }
-  .header-content {
-    padding: 0 8px;
-  }
-  .header-icon-wrapper {
-    width: 40px;
-    height: 40px;
-  }
-  .header-icon {
-    font-size: 20px;
-  }
-  .page-title {
-    font-size: 16px;
-  }
-  .search-bar {
-    padding: 12px;
-  }
-  .distribution-card {
-    padding: 12px;
-  }
-  .card-title {
-    font-size: 15px;
-  }
-  .mobile-fab {
-    bottom: 16px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+    .info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        
+        .label {
+          color: #909399;
+        }
+        
+        .value {
+          color: #606266;
+        }
+      }
+    }
+
+    .mobile-card-footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
   }
 }
 </style>
+
