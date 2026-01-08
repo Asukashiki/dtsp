@@ -1,188 +1,135 @@
 <template>
-  <div class="da-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('newFarm.da.detail') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('newFarm.da.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情内容 -->
-    <div class="detail-wrapper" v-loading="loading">
-      <div v-if="detail" class="detail-content">
-        <!-- 基本信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-user-star-line"></i>
-            {{ $t('newFarm.da.sections.basicInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.daId') }}:</span>
-              <span class="value">{{ detail.daId }}</span>
+      <!-- 详情内容 -->
+      <div class="content-wrapper" v-loading="loading">
+        <template v-if="detail">
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-star-line"></i>
+                <span>{{ $t('newFarm.da.sections.basicInfo') }}</span>
+              </div>
             </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.daName') }}:</span>
-              <span class="value">{{ detail.daName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.idCard') }}:</span>
-              <span class="value">{{ detail.idCard || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.gender') }}:</span>
-              <span class="value">
-                <el-tag v-if="detail.gender" size="small" :type="detail.gender === 'MALE' ? 'primary' : 'danger'">
-                  {{ detail.gender === 'MALE' ? $t('newFarm.common.male') : $t('newFarm.common.female') }}
-                </el-tag>
-                <span v-else>-</span>
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.phone') }}:</span>
-              <span class="value">{{ detail.phone || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.email') }}:</span>
-              <span class="value">{{ detail.email || '-' }}</span>
-            </div>
-            <div class="info-item full-width">
-              <span class="label">{{ $t('newFarm.da.form.address') }}:</span>
-              <span class="value">{{ detail.address || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.da.form.daId')">{{ detail.daId }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.daName')">{{ detail.daName }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.idCard')">{{ detail.idCard || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.gender')">
+                  <template v-if="detail.gender">
+                    <el-tag size="small" effect="plain" :type="detail.gender === 'MALE' ? 'primary' : 'danger'">
+                      {{ detail.gender === 'MALE' ? $t('newFarm.common.male') : $t('newFarm.common.female') }}
+                    </el-tag>
+                  </template>
+                  <template v-else>-</template>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.phone')">{{ detail.phone || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.email')">{{ detail.email || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.address')" :span="2">
+                  {{ detail.address || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 账号信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-account-circle-line"></i>
-            {{ $t('newFarm.da.sections.accountInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.account') }}:</span>
-              <span class="value">{{ detail.account || '-' }}</span>
+          <!-- 账号信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-account-circle-line"></i>
+                <span>{{ $t('newFarm.da.sections.accountInfo') }}</span>
+              </div>
             </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.da.form.accountStatus') }}:</span>
-              <span class="value">
-                <el-tag :type="detail.accountStatus === '1' ? 'success' : 'danger'" size="small">
-                  {{ detail.accountStatus === '1' ? $t('newFarm.da.status.enabled') : $t('newFarm.da.status.disabled') }}
-                </el-tag>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 区划信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-map-pin-line"></i>
-            {{ $t('newFarm.da.sections.regionInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.zoneName') }}:</span>
-              <span class="value">{{ zoneName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.woredaName') }}:</span>
-              <span class="value">{{ woredaName }}</span>
-            </div>
-            <div class="info-item full-width">
-              <span class="label">{{ $t('newFarm.da.form.kebeleCodes') }}:</span>
-              <span class="value">
-                <template v-if="kebeleNames.length > 0">
-                  <el-tag
-                    v-for="(name, index) in kebeleNames"
-                    :key="index"
-                    size="small"
-                    class="kebele-tag"
-                  >
-                    {{ name }}
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.da.form.account')">{{ detail.account || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.accountStatus')">
+                  <el-tag :type="detail.accountStatus === '1' ? 'success' : 'danger'" effect="plain" size="small">
+                    {{ detail.accountStatus === '1' ? $t('newFarm.da.status.enabled') : $t('newFarm.da.status.disabled') }}
                   </el-tag>
-                </template>
-                <span v-else>-</span>
-              </span>
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 统计信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('newFarm.da.sections.statistics') }}
-          </h3>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <i class="ri-user-line stat-icon"></i>
-              <div class="stat-content">
-                <span class="stat-value">{{ detail.farmerCount || 0 }}</span>
-                <span class="stat-label">{{ $t('newFarm.da.stats.farmerCount') }}</span>
+          <!-- 区划信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-map-pin-line"></i>
+                <span>{{ $t('newFarm.da.sections.regionInfo') }}</span>
               </div>
             </div>
-            <div class="stat-card">
-              <i class="ri-landscape-line stat-icon"></i>
-              <div class="stat-content">
-                <span class="stat-value">{{ detail.landCount || 0 }}</span>
-                <span class="stat-label">{{ $t('newFarm.da.stats.landCount') }}</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="ri-ruler-line stat-icon"></i>
-              <div class="stat-content">
-                <span class="stat-value">{{ formatArea(detail.totalLandArea) }}</span>
-                <span class="stat-label">{{ $t('newFarm.da.stats.totalLandArea') }}</span>
-              </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.common.zoneName')">{{ zoneName }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.woredaName')">{{ woredaName }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.form.kebeleCodes')" :span="2">
+                  <template v-if="kebeleNames.length > 0">
+                    <el-tag v-for="(name, index) in kebeleNames" :key="index" size="small" effect="plain" class="mr-2 mb-1">
+                      {{ name }}
+                    </el-tag>
+                  </template>
+                  <template v-else>-</template>
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 系统信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('newFarm.common.systemInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.createBy') }}:</span>
-              <span class="value">{{ detail.createBy || '-' }}</span>
+          <!-- 统计信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-line"></i>
+                <span>{{ $t('newFarm.da.sections.statistics') }}</span>
+              </div>
             </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.createTime') }}:</span>
-              <span class="value">{{ detail.createTime || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.updateBy') }}:</span>
-              <span class="value">{{ detail.updateBy || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.updateTime') }}:</span>
-              <span class="value">{{ detail.updateTime || '-' }}</span>
-            </div>
-            <div class="info-item full-width">
-              <span class="label">{{ $t('newFarm.common.remark') }}:</span>
-              <span class="value">{{ detail.remark || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.da.stats.farmerCount')">{{ detail.farmerCount || 0 }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.stats.landCount')">{{ detail.landCount || 0 }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.da.stats.totalLandArea')" :span="2">
+                  {{ formatArea(detail.totalLandArea) }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 操作按钮 -->
-        <div class="detail-actions">
-          <el-button @click="goBack">{{ $t('common.back') }}</el-button>
-          <el-button type="primary" @click="handleEdit">{{ $t('common.edit') }}</el-button>
-        </div>
+          <!-- 系统信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('newFarm.common.systemInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.common.createBy')">{{ detail.createBy || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.createTime')">{{ detail.createTime || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.updateBy')">{{ detail.updateBy || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.updateTime')">{{ detail.updateTime || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.remark')" :span="2">{{ detail.remark || '-' }}</el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- ⚠️ 详情页不显示编辑按钮（按规范） -->
+        </template>
       </div>
     </div>
   </div>
@@ -211,11 +158,6 @@ const kebeleOptions = ref([])
 // 返回
 const goBack = () => {
   router.back()
-}
-
-// 编辑
-const handleEdit = () => {
-  router.push(`/input/da/edit/${route.params.id}`)
 }
 
 // 格式化面积
@@ -333,192 +275,7 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.da-detail-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 详情内容 */
-.detail-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.detail-section {
-  background: #f5f7fa;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  margin: 0 0 20px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.info-item .label {
-  font-weight: 500;
-  color: #606266;
-  font-size: 14px;
-}
-
-.info-item .value {
-  color: #303133;
-  font-size: 15px;
-}
-
-.kebele-tag {
-  margin-right: 8px;
-  margin-bottom: 4px;
-}
-
-/* 统计卡片 */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.stat-icon {
-  font-size: 36px;
-  color: #009A44;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #303133;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #909399;
-}
-
-.detail-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f2f5;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-  }
-
-  .header-center {
-    text-align: left;
-  }
-
-  .detail-wrapper {
-    padding: 16px;
-  }
-
-  .detail-section {
-    padding: 16px;
-  }
-
-  .detail-actions {
-    flex-direction: column;
-  }
-
-  .detail-actions .el-button {
-    width: 100%;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

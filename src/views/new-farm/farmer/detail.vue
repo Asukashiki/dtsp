@@ -1,210 +1,198 @@
 <template>
-  <div class="farmer-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('newFarm.farmer.detail') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('newFarm.farmer.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情内容 -->
-    <div class="detail-wrapper" v-loading="loading">
-      <div v-if="detail" class="detail-content">
-        <!-- 基本信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('newFarm.farmer.sections.basicInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.farmerId') }}:</span>
-              <span class="value">{{ detail.farmerId }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.farmerName') }}:</span>
-              <span class="value">{{ detail.farmerName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.idCard') }}:</span>
-              <span class="value">{{ detail.idCard || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.gender') }}:</span>
-              <span class="value">
-                <el-tag v-if="detail.gender" size="small" :type="detail.gender === 'MALE' ? 'primary' : 'danger'">
-                  {{ detail.gender === 'MALE' ? $t('newFarm.common.male') : $t('newFarm.common.female') }}
-                </el-tag>
-                <span v-else>-</span>
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('common.birthDate') }}:</span>
-              <span class="value">{{ detail.birthday || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.youthCategory') }}:</span>
-              <span class="value">
-                <el-tag v-if="detail.youthCategory === '1'" size="small" type="success">
-                  {{ $t('common.yes') }}
-                </el-tag>
-                <el-tag v-else-if="detail.youthCategory === '0'" size="small" type="info">
-                  {{ $t('common.no') }}
-                </el-tag>
-                <span v-else>-</span>
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.phone') }}:</span>
-              <span class="value">{{ detail.phone || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.email') }}:</span>
-              <span class="value">{{ detail.email || '-' }}</span>
-            </div>
-            <div class="info-item full-width">
-              <span class="label">{{ $t('newFarm.farmer.form.address') }}:</span>
-              <span class="value">{{ detail.address || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 组织信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-building-line"></i>
-            {{ $t('newFarm.farmer.sections.orgInfo') }}
-          </h3>
-          <div class="info-grid">
-
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.cooperativeId') }}:</span>
-              <span class="value">{{ detail.cooperativeName || detail.cooperativeId || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.farmer.form.daId') }}:</span>
-              <span class="value">{{ detail.daName || detail.daId || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 区划信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-map-pin-line"></i>
-            {{ $t('newFarm.farmer.sections.regionInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.zoneName') }}:</span>
-              <span class="value">{{ detail.zoneName || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.woredaName') }}:</span>
-              <span class="value">{{ detail.woredaName || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.kebeleName') }}:</span>
-              <span class="value">{{ detail.kebeleName || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 土地统计 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-landscape-line"></i>
-            {{ $t('newFarm.farmer.sections.landStatistics') }}
-          </h3>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <i class="ri-landscape-line stat-icon"></i>
-              <div class="stat-content">
-                <span class="stat-value">{{ detail.landCount || 0 }}</span>
-                <span class="stat-label">{{ $t('newFarm.farmer.stats.landCount') }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <div v-if="detail">
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.basicInfo') }}</span>
               </div>
             </div>
-            <div class="stat-card">
-              <i class="ri-ruler-line stat-icon"></i>
-              <div class="stat-content">
-                <span class="stat-value">{{ formatArea(detail.totalLandArea) }}</span>
-                <span class="stat-label">{{ $t('newFarm.farmer.stats.totalLandArea') }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 关联土地列表 -->
-          <div v-if="landList.length > 0" class="land-list">
-            <h4 class="list-title">{{ $t('newFarm.farmer.sections.landList') }}</h4>
-            <div class="land-cards">
-              <div v-for="land in landList" :key="land.landId" class="land-card">
-                <div class="land-header">
-                  <span class="land-name">{{ land.landName }}</span>
-                  <el-tag size="small" :type="getLandStatusType(land.currentStatus)">
-                    {{ $t(`newFarm.land.status.${land.currentStatus}`) }}
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.farmerId')">
+                  {{ detail.farmerId }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.farmerName')">
+                  {{ detail.farmerName }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.idCard')">
+                  {{ detail.idCard || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.gender')">
+                  <el-tag v-if="detail.gender" size="small" :type="detail.gender === 'MALE' ? 'primary' : 'danger'">
+                    {{ detail.gender === 'MALE' ? $t('newFarm.common.male') : $t('newFarm.common.female') }}
                   </el-tag>
+                  <span v-else>-</span>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('common.birthDate')">
+                  {{ detail.birthday || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.youthCategory')">
+                  <el-tag v-if="detail.youthCategory === '1'" size="small" type="success">
+                    {{ $t('common.yes') }}
+                  </el-tag>
+                  <el-tag v-else-if="detail.youthCategory === '0'" size="small" type="info">
+                    {{ $t('common.no') }}
+                  </el-tag>
+                  <span v-else>-</span>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.phone')">
+                  {{ detail.phone || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.email')">
+                  {{ detail.email || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.address')" :span="2">
+                  {{ detail.address || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 组织信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.orgInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.cooperativeId')">
+                  {{ detail.cooperativeName || detail.cooperativeId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.form.daId')">
+                  {{ detail.daName || detail.daId || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 区划信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-map-pin-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.regionInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.common.zoneName')">
+                  {{ detail.zoneName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.woredaName')">
+                  {{ detail.woredaName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.kebeleName')">
+                  {{ detail.kebeleName || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 土地统计 & 关联土地 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-landscape-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.landStatistics') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.farmer.stats.landCount')">
+                  {{ detail.landCount || 0 }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.farmer.stats.totalLandArea')">
+                  {{ formatArea(detail.totalLandArea) }}
+                </el-descriptions-item>
+              </el-descriptions>
+
+              <div style="margin-top: 16px" v-if="landList.length > 0">
+                <div style="margin-bottom: 12px; font-weight: 600;">
+                  {{ $t('newFarm.farmer.sections.landList') }}
                 </div>
-                <div class="land-info">
-                  <span>{{ $t('newFarm.land.form.landId') }}: {{ land.landId }}</span>
-                  <span>{{ $t('newFarm.land.form.areaSize') }}: {{ formatArea(land.areaSize) }}</span>
-                </div>
-                <div class="land-actions">
-                  <el-button size="small" type="primary" link @click="handleViewLandDetail(land.landId)">
-                    <i class="ri-eye-line"></i>
-                    {{ $t('newFarm.land.actions.viewDetail') }}
-                  </el-button>
-                  <el-button size="small" type="danger" link @click="handleRemoveLand(land)">
-                    <i class="ri-link-unlink"></i>
-                    {{ $t('newFarm.land.actions.removeFarmer') }}
-                  </el-button>
-                </div>
+                <el-table :data="landList" border stripe>
+                  <el-table-column prop="landName" :label="$t('newFarm.land.form.landName')" min-width="160" show-overflow-tooltip />
+                  <el-table-column prop="landId" :label="$t('newFarm.land.form.landId')" min-width="140" show-overflow-tooltip />
+                  <el-table-column :label="$t('newFarm.land.form.areaSize')" min-width="120">
+                    <template #default="{ row }">
+                      {{ formatArea(row.areaSize) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('newFarm.land.form.currentStatus')" min-width="140" align="center">
+                    <template #default="{ row }">
+                      <el-tag size="small" :type="getLandStatusType(row.currentStatus)">
+                        {{ $t(`newFarm.land.status.${row.currentStatus}`) }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('newFarm.common.actions')" width="220" fixed="right">
+                    <template #default="{ row }">
+                      <el-button type="success" size="small" @click="handleViewLandDetail(row.landId)">
+                        <i class="ri-eye-line"></i>
+                        {{ $t('newFarm.land.actions.viewDetail') }}
+                      </el-button>
+                      <el-button type="danger" size="small" @click="handleRemoveLand(row)">
+                        <i class="ri-link-unlink"></i>
+                        {{ $t('newFarm.land.actions.removeFarmer') }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 系统信息 -->
-        <div class="detail-section">
-          <h3 class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('newFarm.common.systemInfo') }}
-          </h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.createBy') }}:</span>
-              <span class="value">{{ detail.createBy || '-' }}</span>
+          <!-- 系统信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('newFarm.common.systemInfo') }}</span>
+              </div>
             </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.createTime') }}:</span>
-              <span class="value">{{ detail.createTime || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.updateBy') }}:</span>
-              <span class="value">{{ detail.updateBy || '-' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">{{ $t('newFarm.common.updateTime') }}:</span>
-              <span class="value">{{ detail.updateTime || '-' }}</span>
-            </div>
-            <div class="info-item full-width">
-              <span class="label">{{ $t('newFarm.common.remark') }}:</span>
-              <span class="value">{{ detail.remark || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('newFarm.common.createBy')">
+                  {{ detail.createBy || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.createTime')">
+                  {{ detail.createTime || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.updateBy')">
+                  {{ detail.updateBy || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.updateTime')">
+                  {{ detail.updateTime || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('newFarm.common.remark')" :span="2">
+                  {{ detail.remark || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 操作按钮 -->
-        <div class="detail-actions">
-          <el-button @click="goBack">{{ $t('common.back') }}</el-button>
-          <el-button type="primary" @click="handleEdit">{{ $t('common.edit') }}</el-button>
+          <!-- ⚠️ 注意：详情页不显示底部操作按钮 -->
         </div>
       </div>
     </div>
@@ -228,10 +216,6 @@ const landList = ref([])
 
 const goBack = () => {
   router.back()
-}
-
-const handleEdit = () => {
-  router.push(`/input/farmer/edit/${route.params.id}`)
 }
 
 const formatArea = (area) => {
@@ -306,56 +290,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.farmer-detail-page { min-height: calc(100vh - 120px); }
-
-.page-header { background: white; padding: 16px 0; margin: -24px 0 24px 0; border-radius: 0 0 12px 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-.header-left { display: flex; align-items: center; }
-.header-center { text-align: center; }
-.page-title { font-size: 20px; font-weight: 600; color: #303133; margin: 0; }
-
-.detail-wrapper { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-.detail-section { background: #f5f7fa; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-.section-title { font-size: 18px; font-weight: 600; color: #009A44; margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid #009A44; display: flex; align-items: center; gap: 8px; }
-.section-title i { font-size: 20px; }
-
-.info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.info-item { display: flex; flex-direction: column; gap: 8px; }
-.info-item.full-width { grid-column: 1 / -1; }
-.info-item .label { font-weight: 500; color: #606266; font-size: 14px; }
-.info-item .value { color: #303133; font-size: 15px; }
-
-.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
-.stat-card { background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-.stat-icon { font-size: 36px; color: #009A44; }
-.stat-content { display: flex; flex-direction: column; }
-.stat-value { font-size: 24px; font-weight: 700; color: #303133; }
-.stat-label { font-size: 14px; color: #909399; }
-
-.land-list { margin-top: 20px; }
-.list-title { font-size: 16px; font-weight: 600; color: #303133; margin: 0 0 16px 0; }
-.land-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.land-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); transition: box-shadow 0.3s ease; }
-.land-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-.land-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.land-name { font-weight: 600; color: #303133; }
-.land-info { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #606266; margin-bottom: 12px; }
-.land-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid #f0f2f5; }
-.land-actions .el-button { flex: 1; justify-content: center; }
-
-.detail-actions { display: flex; justify-content: flex-end; gap: 16px; padding-top: 24px; border-top: 1px solid #f0f2f5; }
-
-@media screen and (max-width: 768px) {
-  .info-grid, .stats-grid { grid-template-columns: 1fr; }
-  .page-header { margin: -16px -16px 16px -16px; }
-  .header-content { padding: 0 16px; grid-template-columns: auto 1fr; gap: 16px; }
-  .header-center { text-align: left; }
-  .detail-wrapper, .detail-section { padding: 16px; }
-  .detail-actions { flex-direction: column; }
-  .detail-actions .el-button { width: 100%; }
-  .land-cards { grid-template-columns: 1fr; }
-  .land-actions { flex-direction: column; }
-  .land-actions .el-button { width: 100%; }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

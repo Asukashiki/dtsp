@@ -1,203 +1,150 @@
 <template>
-  <div class="feedback-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('input.feedback.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button v-if="detailData && detailData.status === '0'" type="primary" @click="handleEdit">
-            <i class="ri-edit-line"></i>
-            <span class="btn-text">{{ $t('common.edit') }}</span>
-          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('input.feedback.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('input.feedback.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.columns.feedbackNo') }}:</span>
-              <span class="value">{{ detailData.feedbackNo }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.form.feedbackType') }}:</span>
-              <el-tag :type="getTypeTag(detailData.feedbackType)">
-                {{ getFeedbackTypeText(detailData.feedbackType) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.form.priority') }}:</span>
-              <el-tag :type="getPriorityTag(detailData.priority)">
-                {{ getPriorityText(detailData.priority) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.columns.status') }}:</span>
-              <el-tag :type="getStatusTag(detailData.status)">
-                {{ getStatusText(detailData.status) }}
-              </el-tag>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.feedback.form.title') }}:</span>
-              <span class="value">{{ detailData.title }}</span>
-            </div>
-            <div class="detail-item full-width content-item">
-              <span class="label">{{ $t('input.feedback.form.content') }}:</span>
-              <div class="value content-value">{{ detailData.content }}</div>
-            </div>
-            <div class="detail-item" v-if="detailData.inputName">
-              <span class="label">{{ $t('input.feedback.form.inputName') }}:</span>
-              <span class="value">{{ detailData.inputName }}</span>
-            </div>
-            <div class="detail-item" v-if="detailData.supplierName">
-              <span class="label">{{ $t('input.feedback.form.supplierName') }}:</span>
-              <span class="value">{{ detailData.supplierName }}</span>
-            </div>
-            <div class="detail-item full-width" v-if="detailData.remark">
-              <span class="label">{{ $t('input.feedback.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.columns.createTime') }}:</span>
-              <span class="value">{{ detailData.createTime || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 联系信息 -->
-        <div class="detail-section" v-if="detailData.contactName || detailData.contactPhone || detailData.contactEmail">
-          <div class="section-title">
-            <i class="ri-contacts-line"></i>
-            {{ $t('input.feedback.form.contactInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item" v-if="detailData.contactName">
-              <span class="label">{{ $t('input.feedback.form.contactName') }}:</span>
-              <span class="value">{{ detailData.contactName }}</span>
-            </div>
-            <div class="detail-item" v-if="detailData.contactPhone">
-              <span class="label">{{ $t('input.feedback.form.contactPhone') }}:</span>
-              <span class="value">{{ detailData.contactPhone }}</span>
-            </div>
-            <div class="detail-item full-width" v-if="detailData.contactEmail">
-              <span class="label">{{ $t('input.feedback.form.contactEmail') }}:</span>
-              <span class="value">{{ detailData.contactEmail }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 处理信息 -->
-        <div class="detail-section" v-if="detailData.status !== '0'">
-          <div class="section-title">
-            <i class="ri-file-edit-line"></i>
-            {{ $t('input.feedback.form.processingInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item" v-if="detailData.handlerName">
-              <span class="label">{{ $t('input.feedback.form.handlerName') }}:</span>
-              <span class="value">{{ detailData.handlerName }}</span>
-            </div>
-            <div class="detail-item" v-if="detailData.handleTime">
-              <span class="label">{{ $t('input.feedback.form.handleTime') }}:</span>
-              <span class="value">{{ detailData.handleTime }}</span>
-            </div>
-            <div class="detail-item" v-if="detailData.processingHours !== null && detailData.processingHours !== undefined">
-              <span class="label">{{ $t('input.feedback.form.processingHours') }}:</span>
-              <span class="value">{{ detailData.processingHours }} {{ $t('common.hours', '小时') }}</span>
-            </div>
-            <div class="detail-item full-width" v-if="detailData.handleResult">
-              <span class="label">{{ $t('input.feedback.form.handleResult') }}:</span>
-              <div class="value content-value">{{ detailData.handleResult }}</div>
-            </div>
-            <div class="detail-item full-width" v-if="detailData.handleRemark">
-              <span class="label">{{ $t('input.feedback.form.handleRemark') }}:</span>
-              <span class="value">{{ detailData.handleRemark }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 评价信息 -->
-        <div class="detail-section" v-if="detailData.satisfaction">
-          <div class="section-title">
-            <i class="ri-star-line"></i>
-            {{ $t('input.feedback.form.evaluationInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.feedback.form.satisfaction') }}:</span>
-              <div class="value">
-                <el-rate v-model="detailData.satisfaction" disabled show-score text-color="#ff9900" />
-                <span class="satisfaction-text">{{ getSatisfactionText(detailData.satisfaction) }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <template v-if="detailData">
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.feedback.form.basicInfo') }}</span>
               </div>
             </div>
-            <div class="detail-item" v-if="detailData.evaluationTime">
-              <span class="label">{{ $t('input.feedback.form.evaluationTime') }}:</span>
-              <span class="value">{{ detailData.evaluationTime }}</span>
-            </div>
-            <div class="detail-item full-width" v-if="detailData.evaluation">
-              <span class="label">{{ $t('input.feedback.form.evaluation') }}:</span>
-              <div class="value content-value">{{ detailData.evaluation }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 回复列表 -->
-        <!-- <div class="detail-section" v-if="detailData.replies && detailData.replies.length > 0">
-          <div class="section-title">
-            <i class="ri-chat-1-line"></i>
-            {{ $t('input.feedback.replies', '回复记录') }} ({{ detailData.replies.length }})
-          </div>
-          <div class="reply-list">
-            <div v-for="reply in detailData.replies" :key="reply.replyId" class="reply-item">
-              <div class="reply-header">
-                <div class="reply-user">
-                  <i class="ri-user-line"></i>
-                  <span class="user-name">{{ reply.replyUserName }}</span>
-                  <el-tag size="small" :type="reply.replyUserType === '1' ? 'warning' : ''">
-                    {{ reply.replyUserType === '1' ? $t('input.feedback.handler', '处理人员') : $t('input.feedback.user', '用户') }}
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.feedback.columns.feedbackNo')">
+                  {{ detailData.feedbackNo }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.form.feedbackType')">
+                  <el-tag :type="getTypeTag(detailData.feedbackType)" effect="plain">
+                    {{ getFeedbackTypeText(detailData.feedbackType) }}
                   </el-tag>
-                </div>
-                <div class="reply-time">{{ reply.createTime }}</div>
-              </div>
-              <div class="reply-content">{{ reply.content }}</div>
-              <div v-if="reply.attachmentList && reply.attachmentList.length > 0" class="reply-attachments">
-                <i class="ri-attachment-line"></i>
-                <span v-for="(file, index) in reply.attachmentList" :key="index" class="attachment-item">
-                  {{ file }}
-                </span>
-              </div>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.form.priority')">
+                  <el-tag :type="getPriorityTag(detailData.priority)" effect="plain">
+                    {{ getPriorityText(detailData.priority) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.columns.status')">
+                  <el-tag :type="getStatusTag(detailData.status)" effect="plain">
+                    {{ getStatusText(detailData.status) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.form.title')" :span="2">
+                  {{ detailData.title }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.form.content')" :span="2">
+                  <div class="whitespace-pre-wrap break-words leading-6">{{ detailData.content }}</div>
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.inputName" :label="$t('input.feedback.form.inputName')">
+                  {{ detailData.inputName }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.supplierName" :label="$t('input.feedback.form.supplierName')">
+                  {{ detailData.supplierName }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.remark" :label="$t('input.feedback.form.remark')" :span="2">
+                  <div class="whitespace-pre-wrap break-words leading-6">{{ detailData.remark }}</div>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.feedback.columns.createTime')">
+                  {{ detailData.createTime || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div> -->
 
-        <!-- 无回复提示 -->
-        <!-- <div class="detail-section" v-else>
-          <div class="section-title">
-            <i class="ri-chat-1-line"></i>
-            {{ $t('input.feedback.replies', '回复记录') }}
+          <!-- 联系信息 -->
+          <div class="info-card" v-if="detailData.contactName || detailData.contactPhone || detailData.contactEmail">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-contacts-line"></i>
+                <span>{{ $t('input.feedback.form.contactInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item v-if="detailData.contactName" :label="$t('input.feedback.form.contactName')">
+                  {{ detailData.contactName }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.contactPhone" :label="$t('input.feedback.form.contactPhone')">
+                  {{ detailData.contactPhone }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.contactEmail" :label="$t('input.feedback.form.contactEmail')" :span="2">
+                  {{ detailData.contactEmail }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
           </div>
-          <div class="empty-state">
-            <i class="ri-chat-off-line"></i>
-            <p>{{ $t('input.feedback.form.noReplies') }}</p>
+
+          <!-- 处理信息 -->
+          <div class="info-card" v-if="detailData.status !== '0'">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-edit-line"></i>
+                <span>{{ $t('input.feedback.form.processingInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item v-if="detailData.handlerName" :label="$t('input.feedback.form.handlerName')">
+                  {{ detailData.handlerName }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.handleTime" :label="$t('input.feedback.form.handleTime')">
+                  {{ detailData.handleTime }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.processingHours !== null && detailData.processingHours !== undefined" :label="$t('input.feedback.form.processingHours')">
+                  {{ detailData.processingHours }} {{ $t('common.hours', '小时') }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.handleResult" :label="$t('input.feedback.form.handleResult')" :span="2">
+                  <div class="whitespace-pre-wrap break-words leading-6">{{ detailData.handleResult }}</div>
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.handleRemark" :label="$t('input.feedback.form.handleRemark')" :span="2">
+                  <div class="whitespace-pre-wrap break-words leading-6">{{ detailData.handleRemark }}</div>
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
           </div>
-        </div> -->
-      </template>
+
+          <!-- 评价信息 -->
+          <div class="info-card" v-if="detailData.satisfaction">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-star-line"></i>
+                <span>{{ $t('input.feedback.form.evaluationInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.feedback.form.satisfaction')">
+                  <div class="flex items-center gap-3">
+                    <el-rate :model-value="detailData.satisfaction" disabled show-score text-color="#ff9900" />
+                    <span class="text-sm text-gray-600">{{ getSatisfactionText(detailData.satisfaction) }}</span>
+                  </div>
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.evaluationTime" :label="$t('input.feedback.form.evaluationTime')">
+                  {{ detailData.evaluationTime }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.evaluation" :label="$t('input.feedback.form.evaluation')" :span="2">
+                  <div class="whitespace-pre-wrap break-words leading-6">{{ detailData.evaluation }}</div>
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -295,11 +242,6 @@ const goBack = () => {
   router.back()
 }
 
-// 编辑
-const handleEdit = () => {
-  router.push(`/input/feedback/edit/${feedbackId}`)
-}
-
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -321,315 +263,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.feedback-detail-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right {
-  justify-content: flex-end;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.detail-section {
-  margin-bottom: 32px;
-}
-
-.detail-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.section-title i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-item.content-item {
-  align-items: flex-start;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.detail-item .label {
-  font-size: 14px;
-  color: #909399;
-  flex-shrink: 0;
-  min-width: 120px;
-  padding-top: 2px;
-}
-
-.detail-item .value {
-  font-size: 14px;
-  color: #303133;
-  font-weight: 500;
-  flex: 1;
-}
-
-.content-value {
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.6;
-}
-
-.satisfaction-text {
-  margin-left: 12px;
-  color: #606266;
-  font-size: 14px;
-}
-
-/* 回复列表 */
-.reply-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.reply-item {
-  background: #f9fafb;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 16px;
-  transition: all 0.3s ease;
-}
-
-.reply-item:hover {
-  border-color: #009A44;
-  box-shadow: 0 2px 8px rgba(0, 154, 68, 0.1);
-}
-
-.reply-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.reply-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.reply-user i {
-  font-size: 18px;
-  color: #909399;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.reply-time {
-  font-size: 13px;
-  color: #909399;
-}
-
-.reply-content {
-  font-size: 14px;
-  color: #606266;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.reply-attachments {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed #e4e7ed;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.reply-attachments i {
-  color: #909399;
-  font-size: 16px;
-}
-
-.attachment-item {
-  font-size: 13px;
-  color: #409eff;
-  cursor: pointer;
-  padding: 4px 8px;
-  background: #ecf5ff;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.attachment-item:hover {
-  background: #d9ecff;
-}
-
-/* 空状态 */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-  opacity: 0.5;
-}
-
-.empty-state p {
-  font-size: 14px;
-  margin: 0;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 1024px) {
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-item.full-width {
-    grid-column: auto;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr auto;
-    gap: 12px;
-  }
-
-  .header-center {
-    text-align: center;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .detail-wrapper {
-    padding: 16px;
-  }
-
-  .detail-item .label {
-    min-width: 80px;
-  }
-
-  .btn-text {
-    display: none;
-  }
-
-  .reply-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .reply-time {
-    align-self: flex-start;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 0 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-wrapper {
-    padding: 12px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    padding-top: 0;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

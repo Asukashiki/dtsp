@@ -9,7 +9,7 @@
       :disabled="disabled || (loading && currentAction !== button.action)"
       @click="handleAction(button)">
       <i :class="button.icon"></i>
-      <span class="btn-text">{{ $t(`common.${button.label}`) }}</span>
+      <span class="btn-text">{{ button.text || $t(`common.${button.label}`) }}</span>
     </el-button>
   </div>
 </template>
@@ -49,6 +49,14 @@ const props = defineProps({
   showAudit: {
     type: Boolean,
     default: true
+  },
+
+  /**
+   * Whether to show confirm button (for stock-in approved status)
+   */
+  showConfirm: {
+    type: Boolean,
+    default: false
   },
 
   /**
@@ -144,10 +152,13 @@ const getDefaultButtons = () => {
       break
 
     case 'S1': // Pending Approval
-      if (props.showAudit && userStore.hasWorkflowStatusPermission('approve')) {
-        // 审核页面：只显示审核按钮
-        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-      } else if (!props.showAudit) {
+      if (props.showAudit) {
+        // 审核页面：显示查看按钮 + 审核按钮
+        buttons.push({ type: '', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        if (userStore.hasWorkflowStatusPermission('approve')) {
+          buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
+        }
+      } else {
         // 管理页面：显示查看按钮 + 作废按钮
         if (userStore.hasWorkflowStatusPermission('approve')) {
           buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
@@ -159,6 +170,10 @@ const getDefaultButtons = () => {
       break
 
     case 'S2': // Approved
+      if (props.showConfirm) {
+        // 显示确认入库按钮（用于入库管理的已审核状态）
+        buttons.push({ type: 'success', action: 'confirm', label: 'confirmInbound', icon: 'ri-checkbox-circle-line' })
+      }
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
 

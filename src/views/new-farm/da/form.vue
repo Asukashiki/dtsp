@@ -1,191 +1,239 @@
 <template>
-  <div class="da-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('newFarm.da.edit') : $t('newFarm.da.add') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('newFarm.da.edit') : $t('newFarm.da.add') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper" v-loading="pageLoading || regionLoading">
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-position="top" class="da-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-user-star-line"></i>
-            <h3>{{ $t('newFarm.da.sections.basicInfo') }}</h3>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="160px"
+          v-loading="pageLoading || regionLoading"
+        >
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-star-line"></i>
+                <span>{{ $t('newFarm.da.sections.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.daName')" prop="daName">
+                    <el-input
+                      v-model="formData.daName"
+                      :placeholder="$t('newFarm.da.placeholder.daName')"
+                      maxlength="100"
+                      show-word-limit
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.idCard')" prop="idCard">
+                    <el-input
+                      v-model="formData.idCard"
+                      :placeholder="$t('newFarm.da.placeholder.idCard')"
+                      maxlength="50"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.gender')" prop="gender">
+                    <el-radio-group v-model="formData.gender">
+                      <el-radio label="MALE">{{ $t('newFarm.common.male') }}</el-radio>
+                      <el-radio label="FEMALE">{{ $t('newFarm.common.female') }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.phone')" prop="phone">
+                    <el-input
+                      v-model="formData.phone"
+                      :placeholder="$t('newFarm.da.placeholder.phone')"
+                      maxlength="20"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.email')" prop="email">
+                    <el-input
+                      v-model="formData.email"
+                      :placeholder="$t('newFarm.da.placeholder.email')"
+                      maxlength="100"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.address')" prop="address">
+                    <el-input
+                      v-model="formData.address"
+                      :placeholder="$t('newFarm.da.placeholder.address')"
+                      maxlength="200"
+                      show-word-limit
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('newFarm.da.form.daName')" prop="daName">
-              <el-input
-                  v-model="formData.daName"
-                  :placeholder="$t('newFarm.da.placeholder.daName')"
-                  maxlength="100"
-                  show-word-limit
-              />
-            </el-form-item>
 
-            <el-form-item :label="$t('newFarm.da.form.idCard')" prop="idCard">
-              <el-input
-                  v-model="formData.idCard"
-                  :placeholder="$t('newFarm.da.placeholder.idCard')"
-                  maxlength="50"
-              />
-            </el-form-item>
+          <!-- 账号信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-account-circle-line"></i>
+                <span>{{ $t('newFarm.da.sections.accountInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.account')" prop="account">
+                    <el-input
+                      v-model="formData.account"
+                      :placeholder="$t('newFarm.da.placeholder.account')"
+                      :disabled="isEdit"
+                      maxlength="50"
+                      @blur="checkAccount"
+                    >
+                      <template #append v-if="!isEdit && accountCheckResult !== null">
+                        <i
+                          :class="accountCheckResult ? 'ri-check-line' : 'ri-close-line'"
+                          :style="{ color: accountCheckResult ? '#67c23a' : '#f56c6c' }"
+                        ></i>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.da.form.gender')" prop="gender">
-              <el-radio-group v-model="formData.gender">
-                <el-radio label="MALE">{{ $t('newFarm.common.male') }}</el-radio>
-                <el-radio label="FEMALE">{{ $t('newFarm.common.female') }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
+                <el-col v-if="!isEdit" :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.password')" prop="password">
+                    <el-input
+                      v-model="formData.password"
+                      type="password"
+                      :placeholder="$t('newFarm.da.placeholder.password')"
+                      show-password
+                      maxlength="20"
+                    />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.da.form.phone')" prop="phone">
-              <el-input
-                  v-model="formData.phone"
-                  :placeholder="$t('newFarm.da.placeholder.phone')"
-                  maxlength="20"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.da.form.email')" prop="email">
-              <el-input
-                  v-model="formData.email"
-                  :placeholder="$t('newFarm.da.placeholder.email')"
-                  maxlength="100"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.da.form.address')" prop="address" class="full-width-item">
-              <el-input
-                  v-model="formData.address"
-                  :placeholder="$t('newFarm.da.placeholder.address')"
-                  maxlength="200"
-                  show-word-limit
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.accountStatus')" prop="accountStatus">
+                    <el-switch
+                      v-model="formData.accountStatus"
+                      active-value="1"
+                      inactive-value="0"
+                      :active-text="$t('newFarm.da.status.enabled')"
+                      :inactive-text="$t('newFarm.da.status.disabled')"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-        </div>
 
-        <!-- 账号信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-account-circle-line"></i>
-            <h3>{{ $t('newFarm.da.sections.accountInfo') }}</h3>
+          <!-- 区划信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-map-pin-line"></i>
+                <span>{{ $t('newFarm.da.sections.regionInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
+                    <el-cascader
+                      v-model="regionCodePath"
+                      :options="regionTreeOptions"
+                      :placeholder="$t('newFarm.common.selectWoreda')"
+                      :props="cascaderProps"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      v-loading="regionTreeLoading"
+                      @change="handleRegionChange"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes">
+                    <el-select
+                      v-model="formData.kebeleCodes"
+                      :placeholder="$t('newFarm.da.placeholder.kebeleCodes')"
+                      :disabled="kebeleOptions.length === 0"
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in kebeleOptions"
+                        :key="item.code || item.id"
+                        :label="item.name"
+                        :value="item.code || item.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('newFarm.da.form.account')" prop="account">
-              <el-input
-                  v-model="formData.account"
-                  :placeholder="$t('newFarm.da.placeholder.account')"
-                  :disabled="isEdit"
-                  maxlength="50"
-                  @blur="checkAccount"
-              >
-                <template #append v-if="!isEdit && accountCheckResult !== null">
-                  <i :class="accountCheckResult ? 'ri-check-line' : 'ri-close-line'" 
-                     :style="{ color: accountCheckResult ? '#67c23a' : '#f56c6c' }"></i>
-                </template>
-              </el-input>
-            </el-form-item>
 
-            <el-form-item v-if="!isEdit" :label="$t('newFarm.da.form.password')" prop="password">
-              <el-input
-                  v-model="formData.password"
-                  type="password"
-                  :placeholder="$t('newFarm.da.placeholder.password')"
-                  show-password
-                  maxlength="20"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.da.form.accountStatus')" prop="accountStatus">
-              <el-switch
-                  v-model="formData.accountStatus"
-                  active-value="1"
-                  inactive-value="0"
-                  :active-text="$t('newFarm.da.status.enabled')"
-                  :inactive-text="$t('newFarm.da.status.disabled')"
-              />
-            </el-form-item>
+          <!-- 备注 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-text-line"></i>
+                <span>{{ $t('newFarm.common.remark') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24">
+                  <el-form-item :label="$t('newFarm.common.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="4"
+                      :placeholder="$t('newFarm.da.placeholder.remark')"
+                      maxlength="500"
+                      show-word-limit
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-        </div>
 
-        <!-- 区划信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-map-pin-line"></i>
-            <h3>{{ $t('newFarm.da.sections.regionInfo') }}</h3>
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" :loading="saveLoading" @click="handleSubmit">
+              {{ $t('common.save') }}
+            </el-button>
           </div>
-          <div class="form-grid">
-            <!-- 行政区划级联选择 (只能选择Woreda级别: orgType='1' && orgGrade=4) -->
-            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
-              <el-cascader
-                v-model="regionCodePath"
-                :options="regionTreeOptions"
-                :placeholder="$t('newFarm.common.selectWoreda')"
-                :props="cascaderProps"
-                filterable
-                clearable
-                style="width: 100%"
-                v-loading="regionTreeLoading"
-                @change="handleRegionChange"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('newFarm.da.form.kebeleCodes')" prop="kebeleCodes">
-              <el-select
-                  v-model="formData.kebeleCodes"
-                  :placeholder="$t('newFarm.da.placeholder.kebeleCodes')"
-                  :disabled="kebeleOptions.length === 0">
-                <el-option
-                    v-for="item in kebeleOptions"
-                    :key="item.code || item.id"
-                    :label="item.name"
-                    :value="item.code || item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 备注 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-file-text-line"></i>
-            <h3>{{ $t('newFarm.common.remark') }}</h3>
-          </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('newFarm.common.remark')" prop="remark" class="full-width-item">
-              <el-input
-                  v-model="formData.remark"
-                  type="textarea"
-                  :rows="4"
-                  :placeholder="$t('newFarm.da.placeholder.remark')"
-                  maxlength="500"
-                  show-word-limit
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="saveLoading" @click="handleSubmit">
-            {{ $t('common.save') }}
-          </el-button>
-        </div>
-      </el-form>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -500,138 +548,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.da-form-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* Page header */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* Form area */
-.form-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-block {
-  margin-bottom: 32px;
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.block-header i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.block-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.full-width-item {
-  grid-column: 1 / -1;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.form-tip {
-  font-size: 12px;
-  color: #909399;
-  margin-top: 4px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f2f5;
-}
-
-/* Responsive design */
-@media screen and (max-width: 1024px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-  }
-
-  .header-center {
-    text-align: left;
-  }
-
-  .form-wrapper {
-    padding: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

@@ -1,127 +1,134 @@
 <template>
-  <div class="input-catalog-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-list-check header-icon"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">{{ $t('input.catalog.title') }}</h1>
-          <p class="page-subtitle">{{ $t('input.catalog.subtitle') }}</p>
-        </div>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-list-check"
+        :title="$t('input.catalog.title')"
+        :subtitle="$t('input.catalog.subtitle')" />
 
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-      <!-- 搜索和筛选栏 -->
-      <div class="search-bar">
-        <div class="search-row">
-          <el-input
-              v-model="searchKeyword"
-              :placeholder="$t('input.catalog.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @clear="handleSearch"
-              @keyup.enter="handleSearch"
-          >
-            <template #prefix>
-              <i class="ri-search-line"></i>
-            </template>
-          </el-input>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片（无标题） -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('input.catalog.searchPlaceholder')">
+              <el-input
+                  v-model="searchKeyword"
+                  :placeholder="$t('input.catalog.searchPlaceholder')"
+                  clearable
+                  @clear="handleSearch"
+                  @keyup.enter="handleSearch"
+                  class="search-input">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
 
-          <el-select
-              v-model="selectedType"
-              :placeholder="$t('input.catalog.filterByType')"
-              class="type-filter"
-              @change="handleSearch"
-              v-loading="dictLoading"
-          >
-            <el-option :label="$t('input.catalog.type.all')" value="all" />
-            <!-- 从字典动态生成类型选项（移除农药） -->
-            <el-option
-                v-for="item in inputTypeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-          </el-select>
+            <SearchItem :label="$t('input.catalog.filterByType')">
+              <el-select
+                  v-model="selectedType"
+                  :placeholder="$t('input.catalog.filterByType')"
+                  @change="handleSearch"
+                  v-loading="dictLoading"
+                  class="filter-select">
+                <el-option :label="$t('input.catalog.type.all')" value="all" />
+                <!-- 从字典动态生成类型选项（移除农药） -->
+                <el-option
+                    v-for="item in inputTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <div class="action-row">
-          <div class="action-left">
-            <el-button type="primary" @click="handleSearch">
-              <i class="ri-search-line"></i>
-              <span class="btn-text">{{ $t('common.search') }}</span>
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-restart-line"></i>
-              <span class="btn-text">{{ $t('common.reset') }}</span>
-            </el-button>
-          </div>
-          <div class="action-right">
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('input.catalog.list')" icon="ri-file-list-3-line">
+          <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              <span class="btn-text">{{ $t('input.catalog.add') }}</span>
+              {{ $t('input.catalog.add') }}
             </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table
+                v-loading="loading"
+                :data="tableData"
+                stripe
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+            >
+              <el-table-column type="selection" width="55" />
+              <el-table-column prop="inputName" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
+              <el-table-column :label="$t('input.catalog.columns.inputType')" width="150" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getTypeTag(row.type)" size="small">{{ getTypeLabel(row.type) }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="inputSku" :label="$t('input.catalog.columns.inputSku')" width="150" show-overflow-tooltip />
+              <el-table-column prop="trademark" :label="$t('input.catalog.columns.trademark')" width="120" />
+              <el-table-column prop="registerCode" :label="$t('input.catalog.columns.registerCode')" width="140" />
+              <el-table-column prop="producerName" :label="$t('input.catalog.columns.producerName')" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="createTime" :label="$t('input.catalog.columns.createTime')" width="160" />
+              <el-table-column prop="status" :label="$t('input.catalog.columns.status')" width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="row.status === 'active' ? 'success' : 'info'" size="small">
+                    {{ $t(`input.catalog.statusOptions.${row.status}`) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('input.catalog.columns.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <div class="action-buttons">
+                    <el-button 
+                      class="action-btn action-btn-view" 
+                      size="small"
+                      @click="handleView(row)">
+                      <i class="ri-eye-line"></i>
+                      <span class="btn-text">{{ $t('common.view') }}</span>
+                    </el-button>
+                    <el-button 
+                      class="action-btn action-btn-edit" 
+                      type="primary"
+                      size="small"
+                      @click="handleEdit(row)">
+                      <i class="ri-edit-line"></i>
+                      <span class="btn-text">{{ $t('common.edit') }}</span>
+                    </el-button>
+                    <el-button 
+                      class="action-btn action-btn-delete" 
+                      type="danger"
+                      size="small"
+                      @click="handleDelete(row)">
+                      <i class="ri-delete-bin-line"></i>
+                      <span class="btn-text">{{ $t('common.delete') }}</span>
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="pagination-wrapper">
+              <el-pagination
+                  v-model:current-page="pagination.page"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :total="pagination.total"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handlePageChange"
+              />
+            </div>
           </div>
-        </div>
-      </div>
+        </InfoCard>
 
-      <!-- PC端：数据表格 -->
-      <div class="table-card pc-view">
-        <el-table
-            v-loading="loading"
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="55" />
-          <el-table-column prop="inputName" :label="$t('input.catalog.columns.inputName')" min-width="180" show-overflow-tooltip />
-          <el-table-column :label="$t('input.catalog.columns.inputType')" width="150" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getTypeTag(row.type)" size="small">{{ getTypeLabel(row.type) }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="inputSku" :label="$t('input.catalog.columns.inputSku')" width="150" show-overflow-tooltip />
-          <el-table-column prop="trademark" :label="$t('input.catalog.columns.trademark')" width="120" />
-          <el-table-column prop="registerCode" :label="$t('input.catalog.columns.registerCode')" width="140" />
-          <el-table-column prop="producerName" :label="$t('input.catalog.columns.producerName')" min-width="200" show-overflow-tooltip />
-          <el-table-column prop="createTime" :label="$t('input.catalog.columns.createTime')" width="160" />
-          <el-table-column prop="status" :label="$t('input.catalog.columns.status')" width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === 'active' ? 'success' : 'info'" size="small">
-                {{ $t(`input.catalog.statusOptions.${row.status}`) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('input.catalog.columns.actions')" width="220" fixed="right">
-            <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i></el-button>
-              <el-button link type="primary" @click="handleEdit(row)"><i class="ri-edit-line"></i></el-button>
-              <el-button link type="danger" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div class="pagination-wrapper">
-          <el-pagination
-              v-model:current-page="pagination.page"
-              v-model:page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              :total="pagination.total"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="handleSizeChange"
-              @current-change="handlePageChange"
-          />
-        </div>
-      </div>
-
-      <!-- 移动端：卡片列表 -->
-      <div class="mobile-view" v-loading="loading">
-        <div class="card-list">
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only" v-loading="loading">
           <div v-for="item in tableData" :key="item.inputId" class="input-card" @click="handleView(item)">
             <div class="card-header">
               <el-tag :type="getTypeTag(item.type)" size="small">{{ getTypeLabel(item.type) }}</el-tag>
@@ -145,38 +152,50 @@
             <div class="card-footer">
               <span class="create-time">{{ item.createTime }}</span>
               <div class="card-actions" @click.stop>
-                <el-button link type="primary" size="small" @click="handleEdit(item)">
-                  <i class="ri-edit-line"></i> {{ $t('common.edit') }}
+                <el-button 
+                  class="action-btn action-btn-view" 
+                  size="small"
+                  @click="handleView(item)">
+                  <i class="ri-eye-line"></i>
+                  <span class="btn-text">{{ $t('common.view') }}</span>
                 </el-button>
-                <el-button link type="danger" size="small" @click="handleDelete(item)">
-                  <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
+                <el-button 
+                  class="action-btn action-btn-edit" 
+                  type="primary"
+                  size="small"
+                  @click="handleEdit(item)">
+                  <i class="ri-edit-line"></i>
+                  <span class="btn-text">{{ $t('common.edit') }}</span>
+                </el-button>
+                <el-button 
+                  class="action-btn action-btn-delete" 
+                  type="danger"
+                  size="small"
+                  @click="handleDelete(item)">
+                  <i class="ri-delete-bin-line"></i>
+                  <span class="btn-text">{{ $t('common.delete') }}</span>
                 </el-button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div v-if="tableData.length === 0 && !loading" class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('home.noData') }}</p>
-        </div>
+          <div v-if="tableData.length === 0 && !loading" class="empty-state">
+            <i class="ri-inbox-line"></i>
+            <p>{{ $t('home.noData') }}</p>
+          </div>
 
-        <div class="mobile-pagination">
-          <el-pagination
-              v-model:current-page="pagination.page"
-              :total="pagination.total"
-              :page-size="pagination.pageSize"
-              layout="prev, pager, next"
-              small
-              @current-change="handlePageChange"
-          />
+          <div class="mobile-pagination">
+            <el-pagination
+                v-model:current-page="pagination.page"
+                :total="pagination.total"
+                :page-size="pagination.pageSize"
+                layout="prev, pager, next"
+                small
+                @current-change="handlePageChange"
+            />
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- 移动端浮动添加按钮 -->
-    <div class="mobile-fab" @click="handleAdd">
-      <i class="ri-add-line"></i>
     </div>
   </div>
 </template>
@@ -188,6 +207,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getInputList, deleteInput } from '@/api/input'
 import { useDict, clearDictCache } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -354,93 +374,183 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.input-catalog-container { min-height: calc(100vh - 120px); position: relative; }
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-/* 页面头部 */
-.page-header { background: linear-gradient(135deg, #009A44 0%, #00b350 100%); padding: 24px 0; margin: -24px 0 24px 0; border-radius: 0 0 16px 16px; }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-.header-icon-wrapper { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-shrink: 0; }
-.header-icon { font-size: 32px; color: white; }
-.header-text { flex: 1; color: white; min-width: 0; }
-.page-title { font-size: 24px; font-weight: 600; margin: 0 0 4px 0; }
-.page-subtitle { font-size: 14px; opacity: 0.9; margin: 0; }
+/* 操作按钮样式 */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 4px 0;
+}
 
-/* 搜索栏 */
-.search-bar { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
-.search-row { display: flex; gap: 12px; margin-bottom: 12px; }
-.search-input { flex: 1; min-width: 0; }
-.type-filter { width: 160px; flex-shrink: 0; }
-.action-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.action-left, .action-right { display: flex; gap: 8px; }
+.action-btn {
+  min-width: auto;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+  border-radius: 4px;
 
-/* PC端表格 */
-.table-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 16px; }
-.pagination-wrapper { margin-top: 16px; display: flex; justify-content: flex-end; }
+  i {
+    font-size: 13px;
+    margin-right: 0;
+  }
 
-/* 移动端默认隐藏 */
-.mobile-view, .mobile-fab { display: none; }
+  .btn-text {
+    white-space: nowrap;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* VIEW 按钮 - 绿色背景 */
+.action-btn-view {
+  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  border-color: #009A44;
+  color: white;
+
+  &:hover {
+    background: linear-gradient(135deg, #00b350 0%, #009A44 100%);
+    border-color: #00b350;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 154, 68, 0.3);
+  }
+
+  &:active {
+    background: #008038;
+    border-color: #008038;
+  }
+
+  &:focus {
+    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+    border-color: #009A44;
+    color: white;
+  }
+}
+
+/* EDIT 按钮 - 使用默认 primary 样式 */
+.action-btn-edit {
+  // 使用 Element Plus 默认的 primary 样式
+}
+
+/* DELETE 按钮 - 使用默认 danger 样式 */
+.action-btn-delete {
+  // 使用 Element Plus 默认的 danger 样式
+}
 
 /* 移动端卡片样式 */
-.card-list { display: flex; flex-direction: column; gap: 12px; }
-.input-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; cursor: pointer; }
-.input-card:active { transform: scale(0.98); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
-.card-header { display: flex; gap: 8px; margin-bottom: 12px; }
-.card-title { font-size: 16px; font-weight: 600; color: #303133; margin: 0 0 12px 0; line-height: 1.4; }
-.card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.info-item { display: flex; flex-direction: column; gap: 2px; }
-.info-item.full { grid-column: 1 / -1; }
-.info-label { font-size: 12px; color: #909399; }
-.info-value { font-size: 14px; color: #606266; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid rgba(0, 0, 0, 0.06); }
-.create-time { font-size: 12px; color: #909399; }
-.card-actions { display: flex; gap: 8px; }
-.empty-state { text-align: center; padding: 60px 20px; color: #909399; }
-.empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
-.mobile-pagination { display: flex; justify-content: center; padding: 16px 0; }
-
-/* 响应式设计 */
-@media screen and (max-width: 1024px) {
-  .page-header { margin: -16px -16px 16px -16px; padding: 20px 0; }
-  .header-content { padding: 0 16px; }
+.mobile-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-@media screen and (max-width: 768px) {
-  .page-header { margin: -12px -12px 12px -12px; padding: 16px 0; }
-  .header-content { padding: 0 12px; gap: 12px; }
-  .header-icon-wrapper { width: 48px; height: 48px; border-radius: 10px; }
-  .header-icon { font-size: 24px; }
-  .page-title { font-size: 18px; }
-  .page-subtitle { display: none; }
-
-  .search-row { flex-direction: column; }
-  .type-filter { width: 100%; }
-  .action-row { flex-direction: column; align-items: stretch; }
-  .action-left, .action-right { justify-content: stretch; }
-  .action-left .el-button, .action-right .el-button { flex: 1; }
-  .action-right { display: none; }
-
-  .pc-view { display: none; }
-  .mobile-view { display: block; }
-
-  .mobile-fab {
-    display: flex; position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%); border-radius: 50%;
-    align-items: center; justify-content: center; color: white; font-size: 24px;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3); cursor: pointer; z-index: 50; transition: all 0.3s ease;
-  }
-  .mobile-fab:active { transform: scale(0.9); }
+.input-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-@media screen and (max-width: 480px) {
-  .page-header { margin: -8px -8px 8px -8px; padding: 12px 0; }
-  .header-content { padding: 0 8px; }
-  .header-icon-wrapper { width: 40px; height: 40px; }
-  .header-icon { font-size: 20px; }
-  .page-title { font-size: 16px; }
-  .search-bar { padding: 12px; }
-  .input-card { padding: 12px; }
-  .card-title { font-size: 15px; }
-  .mobile-fab { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+.input-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.card-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-item.full {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #909399;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #606266;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.create-time {
+  font-size: 12px;
+  color: #909399;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #909399;
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.mobile-pagination {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
 }
 </style>

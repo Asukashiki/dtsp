@@ -137,10 +137,10 @@
       <div class="system-content" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { marginLeft: menuWidth } : {}">
         <!-- 全局标签页导航 -->
         <PageBreadcrumb />
-        
-        <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <component :is="Component" />
+
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade" ><!-- mode="out-in"-->
+            <component :is="Component" :key="route.path" />
           </transition>
         </router-view>
       </div>

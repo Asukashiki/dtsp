@@ -53,6 +53,7 @@ export default {
   audit: 'Audit',
   approve: 'Approve',
   reject: 'Reject',
+  confirmInbound: 'Confirm Inbound',
   update: 'Update',
   remarks: 'Remarks',
   refresh: 'Refresh',

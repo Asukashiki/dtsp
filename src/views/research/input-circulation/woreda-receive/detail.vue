@@ -1,66 +1,126 @@
 <template>
-  <div class="union-receive-detail-container">
-    <el-page-header @back="handleBack" :title="$t('common.back')">
-      <template #content><span>{{ $t('inputCirculation.receiveDetail') }}</span></template>
-    </el-page-header>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('inputCirculation.confirmReceive') }}</h1>
+          </div>
+        </div>
+      </div>
 
-    <el-card v-loading="loading" class="main-card">
-      <el-descriptions :column="2" border>
-        <el-descriptions-item :label="$t('inputCirculation.releaseId')">{{ mainData.releaseId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseName')">{{ mainData.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseBy')">{{ mainData.releaseBy }}</el-descriptions-item>
-<!--        <el-descriptions-item :label="$t('inputCirculation.targetPhone')">{{ mainData.targetPhone }}</el-descriptions-item>-->
-        <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">{{ mainData.releaseOrg }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.releaseDate')">{{ mainData.releaseDate }}</el-descriptions-item>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('inputCirculation.basicInfo') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('inputCirculation.releaseId')">
+                {{ mainData.releaseId || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.releaseName')">
+                {{ mainData.releaseName || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.releaseBy')">
+                {{ mainData.releaseBy || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.releaseOrg')">
+                {{ mainData.releaseOrg || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.releaseDate')">
+                {{ mainData.releaseDate || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.status')">
+                {{ mainData.receiveStatus || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.confirmBy')">
+                {{ mainData.confirmBy || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">
+                {{ mainData.confirmOrg || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('inputCirculation.confirmTime')">
+                {{ mainData.confirmTime || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
 
-        <el-descriptions-item :label="$t('inputCirculation.receiveId')">{{ mainData.releaseId }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.receiveName')">{{ mainData.releaseName }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.status')">{{ mainData.receiveStatus }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmBy')">{{ mainData.confirmBy || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmOrg')">{{ mainData.confirmOrg || '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="$t('inputCirculation.confirmTime')">{{ mainData.confirmTime || '-' }}</el-descriptions-item>
-      </el-descriptions>
-    </el-card>
+        <!-- 需求选择卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-list-check-line"></i>
+              <span>{{ $t('inputCirculation.demandSelectionTitle') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-table :data="demandList" border v-loading="demandLoading">
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+                <template #default="{ row }">
+                  {{ getLabelByValue('input_type', row.inputType) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+                <template #default="{ row }">
+                  {{ getLabelByValue('input_category', row.inputCategory) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
+            </el-table>
+          </div>
+        </div>
 
-    <el-card v-loading="demandLoading" class="main-card">
-      <h3>{{ $t('inputCirculation.demandSelectionTitle') }}</h3>
-      <el-table :data="demandList" border style="margin-top: 16px">
-        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
-          <template #default="{ row }">
-            {{ getLabelByValue('input_type', row.inputType) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
-          <template #default="{ row }">
-            {{ getLabelByValue('input_category', row.inputCategory) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
-      </el-table>
-    </el-card>
+        <!-- 分发明细卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-file-list-line"></i>
+              <span>{{ $t('inputCirculation.detailInfo') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-table :data="detailData" border>
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+                <template #default="{ row }">
+                  {{ getLabelByValue('input_type', row.inputType) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+                <template #default="{ row }">
+                  {{ getLabelByValue('input_category', row.inputCategory) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('inputCirculation.quantity')" prop="quantity" min-width="120" />
+              <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
+                <template #default="{ row }">
+                  {{ getLabelByValue('agri_unit', row.unit) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('inputCirculation.unitPrice')" prop="unitPrice" min-width="120" />
+            </el-table>
+          </div>
+        </div>
 
-    <el-card v-loading="loading" class="main-card">
-      <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
-      <el-table :data="detailData" border style="margin-top: 16px">
-        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
-          <template #default="{ row }">
-            {{ getLabelByValue('input_type', row.inputType) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
-          <template #default="{ row }">
-            {{ getLabelByValue('input_category', row.inputCategory) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('inputCirculation.quantity')" prop="quantity" min-width="120" />
-        <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
-          <template #default="{ row }">
-            {{ getLabelByValue('agri_unit', row.unit) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('inputCirculation.unitPrice')" prop="unitPrice" min-width="120" />
-      </el-table>
-    </el-card>
+        <!-- 操作按钮区域（固定在底部） -->
+        <div class="form-actions">
+          <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
+          <el-button type="primary" @click="handleConfirm" :loading="submitLoading">
+            {{ $t('inputCirculation.confirmReceive') }}
+          </el-button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -68,8 +128,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { getWoredaReceiveDetail, getUnionReleaseDetailByReleaseId } from '@/api/inputCirculation'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getWoredaReceiveDetail, getUnionReleaseDetailByReleaseId, confirmWoredaReceive } from '@/api/inputCirculation'
 import { getTownAggregationDetail } from '@/api/villageAggregation'
 import { useDict } from '@/hooks/useDict'
 
@@ -79,6 +139,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
+const submitLoading = ref(false)
 const mainData = ref({})
 const detailData = ref([])
 const demandList = ref([])
@@ -129,10 +190,53 @@ const loadDemandListByReleaseId = async (releaseId) => {
 }
 
 const handleBack = () => router.back()
+
+const handleConfirm = async () => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to confirm receipt of this distribution?',
+      'Confirm Receipt',
+      {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+
+    submitLoading.value = true
+    // Get current user info
+    const userInfoStr = localStorage.getItem('userInfo')
+    let confirmBy = ''
+    let confirmOrg = ''
+
+    if (userInfoStr) {
+      const userInfo = JSON.parse(userInfoStr)
+      const user = userInfo.user || userInfo
+      confirmBy = user.REALNAME || user.USERNAME || user.realName || user.username || ''
+      confirmOrg = user.ORGANNAME || user.organName || ''
+    }
+
+    const response = await confirmWoredaReceive(route.params.id, confirmBy, confirmOrg)
+
+    if (response.code === 200) {
+      ElMessage.success('Receipt confirmed successfully')
+      router.back()
+    } else {
+      ElMessage.error(response.msg || 'Failed to confirm receipt')
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to confirm receipt:', error)
+      ElMessage.error('Failed to confirm receipt')
+    }
+  } finally {
+    submitLoading.value = false
+  }
+}
+
 onMounted(() => fetchDetail())
 </script>
 
-<style scoped>
-.union-receive-detail-container { padding: 20px; }
-.main-card { margin-top: 20px; }
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

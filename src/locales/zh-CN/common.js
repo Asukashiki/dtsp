@@ -52,6 +52,7 @@ export default {
     audit: '审核',
     approve: '通过',
     reject: '驳回',
+    confirmInbound: '确认入库',
     update: '更新',
     remarks: '备注',
     refresh: '刷新',

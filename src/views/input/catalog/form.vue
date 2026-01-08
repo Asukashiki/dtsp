@@ -1,341 +1,358 @@
 <template>
-  <div class="input-form-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
+          <div class="header-content">
+            <h1 class="page-title">
+              {{ isEdit ? $t('input.catalog.edit') : $t('input.catalog.add') }}
+            </h1>
+          </div>
         </div>
-        <div class="header-center">
-          <h1 class="page-title">
-            {{ isEdit ? $t('input.catalog.edit') : $t('input.catalog.add') }}
-          </h1>
-        </div>
-        <div class="header-right"></div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form
-          ref="formRef"
-          :model="formData"
-          :rules="rules"
-          :label-width="labelWidth"
-          :label-position="labelPosition"
-      >
-        <!-- 基本信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('input.catalog.form.basicInfo') }}
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+            ref="formRef"
+            :model="formData"
+            :rules="rules"
+            label-width="140px"
+            v-loading="dictLoading"
+        >
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.inputName')"
+                      prop="inputName"
+                  >
+                    <el-input
+                        v-model="formData.inputName"
+                        :placeholder="$t('input.catalog.placeholder.inputName')"
+                        maxlength="100"
+                        show-word-limit
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.inputType')"
+                      prop="type"
+                  >
+                    <!-- 投入品类型下拉框（已移除农药选项） -->
+                    <el-select
+                        v-model="formData.type"
+                        :placeholder="$t('input.catalog.placeholder.inputType')"
+                        style="width: 100%"
+                        @change="handleTypeChange"
+                        v-loading="dictLoading"
+                    >
+                      <el-option
+                          v-for="item in options.input_type"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.agriculturalInputType')"
+                      prop="agriculturalInputType"
+                      :required="['IN01', 'IN02'].includes(formData.type)"
+                  >
+                    <!-- 投入品品类下拉框：根据类型过滤选项 -->
+                    <el-select
+                        v-model="formData.agriculturalInputType"
+                        :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
+                        style="width: 100%"
+                        v-loading="dictLoading"
+                    >
+                      <el-option
+                          v-for="item in filterCategoryOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.inputSku')"
+                      prop="inputSku"
+                  >
+                    <el-input
+                        v-model="formData.inputSku"
+                        :placeholder="$t('input.catalog.placeholder.inputSku')"
+                        maxlength="50"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.trademark')"
+                      prop="trademark"
+                  >
+                    <el-input
+                        v-model="formData.trademark"
+                        :placeholder="$t('input.catalog.placeholder.trademark')"
+                        maxlength="100"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.specificationModel')"
+                      prop="specificationModel"
+                  >
+                    <el-input
+                        v-model="formData.specificationModel"
+                        :placeholder="$t('input.catalog.placeholder.specificationModel')"
+                        maxlength="100"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.unit')"
+                      prop="unit"
+                  >
+                    <el-input
+                        v-model="formData.unit"
+                        :placeholder="$t('input.catalog.placeholder.unit')"
+                        maxlength="20"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.referencePrice')"
+                      prop="referencePrice"
+                  >
+                    <el-input-number
+                        v-model="formData.referencePrice"
+                        :placeholder="$t('input.catalog.placeholder.referencePrice')"
+                        :precision="2"
+                        :min="0"
+                        style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.isImport')"
+                      prop="isImport"
+                  >
+                    <el-radio-group v-model="formData.isImport">
+                      <el-radio :label="0">{{ $t('input.catalog.isImport.no') }}</el-radio>
+                      <el-radio :label="1">{{ $t('input.catalog.isImport.yes') }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.description')"
+                      prop="description"
+                  >
+                    <el-input
+                        v-model="formData.description"
+                        :placeholder="$t('input.catalog.placeholder.description')"
+                        type="textarea"
+                        :rows="2"
+                        maxlength="500"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.status')"
+                      prop="status"
+                  >
+                    <el-radio-group v-model="formData.status">
+                      <el-radio value="active">{{ $t('input.catalog.statusOptions.active') }}</el-radio>
+                      <el-radio value="inactive">{{ $t('input.catalog.statusOptions.inactive') }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.inputName')"
-                  prop="inputName"
-              >
-                <el-input
-                    v-model="formData.inputName"
-                    :placeholder="$t('input.catalog.placeholder.inputName')"
-                    maxlength="100"
-                    show-word-limit
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.inputType')"
-                  prop="type"
-              >
-                <!-- 投入品类型下拉框（已移除农药选项） -->
-                <el-select
-                    v-model="formData.type"
-                    :placeholder="$t('input.catalog.placeholder.inputType')"
-                    style="width: 100%"
-                    @change="handleTypeChange"
-                    v-loading="dictLoading"
-                >
-                  <el-option
-                      v-for="item in options.input_type"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.agriculturalInputType')"
-                  prop="agriculturalInputType"
-                  :required="['IN01', 'IN02'].includes(formData.type)"
-              >
-                <!-- 投入品品类下拉框：根据类型过滤选项 -->
-                <el-select
-                    v-model="formData.agriculturalInputType"
-                    :placeholder="$t('input.catalog.placeholder.agriculturalInputType')"
-                    style="width: 100%"
-                    v-loading="dictLoading"
-                >
-                  <el-option
-                      v-for="item in filterCategoryOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12"></el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.inputSku')"
-                  prop="inputSku"
-              >
-                <el-input
-                    v-model="formData.inputSku"
-                    :placeholder="$t('input.catalog.placeholder.inputSku')"
-                    maxlength="50"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.trademark')"
-                  prop="trademark"
-              >
-                <el-input
-                    v-model="formData.trademark"
-                    :placeholder="$t('input.catalog.placeholder.trademark')"
-                    maxlength="100"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.specificationModel')"
-                  prop="specificationModel"
-              >
-                <el-input
-                    v-model="formData.specificationModel"
-                    :placeholder="$t('input.catalog.placeholder.specificationModel')"
-                    maxlength="100"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.unit')"
-                  prop="unit"
-              >
-                <el-input
-                    v-model="formData.unit"
-                    :placeholder="$t('input.catalog.placeholder.unit')"
-                    maxlength="20"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.referencePrice')"
-                  prop="referencePrice"
-              >
-                <el-input-number
-                    v-model="formData.referencePrice"
-                    :placeholder="$t('input.catalog.placeholder.referencePrice')"
-                    :precision="2"
-                    :min="0"
-                    style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.isImport')"
-                  prop="isImport"
-              >
-                <el-radio-group v-model="formData.isImport">
-                  <el-radio :label="0">{{ $t('input.catalog.isImport.no') }}</el-radio>
-                  <el-radio :label="1">{{ $t('input.catalog.isImport.yes') }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.description')"
-                  prop="description"
-              >
-                <el-input
-                    v-model="formData.description"
-                    :placeholder="$t('input.catalog.placeholder.description')"
-                    type="textarea"
-                    :rows="2"
-                    maxlength="500"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.status')"
-                  prop="status"
-              >
-                <el-radio-group v-model="formData.status">
-                  <el-radio value="active">{{ $t('input.catalog.statusOptions.active') }}</el-radio>
-                  <el-radio value="inactive">{{ $t('input.catalog.statusOptions.inactive') }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 法规与许可信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('input.catalog.form.regulatoryInfo') }}
+          <!-- 法规与许可信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-shield-check-line"></i>
+                <span>{{ $t('input.catalog.form.regulatoryInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.registerCode')"
+                      prop="registerCode"
+                  >
+                    <el-input
+                        v-model="formData.registerCode"
+                        :placeholder="$t('input.catalog.placeholder.registerCode')"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.productionLicense')"
+                      prop="productionLicense"
+                  >
+                    <el-input
+                        v-model="formData.productionLicense"
+                        :placeholder="$t('input.catalog.placeholder.productionLicense')"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.productionStandard')"
+                      prop="productionStandard"
+                  >
+                    <el-input
+                        v-model="formData.productionStandard"
+                        :placeholder="$t('input.catalog.placeholder.productionStandard')"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.registerCode')"
-                  prop="registerCode"
-              >
-                <el-input
-                    v-model="formData.registerCode"
-                    :placeholder="$t('input.catalog.placeholder.registerCode')"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.productionLicense')"
-                  prop="productionLicense"
-              >
-                <el-input
-                    v-model="formData.productionLicense"
-                    :placeholder="$t('input.catalog.placeholder.productionLicense')"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.productionStandard')"
-                  prop="productionStandard"
-              >
-                <el-input
-                    v-model="formData.productionStandard"
-                    :placeholder="$t('input.catalog.placeholder.productionStandard')"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 生产与责任信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-building-line"></i>
-            {{ $t('input.catalog.form.productionInfo') }}
+          <!-- 生产与责任信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-line"></i>
+                <span>{{ $t('input.catalog.form.productionInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.producerName')"
+                      prop="producerName"
+                  >
+                    <el-input
+                        v-model="formData.producerName"
+                        :placeholder="$t('input.catalog.placeholder.producerName')"
+                        maxlength="200"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                      :label="$t('input.catalog.form.producerAddress')"
+                      prop="producerAddress"
+                  >
+                    <el-input
+                        v-model="formData.producerAddress"
+                        :placeholder="$t('input.catalog.placeholder.producerAddress')"
+                        maxlength="255"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.producerName')"
-                  prop="producerName"
-              >
-                <el-input
-                    v-model="formData.producerName"
-                    :placeholder="$t('input.catalog.placeholder.producerName')"
-                    maxlength="200"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                  :label="$t('input.catalog.form.producerAddress')"
-                  prop="producerAddress"
-              >
-                <el-input
-                    v-model="formData.producerAddress"
-                    :placeholder="$t('input.catalog.placeholder.producerAddress')"
-                    maxlength="255"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 种子特性信息（仅IN01=种子显示） -->
-        <div v-if="formData.type === 'IN01'" class="form-section">
-          <div class="section-title">
-            <i class="ri-seedling-line"></i>
-            {{ $t('input.catalog.seed.title') }}
+          <!-- 种子特性信息（仅IN01=种子显示） -->
+          <div v-if="formData.type === 'IN01'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ $t('input.catalog.seed.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.catalog.seed.breeder')">
+                    <el-input
+                        v-model="formData.breeder"
+                        :placeholder="$t('input.catalog.placeholder.breeder')"
+                        maxlength="200"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.catalog.seed.varietySource')">
+                    <el-input
+                        v-model="formData.varietySource"
+                        :placeholder="$t('input.catalog.placeholder.varietySource')"
+                        maxlength="500"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.breeder')">
-                <el-input
-                    v-model="formData.breeder"
-                    :placeholder="$t('input.catalog.placeholder.breeder')"
-                    maxlength="200"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item :label="$t('input.catalog.seed.varietySource')">
-                <el-input
-                    v-model="formData.varietySource"
-                    :placeholder="$t('input.catalog.placeholder.varietySource')"
-                    maxlength="500"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 化肥特性信息（仅IN02=化肥显示） -->
-        <div v-if="formData.type === 'IN02'" class="form-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('input.catalog.fertilizer.title') }}
+          <!-- 化肥特性信息（仅IN02=化肥显示） -->
+          <div v-if="formData.type === 'IN02'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ $t('input.catalog.fertilizer.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="text-center text-gray-500">
+                {{ $t('input.catalog.fertilizer.emptyTip') }}
+              </div>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="24" class="text-center text-gray-500">
-              {{ $t('input.catalog.fertilizer.emptyTip') }}
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 其他类型（仅IN09=其他显示） -->
-        <div v-if="formData.type === 'IN09'" class="form-section">
-          <div class="section-title">
-            <i class="ri-more-line"></i>
-            {{ $t('input.catalog.other.title') }}
+          <!-- 其他类型（仅IN09=其他显示） -->
+          <div v-if="formData.type === 'IN09'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-more-line"></i>
+                <span>{{ $t('input.catalog.other.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="text-center text-gray-500">
+                {{ $t('input.catalog.other.emptyTip') }}
+              </div>
+            </div>
           </div>
-          <el-row :gutter="24">
-            <el-col :span="24" class="text-center text-gray-500">
-              {{ $t('input.catalog.other.emptyTip') }}
-            </el-col>
-          </el-row>
-        </div>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button
-              type="primary"
-              :loading="submitting"
-              @click="handleSubmit"
-          >
-            {{ $t('common.submit') }}
-          </el-button>
-        </div>
-      </el-form>
+          <!-- 操作按钮区域（固定在底部） -->
+          <div class="form-actions">
+            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+            <el-button
+                type="primary"
+                :loading="submitting"
+                @click="handleSubmit"
+            >
+              {{ $t('common.submit') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -352,15 +369,6 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
-// 响应式表单布局
-const isMobile = ref(window.innerWidth <= 768)
-const labelWidth = computed(() => isMobile.value ? '100%' : '180px')
-const labelPosition = computed(() => isMobile.value ? 'top' : 'right')
-
-// 监听窗口大小变化
-window.addEventListener('resize', () => {
-  isMobile.value = window.innerWidth <= 768
-})
 
 const formRef = ref()
 const submitting = ref(false)
@@ -408,10 +416,6 @@ const getCategoryPlaceholder = computed(() => {
 })
 
 onMounted(async () => {
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth <= 768;
-  });
-
   await refreshDict();
 
   if (isEdit.value) {
@@ -593,118 +597,10 @@ const goBack = () => {
 };
 </script>
 
-<style scoped>
-.text-xs {
-  font-size: 12px;
-}
-.text-gray-400 {
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+
+.text-gray-500 {
   color: #909399;
-}
-.mt-1 {
-  margin-top: 4px;
-}
-
-.input-form-container {
-  min-height: calc(100vh - 120px);
-}
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-left, .header-right { flex: 1; }
-.header-center { flex: 2; text-align: center; }
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-.form-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-.form-section {
-  margin-bottom: 32px;
-}
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-title i { font-size: 20px; }
-
-/* 图片上传样式 */
-.image-uploader {
-  --el-upload-picture-card-size: 120px;
-}
-:deep(.el-upload--picture-card) {
-  width: 100%;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px dashed #dcdfe6;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-:deep(.el-upload--picture-card:hover) {
-  border-color: #009A44;
-}
-:deep(.el-upload__text) {
-  font-size: 14px;
-  color: #606266;
-  margin-top: 8px;
-}
-:deep(.el-upload-list--picture-card .el-upload-list__item) {
-  width: 100%;
-  height: 120px;
-}
-
-.form-actions {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
-
-/* 响应式 */
-@media screen and (max-width: 768px) {
-  .page-header { margin: -12px -12px 12px -12px; }
-  .header-content { padding: 12px; }
-  .page-title { font-size: 16px; }
-  .header-right { display: none; }
-  .form-wrapper { padding: 24px 16px; border-radius: 0; box-shadow: none; }
-  :deep(.el-row) { display: block !important; }
-  :deep(.el-col) { max-width: 100% !important; }
-  :deep(.el-form-item__label) { text-align: left !important; padding-bottom: 8px !important; }
-  :deep(.el-form-item__content) { margin-left: 0 !important; }
-  .image-uploader { --el-upload-picture-card-size: 100%; }
-  :deep(.el-upload--picture-card) { height: 150px; }
-  :deep(.el-upload-list--picture-card .el-upload-list__item) { height: 150px; }
-  .form-actions { flex-direction: column; gap: 12px; }
-  .form-actions .el-button { width: 100%; }
 }
 </style>

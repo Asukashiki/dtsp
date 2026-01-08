@@ -1307,7 +1307,7 @@ const handleDrillDown2Detail = async (row) => {
   activeDetailTab.value = 'aggregation'
   drillDown2AggregationData.value = []
   farmerDemandData.value = []
-  
+
   // 重置搜索表单
   farmerSearchForm.farmerName = ''
   farmerSearchForm.farmerIdNumber = ''
@@ -1356,7 +1356,7 @@ const loadFarmerDemandData = async () => {
       orderByColumn: 'createdTime',
       isAsc: 'desc'
     }
-    
+
     const res = await getFarmerDemandPage(params)
     if (res.code === 200) {
       farmerDemandData.value = res.data?.records || []
@@ -1402,7 +1402,7 @@ const handleViewFarmerDemand = (row) => {
     zoneName: currentDrillDownRow.value?.sourceName
   }
   sessionStorage.setItem('aggregation_nav_state', JSON.stringify(navigationState))
-  
+
   router.push({
     name: 'DemandAuditDetail',
     params: { id: row.id },
@@ -1447,14 +1447,14 @@ const handleCurrentChange = () => {
 // 初始化
 onMounted(() => {
   loadData()
-  
+
   // 检查是否需要恢复下钻状态
   const savedState = sessionStorage.getItem('aggregation_nav_state')
   if (savedState) {
     try {
       const state = JSON.parse(savedState)
       sessionStorage.removeItem('aggregation_nav_state')
-      
+
       if (state.viewMode === 'drillDown2' && state.kebeleCode) {
         // 设置下钻状态
         currentDrillDownRow.value = {
@@ -1467,7 +1467,7 @@ onMounted(() => {
           sourceName: state.kebeleName
         }
         viewMode.value = 'drillDown2'
-        
+
         // 加载数据并打开对话框
         loadDrillDown2Data().then(() => {
           setTimeout(() => {

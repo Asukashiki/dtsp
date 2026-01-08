@@ -1,135 +1,163 @@
 <template>
-  <div class="warehouse-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('input.inventory.warehouse.edit') : $t('input.inventory.warehouse.add') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="warehouse-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-information-line"></i>
-            <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="submitLoading">
+          
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 两列布局 -->
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.warehouseCode')" prop="warehouseCode">
+                    <el-input v-model="formData.warehouseCode" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseCode')" readonly clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.warehouseName')" prop="warehouseName">
+                    <el-input v-model="formData.warehouseName" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseName')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.warehouseType')" prop="warehouseType">
+                    <el-select v-model="formData.warehouseType" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseType')" style="width: 100%">
+                      <el-option :label="$t('input.inventory.warehouse.type.normal')" value="normal" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.status')" prop="status">
+                    <el-select v-model="formData.status" :placeholder="$t('input.inventory.warehouse.placeholder.status')" style="width: 100%">
+                      <el-option :label="$t('input.inventory.warehouse.status.enabled')" value="1" />
+                      <el-option :label="$t('input.inventory.warehouse.status.disabled')" value="0" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.location')" prop="location">
+                    <el-input v-model="formData.location" :placeholder="$t('input.inventory.warehouse.placeholder.location')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.capacity')" prop="capacity">
+                    <el-input
+                      v-model="capacityDisplay"
+                      :placeholder="$t('input.inventory.warehouse.placeholder.capacity')"
+                      type="number"
+                      @input="handleCapacityInput">
+                      <template #append>KG</template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.warehouseArea')" prop="warehouseArea">
+                    <el-input
+                      v-model="warehouseAreaDisplay"
+                      :placeholder="$t('input.inventory.warehouse.placeholder.warehouseArea')"
+                      type="number"
+                      @input="handleWarehouseAreaInput">
+                      <template #append>L</template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.organName')" prop="organName">
+                    <el-input v-model="formData.organName" :placeholder="$t('input.inventory.warehouse.placeholder.organName')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.siteCertificate')">
+                    <el-upload
+                      v-model:file-list="fileList"
+                      :action="uploadUrl"
+                      :headers="uploadHeaders"
+                      :on-success="handleUploadSuccess"
+                      :on-remove="handleRemove"
+                      :before-upload="beforeUpload"
+                      :limit="1"
+                      accept=".jpg,.jpeg,.png,.pdf"
+                      list-type="text">
+                      <el-button type="primary" size="small">
+                        <i class="ri-upload-line"></i>
+                        {{ $t('input.inventory.warehouse.uploadFile') }}
+                      </el-button>
+                      <template #tip>
+                        <div class="el-upload__tip">
+                          {{ $t('input.inventory.warehouse.uploadTip') }}
+                        </div>
+                      </template>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.remark')">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('input.inventory.warehouse.placeholder.remark')"
+                      maxlength="500"
+                      show-word-limit />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseCode')" prop="warehouseCode">
-              <el-input v-model="formData.warehouseCode" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseCode')" readonly clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseName')" prop="warehouseName">
-              <el-input v-model="formData.warehouseName" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseName')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseType')" prop="warehouseType">
-              <el-select v-model="formData.warehouseType" :placeholder="$t('input.inventory.warehouse.placeholder.warehouseType')" class="full-width">
-                <el-option :label="$t('input.inventory.warehouse.type.normal')" value="normal" />
-<!--                <el-option :label="$t('input.inventory.warehouse.type.cold')" value="cold" />
-                <el-option :label="$t('input.inventory.warehouse.type.dangerous')" value="dangerous" />-->
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.location')" prop="location" class="full-width-item">
-              <el-input v-model="formData.location" :placeholder="$t('input.inventory.warehouse.placeholder.location')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.capacity')" prop="capacity">
-              <el-input
-                v-model="capacityDisplay"
-                :placeholder="$t('input.inventory.warehouse.placeholder.capacity')"
-                type="number"
-                @input="handleCapacityInput"
-                class="full-width"
-              >
-                <template #append>KG</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.warehouseArea')" prop="warehouseArea">
-              <el-input
-                v-model="warehouseAreaDisplay"
-                :placeholder="$t('input.inventory.warehouse.placeholder.warehouseArea')"
-                type="number"
-                @input="handleWarehouseAreaInput"
-                class="full-width"
-              >
-                <template #append>L</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.organName')" prop="organName">
-              <el-input v-model="formData.organName" :placeholder="$t('input.inventory.warehouse.placeholder.organName')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.status')" prop="status">
-              <el-select v-model="formData.status" :placeholder="$t('input.inventory.warehouse.placeholder.status')" class="full-width">
-                <el-option :label="$t('input.inventory.warehouse.status.enabled')" value="1" />
-                <el-option :label="$t('input.inventory.warehouse.status.disabled')" value="0" />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.siteCertificate')" class="full-width-item">
-              <el-upload
-                v-model:file-list="fileList"
-                :action="uploadUrl"
-                :headers="uploadHeaders"
-                :on-success="handleUploadSuccess"
-                :on-remove="handleRemove"
-                :before-upload="beforeUpload"
-                :limit="1"
-                accept=".jpg,.jpeg,.png,.pdf"
-                list-type="text"
-              >
-                <el-button type="primary" size="small">
-                  <i class="ri-upload-line"></i>
-                  {{ $t('input.inventory.warehouse.uploadFile') }}
-                </el-button>
-                <template #tip>
-                  <div class="el-upload__tip">
-                    {{ $t('input.inventory.warehouse.uploadTip') }}
-                  </div>
-                </template>
-              </el-upload>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.remark')" class="full-width-item">
-              <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('input.inventory.warehouse.placeholder.remark')"
-                maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
-          </div>
-        </div>
 
-        <!-- 联系信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-contacts-line"></i>
-            <h3>{{ $t('userInfo.contactInfo') }}</h3>
+          <!-- 联系信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-contacts-line"></i>
+                <span>{{ $t('userInfo.contactInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.contactPerson')" prop="contactPerson">
+                    <el-input v-model="formData.contactPerson" :placeholder="$t('input.inventory.warehouse.placeholder.contactPerson')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouse.form.contactPhone')" prop="contactPhone">
+                    <el-input v-model="formData.contactPhone" :placeholder="$t('input.inventory.warehouse.placeholder.contactPhone')" clearable />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.warehouse.form.contactPerson')" prop="contactPerson">
-              <el-input v-model="formData.contactPerson" :placeholder="$t('input.inventory.warehouse.placeholder.contactPerson')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.warehouse.form.contactPhone')" prop="contactPhone">
-              <el-input v-model="formData.contactPhone" :placeholder="$t('input.inventory.warehouse.placeholder.contactPhone')" clearable />
-            </el-form-item>
-          </div>
-        </div>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
-        </div>
-      </el-form>
+          <!-- 操作按钮区域（固定在底部） -->
+          <div class="form-actions">
+            <el-button v-for="button in getActionButtons()" :key="button.action"
+              :type="button.type" @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ $t(`common.${button.label}`) }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -149,6 +177,36 @@ const formRef = ref(null)
 const submitLoading = ref(false)
 const isEdit = computed(() => route.path.includes('/edit/'))
 const warehouseId = computed(() => route.params.id)
+
+// 页面模式判断
+const pageMode = computed(() => {
+  return isEdit.value ? 'edit' : 'add'
+})
+
+// 页面标题
+const pageTitle = computed(() => {
+  return isEdit.value ? t('input.inventory.warehouse.edit') : t('input.inventory.warehouse.add')
+})
+
+// 根据页面模式返回不同的按钮
+const getActionButtons = () => {
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
+
+// 统一的动作处理方法
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      goBack()
+      break
+    case 'save':
+      handleSubmit()
+      break
+  }
+}
 
 // 容量显示值
 const capacityDisplay = ref('')
@@ -411,164 +469,6 @@ const generateSku = () => {
 }
 </script>
 
-<style scoped>
-.warehouse-form-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right {
-  justify-content: flex-end;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-block {
-  margin-bottom: 32px;
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.block-header i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.block-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.full-width-item {
-  grid-column: 1 / -1;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f2f5;
-  margin-top: 24px;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 1024px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-  }
-
-  .header-right {
-    display: none;
-  }
-
-  .header-center {
-    text-align: left;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .form-wrapper {
-    padding: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 0 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .form-wrapper {
-    padding: 12px;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>
