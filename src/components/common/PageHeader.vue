@@ -1,7 +1,10 @@
 <template>
   <div class="page-header">
     <div class="header-left">
-      <div class="header-icon">
+      <el-button v-if="showBack" class="back-btn" @click="handleBack">
+        <i class="ri-arrow-left-line"></i>
+      </el-button>
+      <div v-else class="header-icon">
         <i :class="icon"></i>
       </div>
       <div class="header-content">
@@ -23,7 +26,9 @@
  * <PageHeader
  *   icon="ri-user-line"
  *   :title="$t('page.title')"
- *   :subtitle="$t('page.subtitle')">
+ *   :subtitle="$t('page.subtitle')"
+ *   show-back
+ *   @back="handleBack">
  *   <template #actions>
  *     <el-button>操作按钮</el-button>
  *   </template>
@@ -52,8 +57,22 @@ defineProps({
   subtitle: {
     type: String,
     default: ''
+  },
+
+  /**
+   * 是否显示返回按钮
+   */
+  showBack: {
+    type: Boolean,
+    default: false
   }
 })
+
+const emit = defineEmits(['back'])
+
+const handleBack = () => {
+  emit('back')
+}
 </script>
 
 <style lang="scss" scoped>

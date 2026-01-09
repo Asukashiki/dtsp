@@ -1,292 +1,146 @@
 <template>
-  <div class="c1-certificate-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-        <div class="header-icon header-left">
-          <i class="ri-award-line "></i>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader icon="ri-award-line" :title="$t('seed.c1Certificate.title')"
+        :subtitle="$t('seed.c1Certificate.subtitle')" />
+
+      <div class="content-wrapper">
+        <!-- 搜索区域 -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('seed.c1Certificate.columns.batchId')">
+              <el-input v-model="searchParams.keyword" :placeholder="$t('common.pleaseInput')" clearable />
+            </SearchItem>
+            <SearchItem :label="$t('seed.c1Certificate.columns.varietyName')">
+              <el-input v-model="searchParams.varietyName" :placeholder="$t('common.pleaseInput')" clearable />
+            </SearchItem>
+            <SearchItem :label="$t('seed.c1Certificate.columns.cropType')">
+              <el-select v-model="searchParams.cropType" :placeholder="$t('common.pleaseSelect')" clearable
+                :loading="dictLoading">
+                <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('seed.c1Certificate.columns.startDate')">
+              <el-date-picker v-model="dateRange" type="daterange" :range-separator="$t('common.to')"
+                :start-placeholder="$t('common.startDate')" :end-placeholder="$t('common.endDate')"
+                value-format="YYYY-MM-DD" @change="handleDateChange" />
+            </SearchItem>
+          </SearchForm>
         </div>
-        <div class="header-content">
-          <h1 class="page-title">{{ $t('seed.c1Certificate.title') }}</h1>
-          <p class="page-subtitle">{{ $t('seed.c1Certificate.subtitle') }}</p>
-      </div>
-    </div>
 
-    <!-- PC端视图 -->
-    <div class="pc-view">
-      <!-- 搜索区域 -->
-      <el-card shadow="never" class="search-card">
-        <el-form :model="searchParams" label-width="100px" class="search-form">
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item :label="$t('seed.c1Certificate.columns.batchId')">
-                <el-input
-                  v-model="searchParams.keyword"
-                  :placeholder="$t('common.pleaseInput')"
-                  clearable
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item :label="$t('seed.c1Certificate.columns.varietyName')">
-                <el-input
-                  v-model="searchParams.varietyName"
-                  :placeholder="$t('common.pleaseInput')"
-                  clearable
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item :label="$t('seed.c1Certificate.columns.cropType')">
-                <el-select
-                  v-model="searchParams.cropType"
-                  :placeholder="$t('common.pleaseSelect')"
-                  clearable
-                  style="width: 100%"
-                  :loading="dictLoading"
-                >
-                  <el-option
-                    v-for="item in options.crop_type"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item :label="$t('seed.c1Certificate.columns.startDate')">
-                <el-date-picker
-                  v-model="dateRange"
-                  type="daterange"
-                  :range-separator="$t('common.to')"
-                  :start-placeholder="$t('common.startDate')"
-                  :end-placeholder="$t('common.endDate')"
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD"
-                  @change="handleDateChange"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24" class="search-actions">
-              <el-button type="primary" @click="handleSearch">
-                <i class="ri-search-line"></i>
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-refresh-line"></i>
-                {{ $t('common.reset') }}
-              </el-button>
-            </el-col>
-          </el-row>
-        </el-form>
-      </el-card>
-
-      <!-- 表格区域 -->
-      <el-card shadow="never" class="table-card">
-        <template #header>
-          <div class="card-header">
-            <span class="card-title">
-              <i class="ri-award-line"></i>
-              {{ $t('seed.c1Certificate.title') }}
-            </span>
-            <div class="header-actions">
-              <el-tag type="success">
-                {{ $t('common.total') }}: {{ total }}
-              </el-tag>
-            </div>
-          </div>
-        </template>
-
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          border
-          style="width: 100%"
-          :empty-text="$t('common.noData')"
-        >
-          <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
-          <el-table-column prop="batchId" :label="$t('seed.c1Certificate.columns.batchId')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="orgName" :label="$t('seed.c1Certificate.columns.orgName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="varietyName" :label="$t('seed.c1Certificate.columns.varietyName')" min-width="120" />
-          <el-table-column prop="cropType" :label="$t('seed.c1Certificate.columns.cropType')" width="120" align="center">
-            <template #default="{ row }">
-              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', row.cropType) }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="startDate" :label="$t('seed.c1Certificate.columns.startDate')" width="120" align="center" />
-          <el-table-column prop="auditor" :label="$t('seed.c1Certificate.columns.auditor')" width="120" align="center" />
-          <el-table-column prop="auditorOrgName" :label="$t('seed.c1Certificate.columns.auditorOrg')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="auditTime" :label="$t('seed.c1Certificate.columns.auditTime')" width="160" align="center" />
-          <el-table-column prop="printCount" :label="$t('seed.c1Certificate.columns.printCount')" width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.printCount > 0 ? 'info' : 'success'" size="small">
-                {{ row.printCount || 0 }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="lastPrintTime" :label="$t('seed.c1Certificate.columns.lastPrintTime')" width="160" align="center" />
-          <el-table-column :label="$t('common.action')" width="200" align="center" fixed="right">
-            <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.view') }}
-              </el-button>
-              <el-button link type="success" @click="handlePrint(row)">
-                <i class="ri-printer-line"></i>
-                {{ $t('seed.c1Certificate.print') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <el-pagination
-          :current-page="pagination.current"
-          :page-size="pagination.size"
-          :total="total"
-          :page-sizes="[10, 20, 50, 100]"
-          :background="true"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          class="pagination"
-        />
-      </el-card>
-    </div>
-
-    <!-- 移动端视图 -->
-    <div class="mobile-view">
-      <!-- 搜索栏 -->
-      <div class="mobile-search">
-        <el-input
-          v-model="searchParams.keyword"
-          :placeholder="$t('seed.c1Certificate.searchPlaceholder')"
-          clearable
-          @clear="handleSearch"
-        >
-          <template #prefix>
-            <i class="ri-search-line"></i>
+        <!-- 列表区域 -->
+        <InfoCard :title="$t('seed.c1Certificate.title')" icon="ri-award-line">
+          <template #extra>
+            <el-tag type="success">
+              {{ $t('common.total') }}: {{ total }}
+            </el-tag>
           </template>
-          <template #suffix>
-            <el-button link @click="showFilter = !showFilter">
-              <i class="ri-filter-line"></i>
-            </el-button>
-          </template>
-        </el-input>
-      </div>
 
-      <!-- 筛选面板 -->
-      <el-drawer
-        v-model="showFilter"
-        :title="$t('common.filter')"
-        direction="rtl"
-        size="80%"
-      >
-        <el-form :model="searchParams" label-position="top">
-          <el-form-item :label="$t('seed.c1Certificate.columns.varietyName')">
-            <el-input v-model="searchParams.varietyName" clearable />
-          </el-form-item>
-          <el-form-item :label="$t('seed.c1Certificate.columns.cropType')">
-            <el-select v-model="searchParams.cropType" clearable style="width: 100%">
-              <el-option label="Wheat" value="Wheat" />
-              <el-option label="Maize" value="Maize" />
-              <el-option label="Teff" value="Teff" />
-              <el-option label="Sorghum" value="Sorghum" />
-              <el-option label="Barley" value="Barley" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('seed.c1Certificate.columns.startDate')">
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-              style="width: 100%"
-              value-format="YYYY-MM-DD"
-              @change="handleDateChange"
-            />
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button @click="handleReset">{{ $t('common.reset') }}</el-button>
-          <el-button type="primary" @click="handleSearch">{{ $t('common.search') }}</el-button>
-        </template>
-      </el-drawer>
+          <div class="table-wrapper pc-only">
+            <el-table v-loading="loading" :data="tableData" stripe>
+              <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
+              <el-table-column prop="batchId" :label="$t('seed.c1Certificate.columns.batchId')" min-width="180"
+                show-overflow-tooltip />
+              <el-table-column prop="orgName" :label="$t('seed.c1Certificate.columns.orgName')" min-width="180"
+                show-overflow-tooltip />
+              <el-table-column prop="varietyName" :label="$t('seed.c1Certificate.columns.varietyName')"
+                min-width="120" />
+              <el-table-column prop="cropType" :label="$t('seed.c1Certificate.columns.cropType')" width="120"
+                align="center">
+                <template #default="{ row }">
+                  <el-tag type="success" size="small">{{ getLabelByValue('crop_type', row.cropType) }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="startDate" :label="$t('seed.c1Certificate.columns.startDate')" width="120"
+                align="center" />
+              <el-table-column prop="auditor" :label="$t('seed.c1Certificate.columns.auditor')" width="120"
+                align="center" />
+              <el-table-column prop="auditorOrgName" :label="$t('seed.c1Certificate.columns.auditorOrg')"
+                min-width="150" show-overflow-tooltip />
+              <el-table-column prop="auditTime" :label="$t('seed.c1Certificate.columns.auditTime')" width="160"
+                align="center" />
+              <el-table-column prop="printCount" :label="$t('seed.c1Certificate.columns.printCount')" width="100"
+                align="center">
+                <template #default="{ row }">
+                  <el-tag :type="row.printCount > 0 ? 'info' : 'success'" size="small">
+                    {{ row.printCount || 0 }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="lastPrintTime" :label="$t('seed.c1Certificate.columns.lastPrintTime')" width="160"
+                align="center" />
+              <el-table-column :label="$t('common.action')" width="200" align="center" fixed="right">
+                <template #default="{ row }">
+                  <el-button link type="primary" @click="handleView(row)">
+                    <i class="ri-eye-line"></i>
+                    {{ $t('common.view') }}
+                  </el-button>
+                  <el-button link type="success" @click="handlePrint(row)">
+                    <i class="ri-printer-line"></i>
+                    {{ $t('seed.c1Certificate.print') }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
 
-      <!-- 统计信息 -->
-      <div class="mobile-stats">
-        <el-tag type="success" size="large">
-          {{ $t('common.total') }}: {{ total }}
-        </el-tag>
-      </div>
-
-      <!-- 列表 -->
-      <div v-loading="loading" class="mobile-list">
-        <div v-for="item in tableData" :key="item.id" class="mobile-card">
-          <div class="card-header">
-            <div class="header-left">
-              <div class="batch-id">{{ item.batchId }}</div>
-              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
-            </div>
-            <div class="header-right">
-              <el-tag :type="item.printCount > 0 ? 'info' : 'success'" size="small">
-                {{ $t('seed.c1Certificate.columns.printCount') }}: {{ item.printCount || 0 }}
-              </el-tag>
+            <div class="pagination-wrapper">
+              <el-pagination
+v-model:current-page="pagination.current" v-model:page-size="pagination.size"
+                :total="total" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange" @current-change="handleCurrentChange" />
             </div>
           </div>
 
-          <div class="card-content">
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.orgName') }}:</span>
-              <span class="value">{{ item.orgName }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.varietyName') }}:</span>
-              <span class="value">{{ item.varietyName }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.startDate') }}:</span>
-              <span class="value">{{ item.startDate }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.auditor') }}:</span>
-              <span class="value">{{ item.auditor || '-' }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.auditorOrg') }}:</span>
-              <span class="value">{{ item.auditorOrgName || '-' }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.auditTime') }}:</span>
-              <span class="value">{{ item.auditTime || '-' }}</span>
-            </div>
-            <div v-if="item.lastPrintTime" class="info-row">
-              <span class="label">{{ $t('seed.c1Certificate.columns.lastPrintTime') }}:</span>
-              <span class="value">{{ item.lastPrintTime }}</span>
+          <!-- 移动端视图 -->
+          <div class="mobile-only">
+            <div class="card-list" v-loading="loading">
+              <div v-for="item in tableData" :key="item.id" class="data-card">
+                <div class="card-header">
+                  <span class="card-code">{{ item.batchId }}</span>
+                  <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+                </div>
+                <div class="card-content">
+                  <div class="info-row">
+                    <span class="label">{{ $t('seed.c1Certificate.columns.orgName') }}</span>
+                    <span class="value">{{ item.orgName }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('seed.c1Certificate.columns.varietyName') }}</span>
+                    <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('seed.c1Certificate.columns.startDate') }}</span>
+                    <span class="value">{{ item.startDate }}</span>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <el-tag :type="item.printCount > 0 ? 'info' : 'success'" size="small">
+                    {{ $t('seed.c1Certificate.columns.printCount') }}: {{ item.printCount || 0 }}
+                  </el-tag>
+                  <div class="actions">
+                    <el-button link type="primary" @click="handleView(item)">
+                      <i class="ri-eye-line"></i> {{ $t('common.view') }}
+                    </el-button>
+                    <el-button link type="success" @click="handlePrint(item)">
+                      <i class="ri-printer-line"></i> {{ $t('seed.c1Certificate.print') }}
+                    </el-button>
+                  </div>
+                </div>
+              </div>
+              <div v-if="hasMore" class="load-more">
+                <el-button link @click="loadMore" :loading="loading">
+                  {{ $t('common.loadMore') }}
+                </el-button>
+              </div>
+              <div v-if="!loading && tableData.length === 0" class="empty-status">
+                <i class="ri-inbox-line"></i>
+                <p>{{ $t('common.noData') }}</p>
+              </div>
             </div>
           </div>
-
-          <div class="card-actions">
-            <el-button type="primary" size="small" @click="handleView(item)">
-              <i class="ri-eye-line"></i>
-              {{ $t('common.view') }}
-            </el-button>
-            <el-button type="success" size="small" @click="handlePrint(item)">
-              <i class="ri-printer-line"></i>
-              {{ $t('seed.c1Certificate.print') }}
-            </el-button>
-          </div>
-        </div>
-
-        <!-- 加载更多 -->
-        <div v-if="hasMore" class="load-more">
-          <el-button @click="loadMore" :loading="loading">
-            {{ $t('common.loadMore') }}
-          </el-button>
-        </div>
-
-        <!-- 空状态 -->
-        <el-empty v-if="!loading && tableData.length === 0" :description="$t('common.noData')" />
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -299,6 +153,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getApprovedC1BatchList, recordC1BatchPrint } from '@/api/c1BreedingBatch'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -435,197 +290,14 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.mobile-view {
-  display: none;
-}
-
-.search-card {
-  margin-bottom: 16px;
-}
-
-.search-form {
-  margin-bottom: -18px;
-}
-
-.search-actions {
-  text-align: right;
-}
-
-.table-card {
-  margin-bottom: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #10b981;
-}
-
-.card-title i {
-  font-size: 20px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.pagination {
+.pagination-wrapper {
   margin-top: 16px;
   display: flex;
   justify-content: flex-end;
-}
-
-/* 移动端视图 */
-@media screen and (max-width: 768px) {
-  .c1-certificate-container {
-    min-height: calc(100vh - 100px);
-  }
-
-  .page-header {
-    margin: -24px -12px 16px -12px;
-    padding: 20px 0;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    gap: 16px;
-  }
-
-  .header-icon-wrapper {
-    width: 48px;
-    height: 48px;
-  }
-
-  .header-icon {
-    font-size: 24px;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-
-  .page-subtitle {
-    font-size: 13px;
-  }
-
-  .pc-view {
-    display: none;
-  }
-
-  .mobile-view {
-    display: block;
-    padding: 0 12px;
-  }
-
-  .mobile-search {
-    margin-bottom: 12px;
-  }
-
-  .mobile-stats {
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .mobile-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .mobile-card {
-    background: white;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #10b981;
-  }
-
-  .mobile-card .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .mobile-card .header-left {
-    flex: 1;
-  }
-
-  .mobile-card .batch-id {
-    font-size: 14px;
-    font-weight: 600;
-    color: #10b981;
-    margin-bottom: 6px;
-  }
-
-  .mobile-card .card-content {
-    margin-bottom: 12px;
-  }
-
-  .mobile-card .info-row {
-    display: flex;
-    margin-bottom: 8px;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .mobile-card .info-row:last-child {
-    margin-bottom: 0;
-  }
-
-  .mobile-card .label {
-    min-width: 90px;
-    color: #6b7280;
-    flex-shrink: 0;
-  }
-
-  .mobile-card .value {
-    color: #1f2937;
-    flex: 1;
-  }
-
-  .mobile-card .card-actions {
-    display: flex;
-    gap: 8px;
-    padding-top: 12px;
-    border-top: 1px solid #f3f4f6;
-  }
-
-  .mobile-card .card-actions .el-button {
-    flex: 1;
-  }
-
-  .load-more {
-    text-align: center;
-    padding: 16px 0;
-  }
-
-  .load-more .el-button {
-    width: 100%;
-  }
-}
-
-/* 响应式调整 */
-@media screen and (max-width: 1200px) {
-  .c1-certificate-container {
-    padding: 16px;
-  }
 }
 </style>

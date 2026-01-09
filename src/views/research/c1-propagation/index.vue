@@ -1,173 +1,160 @@
 <template>
-  <div class="c1-propagation-container">
-    <div class="page-header">
-        <div class="header-left header-icon">
-          <i class="ri-seedling-line"></i>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-seedling-line"
+        :title="$t('research.c1Propagation.title')"
+        :subtitle="$t('research.c1Propagation.subtitle')" />
+
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="loadData" @reset="handleReset">
+            <SearchItem :label="$t('research.c1Propagation.searchPlaceholder')">
+              <el-input
+                v-model="searchQuery"
+                :placeholder="$t('research.c1Propagation.searchPlaceholder')"
+                clearable
+                @keyup.enter="loadData">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.c1Propagation.form.applyStatus')">
+              <el-select
+                v-model="statusFilter"
+                :placeholder="$t('research.c1Propagation.form.applyStatus')"
+                clearable
+                @change="loadData">
+                <el-option label="Pending" value="pending" />
+                <el-option label="Approved" value="approved" />
+                <el-option label="Rejected" value="rejected" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('common.dateRange')">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
+                style="width: 100%"
+                clearable
+                value-format="YYYY-MM-DD"
+                @change="loadData"
+              />
+            </SearchItem>
+          </SearchForm>
         </div>
-      <div class="header-content">
-          <h1 class="page-title">{{ $t('research.c1Propagation.title') }}</h1>
-          <p class="page-subtitle">{{ $t('research.c1Propagation.subtitle') }}</p>
-      </div>
-    </div>
 
-    <div class="content-wrapper">
-      <!-- 列表视图 -->
-      <div v-if="!showForm && !showDetail" class="list-view">
-        <div class="search-bar">
-          <div class="search-row">
-            <el-input
-              v-model="searchQuery"
-              :placeholder="$t('research.c1Propagation.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @clear="loadData"
-              @keyup.enter="loadData"
-            >
-              <template #prefix>
-                <i class="ri-search-line"></i>
-              </template>
-            </el-input>
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.c1Propagation.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('research.c1Propagation.add') }}
+            </el-button>
+          </template>
 
-            <el-select
-              v-model="statusFilter"
-              :placeholder="$t('research.c1Propagation.form.applyStatus')"
-              clearable
-              class="status-filter"
-              @change="loadData"
-            >
-              <el-option label="Pending" value="pending" />
-              <el-option label="Approved" value="approved" />
-              <el-option label="Rejected" value="rejected" />
-            </el-select>
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="dataList" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
+              <el-table-column
+                prop="applicantOrgName"
+                :label="$t('research.c1Propagation.columns.applicantOrgName')"
+                min-width="180"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="authId"
+                :label="$t('research.c1Propagation.columns.authId')"
+                min-width="140"
+                show-overflow-tooltip
+              >
+                <template #default="{ row }">
+                  {{ row.authId || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="cropType"
+                :label="$t('research.c1Propagation.columns.cropType')"
+                min-width="160"
+                align="center"
+              >
+                <template #default="{ row }">
+                  {{ getLabelByValue('crop_type', row.cropType) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="varietyName"
+                :label="$t('research.c1Propagation.columns.varietyName')"
+                min-width="140"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="applyDate"
+                :label="$t('research.c1Propagation.columns.applyDate')"
+                min-width="160"
+                align="center"
+              />
+              <el-table-column
+                prop="applyStatus"
+                :label="$t('research.c1Propagation.columns.applyStatus')"
+                min-width="160"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-tag :type="getStatusType(row.applyStatus)" size="small">
+                    {{ $t(`research.c1Propagation.status.${row.applyStatus}`) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('common.actions')"
+                width="180"
+                fixed="right"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-button link type="primary" @click="handleView(row)">
+                    <i class="ri-eye-line"></i> {{ $t('common.view') }}
+                  </el-button>
+                  <el-button link type="primary" @click="handleEdit(row)" v-if="row.applyStatus === 'pending'">
+                    <i class="ri-edit-line"></i>
+                  </el-button>
+                  <el-button link type="danger" @click="handleDelete(row)" v-if="row.applyStatus === 'pending'">
+                    <i class="ri-delete-bin-line"></i>
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
 
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-              range-separator="-"
-              :start-placeholder="$t('common.startDate')"
-              :end-placeholder="$t('common.endDate')"
-              class="date-filter"
-              clearable
-              value-format="YYYY-MM-DD"
-              @change="loadData"
-            />
-          </div>
-
-          <div class="action-row">
-            <div class="action-left">
-              <el-button type="primary" @click="loadData">
-                <i class="ri-search-line"></i>
-                <span class="btn-text">{{ $t('common.search') }}</span>
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-restart-line"></i>
-                <span class="btn-text">{{ $t('common.reset') }}</span>
-              </el-button>
+            <!-- 分页 -->
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              />
             </div>
-            <div class="action-right">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                <span class="btn-text">{{ $t('research.c1Propagation.add') }}</span>
-              </el-button>
+          </div>
+
+          <!-- 移动端卡片列表 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-if="dataList.length === 0 && !loading" class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>{{ $t('common.noData') }}</p>
             </div>
-          </div>
-        </div>
-
-        <!-- PC端表格 -->
-        <div class="table-card pc-view">
-          <el-table :data="dataList" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
-            <el-table-column
-              prop="applicantOrgName"
-              :label="$t('research.c1Propagation.columns.applicantOrgName')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="authId"
-              :label="$t('research.c1Propagation.columns.authId')"
-              min-width="140"
-              show-overflow-tooltip
-            >
-              <template #default="{ row }">
-                {{ row.authId || '-' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="cropType"
-              :label="$t('research.c1Propagation.columns.cropType')"
-              min-width="160"
-              align="center"
-            >
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="varietyName"
-              :label="$t('research.c1Propagation.columns.varietyName')"
-              min-width="140"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="applyDate"
-              :label="$t('research.c1Propagation.columns.applyDate')"
-              min-width="160"
-              align="center"
-            />
-            <el-table-column
-              prop="applyStatus"
-              :label="$t('research.c1Propagation.columns.applyStatus')"
-              min-width="160"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tag :type="getStatusType(row.applyStatus)" size="small">
-                  {{ $t(`research.c1Propagation.status.${row.applyStatus}`) }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('research.c1Propagation.columns.actions')"
-              width="180"
-              fixed="right"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-button link type="primary" @click="handleView(row)">
-                  <i class="ri-eye-line"></i> {{ $t('common.view') }}
-                </el-button>
-                <el-button link type="primary" @click="handleEdit(row)" v-if="row.applyStatus === 'pending'">
-                  <i class="ri-edit-line"></i>
-                </el-button>
-                <el-button link type="danger" @click="handleDelete(row)" v-if="row.applyStatus === 'pending'">
-                  <i class="ri-delete-bin-line"></i>
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <div class="pagination-wrapper">
-            <el-pagination
-              v-model:current-page="currentPage"
-              v-model:page-size="pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
-          </div>
-        </div>
-
-        <!-- 移动端卡片 -->
-        <div class="mobile-view" v-loading="loading">
-          <div class="card-list">
-            <div
-              v-for="item in dataList"
-              :key="item.id"
-              class="propagation-card"
-              @click="handleView(item)"
-            >
+            <div v-for="item in dataList" :key="item.id" class="card">
               <div class="card-header">
                 <el-tag :type="getStatusType(item.applyStatus)" size="small">
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
@@ -176,80 +163,53 @@
                 <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
-              <div class="card-info">
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.c1Propagation.columns.varietyName') }}</span>
-                  <span class="info-value">{{ item.varietyName }}</span>
+              <div class="card-body">
+                <div class="card-row">
+                  <span class="label">{{ $t('research.c1Propagation.columns.varietyName') }}:</span>
+                  <span class="value">{{ item.varietyName }}</span>
                 </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.c1Propagation.columns.applyDate') }}</span>
-                  <span class="info-value">{{ item.applyDate }}</span>
+                <div class="card-row">
+                  <span class="label">{{ $t('research.c1Propagation.columns.applyDate') }}:</span>
+                  <span class="value">{{ item.applyDate }}</span>
                 </div>
               </div>
               <div class="card-footer">
-                <span class="create-time">{{ item.createdTime }}</span>
-                <div class="card-actions" @click.stop>
-                  <el-button link type="primary" size="small" @click="handleEdit(item)" v-if="item.applyStatus === 'pending'">
-                    <i class="ri-edit-line"></i>
-                  </el-button>
-                  <el-button link type="danger" size="small" @click="handleDelete(item)" v-if="item.applyStatus === 'pending'">
-                    <i class="ri-delete-bin-line"></i>
-                  </el-button>
-                </div>
+                <el-button text type="primary" @click="handleView(item)">{{ $t('common.view') }}</el-button>
+                <el-button text type="primary" @click="handleEdit(item)" v-if="item.applyStatus === 'pending'">{{ $t('common.edit') }}</el-button>
+                <el-button text type="danger" @click="handleDelete(item)" v-if="item.applyStatus === 'pending'">{{ $t('common.delete') }}</el-button>
               </div>
             </div>
-          </div>
 
-          <div v-if="dataList.length === 0 && !loading" class="empty-state">
-            <i class="ri-inbox-line"></i>
-            <p>{{ $t('home.noData') }}</p>
+            <!-- 移动端分页 -->
+            <div v-if="total > pageSize" class="mobile-pagination">
+              <el-pagination
+                v-model:current-page="currentPage"
+                :total="total"
+                :page-size="pageSize"
+                layout="prev, pager, next"
+                small
+                @current-change="handleCurrentChange"
+              />
+            </div>
           </div>
-
-          <div class="mobile-pagination">
-            <el-pagination
-              v-model:current-page="currentPage"
-              :total="total"
-              :page-size="pageSize"
-              layout="prev, pager, next"
-              small
-              @current-change="handleCurrentChange"
-            />
-          </div>
-        </div>
+        </InfoCard>
       </div>
-
-      <!-- 新增/编辑表单视图 -->
-      <PropagationForm
-        v-if="showForm"
-        :is-edit="isEdit"
-        :edit-data="currentRow"
-        @cancel="showForm = false"
-        @success="handleFormSuccess"
-      />
-
-      <!-- 详情视图 -->
-      <PropagationDetail
-        v-if="showDetail"
-        :data="currentRow"
-        @back="showDetail = false"
-      />
     </div>
 
-    <div class="mobile-fab" @click="handleAdd" v-if="!showForm && !showDetail">
-      <i class="ri-add-line"></i>
-    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1PropagationList, deleteC1Propagation } from '@/api/c1Propagation'
 import { useDict } from '@/hooks/useDict'
-import PropagationForm from './form.vue'
-import PropagationDetail from './detail.vue'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
+const router = useRouter()
 const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
@@ -264,12 +224,6 @@ const dateRange = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-
-// 视图控制
-const showForm = ref(false)
-const showDetail = ref(false)
-const isEdit = ref(false)
-const currentRow = ref(null)
 
 // 获取状态类型
 const getStatusType = (status) => {
@@ -291,7 +245,7 @@ const loadData = async () => {
       keyword: searchQuery.value,
       applyStatus: statusFilter.value
     }
-    
+
     if (dateRange.value && dateRange.value.length === 2) {
       params.queryDateStart = dateRange.value[0]
       params.queryDateEnd = dateRange.value[1]
@@ -333,23 +287,15 @@ const handleCurrentChange = (val) => {
 
 // CRUD 操作
 const handleAdd = () => {
-  isEdit.value = false
-  currentRow.value = null
-  showForm.value = true
-  showDetail.value = false
+  router.push('/research/c1-propagation/add')
 }
 
 const handleEdit = (row) => {
-  isEdit.value = true
-  currentRow.value = row
-  showForm.value = true
-  showDetail.value = false
+  router.push(`/research/c1-propagation/edit/${row.id}`)
 }
 
 const handleView = (row) => {
-  currentRow.value = row
-  showDetail.value = true
-  showForm.value = false
+  router.push(`/research/c1-propagation/detail/${row.id}`)
 }
 
 const handleDelete = (row) => {
@@ -379,295 +325,14 @@ const handleDelete = (row) => {
     .catch(() => {})
 }
 
-const handleFormSuccess = () => {
-  showForm.value = false
-  loadData()
-}
-
 // 初始化
 onMounted(() => {
   loadData()
 })
 </script>
 
-<style scoped>
-.search-bar {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-}
-
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 0;
-}
-
-.status-filter {
-  width: 150px;
-  flex-shrink: 0;
-}
-
-.date-filter {
-  width: 300px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left,
-.action-right {
-  display: flex;
-  gap: 8px;
-}
-
-.table-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mobile-view,
-.mobile-fab {
-  display: none;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.propagation-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.propagation-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-}
-
-.card-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.info-label {
-  font-size: 12px;
-  color: #909399;
-}
-
-.info-value {
-  font-size: 14px;
-  color: #606266;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.create-time {
-  font-size: 12px;
-  color: #909399;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.mobile-pagination {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
-
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-    padding: 20px 0;
-  }
-  .header-content {
-    padding: 0 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-    padding: 16px 0;
-  }
-  .header-content {
-    padding: 0 12px;
-    gap: 12px;
-  }
-  .header-icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-  }
-  .header-icon {
-    font-size: 24px;
-  }
-  .page-title {
-    font-size: 18px;
-  }
-  .page-subtitle {
-    display: none;
-  }
-
-  .search-row {
-    flex-direction: column;
-  }
-  .status-filter,
-  .date-filter {
-    width: 100%;
-  }
-  .action-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .action-left,
-  .action-right {
-    justify-content: stretch;
-  }
-  .action-left .el-button,
-  .action-right .el-button {
-    flex: 1;
-  }
-  .action-right {
-    display: none;
-  }
-
-  .pc-view {
-    display: none;
-  }
-  .mobile-view {
-    display: block;
-  }
-
-  .mobile-fab {
-    display: flex;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    cursor: pointer;
-    z-index: 50;
-    transition: all 0.3s ease;
-  }
-  .mobile-fab:active {
-    transform: scale(0.9);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-    padding: 12px 0;
-  }
-  .header-content {
-    padding: 0 8px;
-  }
-  .header-icon-wrapper {
-    width: 40px;
-    height: 40px;
-  }
-  .header-icon {
-    font-size: 20px;
-  }
-  .page-title {
-    font-size: 16px;
-  }
-  .search-bar {
-    padding: 12px;
-  }
-  .propagation-card {
-    padding: 12px;
-  }
-  .card-title {
-    font-size: 15px;
-  }
-  .mobile-fab {
-    bottom: 16px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

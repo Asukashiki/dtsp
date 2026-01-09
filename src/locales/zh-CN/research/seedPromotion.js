@@ -8,6 +8,7 @@ export default {
   generateLink: '生成分享链接',
   copyLink: '复制链接',
   shareLink: '分享链接',
+  shareTip: '您可以将分享链接发送给客户，以便他们更好地了解品种信息',
   linkCopied: '链接已复制到剪贴板',
 
   // 搜索和筛选

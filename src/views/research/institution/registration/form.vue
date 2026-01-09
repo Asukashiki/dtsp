@@ -2,38 +2,18 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-edit-box-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ pageTitle }}</h1>
-            <p class="page-subtitle">{{ $t('orgRegistration.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader :title="pageTitle" :subtitle="$t('orgRegistration.subtitle')" shadow show-back @back="handleCancel" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <el-form
-          ref="formRef"
-          :model="formData"
-          :rules="rules"
-          :label-width="labelWidth"
-          :label-position="labelPosition"
-          class="registration-form"
-        >
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" class="registration-form">
           <!-- 基本信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-information-line"></i>
-              {{ $t('orgRegistration.form.basicInfo') }}
-            </div>
-            <el-row :gutter="20">
+          <InfoCard :title="$t('orgRegistration.form.basicInfo')" icon="ri-information-line">
+            <el-row :gutter="24">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.orgType')" prop="orgType">
-                  <el-select v-model="formData.orgType" :placeholder="$t('orgRegistration.placeholder.orgType')" style="width: 100%" :disabled="isView">
+                  <el-select v-model="formData.orgType" :placeholder="$t('orgRegistration.placeholder.orgType')"
+                    style="width: 100%">
                     <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
                     <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
                     <el-option value="PRIVATE" :label="$t('orgRegistration.orgType.PRIVATE')"></el-option>
@@ -42,291 +22,162 @@
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.orgName')" prop="orgName">
-                  <el-input v-model="formData.orgName" :placeholder="$t('orgRegistration.placeholder.orgName')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.orgName" :placeholder="$t('orgRegistration.placeholder.orgName')" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.unifiedCode')" prop="unifiedCode">
-                  <el-input v-model="formData.unifiedCode" :placeholder="$t('orgRegistration.placeholder.unifiedCode')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.unifiedCode"
+                    :placeholder="$t('orgRegistration.placeholder.unifiedCode')" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.licenseNumber')" prop="licenseNumber">
-                  <el-input v-model="formData.licenseNumber" :placeholder="$t('orgRegistration.placeholder.licenseNumber')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.licenseNumber"
+                    :placeholder="$t('orgRegistration.placeholder.licenseNumber')" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.licenseStart')" prop="licenseStart">
-                  <el-date-picker
-                    v-model="formData.licenseStart"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD"
-                    :placeholder="$t('orgRegistration.placeholder.licenseStart')"
-                    style="width: 100%"
-                    :disabled="isView"
-                  ></el-date-picker>
+                  <el-date-picker v-model="formData.licenseStart" type="date" format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD" :placeholder="$t('orgRegistration.placeholder.licenseStart')"
+                    style="width: 100%" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.licenseEnd')" prop="licenseEnd">
-                  <el-date-picker
-                    v-model="formData.licenseEnd"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD"
-                    :placeholder="$t('orgRegistration.placeholder.licenseEnd')"
-                    style="width: 100%"
-                    :disabled="isView"
-                  ></el-date-picker>
+                  <el-date-picker v-model="formData.licenseEnd" type="date" format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD" :placeholder="$t('orgRegistration.placeholder.licenseEnd')"
+                    style="width: 100%" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('research.variety.cropType')" prop="cropTypes">
-                  <el-select
-                    v-model="cropTypesArray"
-                    :placeholder="$t('research.variety.cropType')"
-                    style="width: 100%"
-                    multiple
-                    :disabled="isView"
-                    v-loading="dictLoading"
-                  >
-                    <el-option
-                      v-for="item in options.crop_type"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
+                  <el-select v-model="cropTypesArray" :placeholder="$t('research.variety.cropType')" style="width: 100%"
+                    multiple v-loading="dictLoading">
+                    <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label"
+                      :value="item.value" />
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
+          </InfoCard>
 
           <!-- 位置信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-map-pin-line"></i>
-              {{ $t('orgRegistration.form.locationInfo') }}
-            </div>
-            <el-row :gutter="20">
+          <InfoCard :title="$t('orgRegistration.form.locationInfo')" icon="ri-map-pin-line">
+            <el-row :gutter="24">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.regionCode')" prop="regionCode">
-                  <el-cascader
-                    v-model="regionCodePath"
-                    :options="regionTreeOptions"
+                  <el-cascader v-model="formData.regionCode" :options="regionTreeOptions"
                     :placeholder="$t('orgRegistration.placeholder.regionCode')"
-                    :props="{ checkStrictly: true, emitPath: false }"
-                    filterable
-                    clearable
-                    style="width: 100%"
-                    :disabled="isView"
-                    v-loading="regionTreeLoading"
-                    @change="handleRegionChange"
-                  />
+                    :props="{ checkStrictly: true, emitPath: false }" filterable clearable style="width: 100%"
+                    v-loading="regionTreeLoading" @change="handleRegionChange" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :xs="24">
                 <el-form-item :label="$t('orgRegistration.form.fullAddress')" prop="fullAddress">
-                  <el-input v-model="formData.fullAddress" :placeholder="$t('orgRegistration.placeholder.fullAddress')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.fullAddress"
+                    :placeholder="$t('orgRegistration.placeholder.fullAddress')" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.gpsLat')" prop="gpsLat">
-                  <el-input v-model="formData.gpsLat" :placeholder="$t('orgRegistration.placeholder.gpsLat')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.gpsLat" :placeholder="$t('orgRegistration.placeholder.gpsLat')" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.gpsLng')" prop="gpsLng">
-                  <el-input v-model="formData.gpsLng" :placeholder="$t('orgRegistration.placeholder.gpsLng')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.gpsLng" :placeholder="$t('orgRegistration.placeholder.gpsLng')" />
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
+          </InfoCard>
 
           <!-- 证照信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-file-text-line"></i>
-              {{ $t('orgRegistration.form.certificateInfo') }}
-            </div>
-            <el-row :gutter="20">
+          <InfoCard :title="$t('orgRegistration.form.certificateInfo')" icon="ri-file-text-line">
+            <el-row :gutter="24">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.businessLicenseUrl')" prop="businessLicenseUrl">
-                  <!-- 查看模式显示图片 -->
-                  <template v-if="isView">
-                    <el-image
-                      v-if="businessLicensePreviewUrl"
-                      :src="businessLicensePreviewUrl"
-                      :preview-src-list="[businessLicensePreviewUrl]"
-                      fit="contain"
-                      style="width: 120px; height: 120px; border-radius: 8px"
-                    />
-                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
-                  </template>
-                  <!-- 编辑模式上传组件 -->
-                  <template v-else>
-                    <el-upload
-                      class="upload-demo"
-                      :http-request="handleBusinessLicenseUpload"
-                      :on-success="handleBusinessLicenseSuccess"
-                      :on-error="handleUploadError"
-                      :before-upload="beforeUpload"
-                      :file-list="businessLicenseFileList"
-                      list-type="picture-card"
-                      :limit="1"
-                      accept=".jpg,.jpeg,.png"
-                    >
-                      <i class="ri-upload-cloud-line"></i>
-                      <div class="upload-text">{{ $t('common.upload') }}</div>
-                    </el-upload>
-                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
-                  </template>
+                  <el-upload class="upload-demo" :http-request="handleBusinessLicenseUpload"
+                    :on-success="handleBusinessLicenseSuccess" :on-error="handleUploadError"
+                    :before-upload="beforeUpload" :file-list="businessLicenseFileList" list-type="picture-card"
+                    :limit="1" accept=".jpg,.jpeg,.png">
+                    <i class="ri-upload-cloud-line"></i>
+                    <div class="upload-text">{{ $t('common.upload') }}</div>
+                  </el-upload>
+                  <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.taxCertUrl')" prop="taxCertUrl">
-                  <!-- 查看模式显示图片 -->
-                  <template v-if="isView">
-                    <el-image
-                      v-if="taxCertPreviewUrl"
-                      :src="taxCertPreviewUrl"
-                      :preview-src-list="[taxCertPreviewUrl]"
-                      fit="contain"
-                      style="width: 120px; height: 120px; border-radius: 8px"
-                    />
-                    <span v-else class="no-image">{{ $t('common.noImage') }}</span>
-                  </template>
-                  <!-- 编辑模式上传组件 -->
-                  <template v-else>
-                    <el-upload
-                      class="upload-demo"
-                      :http-request="handleTaxCertUpload"
-                      :on-success="handleTaxCertSuccess"
-                      :on-error="handleUploadError"
-                      :before-upload="beforeUpload"
-                      :file-list="taxCertFileList"
-                      list-type="picture-card"
-                      :limit="1"
-                      accept=".jpg,.jpeg,.png"
-                    >
-                      <i class="ri-upload-cloud-line"></i>
-                      <div class="upload-text">{{ $t('common.upload') }}</div>
-                    </el-upload>
-                    <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
-                  </template>
+                  <el-upload class="upload-demo" :http-request="handleTaxCertUpload" :on-success="handleTaxCertSuccess"
+                    :on-error="handleUploadError" :before-upload="beforeUpload" :file-list="taxCertFileList"
+                    list-type="picture-card" :limit="1" accept=".jpg,.jpeg,.png">
+                    <i class="ri-upload-cloud-line"></i>
+                    <div class="upload-text">{{ $t('common.upload') }}</div>
+                  </el-upload>
+                  <div class="upload-tip">{{ $t('orgRegistration.uploadTip') }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
+          </InfoCard>
 
           <!-- 联系信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-contacts-line"></i>
-              {{ $t('orgRegistration.form.contactInfo') }}
-            </div>
-            <el-row :gutter="20">
+          <InfoCard :title="$t('orgRegistration.form.contactInfo')" icon="ri-contacts-line">
+            <el-row :gutter="24">
               <el-col :xs="24" :sm="8">
                 <el-form-item :label="$t('orgRegistration.form.contactName')" prop="contactName">
-                  <el-input v-model="formData.contactName" :placeholder="$t('orgRegistration.placeholder.contactName')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.contactName"
+                    :placeholder="$t('orgRegistration.placeholder.contactName')" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="8">
                 <el-form-item :label="$t('orgRegistration.form.contactMobile')" prop="contactMobile">
-                  <el-input v-model="formData.contactMobile" :placeholder="$t('orgRegistration.placeholder.contactMobile')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.contactMobile"
+                    :placeholder="$t('orgRegistration.placeholder.contactMobile')" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="8">
                 <el-form-item :label="$t('orgRegistration.form.contactEmail')" prop="contactEmail">
-                  <el-input v-model="formData.contactEmail" :placeholder="$t('orgRegistration.placeholder.contactEmail')" :disabled="isView"></el-input>
+                  <el-input v-model="formData.contactEmail"
+                    :placeholder="$t('orgRegistration.placeholder.contactEmail')" />
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
+          </InfoCard>
 
           <!-- 账号信息（仅新增时显示） -->
-          <div class="form-section" v-if="!isView">
-            <div class="section-title">
-              <i class="ri-user-settings-line"></i>
-              {{ $t('orgRegistration.form.accountInfo') }}
-            </div>
-            <el-row :gutter="20">
+          <InfoCard v-if="!isEdit" :title="$t('orgRegistration.form.accountInfo')" icon="ri-user-settings-line">
+            <el-row :gutter="24">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.applyUsername')" prop="applyUsername">
-                  <el-input 
-                    v-model="formData.applyUsername" 
-                    :placeholder="$t('orgRegistration.placeholder.applyUsername')"
-                    @blur="checkUsername"
-                  >
+                  <el-input v-model="formData.applyUsername"
+                    :placeholder="$t('orgRegistration.placeholder.applyUsername')" @blur="checkUsername">
                     <template #append v-if="usernameCheckResult !== null">
                       <i :class="usernameCheckResult ? 'ri-check-line text-success' : 'ri-close-line text-danger'"></i>
                     </template>
                   </el-input>
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row :gutter="20" v-if="!isEdit">
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.applyPassword')" prop="applyPassword">
-                  <el-input v-model="formData.applyPassword" type="password" show-password :placeholder="$t('orgRegistration.placeholder.applyPassword')"></el-input>
+                  <el-input v-model="formData.applyPassword" type="password" show-password
+                    :placeholder="$t('orgRegistration.placeholder.applyPassword')" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.confirmPassword')" prop="confirmPassword">
-                  <el-input v-model="formData.confirmPassword" type="password" show-password :placeholder="$t('orgRegistration.placeholder.confirmPassword')"></el-input>
+                  <el-input v-model="formData.confirmPassword" type="password" show-password
+                    :placeholder="$t('orgRegistration.placeholder.confirmPassword')" />
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
-
-          <!-- 审核历史（详情页显示） -->
-          <div class="form-section" v-if="isView && auditLogs.length > 0">
-            <div class="section-title">
-              <i class="ri-history-line"></i>
-              {{ $t('orgRegistration.form.auditHistory') }}
-            </div>
-            <el-timeline>
-              <el-timeline-item
-                v-for="log in auditLogs"
-                :key="log.id"
-                :type="log.auditResult === 1 ? 'success' : 'danger'"
-                :timestamp="log.auditTime"
-                placement="top"
-              >
-                <el-card>
-                  <div class="audit-log-item">
-                    <div class="audit-result">
-                      <el-tag :type="log.auditResult === 1 ? 'success' : 'danger'">
-                        {{ log.auditResult === 1 ? $t('orgRegistration.status.approved') : $t('orgRegistration.status.rejected') }}
-                      </el-tag>
-                    </div>
-                    <div class="audit-info">
-                      <span class="auditor">{{ $t('orgRegistration.form.auditorName') }}: {{ log.auditorName }}</span>
-                    </div>
-                    <div class="audit-comment" v-if="log.auditComment">
-                      {{ log.auditComment }}
-                    </div>
-                  </div>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
+          </InfoCard>
 
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting" v-if="!isView">
+            <el-button type="primary" @click="handleSubmit" :loading="submitting">
               {{ $t('common.submit') }}
             </el-button>
           </div>
@@ -341,53 +192,37 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { 
-  submitRegistration, 
-  getRegistrationDetail, 
-  checkUsernameUnique, 
-  getRegionTree, 
-  buildRegionPath 
+import {
+  submitRegistration,
+  getRegistrationDetail,
+  checkUsernameUnique,
+  getRegionTree,
+  buildRegionPath
 } from '@/api/breedingOrgRegistration'
 import { useDict } from '@/hooks/useDict'
 import { uploadFile, getFilePreviewUrl } from '@/api/file'
+import { PageHeader, InfoCard } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-// 响应式标签宽度
-const labelWidth = computed(() => {
-  const isMobile = window.innerWidth <= 768
-  return isMobile ? '120px' : '220px'
-})
-
-// 响应式标签位置（移动端在上方）
-const labelPosition = computed(() => {
-  const isMobile = window.innerWidth <= 768
-  return isMobile ? 'top' : 'right'
-})
-
 // 页面模式
-const isEdit = computed(() => route.name === 'RegistrationEdit')
-const isView = computed(() => route.name === 'RegistrationDetail')
+const isEdit = computed(() => !!route.params.id)
 
 // 页面标题
 const pageTitle = computed(() => {
-  if (isView.value) return t('orgRegistration.form.title.view')
-  if (isEdit.value) return t('orgRegistration.form.title.edit')
-  return t('orgRegistration.form.title.add')
+  return isEdit.value ? t('orgRegistration.form.title.edit') : t('orgRegistration.form.title.add')
 })
 
 // 表单相关
 const formRef = ref(null)
 const submitting = ref(false)
-const auditLogs = ref([])
 const usernameCheckResult = ref(null)
 
 // 行政区划树
 const regionTreeOptions = ref([])
 const regionTreeLoading = ref(false)
-const regionCodePath = ref(null)
 
 // 初始化字典
 const { options, loading: dictLoading } = useDict(['crop_type'], {
@@ -401,8 +236,6 @@ const cropTypesArray = ref([])
 // 文件上传相关
 const businessLicenseFileList = ref([])
 const taxCertFileList = ref([])
-const businessLicensePreviewUrl = ref('')
-const taxCertPreviewUrl = ref('')
 
 // 监听 cropTypesArray 变化，同步到 formData.cropTypes
 watch(cropTypesArray, (val) => {
@@ -453,7 +286,7 @@ const rules = reactive({
   licenseEnd: [{ required: true, message: t('orgRegistration.rules.licenseEndRequired'), trigger: 'change' }],
   cropTypes: [{ required: true, message: t('research.variety.cropType'), trigger: 'change' }],
   regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }],
-  applyUsername: [{ required: true, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
+  applyUsername: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
   applyPassword: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' }],
   confirmPassword: [
     { required: !isEdit.value, message: t('orgRegistration.rules.confirmPasswordRequired'), trigger: 'blur' },
@@ -479,7 +312,6 @@ const loadRegionTree = async () => {
 // 处理区域选择变化
 const handleRegionChange = (value) => {
   if (value) {
-    // 使用 buildRegionPath 获取最后一级
     const { regionCode, regionName } = buildRegionPath(regionTreeOptions.value, value)
     formData.regionCode = regionCode
     formData.regionName = regionName
@@ -492,7 +324,7 @@ const handleRegionChange = (value) => {
 // 上传前验证
 const beforeUpload = (file) => {
   const isValidType = ['image/jpeg', 'image/png'].includes(file.type)
-  const isLt2M = file.size / 1024 / 1024 < 2
+  const isLt2M = file.size / 1024 / 1024 < 5
 
   if (!isValidType) {
     ElMessage.error(t('orgRegistration.uploadTip'))
@@ -532,7 +364,6 @@ const handleBusinessLicenseSuccess = async (response) => {
     try {
       const previewRes = await getFilePreviewUrl(response.data.id)
       const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
-      businessLicensePreviewUrl.value = previewUrl
       businessLicenseFileList.value = [{
         name: response.data.originalFileName || 'license',
         url: previewUrl,
@@ -540,10 +371,6 @@ const handleBusinessLicenseSuccess = async (response) => {
       }]
     } catch (error) {
       console.error('Get preview URL failed:', error)
-      businessLicenseFileList.value = [{
-        name: response.data.originalFileName || 'license',
-        uid: response.data.id
-      }]
     }
     ElMessage.success(t('common.uploadSuccess'))
   }
@@ -570,7 +397,6 @@ const handleTaxCertSuccess = async (response) => {
     try {
       const previewRes = await getFilePreviewUrl(response.data.id)
       const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
-      taxCertPreviewUrl.value = previewUrl
       taxCertFileList.value = [{
         name: response.data.originalFileName || 'tax_cert',
         url: previewUrl,
@@ -578,10 +404,6 @@ const handleTaxCertSuccess = async (response) => {
       }]
     } catch (error) {
       console.error('Get preview URL failed:', error)
-      taxCertFileList.value = [{
-        name: response.data.originalFileName || 'tax_cert',
-        uid: response.data.id
-      }]
     }
     ElMessage.success(t('common.uploadSuccess'))
   }
@@ -589,7 +411,7 @@ const handleTaxCertSuccess = async (response) => {
 
 // 检查用户名唯一性
 const checkUsername = async () => {
-  if (!formData.applyUsername) {
+  if (!formData.applyUsername || isEdit.value) {
     usernameCheckResult.value = null
     return
   }
@@ -599,8 +421,6 @@ const checkUsername = async () => {
       usernameCheckResult.value = res.data
       if (!res.data) {
         ElMessage.warning(t('orgRegistration.messages.usernameUnavailable'))
-      } else {
-        ElMessage.success(t('orgRegistration.messages.usernameAvailable'))
       }
     }
   } catch (error) {
@@ -612,31 +432,21 @@ const checkUsername = async () => {
 const loadData = async () => {
   const id = route.params.id
   if (!id) return
-  
+
   try {
     const res = await getRegistrationDetail(id)
     if (res.code === 200 && res.data) {
-      const { baseInfo, auditLogs: logs } = res.data
+      const { baseInfo } = res.data
       Object.assign(formData, baseInfo)
-      formData.id = baseInfo.id
-      auditLogs.value = logs || []
-      
-      // 解析 cropTypes 到数组
+
       if (baseInfo.cropTypes) {
         cropTypesArray.value = baseInfo.cropTypes.split(',').filter(Boolean)
       }
-      
-      // 设置区域选择器的值
-      if (baseInfo.regionCode) {
-        regionCodePath.value = baseInfo.regionCode
-      }
-      
-      // 回显营业执照图片
+
       if (baseInfo.businessLicenseUrl) {
         try {
           const previewRes = await getFilePreviewUrl(baseInfo.businessLicenseUrl)
           const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
-          businessLicensePreviewUrl.value = previewUrl
           businessLicenseFileList.value = [{
             name: 'Business License',
             url: previewUrl,
@@ -646,13 +456,11 @@ const loadData = async () => {
           console.error('Failed to load business license preview:', error)
         }
       }
-      
-      // 回显税务证图片
+
       if (baseInfo.taxCertUrl) {
         try {
           const previewRes = await getFilePreviewUrl(baseInfo.taxCertUrl)
           const previewUrl = previewRes.code === 200 ? previewRes.msg : ''
-          taxCertPreviewUrl.value = previewUrl
           taxCertFileList.value = [{
             name: 'Tax Certificate',
             url: previewUrl,
@@ -672,25 +480,26 @@ const loadData = async () => {
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
-  
+
   try {
     await formRef.value.validate()
-    
-    // 用户名唯一性检查
+
     if (usernameCheckResult.value === false) {
       ElMessage.warning(t('orgRegistration.rules.usernameExists'))
       return
     }
-    
+
     submitting.value = true
-    
     const submitData = { ...formData }
     delete submitData.confirmPassword
-    
+    if (isEdit.value) {
+      delete submitData.applyPassword
+    }
+
     const res = await submitRegistration(submitData)
     if (res.code === 200) {
       ElMessage.success(t('orgRegistration.messages.submitSuccess'))
-      router.push({ name: 'InstitutionRegistration' })
+      router.back()
     } else {
       ElMessage.error(res.msg || t('orgRegistration.messages.submitFailed'))
     }
@@ -710,193 +519,31 @@ const handleCancel = () => {
 // 初始化
 onMounted(() => {
   loadRegionTree()
-  if (isEdit.value || isView.value) {
+  if (isEdit.value) {
     loadData()
   }
 })
 </script>
 
-<style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-wrapper {
-  margin: 0 auto;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 .registration-form {
-  max-width: 100%;
-}
-
-.form-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e8f5e9;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 22px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .form-actions {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e8f5e9;
-}
-
-.audit-log-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.audit-result {
-  margin-bottom: 8px;
-}
-
-.audit-info {
-  color: #666;
-  font-size: 14px;
-}
-
-.audit-comment {
-  color: #333;
-  margin-top: 8px;
-  padding: 8px;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.text-success {
-  color: #67c23a;
-}
-
-.text-danger {
-  color: #f56c6c;
-}
-
-/* 上传组件 */
-.upload-demo :deep(.el-upload) {
-  width: 120px;
-  height: 120px;
-}
-
-.upload-demo :deep(.el-upload-list__item) {
-  width: 120px;
-  height: 120px;
-}
-
-.upload-text {
-  font-size: 12px;
-  color: #606266;
-  margin-top: 4px;
+  padding: 24px 0;
 }
 
 .upload-tip {
   font-size: 12px;
   color: #909399;
   margin-top: 8px;
-}
-
-.no-image {
-  color: #909399;
-  font-size: 14px;
-}
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .content-wrapper {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 14px !important;
-  }
+  line-height: 1.4;
 }
 </style>

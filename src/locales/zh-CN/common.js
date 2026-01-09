@@ -95,6 +95,7 @@ export default {
     detail: '详情',
     all: '全部',
     currentUser: '当前用户',
+    basicInfo: '基本信息',
     systemInfo: '系统信息',
     // 错误提示
     error: {

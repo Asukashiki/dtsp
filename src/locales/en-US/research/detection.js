@@ -3,14 +3,18 @@ export default {
   fieldDetection: {
     title: 'Field Detection',
     subtitle: 'Manage field detection records for Breeder Seed and C1 Seed',
-    addTitle: 'Add Field Detection Record'
+    addTitle: 'Add Field Detection Record',
+    list: 'Field Detection List',
+    detail: 'Field Detection Details'
   },
 
   // Lab Testing
   labTesting: {
     title: 'Lab Testing',
     subtitle: 'Manage laboratory testing records for Breeder Seed and C1 Seed',
-    addTitle: 'Add Lab Testing Record'
+    addTitle: 'Add Lab Testing Record',
+    list: 'Lab Testing List',
+    detail: 'Lab Testing Details'
   },
 
   // Common
@@ -37,6 +41,7 @@ export default {
   search: 'Search',
   reset: 'Reset',
   noData: 'No detection records found',
+  basicInfo: 'Basic Information',
 
   // Batch Selector
   batchSelector: {

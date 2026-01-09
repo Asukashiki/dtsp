@@ -13,12 +13,20 @@ export default {
   audit: '审核',
   detail: '申请详情',
   auditDetail: '审核详情',
+  list: '申请列表',
   searchPlaceholder: '搜索机构名称、品种名称',
   deleteConfirm: '确定要删除该申请吗？',
   deleteSuccess: '删除成功',
   addSuccess: '添加成功',
   updateSuccess: '更新成功',
   auditSuccess: '审核提交成功',
+
+  // 标签页
+  tabs: {
+    pending: '待审核',
+    approved: '已通过',
+    rejected: '已拒绝'
+  },
 
   // 状态
   status: {

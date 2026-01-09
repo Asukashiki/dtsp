@@ -1,247 +1,210 @@
 <template>
-  <el-dialog
-    v-model="dialogVisible"
-    :title="$t('research.breeding.seed.receiveConfirm.detail')"
-    width="80%"
-    :close-on-click-modal="false"
-    @close="handleClose"
-    class="detail-dialog"
-  >
-    <div class="detail-content">
-      <!-- 基础信息 -->
-      <div class="info-section">
-        <div class="section-title">
-          <i class="ri-information-line"></i>
-          {{ $t('research.breeding.seed.receiveConfirm.form.basicInfo') }}
-        </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.distributeId') }}</span>
-            <span class="value">{{ data.distributeId }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.oseName') }}</span>
-            <span class="value">{{ data.oseName }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.receiveStatus') }}</span>
-            <el-tag :type="data.receiveStatus === 'CONFIRMED' ? 'success' : 'warning'">
-              {{ $t(`research.breeding.seed.receiveConfirm.status.${data.receiveStatus}`) }}
-            </el-tag>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.form.totalDistributeQuantity') }}</span>
-            <span class="value">{{ data.distributeDetail?.totalDistributeQuantity || 0 }} kg</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.confirmTime') }}</span>
-            <span class="value">{{ data.confirmTime || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.confirmPeople') }}</span>
-            <span class="value">{{ data.confirmPeople || '-' }}</span>
-          </div>
-          <div class="info-item full-width">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.form.remark') }}</span>
-            <span class="value">{{ data.remark || '-' }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.seed.receiveConfirm.detail') }}</h1>
           </div>
         </div>
       </div>
 
-      <!-- 育种家种子信息 -->
-      <div class="info-section">
-        <div class="section-title">
-          <i class="ri-seedling-line"></i>
-          {{ $t('research.breeding.seed.receiveConfirm.form.breedSeedDetail') }}
-        </div>
-        <div class="table-container" v-if="breedSeedList && breedSeedList.length > 0">
-          <el-table :data="breedSeedList" stripe border style="width: 100%">
-            <el-table-column type="index" label="#" width="60" align="center" />
-            <el-table-column
-              prop="varietyName"
-              :label="$t('research.breeding.seed.receiveConfirm.form.varietyName')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="cropType"
-              :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
-              min-width="140"
-            >
-              <template #default="{ row }">
-                {{ getLabelByValue('crop_type', row.cropType) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-                prop="seedType"
-                :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
-                min-width="140"
-            />
-            <el-table-column
-              prop="breedSeedProduceBatchId"
-              :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')"
-              min-width="220"
-              show-overflow-tooltip
-            />
-              <el-table-column
-              prop="parentalSeedSource"
-              :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-                prop="produceBatchName"
-                :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
-                min-width="220"
-                show-overflow-tooltip
-            />
-            <el-table-column
-              prop="distributeQuantity"
-              :label="$t('research.breeding.seed.receiveConfirm.form.distributeQuantity')"
-              width="180"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.distributeQuantity }} kg
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div v-else class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('research.breeding.seed.receiveConfirm.messages.noSeedData') }}</p>
-        </div>
-      </div>
-
-      <!-- 系统信息 -->
-      <div class="info-section">
-        <div class="section-title">
-          <i class="ri-time-line"></i>
-          {{ $t('research.breeding.seed.receiveConfirm.form.systemInfo') }}
-        </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.columns.createTime') }}</span>
-            <span class="value">{{ data.createTime }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('research.breeding.seed.receiveConfirm.form.basicInfo') }}</span>
+            </div>
           </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breeding.seed.receiveConfirm.form.updateTime') }}</span>
-            <span class="value">{{ data.updateTime || '-' }}</span>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.distributeId')">
+                {{ detailData.distributeId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.oseName')">
+                {{ detailData.oseName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.receiveStatus')">
+                <el-tag :type="detailData.receiveStatus === 'CONFIRMED' ? 'success' : 'warning'">
+                  {{ $t(`research.breeding.seed.receiveConfirm.status.${detailData.receiveStatus}`) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.form.totalDistributeQuantity')">
+                {{ detailData.distributeDetail?.totalDistributeQuantity || 0 }} kg
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.confirmTime')">
+                {{ detailData.confirmTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.confirmPeople')">
+                {{ detailData.confirmPeople || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.form.remark')" :span="2">
+                {{ detailData.remark || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
+
+        <!-- 育种家种子信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-seedling-line"></i>
+              <span>{{ $t('research.breeding.seed.receiveConfirm.form.breedSeedDetail') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container" v-if="breedSeedList && breedSeedList.length > 0">
+              <el-table :data="breedSeedList" stripe border style="width: 100%">
+                <el-table-column type="index" label="#" width="60" align="center" />
+                <el-table-column
+                  prop="varietyName"
+                  :label="$t('research.breeding.seed.receiveConfirm.form.varietyName')"
+                  min-width="180"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="cropType"
+                  :label="$t('research.breeding.seed.receiveConfirm.form.cropType')"
+                  min-width="140"
+                >
+                  <template #default="{ row }">
+                    {{ getLabelByValue('crop_type', row.cropType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                    prop="seedType"
+                    :label="$t('research.breeding.seed.receiveConfirm.form.seedType')"
+                    min-width="140"
+                />
+                <el-table-column
+                  prop="breedSeedProduceBatchId"
+                  :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')"
+                  min-width="220"
+                  show-overflow-tooltip
+                />
+                  <el-table-column
+                  prop="parentalSeedSource"
+                  :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
+                  min-width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                    prop="produceBatchName"
+                    :label="$t('research.breeding.seed.receiveConfirm.form.breedSeedProduceBatchId')"
+                    min-width="220"
+                    show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="distributeQuantity"
+                  :label="$t('research.breeding.seed.receiveConfirm.form.distributeQuantity')"
+                  width="180"
+                  align="right"
+                >
+                  <template #default="{ row }">
+                    {{ row.distributeQuantity }} kg
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-else class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>{{ $t('research.breeding.seed.receiveConfirm.messages.noSeedData') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 系统信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-time-line"></i>
+              <span>{{ $t('research.breeding.seed.receiveConfirm.form.systemInfo') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.columns.createTime')">
+                {{ detailData.createTime }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.receiveConfirm.form.updateTime')">
+                {{ detailData.updateTime || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
       </div>
     </div>
-  </el-dialog>
+  </div>
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { useDict } from '@/hooks/useDict'
+import { getOseReceiveConfirmDetail } from '@/api/breedSeed'
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  data: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-const emit = defineEmits(['update:modelValue', 'close'])
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
 
-const dialogVisible = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
-
-const handleClose = () => {
-  emit('update:modelValue', false)
-  emit('close')
-}
+const loading = ref(false)
+const detailData = ref({})
 
 // 获取 breeder seed 列表
 const breedSeedList = computed(() => {
-  return props.data.distributeDetail?.detailList || []
+  return detailData.value.distributeDetail?.detailList || []
+})
+
+const goBack = () => {
+  router.back()
+}
+
+const loadDetail = async () => {
+  const id = route.params.id
+  if (!id) {
+    ElMessage.error(t('common.invalidId'))
+    goBack()
+    return
+  }
+
+  loading.value = true
+  try {
+    const res = await getOseReceiveConfirmDetail(id)
+    if (res.code === 200) {
+      detailData.value = res.data || {}
+    } else {
+      ElMessage.error(res.msg || t('common.loadFailed'))
+      goBack()
+    }
+  } catch (error) {
+    console.error('Failed to load detail:', error)
+    ElMessage.error(t('common.loadFailed'))
+    goBack()
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadDetail()
 })
 </script>
 
-<style scoped>
-.detail-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.detail-dialog :deep(.el-dialog__title) {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.detail-dialog :deep(.el-dialog__body) {
-  padding: 0;
-}
-
-.detail-content {
-  padding: 24px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.info-section {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.info-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.label {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
-
-.value {
-  font-size: 15px;
-  color: #333;
-  word-break: break-word;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 .table-container {
   margin-top: 12px;
@@ -276,18 +239,6 @@ const breedSeedList = computed(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-header {
-    padding: 16px;
-  }
-
-  .detail-content {
-    padding: 16px;
-  }
-
   .table-container {
     margin-left: -20px;
     margin-right: -20px;

@@ -172,8 +172,7 @@ import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
-import StatusTabs from '@/components/workflow/StatusTabs.vue'
-import ActionButtons from '@/components/workflow/ActionButtons.vue'
+import { StatusTabs, ActionButtons } from '@/components/workflow'
 import {
   getBreedingBatchList,
   getBreedingBatchVoidedList,

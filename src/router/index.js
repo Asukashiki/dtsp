@@ -675,6 +675,18 @@ const routes = [
         component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
         meta: { title: 'OSE确认接收育种家种子', requiresAuth: true }
       },
+      {
+        path: 'breeding/ose-receive-confirm/detail/:id',
+        name: 'OseReceiveConfirmDetail',
+        component: () => import('../views/research/breeding/ose-receive-confirm/detail.vue'),
+        meta: { title: 'OSE接收确认详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-receive-confirm/confirm/:id',
+        name: 'OseReceiveConfirmConfirm',
+        component: () => import('../views/research/breeding/ose-receive-confirm/confirm.vue'),
+        meta: { title: 'OSE确认接收', hideInMenu: true, requiresAuth: true }
+      },
 
       // OSE繁殖批次信息数据采集
       {
@@ -795,6 +807,12 @@ const routes = [
         component: () => import('../views/research/c1-propagation-audit/detail.vue'),
         meta: { title: '繁殖申请审核详情', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'c1-propagation-audit/audit/:id',
+        name: 'C1PropagationAuditForm',
+        component: () => import('../views/research/c1-propagation-audit/audit-form.vue'),
+        meta: { title: '审核繁殖申请', hideInMenu: true, requiresAuth: true }
+      },
 
       // C1繁殖批次管理
       {
@@ -835,6 +853,12 @@ const routes = [
         component: () => import('../views/research/detection/field-detection/add.vue'),
         meta: { title: '新增田间检测', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'field-detection/detail/:id',
+        name: 'FieldDetectionDetail',
+        component: () => import('../views/research/detection/field-detection/detail.vue'),
+        meta: { title: '田间检测详情', hideInMenu: true, requiresAuth: true }
+      },
 
       // 实验室检测
       {
@@ -848,6 +872,12 @@ const routes = [
         name: 'LabTestingAdd',
         component: () => import('../views/research/detection/lab-testing/add.vue'),
         meta: { title: '新增实验室检测', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'lab-testing/detail/:id',
+        name: 'LabTestingDetail',
+        component: () => import('../views/research/detection/lab-testing/detail.vue'),
+        meta: { title: '实验室检测详情', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子认证审核
@@ -904,7 +934,7 @@ const routes = [
       {
         path: 'institution/registration/detail/:id',
         name: 'RegistrationDetail',
-        component: () => import('../views/research/institution/registration/form.vue'),
+        component: () => import('../views/research/institution/registration/detail.vue'),
         meta: { title: '机构注册详情', hideInMenu: true, requiresAuth: true }
       },
       {
@@ -930,6 +960,24 @@ const routes = [
         name: 'OseManagement',
         component: () => import('../views/research/institution/ose-management/index.vue'),
         meta: { title: 'OSE维护', requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/add',
+        name: 'OseAdd',
+        component: () => import('../views/research/institution/ose-management/form.vue'),
+        meta: { title: '新增OSE', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/edit/:id',
+        name: 'OseEdit',
+        component: () => import('../views/research/institution/ose-management/form.vue'),
+        meta: { title: '编辑OSE', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/detail/:id',
+        name: 'OseDetail',
+        component: () => import('../views/research/institution/ose-management/detail.vue'),
+        meta: { title: 'OSE详情', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
@@ -973,6 +1021,13 @@ const routes = [
         name: 'SeedPromotionDetail',
         component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
         meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
+      },
+      // 种子推广新增
+      {
+        path: 'seed/promotion/form',
+        name: 'SeedPromotionForm',
+        component: () => import('../views/research/seed/SeedPromotionForm.vue'),
+        meta: { title: '新增推广内容', hideInMenu: true, requiresAuth: true }
       },
       // 种子信息公示
       {

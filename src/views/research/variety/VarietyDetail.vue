@@ -1,229 +1,171 @@
 <template>
-  <div class="variety-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-plant-line"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">{{ detailData.varietyName || $t('research.variety.detail.title') }}</h1>
-          <p class="page-subtitle">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader icon="ri-plant-line" :title="detailData.varietyName || $t('research.variety.detail.title')" shadow
+        show-back @back="handleBack">
+        <template #subtitle>
+          <div class="header-tags">
             <el-tag v-if="detailData.dataType === 'license'" type="warning" effect="dark" size="small">
               <i class="ri-checkbox-circle-line"></i>
               {{ $t('research.variety.query.autoPublish') }}
             </el-tag>
-            <el-tag v-else type="success" effect="dark" size="small">
+            <el-tag v-else-if="detailData.dataType === 'registration'" type="success" effect="dark" size="small">
               <i class="ri-file-list-line"></i>
               {{ $t('research.variety.query.registrationPublish') }}
             </el-tag>
-          </p>
-        </div>
-      </div>
-      <div class="header-actions">
-        <el-button @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
-      </div>
-    </div>
+          </div>
+        </template>
+      </PageHeader>
 
-    <!-- 详情内容 -->
-    <div class="detail-content" v-loading="loading">
-      <!-- 基本信息 -->
-      <div class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-information-line"></i>
-          Basic Info
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.varietyName') }}</span>
-            <span class="value">{{ detailData.varietyName || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.cropType') }}</span>
-            <span class="value">{{ getLabelByValue('crop_type', detailData.varietyType) || detailData.varietyType || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.registerNo') }}</span>
-            <span class="value">{{ detailData.registerNo || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.enterprise') }}</span>
-            <span class="value">{{ detailData.enterpriseName || '-' }}</span>
-          </div>
-        </div>
-      </div>
+      <!-- 详情内容 -->
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息 -->
+        <InfoCard :title="$t('common.basicInfo')" icon="ri-information-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.variety.query.columns.varietyName')">
+              <span class="highlight-text">{{ detailData.varietyName || '-' }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.cropType')">
+              {{ getLabelByValue('crop_type', detailData.varietyType) || detailData.varietyType || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.registerNo')">
+              {{ detailData.registerNo || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.enterprise')">
+              {{ detailData.enterpriseName || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
 
-      <!-- 许可信息（仅许可数据显示） -->
-      <div v-if="detailData.dataType === 'license'" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-shield-check-line"></i>
-          License Info
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.licenseNo') }}</span>
-            <span class="value">{{ detailData.licenseNo || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.approvalOrg') }}</span>
-            <span class="value">{{ getLabelByValue('approval_org', detailData.approvalOrg) || detailData.approvalOrg || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.approvalDate') }}</span>
-            <span class="value">{{ detailData.approvalDate || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.query.columns.validPeriod') }}</span>
-            <span class="value">
+        <!-- 许可信息（仅许可数据显示） -->
+        <InfoCard v-if="detailData.dataType === 'license'" :title="$t('research.breedingLicense.form.licenseInfo')"
+          icon="ri-shield-check-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.variety.query.columns.licenseNo')">
+              {{ detailData.licenseNo || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.approvalOrg')">
+              {{ getLabelByValue('approval_org', detailData.approvalOrg) || detailData.approvalOrg || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.approvalDate')">
+              {{ detailData.approvalDate || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.query.columns.validPeriod')">
               {{ detailData.validStartDate || '-' }} ~ {{ detailData.validEndDate || '-' }}
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breedingLicense.form.batchName') }}</span>
-            <span class="value">{{ detailData.batchName || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breedingLicense.form.datasetCode') }}</span>
-            <span class="value">{{ detailData.datasetCode || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breedingLicense.form.licenseStatus') }}</span>
-            <span class="value">
-              <el-tag
-                v-if="detailData.licenseStatus"
-                :type="detailData.licenseStatus === 'valid' ? 'success' : detailData.licenseStatus === 'expired' ? 'warning' : 'danger'"
-              >
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breedingLicense.form.batchName')">
+              {{ detailData.batchName || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breedingLicense.form.datasetCode')">
+              {{ detailData.datasetCode || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breedingLicense.form.licenseStatus')" :span="2">
+              <el-tag v-if="detailData.licenseStatus"
+                :type="detailData.licenseStatus === 'valid' ? 'success' : detailData.licenseStatus === 'expired' ? 'warning' : 'danger'">
                 {{ getLabelByValue('license_status', detailData.licenseStatus) || detailData.licenseStatus }}
               </el-tag>
               <span v-else>-</span>
-            </span>
-          </div>
-          <div v-if="detailData.certificateFile" class="info-item full-width">
-            <span class="label">{{ $t('research.breedingLicense.form.certificateFile') }}</span>
-            <span class="value file-link" @click="handlePreviewFile(detailData.certificateFile)">
-              <i class="ri-file-pdf-line"></i>
-              {{ detailData.certificateFileName || $t('research.breedingLicense.form.certificateFile') }}
-            </span>
-          </div>
-        </div>
-      </div>
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detailData.certificateFile"
+              :label="$t('research.breedingLicense.form.certificateFile')" :span="2">
+              <div class="file-link" @click="handlePreviewFile(detailData.certificateFile)">
+                <i class="ri-file-pdf-line"></i>
+                {{ detailData.certificateFileName || $t('research.breedingLicense.form.certificateFile') }}
+              </div>
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
 
-      <!-- 发布信息（仅登记数据显示） -->
-      <div v-if="detailData.dataType === 'registration'" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-calendar-check-line"></i>
-          {{ $t('research.variety.detail.publishInfo') }}
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.detail.publishDate') }}</span>
-            <span class="value">{{ detailData.publishDate || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.variety.detail.publishDept') }}</span>
-            <span class="value">{{ detailData.publishDept || '-' }}</span>
-          </div>
-          <div class="info-item full-width" v-if="detailData.recommendedRegion">
-            <span class="label">{{ $t('research.variety.detail.recommendedRegion') }}</span>
-            <span class="value">{{ detailData.recommendedRegion }}</span>
-          </div>
-        </div>
-      </div>
+        <!-- 发布信息（仅登记数据显示） -->
+        <InfoCard v-if="detailData.dataType === 'registration'" :title="$t('research.variety.detail.publishInfo')"
+          icon="ri-calendar-check-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.variety.detail.publishDate')">
+              {{ detailData.publishDate || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.variety.detail.publishDept')">
+              {{ detailData.publishDept || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detailData.recommendedRegion"
+              :label="$t('research.variety.detail.recommendedRegion')" :span="2">
+              {{ detailData.recommendedRegion }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
 
-      <!-- 描述信息 -->
-      <div v-if="detailData.baseInfo || detailData.sowingGuide" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-file-text-line"></i>
-          {{ $t('research.variety.detail.description') }}
-        </h2>
-        <div class="description-content">
-          <div v-if="detailData.baseInfo" class="description-block">
-            <h4>{{ $t('research.variety.detail.publicDescription') }}</h4>
-            <p>{{ detailData.baseInfo }}</p>
-          </div>
-          <div v-if="detailData.sowingGuide" class="description-block">
-            <h4>{{ $t('research.variety.detail.sowingGuide') }}</h4>
-            <p>{{ detailData.sowingGuide }}</p>
-          </div>
-          <div v-if="detailData.decisionExplanation" class="description-block">
-            <h4>{{ $t('research.variety.detail.decisionExplanation') }}</h4>
-            <p>{{ detailData.decisionExplanation }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 操作信息（许可数据） -->
-      <div v-if="detailData.dataType === 'license' && detailData.createdTime" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-time-line"></i>
-          {{ $t('research.breedingLicense.form.operationInfo') }}
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ $t('research.breedingLicense.form.createTime') }}</span>
-            <span class="value">{{ detailData.createdTime || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ $t('research.breedingLicense.form.createBy') }}</span>
-            <span class="value">{{ detailData.createdByName || '-' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 图片区域 -->
-      <div v-if="detailData.photoUrl" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-image-line"></i>
-          {{ $t('research.variety.detail.photo') }}
-        </h2>
-        <div class="photo-container">
-          <el-image
-            :src="detailData.photoUrl"
-            :preview-src-list="[detailData.photoUrl]"
-            fit="cover"
-            class="variety-image"
-          />
-        </div>
-      </div>
-
-      <!-- 推广视频区域 -->
-      <div v-if="promotionVideos.length > 0" class="detail-section">
-        <h2 class="section-title">
-          <i class="ri-movie-line"></i>
-          {{ $t('research.variety.detail.promotionVideos') }}
-        </h2>
-        <div class="promotion-videos-grid">
-          <div
-            v-for="video in promotionVideos"
-            :key="video.promotionId"
-            class="video-card"
-            @click="handleViewPromotion(video)"
-          >
-            <div class="video-thumbnail">
-              <i class="ri-play-circle-line play-icon"></i>
-              <div class="video-duration">{{ video.validPeriod }} {{ $t('common.days') }}</div>
+        <!-- 描述信息 -->
+        <InfoCard v-if="detailData.baseInfo || detailData.sowingGuide || detailData.decisionExplanation"
+          :title="$t('research.variety.query.detail.description')" icon="ri-file-text-line">
+          <div class="description-content">
+            <div v-if="detailData.baseInfo" class="description-block">
+              <h4>{{ $t('research.variety.query.detail.publicDescription') }}</h4>
+              <p>{{ detailData.baseInfo }}</p>
             </div>
-            <div class="video-info">
-              <div class="video-title">{{ video.title }}</div>
-              <div class="video-meta">
-                <span class="meta-item">
-                  <i class="ri-calendar-line"></i>
-                  {{ formatDate(video.publishTime) }}
-                </span>
-                <span class="meta-item">
-                  <i class="ri-eye-line"></i>
-                  {{ video.visitCount || 0 }}
-                </span>
+            <div v-if="detailData.sowingGuide" class="description-block">
+              <h4>{{ $t('research.variety.query.detail.sowingGuide') }}</h4>
+              <p>{{ detailData.sowingGuide }}</p>
+            </div>
+            <div v-if="detailData.decisionExplanation" class="description-block">
+              <h4>{{ $t('research.variety.query.detail.decisionExplanation') }}</h4>
+              <p>{{ detailData.decisionExplanation }}</p>
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 图片区域 -->
+        <InfoCard v-if="detailData.photoUrl" :title="$t('research.variety.detail.photo')" icon="ri-image-line">
+          <div class="photo-container">
+            <el-image :src="detailData.photoUrl" :preview-src-list="[detailData.photoUrl]" fit="contain"
+              class="variety-image" />
+          </div>
+        </InfoCard>
+
+        <!-- 推广视频区域 -->
+        <InfoCard :title="$t('research.variety.query.detail.promotionVideos')" icon="ri-movie-line">
+          <div v-if="promotionVideos.length > 0" class="promotion-videos-grid">
+            <div v-for="video in promotionVideos" :key="video.promotionId" class="video-card"
+              @click="handleViewPromotion(video)">
+              <div class="video-thumbnail">
+                <i class="ri-play-circle-line play-icon"></i>
+                <div class="video-duration">{{ video.validPeriod }} {{ $t('common.days') }}</div>
+              </div>
+              <div class="video-info">
+                <div class="video-title" :title="video.title">{{ video.title }}</div>
+                <div class="video-meta">
+                  <span class="meta-item">
+                    <i class="ri-calendar-line"></i>
+                    {{ formatDate(video.publishTime) }}
+                  </span>
+                  <span class="meta-item">
+                    <i class="ri-eye-line"></i>
+                    {{ video.visitCount || 0 }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-if="promotionVideos.length === 0" class="no-videos">
-          <i class="ri-movie-off-line"></i>
-          <p>{{ $t('research.variety.detail.noPromotionVideos') }}</p>
+          <div v-else class="empty-status mini">
+            <i class="ri-movie-off-line"></i>
+            <p>{{ $t('research.variety.query.detail.noPromotionVideos') }}</p>
+          </div>
+        </InfoCard>
+
+        <!--系统信息 -->
+        <InfoCard v-if="detailData.dataType === 'license' && detailData.createdTime" :title="$t('common.systemInfo')"
+          icon="ri-time-line">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('research.breedingLicense.form.createTime')">
+              {{ detailData.createdTime || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('research.breedingLicense.form.createBy')">
+              {{ detailData.createdByName || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
+
+        <div class="form-actions">
+          <el-button @click="handleBack">{{ $t('common.back') }}</el-button>
         </div>
       </div>
     </div>
@@ -235,10 +177,10 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getVarietyPublicDetail } from '@/api/seedPromotion'
-import { getPromotionByVariety } from '@/api/seedPromotion'
+import { getVarietyPublicDetail, getPromotionByVariety } from '@/api/seedPromotion'
 import { getFilePreviewUrl } from '@/api/file'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
@@ -336,133 +278,19 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.variety-detail-page {
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  min-height: calc(100vh - 60px);
+@use '@/assets/styles/page-common.scss';
+
+.header-tags {
+  margin-top: 8px;
 }
 
-/* 页面头部 */
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding: 32px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(254, 221, 0, 0.3);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  i {
-    font-size: 40px;
-    color: white;
-  }
-}
-
-.header-text {
-  color: white;
-
-  .page-title {
-    font-size: 28px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .page-subtitle {
-    margin: 0;
-  }
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-/* 详情内容 */
-.detail-content {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.detail-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e4e7ed;
-
-  &:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
+.highlight-text {
+  color: var(--el-color-primary);
   font-weight: 600;
-  color: #303133;
-  margin: 0 0 20px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e8f5e9;
-
-  i {
-    font-size: 22px;
-    color: #009A44;
-  }
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  &.full-width {
-    grid-column: 1 / -1;
-  }
-
-  .label {
-    font-size: 13px;
-    color: #909399;
-    font-weight: 500;
-  }
-
-  .value {
-    font-size: 15px;
-    color: #303133;
-    font-weight: 500;
-    word-break: break-word;
-  }
 }
 
 .file-link {
-  color: #009A44 !important;
+  color: var(--el-color-primary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -470,22 +298,18 @@ onMounted(() => {
   transition: all 0.3s;
 
   &:hover {
-    color: #007a36 !important;
+    opacity: 0.8;
     text-decoration: underline;
-  }
-
-  i {
-    font-size: 16px;
   }
 }
 
-/* 描述内容 */
 .description-content {
   .description-block {
-    margin-bottom: 20px;
-    padding: 16px;
-    background: #f5f7fa;
-    border-radius: 8px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid var(--el-color-primary);
 
     &:last-child {
       margin-bottom: 0;
@@ -493,34 +317,35 @@ onMounted(() => {
 
     h4 {
       margin: 0 0 12px 0;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
-      color: #606266;
+      color: #374151;
     }
 
     p {
       margin: 0;
       font-size: 14px;
-      color: #303133;
+      color: #4b5563;
       line-height: 1.8;
     }
   }
 }
 
-/* 图片区域 */
 .photo-container {
+  display: flex;
+  justify-content: center;
+
   .variety-image {
     width: 100%;
-    max-height: 400px;
-    border-radius: 8px;
-    overflow: hidden;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }
 
-/* 推广视频区域 */
 .promotion-videos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
 }
 
@@ -528,44 +353,46 @@ onMounted(() => {
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #e4e7ed;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.15);
-    transform: translateY(-2px);
-    border-color: #009A44;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    border-color: var(--el-color-primary);
 
     .play-icon {
-      transform: scale(1.1);
+      transform: scale(1.15);
+      opacity: 1;
     }
   }
 
   .video-thumbnail {
     position: relative;
-    height: 180px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+    height: 160px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     display: flex;
     align-items: center;
     justify-content: center;
 
     .play-icon {
-      font-size: 64px;
+      font-size: 48px;
       color: white;
       transition: all 0.3s;
-      opacity: 0.9;
+      opacity: 0.8;
     }
 
     .video-duration {
       position: absolute;
-      bottom: 12px;
-      right: 12px;
-      padding: 4px 12px;
-      background: rgba(0, 0, 0, 0.7);
+      bottom: 10px;
+      right: 10px;
+      padding: 2px 10px;
+      background: rgba(0, 0, 0, 0.6);
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       border-radius: 4px;
+      backdrop-filter: blur(4px);
     }
   }
 
@@ -573,9 +400,9 @@ onMounted(() => {
     padding: 16px;
 
     .video-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      color: #303133;
+      color: #1f2937;
       margin-bottom: 12px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -584,88 +411,30 @@ onMounted(() => {
 
     .video-meta {
       display: flex;
-      gap: 16px;
-      font-size: 13px;
-      color: #909399;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
 
       .meta-item {
         display: flex;
         align-items: center;
         gap: 4px;
-
-        i {
-          font-size: 14px;
-        }
       }
     }
   }
 }
 
-.no-videos {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
+.empty-status.mini {
+  padding: 40px 0;
 
   i {
-    font-size: 64px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  p {
-    font-size: 16px;
-    margin: 0;
+    font-size: 48px;
   }
 }
 
-/* 响应式 */
-@media screen and (max-width: 768px) {
-  .variety-detail-page {
-    padding: 16px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 20px;
-  }
-
-  .header-content {
-    gap: 12px;
-  }
-
-  .header-icon-wrapper {
-    width: 60px;
-    height: 60px;
-
-    i {
-      font-size: 32px;
-    }
-  }
-
-  .header-text .page-title {
-    font-size: 22px;
-  }
-
-  .header-actions {
-    width: 100%;
-
-    .el-button {
-      flex: 1;
-    }
-  }
-
-  .detail-content {
-    padding: 20px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .promotion-videos-grid {
-    grid-template-columns: 1fr;
-  }
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
 }
 </style>

@@ -237,6 +237,7 @@ export default {
   c1BatchAudit: {
     title: 'C1繁殖批次审核',
     subtitle: '审核待审核状态的C1繁殖批次',
+    list: '审核列表',
     searchPlaceholder: '搜索批次号、品种名称、机构名称',
     filterByCrop: '按作物类型筛选',
     noData: '暂无待审核数据',

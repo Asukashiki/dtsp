@@ -1,172 +1,149 @@
 <template>
-  <div class="c1-breeding-batch-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-left header-icon">
-        <i class="ri-seedling-line"></i>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('research.c1BreedingBatch.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.c1BreedingBatch.subtitle') }}</p>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader icon="ri-seedling-line" :title="$t('research.c1BreedingBatch.title')"
+        :subtitle="$t('research.c1BreedingBatch.subtitle')" />
 
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-      <!-- 搜索和筛选栏 -->
-      <div class="search-bar">
-        <div class="search-row">
-          <el-input
-            v-model="queryData.keyword"
-            :placeholder="$t('research.c1BreedingBatch.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @keyup.enter="handleSearch"
-          >
-            <template #prefix>
-              <i class="ri-search-line"></i>
-            </template>
-          </el-input>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('research.c1BreedingBatch.searchPlaceholder')">
+              <el-input v-model="queryData.keyword" :placeholder="$t('research.c1BreedingBatch.searchPlaceholder')"
+                clearable
+@keyup.enter="handleSearch">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
 
-          <el-select
-            v-model="queryData.cropType"
-            :placeholder="$t('research.c1BreedingBatch.filterByCrop')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('research.c1BreedingBatch.allCrops')" value="" />
-            <el-option label="Wheat" value="Wheat" />
-            <el-option label="Maize" value="Maize" />
-            <el-option label="Teff" value="Teff" />
-            <el-option label="Sorghum" value="Sorghum" />
-            <el-option label="Barley" value="Barley" />
-          </el-select>
+            <SearchItem :label="$t('research.c1BreedingBatch.filterByCrop')">
+              <el-select v-model="queryData.cropType" :placeholder="$t('research.c1BreedingBatch.filterByCrop')"
+                clearable
+@change="handleSearch">
+                <el-option :label="$t('research.c1BreedingBatch.allCrops')" value="" />
+                <el-option label="Wheat" value="Wheat" />
+                <el-option label="Maize" value="Maize" />
+                <el-option label="Teff" value="Teff" />
+                <el-option label="Sorghum" value="Sorghum" />
+                <el-option label="Barley" value="Barley" />
+              </el-select>
+            </SearchItem>
 
-          <el-select
-            v-model="queryData.batchStatus"
-            :placeholder="$t('research.c1BreedingBatch.filterByStatus')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('research.c1BreedingBatch.allStatus')" value="" />
-            <el-option :label="$t('research.c1BreedingBatch.status.ongoing')" value="01" />
-            <el-option :label="$t('research.c1BreedingBatch.status.completed')" value="02" />
-            <el-option :label="$t('research.c1BreedingBatch.status.terminated')" value="03" />
-          </el-select>
+            <SearchItem :label="$t('research.c1BreedingBatch.filterByStatus')">
+              <el-select v-model="queryData.batchStatus" :placeholder="$t('research.c1BreedingBatch.filterByStatus')"
+                clearable
+@change="handleSearch">
+                <el-option :label="$t('research.c1BreedingBatch.allStatus')" value="" />
+                <el-option :label="$t('research.c1BreedingBatch.status.ongoing')" value="01" />
+                <el-option :label="$t('research.c1BreedingBatch.status.completed')" value="02" />
+                <el-option :label="$t('research.c1BreedingBatch.status.terminated')" value="03" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <div class="action-row">
-          <div class="action-left">
-            <el-button type="primary" @click="handleSearch">
-              <i class="ri-search-line"></i>
-              <span class="btn-text">{{ $t('common.search') }}</span>
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-restart-line"></i>
-              <span class="btn-text">{{ $t('common.reset') }}</span>
-            </el-button>
-          </div>
-          <div class="action-right">
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.c1BreedingBatch.list')" icon="ri-file-list-3-line">
+          <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              <span class="btn-text">{{ $t('research.c1BreedingBatch.add') }}</span>
+              {{ $t('research.c1BreedingBatch.add') }}
             </el-button>
-          </div>
-        </div>
-      </div>
+          </template>
 
-      <!-- PC端：数据表格 -->
-      <div class="table-card pc-view">
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          table-layout="fixed"
-        >
-          <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180" fixed="left" show-overflow-tooltip />
-          <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100" align="center">
-            <template #default="{ row }">
-              {{ getLabelByValue('crop_type', row.cropType) }}
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="breedingLevel" :label="$t('research.c1BreedingBatch.columns.breedingLevel')" min-width="140" align="center">
-            <template #default="{ row }">
-              <el-tag size="small">{{ getBreedingLevelName(row.breedingLevel) }}</el-tag>
-            </template>
-          </el-table-column> -->
-          <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.columns.startDate')" min-width="120" align="center" />
-          <el-table-column prop="batchStatus" :label="$t('research.c1BreedingBatch.columns.status')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getStatusTagType(row.batchStatus)" size="small">
-                {{ getStatusName(row.batchStatus) }}
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="tableData" stripe v-loading="loading">
+              <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180"
+                fixed="left" show-overflow-tooltip />
+              <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')"
+                min-width="140" show-overflow-tooltip />
+              <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100"
+                align="center">
+                <template #default="{ row }">
+                  {{ getLabelByValue('crop_type', row.cropType) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.columns.startDate')"
+                min-width="120" align="center" />
+              <el-table-column prop="batchStatus" :label="$t('research.c1BreedingBatch.columns.status')" min-width="100"
+                align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getStatusTagType(row.batchStatus)" size="small">
+                    {{ getStatusName(row.batchStatus) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('common.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons workflow-status="S0" mode="list" :custom-buttons="getActionButtons(row)"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination v-model:current-page="queryData.pageNum" v-model:page-size="queryData.pageSize"
+                :total="total" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSearch" @current-change="handleSearch" />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only" v-loading="loading">
+          <div v-for="item in tableData" :key="item.id" class="mobile-card"
+            @click="handleDetail(item.id, item.auditStatus === 'approved')">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ item.batchId }}</span>
+              </div>
+              <el-tag :type="getStatusTagType(item.batchStatus)" size="small">
+                {{ getStatusName(item.batchStatus) }}
               </el-tag>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="trackingCount" :label="$t('research.c1BreedingBatch.columns.trackingCount')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag type="info" size="small">{{ row.trackingCount || 0 }}</el-tag>
-            </template>
-          </el-table-column> -->
-          <el-table-column :label="$t('common.actions')" width="280" fixed="right" align="center">
-            <template #default="{ row }">
-              <el-button link type="primary" @click="handleDetail(row.id, row.auditStatus === 'approved')">{{ $t('common.view') }}</el-button>
-              <el-button v-if="row.auditStatus !== 'approved'" link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
-              <el-tag v-if="row.auditStatus === 'approved'" type="success" size="small" style="margin-left: 8px;">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <!-- 分页 -->
-        <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="queryData.pageNum"
-            v-model:page-size="queryData.pageSize"
-            :total="total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSearch"
-            @current-change="handleSearch"
-          />
-        </div>
-      </div>
-
-      <!-- 移动端：卡片列表 -->
-      <div class="mobile-view">
-        <div v-if="tableData.length === 0" class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('common.noData') }}</p>
-        </div>
-        <div v-for="item in tableData" :key="item.id" class="card" @click="handleDetail(item.id, item.auditStatus === 'approved')">
-          <div class="card-header">
-            <div class="card-title">{{ item.batchId }}</div>
-            <el-tag :type="getStatusTagType(item.batchStatus)" size="small">
-              {{ getStatusName(item.batchStatus) }}
-            </el-tag>
-          </div>
-          <div class="card-body">
-            <div class="card-row">
-              <span class="label">{{ $t('research.c1BreedingBatch.columns.varietyName') }}:</span>
-              <span class="value">{{ item.varietyName }}</span>
             </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.c1BreedingBatch.columns.cropType') }}:</span>
-              <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.c1BreedingBatch.columns.varietyName') }}</span>
+                <span class="value">{{ item.varietyName }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.c1BreedingBatch.columns.cropType') }}</span>
+                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.c1BreedingBatch.columns.startDate') }}</span>
+                <span class="value">{{ item.startDate }}</span>
+              </div>
             </div>
-            <div class="card-row">
-              <span class="label">{{ $t('research.c1BreedingBatch.columns.startDate') }}:</span>
-              <span class="value">{{ item.startDate }}</span>
+            <div class="mobile-card-footer">
+              <template v-if="item.auditStatus !== 'approved'">
+                <el-button text type="primary" @click.stop="handleEdit(item.id)">
+                  {{ $t('common.edit') }}
+                </el-button>
+                <el-button text type="danger" @click.stop="handleDelete(item.id)">
+                  {{ $t('common.delete') }}
+                </el-button>
+              </template>
+              <el-tag v-else type="success" size="small">
+                {{ $t('research.c1BreedingBatch.auditApproved') }}
+              </el-tag>
             </div>
           </div>
-          <div class="card-footer">
-            <template v-if="item.auditStatus !== 'approved'">
-              <el-button text type="primary" @click.stop="handleEdit(item.id)">{{ $t('common.edit') }}</el-button>
-              <el-button text type="danger" @click.stop="handleDelete(item.id)">{{ $t('common.delete') }}</el-button>
-            </template>
-            <el-tag v-else type="success" size="small">{{ $t('research.c1BreedingBatch.auditApproved') }}</el-tag>
+
+          <div v-if="tableData.length === 0 && !loading" class="empty-state">
+            <i class="ri-inbox-line"></i>
+            <p>{{ $t('common.noData') }}</p>
+          </div>
+
+          <div class="pagination-wrapper">
+            <el-pagination v-model:current-page="queryData.pageNum" :total="total" :page-size="queryData.pageSize"
+              layout="prev, pager, next" small @current-change="handleSearch" />
           </div>
         </div>
       </div>
@@ -181,6 +158,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getC1BreedingBatchList, deleteC1BreedingBatch } from '@/api/c1BreedingBatch'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -199,14 +178,6 @@ const queryData = ref({
   pageNum: 1,
   pageSize: 10
 })
-
-// 繁殖级别映射
-const breedingLevelMap = computed(() => ({
-  '01': t('research.c1BreedingBatch.breedingLevel.parentPrep'),
-  '02': t('research.c1BreedingBatch.breedingLevel.original'),
-  '03': t('research.c1BreedingBatch.breedingLevel.foundation'),
-  '04': t('research.c1BreedingBatch.breedingLevel.certified')
-}))
 
 // 状态映射
 const statusMap = computed(() => ({
@@ -292,9 +263,19 @@ const handleDelete = (id) => {
   }).catch(() => {})
 }
 
-// 获取繁殖级别名称
-const getBreedingLevelName = (level) => {
-  return breedingLevelMap.value[level] || level
+// 操作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleDetail(row.id, row.auditStatus === 'approved')
+      break
+    case 'edit':
+      handleEdit(row.id)
+      break
+    case 'delete':
+      handleDelete(row.id)
+      break
+  }
 }
 
 // 获取状态名称
@@ -311,166 +292,51 @@ const getStatusTagType = (status) => {
   }
   return map[status] || 'info'
 }
+
+// 获取操作按钮配置
+const getActionButtons = (row) => {
+  const buttons = []
+
+  // 查看按钮始终显示
+  buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+
+  // 如果未审核通过,显示编辑和删除按钮
+  if (row.auditStatus !== 'approved') {
+    buttons.push({ type: '', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+    buttons.push({ type: 'danger', action: 'delete', label: 'delete', icon: 'ri-delete-bin-line' })
+  }
+
+  return buttons
+}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.content-wrapper {
-  .search-bar {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    .search-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
-
-      @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-      }
-
-      .search-input,
-      .filter-select {
-        width: 100%;
-      }
+.mobile-card-title {
+  display: flex;
+  align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #303133;
+  
+    i {
+      color: #009A44;
+    }
     }
 
-    .action-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-
-      @media (max-width: 768px) {
-        flex-direction: column;
-      }
-
-      .action-left,
-      .action-right {
-        display: flex;
-        gap: 10px;
-
-        @media (max-width: 768px) {
-          width: 100%;
-
-          button {
-            flex: 1;
-          }
-        }
-      }
-    }
-  }
-
-  .table-card {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
-
-  .pagination-wrapper {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .pc-view {
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
-
-  .mobile-view {
-    display: none;
-
-    @media (max-width: 768px) {
-      display: block;
-
-      .empty-state {
-        padding: 60px 20px;
-        text-align: center;
-        color: #909399;
-
-        i {
-          font-size: 48px;
-          margin-bottom: 10px;
-          display: block;
-        }
-      }
-
-      .card {
-        background: white;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px;
-          border-bottom: 1px solid #f0f0f0;
-
-          .card-title {
-            font-weight: bold;
-            color: #333;
-            flex: 1;
-          }
-        }
-
-        .card-body {
-          padding: 15px;
-
-          .card-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f9f9f9;
-            font-size: 14px;
-
-            &:last-child {
-              border-bottom: none;
-            }
-
-            .label {
-              color: #909399;
-              min-width: 100px;
-            }
-
-            .value {
-              color: #333;
-              flex: 1;
-              text-align: right;
-            }
-          }
-        }
-
-        .card-footer {
-          display: flex;
-          justify-content: space-around;
-          padding: 12px;
-          border-top: 1px solid #f0f0f0;
-
-          button {
-            flex: 1;
-            font-size: 12px;
-          }
-        }
-      }
-    }
-  }
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #909399;
 }
 
-:deep(.el-button) {
-  .btn-text {
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 12px;
+    display: block;
 }
 </style>

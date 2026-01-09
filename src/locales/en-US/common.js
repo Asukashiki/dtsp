@@ -98,6 +98,7 @@ export default {
   detail: 'Detail',
   all: 'All',
   currentUser: 'Current User',
+  basicInfo: 'Basic Information',
   systemInfo: 'System Information',
   // Error Messages
   error: {
@@ -128,5 +129,6 @@ export default {
   // Tab labels
   aggregationResults: 'Aggregation Results',
   farmerDemands: 'Farmer Demands',
-  noPermissionDesc: 'You do not have permission to access this page or perform this action'
+  noPermissionDesc: 'You do not have permission to access this page or perform this action',
+  dateRange: 'Date Range'
 }

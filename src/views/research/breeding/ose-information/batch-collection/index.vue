@@ -1,195 +1,177 @@
 <template>
-  <div class="batch-collection-container">
-    <div class="page-header">
-      <div class="header-left">
-        <div class="header-icon">
-          <i class="ri-bar-chart-line"></i>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-bar-chart-line"
+        :title="$t('batchCollection.title')"
+        :subtitle="$t('batchCollection.subtitle')" />
+
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="loadData" @reset="handleReset">
+            <SearchItem :label="$t('batchCollection.searchPlaceholder')">
+              <el-input
+                v-model="searchQuery"
+                :placeholder="$t('batchCollection.searchPlaceholder')"
+                clearable
+                @keyup.enter="loadData">
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('common.dateRange')">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
+                style="width: 100%"
+                clearable
+                @change="loadData"
+              />
+            </SearchItem>
+          </SearchForm>
         </div>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('batchCollection.title') }}</h1>
-        <p class="page-subtitle">{{ $t('batchCollection.subtitle') }}</p>
-      </div>
-    </div>
 
-    <div class="content-wrapper">
-      <!-- 列表视图 -->
-      <div class="list-view">
-        <div class="search-bar">
-          <div class="search-row">
-            <el-input
-              v-model="searchQuery"
-              :placeholder="$t('batchCollection.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @clear="loadData"
-              @keyup.enter="loadData"
-            >
-              <template #prefix>
-                <i class="ri-search-line"></i>
-              </template>
-            </el-input>
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('batchCollection.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('batchCollection.add') }}
+            </el-button>
+          </template>
 
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-              range-separator="-"
-              :start-placeholder="$t('common.startDate')"
-              :end-placeholder="$t('common.endDate')"
-              class="date-filter"
-              clearable
-              @change="loadData"
-            />
-          </div>
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+              <el-table-column type="index" width="50" align="center" />
+              <el-table-column
+                prop="breedingBatchId"
+                :label="$t('batchCollection.columns.breedingBatchId')"
+                min-width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="varietyName"
+                :label="$t('batchCollection.columns.varietyName')"
+                min-width="120"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="toMultiplyQuantity"
+                :label="$t('batchCollection.columns.toMultiplyQuantity')"
+                min-width="120"
+                align="right"
+              >
+                <template #default="{ row }">
+                  {{ row.toMultiplyQuantity }} kg
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="collectionDate"
+                :label="$t('batchCollection.columns.collectionDate')"
+                width="160"
+                align="center"
+              />
+              <el-table-column
+                prop="operator"
+                :label="$t('batchCollection.form.operator')"
+                min-width="120"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="createTime"
+                :label="$t('common.createTime')"
+                width="160"
+                align="center"
+              />
+              <el-table-column
+                :label="$t('common.actions')"
+                width="150"
+                fixed="right"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-button link type="primary" @click="handleView(row)">
+                    <i class="ri-eye-line"></i>
+                    {{ $t('common.view') }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
 
-          <div class="action-row">
-            <div class="action-left">
-              <el-button type="primary" @click="loadData">
-                <i class="ri-search-line"></i>
-                <span class="btn-text">{{ $t('common.search') }}</span>
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-restart-line"></i>
-                <span class="btn-text">{{ $t('common.reset') }}</span>
-              </el-button>
+            <!-- 分页 -->
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              />
             </div>
-            <div class="action-right">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                <span class="btn-text">{{ $t('batchCollection.add') }}</span>
-              </el-button>
+          </div>
+
+          <!-- 移动端卡片列表 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-if="filteredList.length === 0 && !loading" class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>{{ $t('common.noData') }}</p>
             </div>
-          </div>
-        </div>
-
-        <!-- PC端表格 -->
-        <div class="table-card pc-view">
-          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
-            <el-table-column type="index" width="50" align="center" />
-            <el-table-column
-              prop="breedingBatchId"
-              :label="$t('batchCollection.columns.breedingBatchId')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="varietyName"
-              :label="$t('batchCollection.columns.varietyName')"
-              min-width="120"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="toMultiplyQuantity"
-              :label="$t('batchCollection.columns.toMultiplyQuantity')"
-              min-width="120"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.toMultiplyQuantity }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="collectionDate"
-              :label="$t('batchCollection.columns.collectionDate')"
-              width="160"
-              align="center"
-            />
-            <el-table-column
-              prop="operator"
-              :label="$t('batchCollection.form.operator')"
-              min-width="120"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="createTime"
-              :label="$t('common.createTime')"
-              width="160"
-              align="center"
-            />
-            <el-table-column
-              :label="$t('batchCollection.columns.actions')"
-              width="150"
-              fixed="right"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-button link type="primary" @click="handleView(row)">
-                  <i class="ri-eye-line"></i>
-                  {{ $t('common.view') }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <div class="pagination-wrapper">
-            <el-pagination
-              v-model:current-page="currentPage"
-              v-model:page-size="pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
-          </div>
-        </div>
-
-        <!-- 移动端卡片 -->
-        <div class="mobile-view" v-loading="loading">
-          <div class="card-list">
-            <div
-              v-for="item in filteredList"
-              :key="item.id"
-              class="result-card"
-              @click="handleView(item)"
-            >
+            <div v-for="item in filteredList" :key="item.id" class="card">
               <div class="card-header">
+                <div class="card-title">{{ item.breedingBatchId }}</div>
                 <el-tag type="success" size="small">{{ item.varietyName }}</el-tag>
               </div>
-              <h3 class="card-title">{{ item.breedingBatchId }}</h3>
-              <div class="card-info">
-                <div class="info-item">
-                  <span class="info-label">{{ $t('batchCollection.columns.varietyName') }}</span>
-                  <span class="info-value">{{ item.varietyName }}</span>
+              <div class="card-body">
+                <div class="card-row">
+                  <span class="label">{{ $t('batchCollection.columns.varietyName') }}:</span>
+                  <span class="value">{{ item.varietyName }}</span>
                 </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('batchCollection.columns.collectionDate') }}</span>
-                  <span class="info-value">{{ item.collectionDate }}</span>
+                <div class="card-row">
+                  <span class="label">{{ $t('batchCollection.columns.toMultiplyQuantity') }}:</span>
+                  <span class="value">{{ item.toMultiplyQuantity }} kg</span>
                 </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('batchCollection.columns.toMultiplyQuantity') }}</span>
-                  <span class="info-value">{{ item.toMultiplyQuantity }} kg</span>
+                <div class="card-row">
+                  <span class="label">{{ $t('batchCollection.columns.collectionDate') }}:</span>
+                  <span class="value">{{ item.collectionDate }}</span>
                 </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('batchCollection.form.operator') }}</span>
-                  <span class="info-value">{{ item.operator }}</span>
+                <div class="card-row">
+                  <span class="label">{{ $t('batchCollection.form.operator') }}:</span>
+                  <span class="value">{{ item.operator }}</span>
                 </div>
               </div>
               <div class="card-footer">
-                <span class="create-time">{{ item.createTime }}</span>
+                <el-button text type="primary" @click="handleView(item)">{{ $t('common.view') }}</el-button>
               </div>
             </div>
-          </div>
 
-          <div v-if="filteredList.length === 0 && !loading" class="empty-state">
-            <i class="ri-inbox-line"></i>
-            <p>{{ $t('home.noData') }}</p>
+            <!-- 移动端分页 -->
+            <div v-if="total > pageSize" class="mobile-pagination">
+              <el-pagination
+                v-model:current-page="currentPage"
+                :total="total"
+                :page-size="pageSize"
+                layout="prev, pager, next"
+                small
+                @current-change="handleCurrentChange"
+              />
+            </div>
           </div>
-
-          <div class="mobile-pagination">
-            <el-pagination
-              v-model:current-page="currentPage"
-              :total="total"
-              :page-size="pageSize"
-              layout="prev, pager, next"
-              small
-              @current-change="handleCurrentChange"
-            />
-          </div>
-        </div>
+        </InfoCard>
       </div>
     </div>
 
+    <!-- 移动端添加按钮 -->
     <div class="mobile-fab" @click="handleAdd">
       <i class="ri-add-line"></i>
     </div>
@@ -202,6 +184,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getOseBatchCollectionList } from '@/api/breeding'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -303,195 +286,16 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.search-bar {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-}
-
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-filter {
-  width: 300px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left {
-  display: flex;
-  gap: 8px;
-}
-
-.table-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mobile-view {
-  display: none;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.result-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.result-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-}
-
-.card-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.info-label {
-  font-size: 12px;
-  color: #909399;
-}
-
-.info-value {
-  font-size: 14px;
-  color: #606266;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.create-time {
-  font-size: 12px;
-  color: #909399;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.mobile-pagination {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
 .mobile-fab {
   display: none;
 }
 
 @media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-    padding: 16px 0;
-  }
-
-  .search-row {
-    flex-direction: column;
-  }
-
-  .date-filter {
-    width: 100%;
-  }
-
-  .action-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .action-left {
-    justify-content: stretch;
-  }
-
-  .action-left .el-button {
-    flex: 1;
-  }
-
-  .action-right {
-    display: none;
-  }
-
-  .pc-view {
-    display: none;
-  }
-
-  .mobile-view {
-    display: block;
-  }
-
   .mobile-fab {
     display: flex;
     position: fixed;
@@ -509,9 +313,10 @@ onMounted(() => {
     cursor: pointer;
     z-index: 50;
     transition: all 0.3s ease;
-  }
-  .mobile-fab:active {
-    transform: scale(0.9);
+
+    &:active {
+      transform: scale(0.9);
+    }
   }
 }
 </style>

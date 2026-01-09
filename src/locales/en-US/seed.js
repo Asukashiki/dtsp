@@ -237,6 +237,7 @@ export default {
   c1BatchAudit: {
     title: 'Seed Multiplication Audit',
     subtitle: 'Review pending multiplication information',
+    list: 'Audit List',
     searchPlaceholder: 'Search batch ID, variety name, organization',
     filterByCrop: 'Filter by crop type',
     noData: 'No pending batches',

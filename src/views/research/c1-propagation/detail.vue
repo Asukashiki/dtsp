@@ -1,162 +1,144 @@
 <template>
-  <div class="detail-container">
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i class="ri-file-info-line"></i>
-          <span>{{ $t('research.c1Propagation.detail') }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.c1Propagation.detail') }}</h1>
+          </div>
         </div>
-        <el-button @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
       </div>
 
-      <div class="card-body">
-        <!-- 状态标签 -->
-        <div class="status-banner" :class="`status-${data.applyStatus}`">
-          <el-tag :type="getStatusType(data.applyStatus)" size="large">
-            {{ $t(`research.c1Propagation.status.${data.applyStatus}`) }}
-          </el-tag>
-        </div>
-
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
         <!-- 机构信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-building-line"></i>
-            {{ $t('research.c1Propagation.form.basicInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-building-line"></i>
+              {{ $t('research.c1Propagation.form.basicInfo') }}
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.applicantOrgType') }}:</span>
-              <span class="value">{{ $t(`research.c1Propagation.orgType.${data.applicantOrgType}`) }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.applicantOrgName') }}:</span>
-              <span class="value">{{ data.applicantOrgName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.applicantOrgId') }}:</span>
-              <span class="value">{{ data.applicantOrgId }}</span>
-            </div>
-            <div class="detail-item" v-if="data.authId">
-              <span class="label">{{ $t('research.c1Propagation.columns.authId') }}:</span>
-              <span class="value">{{ data.authId }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.applicantOrgType')">
+                {{ $t(`research.c1Propagation.orgType.${detailData.applicantOrgType}`) }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.applicantOrgName')">
+                {{ detailData.applicantOrgName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.applicantOrgId')">
+                {{ detailData.applicantOrgId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.columns.authId')" v-if="detailData.authId">
+                {{ detailData.authId }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 繁殖信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('research.c1Propagation.form.propagationInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-plant-line"></i>
+              {{ $t('research.c1Propagation.form.propagationInfo') }}
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.propagationBatchId') }}:</span>
-              <span class="value">{{ data.propagationBatchId }}</span>
-            </div>
-            <div class="detail-item" v-if="data.sourceType">
-              <span class="label">{{ $t('research.c1Propagation.sourceType') }}:</span>
-              <el-tag :type="data.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
-                {{ data.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') : $t('research.c1Propagation.sourceOseBatch') }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.cropType') }}:</span>
-              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.varietyName') }}:</span>
-              <span class="value">{{ data.varietyName }}</span>
-            </div>
-            <!-- <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.varietyCode') }}:</span>
-              <span class="value">{{ data.varietyCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.species') }}:</span>
-              <span class="value">{{ data.species || '-' }}</span>
-            </div> -->
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.applyDate') }}:</span>
-              <span class="value">{{ data.applyDate }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.demandQuantity') }}:</span>
-              <span class="value">{{ data.demandQuantity || '-' }} kg</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.fromSeedType') }}:</span>
-              <span class="value">{{ data.fromSeedType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.toSeedType') }}:</span>
-              <span class="value">{{ data.toSeedType || '-' }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.c1Propagation.form.applyDescription') }}:</span>
-              <span class="value">{{ data.applyDescription || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.propagationBatchId')">
+                {{ detailData.propagationBatchId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.sourceType')" v-if="detailData.sourceType">
+                <el-tag :type="detailData.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'" size="small">
+                  {{ detailData.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') :
+                    $t('research.c1Propagation.sourceOseBatch') }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.cropType')">
+                {{ getLabelByValue('crop_type', detailData.cropType) }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.varietyName')">
+                {{ detailData.varietyName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.applyDate')">
+                {{ detailData.applyDate }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.demandQuantity')">
+                {{ detailData.demandQuantity || '-' }} kg
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.fromSeedType')">
+                {{ detailData.fromSeedType || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.toSeedType')">
+                {{ detailData.toSeedType || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.applyDescription')" :span="2">
+                {{ detailData.applyDescription || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
-        <!-- 审核信息（如果已审核） -->
-        <div class="detail-section" v-if="data.applyStatus !== 'pending'">
-          <div class="section-title">
-            <i class="ri-checkbox-circle-line"></i>
-            {{ $t('research.c1Propagation.form.auditInfo') }}
+        <!-- 审核信息(如果已审核) -->
+        <div class="info-card" v-if="detailData.applyStatus !== 'pending'">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-checkbox-circle-line"></i>
+              {{ $t('research.c1Propagation.form.auditInfo') }}
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.auditResult') }}:</span>
-              <el-tag :type="data.auditResult === 'approved' ? 'success' : 'danger'">
-                {{ $t(`research.c1Propagation.auditResult.${data.auditResult}`) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.auditor') }}:</span>
-              <span class="value">{{ data.auditor || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.auditOrg') }}:</span>
-              <span class="value">{{ data.auditOrg || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.auditTime') }}:</span>
-              <span class="value">{{ data.auditTime || '-' }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.c1Propagation.form.auditOpinion') }}:</span>
-              <span class="value">{{ data.auditOpinion || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.auditResult')">
+                <el-tag :type="detailData.auditResult === 'approved' ? 'success' : 'danger'">
+                  {{ $t(`research.c1Propagation.auditResult.${detailData.auditResult}`) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.auditor')">
+                {{ detailData.auditor || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.auditOrg')">
+                {{ detailData.auditOrg || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.auditTime')">
+                {{ detailData.auditTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.auditOpinion')" :span="2">
+                {{ detailData.auditOpinion || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 操作人信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('research.c1Propagation.form.operatorInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-user-line"></i>
+              {{ $t('research.c1Propagation.form.operatorInfo') }}
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.operator') }}:</span>
-              <span class="value">{{ data.operator || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.operationOrg') }}:</span>
-              <span class="value">{{ data.operationOrg || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.operationTime') }}:</span>
-              <span class="value">{{ data.operationTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.c1Propagation.form.createdTime') }}:</span>
-              <span class="value">{{ data.createdTime || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.operator')">
+                {{ detailData.operator || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.operationOrg')">
+                {{ detailData.operationOrg || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.operationTime')">
+                {{ detailData.operationTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.c1Propagation.form.createdTime')">
+                {{ detailData.createdTime || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
       </div>
@@ -165,20 +147,23 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
+import { getC1PropagationById } from '@/api/c1Propagation'
 import { useDict } from '@/hooks/useDict'
 
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true
-  }
-})
-
-const emit = defineEmits(['back'])
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+
+// 数据状态
+const loading = ref(false)
+const detailData = ref({})
 
 // 获取状态类型
 const getStatusType = (status) => {
@@ -190,122 +175,33 @@ const getStatusType = (status) => {
   return types[status] || 'info'
 }
 
-const handleBack = () => {
-  emit('back')
-}
-</script>
-
-<style scoped>
-.detail-container {
-  padding: 20px 0;
-}
-
-.info-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.card-title i {
-  font-size: 20px;
-}
-
-.card-body {
-  padding: 30px 24px;
-}
-
-.status-banner {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  background: #f5f5f5;
-}
-
-.status-banner.status-pending {
-  background: linear-gradient(135deg, rgba(230, 162, 60, 0.1) 0%, rgba(230, 162, 60, 0.05) 100%);
-}
-
-.status-banner.status-approved {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.1) 0%, rgba(0, 154, 68, 0.05) 100%);
-}
-
-.status-banner.status-rejected {
-  background: linear-gradient(135deg, rgba(245, 108, 108, 0.1) 0%, rgba(245, 108, 108, 0.05) 100%);
-}
-
-.detail-section {
-  margin-bottom: 30px;
-}
-
-.detail-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  border-left: 4px solid #009A44;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.detail-item .label {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
-
-.detail-item .value {
-  font-size: 15px;
-  color: #333;
-}
-
-@media screen and (max-width: 768px) {
-  .detail-grid {
-    grid-template-columns: 1fr;
+// 加载详情数据
+const getInfo = async () => {
+  loading.value = true
+  try {
+    const res = await getC1PropagationById(route.params.id)
+    if (res.code === 200 && res.data) {
+      detailData.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load data:', error)
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    loading.value = false
   }
 }
+
+// 返回
+const goBack = () => {
+  router.back()
+}
+
+// 初始化
+onMounted(() => {
+  getInfo()
+})
+</script>
+
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
 </style>
