@@ -190,7 +190,7 @@ export default {
       title: 'Seed Production Data',
       subtitle: 'Record Seed production data to ensure seed propagation process is traceable',
       list: 'Production Data List',
-      add: 'Add Production Data',
+      add: 'Add',
       detail: 'Production Data Details',
       delete: 'Delete Production Data',
       deleteConfirm: 'Are you sure to delete this production data?',

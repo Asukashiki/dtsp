@@ -4,9 +4,9 @@
       <!-- 页面头部 -->
       <div class="page-header">
         <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-edit-box-line"></i>
-          </div>
+          <el-button class="back-btn" @click="handleCancel">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ isEdit ? $t('farmerDemand.edit') : $t('farmerDemand.add') }}</h1>
             <p class="page-subtitle">{{ $t('farmerDemand.subtitle') }}</p>
@@ -21,229 +21,231 @@
             :model="formData"
             :rules="rules"
             :label-width="labelWidth"
-            class="demand-form"
         >
           <!-- 农民信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-user-line"></i>
-              {{ $t('farmerDemand.form.farmerInfo') }}
+          <InfoCard
+            :title="$t('farmerDemand.form.farmerInfo')"
+            icon="ri-user-line"
+          >
+            <div class="card-body">
+              <!-- 农民姓名 + 年份 一行两列 -->
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.farmerName')" prop="farmerName">
+                    <el-select
+                        v-model="selectedFarmer"
+                        :placeholder="$t('farmerDemand.placeholder.farmerName')"
+                        filterable
+                        remote
+                        :remote-method="handleSearchFarmer"
+                        :loading="farmerLoading"
+                        @change="handleSelectFarmer"
+                        style="width: 100%"
+                        value-key="farmerId"
+                        clearable
+                    >
+                      <el-option
+                          v-for="farmer in farmerList"
+                          :key="farmer.farmerId"
+                          :label="farmer.farmerName"
+                          :value="farmer"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <!-- 年份列：使用年份选择器 -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
+                    <el-date-picker
+                        v-model="formData.year"
+                        type="year"
+                        format="YYYY"
+                        value-format="YYYY"
+                        :placeholder="$t('farmerDemand.placeholder.year')"
+                        style="width: 100%"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.farmerIdNumber')" prop="farmerIdNumber">
+                    <el-input v-model="formData.farmerIdNumber" :placeholder="$t('farmerDemand.placeholder.farmerIdNumber')" disabled></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.landArea')" prop="landArea">
+                    <el-input-number v-model="formData.landArea" :min="0" :precision="2" style="width: 100%" disabled></el-input-number>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.zone')" prop="zoneName">
+                    <el-input v-model="formData.zoneName" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woredaName">
+                    <el-input v-model="formData.woredaName" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebeleName">
+                    <el-input v-model="formData.kebeleName" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
-            <!-- 农民姓名 + 年份 一行两列 -->
-            <el-row :gutter="20">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.farmerName')" prop="farmerName">
-                  <el-select
-                      v-model="selectedFarmer"
-                      :placeholder="$t('farmerDemand.placeholder.farmerName')"
-                      filterable
-                      remote
-                      :remote-method="handleSearchFarmer"
-                      :loading="farmerLoading"
-                      @change="handleSelectFarmer"
-                      style="width: 100%"
-                      value-key="farmerId"
-                      clearable
-                  >
-                    <el-option
-                        v-for="farmer in farmerList"
-                        :key="farmer.farmerId"
-                        :label="farmer.farmerName"
-                        :value="farmer"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <!-- 年份列：使用年份选择器 -->
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
-                  <el-date-picker
-                      v-model="formData.year"
-                      type="year"
-                      format="YYYY"
-                      value-format="YYYY"
-                      :placeholder="$t('farmerDemand.placeholder.year')"
-                      style="width: 100%"
-                  ></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.farmerIdNumber')" prop="farmerIdNumber">
-                  <el-input v-model="formData.farmerIdNumber" :placeholder="$t('farmerDemand.placeholder.farmerIdNumber')" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.landArea')" prop="landArea">
-                  <el-input-number v-model="formData.landArea" :min="0" :precision="2" style="width: 100%" disabled></el-input-number>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.zone')" prop="zoneName">
-                  <el-input v-model="formData.zoneName" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woredaName">
-                  <el-input v-model="formData.woredaName" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebeleName">
-                  <el-input v-model="formData.kebeleName" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
+          </InfoCard>
 
           <!-- 投入品明细 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-list-check"></i>
-              {{ $t('farmerDemand.form.itemsInfo') }}
+          <InfoCard
+            :title="$t('farmerDemand.form.itemsInfo')"
+            icon="ri-list-check"
+          >
+            <template #actions>
               <el-button type="primary" size="small" @click="handleAddItem">
                 <i class="ri-add-line"></i>
                 {{ $t('farmerDemand.form.addItem') }}
               </el-button>
-            </div>
+            </template>
+            
+            <div class="card-body">
+              <!-- 显示季节耕地面积汇总和警告 -->
+              <div v-if="formData.inputItems.length > 0 && formData.landArea" class="crop-land-summary-wrapper">
+                <div class="summary-header">
+                  <span class="summary-label">{{ $t('farmerDemand.realtime.totalLandArea') }}:</span>
+                  <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
+                </div>
 
-            <!-- 显示季节耕地面积汇总和警告 -->
-            <div v-if="formData.inputItems.length > 0 && formData.landArea" class="crop-land-summary-wrapper">
-              <div class="summary-header">
-                <span class="summary-label">{{ $t('farmerDemand.realtime.totalLandArea') }}:</span>
-                <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
-              </div>
+                <!-- 按混合规则显示耕地面积汇总：种子按大类，化肥按小类 -->
+                <div v-if="Object.keys(mixedSummaries).length > 0" class="season-summaries-list">
+                  <div v-for="(data, key) in mixedSummaries" :key="key"
+                       class="season-summary-item"
+                       :class="{ 'exceeded': data.sum > formData.landArea }">
+                    <span class="season-name">{{ getSeasonName(data.season) }} - {{ data.displayName }}</span>
+                    <span class="season-sum">{{ data.sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
+                    <i v-if="data.sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
+                  </div>
+                </div>
 
-              <!-- 按混合规则显示耕地面积汇总：种子按大类，化肥按小类 -->
-              <div v-if="Object.keys(mixedSummaries).length > 0" class="season-summaries-list">
-                <div v-for="(data, key) in mixedSummaries" :key="key"
-                     class="season-summary-item"
-                     :class="{ 'exceeded': data.sum > formData.landArea }">
-                  <span class="season-name">{{ getSeasonName(data.season) }} - {{ data.displayName }}</span>
-                  <span class="season-sum">{{ data.sum.toFixed(2) }} {{ $t('farmerDemand.realtime.hectares') }}</span>
-                  <i v-if="data.sum > formData.landArea" class="ri-error-warning-line warning-icon"></i>
+                <!-- 超出警告（汇总显示） -->
+                <div v-if="isSeasonCropLandExceeded" class="error-message">
+                  <i class="ri-error-warning-line"></i>
+                  <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ isSeasonCropLandExceeded.displayName }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
                 </div>
               </div>
 
-              <!-- 超出警告（汇总显示） -->
-              <div v-if="isSeasonCropLandExceeded" class="error-message">
-                <i class="ri-error-warning-line"></i>
-                <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ isSeasonCropLandExceeded.displayName }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
+              <div v-if="formData.inputItems.length === 0" class="no-items">
+                <el-empty :description="$t('farmerDemand.form.noItems')"></el-empty>
               </div>
-            </div>
+              <div v-else class="items-list">
+                <div v-for="(item, index) in formData.inputItems" :key="index" class="item-card">
+                  <div class="item-header">
+                    <span class="item-index">{{ index + 1 }}</span>
+                    <el-button link type="danger" @click="handleRemoveItem(index)">
+                      <i class="ri-delete-bin-line"></i>
+                      {{ $t('farmerDemand.form.removeItem') }}
+                    </el-button>
+                  </div>
+                  <!-- 投入品大类：级联选择器 -->
+                  <el-row :gutter="20" style="margin-bottom: 16px;">
+                    <el-col :xs="24">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.inputCategory')"
+                          :prop="`inputItems.${index}.cascadeValue`"
+                          :rules="rules.cascadeValue"
+                      >
+                        <div v-loading="dictLoading">
+                          <el-cascader
+                              v-model="item.cascadeValue"
+                              :options="cascaderOptions"
+                              :placeholder="$t('farmerDemand.placeholder.inputCategory')"
+                              style="width: 100%"
+                              :props="{
+                              expandTrigger: 'click',
+                              label: 'label',
+                              value: 'value',
+                              checkStrictly: false,
+                              emitPath: true
+                            }"
+                              @change="(val) => handleCascaderChange(val, index)"
+                          ></el-cascader>
+                        </div>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
 
-            <div v-if="formData.inputItems.length === 0" class="no-items">
-              <el-empty :description="$t('farmerDemand.form.noItems')"></el-empty>
-            </div>
-            <div v-else class="items-list">
-              <div v-for="(item, index) in formData.inputItems" :key="index" class="item-card">
-                <div class="item-header">
-                  <span class="item-index">{{ index + 1 }}</span>
-                  <el-button link type="danger" @click="handleRemoveItem(index)">
-                    <i class="ri-delete-bin-line"></i>
-                    {{ $t('farmerDemand.form.removeItem') }}
-                  </el-button>
-                </div>
-                <!-- 投入品大类：级联选择器 -->
-                <el-row :gutter="20" style="margin-bottom: 16px;">
-                  <el-col :xs="24">
-                    <el-form-item
-                        :label="$t('farmerDemand.form.inputCategory')"
-                        :prop="`inputItems.${index}.cascadeValue`"
-                        :rules="rules.cascadeValue"
-                    >
-                      <div v-loading="dictLoading">
-                        <el-cascader
-                            v-model="item.cascadeValue"
-                            :options="cascaderOptions"
-                            :placeholder="$t('farmerDemand.placeholder.inputCategory')"
+                  <!-- 季节 + 耕地面积 -->
+                  <el-row :gutter="20" style="margin-bottom: 16px;">
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.season')"
+                          :prop="`inputItems.${index}.season`"
+                          :rules="rules.season"
+                      >
+                        <el-select v-model="item.season" :placeholder="$t('farmerDemand.placeholder.season')" style="width: 100%">
+                          <el-option
+                              v-for="seasonItem in options.agri_season"
+                              :key="seasonItem.value"
+                              :label="seasonItem.label"
+                              :value="seasonItem.value"
+                          ></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.cropLand')"
+                          :prop="`inputItems.${index}.cropLand`"
+                          :rules="rules.cropLand"
+                      >
+                        <el-input-number
+                            v-model="item.cropLand"
+                            :min="0"
+                            :precision="2"
                             style="width: 100%"
-                            :props="{
-                            expandTrigger: 'click',
-                            label: 'label',
-                            value: 'value',
-                            checkStrictly: false,
-                            emitPath: true
-                          }"
-                            @change="(val) => handleCascaderChange(val, index)"
-                        ></el-cascader>
-                      </div>
-                    </el-form-item>
-                  </el-col>
+                            :placeholder="$t('farmerDemand.placeholder.cropLand')"
+                        ></el-input-number>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
 
-                </el-row>
-
-                <!-- 季节 + 耕地面积 -->
-                <el-row :gutter="20" style="margin-bottom: 16px;">
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                        :label="$t('farmerDemand.form.season')"
-                        :prop="`inputItems.${index}.season`"
-                        :rules="rules.season"
-                    >
-                      <el-select v-model="item.season" :placeholder="$t('farmerDemand.placeholder.season')" style="width: 100%">
-                        <el-option
-                            v-for="seasonItem in options.agri_season"
-                            :key="seasonItem.value"
-                            :label="seasonItem.label"
-                            :value="seasonItem.value"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                        :label="$t('farmerDemand.form.cropLand')"
-                        :prop="`inputItems.${index}.cropLand`"
-                        :rules="rules.cropLand"
-                    >
-                      <el-input-number
-                          v-model="item.cropLand"
-                          :min="0"
-                          :precision="2"
-                          style="width: 100%"
-                          :placeholder="$t('farmerDemand.placeholder.cropLand')"
-                      ></el-input-number>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-
-                <!-- 单位 + 数量 -->
-                <el-row :gutter="20">
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                        :label="$t('farmerDemand.form.unit')"
-                        :prop="`inputItems.${index}.unit`"
-                        :rules="rules.unit"
-                    >
-                      <el-select v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" style="width: 100%">
-                        <el-option
-                            v-for="unitItem in options.agri_unit"
-                            :key="unitItem.value"
-                            :label="unitItem.label"
-                            :value="unitItem.value"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item
-                        :label="$t('farmerDemand.form.quantity')"
-                        :prop="`inputItems.${index}.quantity`"
-                        :rules="rules.quantity"
-                    >
-                      <el-input-number v-model="item.quantity" :min="0" :precision="2" style="width: 100%"></el-input-number>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
+                  <!-- 单位 + 数量 -->
+                  <el-row :gutter="20">
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.unit')"
+                          :prop="`inputItems.${index}.unit`"
+                          :rules="rules.unit"
+                      >
+                        <el-select v-model="item.unit" :placeholder="$t('farmerDemand.placeholder.unit')" style="width: 100%">
+                          <el-option
+                              v-for="unitItem in options.agri_unit"
+                              :key="unitItem.value"
+                              :label="unitItem.label"
+                              :value="unitItem.value"
+                          ></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.quantity')"
+                          :prop="`inputItems.${index}.quantity`"
+                          :rules="rules.quantity"
+                      >
+                        <el-input-number v-model="item.quantity" :min="0" :precision="2" style="width: 100%"></el-input-number>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </div>
               </div>
             </div>
-          </div>
+          </InfoCard>
 
           <!-- 操作按钮 -->
           <div class="form-actions">
@@ -266,6 +268,7 @@ import { ElMessage } from 'element-plus'
 import { addFarmerDemand, updateFarmerDemand, getFarmerDemandDetail } from '@/api/farmerDemand'
 import { getFarmerList, getFarmerDetail } from '@/api/newFarm'
 import { useDict, clearDictCache } from '@/hooks/useDict'
+import { InfoCard } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
@@ -749,109 +752,31 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+
+// 自定义样式
+:deep(.el-cascader .el-input__inner) {
+  padding: 0 15px;
 }
 
-.page-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.demand-form {
-  max-width: 100%;
-}
-
-.form-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e8f5e9;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 22px;
-}
-
-/* 耕地面积汇总提示 - 新版 */
+// 耕地面积汇总提示 - 新版
 .crop-land-summary-wrapper {
-  margin-bottom: 16px;
-  padding: 14px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-color-page);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
 }
 
 .summary-header {
-  padding: 10px 12px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 30%, #FEDD00 100%);
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--el-color-primary) 0%, #00b350 30%, #FEDD00 100%);
   border-radius: 6px;
   color: white;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -871,14 +796,14 @@ onMounted(async () => {
 .season-summaries-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .season-summary-item {
-  padding: 10px 12px;
+  padding: 12px 16px;
   background: white;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   display: flex;
@@ -889,68 +814,58 @@ onMounted(async () => {
 }
 
 .season-summary-item:hover {
-  border-color: #009A44;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  border-color: var(--el-color-primary);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .season-summary-item.exceeded {
-  background: #fef2f2;
-  border-color: #dc2626;
-  border-width: 2px;
+  background: var(--el-color-danger-light-9);
+  border-color: var(--el-color-danger);
+  border-width: 1px;
 }
 
 .season-name {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-color-primary);
   flex-shrink: 0;
 }
 
 .season-sum {
   font-weight: 600;
-  color: #009A44;
+  color: var(--el-color-primary);
   margin-left: auto;
 }
 
 .warning-icon {
-  color: #dc2626;
+  color: var(--el-color-danger);
   font-size: 18px;
   flex-shrink: 0;
 }
 
 .error-message {
-  padding: 10px 12px;
-  background: #fee;
-  border: 1px solid #fcc;
+  padding: 12px 16px;
+  background: var(--el-color-danger-light-9);
+  border: 1px solid var(--el-color-danger-light-7);
   border-radius: 6px;
-  color: #dc2626;
+  color: var(--el-color-danger);
   font-weight: 600;
   font-size: 13px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .error-message i {
   font-size: 16px;
 }
 
-.no-items {
-  text-align: center;
-  padding: 40px 0;
-}
-
-.items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .item-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
-  background: #fafafa;
+  background: var(--bg-color-overlay);
+  margin-bottom: 16px;
 }
 
 .item-header {
@@ -959,95 +874,20 @@ onMounted(async () => {
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .item-index {
   font-size: 16px;
   font-weight: 600;
-  color: #009A44;
+  color: var(--el-color-primary);
 }
 
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e8f5e9;
-}
-
-:deep(.el-cascader .el-input__inner) {
-  padding: 0 15px;
-}
-
-/* 移动端适配 */
+// 移动端适配
 @media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .content-wrapper {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .item-card {
-    padding: 16px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 14px !important;
-  }
-
-  :deep(.el-input__inner), :deep(.el-input-number__input) {
-    font-size: 14px !important;
-    padding: 8px 15px !important;
-  }
-
   .crop-land-summary-wrapper {
-    padding: 10px;
-    margin-bottom: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
   }
-
-  .summary-header {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-
-  .summary-header .summary-value {
-    font-size: 14px;
-  }
-
-  .season-summary-item {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-
-  .season-name,
-  .season-sum {
-    font-size: 13px;
-  }
-
-  .error-message {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-
 }
 </style>

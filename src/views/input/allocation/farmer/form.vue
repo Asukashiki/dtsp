@@ -1,97 +1,140 @@
 <template>
-  <div class="farmer-allocation-form-container">
-    <el-page-header @back="handleBack" :title="$t('common.back')">
-      <template #content>
-        <span>{{ isEdit ? $t('allocation.editFarmerAllocation') : $t('allocation.addFarmerAllocation') }}</span>
-      </template>
-    </el-page-header>
-
-    <el-card v-loading="loading" class="form-card">
-      <el-form :model="formData" :rules="rules" ref="formRef" label-width="150px">
-        <!-- Basic Information -->
-        <h3>{{ $t('allocation.basicInfo') }}</h3>
-        <el-form-item :label="$t('allocation.allocationName')" prop="allocationName">
-          <el-input v-model="formData.allocationName" :placeholder="$t('common.pleaseInput')" />
-        </el-form-item>
-        <el-form-item :label="$t('allocation.year')" prop="year">
-          <el-date-picker 
-            v-model="formData.year" 
-            type="year" 
-            value-format="YYYY" 
-            @change="handleYearOrFarmerChange" />
-        </el-form-item>
-        <el-form-item :label="$t('allocation.farmer')" prop="zone">
-  <el-select 
-    v-model="formData.zone" 
-    :placeholder="$t('common.pleaseSelect')" 
-    @change="handleFarmerChange">
-    <el-option 
-      v-for="item in farmerOptions" 
-      :key="item.code" 
-      :label="item.name" 
-      :value="item.code" />
-  </el-select>
-</el-form-item>
-
-        <!-- Demand Section (根据Year和zone带出，不可编辑) -->
-        <h3>{{ $t('allocation.demand') }}</h3>
-        <el-table
-          :data="demandList"
-          border
-          style="margin-top: 16px; margin-bottom: 24px;"
-          :header-cell-style="{ textAlign: 'center' }"
-          :cell-style="{ textAlign: 'center' }"
-          v-loading="demandLoading">
-          <el-table-column :label="$t('allocation.inputType')" prop="inputType" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_type', row.inputType) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('allocation.inputCategory')" prop="inputCategory" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_category', row.inputCategory) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('allocation.totalQuantity')" prop="totalQuantity" min-width="120" />
-        </el-table>
-
-        <!-- Quota Section (根据Demand数据一样，Input Type和Input Category不可编辑，Total Quantity可以编辑) -->
-        <h3>{{ $t('allocation.quota') }}</h3>
-        <el-table
-          :data="quotaList"
-          border
-          style="margin-top: 16px; margin-bottom: 24px;"
-          :header-cell-style="{ textAlign: 'center' }"
-          :cell-style="{ textAlign: 'center' }"
-          v-loading="demandLoading">
-          <el-table-column :label="$t('allocation.inputType')" prop="inputType" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_type', row.inputType) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('allocation.inputCategory')" prop="inputCategory" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_category', row.inputCategory) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('allocation.totalQuantity')" min-width="150">
-            <template #default="{ row }">
-              <el-input-number 
-                v-model="row.totalQuantity" 
-                :min="0" 
-                :precision="2"
-                controls-position="right"
-                style="width: 120px" />
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div style="margin-top: 24px; text-align: center">
-          <el-button type="primary" @click="handleSubmit">{{ $t('common.save') }}</el-button>
-          <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('allocation.editFarmerAllocation') : $t('allocation.addFarmerAllocation') }}</h1>
+          </div>
         </div>
-      </el-form>
-    </el-card>
+      </div>
+
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('allocation.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('allocation.allocationName')" prop="allocationName">
+                    <el-input v-model="formData.allocationName" :placeholder="$t('common.pleaseInput')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('allocation.year')" prop="year">
+                    <el-date-picker 
+                      v-model="formData.year" 
+                      type="year" 
+                      value-format="YYYY" 
+                      style="width: 100%"
+                      @change="handleYearOrFarmerChange" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('allocation.farmer')" prop="zone">
+                    <el-select 
+                      v-model="formData.zone" 
+                      :placeholder="$t('common.pleaseSelect')" 
+                      style="width: 100%"
+                      @change="handleFarmerChange">
+                      <el-option 
+                        v-for="item in farmerOptions" 
+                        :key="item.code" 
+                        :label="item.name" 
+                        :value="item.code" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 需求区域 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-survey-line"></i>
+                <span>{{ $t('allocation.demand') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table
+                :data="demandList"
+                border
+                stripe
+                v-loading="demandLoading">
+                <el-table-column :label="$t('allocation.inputType')" prop="inputType" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_type', row.inputType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('allocation.inputCategory')" prop="inputCategory" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('allocation.totalQuantity')" prop="totalQuantity" min-width="120" />
+              </el-table>
+            </div>
+          </div>
+
+          <!-- 配额区域 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-pie-chart-line"></i>
+                <span>{{ $t('allocation.quota') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table
+                :data="quotaList"
+                border
+                stripe
+                v-loading="demandLoading">
+                <el-table-column :label="$t('allocation.inputType')" prop="inputType" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_type', row.inputType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('allocation.inputCategory')" prop="inputCategory" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('allocation.totalQuantity')" min-width="150">
+                  <template #default="{ row }">
+                    <el-input-number 
+                      v-model="row.totalQuantity" 
+                      :min="0" 
+                      :precision="2"
+                      controls-position="right"
+                      style="width: 100%" />
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+
+          <!-- 操作按钮汇总 -->
+          <div class="form-actions">
+            <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="loading">{{ $t('common.save') }}</el-button>
+          </div>
+        </el-form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -105,7 +148,7 @@ import { getAllFarmerList } from '@/api/newFarm'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store/user'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -124,8 +167,8 @@ const formData = reactive({
   allocationName: '',
   year: new Date().getFullYear().toString(),
   zone: '',
-  zoneName: '', // 添加zoneName字段
-  level: 3 // 添加level字段，3表示farmer级别
+  zoneName: '',
+  level: 3
 })
 
 const demandList = ref([]) // 需求列表（不可编辑）
@@ -144,7 +187,6 @@ const getFarmerOptions = async () => {
   try {
     const response = await getAllFarmerList()
     if (response.code === 200) {
-      // 将返回的list映射为farmerOptions需要的格式
       farmerOptions.value = response.data.map(item => ({
         code: item.farmerId,
         name: item.farmerName
@@ -159,16 +201,13 @@ const getFarmerOptions = async () => {
 
 // 处理农民选择变化
 const handleFarmerChange = (value) => {
-  // 查找选中的农民对象
   const selectedFarmer = farmerOptions.value.find(item => item.code === value)
   if (selectedFarmer) {
-    // 保存农民的name
     formData.zoneName = selectedFarmer.name
   } else {
     formData.zoneName = ''
   }
   
-  // 调用加载需求数据的函数
   handleYearOrFarmerChange()
 }
 
@@ -182,20 +221,17 @@ const handleYearOrFarmerChange = async () => {
   
   demandLoading.value = true
   try {
-    // 调用API获取农民需求数据
     const response = await getFarmerDemandByFarmerId(formData.zone, {
       year: formData.year
     })
     
     if (response.code === 200 && response.data) {
-      // 将返回的数据映射为需求列表需要的格式
       demandList.value = response.data.map(item => ({
         inputType: item.inputType,
         inputCategory: item.inputCategory,
         totalQuantity: item.totalQuantity
       }))
       
-      // 初始化配额列表为需求列表的数据
       quotaList.value = demandList.value.map(item => ({
         ...item
       }))
@@ -220,8 +256,6 @@ const fetchDetail = async () => {
     const response = await getFarmerAllocationDetail(route.params.id)
     if (response.code === 200 && response.data) {
       Object.assign(formData, response.data.main)
-      
-      // 设置需求列表和配额列表
       demandList.value = response.data.demandList || []
       quotaList.value = response.data.quotaList || []
     }
@@ -237,13 +271,10 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (!valid) return
     
-    // 校验配额数量不能超过需求数量
     const isValid = validateQuotaVsDemand()
     if (!isValid) return
     
     loading.value = true
-    
-    // 准备提交数据
     const submitData = {
       ...formData,
       demandList: demandList.value,
@@ -267,27 +298,22 @@ const handleSubmit = async () => {
   })
 }
 
-// 校验配额数量不能超过需求数量
 const validateQuotaVsDemand = () => {
-  // 确保两个列表长度相同
   if (demandList.value.length !== quotaList.value.length) {
     ElMessage.error(t('allocation.demandAndQuotaMismatch'))
     return false
   }
   
-  // 检查每个配额项的数量是否超过对应的需求项数量
   for (let i = 0; i < demandList.value.length; i++) {
     const demandItem = demandList.value[i]
     const quotaItem = quotaList.value[i]
     
-    // 确保是同一项（通过inputType和inputCategory匹配）
     if (demandItem.inputType !== quotaItem.inputType || 
         demandItem.inputCategory !== quotaItem.inputCategory) {
       ElMessage.error(t('allocation.demandAndQuotaMismatch'))
       return false
     }
     
-    // 检查配额数量是否超过需求数量
     const demandQuantity = parseFloat(demandItem.totalQuantity) || 0
     const quotaQuantity = parseFloat(quotaItem.totalQuantity) || 0
     
@@ -312,11 +338,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.farmer-allocation-form-container {
-  padding: 20px;
-}
-.form-card {
-  margin-top: 20px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

@@ -69,6 +69,7 @@ export default {
   createdTime: 'Created Time',
   updatedBy: 'Updated By',
   updatedTime: 'Updated Time',
+  dateRange: 'Search By date',
   approver: 'Approver',
   approveTime: 'Approve Time',
   auditInfo: 'Audit Information',

@@ -2,229 +2,193 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-database-2-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('villageAggregation.title') }}</h1>
-            <p class="page-subtitle">{{ $t('villageAggregation.subtitle') }}</p>
-          </div>
-        </div>
-<!--        <div class="header-right">-->
-<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
-<!--            <i class="ri-add-line"></i>-->
-<!--            {{ $t('villageAggregation.actions.addYear') }}-->
-<!--          </el-button>-->
-<!--        </div>-->
-      </div>
+      <PageHeader
+        icon="ri-database-2-line"
+        :title="$t('villageAggregation.title')"
+        :subtitle="$t('villageAggregation.subtitle')"
+      />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <!-- PC端表格 -->
-          <div class="table-wrapper pc-only">
-            <el-table
-              v-loading="loading"
-              :data="tableData"
-              stripe
-              empty-text=""
-              :default-sort="{ prop: 'year', order: 'descending' }"
-            >
-              <el-table-column
-                prop="year"
-                :label="$t('villageAggregation.columns.year')"
-                min-width="100"
-              />
-              <!-- <el-table-column
-                prop="sourceCode"
-                :label="$t('villageAggregation.columns.sourceCode')"
-                min-width="140"
-              /> -->
-              <el-table-column
-                prop="sourceName"
-                :label="$t('KebeleName')"
-                min-width="140"
-              />
-              <!-- <el-table-column
-                prop="targetCode"
-                :label="$t('villageAggregation.columns.targetCode')"
-                min-width="140"
-              />
-              <el-table-column
-                prop="targetName"
-                :label="$t('villageAggregation.columns.targetName')"
-                min-width="140"
-              /> -->
-              <el-table-column
-                prop="subQuantity"
-                :label="$t('villageAggregation.columns.subQuantity')"
-                min-width="140"
+        <InfoCard
+          :title="$t('Aggregation List')"
+          icon="ri-list-check"
+          :is-list="true"
+        >
+          <div class="card-body">
+            <!-- PC端表格 -->
+            <div class="table-wrapper pc-only">
+              <el-table
+                v-loading="loading"
+                :data="tableData"
+                stripe
+                empty-text=""
+                :default-sort="{ prop: 'year', order: 'descending' }"
               >
-              </el-table-column>
-              <el-table-column
-                  prop="unsubmitQuantity"
-                  :label="$t('Unsubmit Quantity')"
+                <el-table-column
+                  prop="year"
+                  :label="$t('villageAggregation.columns.year')"
+                  min-width="100"
+                />
+                <el-table-column
+                  prop="sourceName"
+                  :label="$t('KebeleName')"
                   min-width="140"
-              >
-              </el-table-column>
-              <el-table-column
-                  prop="submitQuantity"
-                  :label="$t('Submit Quantity')"
+                />
+                <el-table-column
+                  prop="subQuantity"
+                  :label="$t('villageAggregation.columns.subQuantity')"
                   min-width="140"
-              >
-              </el-table-column>
-              <el-table-column
-                  prop="auditQuantity"
-                  :label="$t('Audit Quantity')"
-                  min-width="140"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="status"
-                :label="$t('villageAggregation.columns.status')"
-                min-width="100"
-              >
-                <template #default="{ row }">
-                  <el-tag v-if="row.status === '0'" type="info">
-                    {{ $t('villageAggregation.status.draft') }}
-                  </el-tag>
-                  <el-tag v-else-if="row.status === '1'" type="warning">
-                    {{ $t('villageAggregation.status.pending') }}
-                  </el-tag>
-                  <el-tag v-else-if="row.status === '2'" type="success">
-                    {{ $t('villageAggregation.status.approved') }}
-                  </el-tag>
-                  <el-tag v-else-if="row.status === '3'" type="danger">
-                    {{ $t('villageAggregation.status.rejected') }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-<!--              <el-table-column-->
-<!--                prop="creator"-->
-<!--                :label="$t('villageAggregation.columns.creator')"-->
-<!--                min-width="120"-->
-<!--            />-->
-              <el-table-column
-                prop="createTime"
-                :label="$t('villageAggregation.columns.createTime')"
-                min-width="160"
-              />
-              <el-table-column
-                :label="$t('villageAggregation.columns.actions')"
-                fixed="right"
-                width="340"
-              >
-                <template #default="{ row }">
-                  <div class="action-buttons">
-                    <el-button link type="primary" @click="handleApprove(row)">
-                      <i class="ri-file-list-3-line"></i>
-                      {{ $t('villageAggregation.actions.approve') }}
-                    </el-button>
-                    <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
-                      <i class="ri-upload-cloud-line"></i>
-                      {{ $t('villageAggregation.actions.submit') }}
-                    </el-button>
-                    <el-button link type="info" @click="handleDetail(row)">
-                      <i class="ri-list-check"></i>
-                      {{ $t('Aggregation detail') }}
-                    </el-button>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="unsubmitQuantity"
+                    :label="$t('Unsubmit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="submitQuantity"
+                    :label="$t('Submit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="auditQuantity"
+                    :label="$t('Audit Quantity')"
+                    min-width="140"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="status"
+                  :label="$t('villageAggregation.columns.status')"
+                  min-width="100"
+                >
+                  <template #default="{ row }">
+                    <el-tag v-if="row.status === '0'" type="info">
+                      {{ $t('villageAggregation.status.draft') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '1'" type="warning">
+                      {{ $t('villageAggregation.status.pending') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '2'" type="success">
+                      {{ $t('villageAggregation.status.approved') }}
+                    </el-tag>
+                    <el-tag v-else-if="row.status === '3'" type="danger">
+                      {{ $t('villageAggregation.status.rejected') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('villageAggregation.columns.createTime')"
+                  min-width="160"
+                />
+                <el-table-column
+                  :label="$t('villageAggregation.columns.actions')"
+                  fixed="right"
+                  width="340"
+                >
+                  <template #default="{ row }">
+                    <div class="action-buttons">
+                      <ActionButtons
+                        :custom-buttons="getCustomButtons(row)"
+                        :workflow-status="row.status"
+                        mode="list"
+                        :show-audit="false"
+                        @action="(action) => handleTableAction(row, action)"
+                      />
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
 
-          <!-- 移动端卡片 -->
-          <div class="mobile-cards mobile-only">
-            <div v-for="item in tableData" :key="item.id" class="mobile-card">
-              <div class="mobile-card-header">
-                <div class="year-badge">
-                  <i class="ri-calendar-line"></i>
-                  <span>{{ item.year }}</span>
-                </div>
-                <el-tag v-if="item.status === '0'" type="info" size="small">
-                  {{ $t('villageAggregation.status.draft') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '1'" type="warning" size="small">
-                  {{ $t('villageAggregation.status.pending') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '2'" type="success" size="small">
-                  {{ $t('villageAggregation.status.approved') }}
-                </el-tag>
-                <el-tag v-else-if="item.status === '3'" type="danger" size="small">
-                  {{ $t('villageAggregation.status.rejected') }}
-                </el-tag>
-              </div>
-              <div class="mobile-card-body">
-                <!-- <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.sourceCode') }}:</span>
-                  <span class="value">{{ item.sourceCode }}</span>
-                </div> -->
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('KebeleName') }}:</span>
-                  <span class="value">{{ item.sourceName }}</span>
-                </div>
-                <!-- <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.targetCode') }}:</span>
-                  <span class="value">{{ item.targetCode }}</span>
-                </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.targetName') }}:</span>
-                  <span class="value">{{ item.targetName }}</span>
-                </div> -->
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
-                  <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
-                </div>
-
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
-                  <span class="value">{{ item.creator }}</span>
-                </div>
-                <div class="mobile-card-row">
-                  <span class="label">{{ $t('villageAggregation.columns.createTime') }}:</span>
-                  <span class="value">{{ item.createTime }}</span>
-                </div>
-              </div>
-              <div class="mobile-card-actions">
-                <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
-                  {{ $t('villageAggregation.actions.approve') }}
-                </el-button>
-                <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
-                  {{ $t('villageAggregation.actions.submit') }}
-                </el-button>
-                <el-button type="info" size="small" @click="handleDetail(item)">
-                  {{ $t('villageAggregation.actions.detail') }}
-                </el-button>
+              <!-- PC pagination -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :total="pagination.total"
+                  :page-sizes="[5, 10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
-          </div>
 
-          <!-- 分页 -->
-          <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
-            <el-pagination
-              :current-page="pagination.currentPage"
-              :page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              :total="pagination.total"
-              layout="total, sizes, prev, pager, next, jumper"
-              background
-              small
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              @update:current-page="pagination.currentPage = $event"
-              @update:page-size="pagination.pageSize = $event"
+            <!-- 移动端卡片 -->
+            <div class="mobile-card-list mobile-only">
+              <div v-for="item in tableData" :key="item.id" class="mobile-card">
+                <div class="mobile-card-header">
+                  <div class="mobile-card-title">
+                    <i class="ri-calendar-line"></i>
+                    <span>{{ item.year }}</span>
+                  </div>
+                  <el-tag v-if="item.status === '0'" type="info" size="small">
+                    {{ $t('villageAggregation.status.draft') }}
+                  </el-tag>
+                  <el-tag v-else-if="item.status === '1'" type="warning" size="small">
+                    {{ $t('villageAggregation.status.pending') }}
+                  </el-tag>
+                  <el-tag v-else-if="item.status === '2'" type="success" size="small">
+                    {{ $t('villageAggregation.status.approved') }}
+                  </el-tag>
+                  <el-tag v-else-if="item.status === '3'" type="danger" size="small">
+                    {{ $t('villageAggregation.status.rejected') }}
+                  </el-tag>
+                </div>
+                <div class="mobile-card-body">
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('KebeleName') }}:</span>
+                    <span class="value">{{ item.sourceName }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('villageAggregation.columns.subQuantity') }}:</span>
+                    <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('villageAggregation.columns.creator') }}:</span>
+                    <span class="value">{{ item.creator }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('villageAggregation.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime }}</span>
+                  </div>
+                </div>
+                <div class="mobile-card-footer">
+                  <ActionButtons
+                    :custom-buttons="getCustomButtons(item)"
+                    :workflow-status="item.status"
+                    mode="list"
+                    :show-audit="false"
+                    @action="(action) => handleTableAction(item, action)"
+                  />
+                </div>
+              </div>
+
+              <!-- Mobile pagination -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[5, 10, 20, 50]"
+                  :total="pagination.total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
+            </div>
+
+            <!-- 空状态 -->
+            <el-empty
+              v-if="tableData.length === 0 && !loading"
+              :description="$t('villageAggregation.messages.noData')"
             />
-          </div> -->
-
-          <!-- 空状态 -->
-          <el-empty
-            v-if="tableData.length === 0 && !loading"
-            :description="$t('villageAggregation.messages.noData')"
-          />
-        </div>
+          </div>
+        </InfoCard>
       </div>
     </div>
 
@@ -291,29 +255,7 @@
           :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
         />
-<!--        <el-table-column-->
-<!--          prop="totalCount"-->
-<!--          :label="$t('villageAggregation.detailDialog.columns.totalCount')"-->
-<!--          min-width="120"-->
-<!--        />-->
       </el-table>
-
-      <!-- 分页 -->
-      <!-- <div v-if="detailPagination.total > 0" class="pagination-wrapper" style="margin-top: 16px;">
-        <el-pagination
-          :current-page="detailPagination.currentPage"
-          :page-size="detailPagination.pageSize"
-          :page-sizes="[10, 20, 50]"
-          :total="detailPagination.total"
-          layout="total, sizes, prev, pager, next"
-          background
-          small
-          @size-change="handleDetailSizeChange"
-          @current-change="handleDetailCurrentChange"
-          @update:current-page="detailPagination.currentPage = $event"
-          @update:page-size="detailPagination.pageSize = $event"
-        />
-      </div> -->
 
       <el-empty
         v-if="detailData.length === 0 && !detailLoading"
@@ -337,6 +279,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { createVillageDemandSummaryMain, getVillageDemandSummaryMainList, aggregateVillageInputDemand, getVillageAggregationDetail, updateVillageDemandSummaryMain } from '@/api/villageAggregation'
 import { getApprovedDemandPage } from '@/api/demandAudit'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 
@@ -350,7 +294,7 @@ const tableData = ref([])
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 9999999,
+  pageSize: 5,
   total: 0
 })
 
@@ -397,26 +341,65 @@ const loadApprovedCountForRow = async (row) => {
   }
 }
 
+// 获取自定义按钮
+const getCustomButtons = (row) => {
+  const buttons = [
+    { 
+      type: 'primary', 
+      action: 'approve', 
+      label: 'villageAggregation.actions.approve', 
+      icon: 'ri-eye-line' 
+    }
+  ]
+  
+  // Submit button logic
+  if (row.status === '0' || row.status === '3') {
+    buttons.push({ 
+      type: 'success', 
+      action: 'submit', 
+      label: 'villageAggregation.actions.submit', 
+      icon: 'ri-upload-cloud-line' 
+    })
+  }
+
+  // Detail button (using rawLabel for unkeyed text if needed, or key)
+  // User code used $t('Aggregation detail'). I'll use rawLabel.
+  buttons.push({ 
+    type: 'primary', 
+    action: 'detail', 
+    rawLabel: t('Aggregation detail'), 
+    icon: 'ri-list-check' 
+  })
+
+  return buttons
+}
+
+// 统一动作处理
+const handleTableAction = (row, action) => {
+  if (action === 'approve') handleApprove(row)
+  else if (action === 'submit') handleSubmit(row)
+  else if (action === 'detail') handleDetail(row)
+}
+
 // 加载列表数据
 const loadData = async () => {
   loading.value = true
   try {
+    console.log('currentPage',pagination.currentPage)
+    console.log('pageSize',pagination.pageSize)
     const params = {
-      page: pagination.currentPage,
+      page: pagination.currentPage, // 修正为 page
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
-      level: 0,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      level: '0',
       orderByColumn: 'year',
       isAsc: 'desc'
-      // sourceCode:'huangshan'
-      // TODO: Add user context filters
-      // sourceCode: 'KB001'
     }
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      tableData.value = res.data.list || []
-      pagination.total = res.data.total || 0
+      tableData.value = res.data?.records || []
+      pagination.total = res.data?.total || 0
 
       // 为每行加载已审批数量
       await Promise.all(tableData.value.map(item => loadApprovedCountForRow(item)))
@@ -567,7 +550,7 @@ const handleDetailCurrentChange = () => {
   loadDetailData()
 }
 
-// 分页变化
+// 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
   loadData()
@@ -583,207 +566,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.info-card {
-  background: white;
-  padding: 24px;
-}
-
-.table-wrapper {
-  margin-bottom: 16px;
-}
-
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.mobile-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.mobile-card-header {
-  padding: 16px;
-  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.year-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  color: #009A44;
-  font-size: 18px;
-}
-
-.mobile-card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 120px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-actions {
-  padding: 12px 16px;
-  background: #fafafa;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .header-right {
-    width: 100%;
-  }
-
-  .header-right .el-button {
-    width: 100%;
-  }
-
-  .info-card {
-    padding: 16px;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
+// 自定义样式可以根据需要添加，大部分已包含在通用样式中
 </style>

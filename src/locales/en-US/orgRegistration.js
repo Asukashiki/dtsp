@@ -2,13 +2,13 @@ export default {
   // 页面标题
   title: 'Multiplier Registration Application',
   subtitle: 'Manage Union and Cooperative registration applications and approvals',
-  
+
   // 列表页
   list: {
     title: 'Registration Application List',
-    searchPlaceholder: 'Search by organization name',
-    filterByStatus: 'Filter by Status',
-    filterByType: 'Filter by Type',
+    searchPlaceholder: 'Organization Name',
+    filterByStatus: 'Status',
+    filterByType: 'Type',
     allStatus: 'All Status',
     allTypes: 'All Types',
     noData: 'No registration applications found'
@@ -76,36 +76,36 @@ export default {
     licenseEnd: 'License Valid To',
     inputTypes: 'Input Types',
     salesAreaCodes: 'Sales Area Codes',
-    
+
     // 位置信息
     locationInfo: 'Location Information',
     regionCode: 'Region',
     fullAddress: 'Full Address',
     gpsLat: 'GPS Latitude',
     gpsLng: 'GPS Longitude',
-    
+
     // 业务信息
     businessInfo: 'Business Information',
     annualCapacity: 'Annual Capacity',
-    
+
     // 证照信息
     certificateInfo: 'Certificate Information',
     businessLicenseUrl: 'Business License Image',
     taxCertUrl: 'Tax Certificate Image',
     otherCertsJson: 'Other Certificates',
-    
+
     // 账号信息
     accountInfo: 'Account Information',
     applyUsername: 'Login Account',
     applyPassword: 'Login Password',
     confirmPassword: 'Confirm Password',
-    
+
     // 联系信息
     contactInfo: 'Contact Information',
     contactName: 'Contact Name',
     contactMobile: 'Contact Mobile',
     contactEmail: 'Contact Email',
-    
+
     // 审核信息
     auditInfo: 'Audit Information',
     auditResult: 'Audit Result',
@@ -137,7 +137,10 @@ export default {
     contactName: 'Enter contact name',
     contactMobile: 'Enter contact mobile',
     contactEmail: 'Enter contact email',
-    auditComment: 'Enter audit comment'
+    auditComment: 'Enter audit comment',
+    orgName: 'Please enter organization name',
+    orgType: 'Please select organization type',
+    status: 'Please select status',
   },
 
   // 验证规则
