@@ -411,11 +411,16 @@ const routes = [
 
       // 实验室测试数据采集审核
       {
-      // 实验室测试数据采集审核
         path: 'breeding-data/laboratory-test-audit',
         name: 'BreedingLabTestAudit',
         component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
         meta: { title: 'router.breedingData.laboratoryTest.audit', requiresAuth: true }
+      },
+      {
+        path: 'breeding-data/laboratory-test-audit/detail/:id',
+        name: 'BreedingLabTestAuditDetail',
+        component: () => import('../views/research/data-collection/laboratory-test-audit/detail.vue'),
+        meta: { title: 'router.breedingData.laboratoryTest.auditDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Breeder seed生产数据采集
@@ -508,6 +513,18 @@ const routes = [
         component: () => import('../views/research/breeding/seed-production-result/index.vue'),
         meta: { title: '生产数据采集详情', requiresAuth: true }
       },
+      {
+        path: 'breeding/seed-production-result/add',
+        name: 'SeedProductionResultAdd',
+        component: () => import('../views/research/breeding/seed-production-result/form.vue'),
+        meta: { title: '新增生产数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/seed-production-result/detail/:id',
+        name: 'SeedProductionResultDetail',
+        component: () => import('../views/research/breeding/seed-production-result/detail.vue'),
+        meta: { title: '生产数据采集详情', requiresAuth: true }
+      },
       // Breeder seed分发数据
       {
         path: 'breeding/seed-distribution',
@@ -522,6 +539,18 @@ const routes = [
         name: 'PrebasicSeedProduction',
         component: () => import('../views/research/breeding/prebasic-seed-production/index.vue'),
         meta: { title: 'Pre-basic Seed生产数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/prebasic-seed-production/add',
+        name: 'PrebasicSeedProductionForm',
+        component: () => import('../views/research/breeding/prebasic-seed-production/form.vue'),
+        meta: { title: '新增原原种生产', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/prebasic-seed-production/detail/:id',
+        name: 'PrebasicSeedProductionDetail',
+        component: () => import('../views/research/breeding/prebasic-seed-production/detail.vue'),
+        meta: { title: '原原种生产详情', hideInMenu: true, requiresAuth: true }
       },
 
       // Pre-basic Seed生产结果数据

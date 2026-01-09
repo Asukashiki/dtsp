@@ -1,215 +1,174 @@
 <template>
-  <div class="laboratory-test-detail-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-        <div class="back-btn" link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </div>
-        <div class="header-content">
-          <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.detail') }}</h1>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-
-
-
-
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基础信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading" v-if="detailData">
+        <!-- 基础信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.trialId') }}:</span>
-              <span class="value">{{ detailData.trialId }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')">
+                {{ detailData.batchId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')">
+                {{ detailData.trialId }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 样本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-test-tube-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleId') }}:</span>
-              <span class="value">{{ detailData.sampleId }}</span>
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-test-tube-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}</span>
             </div>
-            <!-- plotId commented out -->
-
-
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')">
+                {{ detailData.sampleId }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 实验参数信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-flask-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.paramInfo') || '实验参数' }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-flask-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.paramInfo') || '实验参数' }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.sampleType') }}:</span>
-              <span class="value">{{ detailData.sampleType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labParameter') }}:</span>
-              <span class="value">{{ detailData.labParameter || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围' }}:</span>
-              <span class="value">{{ expectedRangeText }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.resultValue') }}:</span>
-              <span class="value">{{ detailData.resultValue || '-' }}</span>
-            </div>
-
-
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.sampleType')">
+                {{ detailData.sampleType || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.labParameter')">
+                {{ detailData.labParameter || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围'">
+                {{ expectedRangeText }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.resultValue')">
+                {{ detailData.resultValue || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')">
+                <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
+                  {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
+                </el-tag>
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 测试数据 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testData') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-bar-chart-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-
-
-
-
-
-
-
-
- 
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.germinationRate') }}:</span>
-              <span class="value highlight">{{ detailData.germinationRate }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.purityPercent') }}:</span>
-              <span class="value">{{ detailData.purityPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.moistureContentPercent') }}:</span>
-              <span class="value">{{ detailData.moistureContentPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.proteinPercent') }}:</span>
-              <span class="value">{{ detailData.proteinPercent }}%</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.toxinLevelPpm') }}:</span>
-              <span class="value">{{ detailData.toxinLevelPpm || '-' }} PPM</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')">
+                <span class="highlight">{{ detailData.germinationRate }}%</span>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')">
+                {{ detailData.purityPercent }}%
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')">
+                {{ detailData.moistureContentPercent }}%
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')">
+                {{ detailData.proteinPercent }}%
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.toxinLevelPpm')">
+                {{ detailData.toxinLevelPpm || '-' }} PPM
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 健康与追溯 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-heart-pulse-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.healthTraceability') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-heart-pulse-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.qualityInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.seedHealthFindings') }}:</span>
-              <span class="value">{{ detailData.seedHealthFindings }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.traceabilityLink') }}:</span>
-              <span class="value">{{ detailData.traceabilityLink }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.labReportFile') }}:</span>
-              <span v-if="detailData.labReportFile" class="value file-link" @click="handlePreviewFile(detailData.labReportFile)">
-                <i class="ri-file-pdf-line"></i>
-                {{ detailData.labReportFileName || $t('research.dataCollection.laboratoryTest.form.labReportFile') }}
-              </span>
-              <span v-else class="value">-</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.seedHealthFindings')" :span="2">
+                {{ detailData.seedHealthFindings || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.traceabilityLink')">
+                {{ detailData.traceabilityLink || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.labReportFile')">
+                <span v-if="detailData.labReportFile" class="file-link" @click="handlePreviewFile(detailData.labReportFile)">
+                  <i class="ri-file-pdf-line"></i>
+                  {{ detailData.labReportFileName || $t('research.dataCollection.laboratoryTest.form.labReportFile') }}
+                </span>
+                <span v-else>-</span>
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 检测信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-calendar-check-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-calendar-check-line"></i>
+              <span>{{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-item">
-            <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testStatus') }}:</span>
-            <span class="value">
-              <el-tag :type="passFlag === true ? 'success' : (passFlag === false ? 'danger' : 'info')">
-                {{ passFlag === true ? 'Pass' : (passFlag === false ? 'Fail' : '-') }}
-              </el-tag>
-            </span>
-          </div>
-
-
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testDate') }}:</span>
-              <span class="value">{{ detailData.testDate || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testOrganization') }}:</span>
-              <span class="value">{{ detailData.testOrganization || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.laboratoryTest.form.testerName') }}:</span>
-              <span class="value">{{ detailData.testerName || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.testDate')">
+                {{ detailData.testDate || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.testOrganization')">
+                {{ detailData.testOrganization || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.laboratoryTest.form.testerName')">
+                {{ detailData.testerName || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
-          <!-- 退回信息 (仅在已退回S3状态时显示) -->
-          <div v-if="detailData.workflowStatus === 'S3'" class="detail-section rejection-section">
-            <div class="section-title">
-              <i class="ri-error-warning-line"></i>
-              {{ $t('research.dataCollection.laboratoryTest.rejectionInfo') || 'Rejection Information' }}
-            </div>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectBy') || 'Rejected By'
-                }}:</span>
-                <span class="value">{{ detailData.approveByName || detailData.updateBy || '-' }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectOrg') || 'Organization'
-                }}:</span>
-                <span class="value">{{ detailData.rejectOrgName || '-' }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectTime') || 'Rejected Time'
-                }}:</span>
-                <span class="value">{{ detailData.updateTime || '-' }}</span>
-              </div>
-              <div class="detail-item full-width">
-                <span class="label">{{ $t('research.dataCollection.laboratoryTest.rejectReason') || 'Reason'
-                }}:</span>
-                <span class="value">{{ detailData.auditOpinion || '-' }}</span>
-              </div>
-            </div>
-        </div>
-      </template>
+        <!-- 工作流信息 -->
+        <WorkflowInfo
+          :workflow-status="detailData.workflowStatus"
+          mode="view"
+          :approval-history="approvalHistory"
+          :hide-for-states="['S0', 'S10']" />
+      </div>
     </div>
   </div>
 </template>
@@ -219,6 +178,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 import { getLabTestDetail } from '@/api/labTest'
 import { getFilePreviewUrl } from '@/api/file'
 
@@ -228,6 +188,7 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const detailData = ref(null)
+const approvalHistory = ref([])
 
 const PARAM_RULES = {
   'pH': { key: 'pH', type: 'range', min: 5.5, max: 7.5 },
@@ -266,6 +227,10 @@ const loadDetail = async () => {
     const res = await getLabTestDetail(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
+      // 加载审批历史（如果有的话）
+      if (res.data.approvalHistory) {
+        approvalHistory.value = res.data.approvalHistory
+      }
     } else {
       ElMessage.error(t('common.loadFailed'))
       goBack()
@@ -296,11 +261,6 @@ const handlePreviewFile = async (fileId) => {
   }
 }
 
-// 编辑
-const handleEdit = () => {
-  router.push({ name: 'BreedingLabTestEdit', params: { id: route.params.id } })
-}
-
 // 返回
 const goBack = () => {
   router.back()
@@ -312,68 +272,12 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-/* 详情分节 */
-.detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-/* 详情网格 */
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-  flex-direction: column;
-}
-
-.detail-item .label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 160px;
-  flex-shrink: 0;
-}
-
-.detail-item.full-width .label {
-  min-width: auto;
-  margin-bottom: 8px;
-}
-
-.detail-item .value {
-  color: #1f2937;
-  flex: 1;
-}
-
-.detail-item .value.highlight {
+/* 高亮样式 */
+.highlight {
   color: #009A44;
   font-weight: 600;
   font-size: 16px;
@@ -396,193 +300,5 @@ onMounted(() => {
 
 .file-link i {
   font-size: 16px;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .detail-section {
-    padding: 20px 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-    flex-wrap: wrap;
-  }
-
-  .header-left,
-  .header-center,
-  .header-right {
-    flex: auto;
-  }
-
-  .header-left {
-    order: 1;
-  }
-
-  .header-center {
-    order: 2;
-    width: 100%;
-    margin-top: 8px;
-    text-align: left;
-  }
-
-  .header-right {
-    order: 3;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 50;
-  }
-
-  .header-right .el-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    padding: 0;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border: none;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-right .el-button i {
-    font-size: 24px;
-    margin-right: 0;
-  }
-
-  .header-right .el-button span {
-    display: none;
-  }
-
-  .header-left .el-button {
-    font-size: 14px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-section {
-    padding: 16px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  /* 单列布局 */
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    background: rgba(0, 154, 68, 0.02);
-    border-radius: 8px;
-    border-left: 3px solid #009A44;
-  }
-
-  .detail-item.full-width {
-    grid-column: auto;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 15px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .header-right .el-button {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .header-right .el-button i {
-    font-size: 20px;
-  }
-
-  .detail-section {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .detail-grid {
-    gap: 12px;
-  }
-
-  .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 14px;
-  }
 }
 </style>

@@ -1,183 +1,194 @@
 <template>
-  <div class="form-container">
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i class="ri-add-circle-line"></i>
-          <span>{{ $t('research.breeding.seed.production.add') }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleCancel">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.seed.production.add') }}</h1>
+          </div>
         </div>
-        <el-button @click="handleCancel">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
       </div>
 
-      <div class="card-body">
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
         <el-form
           ref="formRef"
           :model="formData"
           :rules="rules"
           label-width="180px"
-          label-position="right"
         >
-          <!-- 基础信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-information-line"></i>
-              {{ $t('research.breeding.seed.production.form.basicInfo') }}
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.breeding.seed.production.form.basicInfo') }}</span>
+              </div>
             </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
+                  <el-input
+                    v-model="formData.produceBatchName"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
-                <el-input
-                  v-model="formData.produceBatchName"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
-                  clearable
-                  style="width: 100%"
-                />
-              </el-form-item>
-
-              <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
-                <el-select
-                  v-model="formData.breedBatchName"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleBatchChange"
-                >
-                  <el-option
-                    v-for="batch in breedBatchList"
-                    :key="batch.batchId"
-                    :label="batch.batchName"
-                    :value="batch.batchId"
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.breedBatchName')" prop="breedBatchName">
+                  <el-select
+                    v-model="formData.breedBatchName"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.breedBatchName')"
+                    filterable
+                    clearable
+                    @change="handleBatchChange"
                   >
-                    <div style="display: flex; justify-content: space-between;">
-                      <span>{{ batch.batchName }}</span>
-                      <el-tag type="success" size="small" effect="plain">
-                        {{ batch.status }}
-                      </el-tag>
-                    </div>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </div>
+                    <el-option
+                      v-for="batch in breedBatchList"
+                      :key="batch.batchId"
+                      :label="batch.batchName"
+                      :value="batch.batchId"
+                    >
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ batch.batchName }}</span>
+                        <el-tag type="success" size="small" effect="plain">
+                          {{ batch.status }}
+                        </el-tag>
+                      </div>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('research.breeding.seed.production.form.trialName')" prop="trialName">
-              <el-select
-                v-model="formData.trialId"
-                :placeholder="$t('research.breeding.seed.production.placeholder.trialName')"
-                filterable
-                clearable
-                style="width: 100%"
-                @change="handleTrialChange"
-              >
-                <el-option
-                  v-for="trial in trialList"
-                  :key="trial.trialId"
-                  :label="trial.trialName"
-                  :value="trial.trialId"
-                />
-              </el-select>
-            </el-form-item>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.trialName')" prop="trialName">
+                  <el-select
+                    v-model="formData.trialId"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.trialName')"
+                    filterable
+                    clearable
+                    @change="handleTrialChange"
+                  >
+                    <el-option
+                      v-for="trial in trialList"
+                      :key="trial.trialId"
+                      :label="trial.trialName"
+                      :value="trial.trialId"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
 
-              <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
-                <el-input
-                  v-model="formData.varietyName"
-                  disabled
-                  :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
-                />
-              </el-form-item>
-            </div>
-
-            <div class="form-row">
-              <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
-                <el-select
-                  v-model="formData.fromSeedLevel"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
-                  clearable
-                  style="width: 100%"
-                  @change="handleSeedLevelChange"
-                >
-                  <el-option label="Pre-Basic" value="Pre-Basic" />
-                  <el-option label="Breeder" value="Breeder" />
-                </el-select>
-              </el-form-item>
-
-              <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
-                <el-select
-                  v-model="formData.toSeedLevel"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
-                  clearable
-                  style="width: 100%"
-                  :disabled="!formData.fromSeedLevel"
-                >
-                  <el-option
-                    v-for="option in toSeedLevelOptions"
-                    :key="option.value"
-                    :label="option.label"
-                    :value="option.value"
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
+                  <el-input
+                    v-model="formData.varietyName"
+                    disabled
+                    :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
                   />
-                </el-select>
-              </el-form-item>
-            </div>
+                </el-form-item>
+              </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
-                <el-date-picker
-                  v-model="formData.time"
-                  type="datetime"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.time')"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 100%"
-                />
-              </el-form-item>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')" prop="fromSeedLevel">
+                  <el-select
+                    v-model="formData.fromSeedLevel"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.fromSeedLevel')"
+                    clearable
+                    @change="handleSeedLevelChange"
+                  >
+                    <el-option label="Pre-Basic" value="Pre-Basic" />
+                    <el-option label="Breeder" value="Breeder" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
 
-              <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
-                <el-select
-                  v-model="formData.landName"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleLandChange"
-                >
-                  <el-option
-                    v-for="land in landList"
-                    :key="land.landId"
-                    :label="land.landName"
-                    :value="land.landName"
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.toSeedLevel')" prop="toSeedLevel">
+                  <el-select
+                    v-model="formData.toSeedLevel"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.toSeedLevel')"
+                    clearable
+                    :disabled="!formData.fromSeedLevel"
+                  >
+                    <el-option
+                      v-for="option in toSeedLevelOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
+                  <el-date-picker
+                    v-model="formData.time"
+                    type="datetime"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.time')"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    style="width: 100%"
                   />
-                </el-select>
-              </el-form-item>
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
+                  <el-select
+                    v-model="formData.landName"
+                    :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                    filterable
+                    clearable
+                    @change="handleLandChange"
+                  >
+                    <el-option
+                      v-for="land in landList"
+                      :key="land.landId"
+                      :label="land.landName"
+                      :value="land.landName"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
             </div>
           </div>
 
-          <!-- 生产信息 -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-plant-line"></i>
-              {{ $t('research.breeding.seed.production.form.productionInfo') }}
+          <!-- 生产信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ $t('research.breeding.seed.production.form.productionInfo') }}</span>
+              </div>
             </div>
-
-            <div class="form-row">
-              <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
-                <el-input-number
-                  v-model="formData.inputSeedQuantity"
-                  :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
-                  :min="0"
-                  :precision="2"
-                  style="width: 100%"
-                />
-              </el-form-item>
-              
-              <!-- 占位元素，保持布局一致性 -->
-              <div></div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
+                    <el-input-number
+                      v-model="formData.inputSeedQuantity"
+                      :placeholder="$t('research.breeding.seed.production.placeholder.inputSeedQuantity')"
+                      :min="0"
+                      :precision="2"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </div>
 
+          <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSubmit" :loading="submitting">
@@ -533,100 +544,6 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.form-container {
-  padding: 20px 0;
-}
-
-.info-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.card-title i {
-  font-size: 20px;
-}
-
-.card-body {
-  padding: 30px 24px;
-}
-
-.form-section {
-  margin-bottom: 30px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  border-left: 4px solid #009A44;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-/* 两列布局 */
-.form-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.form-row > .el-form-item {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-@media screen and (max-width: 768px) {
-  :deep(.el-form-item__label) {
-    text-align: left !important;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .form-actions button {
-    width: 100%;
-  }
-  
-  /* 移动端单列布局 */
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

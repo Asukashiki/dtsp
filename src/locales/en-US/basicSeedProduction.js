@@ -4,6 +4,7 @@ export default {
   searchPlaceholder: 'Search by batch ID or name',
   add: 'Add Batch',
   detail: 'Batch Detail',
+  list: 'Batch List',
   
   columns: {
     produceBatchId: 'Batch ID',

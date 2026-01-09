@@ -68,7 +68,9 @@ export default {
     add: 'Add Laboratory Test',
     edit: 'Edit Laboratory Test',
     detail: 'Laboratory Test Detail',
-    audit: 'Laboratory Test Data Audit'
+    audit: 'Laboratory Test Data Audit',
+    auditDetail: 'Audit Laboratory Test',
+    viewDetail: 'View Laboratory Test'
   },
   // Breeding Dataset Compilation
   datasetCompilation: {

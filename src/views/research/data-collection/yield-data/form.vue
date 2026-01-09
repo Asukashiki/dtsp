@@ -1,314 +1,271 @@
 <template>
-  <div class="yield-data-form-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
+          <div class="header-content">
+            <h1 class="page-title">
+              {{ isEdit ? $t('research.dataCollection.yieldData.edit') : $t('research.dataCollection.yieldData.add') }}
+            </h1>
+          </div>
         </div>
-        <div class="header-center">
-          <h1 class="page-title">
-            {{ isEdit ? $t('research.dataCollection.yieldData.edit') : $t('research.dataCollection.yieldData.add') }}
-          </h1>
-        </div>
-        <div class="header-right"></div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form
-        ref="formRef"
-        v-loading="loading"
-        :model="formData"
-        :rules="rules"
-        label-position="right"
-        label-width="200px"
-        class="yield-form"
-      >
-        <!-- 地块信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-map-pin-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.plotInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.plotId')" prop="plotId">
-            <el-select
-              v-model="formData.plotId"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.plotId')"
-              filterable
-              clearable
-              style="width: 100%"
-              :loading="plotLoading"
-              @change="handlePlotChange"
-            >
-              <el-option
-                v-for="item in plotOptions"
-                :key="item.plotId"
-                :label="item.plotId"
-                :value="item.plotId"
-              />
-            </el-select>
-          </el-form-item>
-
-          <!-- <el-form-item :label="$t('research.dataCollection.yieldData.form.plotAreaM2')" prop="plotAreaM2">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.plotAreaM2"
-                :placeholder="$t('research.dataCollection.yieldData.placeholder.plotAreaM2')"
-                :min="0"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">m²</span>
-            </div>
-          </el-form-item> -->
-        </div>
-
-        <!-- 基础信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.basicInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.batchId')" prop="batchId">
-            <el-input
-              v-model="formData.batchId"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
-              disabled
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.trialId')" prop="trialId">
-            <el-input
-              v-model="formData.trialId"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.trialId')"
-              disabled
-            />
-          </el-form-item>
-
-          <!-- <el-form-item :label="$t('research.dataCollection.yieldData.form.harvestDate')" prop="harvestDate">
-            <el-date-picker
-              v-model="formData.harvestDate"
-              type="date"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.harvestDate')"
-              style="width: 100%"
-            />
-          </el-form-item> -->
-        </div>
-
-        <!-- 产量信息 -->
-        <!-- <div class="form-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-box-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.yieldInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.grainWeightKg')" prop="grainWeightKg">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.grainWeightKg"
-                :placeholder="$t('research.dataCollection.yieldData.placeholder.grainWeightKg')"
-                :min="0"
-                :precision="3"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">kg</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.yieldQtPerHa')" prop="yieldQtPerHa">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.yieldQtPerHa"
-                :placeholder="$t('research.dataCollection.yieldData.placeholder.yieldQtPerHa')"
-                :min="0"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">qt/ha</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.moistureContent')">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.moistureContent"
-                :placeholder="$t('research.dataCollection.yieldData.placeholder.moistureContent')"
-                :min="0"
-                :max="100"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">%</span>
-            </div>
-          </el-form-item>
-        </div> -->
-
-        <!-- 检验信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-file-search-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionDate')">
-            <el-date-picker
-              v-model="formData.inspectionDate"
-              type="date"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionDate')"
-              style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionType')" prop="inspectionType">
-            <el-select
-              v-model="formData.inspectionType"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionType')"
-              clearable
-              filterable
-              style="width: 100%"
-              @change="onInspectionTypeChange"
-            >
-              <el-option
-                v-for="item in inspectionTypeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreCode')" prop="scoreCode">
-            <el-select
-              v-model="formData.scoreCode"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreCode')"
-              :disabled="!formData.inspectionType"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="onScoreCodeChange"
-            >
-              <el-option
-                v-for="opt in scoreCodeOptions"
-                :key="opt.code"
-                :label="opt.label"
-                :value="opt.code"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreValue')" prop="scoreValue">
-            <!-- 数字类型（天 / cm / 计数） -->
-            <template v-if="currentCodeMeta && currentCodeMeta.type === 'number'">
-              <div class="input-with-unit">
-                <el-input-number
-                  v-model="formData.scoreValue"
-                  :min="0"
-                  :precision="currentCodeMeta.precision ?? 0"
-                  :controls="false"
-                  style="width: 100%"
-                />
-                <span class="unit-hint">{{ currentCodeMeta.unit || '' }}</span>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          v-loading="loading"
+          :model="formData"
+          :rules="rules"
+          label-position="right"
+          label-width="200px"
+          class="yield-form"
+        >
+          <!-- 地块信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-map-pin-line"></i>
+                <span>{{ $t('research.dataCollection.yieldData.form.plotInfo') }}</span>
               </div>
-            </template>
-
-            <!-- 百分比类型 -->
-            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'percent'">
-              <div class="input-with-unit">
-                <el-input-number
-                  v-model="formData.scoreValue"
-                  :min="0"
-                  :max="100"
-                  :precision="2"
-                  :controls="false"
-                  style="width: 100%"
-                />
-                <span class="unit-hint">%</span>
-              </div>
-            </template>
-
-            <!-- 等级分（1-5、1-9） -->
-            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'scale'">
-              <el-input-number
-                v-model="formData.scoreValue"
-                :min="currentCodeMeta.min || 1"
-                :max="currentCodeMeta.max || 5"
-                :controls="false"
-                style="width: 100%"
-              />
-            </template>
-
-            <!-- 分类（下拉） -->
-            <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'category'">
-              <el-select
-                v-model="formData.scoreValue"
-                :placeholder="$t('common.pleaseSelect')"
-                filterable
-                clearable
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="c in (currentCodeMeta.options || [])"
-                  :key="c.value"
-                  :label="c.label"
-                  :value="c.value"
-                />
-              </el-select>
-            </template>
-
-            <!-- 未选择评分代码时的占位提示 -->
-            <template v-else>
-              <el-input v-model="dummy" disabled :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreValue')" />
-            </template>
-          </el-form-item>
-        </div>
-
-        <!-- 操作信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.operatorInfo') }}
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.plotId')" prop="plotId">
+                    <el-select
+                      v-model="formData.plotId"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.plotId')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="plotLoading"
+                      @change="handlePlotChange"
+                    >
+                      <el-option
+                        v-for="item in plotOptions"
+                        :key="item.plotId"
+                        :label="item.plotId"
+                        :value="item.plotId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.recorderName')" prop="recorderName">
-            <el-input
-              v-model="formData.recorderName"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.recorderName')"
-              clearable
-            />
-          </el-form-item>
+          <!-- 基础信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.dataCollection.yieldData.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.batchId')" prop="batchId">
+                    <el-input
+                      v-model="formData.batchId"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.batchId')"
+                      disabled
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.trialId')" prop="trialId">
+                    <el-input
+                      v-model="formData.trialId"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.trialId')"
+                      disabled
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
 
-          <el-form-item :label="$t('research.dataCollection.yieldData.form.remark')">
-            <el-input
-              v-model="formData.remark"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.dataCollection.yieldData.placeholder.remark')"
-            />
-          </el-form-item>
-        </div>
+          <!-- 检验信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-search-line"></i>
+                <span>{{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionDate')">
+                    <el-date-picker
+                      v-model="formData.inspectionDate"
+                      type="date"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionDate')"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.inspectionType')" prop="inspectionType">
+                    <el-select
+                      v-model="formData.inspectionType"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.inspectionType')"
+                      clearable
+                      filterable
+                      style="width: 100%"
+                      @change="onInspectionTypeChange"
+                    >
+                      <el-option
+                        v-for="item in inspectionTypeOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreCode')" prop="scoreCode">
+                    <el-select
+                      v-model="formData.scoreCode"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreCode')"
+                      :disabled="!formData.inspectionType"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="onScoreCodeChange"
+                    >
+                      <el-option
+                        v-for="opt in scoreCodeOptions"
+                        :key="opt.code"
+                        :label="opt.label"
+                        :value="opt.code"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.scoreValue')" prop="scoreValue">
+                    <!-- 数字类型（天 / cm / 计数） -->
+                    <template v-if="currentCodeMeta && currentCodeMeta.type === 'number'">
+                      <div class="input-with-unit">
+                        <el-input-number
+                          v-model="formData.scoreValue"
+                          :min="0"
+                          :precision="currentCodeMeta.precision ?? 0"
+                          :controls="false"
+                          style="width: 100%"
+                        />
+                        <span class="unit-hint">{{ currentCodeMeta.unit || '' }}</span>
+                      </div>
+                    </template>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit">
-            <i class="ri-save-line"></i>
-            {{ $t('common.save') }}
-          </el-button>
-        </div>
-      </el-form>
+                    <!-- 百分比类型 -->
+                    <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'percent'">
+                      <div class="input-with-unit">
+                        <el-input-number
+                          v-model="formData.scoreValue"
+                          :min="0"
+                          :max="100"
+                          :precision="2"
+                          :controls="false"
+                          style="width: 100%"
+                        />
+                        <span class="unit-hint">%</span>
+                      </div>
+                    </template>
+
+                    <!-- 等级分（1-5、1-9） -->
+                    <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'scale'">
+                      <el-input-number
+                        v-model="formData.scoreValue"
+                        :min="currentCodeMeta.min || 1"
+                        :max="currentCodeMeta.max || 5"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                    </template>
+
+                    <!-- 分类（下拉） -->
+                    <template v-else-if="currentCodeMeta && currentCodeMeta.type === 'category'">
+                      <el-select
+                        v-model="formData.scoreValue"
+                        :placeholder="$t('common.pleaseSelect')"
+                        filterable
+                        clearable
+                        style="width: 100%"
+                      >
+                        <el-option
+                          v-for="c in (currentCodeMeta.options || [])"
+                          :key="c.value"
+                          :label="c.label"
+                          :value="c.value"
+                        />
+                      </el-select>
+                    </template>
+
+                    <!-- 未选择评分代码时的占位提示 -->
+                    <template v-else>
+                      <el-input v-model="dummy" disabled :placeholder="$t('research.dataCollection.yieldData.placeholder.scoreValue')" />
+                    </template>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ $t('research.dataCollection.yieldData.form.operatorInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.recorderName')" prop="recorderName">
+                    <el-input
+                      v-model="formData.recorderName"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.recorderName')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('research.dataCollection.yieldData.form.remark')">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('research.dataCollection.yieldData.placeholder.remark')"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="goBack">
+              {{ $t('common.cancel') }}
+            </el-button>
+            <el-button type="primary" @click="handleSubmit">
+              <i class="ri-save-line"></i>
+              {{ $t('common.save') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -586,77 +543,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.yield-data-form-container {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.yield-form {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 表单分节 */
-.form-section {
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 /* 带单位的输入框容器 */
 .input-with-unit {
@@ -666,7 +554,7 @@ onMounted(() => {
   width: 100%;
 }
 
-.input-with-unit .el-input-number {
+.input-with-unit :deep(.el-input-number) {
   flex: 1;
 }
 
@@ -676,140 +564,5 @@ onMounted(() => {
   font-size: 14px;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-/* 操作按钮 */
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.form-actions .el-button {
-  min-width: 120px;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .yield-form {
-    padding: 20px 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .yield-form {
-    padding: 16px 12px;
-    border-radius: 8px;
-  }
-
-  .yield-form :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  .yield-form :deep(.el-form-item__label) {
-    text-align: left;
-    display: block;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    padding: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-  }
-
-  .yield-form :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  .unit-hint {
-    font-size: 13px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    padding-top: 20px;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .form-actions .el-button:first-child {
-    order: 2;
-  }
-
-  .form-actions .el-button:last-child {
-    order: 1;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .yield-form {
-    padding: 12px 8px;
-  }
-
-  .yield-form :deep(.el-form-item) {
-    margin-bottom: 16px;
-  }
-
-  .yield-form :deep(.el-form-item__label) {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .unit-hint {
-    font-size: 12px;
-  }
 }
 </style>

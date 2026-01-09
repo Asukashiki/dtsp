@@ -68,7 +68,9 @@ export default {
     add: '新增实验室测试数据',
     edit: '编辑实验室测试数据',
     detail: '实验室测试数据详情',
-    audit: '实验室测试数据采集审核'
+    audit: '实验室测试数据采集审核',
+    auditDetail: '审核实验室测试数据',
+    viewDetail: '查看实验室测试数据'
   },
   // 育种数据集编制
   datasetCompilation: {

@@ -1,242 +1,190 @@
 <template>
-  <div class="environment-new-data-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon-wrapper">
-        <i class="ri-cloud-line"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ $t('research.environmentNewData.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.environmentNewData.subtitle') }}</p>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-cloud-line"
+        :title="$t('research.environmentNewData.title')"
+        :subtitle="$t('research.environmentNewData.subtitle')" />
 
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-      <!-- 搜索和筛选栏 -->
-      <div class="search-bar">
-        <div class="search-row">
-          <el-input
-            v-model="searchForm.stationId"
-            :placeholder="$t('research.environmentNewData.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @clear="handleSearch"
-            @keyup.enter="handleSearch"
-          >
-            <template #prefix>
-              <i class="ri-search-line"></i>
-            </template>
-          </el-input>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('research.environmentNewData.columns.stationId')">
+              <el-input
+                v-model="searchForm.stationId"
+                :placeholder="$t('research.environmentNewData.searchPlaceholder')"
+                class="search-input"
+                clearable>
+                <template #prefix>
+                  <i class="ri-search-line"></i>
+                </template>
+              </el-input>
+            </SearchItem>
 
-          <el-select
-            v-model="searchForm.parameterCode"
-            :placeholder="$t('research.environmentNewData.filterByParameter')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('research.environmentNewData.allParameters')" value="" />
-            <el-option
-              v-for="item in options.env_parameter_code || []"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+            <SearchItem :label="$t('research.environmentNewData.columns.parameterCode')">
+              <el-select
+                v-model="searchForm.parameterCode"
+                :placeholder="$t('research.environmentNewData.filterByParameter')"
+                class="filter-select"
+                clearable>
+                <el-option
+                  v-for="item in options.env_parameter_code || []"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </SearchItem>
 
-          <el-select
-            v-model="searchForm.batchId"
-            :placeholder="$t('research.environmentNewData.filterByBatch')"
-            class="filter-select"
-            filterable
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('research.environmentNewData.allBatches')" value="" />
-            <el-option
-              v-for="item in batchOptions"
-              :key="item.batchId"
-              :label="item.batchName || item.batchId"
-              :value="item.batchId"
-            />
-          </el-select>
+            <SearchItem :label="$t('research.environmentNewData.columns.batchId')">
+              <el-select
+                v-model="searchForm.batchId"
+                :placeholder="$t('research.environmentNewData.filterByBatch')"
+                class="filter-select"
+                filterable
+                clearable>
+                <el-option
+                  v-for="item in batchOptions"
+                  :key="item.batchId"
+                  :label="item.batchName || item.batchId"
+                  :value="item.batchId"
+                />
+              </el-select>
+            </SearchItem>
 
-          <!-- Audit Status -->
-          <el-select
-            v-model="searchForm.workflowStatus"
-            :placeholder="$t('research.environmentNewData.columns.auditStatus')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('common.all')" value="" />
-            <el-option
-              v-for="opt in options.flow_status || []"
-              :key="opt.value"
-              :label="opt.label"
-              :value="opt.value"
-            />
-          </el-select>
+            <SearchItem :label="$t('research.environmentNewData.columns.auditStatus')">
+              <el-select
+                v-model="searchForm.workflowStatus"
+                :placeholder="$t('common.pleaseSelect')"
+                class="filter-select"
+                clearable>
+                <el-option
+                  v-for="opt in options.flow_status || []"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value"
+                />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <div class="action-row">
-          <div class="action-left">
-            <el-button type="primary" @click="handleSearch">
-              <i class="ri-search-line"></i>
-              <span class="btn-text">{{ $t('common.search') }}</span>
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-restart-line"></i>
-              <span class="btn-text">{{ $t('common.reset') }}</span>
-            </el-button>
-          </div>
-          <div class="action-right">
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="$t('research.environmentNewData.list')"
+          icon="ri-file-list-3-line">
+          <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              <span class="btn-text">{{ $t('research.environmentNewData.add') }}</span>
+              {{ $t('common.add') }}
             </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="tableData" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="plotId" :label="$t('research.environmentNewData.columns.plotId')" min-width="120" />
+              <el-table-column prop="batchId" :label="$t('research.environmentNewData.columns.batchId')" min-width="120" />
+              <el-table-column prop="trialId" :label="$t('research.environmentNewData.columns.trialId')" min-width="120" />
+              <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" />
+              <el-table-column prop="parameterCode" :label="$t('research.environmentNewData.columns.parameterCode')" min-width="140" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getParameterTag(row.parameterCode)" size="small">
+                    {{ getParameterName(row.parameterCode) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="value" :label="$t('research.environmentNewData.columns.value')" min-width="100" align="right" />
+              <el-table-column prop="unit" :label="$t('research.environmentNewData.columns.unit')" min-width="80" align="center" />
+              <el-table-column prop="timestamp" :label="$t('research.environmentNewData.columns.timestamp')" min-width="160" align="center" />
+              <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
+              <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getWorkflowStatusType(row.workflowStatus)" effect="plain">
+                    {{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="row.workflowStatus || 'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="pagination.pageNum"
+                v-model:page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="pagination.total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange"
+                @current-change="handlePageChange"
+              />
+            </div>
           </div>
-        </div>
-      </div>
+        </InfoCard>
 
-      <!-- PC端：数据表格 -->
-      <div class="table-card pc-view">
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-        >
-          <el-table-column prop="plotId" :label="$t('research.environmentNewData.columns.plotId')" min-width="120" />
-          <el-table-column prop="batchId" :label="$t('research.environmentNewData.columns.batchId')" min-width="120" />
-          <el-table-column prop="trialId" :label="$t('research.environmentNewData.columns.trialId')" min-width="120" />
-          <el-table-column prop="stationId" :label="$t('research.environmentNewData.columns.stationId')" min-width="120" />
-          <el-table-column prop="parameterCode" :label="$t('research.environmentNewData.columns.parameterCode')" min-width="140" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getParameterTag(row.parameterCode)" size="small">
-                {{ getParameterName(row.parameterCode) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="value" :label="$t('research.environmentNewData.columns.value')" min-width="100" align="right" />
-          <el-table-column prop="unit" :label="$t('research.environmentNewData.columns.unit')" min-width="80" align="center" />
-          <el-table-column prop="timestamp" :label="$t('research.environmentNewData.columns.timestamp')" min-width="160" align="center" />
-          <el-table-column prop="source" :label="$t('research.environmentNewData.columns.source')" min-width="100" align="center" />
-          <el-table-column :label="$t('research.environmentNewData.columns.auditStatus')" min-width="140" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getWorkflowStatusType(row.workflowStatus)">{{ getLabelByValue('flow_status', row.workflowStatus) || row.workflowStatus || '-' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('research.environmentNewData.columns.actions')" width="200" fixed="right">
-            <template #default="{ row }">
-              <el-button 
-                v-for="button in getActionButtons(row)" 
-                :key="button.action"
-                link 
-                :type="button.type" 
-                @click="handleAction(row, button.action)">
-                <i :class="button.icon"></i>
-                {{ button.label }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pagination.pageNum"
-            v-model:page-size="pagination.pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="pagination.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
-          />
-        </div>
-      </div>
-
-      <!-- 移动端：卡片列表 -->
-      <div class="mobile-view" v-loading="loading">
-        <div class="card-list">
-          <div v-for="item in tableData" :key="item.envRecordId" class="data-card" @click="handleView(item)">
-            <div class="card-header">
-              <div class="data-info">
-                <h3 class="station-name">{{ item.stationId }}</h3>
-                <span class="timestamp">{{ item.timestamp }}</span>
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in tableData" :key="item.envRecordId" class="mobile-card">
+            <div class="mobile-card-header">
+              <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+              <div class="mobile-card-title">
+                <i class="ri-cloud-line"></i>
+                <span>{{ item.stationId }}</span>
               </div>
-              <div class="card-tags">
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.environmentNewData.columns.parameterCode') }}:</span>
                 <el-tag :type="getParameterTag(item.parameterCode)" size="small">
                   {{ getParameterName(item.parameterCode) }}
                 </el-tag>
               </div>
-            </div>
-
-            <div class="card-body">
-              <div class="value-display">
-                <span class="value">{{ item.value }}</span>
-                <span class="unit">{{ item.unit }}</span>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.environmentNewData.columns.value') }}:</span>
+                <span class="value">{{ item.value }} {{ item.unit }}</span>
               </div>
-
-              <div class="info-row">
-                <i class="ri-folder-line info-icon"></i>
-                <span class="info-label">{{ $t('research.environmentNewData.columns.batchName') }}:</span>
-                <span class="info-value">{{ item.batchName || item.batchId || '-' }}</span>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.environmentNewData.columns.timestamp') }}:</span>
+                <span class="value">{{ item.timestamp }}</span>
               </div>
-
-              <div class="info-row">
-                <i class="ri-flask-line info-icon"></i>
-                <span class="info-label">{{ $t('research.environmentNewData.columns.trialId') }}:</span>
-                <span class="info-value">{{ item.trialId || '-' }}</span>
-              </div>
-
-              <div class="info-row">
-                <i class="ri-map-pin-line info-icon"></i>
-                <span class="info-label">{{ $t('research.environmentNewData.columns.plotId') }}:</span>
-                <span class="info-value">{{ item.plotId || '-' }}</span>
-              </div>
-
-              <div class="info-row">
-                <i class="ri-database-2-line info-icon"></i>
-                <span class="info-label">{{ $t('research.environmentNewData.columns.source') }}:</span>
-                <span class="info-value">{{ item.source || '-' }}</span>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.environmentNewData.columns.batchId') }}:</span>
+                <span class="value">{{ item.batchName || item.batchId || '-' }}</span>
               </div>
             </div>
-
-            <div class="card-footer" @click.stop>
-              <el-button 
-                v-for="button in getActionButtons(item)" 
-                :key="button.action"
-                size="small"
-                :type="button.type === 'primary' ? 'primary' : ''" 
-                @click="handleAction(item, button.action)">
-                <i :class="button.icon"></i> {{ button.label }}
-              </el-button>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="item.workflowStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                @action="(action) => handleAction(item, action)" />
             </div>
           </div>
-        </div>
 
-        <div v-if="tableData.length === 0 && !loading" class="empty-state">
-          <i class="ri-cloud-line"></i>
-          <p>{{ $t('home.noData') }}</p>
-        </div>
-
-        <div class="mobile-pagination">
-          <el-pagination
-            v-model:current-page="pagination.pageNum"
-            :total="pagination.total"
-            :page-size="pagination.pageSize"
-            layout="prev, pager, next"
-            small
-            @current-change="handlePageChange"
-          />
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="pagination.pageNum"
+              v-model:page-size="pagination.pageSize"
+              :total="pagination.total"
+              layout="prev, pager, next"
+              small
+              @current-change="handlePageChange"
+            />
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- 移动端浮动添加按钮 -->
-    <div class="mobile-fab" @click="handleAdd">
-      <i class="ri-add-line"></i>
     </div>
   </div>
 </template>
@@ -246,6 +194,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getEnvironmentNewDataPage, deleteEnvironmentNewData, submitEnvironmentNewDataForAudit } from '@/api/environment-new-data'
 import { getBreedingBatchList } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
@@ -259,6 +209,7 @@ const { options, getLabelByValue } = useDict(['flow_status', 'env_parameter_code
 const loading = ref(false)
 const tableData = ref([])
 const batchOptions = ref([])
+const selectedIds = ref([])
 
 // 获取工作流状态标签类型
 const getWorkflowStatusType = (workflowStatus) => {
@@ -304,46 +255,18 @@ const getParameterName = (code) => {
   return getLabelByValue('env_parameter_code', code) || code || '-'
 }
 
-// 获取操作按钮
-const getActionButtons = (row) => {
-  const workflowStatus = row.workflowStatus
-  const buttons = []
-  
-  // 根据状态显示不同的操作按钮，并检查用户权限
-  switch (workflowStatus) {
-    case 'S0': // 草稿
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
-      }
-      break
-    case 'S1': // 待审批
-      if (userStore.hasWorkflowStatusPermission('approve')) {
-        buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      }
-      break
-    case 'S2': // 审核通过
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
-    case 'S3': // 审核驳回
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: t('common.edit'), icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: t('research.environmentNewData.actions.submit'), icon: 'ri-send-plane-line' })
-      }
-      break
-    case 'S9': // 已归档
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
-    case 'S10': // 已作废
-      buttons.push({ type: 'primary', action: 'view', label: t('common.view'), icon: 'ri-eye-line' })
-      break
+const handleSelectionChange = (selection) => {
+  selectedIds.value = selection.map(item => item.envRecordId)
+}
+
+const handleMobileSelect = (item) => {
+  if (item.checked) {
+    if (!selectedIds.value.includes(item.envRecordId)) {
+      selectedIds.value.push(item.envRecordId)
+    }
+  } else {
+    selectedIds.value = selectedIds.value.filter(id => id !== item.envRecordId)
   }
-  
-  return buttons
 }
 
 // 加载数据
@@ -381,7 +304,7 @@ const loadBatchOptions = async () => {
 }
 
 // 搜索
-const handleSearch = () => {
+const handleQuery = () => {
   pagination.pageNum = 1
   loadData()
 }
@@ -447,6 +370,9 @@ const handleAction = (row, action) => {
     case 'submit':
       handleSubmitForAudit(row)
       break
+    case 'cancelBatch':
+      handleDelete(row)
+      break
   }
 }
 
@@ -498,395 +424,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.environment-new-data-page {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 32px;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.header-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon-wrapper i {
-  font-size: 40px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 15px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 搜索栏 */
-.search-bar {
-  margin-bottom: 24px;
-}
-
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
-
-.filter-select {
-  width: 180px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left,
-.action-right {
-  display: flex;
-  gap: 8px;
-}
-
-/* PC端表格 */
-.table-card {
-  background: white;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* 移动端默认隐藏 */
-.mobile-view,
-.mobile-fab {
-  display: none;
-}
-
-/* 移动端卡片样式 */
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.data-card {
-  background: white;
-  border: 1px solid #e4e7ed;
-  border-radius: 12px;
-  padding: 16px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.data-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.data-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.station-name {
-  font-size: 17px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 4px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.timestamp {
-  font-size: 13px;
-  color: #909399;
-}
-
-.card-tags {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
-  flex-shrink: 0;
-  margin-left: 12px;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.value-display {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-  padding: 12px;
-  background: linear-gradient(135deg, #f0f7f4 0%, #e8f5e9 100%);
-  border-radius: 8px;
-}
-
-.value-display .value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #009A44;
-}
-
-.value-display .unit {
-  font-size: 14px;
-  color: #606266;
-}
-
-.info-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.info-icon {
-  font-size: 16px;
-  color: #909399;
-  flex-shrink: 0;
-}
-
-.info-label {
-  color: #606266;
-  flex-shrink: 0;
-}
-
-.info-value {
-  color: #303133;
-  font-weight: 500;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-footer {
-  display: flex;
-  gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f2f5;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 64px;
-  margin-bottom: 12px;
-  display: block;
-  opacity: 0.5;
-}
-
-.mobile-pagination {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-  margin-top: 16px;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-    padding: 24px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-    padding: 20px 16px;
-    gap: 16px;
-  }
-
-  .header-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-  }
-
-  .header-icon-wrapper i {
-    font-size: 32px;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-
-  .page-subtitle {
-    font-size: 13px;
-  }
-
-  .content-wrapper {
-    padding: 16px;
-  }
-
-  .search-row {
-    flex-direction: column;
-  }
-
-  .search-input,
-  .filter-select {
-    width: 100%;
-  }
-
-  .action-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .action-left,
-  .action-right {
-    justify-content: stretch;
-  }
-
-  .action-left .el-button,
-  .action-right .el-button {
-    flex: 1;
-  }
-
-  .action-right {
-    display: none;
-  }
-
-  .pc-view {
-    display: none;
-  }
-
-  .mobile-view {
-    display: block;
-  }
-
-  .mobile-fab {
-    display: flex;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    cursor: pointer;
-    z-index: 50;
-    transition: all 0.3s ease;
-  }
-
-  .mobile-fab:active {
-    transform: scale(0.9);
-  }
-
-  .btn-text {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    padding: 16px 12px;
-  }
-
-  .header-icon-wrapper {
-    width: 56px;
-    height: 56px;
-  }
-
-  .header-icon-wrapper i {
-    font-size: 28px;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .data-card {
-    padding: 14px;
-  }
-
-  .station-name {
-    font-size: 16px;
-  }
-
-  .value-display .value {
-    font-size: 24px;
-  }
-
-  .mobile-fab {
-    bottom: 16px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

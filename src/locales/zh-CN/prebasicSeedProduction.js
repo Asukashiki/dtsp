@@ -1,6 +1,7 @@
 export default {
-  title: '原原种批次信息',
-  subtitle: 'Pre-basic Seed Batch Information Management',
+  title: 'PreBasic繁殖批次信息',
+  subtitle: '管理PreBasic种子生产批次信息',
+  list: '批次列表',
   add: '新增批次',
   detail: '批次详情',
   searchPlaceholder: '搜索品种名称或作物类型',
@@ -88,6 +89,6 @@ export default {
     S1: '待审核',
     S2: '已审核',
     S3: '已驳回',
-    S4: 'Void'
+    S4: '已作废'
   }
 }

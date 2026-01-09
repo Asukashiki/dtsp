@@ -1,6 +1,7 @@
 export default {
   title: '原原种生产结果',
   subtitle: 'Pre-basic Seed Production Result',
+  list: '生产结果列表',
   add: '新增生产结果',
   detail: '结果详情',
   searchPlaceholder: '搜索批次名称或品种名称',

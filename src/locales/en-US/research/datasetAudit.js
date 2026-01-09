@@ -14,6 +14,13 @@ export default {
     needsRevision: 'Are you sure to mark this dataset as needs revision?'
   },
 
+  // 标签页
+  tabs: {
+    pendingApproval: 'Pending Approval',
+    approved: 'Approved',
+    voided: 'Voided'
+  },
+
   // 搜索筛选
   searchPlaceholder: 'Search variety name',
   filterByAuditStatus: 'Filter by audit status',

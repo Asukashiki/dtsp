@@ -1,145 +1,129 @@
 <template>
-  <div class="yield-data-detail-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="handleBack">
+          <el-button class="back-btn" @click="handleBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('research.dataCollection.fieldInspectionAudit.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button v-if="shouldShowAuditButton" type="warning" @click="handleAudit">
-            <i class="ri-file-check-line"></i>
-            {{ $t('common.audit') }}
-          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.dataCollection.fieldInspectionAudit.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基础信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.trialId') }}:</span>
-              <span class="value">{{ detailData.trialId }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('research.dataCollection.yieldData.form.basicInfo') }}</span>
             </div>
           </div>
-        </div>
-
-        <!-- 地块信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-map-pin-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.plotInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.plotId') }}:</span>
-              <span class="value">{{ detailData.plotId }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.batchId')">
+                {{ detailData.batchId || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.trialId')">
+                {{ detailData.trialId || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.plotId')">
+                {{ detailData.plotId || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 检验信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-file-search-line"></i>
-            {{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-file-search-line"></i>
+              <span>{{ $t('research.dataCollection.yieldData.form.inspectionInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.inspectionDate') }}:</span>
-              <span class="value">{{ detailData.inspectionDate || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.inspectionType') }}:</span>
-              <span class="value">{{ detailData.inspectionType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.scoreCode') }}:</span>
-              <span class="value">{{ detailData.scoreCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.scoreValue') }}:</span>
-              <span class="value">{{ detailData.scoreValue || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.inspectionDate')">
+                {{ detailData.inspectionDate || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.inspectionType')">
+                {{ detailData.inspectionType || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.scoreCode')">
+                {{ detailData.scoreCode || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.scoreValue')">
+                {{ detailData.scoreValue || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 审核信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-file-check-line"></i>
-            {{ $t('research.dataCollection.fieldInspectionAudit.form.auditInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-file-check-line"></i>
+              <span>{{ $t('research.dataCollection.fieldInspectionAudit.form.auditInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditBy') }}:</span>
-              <span class="value">{{ detailData.auditBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.auditTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.columns.auditStatus') }}:</span>
-              <span class="value">{{ getLabelByValue('flow_status', detailData.workflowStatus) || detailData.workflowStatus || '-' }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.dataCollection.fieldInspectionAudit.form.auditComment') }}:</span>
-              <span class="value">{{ detailData.auditRemark || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.auditBy')">
+                {{ detailData.auditBy || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.auditTime')">
+                {{ detailData.auditTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.columns.auditStatus')">
+                <el-tag :type="getWorkflowStatusType(detailData.workflowStatus)" effect="plain">
+                  {{ getLabelByValue('flow_status', detailData.workflowStatus) || detailData.workflowStatus || '-' }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.fieldInspectionAudit.form.auditComment')" :span="2">
+                {{ detailData.auditRemark || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
         <!-- 系统信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-settings-3-line"></i>
-            {{ $t('common.systemInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-settings-3-line"></i>
+              <span>{{ $t('common.systemInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.createBy') }}:</span>
-              <span class="value">{{ detailData.createdBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.createTime') }}:</span>
-              <span class="value">{{ detailData.createdTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.updateBy') }}:</span>
-              <span class="value">{{ detailData.updateBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.dataCollection.yieldData.form.updateTime') }}:</span>
-              <span class="value">{{ detailData.updateTime || '-' }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.createBy')">
+                {{ detailData.createdBy || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.createTime')">
+                {{ detailData.createdTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.updateBy')">
+                {{ detailData.updateBy || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.dataCollection.yieldData.form.updateTime')">
+                {{ detailData.updateTime || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -152,14 +136,37 @@ const { t } = useI18n()
 const { getLabelByValue } = useDict(['flow_status'])
 
 const loading = ref(false)
-const detailData = ref(null)
-
-// 判断是否显示审核按钮（只在审批状态为S2或S3时显示）
-const shouldShowAuditButton = computed(() => {
-  if (!detailData.value) return false
-  const status = detailData.value.workflowStatus
-  return status === 'S1' || status === 'S3'
+const detailData = reactive({
+  id: null,
+  batchId: '',
+  trialId: '',
+  plotId: '',
+  inspectionDate: '',
+  inspectionType: '',
+  scoreCode: '',
+  scoreValue: null,
+  auditBy: '',
+  auditTime: '',
+  workflowStatus: '',
+  auditRemark: '',
+  createdBy: '',
+  createdTime: '',
+  updateBy: '',
+  updateTime: ''
 })
+
+// 获取工作流状态标签类型
+const getWorkflowStatusType = (workflowStatus) => {
+  const workflowStatusMap = {
+    'S0': 'info',
+    'S1': 'warning',
+    'S2': 'primary',
+    'S3': 'danger',
+    'S9': 'danger',
+    'S10': 'danger'
+  }
+  return workflowStatusMap[workflowStatus] || 'info'
+}
 
 // 加载详情
 const loadDetail = async () => {
@@ -167,7 +174,7 @@ const loadDetail = async () => {
   try {
     const res = await getFieldInspectionAuditInfo(route.params.id)
     if (res.code === 200 && res.data) {
-      detailData.value = res.data
+      Object.assign(detailData, res.data)
     } else {
       ElMessage.error(t('common.loadFailed'))
       handleBack()
@@ -181,17 +188,9 @@ const loadDetail = async () => {
   }
 }
 
-
-
-
-// 返回列表
+// 返回
 const handleBack = () => {
-  router.push('/research/breeding-data/field-inspection-audit')
-}
-
-// 前往审核
-const handleAudit = () => {
-  router.push(`/research/breeding-data/field-inspection/audit/${route.params.id}`)
+  router.back()
 }
 
 onMounted(() => {
@@ -199,278 +198,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-@use '@/assets/styles/page-common.scss' as *;
-
-.yield-data-detail-container {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 - 使用项目统一的渐变绿色主题 */
-.page-header {
-  background: linear-gradient(135deg, $primary-green 0%, #00b350 100%);
-  padding: 24px 32px;
-  margin: -24px -24px 24px -24px;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-
-  .el-button {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-weight: 500;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-      color: white;
-    }
-  }
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: white;
-}
-
-.header-right {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-
-  .el-button {
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    color: $primary-green;
-    font-weight: 500;
-
-    &:hover {
-      background: white;
-      color: $primary-green;
-    }
-  }
-}
-
-/* 详情区域 - 使用卡片式设计 */
-.detail-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 详情分节 */
-.detail-section {
-  margin-bottom: 32px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: $primary-green;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid $primary-green;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  i {
-    font-size: 20px;
-  }
-}
-
-/* 详情网格布局 */
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 16px;
-  background: $color-bg-light;
-  border-radius: 8px;
-  border: 1px solid $color-border-lighter;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba($primary-green, 0.05);
-    border-color: $primary-green;
-  }
-
-  &.full-width {
-    grid-column: 1 / -1;
-  }
-
-  .label {
-    font-weight: 600;
-    color: $color-text-regular;
-    min-width: 140px;
-    flex-shrink: 0;
-    line-height: 1.5;
-  }
-
-  .value {
-    flex: 1;
-    color: $color-text-primary;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    padding: 20px 24px;
-  }
-
-  .header-content {
-    gap: 12px;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .detail-wrapper {
-    padding: 20px 16px;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .detail-item .label {
-    min-width: 120px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    padding: 16px 20px;
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .header-left,
-  .header-right {
-    width: 100%;
-  }
-
-  .header-center {
-    width: 100%;
-    text-align: left;
-  }
-
-  .header-right {
-    justify-content: flex-start;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-wrapper {
-    padding: 16px 12px;
-    border-radius: 8px;
-  }
-
-  .detail-section {
-    margin-bottom: 24px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .detail-item {
-    padding: 10px 12px;
-    flex-direction: column;
-    gap: 6px;
-
-    .label {
-      min-width: auto;
-      font-size: 14px;
-      color: $color-text-secondary;
-    }
-
-    .value {
-      font-size: 14px;
-    }
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    padding: 12px 16px;
-    margin: -12px -12px 12px -12px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .detail-wrapper {
-    padding: 12px 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .detail-item {
-    padding: 8px 10px;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

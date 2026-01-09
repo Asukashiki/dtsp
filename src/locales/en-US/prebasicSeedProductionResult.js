@@ -1,6 +1,7 @@
 export default {
   title: 'Pre-Basic Seed Batch Data',
   subtitle: 'Pre-Basic Seed Batch Data',
+  list: 'Production Result List',
   add: 'Add',
   detail: 'Result Detail',
   searchPlaceholder: 'Search batch name or variety name',

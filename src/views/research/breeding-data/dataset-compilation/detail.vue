@@ -1,185 +1,180 @@
 <template>
-  <div class="dataset-detail-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-left">
-        <div class="back-btn" link @click="goBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </div>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
-      </div>
-      <div class="header-right">
-        <el-button
-          v-if="detailData && (detailData.datasetStatus === 'draft' || detailData.datasetStatus === 'rejected')"
-          type="primary" @click="handleEdit">
-          <i class="ri-edit-line"></i>
-          {{ $t('common.edit') }}
-        </el-button>
-      </div>
-    </div>
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基础信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.datasetCompilation.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.columns.datasetCode') }}:</span>
-              <span class="value">{{ detailData.datasetCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.status') }}:</span>
-              <el-tag :type="getStatusType(detailData.status || detailData.datasetStatus)">
-                {{ getStatusLabel(detailData.status || detailData.datasetStatus) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.trialId') }}:</span>
-              <span class="value">{{ detailData.trialId || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.versionNo') }}:</span>
-              <span class="value">{{ detailData.versionNo || '1.0' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.recordCount') }}:</span>
-              <span class="value">{{ detailData.recordCount || 0 }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.cropType') }}:</span>
-              <span class="value">{{ getLabelByValue('crop_type', detailData.cropType) || detailData.cropType || '-'
-                }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.varietyName') }}:</span>
-              <span class="value">{{ detailData.varietyName || '-' }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.datasetCompilation.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
-            </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.datasetCompilation.detail') }}</h1>
           </div>
         </div>
+      </div>
 
-        <!-- 编制信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('research.datasetCompilation.form.compilationInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.compiledBy') }}:</span>
-              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.compiledAt') }}:</span>
-              <span class="value">{{ detailData.compiledAt || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 数据统计 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetCompilation.form.statisticsInfo') }}
-          </div>
-          <div class="statistics-grid">
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-bar-chart-box-line"></i>
+      <!-- 详情区域 -->
+      <div v-loading="loading" class="content-wrapper">
+        <template v-if="detailData">
+          <!-- 基础信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.datasetCompilation.form.basicInfo') }}</span>
               </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
-                <div class="stat-value">
-                  {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length +
-                    environmentDataList.length + yieldDataList.length + labTestList.length }}
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetCompilation.columns.datasetCode')">
+                  {{ detailData.datasetCode || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.status')">
+                  <el-tag :type="getStatusType(detailData.status || detailData.datasetStatus)">
+                    {{ getStatusLabel(detailData.status || detailData.datasetStatus) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.trialId')">
+                  {{ detailData.trialId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.batchId')">
+                  {{ detailData.batchId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.versionNo')">
+                  {{ detailData.versionNo || '1.0' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.recordCount')">
+                  {{ detailData.recordCount || 0 }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.cropType')">
+                  {{ getLabelByValue('crop_type', detailData.cropType) || detailData.cropType || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.varietyName')">
+                  {{ detailData.varietyName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.remark')" :span="2">
+                  {{ detailData.remark || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 编制信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ $t('research.datasetCompilation.form.compilationInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.compiledBy')">
+                  {{ detailData.compiledByName || detailData.compiledBy || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetCompilation.form.compiledAt')">
+                  {{ detailData.compiledAt || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 数据统计 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-line"></i>
+                <span>{{ $t('research.datasetCompilation.form.statisticsInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="statistics-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-bar-chart-box-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.totalCount') }}</div>
+                    <div class="stat-value">
+                      {{ plotInfoList.length + farmingRecordList.length + agronomicTraitList.length +
+                        environmentDataList.length + yieldDataList.length + labTestList.length }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-map-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.plotCount') }}</div>
+                    <div class="stat-value">{{ plotInfoList.length }}</div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-calendar-todo-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.farmingCount') }}</div>
+                    <div class="stat-value">{{ farmingRecordList.length }}</div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-plant-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.agronomicCount') }}</div>
+                    <div class="stat-value">{{ agronomicTraitList.length }}</div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-cloud-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.envCount') }}</div>
+                    <div class="stat-value">{{ environmentDataList.length }}</div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-scissors-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.yieldCount') }}</div>
+                    <div class="stat-value">{{ yieldDataList.length }}</div>
+                  </div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-test-tube-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
+                    <div class="stat-value">{{ labTestList.length }}</div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-map-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.plotCount') }}</div>
-                <div class="stat-value">{{ plotInfoList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-calendar-todo-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.farmingCount') }}</div>
-                <div class="stat-value">{{ farmingRecordList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-plant-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.agronomicCount') }}</div>
-                <div class="stat-value">{{ agronomicTraitList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-cloud-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.envCount') }}</div>
-                <div class="stat-value">{{ environmentDataList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-scissors-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.yieldCount') }}</div>
-                <div class="stat-value">{{ yieldDataList.length }}</div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-test-tube-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
-                <div class="stat-value">{{ labTestList.length }}</div>
-              </div>
-            </div>
           </div>
-        </div>
 
-        <!-- 数据详情Tab页 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-data-line"></i>
-            {{ $t('research.datasetCompilation.form.dataDetails') }}
-          </div>
-          <el-tabs v-model="activeTab" type="card" style="margin-top: 12px">
+          <!-- 数据详情Tab页 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-data-line"></i>
+                <span>{{ $t('research.datasetCompilation.form.dataDetails') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-tabs v-model="activeTab" type="card">
             <!-- 地块及播种信息Tab -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.plot')" name="plotInfo">
               <el-table :data="plotInfoList" border stripe size="small" style="width: 100%; margin-top: 12px"
@@ -573,78 +568,10 @@
               </el-table>
             </el-tab-pane>
           </el-tabs>
-        </div>
-
-        <!-- 提交信息 -->
-        <div v-if="detailData.submitTime" class="detail-section">
-          <div class="section-title">
-            <i class="ri-send-plane-line"></i>
-            {{ $t('research.datasetCompilation.form.submitInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.submitTime') }}:</span>
-              <span class="value">{{ detailData.submitTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.submitBy') }}:</span>
-              <span class="value">{{ detailData.submitByName || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.submitOrgName') }}:</span>
-              <span class="value">{{ detailData.submitOrgName || '-' }}</span>
             </div>
           </div>
-        </div>
-
-        <!-- 审核信息 -->
-        <div v-if="detailData.auditTime" class="detail-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('research.datasetCompilation.form.auditInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.auditTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.auditBy') }}:</span>
-              <span class="value">{{ detailData.auditByName || '-' }}</span>
-            </div>
-            <div v-if="detailData.auditOpinion" class="detail-item full-width">
-              <span class="label">{{ $t('research.datasetCompilation.form.auditOpinion') }}:</span>
-              <span class="value">{{ detailData.auditOpinion }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 创建信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-time-line"></i>
-            {{ $t('research.datasetCompilation.form.creationInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.createdTime') }}:</span>
-              <span class="value">{{ detailData.createdTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.createdBy') }}:</span>
-              <span class="value">{{ detailData.createdBy || '-' }}</span>
-            </div>
-            <div v-if="detailData.updatedTime" class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.updatedTime') }}:</span>
-              <span class="value">{{ detailData.updatedTime }}</span>
-            </div>
-            <div v-if="detailData.updatedBy" class="detail-item">
-              <span class="label">{{ $t('research.datasetCompilation.form.updatedBy') }}:</span>
-              <span class="value">{{ detailData.updatedBy || '-' }}</span>
-            </div>
-          </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -670,15 +597,15 @@ const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'fl
 
 const loading = ref(false)
 const detailData = ref(null)
-const activeTab = ref('plotInfo') // 默认激活第一个Tab
+const activeTab = ref('plotInfo')
 
 // 数据列表 Ref
-const plotInfoList = ref([])           // 地块及播种信息
-const farmingRecordList = ref([])     // 农事记录
-const agronomicTraitList = ref([])    // 农艺性状
-const environmentDataList = ref([])   // 环境监测数据
-const labTestList = ref([])           // 实验室测试数据
-const yieldDataList = ref([])         // 田间检查/产量数据
+const plotInfoList = ref([])
+const farmingRecordList = ref([])
+const agronomicTraitList = ref([])
+const environmentDataList = ref([])
+const labTestList = ref([])
+const yieldDataList = ref([])
 
 // 获取状态类型
 const getStatusType = (status) => {
@@ -866,6 +793,16 @@ const loadDetail = async () => {
     const res = await getDatasetById(route.params.id)
     if (res.code === 200 && res.data) {
       detailData.value = res.data
+      
+      // 设置审批历史记录
+      if (res.data && res.data.approvalComments) {
+        approvalHistory.value = res.data.approvalComments.map(comment => ({
+          approver: comment.approverName,
+          approvalTime: comment.approvalTime,
+          comment: comment.comment
+        }))
+      }
+      
       // 加载所有数据列表
       if (res.data.trialId) {
         await loadAllDataLists(res.data.trialId)
@@ -883,11 +820,6 @@ const loadDetail = async () => {
   }
 }
 
-// 编辑
-const handleEdit = () => {
-  router.push({ name: 'DatasetCompilationEdit', params: { id: route.params.id } })
-}
-
 // 返回
 const goBack = () => {
   router.back()
@@ -899,68 +831,11 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-/* 详情分节 */
-.detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-/* 详情网格 */
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-  flex-direction: column;
-}
-
-.detail-item .label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 160px;
-  flex-shrink: 0;
-}
-
-.detail-item.full-width .label {
-  min-width: auto;
-  margin-bottom: 8px;
-}
-
-.detail-item .value {
-  color: #1f2937;
-  flex: 1;
-}
-
-/* 统计卡片网格 */
+/* 统计卡片样式 */
 .statistics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -968,35 +843,31 @@ onMounted(() => {
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #86efac;
-  border-radius: 12px;
-  padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.1);
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-}
-
-.stat-icon i {
-  font-size: 28px;
-  color: white;
+  background: white;
+  border-radius: 12px;
+  color: #009A44;
+  font-size: 24px;
 }
 
 .stat-content {
@@ -1004,319 +875,14 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
 }
 
 .stat-value {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: #009A44;
-  line-height: 1;
-}
-
-/* ========== Tab 页样式优化 ========== */
-.dataset-detail-container :deep(.el-tabs) {
-  --el-tabs-header-text-color: #6b7280;
-  --el-tabs-active-text-color: #009A44;
-  --el-tabs-border-color: #e5e7eb;
-  --el-tabs-card-header-background: #f9fafb;
-}
-
-.dataset-detail-container :deep(.el-tabs__header) {
-  margin-bottom: 16px;
-}
-
-.dataset-detail-container :deep(.el-tabs__item) {
-  padding: 0 20px;
-  height: 40px;
-  line-height: 40px;
-}
-
-.dataset-detail-container :deep(.el-tabs__item.is-active) {
-  background-color: #f0fdf4;
-  border-color: #009A44;
-}
-
-.dataset-detail-container :deep(.el-tabs--card > .el-tabs__header .el-tabs__item.is-active) {
-  border-bottom-color: #009A44;
-}
-
-.dataset-detail-container :deep(.el-tabs__ink-bar) {
-  height: 3px;
-  background-color: #009A44;
-}
-
-/* 表格样式适配 */
-.dataset-detail-container :deep(.el-table) {
-  --el-table-header-text-color: #009A44;
-  --el-table-row-hover-bg-color: #f0fdf4;
-}
-
-.dataset-detail-container :deep(.el-table th) {
-  background-color: #f8fff9 !important;
-}
-
-.dataset-detail-container :deep(.el-table td) {
-  border-color: #e8f5ec;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .detail-section {
-    padding: 20px 16px;
-  }
-
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-    flex-wrap: wrap;
-  }
-
-  .header-left,
-  .header-center,
-  .header-right {
-    flex: auto;
-  }
-
-  .header-left {
-    order: 1;
-  }
-
-  .header-center {
-    order: 2;
-    width: 100%;
-    margin-top: 8px;
-    text-align: left;
-  }
-
-  .header-right {
-    order: 3;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 50;
-  }
-
-  .header-right .el-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    padding: 0;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border: none;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-right .el-button i {
-    font-size: 24px;
-    margin-right: 0;
-  }
-
-  .header-right .el-button span {
-    display: none;
-  }
-
-  .header-left .el-button {
-    font-size: 14px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-section {
-    padding: 16px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  /* 单列布局 */
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    background: rgba(0, 154, 68, 0.02);
-    border-radius: 8px;
-    border-left: 3px solid #009A44;
-  }
-
-  .detail-item.full-width {
-    grid-column: auto;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .statistics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 12px;
-  }
-
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .stat-icon i {
-    font-size: 20px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-  }
-
-  /* Tab 页移动端适配 */
-  .dataset-detail-container :deep(.el-tabs__nav) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .dataset-detail-container :deep(.el-tabs__item) {
-    padding: 0 16px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  /* 表格移动端适配 */
-  .dataset-detail-container :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  .dataset-detail-container :deep(.el-table th) {
-    padding: 8px 4px;
-  }
-
-  .dataset-detail-container :deep(.el-table td) {
-    padding: 8px 4px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .header-right .el-button {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .header-right .el-button i {
-    font-size: 20px;
-  }
-
-  .detail-section {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .detail-grid {
-    gap: 12px;
-  }
-
-  .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .stat-card {
-    padding: 10px;
-  }
-
-  .stat-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .stat-icon i {
-    font-size: 18px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-  }
-
-  .stat-value {
-    font-size: 18px;
-  }
 }
 </style>
