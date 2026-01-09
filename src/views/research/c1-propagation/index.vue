@@ -4,8 +4,8 @@
       <!-- 页面头部 -->
       <PageHeader
         icon="ri-seedling-line"
-        :title="$t('research.c1Propagation.title')"
-        :subtitle="$t('research.c1Propagation.subtitle')" />
+        :title="$t('research.menu.c1SeedPropagationApplication')"
+        :subtitle="$t('research.menu.c1SeedPropagationApplicationSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

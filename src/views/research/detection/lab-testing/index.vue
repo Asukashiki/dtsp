@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <PageHeader icon="ri-flask-line" :title="$t('research.detection.labTesting.title')"
-        :subtitle="$t('research.detection.labTesting.subtitle')" />
+      <PageHeader icon="ri-flask-line" :title="$t('research.menu.labTesting')"
+        :subtitle="$t('research.menu.labTestingSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

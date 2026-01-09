@@ -59,15 +59,17 @@ export default {
   laboratoryTestAudit: 'Laboratory Test Data Audit',
 
   fieldDetection: 'Field Detection',
+  fieldDetectionSubtitle: 'Record field detection data',
   labTesting: 'Lab Testing',
+  labTestingSubtitle: 'Record laboratory testing data',
 
-  breederSeedProduction: 'Seed Production Data',
-  breederSeedProductionResult: 'Production Data Collection',
+  breederSeedProduction: 'Breeder Seed Production Data',
+  breederSeedProductionResult: 'Breeder Seed Production Result',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',
 
-  breederSeedDistribution: 'Seed Distribution Data',
+  breederSeedDistribution: 'Breeder Seed Distribution Data',
   breederSeedDistributionAdd: 'Add Seed Distribution',
   breederSeedDistributionEdit: 'Edit Seed Distribution',
   breederSeedDistributionDetail: 'Seed Distribution Detail',
@@ -110,26 +112,31 @@ export default {
   environmentNewDataApprove: 'Environment Monitoring Data Approval',
 
   oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
+  oseReceiveConfirmSubtitle: 'OSE confirms receipt of breeder seeds from breeders',
   oseReceiveConfirmAdd: 'Add Receipt Confirmation',
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
+  oseReceiveConfirmConfirm: 'OSE Confirm Receipt',
 
   oseBatchCollection: 'Seed Multiplication Batch Data',
+  oseBatchCollectionSubtitle: 'OSE records seed multiplication batch information',
   oseBatchCollectionAdd: 'Add Batch Data',
   oseBatchCollectionEdit: 'Edit Batch Data',
   oseBatchCollectionDetail: 'Batch Data Detail',
 
-  propagationBatchCollection: 'Seed Multiplication Batch Info',
+  propagationBatchCollection: 'OSE Propagation Batch Information',
+  propagationBatchCollectionSubtitle: 'Manage OSE propagation batch information',
   propagationBatchAdd: 'Add Seed Multiplication Batch',
   propagationBatchEdit: 'Edit Seed Multiplication Batch',
   propagationBatchDetail: 'Seed Multiplication Batch Detail',
 
-  propagationTrackingCollection: 'Multiplication  Tracking Information',
+  propagationTrackingCollection: 'Seed Multiplication Tracking Information',
   propagationTrackingAdd: 'Add Tracking Information',
   propagationTrackingEdit: 'Edit Tracking Information',
   propagationTrackingDetail: 'Tracking Information Detail',
 
-  c1PropagationBatchCollection: 'Seed Multiplication Information',
+  c1PropagationBatchCollection: 'C1 Propagation Batch Information',
+  c1PropagationBatchCollectionSubtitle: 'Manage C1 propagation batch information',
   c1PropagationBatchAdd: 'Add Propagation Batch',
   c1PropagationBatchEdit: 'Edit Propagation Batch',
   c1PropagationBatchDetail: 'Propagation Batch Detail',
@@ -139,19 +146,30 @@ export default {
   seedCertificationApplicationEdit: 'Edit Certification Application',
   seedCertificationApplicationDetail: 'Certification Application Detail',
 
-  c1SeedPropagationApplication: 'Seed Multiplication Application',
+  c1SeedPropagationApplication: 'C1 Seed Propagation Application',
+  c1SeedPropagationApplicationSubtitle: 'Union/Cooperative applies for seed propagation',
   c1SeedPropagationApplicationAdd: 'Add Propagation Application',
   c1SeedPropagationApplicationEdit: 'Edit Propagation Application',
   c1SeedPropagationApplicationDetail: 'Propagation Application Detail',
 
-  c1SeedPropagationApplicationAudit: 'Seed Multiplication Application Audit',
+  c1SeedPropagationApplicationAudit: 'C1 Seed Propagation Application Audit',
+  c1SeedPropagationApplicationAuditSubtitle: 'OIA reviews seed propagation applications',
   c1SeedPropagationApplicationAuditDetail: 'Propagation Application Audit Detail',
+  c1SeedPropagationApplicationAuditForm: 'Audit Propagation Application',
 
-  c1BatchAudit: 'Seed Multiplication Audit',
+  c1BatchAudit: 'Breeding Seed Audit',
+  c1BatchAuditSubtitle: 'Audit C1 propagation batch information',
   c1BatchAuditDetail: 'Breeding Seed Audit Detail',
 
   c1BatchCertificate: 'Seed Certificate Issuance',
+  c1BatchCertificateSubtitle: 'Issue seed certificates for C1 batches',
   c1BatchCertificateDetail: 'Seed Certificate Issuance Detail',
+
+  fieldDetectionAdd: 'Add Field Detection',
+  fieldDetectionDetail: 'Field Detection Detail',
+
+  labTestingAdd: 'Add Lab Testing',
+  labTestingDetail: 'Lab Testing Detail',
 
   seedCertificationAudit: 'Seed Certification Audit',
   seedCertificationAuditDetail: 'Certification Audit Detail',
@@ -191,10 +209,6 @@ export default {
   breedingPlan: 'Breeding Plan Management',
   breedingMaterial: 'Breeding Material Registration',
   breedingModule: 'Seed Multiplication Batch Info Management',
-  breedingBatch: 'Seed Multiplication Batch Info',
-  breedingTracking: 'Seed Multiplication Tracking Information',
-  breedingTest: 'Seed Multiplication Test Information Collection',
-  breedingTracking: 'Breeding Tracking Management',
   breedingSeed: 'Breeding Seed Management',
   breedingCertification: 'Breeding Seed Certification Application',
   breedingAudit: 'Seed Multiplication Audit',
@@ -206,7 +220,6 @@ export default {
   seedProduction: 'Seed Production Data',
   seedDistribution: 'Breeder Seed Distribution Management',
   oseManagement: 'OSE Maintenance Management',
-  oseReceiveConfirm: 'OSE Receive Confirmation',
   datasetCompilation: 'Breeding Dataset Compilation',
   datasetAudit: 'Breeding Dataset Audit',
   breedingLicense: 'Breeding Licensing Data Entry',
@@ -221,9 +234,7 @@ export default {
   labData: 'Laboratory Test Data Collection',
   yieldData: 'Yield Data Collection',
   iotData: 'IOT Sensor Data Collection',
-  seedService: 'Breed  Information Service',
   promotionManagement: 'Seed Promotion Management',
-  seedInfo: 'Varietal Information Publicity',
 
   // Input Circulation Management
   inputCirculation: 'Input Circulation Management',

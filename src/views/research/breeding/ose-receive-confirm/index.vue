@@ -4,8 +4,8 @@
       <!-- 页面头部 -->
       <PageHeader
         icon="ri-checkbox-circle-line"
-        :title="$t('research.breeding.seed.receiveConfirm.title')"
-        :subtitle="$t('research.breeding.seed.receiveConfirm.subtitle')" />
+        :title="$t('research.menu.oseReceiveConfirm')"
+        :subtitle="$t('research.menu.oseReceiveConfirmSubtitle')" />
 
       <!-- 统计卡片区域 -->
       <div class="stats-grid" v-if="false">

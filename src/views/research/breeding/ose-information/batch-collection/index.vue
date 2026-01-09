@@ -4,8 +4,8 @@
       <!-- 页面头部 -->
       <PageHeader
         icon="ri-bar-chart-line"
-        :title="$t('batchCollection.title')"
-        :subtitle="$t('batchCollection.subtitle')" />
+        :title="$t('research.menu.oseBatchCollection')"
+        :subtitle="$t('research.menu.oseBatchCollectionSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

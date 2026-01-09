@@ -4,8 +4,8 @@
       <!-- 页面头部 -->
       <PageHeader
         icon="ri-seedling-line"
-        :title="$t('research.breeding.title')"
-        :subtitle="$t('research.breeding.subtitle')" />
+        :title="$t('research.menu.oseBatchCollection')"
+        :subtitle="$t('research.menu.oseBatchCollectionSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

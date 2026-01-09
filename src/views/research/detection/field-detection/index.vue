@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <PageHeader icon="ri-bar-chart-box-line" :title="$t('research.detection.fieldDetection.title')"
-        :subtitle="$t('research.detection.fieldDetection.subtitle')" />
+      <PageHeader icon="ri-bar-chart-box-line" :title="$t('research.menu.fieldDetection')"
+        :subtitle="$t('research.menu.fieldDetectionSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

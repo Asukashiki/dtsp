@@ -679,13 +679,13 @@ const routes = [
         path: 'breeding/ose-receive-confirm/detail/:id',
         name: 'OseReceiveConfirmDetail',
         component: () => import('../views/research/breeding/ose-receive-confirm/detail.vue'),
-        meta: { title: 'OSE接收确认详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReceiveConfirmDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/ose-receive-confirm/confirm/:id',
         name: 'OseReceiveConfirmConfirm',
         component: () => import('../views/research/breeding/ose-receive-confirm/confirm.vue'),
-        meta: { title: 'OSE确认接收', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReceiveConfirmConfirm', hideInMenu: true, requiresAuth: true }
       },
 
       // OSE繁殖批次信息数据采集
@@ -693,19 +693,19 @@ const routes = [
         path: 'breeding/ose-batch-collection',
         name: 'OseBatchCollection',
         component: () => import('../views/research/breeding/ose-information/batch-collection/index.vue'),
-        meta: { title: 'OSE繁殖批次信息数据采集', requiresAuth: true }
+        meta: { title: 'research.menu.oseBatchCollection', requiresAuth: true }
       },
       {
         path: 'breeding/ose-batch-collection/add',
         name: 'OseBatchCollectionAdd',
         component: () => import('../views/research/breeding/ose-information/batch-collection/collection-form.vue'),
-        meta: { title: '新增OSE繁殖批次采集', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseBatchCollectionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/ose-batch-collection/detail/:id',
         name: 'OseBatchCollectionDetail',
         component: () => import('../views/research/breeding/ose-information/batch-collection/collection-detail.vue'),
-        meta: { title: 'OSE繁殖批次采集详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseBatchCollectionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子扩繁批次信息采集
@@ -811,7 +811,7 @@ const routes = [
         path: 'c1-propagation-audit/audit/:id',
         name: 'C1PropagationAuditForm',
         component: () => import('../views/research/c1-propagation-audit/audit-form.vue'),
-        meta: { title: '审核繁殖申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationAuditForm', hideInMenu: true, requiresAuth: true }
       },
 
       // C1繁殖批次管理
@@ -857,7 +857,7 @@ const routes = [
         path: 'field-detection/detail/:id',
         name: 'FieldDetectionDetail',
         component: () => import('../views/research/detection/field-detection/detail.vue'),
-        meta: { title: '田间检测详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldDetectionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 实验室检测
@@ -877,7 +877,7 @@ const routes = [
         path: 'lab-testing/detail/:id',
         name: 'LabTestingDetail',
         component: () => import('../views/research/detection/lab-testing/detail.vue'),
-        meta: { title: '实验室检测详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.labTestingDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子认证审核

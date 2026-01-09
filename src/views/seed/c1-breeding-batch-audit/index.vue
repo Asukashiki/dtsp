@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <PageHeader icon="ri-checkbox-circle-line" :title="$t('seed.c1BatchAudit.title')"
-        :subtitle="$t('seed.c1BatchAudit.subtitle')" />
+      <PageHeader icon="ri-checkbox-circle-line" :title="$t('research.menu.c1BatchAudit')"
+        :subtitle="$t('research.menu.c1BatchAuditSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">

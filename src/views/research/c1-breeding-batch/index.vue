@@ -2,8 +2,8 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <PageHeader icon="ri-seedling-line" :title="$t('research.c1BreedingBatch.title')"
-        :subtitle="$t('research.c1BreedingBatch.subtitle')" />
+      <PageHeader icon="ri-seedling-line" :title="$t('research.menu.c1PropagationBatchCollection')"
+        :subtitle="$t('research.menu.c1PropagationBatchCollectionSubtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
