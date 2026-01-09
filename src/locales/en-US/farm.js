@@ -13,6 +13,15 @@ export default {
       farmerInfo: 'Farmer Information',
       landManagement: 'Land Management',
       landList: 'Land Information Management',
+      // 农民管理 - 操作后缀
+      farmerList: 'Farmer List',
+      farmerAdd: 'Add Farmer',
+      farmerEdit: 'Edit Farmer',
+      farmerDetail: 'Farmer Details',
+      // 土地管理 - 操作后缀
+      landAdd: 'Add Land',
+      landEdit: 'Edit Land',
+      landDetail: 'Land Details',
     },
 
     // Farmer Authentication Application

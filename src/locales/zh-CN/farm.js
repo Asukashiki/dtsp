@@ -13,6 +13,15 @@ export default {
       farmerInfo: '农民信息维护',
       landManagement: '土地信息管理',
       landList: '土地信息管理',
+      // 农民管理 - 操作后缀
+      farmerList: '农民列表',
+      farmerAdd: '新增农民',
+      farmerEdit: '编辑农民',
+      farmerDetail: '农民详情',
+      // 土地管理 - 操作后缀
+      landAdd: '新增土地',
+      landEdit: '编辑土地',
+      landDetail: '土地详情',
     },
 
     // 农民认证申请

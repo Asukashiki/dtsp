@@ -61,6 +61,31 @@ export default {
       stockQuery: '库存查询',
       dashboard: '大屏管理',
       feedback: '信息反馈',
+      // 仓库管理 - 操作后缀
+      warehouseList: '仓库列表',
+      warehouseAdd: '新增仓库',
+      warehouseEdit: '编辑仓库',
+      warehouseDetail: '仓库详情',
+      // 入库管理 - 操作后缀
+      stockInList: '入库单列表',
+      stockInAdd: '新增入库单',
+      stockInEdit: '编辑入库单',
+      stockInDetail: '入库单详情',
+      stockInAudit: '入库单审核',
+      // 出库管理 - 操作后缀
+      stockOutList: '出库单列表',
+      stockOutAdd: '新增出库单',
+      stockOutEdit: '编辑出库单',
+      stockOutDetail: '出库单详情',
+      stockOutAudit: '出库单审核',
+      // 库存查询 - 操作后缀
+      stockQueryList: '库存列表',
+      stockQueryDetail: '库存详情',
+      // 大屏管理 - 操作后缀
+      dashboardView: '大屏查看',
+      // 信息反馈 - 操作后缀
+      feedbackList: '反馈列表',
+      feedbackDetail: '反馈详情',
     },
 
 

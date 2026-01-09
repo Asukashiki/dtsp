@@ -60,7 +60,32 @@ export default {
     stockOut: 'Stock Out Management',
     stockQuery: 'Inventory Query',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
-    feedback: 'Information Feedback'
+    feedback: 'Information Feedback',
+    // 仓库管理 - 操作后缀
+    warehouseList: 'Warehouse List',
+    warehouseAdd: 'Add Warehouse',
+    warehouseEdit: 'Edit Warehouse',
+    warehouseDetail: 'Warehouse Details',
+    // 入库管理 - 操作后缀
+    stockInList: 'Stock In Order List',
+    stockInAdd: 'Add Stock In Order',
+    stockInEdit: 'Edit Stock In Order',
+    stockInDetail: 'Stock In Order Details',
+    stockInAudit: 'Stock In Order Audit',
+    // 出库管理 - 操作后缀
+    stockOutList: 'Stock Out Order List',
+    stockOutAdd: 'Add Stock Out Order',
+    stockOutEdit: 'Edit Stock Out Order',
+    stockOutDetail: 'Stock Out Order Details',
+    stockOutAudit: 'Stock Out Order Audit',
+    // 库存查询 - 操作后缀
+    stockQueryList: 'Inventory List',
+    stockQueryDetail: 'Inventory Details',
+    // 大屏管理 - 操作后缀
+    dashboardView: 'Dashboard View',
+    // 信息反馈 - 操作后缀
+    feedbackList: 'Feedback List',
+    feedbackDetail: 'Feedback Details',
   },
 
   // 投入品目录管理

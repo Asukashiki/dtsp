@@ -25,14 +25,14 @@ const routes = [
     path: '/print/seed/breeding-certification/:id',
     name: 'BreedingCertificationPrint',
     component: () => import('../views/seed/breeding-certification/print.vue'),
-    meta: { title: '打印认证标签', hideInMenu: true, requiresAuth: true }
+    meta: { title: 'research.menu.seedCertificationIssuance', hideInMenu: true, requiresAuth: true }
   },
   // C1繁殖批次证书打印页面
   {
     path: '/print/seed/c1-breeding-certificate/:id',
     name: 'C1BreedingCertificatePrint',
     component: () => import('../views/seed/c1-breeding-certificate/print.vue'),
-    meta: { title: 'C1繁殖批次证书打印', hideInMenu: true, requiresAuth: true }
+    meta: { title: 'research.menu.c1BatchCertificate', hideInMenu: true, requiresAuth: true }
   },
   {
     path: '/',
@@ -45,20 +45,20 @@ const routes = [
         path: 'home',
         name: 'Home',
         component: () => import('../views/home/Home.vue'),
-        meta: { title: '首页', icon: 'home', requiresAuth: true }
+        meta: { title: 'common.home', icon: 'home', requiresAuth: true }
       },
       {
         path: 'user',
         name: 'user',
         component: () => import('../components/userDetails.vue'),
-        meta: { title: '首页', icon: 'user', requiresAuth: true }
+        meta: { title: 'common.home', icon: 'user', requiresAuth: true }
       },
       // 应用注册申请逻辑按需求下线，以下路由整体注释保留
       // {
       //   path: 'application',
       //   name: 'Application',
       //   redirect: '/application/record',
-      //   meta: { title: '用户身份认证', icon: 'application', requiresAuth: true }
+      //   meta: { title: 'common.identity', icon: 'application', requiresAuth: true }
       // },
       // {
       //   path: 'application/record',
@@ -77,25 +77,25 @@ const routes = [
         path: 'identity',
         name: 'Identity',
         component: () => import('../views/identity/index.vue'),
-        meta: { title: '用户身份认证', icon: 'user', requiresAuth: true }
+        meta: { title: 'common.identity', icon: 'user', requiresAuth: true }
       },
       {
         path: 'identity/farmer',
         name: 'IdentityFarmer',
         component: () => import('../views/identity/farmer.vue'),
-        meta: { title: '农民认证申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'common.farmerAuth', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'identity/supplier',
         name: 'IdentitySupplier',
         component: () => import('../views/identity/supplier.vue'),
-        meta: { title: '供应商认证申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'common.supplierAuth', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'identity/buyer',
         name: 'IdentityBuyer',
         component: () => import('../views/identity/buyer.vue'),
-        meta: { title: '收购商认证申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'common.buyerAuth', hideInMenu: true, requiresAuth: true }
       },
       // 知识中心逻辑按需求下线，以下路由整体注释保留
       // {
@@ -108,7 +108,7 @@ const routes = [
         path: 'dataList',
         name: 'DataList',
         component: () => import('../views/home/components/dataList.vue'),
-        meta: { title: '系统公告', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'common.announcement', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
@@ -127,38 +127,38 @@ const routes = [
         path: 'breeding-data/batch',
         name: 'BreedingBatchList',
         component: () => import('../views/research/breeding-data/batch/index.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.list', requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchManagement', requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/add',
         name: 'BreedingBatchAdd',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/edit/:dataId',
         name: 'BreedingBatchEdit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/detail/:dataId',
         name: 'BreedingBatchDetail',
         component: () => import('../views/research/breeding-data/batch/detail.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
         {
         path: 'breeding-data/batch/audit/:dataId',
         name: 'BreedingBatchAudit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.audit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchApprove', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/batch/approve',
         name: 'BreedingBatchApprove',
         component: () => import('../views/research/breeding-data/batch/approve.vue'),
-        meta: { title: 'router.breedingData.breedingBatch.approve', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingBatchApprove', hideInMenu: true, requiresAuth: true }
       },
 
 
@@ -167,25 +167,25 @@ const routes = [
         path: 'breeding-data/plot',
         name: 'PlotInfoList',
         component: () => import('../views/research/breeding-data/plot/index.vue'),
-        meta: { title: 'router.breedingData.plot.list', requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoManagement', requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/add',
         name: 'PlotInfoAdd',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
-        meta: { title: 'router.breedingData.plot.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/edit/:plotId',
         name: 'PlotInfoEdit',
         component: () => import('../views/research/breeding-data/plot/form.vue'),
-        meta: { title: 'router.breedingData.plot.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/plot/detail/:plotId',
         name: 'PlotInfoDetail',
         component: () => import('../views/research/breeding-data/plot/detail.vue'),
-        meta: { title: 'router.breedingData.plot.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 地块及播种信息管理审核
@@ -193,13 +193,13 @@ const routes = [
         path: 'breeding-data/plot-audit',
         name: 'PlotAuditList',
         component: () => import('../views/research/breeding-data/plot-audit/index.vue'),
-        meta: { title: 'router.breedingData.plot.audit', requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/plot-audit/review/:plotId',
         name: 'PlotAuditReview',
         component: () => import('../views/research/breeding-data/plot-audit/review.vue'),
-        meta: { title: 'router.breedingData.plot.auditReview', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.plotInfoAudit', hideInMenu: true, requiresAuth: true }
       },
 
       // 试验基础信息管理
@@ -207,25 +207,25 @@ const routes = [
         path: 'breeding-data/trial',
         name: 'TrialBasicList',
         component: () => import('../views/research/breeding-data/trial/index.vue'),
-        meta: { title: 'router.breedingData.trial.list', requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicManagement', requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/add',
         name: 'TrialBasicAdd',
         component: () => import('../views/research/breeding-data/trial/form.vue'),
-        meta: { title: 'router.breedingData.trial.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/edit/:trialId',
         name: 'TrialBasicEdit',
         component: () => import('../views/research/breeding-data/trial/form.vue'),
-        meta: { title: 'router.breedingData.trial.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trial/detail/:trialId',
         name: 'TrialBasicDetail',
         component: () => import('../views/research/breeding-data/trial/detail.vue'),
-        meta: { title: 'router.breedingData.trial.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农艺性状数据采集
@@ -233,38 +233,38 @@ const routes = [
         path: 'breeding-data/trait',
         name: 'AgronomicTraitDataList',
         component: () => import('../views/research/breeding-data/trait/index.vue'),
-        meta: { title: 'router.breedingData.trait.list', requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataCollection', requiresAuth: true }
       },
       // 农艺性状数据采集
       {
         path: 'breeding-data/trait-audit',
         name: 'AgronomicTraitDataAudit',
         component: () => import('../views/research/breeding-data/trait-audit/index.vue'),
-        meta: { title: 'router.breedingData.trait.audit', requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/trait-audit/review/:traitId',
         name: 'AgronomicTraitDataAuditReview',
         component: () => import('../views/research/breeding-data/trait-audit/review.vue'),
-        meta: { title: 'router.breedingData.trait.auditReview', requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/add',
         name: 'AgronomicTraitDataAdd',
         component: () => import('../views/research/breeding-data/trait/form.vue'),
-        meta: { title: 'router.breedingData.trait.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/edit/:traitId',
         name: 'AgronomicTraitDataEdit',
         component: () => import('../views/research/breeding-data/trait/form.vue'),
-        meta: { title: 'router.breedingData.trait.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/trait/detail/:traitId',
         name: 'AgronomicTraitDataDetail',
         component: () => import('../views/research/breeding-data/trait/detail.vue'),
-        meta: { title: 'router.breedingData.trait.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.agronomicTraitDataDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农事记录数据采集
@@ -272,25 +272,25 @@ const routes = [
         path: 'breeding-data/farming',
         name: 'FarmingRecordDataList',
         component: () => import('../views/research/breeding-data/farming/index.vue'),
-        meta: { title: 'router.breedingData.farming.list', requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataCollection', requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/add',
         name: 'FarmingRecordDataAdd',
         component: () => import('../views/research/breeding-data/farming/form.vue'),
-        meta: { title: 'router.breedingData.farming.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/edit/:farmingId',
         name: 'FarmingRecordDataEdit',
         component: () => import('../views/research/breeding-data/farming/form.vue'),
-        meta: { title: 'router.breedingData.farming.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/detail/:farmingId',
         name: 'FarmingRecordDataDetail',
         component: () => import('../views/research/breeding-data/farming/detail.vue'),
-        meta: { title: 'router.breedingData.farming.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农事记录数据采集审核 - 新增的审核路由
@@ -298,19 +298,19 @@ const routes = [
         path: 'breeding-data/farming/farming-index',
         name: 'FarmingRecordAuditIndex',
         component: () => import('../views/research/breeding-data/farming/farming-index.vue'),
-        meta: { title: 'router.breedingData.farming.auditIndex', requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/farming-detail/:farmingId',
         name: 'FarmingRecordAuditDetail',
         component: () => import('../views/research/breeding-data/farming/farming-detail.vue'),
-        meta: { title: 'router.breedingData.farming.auditDetail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataAudit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/farming/farming-form/:farmingId',
         name: 'FarmingRecordAuditForm',
         component: () => import('../views/research/breeding-data/farming/farming-form.vue'),
-        meta: { title: 'router.breedingData.farming.auditForm', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmingRecordDataAudit', hideInMenu: true, requiresAuth: true }
       },
 
       // 环境属性数据采集
@@ -318,25 +318,25 @@ const routes = [
         path: 'breeding-data/environment',
         name: 'EnvironmentDataList',
         component: () => import('../views/research/breeding-data/environment/index.vue'),
-        meta: { title: 'router.breedingData.environment.list', requiresAuth: true }
+        meta: { title: 'research.menu.environmentDataCollection', requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/add',
         name: 'EnvironmentDataAdd',
         component: () => import('../views/research/breeding-data/environment/form.vue'),
-        meta: { title: 'router.breedingData.environment.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentDataAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/edit/:envId',
         name: 'EnvironmentDataEdit',
         component: () => import('../views/research/breeding-data/environment/form.vue'),
-        meta: { title: 'router.breedingData.environment.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentDataEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/environment/detail/:envId',
         name: 'EnvironmentDataDetail',
         component: () => import('../views/research/breeding-data/environment/detail.vue'),
-        meta: { title: 'router.breedingData.environment.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentDataDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 田间检验数据采集
@@ -344,43 +344,43 @@ const routes = [
         path: 'breeding-data/field-inspection',
         name: 'FieldInspection',
         component: () => import('../views/research/data-collection/yield-data/index.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.list', requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspection', requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/add',
         name: 'FieldInspectionAdd',
         component: () => import('../views/research/data-collection/yield-data/form.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/edit/:id',
         name: 'FieldInspectionEdit',
         component: () => import('../views/research/data-collection/yield-data/form.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/detail/:id',
         name: 'FieldInspectionDetail',
         component: () => import('../views/research/data-collection/yield-data/detail.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/audit/:id',
         name: 'FieldInspectionAudit',
         component: () => import('../views/research/data-collection/yield-data/audit.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.audit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionAudit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection/audit-detail/:id',
         name: 'FieldInspectionAuditDetail',
         component: () => import('../views/research/data-collection/yield-data/audit-detail.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.auditDetail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionAudit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/field-inspection-audit',
         name: 'FieldInspectionAuditList',
         component: () => import('../views/research/data-collection/yield-data/audit-list.vue'),
-        meta: { title: 'router.breedingData.fieldInspection.auditList', requiresAuth: true }
+        meta: { title: 'research.menu.fieldInspectionAudit', requiresAuth: true }
       },
 
       // 实验室测试数据采集
@@ -388,25 +388,25 @@ const routes = [
         path: 'breeding-data/laboratory-test',
         name: 'BreedingLabTest',
         component: () => import('../views/research/data-collection/laboratory-test/index.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.list', requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTest', requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/add',
         name: 'BreedingLabTestAdd',
         component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTestAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/edit/:id',
         name: 'BreedingLabTestEdit',
         component: () => import('../views/research/data-collection/laboratory-test/form.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTestEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test/detail/:id',
         name: 'BreedingLabTestDetail',
         component: () => import('../views/research/data-collection/laboratory-test/detail.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTestDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 实验室测试数据采集审核
@@ -414,13 +414,13 @@ const routes = [
         path: 'breeding-data/laboratory-test-audit',
         name: 'BreedingLabTestAudit',
         component: () => import('../views/research/data-collection/laboratory-test-audit/index.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.audit', requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTestAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/laboratory-test-audit/detail/:id',
         name: 'BreedingLabTestAuditDetail',
         component: () => import('../views/research/data-collection/laboratory-test-audit/detail.vue'),
-        meta: { title: 'router.breedingData.laboratoryTest.auditDetail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.laboratoryTestAudit', hideInMenu: true, requiresAuth: true }
       },
 
       // Breeder seed生产数据采集
@@ -429,108 +429,108 @@ const routes = [
         path: 'breeding-data/dataset-compilation',
         name: 'DatasetCompilation',
         component: () => import('../views/research/breeding-data/dataset-compilation/index.vue'),
-        meta: { title: 'router.breedingData.datasetCompilation.list', requiresAuth: true }
+        meta: { title: 'research.menu.datasetCompilation', requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/add',
         name: 'DatasetCompilationAdd',
         component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
-        meta: { title: 'router.breedingData.datasetCompilation.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.datasetCompilation', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/edit/:id',
         name: 'DatasetCompilationEdit',
         component: () => import('../views/research/breeding-data/dataset-compilation/form.vue'),
-        meta: { title: 'router.breedingData.datasetCompilation.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.datasetCompilation', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-compilation/detail/:id',
         name: 'DatasetCompilationDetail',
         component: () => import('../views/research/breeding-data/dataset-compilation/detail.vue'),
-        meta: { title: 'router.breedingData.datasetCompilation.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.datasetCompilation', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 育种数据集审核
       {
         path: 'breeding-data/dataset-audit',
         name: 'DatasetAudit',
         component: () => import('../views/research/breeding-data/dataset-audit/index.vue'),
-        meta: { title: 'router.breedingData.datasetAudit.list', requiresAuth: true }
+        meta: { title: 'research.menu.datasetAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/dataset-audit/review/:id',
         name: 'DatasetAuditReview',
         component: () => import('../views/research/breeding-data/dataset-audit/review.vue'),
-        meta: { title: 'router.breedingData.datasetAudit.review', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.datasetAudit', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 试验基础信息管理审核
       {
         path: 'breeding-data/trial-audit',
         name: 'TrialBasicAudit',
         component: () => import('../views/research/breeding-data/trial-audit/index.vue'),
-        meta: { title: 'router.breedingData.trial.audit', requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicAudit', requiresAuth: true }
       },
       {
         path: 'breeding-data/trial-audit/review/:id',
         name: 'TrialBasicAuditReview',
         component: () => import('../views/research/breeding-data/trial-audit/review.vue'),
-        meta: { title: 'router.breedingData.trial.auditReview', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.trialBasicAudit', hideInMenu: true, requiresAuth: true }
       },
       // 育种数据管理 - 育种许可数据录入
       {
         path: 'breeding-data/breeding-license',
         name: 'BreedingLicense',
         component: () => import('../views/research/breeding-data/breeding-license/index.vue'),
-        meta: { title: 'router.breedingData.breedingLicense.list', requiresAuth: true }
+        meta: { title: 'research.menu.breedingLicense', requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/add',
         name: 'BreedingLicenseAdd',
         component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
-        meta: { title: 'router.breedingData.breedingLicense.add', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingLicense', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/edit/:id',
         name: 'BreedingLicenseEdit',
         component: () => import('../views/research/breeding-data/breeding-license/form.vue'),
-        meta: { title: 'router.breedingData.breedingLicense.edit', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingLicense', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding-data/breeding-license/detail/:id',
         name: 'BreedingLicenseDetail',
         component: () => import('../views/research/breeding-data/breeding-license/detail.vue'),
-        meta: { title: 'router.breedingData.breedingLicense.detail', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.breedingLicense', hideInMenu: true, requiresAuth: true }
       },
       // 数据采集 - 试验基础数据采集
       {
         path: 'breeding/seed-production',
         name: 'SeedProduction',
         component: () => import('../views/research/breeding/seed-production/index.vue'),
-        meta: { title: 'Breeder able seed生产数据采集', requiresAuth: true }
+        meta: { title: 'research.menu.breederSeedProduction', requiresAuth: true }
       },
       {
         path: 'breeding/seed-production-result',
         name: 'SeedProductionResult',
         component: () => import('../views/research/breeding/seed-production-result/index.vue'),
-        meta: { title: '生产数据采集详情', requiresAuth: true }
+        meta: { title: 'research.menu.breederSeedProductionResult', requiresAuth: true }
       },
       {
         path: 'breeding/seed-production-result/add',
         name: 'SeedProductionResultAdd',
         component: () => import('../views/research/breeding/seed-production-result/form.vue'),
-        meta: { title: '新增生产数据采集', requiresAuth: true }
+        meta: { title: 'research.menu.breederSeedProductionAdd', requiresAuth: true }
       },
       {
         path: 'breeding/seed-production-result/detail/:id',
         name: 'SeedProductionResultDetail',
         component: () => import('../views/research/breeding/seed-production-result/detail.vue'),
-        meta: { title: '生产数据采集详情', requiresAuth: true }
+        meta: { title: 'research.menu.breederSeedProductionResult', requiresAuth: true }
       },
       // Breeder seed分发数据
       {
         path: 'breeding/seed-distribution',
         name: 'SeedDistribution',
         component: () => import('../views/research/breeding/seed-distribution/index.vue'),
-        meta: { title: 'Breeder able seed分发数据', requiresAuth: true }
+        meta: { title: 'research.menu.breederSeedDistribution', requiresAuth: true }
       },
 
       // Pre-basic Seed生产数据采集
@@ -538,19 +538,19 @@ const routes = [
         path: 'breeding/prebasic-seed-production',
         name: 'PrebasicSeedProduction',
         component: () => import('../views/research/breeding/prebasic-seed-production/index.vue'),
-        meta: { title: 'Pre-basic Seed生产数据采集', requiresAuth: true }
+        meta: { title: 'research.menu.prebasicSeedProduction', requiresAuth: true }
       },
       {
         path: 'breeding/prebasic-seed-production/add',
         name: 'PrebasicSeedProductionForm',
         component: () => import('../views/research/breeding/prebasic-seed-production/form.vue'),
-        meta: { title: '新增原原种生产', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.prebasicSeedProductionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/prebasic-seed-production/detail/:id',
         name: 'PrebasicSeedProductionDetail',
         component: () => import('../views/research/breeding/prebasic-seed-production/detail.vue'),
-        meta: { title: '原原种生产详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.prebasicSeedProductionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Pre-basic Seed生产结果数据
@@ -558,7 +558,7 @@ const routes = [
         path: 'breeding/prebasic-seed-production-result',
         name: 'PrebasicSeedProductionResult',
         component: () => import('../views/research/breeding/prebasic-seed-production-result/index.vue'),
-        meta: { title: 'Pre-basic Seed生产结果数据', requiresAuth: true }
+        meta: { title: 'research.menu.prebasicSeedProductionResult', requiresAuth: true }
       },
 
       // Basic Seed生产数据采集
@@ -566,7 +566,7 @@ const routes = [
         path: 'breeding/basic-seed-production',
         name: 'BasicSeedProduction',
         component: () => import('../views/research/breeding/basic-seed-production/index.vue'),
-        meta: { title: 'Basic Seed生产数据采集', requiresAuth: true }
+        meta: { title: 'research.menu.basicSeedProduction', requiresAuth: true }
       },
 
       // Basic Seed生产结果数据
@@ -574,7 +574,7 @@ const routes = [
         path: 'breeding/basic-seed-production-result',
         name: 'BasicSeedProductionResult',
         component: () => import('../views/research/breeding/basic-seed-production-result/index.vue'),
-        meta: { title: 'Basic Seed生产结果数据', requiresAuth: true }
+        meta: { title: 'research.menu.basicSeedProductionResult', requiresAuth: true }
       },
 
       // 物联网传感器维护
@@ -582,25 +582,25 @@ const routes = [
         path: 'data-collection/iot-sensor',
         name: 'IotSensorList',
         component: () => import('../views/research/data-collection/iot-sensor/index.vue'),
-        meta: { title: '物联网传感器维护', requiresAuth: true }
+        meta: { title: 'research.menu.iotSensorMaintenance', requiresAuth: true }
       },
       {
         path: 'data-collection/iot-sensor/add',
         name: 'IotSensorAdd',
         component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
-        meta: { title: '新增传感器', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.iotSensorMaintenanceAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/iot-sensor/edit/:id',
         name: 'IotSensorEdit',
         component: () => import('../views/research/data-collection/iot-sensor/form.vue'),
-        meta: { title: '编辑传感器', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.iotSensorMaintenanceEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/iot-sensor/detail/:id',
         name: 'IotSensorDetail',
         component: () => import('../views/research/data-collection/iot-sensor/detail.vue'),
-        meta: { title: '传感器详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.iotSensorMaintenanceDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 环境监测新数据
@@ -608,37 +608,37 @@ const routes = [
         path: 'data-collection/environment-new-data',
         name: 'EnvironmentNewDataList',
         component: () => import('../views/research/data-collection/environment-new-data/index.vue'),
-        meta: { title: '环境监测数据', requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewData', requiresAuth: true }
       },
       {
         path: 'data-collection/environment-new-data/add',
         name: 'EnvironmentNewDataAdd',
         component: () => import('../views/research/data-collection/environment-new-data/form.vue'),
-        meta: { title: '新增环境监测数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewDataAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/environment-new-data/edit/:envRecordId',
         name: 'EnvironmentNewDataEdit',
         component: () => import('../views/research/data-collection/environment-new-data/form.vue'),
-        meta: { title: '编辑环境监测数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewDataEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/environment-new-data/detail/:envRecordId',
         name: 'EnvironmentNewDataDetail',
         component: () => import('../views/research/data-collection/environment-new-data/detail.vue'),
-        meta: { title: '环境监测数据详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewDataDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/environment-new-data/approve',
         name: 'EnvironmentNewDataApprove',
         component: () => import('../views/research/data-collection/environment-new-data/approve.vue'),
-        meta: { title: '环境监测数据审批', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewDataApprove', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'data-collection/environment-new-data/audit/:envRecordId',
         name: 'EnvironmentNewDataAudit',
         component: () => import('../views/research/data-collection/environment-new-data/form.vue'),
-        meta: { title: '环境监测数据审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.environmentNewDataApprove', hideInMenu: true, requiresAuth: true }
       },
       // ==================== 繁殖数据管理 ====================
 
@@ -647,7 +647,7 @@ const routes = [
         path: 'breeding/ose-receive-confirm',
         name: 'OseReceiveConfirm',
         component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
-        meta: { title: 'OSE确认接收育种家种子', requiresAuth: true }
+        meta: { title: 'research.menu.oseReceiveConfirm', requiresAuth: true }
       },
 
       // 种子扩繁批次信息采集
@@ -655,25 +655,25 @@ const routes = [
         path: 'breeding',
         name: 'BreedingModule',
         component: () => import('../views/research/breeding/ose-information/index.vue'),
-        meta: { title: '种子扩繁批次信息采集', requiresAuth: true }
+        meta: { title: 'research.menu.propagationBatchCollection', requiresAuth: true }
       },
       {
         path: 'breeding/batch/add',
         name: 'PropagationBatchAdd',
         component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
-        meta: { title: '新增种子扩繁批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationBatchAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/batch/edit/:id',
         name: 'PropagationBatchEdit',
         component: () => import('../views/research/breeding/ose-information/batch-form.vue'),
-        meta: { title: '编辑种子扩繁批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationBatchEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/detail/:id',
         name: 'BreedingDetail',
         component: () => import('../views/research/breeding/ose-information/detail.vue'),
-        meta: { title: '种子扩繁批次详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子扩繁跟踪信息采集
@@ -681,7 +681,7 @@ const routes = [
         path: 'breeding/tracking',
         name: 'BreedingTracking',
         component: () => import('../views/research/breeding-tracking/index.vue'),
-        meta: { title: '种子扩繁跟踪信息采集', requiresAuth: true }
+        meta: { title: 'research.menu.propagationTrackingCollection', requiresAuth: true }
       },
 
       // 繁殖种子认证申请
@@ -689,25 +689,25 @@ const routes = [
         path: 'seed/breeding-certification',
         name: 'BreedingCertificationList',
         component: () => import('../views/seed/breeding-certification/index.vue'),
-        meta: { title: '繁殖种子认证申请', requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationApplication', requiresAuth: true }
       },
       {
         path: 'seed/breeding-certification/add',
         name: 'BreedingCertificationAdd',
         component: () => import('../views/seed/breeding-certification/form.vue'),
-        meta: { title: '新增认证申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationApplicationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'seed/breeding-certification/edit/:id',
         name: 'BreedingCertificationEdit',
         component: () => import('../views/seed/breeding-certification/form.vue'),
-        meta: { title: '编辑认证申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationApplicationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'seed/breeding-certification/detail/:id',
         name: 'BreedingCertificationDetail',
         component: () => import('../views/seed/breeding-certification/detail.vue'),
-        meta: { title: '认证申请详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationApplicationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // C1种子繁殖申请
@@ -715,25 +715,25 @@ const routes = [
         path: 'c1-propagation',
         name: 'C1PropagationList',
         component: () => import('../views/research/c1-propagation/index.vue'),
-        meta: { title: 'C1种子繁殖申请', requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplication', requiresAuth: true }
       },
       {
         path: 'c1-propagation/add',
         name: 'C1PropagationAdd',
         component: () => import('../views/research/c1-propagation/form.vue'),
-        meta: { title: '新增繁殖申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'c1-propagation/edit/:id',
         name: 'C1PropagationEdit',
         component: () => import('../views/research/c1-propagation/form.vue'),
-        meta: { title: '编辑繁殖申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'c1-propagation/detail/:id',
         name: 'C1PropagationDetail',
         component: () => import('../views/research/c1-propagation/detail.vue'),
-        meta: { title: '繁殖申请详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // C1种子繁殖申请审核
@@ -741,13 +741,13 @@ const routes = [
         path: 'c1-propagation-audit',
         name: 'C1PropagationAuditList',
         component: () => import('../views/research/c1-propagation-audit/index.vue'),
-        meta: { title: 'C1种子繁殖申请审核', requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationAudit', requiresAuth: true }
       },
       {
         path: 'c1-propagation-audit/detail/:id',
         name: 'C1PropagationAuditDetail',
         component: () => import('../views/research/c1-propagation-audit/detail.vue'),
-        meta: { title: '繁殖申请审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1SeedPropagationApplicationAuditDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // C1繁殖批次管理
@@ -755,25 +755,25 @@ const routes = [
         path: 'c1-breeding-batch',
         name: 'C1BreedingBatchList',
         component: () => import('../views/research/c1-breeding-batch/index.vue'),
-        meta: { title: 'C1繁殖批次管理', requiresAuth: true }
+        meta: { title: 'research.menu.c1PropagationBatchCollection', requiresAuth: true }
       },
       {
         path: 'c1-breeding-batch/add',
         name: 'C1BreedingBatchAdd',
         component: () => import('../views/research/c1-breeding-batch/batch-form.vue'),
-        meta: { title: '新增C1繁殖批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1PropagationBatchAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'c1-breeding-batch/edit/:id',
         name: 'C1BreedingBatchEdit',
         component: () => import('../views/research/c1-breeding-batch/batch-form.vue'),
-        meta: { title: '编辑C1繁殖批次', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1PropagationBatchEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'c1-breeding-batch/detail/:id',
         name: 'C1BreedingBatchDetail',
         component: () => import('../views/research/c1-breeding-batch/detail.vue'),
-        meta: { title: 'C1繁殖批次详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.c1PropagationBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 田间检测
@@ -781,13 +781,13 @@ const routes = [
         path: 'field-detection',
         name: 'FieldDetection',
         component: () => import('../views/research/detection/field-detection/index.vue'),
-        meta: { title: '田间检测', requiresAuth: true }
+        meta: { title: 'research.menu.fieldDetection', requiresAuth: true }
       },
       {
         path: 'field-detection/add',
         name: 'FieldDetectionAdd',
         component: () => import('../views/research/detection/field-detection/add.vue'),
-        meta: { title: '新增田间检测', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.fieldDetection', hideInMenu: true, requiresAuth: true }
       },
 
       // 实验室检测
@@ -795,13 +795,13 @@ const routes = [
         path: 'lab-testing',
         name: 'LabTesting',
         component: () => import('../views/research/detection/lab-testing/index.vue'),
-        meta: { title: '实验室检测', requiresAuth: true }
+        meta: { title: 'research.menu.labTesting', requiresAuth: true }
       },
       {
         path: 'lab-testing/add',
         name: 'LabTestingAdd',
         component: () => import('../views/research/detection/lab-testing/add.vue'),
-        meta: { title: '新增实验室检测', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.labTesting', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子认证审核
@@ -809,7 +809,7 @@ const routes = [
         path: 'seed/breeding-audit',
         name: 'BreedingAudit',
         component: () => import('../views/seed/breeding-audit/index.vue'),
-        meta: { title: '种子认证审核', requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationAudit', requiresAuth: true }
       },
 
       // 种子认证颁发
@@ -817,7 +817,7 @@ const routes = [
         path: 'seed/breeding-certificate',
         name: 'BreedingCertificate',
         component: () => import('../views/seed/breeding-certificate/index.vue'),
-        meta: { title: '种子认证颁发', requiresAuth: true }
+        meta: { title: 'research.menu.seedCertificationIssuance', requiresAuth: true }
       },
 
       // C1繁殖批次审核
@@ -825,7 +825,7 @@ const routes = [
         path: 'c1-breeding-batch-audit',
         name: 'C1BreedingBatchAudit',
         component: () => import('../views/seed/c1-breeding-batch-audit/index.vue'),
-        meta: { title: 'C1繁殖批次审核', requiresAuth: true }
+        meta: { title: 'research.menu.c1BatchAudit', requiresAuth: true }
       },
 
       // C1繁殖批次证书颁发
@@ -833,7 +833,7 @@ const routes = [
         path: 'c1-breeding-certificate',
         name: 'C1BreedingCertificate',
         component: () => import('../views/seed/c1-breeding-certificate/index.vue'),
-        meta: { title: 'C1繁殖批次证书颁发', requiresAuth: true }
+        meta: { title: 'research.menu.c1BatchCertificate', requiresAuth: true }
       },
 
       // 繁殖机构注册
@@ -841,49 +841,49 @@ const routes = [
         path: 'institution/registration',
         name: 'InstitutionRegistration',
         component: () => import('../views/research/institution/registration/index.vue'),
-        meta: { title: '繁殖机构注册', requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistration', requiresAuth: true }
       },
       {
         path: 'institution/registration/add',
         name: 'RegistrationAdd',
         component: () => import('../views/research/institution/registration/form.vue'),
-        meta: { title: '新增机构注册', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistrationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/registration/edit/:id',
         name: 'RegistrationEdit',
         component: () => import('../views/research/institution/registration/form.vue'),
-        meta: { title: '编辑机构注册', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistrationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/registration/detail/:id',
         name: 'RegistrationDetail',
         component: () => import('../views/research/institution/registration/form.vue'),
-        meta: { title: '机构注册详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistrationDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/approval/audit/:id',
         name: 'RegistrationAudit',
         component: () => import('../views/research/institution/registration/audit.vue'),
-        meta: { title: '机构注册审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistration', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/approval',
         name: 'InstitutionApproval',
         component: () => import('../views/research/institution/registration/approval.vue'),
-        meta: { title: '繁殖机构注册', requiresAuth: true }
+        meta: { title: 'research.menu.propagationOrgRegistration', requiresAuth: true }
       },
       {
         path: 'union/registration',
         name: 'UnionRegistration',
         component: () => import('../views/research/institution/union/UnionRegistration.vue'),
-        meta: { title: '繁殖机构注册申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.institutionRegistration', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/ose-management',
         name: 'OseManagement',
         component: () => import('../views/research/institution/ose-management/index.vue'),
-        meta: { title: 'OSE维护', requiresAuth: true }
+        meta: { title: 'research.menu.oseManagement', requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
@@ -891,25 +891,25 @@ const routes = [
         path: 'institution/research-center',
         name: 'ResearchCenter',
         component: () => import('../views/research/institution/research-center/index.vue'),
-        meta: { title: '研究中心管理', requiresAuth: true }
+        meta: { title: 'research.menu.researchCenterManagement', requiresAuth: true }
       },
       {
         path: 'institution/research-center/add',
         name: 'ResearchCenterAdd',
         component: () => import('../views/research/institution/research-center/form.vue'),
-        meta: { title: '新增研究中心', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.researchCenterAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/research-center/edit/:locationId',
         name: 'ResearchCenterEdit',
         component: () => import('../views/research/institution/research-center/form.vue'),
-        meta: { title: '编辑研究中心', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.researchCenterEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'institution/research-center/detail/:locationId',
         name: 'ResearchCenterDetail',
         component: () => import('../views/research/institution/research-center/detail.vue'),
-        meta: { title: '研究中心详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.researchCenterDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 种子信息服务 ====================
@@ -919,28 +919,28 @@ const routes = [
         path: 'seed/promotion',
         name: 'SeedPromotion',
         component: () => import('../views/research/seed/SeedPromotion.vue'),
-        meta: { title: '种子推广信息管理', requiresAuth: true }
+        meta: { title: 'research.menu.seedPromotionManagement', requiresAuth: true }
       },
       // 种子推广详情
       {
         path: 'seed/promotion/detail/:promotionId',
         name: 'SeedPromotionDetail',
         component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
-        meta: { title: '推广详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedPromotionManagementDetail', hideInMenu: true, requiresAuth: true }
       },
       // 种子信息公示
       {
         path: 'seed/info',
         name: 'SeedInfo',
         component: () => import('../views/research/variety/VarietyQuery.vue'),
-        meta: { title: '种子信息公示', requiresAuth: true }
+        meta: { title: 'research.menu.seedInfoPublicity', requiresAuth: true }
       },
       // 品种详情页
       {
         path: 'variety/detail/:publishId',
         name: 'VarietyDetailPage',
         component: () => import('../views/research/variety/VarietyDetail.vue'),
-        meta: { title: '品种详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedInfoPublicityDetail', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
@@ -957,375 +957,375 @@ const routes = [
         path: 'registration',
         name: 'OrgRegistration',
         component: () => import('../views/input/registration/index.vue'),
-        meta: { title: 'Union/Cooperative注册申请', requiresAuth: true }
+        meta: { title: 'input.menu.registration', requiresAuth: true }
       },
       {
         path: 'registration/add',
         name: 'OrgRegistrationAdd',
         component: () => import('../views/input/registration/form.vue'),
-        meta: { title: '新增注册申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.registrationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/edit/:id',
         name: 'OrgRegistrationEdit',
         component: () => import('../views/input/registration/form.vue'),
-        meta: { title: '编辑注册申请', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.registrationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/detail/:id',
         name: 'OrgRegistrationDetail',
         component: () => import('../views/input/registration/form.vue'),
-        meta: { title: '注册申请详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.registrationDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/audit/:id',
         name: 'OrgRegistrationAudit',
         component: () => import('../views/input/registration/audit.vue'),
-        meta: { title: '注册申请审核', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.registrationAudit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'registration/approval',
         name: 'OrgRegistrationApproval',
         component: () => import('../views/input/registration/approval-list.vue'),
-        meta: { title: 'Union/Cooperative注册审核', requiresAuth: true }
+        meta: { title: 'input.menu.registrationApproval', requiresAuth: true }
       },
       // DA农民需求录入
       {
         path: 'demand/farmer',
         name: 'FarmerDemand',
         component: () => import('../views/input/demand/farmer/index.vue'),
-        meta: { title: 'DA农民需求录入', requiresAuth: true }
+        meta: { title: 'input.menu.farmerDemand', requiresAuth: true }
       },
       {
         path: 'demand/farmer/add',
         name: 'FarmerDemandAdd',
         component: () => import('../views/input/demand/farmer/form.vue'),
-        meta: { title: '新增农民需求', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerDemandAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'demand/farmer/edit/:id',
         name: 'FarmerDemandEdit',
         component: () => import('../views/input/demand/farmer/form.vue'),
-        meta: { title: '编辑农民需求', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerDemandEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'demand/farmer/detail/:id',
         name: 'FarmerDemandDetail',
         component: () => import('../views/input/demand/farmer/detail.vue'),
-        meta: { title: '农民需求详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerDemandDetail', hideInMenu: true, requiresAuth: true }
       },
       // 村级需求汇聚（新页面）
       {
         path: 'demand/aggregation',
         name: 'VillageAggregation',
         component: () => import('../views/input/demand/aggregation/index.vue'),
-        meta: { title: '村级需求汇聚', requiresAuth: true }
+        meta: { title: 'input.menu.villageAggregation', requiresAuth: true }
       },
       // 村级审核详情（原投入品需求审核页面，现作为详情页隐藏）
       {
         path: 'demand/audit/:year',
         name: 'VillageAuditDetail',
         component: () => import('../views/input/demand/audit/index.vue'),
-        meta: { title: '村级审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.villageAggregation', hideInMenu: true, requiresAuth: true }
       },
       // 镇级需求汇聚（新页面）
       {
         path: 'demand/aggregation-town',
         name: 'TownAggregation',
         component: () => import('../views/input/demand/aggregation-town/index.vue'),
-        meta: { title: '镇级需求汇聚', requiresAuth: true }
+        meta: { title: 'input.menu.townAggregation', requiresAuth: true }
       },
       // 镇级审核详情（隐藏页面，通过年度参数访问）
       {
         path: 'demand/audit-town/:year',
         name: 'TownAuditDetail',
         component: () => import('../views/input/demand/audit-town/index.vue'),
-        meta: { title: '镇级审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.townAggregation', hideInMenu: true, requiresAuth: true }
       },
       // 区级需求汇聚（新页面）
       {
         path: 'demand/aggregation-district',
         name: 'DistrictAggregation',
         component: () => import('../views/input/demand/aggregation-district/index.vue'),
-        meta: { title: '区级需求汇聚', requiresAuth: true }
+        meta: { title: 'input.menu.districtAggregation', requiresAuth: true }
       },
       // 区级审核详情（隐藏页面，通过年度参数访问）
       {
         path: 'demand/audit-district/:year',
         name: 'DistrictAuditDetail',
         component: () => import('../views/input/demand/audit-district/index.vue'),
-        meta: { title: '区级审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.districtAggregation', hideInMenu: true, requiresAuth: true }
       },
       // 州级需求汇聚（新页面）
       {
         path: 'demand/aggregation-state',
         name: 'StateAggregation',
         component: () => import('../views/input/demand/aggregation-state/index.vue'),
-        meta: { title: '州级需求汇聚', requiresAuth: true }
+        meta: { title: 'input.menu.stateAggregation', requiresAuth: true }
       },
       // 需求查询
       {
         path: 'demand/demand-inquiry',
         name: 'DemandInquiry',
         component: () => import('../views/input/demand/demand-inquiry/index.vue'),
-        meta: { title: '需求查询', requiresAuth: true }
+        meta: { title: 'input.menu.demandInquiry', requiresAuth: true }
       },
       // 州农业部查看
       {
         path: 'demand/audit-state',
         name: 'StateDemandAuditView',
         component: () => import('../views/input/demand/audit-state/index.vue'),
-        meta: { title: '州农业部查看', requiresAuth: true }
+        meta: { title: 'input.menu.stateAggregation', requiresAuth: true }
       },
       {
         path: 'demand/audit/detail/:id',
         name: 'DemandAuditDetail',
         component: () => import('../views/input/demand/audit/detail.vue'),
-        meta: { title: '需求审核详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.demandAudit', hideInMenu: true, requiresAuth: true }
       },
       // 投入品目录管理
       {
         path: 'catalog',
         name: 'InputCatalog',
         component: () => import('../views/input/catalog/index.vue'),
-        meta: { title: '投入品目录管理', requiresAuth: true }
+        meta: { title: 'input.menu.inputCatalog', requiresAuth: true }
       },
       {
         path: 'catalog/add',
         name: 'InputCatalogAdd',
         component: () => import('../views/input/catalog/form.vue'),
-        meta: { title: '新增投入品', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.inputCatalogAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'catalog/edit/:id',
         name: 'InputCatalogEdit',
         component: () => import('../views/input/catalog/form.vue'),
-        meta: { title: '编辑投入品', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.inputCatalogEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'catalog/detail/:id',
         name: 'InputCatalogDetail',
         component: () => import('../views/input/catalog/detail.vue'),
-        meta: { title: '投入品详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.inputCatalogDetail', hideInMenu: true, requiresAuth: true }
       },
       // 供应商投入品信息管理
       {
         path: 'supplier-input',
         name: 'SupplierInput',
         component: () => import('../views/input/supplier-input/index.vue'),
-        meta: { title: '供应商投入品信息管理', requiresAuth: true }
+        meta: { title: 'input.menu.supplierInput', requiresAuth: true }
       },
       // 供应商管理
       {
         path: 'supplier/auth',
         name: 'SupplierAuth',
         component: () => import('../views/input/supplier/auth.vue'),
-        meta: { title: '供应商认证', requiresAuth: true }
+        meta: { title: 'input.menu.supplierAuth', requiresAuth: true }
       },
       {
         path: 'supplier/approval',
         name: 'SupplierApproval',
         component: () => import('../views/input/supplier/approval.vue'),
-        meta: { title: '供应商认证审批', requiresAuth: true }
+        meta: { title: 'input.menu.supplierAuthApproval', requiresAuth: true }
       },
       {
         path: 'supplier/info',
         name: 'SupplierInfo',
         component: () => import('../views/input/supplier/info.vue'),
-        meta: { title: '供应商信息维护', requiresAuth: true }
+        meta: { title: 'input.menu.supplierInfo', requiresAuth: true }
       },
       {
         path: 'supplier/product',
         name: 'SupplierProduct',
         component: () => import('../views/input/supplier/product/index.vue'),
-        meta: { title: '供应商投入品管理', requiresAuth: true }
+        meta: { title: 'input.menu.supplierProduct', requiresAuth: true }
       },
       {
         path: 'supplier/product/add',
         name: 'SupplierProductAdd',
         component: () => import('../views/input/supplier/product/form.vue'),
-        meta: { title: '新增供应商投入品', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.supplierProductAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'supplier/product/edit/:id',
         name: 'SupplierProductEdit',
         component: () => import('../views/input/supplier/product/form.vue'),
-        meta: { title: '编辑供应商投入品', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.supplierProductEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'supplier/product/detail/:id',
         name: 'SupplierProductDetail',
         component: () => import('../views/input/supplier/product/detail.vue'),
-        meta: { title: '供应商投入品详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.supplierProductDetail', hideInMenu: true, requiresAuth: true }
       },
       // 库存管理 - 仓库管理
       {
         path: 'inventory/warehouse',
         name: 'WarehouseList',
         component: () => import('../views/input/inventory/warehouse/index.vue'),
-        meta: { title: '仓库管理', requiresAuth: true }
+        meta: { title: 'input.menu.warehouse', requiresAuth: true }
       },
       {
         path: 'inventory/warehouse/add',
         name: 'WarehouseAdd',
         component: () => import('../views/input/inventory/warehouse/form.vue'),
-        meta: { title: '新增仓库', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.warehouseAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'inventory/warehouse/edit/:id',
         name: 'WarehouseEdit',
         component: () => import('../views/input/inventory/warehouse/form.vue'),
-        meta: { title: '编辑仓库', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.warehouseEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'inventory/warehouse/detail/:id',
         name: 'WarehouseDetail',
         component: () => import('../views/input/inventory/warehouse/detail.vue'),
-        meta: { title: '仓库详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.warehouseDetail', hideInMenu: true, requiresAuth: true }
       },
       // 库存管理 - 入库管理
       {
         path: 'inventory/stock-in',
         name: 'StockInList',
         component: () => import('../views/input/inventory/stock-in/index.vue'),
-        meta: { title: '入库管理', requiresAuth: true }
+        meta: { title: 'input.menu.stockIn', requiresAuth: true }
       },
       {
         path: 'inventory/stock-in/form',
         name: 'StockInAdd',
         component: () => import('../views/input/inventory/stock-in/form.vue'),
-        meta: { title: '新增入库单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockInAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'inventory/stock-in/edit/:id',
         name: 'StockInEdit',
         component: () => import('../views/input/inventory/stock-in/form.vue'),
-        meta: { title: '编辑入库单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockInEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'inventory/stock-in/detail/:id',
         name: 'StockInDetail',
         component: () => import('../views/input/inventory/stock-in/detail.vue'),
-        meta: { title: '入库单详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockInDetail', hideInMenu: true, requiresAuth: true }
       },
       // 库存管理 - 出库管理
       {
         path: 'inventory/stock-out',
         name: 'StockOutList',
         component: () => import('../views/input/inventory/stock-out/index.vue'),
-        meta: { title: '出库管理', requiresAuth: true }
+        meta: { title: 'input.menu.stockOut', requiresAuth: true }
       },
       {
         path: 'inventory/stock-out/add',
         name: 'StockOutAdd',
         component: () => import('../views/input/inventory/stock-out/form.vue'),
-        meta: { title: '新增出库单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockOutAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'inventory/stock-out/detail/:id',
         name: 'StockOutDetail',
         component: () => import('../views/input/inventory/stock-out/detail.vue'),
-        meta: { title: '出库单详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockOutDetail', hideInMenu: true, requiresAuth: true }
       },
       // 库存管理 - 库存查询
       {
         path: 'inventory/stock',
         name: 'StockList',
         component: () => import('../views/input/inventory/stock/index.vue'),
-        meta: { title: '库存查询', requiresAuth: true }
+        meta: { title: 'input.menu.stockQuery', requiresAuth: true }
       },
       {
         path: 'inventory/stock/detail/:id',
         name: 'StockDetail',
         component: () => import('../views/input/inventory/stock/detail.vue'),
-        meta: { title: '库存详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stockQueryDetail', hideInMenu: true, requiresAuth: true }
       },
       // 大屏和反馈
       {
         path: 'dashboard',
         name: 'InputDashboard',
         component: () => import('../views/input/dashboard/index.vue'),
-        meta: { title: '大屏管理', requiresAuth: true }
+        meta: { title: 'input.menu.dashboard', requiresAuth: true }
       },
       {
         path: 'feedback',
         name: 'InputFeedback',
         component: () => import('../views/input/feedback/index.vue'),
-        meta: { title: '信息反馈', requiresAuth: true }
+        meta: { title: 'input.menu.feedback', requiresAuth: true }
       },
       {
         path: 'feedback/add',
         name: 'InputFeedbackAdd',
         component: () => import('../views/input/feedback/form.vue'),
-        meta: { title: '提交反馈', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.feedbackAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'feedback/edit/:id',
         name: 'InputFeedbackEdit',
         component: () => import('../views/input/feedback/form.vue'),
-        meta: { title: '编辑反馈', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.feedbackEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'feedback/detail/:id',
         name: 'InputFeedbackDetail',
         component: () => import('../views/input/feedback/detail.vue'),
-        meta: { title: '反馈详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.feedbackDetail', hideInMenu: true, requiresAuth: true }
       },
       // 州级年度配额管理
       {
         path: 'allocate/state-quota',
         name: 'StateAnnualQuota',
         component: () => import('../views/input/allocate/state-quota/index.vue'),
-        meta: { title: '州级年度配额管理', requiresAuth: true }
+        meta: { title: 'input.menu.stateAnnualQuota', requiresAuth: true }
       },
       {
         path: 'allocate/state-quota/add',
         name: 'StateAnnualQuotaAdd',
         component: () => import('../views/input/allocate/state-quota/form.vue'),
-        meta: { title: '新增州级配额', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stateAnnualQuotaAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocate/state-quota/edit/:quotaId',
         name: 'StateAnnualQuotaEdit',
         component: () => import('../views/input/allocate/state-quota/form.vue'),
-        meta: { title: '编辑州级配额', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stateAnnualQuotaEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocate/state-quota/detail/:quotaId',
         name: 'StateAnnualQuotaDetail',
         component: () => import('../views/input/allocate/state-quota/detail.vue'),
-        meta: { title: '州级配额详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stateAnnualQuotaDetail', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocate/state-quota/allocate/:quotaId',
         name: 'StateAnnualQuotaAllocate',
         component: () => import('../views/input/allocate/state-quota/allocate.vue'),
-        meta: { title: '配额分配', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.stateAnnualQuotaAllocate', hideInMenu: true, requiresAuth: true }
       },
       // 配额逐级分配管理
       {
         path: 'allocate/quota-allocation',
         name: 'QuotaAllocation',
         component: () => import('../views/input/allocate/quota-allocation/index.vue'),
-        meta: { title: '配额逐级分配管理', requiresAuth: true }
+        meta: { title: 'input.menu.quotaAllocation', requiresAuth: true }
       },
       {
         path: 'allocate/quota-allocation/add',
         name: 'QuotaAllocationAdd',
         component: () => import('../views/input/allocate/quota-allocation/form.vue'),
-        meta: { title: '新增配额分配', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.quotaAllocationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocate/quota-allocation/edit/:allocationId',
         name: 'QuotaAllocationEdit',
         component: () => import('../views/input/allocate/quota-allocation/form.vue'),
-        meta: { title: '编辑配额分配', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.quotaAllocationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocate/quota-allocation/detail/:allocationId',
         name: 'QuotaAllocationDetail',
         component: () => import('../views/input/allocate/quota-allocation/detail.vue'),
-        meta: { title: '配额分配详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.quotaAllocationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 投入品流通管理 ====================
@@ -1335,13 +1335,13 @@ const routes = [
         path: 'input-circulation/quota',
         name: 'InputQuotaList',
         component: () => import('../views/research/input-circulation/quota/index.vue'),
-        meta: { title: '投入品配额查看', requiresAuth: true }
+        meta: { title: 'research.menu.inputQuotaView', requiresAuth: true }
       },
       {
         path: 'input-circulation/quota/detail/:id',
         name: 'InputQuotaDetail',
         component: () => import('../views/research/input-circulation/quota/detail.vue'),
-        meta: { title: '配额详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.inputQuotaDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // zone分配额度
@@ -1349,25 +1349,25 @@ const routes = [
         path: 'allocation/zone',
         name: 'ZoneAllocationList',
         component: () => import('../views/input/allocation/zone/index.vue'),
-        meta: { title: 'Zone分配额度管理', requiresAuth: true }
+        meta: { title: 'input.menu.zoneAllocation', requiresAuth: true }
       },
       {
         path: 'allocation/zone/add',
         name: 'ZoneAllocationAdd',
         component: () => import('../views/input/allocation/zone/form.vue'),
-        meta: { title: '新增分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.zoneAllocationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/zone/edit/:id',
         name: 'ZoneAllocationEdit',
         component: () => import('../views/input/allocation/zone/form.vue'),
-        meta: { title: '编辑分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.zoneAllocationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/zone/detail/:id',
         name: 'ZoneAllocationDetail',
         component: () => import('../views/input/allocation/zone/detail.vue'),
-        meta: { title: '分配额度详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.zoneAllocationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // woreda分配额度
@@ -1375,25 +1375,25 @@ const routes = [
         path: 'allocation/woreda',
         name: 'WoredaAllocationList',
         component: () => import('../views/input/allocation/woreda/index.vue'),
-        meta: { title: 'Woreda分配额度管理', requiresAuth: true }
+        meta: { title: 'input.menu.woredaAllocation', requiresAuth: true }
       },
       {
         path: 'allocation/woreda/add',
         name: 'WoredaAllocationAdd',
         component: () => import('../views/input/allocation/woreda/form.vue'),
-        meta: { title: '新增Woreda分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.woredaAllocationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/woreda/edit/:id',
         name: 'WoredaAllocationEdit',
         component: () => import('../views/input/allocation/woreda/form.vue'),
-        meta: { title: '编辑Woreda分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.woredaAllocationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/woreda/detail/:id',
         name: 'WoredaAllocationDetail',
         component: () => import('../views/input/allocation/woreda/detail.vue'),
-        meta: { title: 'Woreda分配额度详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.woredaAllocationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // kebele分配额度
@@ -1401,25 +1401,25 @@ const routes = [
         path: 'allocation/kebele',
         name: 'KebeleAllocationList',
         component: () => import('../views/input/allocation/kebele/index.vue'),
-        meta: { title: 'Kebele分配额度管理', requiresAuth: true }
+        meta: { title: 'input.menu.kebeleAllocation', requiresAuth: true }
       },
       {
         path: 'allocation/kebele/add',
         name: 'KebeleAllocationAdd',
         component: () => import('../views/input/allocation/kebele/form.vue'),
-        meta: { title: '新增Kebele分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.kebeleAllocationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/kebele/edit/:id',
         name: 'KebeleAllocationEdit',
         component: () => import('../views/input/allocation/kebele/form.vue'),
-        meta: { title: '编辑Kebele分配额度', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.kebeleAllocationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/kebele/detail/:id',
         name: 'KebeleAllocationDetail',
         component: () => import('../views/input/allocation/kebele/detail.vue'),
-        meta: { title: 'Kebele分配额度详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.kebeleAllocationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农民分配管理
@@ -1427,25 +1427,25 @@ const routes = [
         path: 'allocation/farmer',
         name: 'FarmerAllocation',
         component: () => import('../views/input/allocation/farmer/index.vue'),
-        meta: { title: '农民分配管理', requiresAuth: true }
+        meta: { title: 'input.menu.farmerAllocation', requiresAuth: true }
       },
       {
         path: 'allocation/farmer/add',
         name: 'FarmerAllocationAdd',
         component: () => import('../views/input/allocation/farmer/form.vue'),
-        meta: { title: '新增农民分配', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerAllocationAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/farmer/edit/:id',
         name: 'FarmerAllocationEdit',
         component: () => import('../views/input/allocation/farmer/form.vue'),
-        meta: { title: '编辑农民分配', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerAllocationEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'allocation/farmer/detail/:id',
         name: 'FarmerAllocationDetail',
         component: () => import('../views/input/allocation/farmer/detail.vue'),
-        meta: { title: '农民分配详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'input.menu.farmerAllocationDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // OSE分发种子到Union
@@ -1453,25 +1453,25 @@ const routes = [
         path: 'input-circulation/ose-release',
         name: 'OseReleaseList',
         component: () => import('../views/research/input-circulation/ose-release/index.vue'),
-        meta: { title: 'OSE分发种子到Union', requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnion', requiresAuth: true }
       },
       {
         path: 'input-circulation/ose-release/add',
         name: 'OseReleaseAdd',
         component: () => import('../views/research/input-circulation/ose-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/ose-release/edit/:id',
         name: 'OseReleaseEdit',
         component: () => import('../views/research/input-circulation/ose-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/ose-release/detail/:id',
         name: 'OseReleaseDetail',
         component: () => import('../views/research/input-circulation/ose-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Union确认接收OSE分发
@@ -1479,19 +1479,19 @@ const routes = [
         path: 'input-circulation/union-receive',
         name: 'UnionReceiveList',
         component: () => import('../views/research/input-circulation/union-receive/index.vue'),
-        meta: { title: 'Union确认接收', requiresAuth: true }
+        meta: { title: 'research.menu.unionReceiveConfirm', requiresAuth: true }
       },
       {
         path: 'input-circulation/union-receive/confirm/:id',
         name: 'UnionReceiveConfirm',
         component: () => import('../views/research/input-circulation/union-receive/confirm.vue'),
-        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.unionReceiveConfirm', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/union-receive/detail/:id',
         name: 'UnionReceiveDetail',
         component: () => import('../views/research/input-circulation/union-receive/detail.vue'),
-        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.unionReceiveDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Union分发投入品到Woreda
@@ -1505,19 +1505,19 @@ const routes = [
         path: 'input-circulation/union-release/add',
         name: 'UnionReleaseAdd',
         component: () => import('../views/research/input-circulation/union-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/union-release/edit/:id',
         name: 'UnionReleaseEdit',
         component: () => import('../views/research/input-circulation/union-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/union-release/detail/:id',
         name: 'UnionReleaseDetail',
         component: () => import('../views/research/input-circulation/union-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Woreda确认接收Union分发
@@ -1531,13 +1531,13 @@ const routes = [
         path: 'input-circulation/woreda-receive/confirm/:id',
         name: 'WoredaReceiveConfirm',
         component: () => import('../views/research/input-circulation/woreda-receive/confirm.vue'),
-        meta: { title: '确认接收', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.unionReceiveConfirm', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/woreda-receive/detail/:id',
         name: 'WoredaReceiveDetail',
         component: () => import('../views/research/input-circulation/woreda-receive/detail.vue'),
-        meta: { title: '接收详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.unionReceiveDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // Woreda分发投入品到农民
@@ -1551,19 +1551,19 @@ const routes = [
         path: 'input-circulation/farmer-release/add',
         name: 'FarmerReleaseAdd',
         component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
-        meta: { title: '新增分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/farmer-release/edit/:id',
         name: 'FarmerReleaseEdit',
         component: () => import('../views/research/input-circulation/farmer-release/form.vue'),
-        meta: { title: '编辑分发单', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'input-circulation/farmer-release/detail/:id',
         name: 'FarmerReleaseDetail',
         component: () => import('../views/research/input-circulation/farmer-release/detail.vue'),
-        meta: { title: '分发单详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseReleaseToUnionDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农民领用确认
@@ -1577,7 +1577,7 @@ const routes = [
         path: 'input-circulation/farmer-receive/detail/:id',
         name: 'FarmerReceiveDetail',
         component: () => import('../views/research/input-circulation/farmer-receive/detail.vue'),
-        meta: { title: '领用详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.farmerReceiveDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // 农田管理系统
@@ -1586,25 +1586,25 @@ const routes = [
         path: 'da',
         name: 'InputDaList',
         component: () => import('../views/new-farm/da/index.vue'),
-        meta: { title: 'DA管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.da', requiresAuth: true }
       },
       {
         path: 'da/add',
         name: 'InputDaAdd',
         component: () => import('../views/new-farm/da/form.vue'),
-        meta: { title: '新增DA', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'da/edit/:id',
         name: 'InputDaEdit',
         component: () => import('../views/new-farm/da/form.vue'),
-        meta: { title: '编辑DA', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'da/detail/:id',
         name: 'InputDaDetail',
         component: () => import('../views/new-farm/da/detail.vue'),
-        meta: { title: 'DA详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 农民管理 ====================
@@ -1612,25 +1612,25 @@ const routes = [
         path: 'farmer',
         name: 'InputFarmerList',
         component: () => import('../views/new-farm/farmer/index.vue'),
-        meta: { title: '农民管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmer', requiresAuth: true }
       },
       {
         path: 'farmer/add',
         name: 'InputFarmerAdd',
         component: () => import('../views/new-farm/farmer/form.vue'),
-        meta: { title: '新增农民', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'farmer/edit/:id',
         name: 'InputFarmerEdit',
         component: () => import('../views/new-farm/farmer/form.vue'),
-        meta: { title: '编辑农民', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'farmer/detail/:id',
         name: 'InputFarmerDetail',
         component: () => import('../views/new-farm/farmer/detail.vue'),
-        meta: { title: '农民详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 土地管理 ====================
@@ -1638,25 +1638,25 @@ const routes = [
         path: 'land',
         name: 'InputLandList',
         component: () => import('../views/new-farm/land/index.vue'),
-        meta: { title: '土地管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.land', requiresAuth: true }
       },
       {
         path: 'land/add',
         name: 'InputLandAdd',
         component: () => import('../views/new-farm/land/form.vue'),
-        meta: { title: '新增土地', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'land/edit/:id',
         name: 'InputLandEdit',
         component: () => import('../views/new-farm/land/form.vue'),
-        meta: { title: '编辑土地', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'land/detail/:id',
         name: 'InputLandDetail',
         component: () => import('../views/new-farm/land/detail.vue'),
-        meta: { title: '土地详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landDetail', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
@@ -1673,26 +1673,26 @@ const routes = [
         path: 'farmer/auth',
         name: 'FarmerAuth',
         component: () => import('../views/farm/farmer/auth.vue'),
-        meta: { title: '农民认证申请', requiresAuth: true }
+        meta: { title: 'common.farmerAuth', requiresAuth: true }
       },
       {
         path: 'farmer/approval',
         name: 'FarmerApproval',
         component: () => import('../views/farm/farmer/approval.vue'),
-        meta: { title: '农民认证审批', requiresAuth: true }
+        meta: { title: 'farm.menu.farmerApproval', requiresAuth: true }
       },
       {
         path: 'farmer/info',
         name: 'FarmerInfo',
         component: () => import('../components/userDetails.vue'),
-        meta: { title: '农民信息维护', requiresAuth: true }
+        meta: { title: 'farm.menu.farmerInfo', requiresAuth: true }
       },
       // 土地信息管理
       {
         path: 'land/list',
         name: 'LandList',
         component: () => import('../views/farm/land/list.vue'),
-        meta: { title: '土地信息管理', requiresAuth: true }
+        meta: { title: 'farm.menu.land', requiresAuth: true }
       }
     ]
   },
@@ -1709,25 +1709,25 @@ const routes = [
         path: 'da',
         name: 'NewFarmDaList',
         component: () => import('../views/new-farm/da/index.vue'),
-        meta: { title: 'DA管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.da', requiresAuth: true }
       },
       {
         path: 'da/add',
         name: 'NewFarmDaAdd',
         component: () => import('../views/new-farm/da/form.vue'),
-        meta: { title: '新增DA', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'da/edit/:id',
         name: 'NewFarmDaEdit',
         component: () => import('../views/new-farm/da/form.vue'),
-        meta: { title: '编辑DA', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'da/detail/:id',
         name: 'NewFarmDaDetail',
         component: () => import('../views/new-farm/da/detail.vue'),
-        meta: { title: 'DA详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.daDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 农民管理 ====================
@@ -1735,25 +1735,25 @@ const routes = [
         path: 'farmer',
         name: 'NewFarmFarmerList',
         component: () => import('../views/new-farm/farmer/index.vue'),
-        meta: { title: '农民管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmer', requiresAuth: true }
       },
       {
         path: 'farmer/add',
         name: 'NewFarmFarmerAdd',
         component: () => import('../views/new-farm/farmer/form.vue'),
-        meta: { title: '新增农民', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'farmer/edit/:id',
         name: 'NewFarmFarmerEdit',
         component: () => import('../views/new-farm/farmer/form.vue'),
-        meta: { title: '编辑农民', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'farmer/detail/:id',
         name: 'NewFarmFarmerDetail',
         component: () => import('../views/new-farm/farmer/detail.vue'),
-        meta: { title: '农民详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.farmerDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 土地管理 ====================
@@ -1761,25 +1761,25 @@ const routes = [
         path: 'land',
         name: 'NewFarmLandList',
         component: () => import('../views/new-farm/land/index.vue'),
-        meta: { title: '土地管理', requiresAuth: true }
+        meta: { title: 'newFarm.menu.land', requiresAuth: true }
       },
       {
         path: 'land/add',
         name: 'NewFarmLandAdd',
         component: () => import('../views/new-farm/land/form.vue'),
-        meta: { title: '新增土地', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'land/edit/:id',
         name: 'NewFarmLandEdit',
         component: () => import('../views/new-farm/land/form.vue'),
-        meta: { title: '编辑土地', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'land/detail/:id',
         name: 'NewFarmLandDetail',
         component: () => import('../views/new-farm/land/detail.vue'),
-        meta: { title: '土地详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'newFarm.menu.landDetail', hideInMenu: true, requiresAuth: true }
       }
     ]
   }

@@ -50,11 +50,23 @@ export default {
   menu: {
     dashboard: 'Dashboard',
     daManagement: 'DA Management',
+    da: 'DA Management',
     daList: 'DA List',
+    daAdd: 'Add DA',
+    daEdit: 'Edit DA',
+    daDetail: 'DA Details',
     farmerManagement: 'Farmer Management',
+    farmer: 'Farmer Management',
     farmerList: 'Farmer List',
+    farmerAdd: 'Add Farmer',
+    farmerEdit: 'Edit Farmer',
+    farmerDetail: 'Farmer Details',
     landManagement: 'Land Management',
+    land: 'Land Management',
     landList: 'Land List',
+    landAdd: 'Add Land',
+    landEdit: 'Edit Land',
+    landDetail: 'Land Details',
   },
 
   // Statistics cards

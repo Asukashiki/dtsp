@@ -40,11 +40,23 @@ export default {
   menu: {
     dashboard: '数据概览',
     daManagement: 'DA管理',
+    da: 'DA管理',
     daList: 'DA列表',
+    daAdd: '新增DA',
+    daEdit: '编辑DA',
+    daDetail: 'DA详情',
     farmerManagement: '农民管理',
+    farmer: '农民管理',
     farmerList: '农民列表',
+    farmerAdd: '新增农民',
+    farmerEdit: '编辑农民',
+    farmerDetail: '农民详情',
     landManagement: '土地管理',
+    land: '土地管理',
     landList: '土地列表',
+    landAdd: '新增土地',
+    landEdit: '编辑土地',
+    landDetail: '土地详情',
   },
 
   // 统计卡片
