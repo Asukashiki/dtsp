@@ -277,7 +277,7 @@ const rules = computed(() => ({
 
 // 加载用户认证信息
 const loadUserCertInfo = async () => {
-  const userId = userStore.userInfo?.user?.id
+  const userId = userStore.userInfo?.userId
 
   loading.value = true
   try {
@@ -429,7 +429,7 @@ const handleSubmit = async () => {
     } else {
       // 新增模式
       const submitData = {
-        userId: userStore.userInfo?.user?.userId || 0,
+        userId: userStore.userInfo?.userId || 0,
         ...formData
       }
       res = await applySupplierCert(submitData)

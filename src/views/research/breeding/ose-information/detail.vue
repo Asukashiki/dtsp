@@ -1,17 +1,16 @@
 <template>
-  <div class="breeding-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('research.breeding.detail.title') }}</h1>
-          <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.detail.title') }}</h1>
+            <p class="batch-id" v-if="batchInfo">{{ batchInfo.batchId }}</p>
+          </div>
         </div>
         <div class="header-right">
           <el-button type="primary" @click="handleEdit" v-if="batchInfo">
@@ -20,176 +19,185 @@
           </el-button>
         </div>
       </div>
-    </div>
 
-    <!-- Tab标签页 -->
-    <div class="content-wrapper">
-      <el-tabs v-model="activeTab" class="breeding-tabs">
-        <!-- Tab 1: 基本信息 -->
-        <el-tab-pane :label="$t('research.breeding.detail.tabs.basicInfo')" name="basic">
-          <div class="tab-content" v-if="batchInfo">
-            <!-- 状态概览卡片 -->
-            <div class="status-overview-card">
-              <div class="overview-item">
-                <i class="ri-seedling-line"></i>
-                <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.varietyName') }}</span>
-                  <span class="overview-value">{{ batchInfo.varietyName }}</span>
-                </div>
-              </div>
-              <div class="overview-divider"></div>
-              <div class="overview-item">
-                <i class="ri-plant-line"></i>
-                <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.cropType') }}</span>
-                  <span class="overview-value">
-                    <el-tag size="small">{{ getCropTypeName(batchInfo.cropType) }}</el-tag>
-                  </span>
-                </div>
-              </div>
-              <div class="overview-divider"></div>
-              <div class="overview-item">
-                <i class="ri-checkbox-circle-line"></i>
-                <div class="overview-content">
-                  <span class="overview-label">{{ $t('research.breeding.batch.form.status') }}</span>
-                  <span class="overview-value">
-                    <el-tag :type="getStatusTagType(batchInfo.batchStatus)">
-                      {{ getStatusName(batchInfo.batchStatus) }}
-                    </el-tag>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 基本信息 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-information-line"></i>
-                <span>{{ $t('research.breeding.detail.basicInfo') }}</span>
-              </div>
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.batchId') }}</span>
-                  <span class="value">{{ batchInfo.batchId }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.breedingBatch.form.distributionId') }}</span>
-                  <span class="value">{{ batchInfo.distributionId || '-' }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.breedingBatch.form.breedingLevel') }}</span>
-                  <span class="value">
-                    <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
-                  </span>
-                </div>
-                <div class="info-item full-width">
-                  <span class="label">{{ $t('research.breeding.breedingBatch.form.parentalSeedSource') }}</span>
-                  <span class="value">{{ batchInfo.parentSeedSource || '-' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 时间节点 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-calendar-line"></i>
-                <span>{{ $t('research.breeding.detail.timeline') }}</span>
-              </div>
-              <div class="timeline-grid">
-                <div class="timeline-item">
-                  <div class="timeline-dot start"></div>
-                  <div class="timeline-content">
-                    <span class="timeline-label">{{ $t('research.breeding.batch.form.startDate') }}</span>
-                    <span class="timeline-value">{{ batchInfo.startDate || '-' }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="!batchInfo">
+        <!-- Tab标签页 -->
+        <el-tabs v-model="activeTab" class="breeding-tabs">
+          <!-- Tab 1: 基本信息 -->
+          <el-tab-pane :label="$t('research.breeding.detail.tabs.basicInfo')" name="basic">
+            <div class="tab-content" v-if="batchInfo">
+              <!-- 状态概览卡片 -->
+              <div class="status-overview-card">
+                <div class="overview-item">
+                  <i class="ri-seedling-line"></i>
+                  <div class="overview-content">
+                    <span class="overview-label">{{ $t('research.breeding.batch.form.varietyName') }}</span>
+                    <span class="overview-value">{{ batchInfo.varietyName }}</span>
                   </div>
                 </div>
-                <div class="timeline-connector"></div>
-                <div class="timeline-item">
-                  <div class="timeline-dot end"></div>
-                  <div class="timeline-content">
-                    <span class="timeline-label">{{ $t('research.breeding.batch.form.endDate') }}</span>
-                    <span class="timeline-value">{{ batchInfo.endDate || '-' }}</span>
+                <div class="overview-divider"></div>
+                <div class="overview-item">
+                  <i class="ri-plant-line"></i>
+                  <div class="overview-content">
+                    <span class="overview-label">{{ $t('research.breeding.batch.form.cropType') }}</span>
+                    <span class="overview-value">
+                      <el-tag size="small">{{ getCropTypeName(batchInfo.cropType) }}</el-tag>
+                    </span>
+                  </div>
+                </div>
+                <div class="overview-divider"></div>
+                <div class="overview-item">
+                  <i class="ri-checkbox-circle-line"></i>
+                  <div class="overview-content">
+                    <span class="overview-label">{{ $t('research.breeding.batch.form.status') }}</span>
+                    <span class="overview-value">
+                      <el-tag :type="getStatusTagType(batchInfo.batchStatus)">
+                        {{ getStatusName(batchInfo.batchStatus) }}
+                      </el-tag>
+                    </span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- 产量数据 -->
-            <div class="detail-section">
-              <div class="section-title">
-                <i class="ri-bar-chart-box-line"></i>
-                <span>{{ $t('research.breeding.detail.yieldData') }}</span>
-              </div>
-              <div class="info-grid">
-                <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.expectedYield') }}</span>
-                  <span class="value metric">
-                    <span class="number">{{ batchInfo.expectedYield || '-' }}</span>
-                    <span class="unit" v-if="batchInfo.expectedYield">kg</span>
-                  </span>
+              <!-- 基本信息 -->
+              <div class="info-card">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-information-line"></i>
+                    <span>{{ $t('research.breeding.detail.basicInfo') }}</span>
+                  </div>
                 </div>
-                <div class="info-item highlight">
-                  <span class="label">{{ $t('research.breeding.batch.form.toMultiplyQuantity') }}</span>
-                  <span class="value metric">
-                    <span class="number">{{ batchInfo.toMultiplyQuantity || '-' }}</span>
-                    <span class="unit" v-if="batchInfo.toMultiplyQuantity">kg</span>
-                  </span>
+                <div class="card-body">
+                  <el-descriptions :column="2" border>
+                    <el-descriptions-item :label="$t('research.breeding.batch.form.batchId')">
+                      {{ batchInfo.batchId }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('research.breeding.breedingBatch.form.distributionId')">
+                      {{ batchInfo.distributionId || '-' }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('research.breeding.breedingBatch.form.breedingLevel')">
+                      <el-tag size="small">{{ getBreedingLevelName(batchInfo.breedingLevel) }}</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('research.breeding.breedingBatch.form.parentalSeedSource')">
+                      {{ batchInfo.parentSeedSource || '-' }}
+                    </el-descriptions-item>
+                  </el-descriptions>
                 </div>
               </div>
-            </div>
 
-            <!-- 机构信息 -->
-            <div class="detail-section" v-if="batchInfo.orgId || batchInfo.orgName">
-              <div class="section-title">
-                <i class="ri-building-line"></i>
-                <span>{{ $t('research.breeding.detail.orgInfo') }}</span>
-              </div>
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.orgId') }}</span>
-                  <span class="value">{{ batchInfo.orgId || '-' }}</span>
+              <!-- 时间节点 -->
+              <div class="info-card">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-calendar-line"></i>
+                    <span>{{ $t('research.breeding.detail.timeline') }}</span>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('research.breeding.batch.form.orgName') }}</span>
-                  <span class="value">{{ batchInfo.orgName || '-' }}</span>
+                <div class="card-body">
+                  <div class="timeline-grid">
+                    <div class="timeline-item">
+                      <div class="timeline-dot start"></div>
+                      <div class="timeline-content">
+                        <span class="timeline-label">{{ $t('research.breeding.batch.form.startDate') }}</span>
+                        <span class="timeline-value">{{ batchInfo.startDate || '-' }}</span>
+                      </div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-item">
+                      <div class="timeline-dot end"></div>
+                      <div class="timeline-content">
+                        <span class="timeline-label">{{ $t('research.breeding.batch.form.endDate') }}</span>
+                        <span class="timeline-value">{{ batchInfo.endDate || '-' }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- 登记信息 -->
-            <div class="detail-section" v-if="batchInfo.createBy || batchInfo.createTime">
-              <div class="section-title">
-                <i class="ri-user-line"></i>
-                <span>{{ $t('common.registrationInfo') }}</span>
-              </div>
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">{{ $t('common.createBy') }}</span>
-                  <span class="value">{{ batchInfo.createBy || '-' }}</span>
+              <!-- 产量数据 -->
+              <div class="info-card">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span>{{ $t('research.breeding.detail.yieldData') }}</span>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">{{ $t('common.createTime') }}</span>
-                  <span class="value">{{ batchInfo.createTime || '-' }}</span>
+                <div class="card-body">
+                  <el-descriptions :column="2" border>
+                    <el-descriptions-item :label="$t('research.breeding.batch.form.expectedYield')">
+                      <span v-if="batchInfo.expectedYield">{{ batchInfo.expectedYield }} kg</span>
+                      <span v-else>-</span>
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('research.breeding.batch.form.toMultiplyQuantity')">
+                      <span v-if="batchInfo.toMultiplyQuantity">{{ batchInfo.toMultiplyQuantity }} kg</span>
+                      <span v-else>-</span>
+                    </el-descriptions-item>
+                  </el-descriptions>
                 </div>
               </div>
-            </div>
 
-            <!-- 备注 -->
-            <div class="detail-section" v-if="batchInfo.remark">
-              <div class="section-title">
-                <i class="ri-file-text-line"></i>
-                <span>{{ $t('common.remarks') }}</span>
+              <!-- 机构信息 -->
+              <div class="info-card" v-if="batchInfo.orgId || batchInfo.orgName">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-building-line"></i>
+                    <span>{{ $t('research.breeding.detail.orgInfo') }}</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <el-descriptions :column="2" border>
+                    <el-descriptions-item :label="$t('research.breeding.batch.form.orgId')">
+                      {{ batchInfo.orgId || '-' }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('research.breeding.batch.form.orgName')">
+                      {{ batchInfo.orgName || '-' }}
+                    </el-descriptions-item>
+                  </el-descriptions>
+                </div>
               </div>
-              <div class="remark-content">
-                {{ batchInfo.remark }}
+
+              <!-- 登记信息 -->
+              <div class="info-card" v-if="batchInfo.createBy || batchInfo.createTime">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-user-line"></i>
+                    <span>{{ $t('common.registrationInfo') }}</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <el-descriptions :column="2" border>
+                    <el-descriptions-item :label="$t('common.createBy')">
+                      {{ batchInfo.createBy || '-' }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :label="$t('common.createTime')">
+                      {{ batchInfo.createTime || '-' }}
+                    </el-descriptions-item>
+                  </el-descriptions>
+                </div>
+              </div>
+
+              <!-- 备注 -->
+              <div class="info-card" v-if="batchInfo.remark">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-file-text-line"></i>
+                    <span>{{ $t('common.remarks') }}</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="remark-content">
+                    {{ batchInfo.remark }}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div v-else class="loading-wrapper">
-            <el-skeleton :rows="5" animated />
-          </div>
-        </el-tab-pane>
-      </el-tabs>
+            <div v-else class="loading-wrapper">
+              <el-skeleton :rows="5" animated />
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>
@@ -201,8 +209,6 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail } from '@/api/breeding'
 import { useDict } from '@/hooks/useDict'
-import TrackingList from '../components/TrackingList.vue'
-import TestList from '../components/TestList.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -213,7 +219,6 @@ const batchInfo = ref(null)
 
 // 使用字典获取作物类型
 const { getLabelByValue } = useDict(['crop_type'])
-
 
 // 繁殖级别映射
 const breedingLevelMap = computed(() => ({
@@ -287,55 +292,14 @@ const goBack = () => {
 </script>
 
 <style scoped lang="scss">
-.breeding-detail-page {
-}
-
-.page-header {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 12px;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.2);
-
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .header-left {
-      min-width: 80px;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-
-      .page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .batch-id {
-        margin: 5px 0 0 0;
-        font-size: 14px;
-        opacity: 0.9;
-      }
-    }
-
-    .header-right {
-      min-width: 80px;
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-}
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
 .content-wrapper {
   background: white;
   border-radius: 12px;
   padding: 20px;
+  margin: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   .breeding-tabs {
@@ -349,7 +313,6 @@ const goBack = () => {
     }
 
     .tab-content {
-      // 状态概览卡片
       .status-overview-card {
         display: flex;
         background: linear-gradient(135deg, #f0f9f4 0%, #e6f7ed 100%);
@@ -394,223 +357,69 @@ const goBack = () => {
         }
       }
 
-      // 详情区块
-      .detail-section {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-        border: 1px solid #f0f0f0;
+      .remark-content {
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        line-height: 1.6;
+        color: #606266;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
 
-        .section-title {
+      .timeline-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 16px;
+        align-items: center;
+
+        .timeline-item {
           display: flex;
+          flex-direction: column;
           align-items: center;
           gap: 8px;
-          margin-bottom: 16px;
-          padding-bottom: 12px;
-          border-bottom: 2px solid #f0f0f0;
 
-          i {
-            font-size: 20px;
-            color: #009A44;
+          .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid #009A44;
+            background: #fff;
+
+            &.start {
+              background: #009A44;
+            }
+
+            &.end {
+              background: #FEDD00;
+              border-color: #FEDD00;
+            }
           }
 
-          span {
-            font-size: 16px;
-            font-weight: 600;
-            color: #303133;
-          }
-        }
-
-        .info-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
-
-          .info-item {
+          .timeline-content {
+            text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
 
-            &.full-width {
-              grid-column: 1 / -1;
-            }
-
-            &.highlight {
-              background: linear-gradient(135deg, #f0f9f4 0%, #e6f7ed 100%);
-              padding: 12px;
-              border-radius: 8px;
-              border-left: 3px solid #009A44;
-            }
-
-            .label {
-              font-size: 13px;
+            .timeline-label {
+              font-size: 12px;
               color: #909399;
-              font-weight: 500;
             }
 
-            .value {
-              font-size: 15px;
+            .timeline-value {
+              font-size: 14px;
+              font-weight: 600;
               color: #303133;
-              font-weight: 500;
-              word-break: break-all;
-
-              &.metric {
-                display: flex;
-                align-items: baseline;
-                gap: 4px;
-
-                .number {
-                  font-size: 24px;
-                  font-weight: 600;
-                  color: #009A44;
-                }
-
-                .unit {
-                  font-size: 14px;
-                  color: #606266;
-                }
-              }
             }
           }
         }
 
-        // 时间线样式
-        .timeline-grid {
-          display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          gap: 16px;
-          align-items: center;
-
-          .timeline-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-
-            .timeline-dot {
-              width: 16px;
-              height: 16px;
-              border-radius: 50%;
-              border: 3px solid #009A44;
-              background: #fff;
-
-              &.start {
-                background: #009A44;
-              }
-
-              &.end {
-                background: #FEDD00;
-                border-color: #FEDD00;
-              }
-            }
-
-            .timeline-content {
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-
-              .timeline-label {
-                font-size: 12px;
-                color: #909399;
-              }
-
-              .timeline-value {
-                font-size: 14px;
-                font-weight: 600;
-                color: #303133;
-              }
-            }
-          }
-
-          .timeline-connector {
-            height: 2px;
-            background: linear-gradient(90deg, #009A44 0%, #FEDD00 100%);
-            min-width: 60px;
-          }
-        }
-
-        // 统计卡片
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
-
-          .stat-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid #e9ecef;
-
-            &:hover {
-              background: #fff;
-              box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-              transform: translateY(-2px);
-            }
-
-            .stat-icon {
-              width: 48px;
-              height: 48px;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-
-              &.tracking {
-                background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-              }
-
-              &.test {
-                background: linear-gradient(135deg, #FEDD00 0%, #ffc107 100%);
-              }
-
-              i {
-                font-size: 24px;
-                color: #fff;
-              }
-            }
-
-            .stat-content {
-              flex: 1;
-
-              .stat-value {
-                font-size: 24px;
-                font-weight: 700;
-                color: #303133;
-                line-height: 1;
-                margin-bottom: 4px;
-              }
-
-              .stat-label {
-                font-size: 13px;
-                color: #606266;
-              }
-            }
-
-            .stat-arrow {
-              font-size: 20px;
-              color: #909399;
-              flex-shrink: 0;
-            }
-          }
-        }
-
-        .remark-content {
-          padding: 16px;
-          background: #f8f9fa;
-          border-radius: 8px;
-          line-height: 1.6;
-          color: #606266;
-          font-size: 14px;
-          white-space: pre-wrap;
-          word-break: break-word;
+        .timeline-connector {
+          height: 2px;
+          background: linear-gradient(90deg, #009A44 0%, #FEDD00 100%);
+          min-width: 60px;
         }
       }
     }
@@ -623,38 +432,15 @@ const goBack = () => {
 
 // 移动端适配
 @media screen and (max-width: 768px) {
-  .breeding-detail-page {
-    padding: 12px;
-  }
-
   .page-header {
     padding: 16px;
-    margin-bottom: 16px;
+    flex-direction: column;
+    gap: 12px;
 
-    .header-content {
-      flex-direction: column;
-      gap: 12px;
+    .header-left {
+      width: 100%;
 
-      .header-left,
-      .header-right {
-        width: 100%;
-        min-width: auto;
-      }
-
-      .header-left {
-        display: flex;
-        justify-content: flex-start;
-      }
-
-      .header-right {
-        justify-content: stretch;
-
-        .el-button {
-          width: 100%;
-        }
-      }
-
-      .header-center {
+      .header-content {
         .page-title {
           font-size: 20px;
         }
@@ -662,6 +448,14 @@ const goBack = () => {
         .batch-id {
           font-size: 13px;
         }
+      }
+    }
+
+    .header-right {
+      width: 100%;
+
+      .el-button {
+        width: 100%;
       }
     }
   }
@@ -708,109 +502,34 @@ const goBack = () => {
           }
         }
 
-        .detail-section {
-          padding: 16px;
-          margin-bottom: 12px;
+        .timeline-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
 
-          .section-title {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-
-            i {
-              font-size: 18px;
-            }
-
-            span {
-              font-size: 15px;
-            }
+          .timeline-connector {
+            width: 2px;
+            height: 40px;
+            min-width: auto;
+            justify-self: center;
+            background: linear-gradient(180deg, #009A44 0%, #FEDD00 100%);
           }
 
-          .info-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .info-item {
-              &.highlight {
-                padding: 10px;
+          .timeline-item {
+            .timeline-content {
+              .timeline-label {
+                font-size: 11px;
               }
 
-              .label {
-                font-size: 12px;
-              }
-
-              .value {
-                font-size: 14px;
-
-                &.metric {
-                  .number {
-                    font-size: 20px;
-                  }
-
-                  .unit {
-                    font-size: 13px;
-                  }
-                }
+              .timeline-value {
+                font-size: 13px;
               }
             }
           }
+        }
 
-          .timeline-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .timeline-connector {
-              width: 2px;
-              height: 40px;
-              min-width: auto;
-              justify-self: center;
-              background: linear-gradient(180deg, #009A44 0%, #FEDD00 100%);
-            }
-
-            .timeline-item {
-              .timeline-content {
-                .timeline-label {
-                  font-size: 11px;
-                }
-
-                .timeline-value {
-                  font-size: 13px;
-                }
-              }
-            }
-          }
-
-          .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-
-            .stat-card {
-              padding: 14px;
-
-              .stat-icon {
-                width: 44px;
-                height: 44px;
-
-                i {
-                  font-size: 22px;
-                }
-              }
-
-              .stat-content {
-                .stat-value {
-                  font-size: 20px;
-                }
-
-                .stat-label {
-                  font-size: 12px;
-                }
-              }
-            }
-          }
-
-          .remark-content {
-            padding: 12px;
-            font-size: 13px;
-          }
+        .remark-content {
+          padding: 12px;
+          font-size: 13px;
         }
       }
     }

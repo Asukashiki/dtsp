@@ -212,6 +212,17 @@ export const getOseReceiveConfirmList = (params) => {
 }
 
 /**
+ * 查询接收确认详情
+ * Query OSE receive confirmation detail
+ */
+export const getOseReceiveConfirmDetail = (id) => {
+  return agricultureRequest({
+    url: `/seed/ose/receive/confirm/${id}`,
+    method: 'get'
+  })
+}
+
+/**
  * OSE确认接收
  * OSE confirm receive
  */

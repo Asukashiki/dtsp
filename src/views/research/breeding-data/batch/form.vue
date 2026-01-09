@@ -2,16 +2,7 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <el-button class="back-btn" @click="goBack">
-            <i class="ri-arrow-left-line"></i>
-          </el-button>
-          <div class="header-content">
-            <h1 class="page-title">{{ pageTitle }}</h1>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon="ri-edit-box-line" :title="pageTitle" shadow show-back @back="goBack" />
 
       <!-- 表单区域 -->
       <div class="content-wrapper">
@@ -207,6 +198,7 @@ import { ElMessage } from 'element-plus'
 import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
+import { PageHeader } from '@/components/common'
 
 const route = useRoute()
 const router = useRouter()

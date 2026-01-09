@@ -9,13 +9,14 @@
       :disabled="disabled || (loading && currentAction !== button.action)"
       @click="handleAction(button)">
       <i :class="button.icon"></i>
-      <span class="btn-text">{{ $t(`common.${button.label}`) }}</span>
+      <span class="btn-text">{{ button.text || $t(`common.${button.label}`) }}</span>
     </el-button>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store'
 
 const props = defineProps({
@@ -52,6 +53,14 @@ const props = defineProps({
   },
 
   /**
+   * Whether to show confirm button (for stock-in approved status)
+   */
+  showConfirm: {
+    type: Boolean,
+    default: false
+  },
+
+  /**
    * Disable all buttons
    */
   disabled: {
@@ -74,10 +83,34 @@ const props = defineProps({
   customButtons: {
     type: Array,
     default: null
+  },
+
+  /**
+   * Actions to exclude by default
+   */
+  excludeActions: {
+    type: Array,
+    default: () => []
+  },
+
+  /**
+   * Whether to force show view button
+   */
+  forceView: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['action'])
+
+const { t } = useI18n()
+
+const getButtonLabel = (button) => {
+  if (button.rawLabel) return button.rawLabel
+  if (button.label && button.label.includes('.')) return t(button.label)
+  return t(`common.${button.label}`)
+}
 
 const userStore = useUserStore()
 const currentAction = ref('')
@@ -144,16 +177,28 @@ const getDefaultButtons = () => {
       break
 
     case 'S1': // Pending Approval
-      if (props.showAudit && userStore.hasWorkflowStatusPermission('approve')) {
-        // 审核页面：只显示审核按钮
-        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-      } else if (!props.showAudit) {
-        // 管理页面：只显示查看按钮（待审批状态不显示作废按钮）
-        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      if (props.showAudit) {
+        // 审核页面：显示查看按钮 + 审核按钮
+        buttons.push({ type: '', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        if (userStore.hasWorkflowStatusPermission('approve')) {
+          buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
+        }
+      } else {
+        // 管理页面：显示查看按钮 + 作废按钮
+        if (userStore.hasWorkflowStatusPermission('approve')) {
+          buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        }
+        if (userStore.hasWorkflowStatusPermission('cancel')) {
+          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+        }
       }
       break
 
     case 'S2': // Approved
+      if (props.showConfirm) {
+        // 显示确认入库按钮（用于入库管理的已审核状态）
+        buttons.push({ type: 'success', action: 'confirm', label: 'confirmInbound', icon: 'ri-checkbox-circle-line' })
+      }
       buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
 
@@ -188,7 +233,20 @@ const getDefaultButtons = () => {
 
 // Compute visible buttons
 const visibleButtons = computed(() => {
-  return props.customButtons || getDefaultButtons()
+  let buttons = props.customButtons || getDefaultButtons()
+
+  // Force View if enabled and not present
+  if (props.forceView && !buttons.find(b => b.action === 'view')) {
+    buttons = [
+      { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
+      ...buttons
+    ]
+  }
+
+  if (props.excludeActions && props.excludeActions.length) {
+    return buttons.filter(b => !props.excludeActions.includes(b.action))
+  }
+  return buttons
 })
 
 const handleAction = (button) => {

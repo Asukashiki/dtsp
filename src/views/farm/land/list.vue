@@ -450,7 +450,7 @@ const formatDate = (dateStr) => {
 const loadData = async () => {
   loading.value = true
   try {
-    const userId = userStore.userInfo?.user?.id
+    const userId = userStore.userInfo?.userId
     if (!userId) {
       ElMessage.error('User not found')
       return
@@ -555,7 +555,7 @@ const handleSubmit = async () => {
     submitLoading.value = true
 
     try {
-      const userId = userStore.userInfo?.user?.id || userStore.userInfo?.userId
+      const userId = userStore.userInfo?.userId
       const data = {
         ...form,
         farmerUserId: String(userId),

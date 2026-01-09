@@ -99,7 +99,6 @@ export function useDict(dictTypes, hookOptions = {}) {
    */
   const options = computed(() => {
     const result = {}
-    console.log("======",dictCache)
     for (const type of types) {
       const data = dictData.value[type] || []
       result[type] = data.map(item => ({

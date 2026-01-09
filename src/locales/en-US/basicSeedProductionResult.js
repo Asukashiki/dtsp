@@ -2,8 +2,8 @@ export default {
   title: 'Basic Seed Batch Data',
   subtitle: 'Manage Basic Seed batch data',
   searchPlaceholder: 'Search by batch ID or name',
-  add: 'Submit Data',
-  
+  add: 'Submit',
+
   columns: {
     resultId: 'Result ID',
     produceBatchId: 'Batch ID',
@@ -13,7 +13,7 @@ export default {
     outputQuantity: 'Output Quantity (kg)',
     actions: 'Actions'
   },
-  
+
   form: {
     batchInfo: 'Batch Information',
     resultInfo: 'Result Information',
@@ -30,20 +30,20 @@ export default {
     collectionDate: 'Collection Date',
     operator: 'Operator'
   },
-  
+
   placeholder: {
     produceBatchId: 'Please select production batch',
     outputQuantity: 'Please enter output quantity',
     collectionDate: 'Please select collection date'
   },
-  
+
   rules: {
     produceBatchIdRequired: 'Production batch is required',
     outputQuantityRequired: 'Output quantity is required',
     outputQuantityMin: 'Output quantity must be greater than 0',
     collectionDateRequired: 'Collection date is required'
   },
-  
+
   section: {
     batchInfo: 'Batch Information',
     resultInfo: 'Result Information'

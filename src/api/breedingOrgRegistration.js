@@ -159,3 +159,13 @@ export function getRegionTree() {
     })
   })
 }
+/**
+ * 删除注册申请
+ * @param {Number} id - 申请ID
+ */
+export function deleteRegistration(id) {
+  return request({
+    url: '/seed/breeding-org-registration/' + id,
+    method: 'delete'
+  })
+}

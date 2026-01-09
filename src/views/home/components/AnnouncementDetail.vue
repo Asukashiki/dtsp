@@ -8,6 +8,7 @@
     :close-on-click-modal="false"
     class="announcement-detail-dialog"
     destroy-on-close
+    width="800px"
   >
     <template #header>
       <div class="dialog-header flex items-center gap-4">
@@ -24,34 +25,40 @@
       <!-- 标题区域 -->
       <div class="detail-header mb-6 pb-5 border-b-2 border-[rgba(0,154,68,0.1)]">
         <h2 class="detail-title text-2xl font-bold text-[#303133] mb-5 text-center leading-relaxed">
-          {{ announcement.content }}
+          {{ parsedTitle }}
         </h2>
         <div class="detail-meta flex items-center justify-center gap-6 flex-wrap">
           <span class="meta-item flex items-center gap-2 text-sm text-[#606266] bg-[rgba(0,154,68,0.06)] px-4 py-2 rounded-full">
             <i class="ri-time-line text-[#009A44] text-base"></i>
             <span class="font-medium">{{ timeLabel }}:</span>
-            <span>{{ announcement.publicTime || announcement.createTime }}</span>
+            <span>{{ announcement.createTime }}</span>
           </span>
-          <span v-if="announcement.orgName" class="meta-item flex items-center gap-2 text-sm text-[#606266] bg-[rgba(0,154,68,0.06)] px-4 py-2 rounded-full">
+          <span v-if="announcement.createBy" class="meta-item flex items-center gap-2 text-sm text-[#606266] bg-[rgba(0,154,68,0.06)] px-4 py-2 rounded-full">
             <i class="ri-user-line text-[#009A44] text-base"></i>
             <span class="font-medium">{{ $t('dataList.publisher') }}:</span>
-            <span>{{ announcement.orgName }}</span>
+            <span>{{ announcement.createBy }}</span>
+          </span>
+          <span v-if="announcement.noticeType" class="meta-item flex items-center gap-2 text-sm text-[#606266] bg-[rgba(0,154,68,0.06)] px-4 py-2 rounded-full">
+            <i class="ri-bookmark-line text-[#009A44] text-base"></i>
+            <span class="font-medium">{{ $t('system.notice.noticeType') }}:</span>
+            <span>{{ announcement.noticeType === '1' ? $t('system.notice.typeNotice') : $t('system.notice.typeAnnouncement') }}</span>
           </span>
         </div>
       </div>
 
-      <!-- 内容区域 -->
+      <!-- 内容区域 - 富文本渲染 -->
       <div class="detail-content">
-        <div class="content-body min-h-[500px] text-base leading-8 text-[#303133] whitespace-pre-wrap text-justify px-2 tracking-wide">
-          {{ announcement.content }}
-        </div>
+        <div 
+          class="content-body min-h-[300px] text-base leading-8 text-[#303133] px-2 tracking-wide rich-text-content"
+          v-html="parsedContent"
+        ></div>
       </div>
 
       <!-- 附件区域（如果有） -->
       <div v-if="announcement.attachments?.length" class="attachment-section mt-6 p-5 bg-[rgba(0,154,68,0.04)] rounded-xl border border-[rgba(0,154,68,0.1)]">
         <div class="attachment-title flex items-center gap-2 text-base font-semibold text-[#009A44] mb-4">
           <i class="ri-attachment-2 text-lg"></i>
-          <span>附件列表</span>
+          <span>{{ $t('common.attachments') || 'Attachments' }}</span>
         </div>
         <div class="attachment-list space-y-3">
           <div
@@ -63,7 +70,7 @@
             <span class="flex-1 text-sm text-[#606266] truncate">{{ file.name }}</span>
             <el-button type="primary" link size="small" class="text-[#009A44]">
               <i class="ri-download-line mr-1"></i>
-              下载
+              {{ $t('common.download') || 'Download' }}
             </el-button>
           </div>
         </div>
@@ -91,8 +98,9 @@
 import { ref, computed, defineProps, defineEmits, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const props = defineProps({
   visible: {
@@ -102,12 +110,13 @@ const props = defineProps({
   announcement: {
     type: Object,
     default: () => ({
-      title: '',
-      content: '',
-      time: '',
-      publisher: 'HCM',
-      attachments: [],
-      important: false
+      noticeId: '',
+      noticeTitle: '',
+      noticeContent: '',
+      noticeType: '1',
+      createBy: '',
+      createTime: '',
+      attachments: []
     })
   }
 })
@@ -117,6 +126,16 @@ const emit = defineEmits(['update:visible'])
 const dialogVisible = computed({
   get: () => props.visible,
   set: (value) => emit('update:visible', value)
+})
+
+// 解析国际化标题
+const parsedTitle = computed(() => {
+  return parseI18nValue(props.announcement.noticeTitle, locale.value, props.announcement.noticeTitle || '')
+})
+
+// 解析国际化内容（富文本）
+const parsedContent = computed(() => {
+  return parseI18nValue(props.announcement.noticeContent, locale.value, props.announcement.noticeContent || '')
 })
 
 const handleClose = () => {

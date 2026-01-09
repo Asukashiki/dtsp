@@ -3,14 +3,18 @@ export default {
   fieldDetection: {
     title: '田间检测',
     subtitle: '管理育种家种子和C1种子的田间检测记录',
-    addTitle: '新增田间检测记录'
+    addTitle: '新增田间检测记录',
+    list: '田间检测记录列表',
+    detail: '田间检测详情'
   },
 
   // 实验室检测
   labTesting: {
     title: '实验室检测',
     subtitle: '管理育种家种子和C1种子的实验室检测记录',
-    addTitle: '新增实验室检测记录'
+    addTitle: '新增实验室检测记录',
+    list: '实验室检测记录列表',
+    detail: '实验室检测详情'
   },
 
   // 通用
@@ -37,6 +41,7 @@ export default {
   search: '搜索',
   reset: '重置',
   noData: '暂无检测记录',
+  basicInfo: '基本信息',
 
   // 批次选择器
   batchSelector: {

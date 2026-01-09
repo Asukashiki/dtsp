@@ -23,6 +23,10 @@ export default {
   success: 'Success',
   failed: 'Failed',
   tips: 'Tips',
+  tip: 'Tip',
+  rootNode: 'Root',
+  collapseAll: 'Collapse All',
+  expandAll: 'Expand All',
   prompt: 'Prompt',
   warning: 'Warning',
   addSuccess: 'Added successfully',
@@ -53,6 +57,7 @@ export default {
   audit: 'Audit',
   approve: 'Approve',
   reject: 'Reject',
+  confirmInbound: 'Confirm Inbound',
   update: 'Update',
   remarks: 'Remarks',
   refresh: 'Refresh',
@@ -65,6 +70,7 @@ export default {
   createdTime: 'Created Time',
   updatedBy: 'Updated By',
   updatedTime: 'Updated Time',
+  dateRange: 'Search By date',
   approver: 'Approver',
   approveTime: 'Approve Time',
   auditInfo: 'Audit Information',
@@ -92,6 +98,7 @@ export default {
   detail: 'Detail',
   all: 'All',
   currentUser: 'Current User',
+  basicInfo: 'Basic Information',
   systemInfo: 'System Information',
   // Error Messages
   error: {
@@ -102,14 +109,31 @@ export default {
     notFound: 'The requested resource does not exist',
     timeout: 'Request timeout, please check your network connection',
     networkError: 'Network error, please check your network connection',
-    operationFailed: 'Operation failed'
+    operationFailed: 'Operation failed',
+    noPermission: 'Access Denied',
+    noPermissionDesc: 'You do not have permission to access this page. Please contact administrator.',
+    pageNotFound: 'Page Not Found',
+    pageNotFoundDesc: 'The page you are looking for does not exist or has been removed.'
   },
   required: 'this item is required',
   saveSuccess: 'Save Success',
   queryFailed: 'query Info failed',
   birthDate: 'Birth Date',
+  backToHome: 'Back to Home',
+  goBack: 'Go Back',
+  pageNotFound: 'Page Not Found',
+  pageNotFoundDesc: 'The page you are looking for does not exist or has been removed.',
+  noPermission: 'No Permission',
+  noPermissionDesc: 'You do not have permission to access this page or perform this action',
   invalidParams: 'Invalid parameters',
   // Tab labels
   aggregationResults: 'Aggregation Results',
-  farmerDemands: 'Farmer Demands'
+  farmerDemands: 'Farmer Demands',
+  noPermissionDesc: 'You do not have permission to access this page or perform this action',
+  dateRange: 'Date Range',
+  
+  // Notice related
+  notice: 'Notice',
+  noticeDetail: 'Notice Details',
+  noticeList: 'Notice List',
 }

@@ -1,204 +1,170 @@
 <template>
-  <div class="distribution-detail-container">
-    <div class="detail-header">
-      <div class="header-left">
-        <el-button link @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
-      </div>
-      <h2 class="detail-title">{{ $t('research.breeding.seed.distribution.detail') }}</h2>
-    </div>
-
-    <div class="detail-content">
-      <div class="info-section">
-        <div class="section-title">
-          <i class="ri-information-line"></i>
-          {{ $t('research.breeding.seed.distribution.form.basicInfo') }}
-        </div>
-
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeId') }}:</span>
-            <span class="info-value">{{ data.distributeId }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.oseName') }}:</span>
-            <span class="info-value">{{ data.oseName }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.time') }}:</span>
-            <span class="info-value">{{ data.time }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.people') }}:</span>
-            <span class="info-value">{{ data.people }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.organ') }}:</span>
-            <span class="info-value">{{ data.organ }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeName') }}:</span>
-            <span class="info-value">{{ data.distributeName }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.fromSeedLevel') }}:</span>
-            <span class="info-value">{{ data.fromSeedLevel }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.toSeedLevel') }}:</span>
-            <span class="info-value">{{ data.toSeedLevel }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.totalDistributeQuantity') }}:</span>
-            <span class="info-value highlight">{{ data.totalDistributeQuantity }} kg</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.columns.distributeStatus') }}:</span>
-            <span class="info-value">
-              <el-tag type="success" size="small">{{ data.distributeStatus }}</el-tag>
-            </span>
-          </div>
-          <div class="info-item full-width" v-if="data.remark">
-            <span class="info-label">{{ $t('research.breeding.seed.distribution.form.remark') }}:</span>
-            <span class="info-value">{{ data.remark }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.seed.distribution.detail') }}</h1>
           </div>
         </div>
       </div>
 
-      <div class="info-section" v-if="data.detailList && data.detailList.length > 0">
-        <div class="section-title">
-          <i class="ri-list-check"></i>
-          {{ $t('research.breeding.seed.distribution.form.detailList') }}
-        </div>
-
-        <div class="detail-table">
-          <el-table :data="data.detailList" stripe border style="width: 100%">
-            <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
-            
-            <el-table-column
-              prop="produceBatchName"
-              :label="$t('research.breeding.seed.distribution.detailColumns.produceBatchName')"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="breedBatchName"
-              :label="$t('research.breeding.seed.distribution.detailColumns.breedBatchName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="parentalSeedSource"
-              :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="varietyName"
-              :label="$t('research.breeding.seed.distribution.detailColumns.varietyName')"
-              min-width="150"
-              show-overflow-tooltip
-            />
-            <el-table-column
-              prop="distributeQuantity"
-              :label="$t('research.breeding.seed.distribution.detailColumns.distributeQuantity')"
-              width="130"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.distributeQuantity }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="produceBatchRemaining"
-              :label="$t('research.breeding.seed.distribution.detailColumns.produceBatchRemaining')"
-              width="150"
-              align="right"
-            >
-              <template #default="{ row }">
-                {{ row.produceBatchRemaining }} kg
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="createTime"
-              :label="$t('research.breeding.seed.distribution.detailColumns.createTime')"
-              width="180"
-            />
-          </el-table>
-        </div>
-
-        <!-- 移动端卡片视图 -->
-        <div class="mobile-detail-list">
-          <div v-for="(item, index) in data.detailList" :key="item.distributeDetailId" class="mobile-detail-card">
-            <div class="card-header">
-              <el-tag type="primary" size="small">{{ $t('common.index') }} {{ index + 1 }}</el-tag>
-              <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 基本信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('research.breeding.seed.distribution.form.basicInfo') }}</span>
             </div>
-            <h4 class="card-title">{{ item.varietyName }}</h4>
-            <div class="card-info">
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeDetailId') }}:</span>
-                <span class="value">{{ item.distributeDetailId }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.produceBatchName') }}:</span>
-                <span class="value">{{ item.produceBatchName }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.breedBatchName') }}:</span>
-                <span class="value">{{ item.breedBatchName }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.parentalSeedSource') }}:</span>
-                <span class="value">{{ item.parentalSeedSource }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeQuantity') }}:</span>
-                <span class="value highlight">{{ item.distributeQuantity }} kg</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.produceBatchRemaining') }}:</span>
-                <span class="value">{{ item.produceBatchRemaining }} kg</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.createTime') }}:</span>
-                <span class="value">{{ item.createTime }}</span>
+          </div>
+          <div class="card-body">
+            <el-descriptions :column="isMobile ? 1 : 2" border>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.distributeId')">
+                {{ data.distributeId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.distributeName')">
+                {{ data.distributeName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.oseName')">
+                {{ data.oseName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.time')">
+                {{ data.time }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.people')">
+                {{ data.people }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.organ')">
+                {{ data.organ }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.fromSeedLevel')">
+                {{ data.fromSeedLevel }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.toSeedLevel')">
+                {{ data.toSeedLevel }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.totalDistributeQuantity')">
+                <span class="font-bold text-primary">{{ data.totalDistributeQuantity }} kg</span>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.columns.distributeStatus')">
+                <el-tag type="success" size="small">{{ data.distributeStatus }}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.distribution.form.remark')" :span="isMobile ? 1 : 2" v-if="data.remark">
+                {{ data.remark }}
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </div>
+
+        <!-- 详情列表 -->
+        <div class="info-card" v-if="data.detailList && data.detailList.length > 0">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-list-check"></i>
+              <span>{{ $t('research.breeding.seed.distribution.form.detailList') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- PC端表格 -->
+            <div class="pc-only">
+              <el-table :data="data.detailList" stripe border>
+                <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
+                <el-table-column
+                  prop="produceBatchId"
+                  :label="$t('research.breeding.seed.distribution.form.produceBatchId')"
+                  min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column
+                  prop="varietyName"
+                  :label="$t('research.breeding.seed.distribution.detailColumns.varietyName')"
+                  min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column
+                  prop="breedBatchName"
+                  :label="$t('research.breeding.seed.distribution.detailColumns.breedBatchName')"
+                  min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column
+                  prop="parentalSeedSource"
+                  :label="$t('research.breeding.seed.distribution.detailColumns.parentalSeedSource')"
+                  min-width="150"
+                  show-overflow-tooltip />
+                <el-table-column
+                  prop="distributeQuantity"
+                  :label="$t('research.breeding.seed.distribution.detailColumns.distributeQuantity')"
+                  width="130"
+                  align="right">
+                  <template #default="{ row }">
+                    <span class="font-bold text-primary">{{ row.distributeQuantity }} kg</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('common.createTime')"
+                  width="180"
+                  align="center" />
+              </el-table>
+            </div>
+
+            <!-- 移动端列表 -->
+            <div class="mobile-only">
+              <div v-for="(item, index) in data.detailList" :key="index" class="mobile-detail-card">
+                <div class="card-header-item">
+                  <span class="index-badge">{{ index + 1 }}</span>
+                  <span class="batch-id">{{ item.produceBatchId }}</span>
+                </div>
+                <div class="card-body-item">
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.varietyName') }}:</span>
+                    <span class="value">{{ item.varietyName }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('research.breeding.seed.distribution.detailColumns.distributeQuantity') }}:</span>
+                    <span class="value font-bold text-primary">{{ item.distributeQuantity }} kg</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">{{ $t('common.createTime') }}:</span>
+                    <span class="value">{{ item.createTime }}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="info-section">
-        <div class="section-title">
-          <i class="ri-time-line"></i>
-          {{ $t('common.systemInfo') }}
-        </div>
-
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">{{ $t('common.createTime') }}:</span>
-            <span class="info-value">{{ data.createTime }}</span>
+        <!-- 系统信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-time-line"></i>
+              <span>{{ $t('common.systemInfo') }}</span>
+            </div>
           </div>
-          <div class="info-item">
-            <span class="info-label">{{ $t('common.updateTime') }}:</span>
-            <span class="info-value">{{ data.updateTime }}</span>
+          <div class="card-body">
+            <el-descriptions :column="isMobile ? 1 : 2" border>
+              <el-descriptions-item :label="$t('common.createTime')">
+                {{ data.createTime || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('common.updateTime')">
+                {{ data.updateTime || '-' }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="detail-footer">
-      <el-button @click="handleBack">{{ $t('common.back') }}</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import { useDict } from '@/hooks/useDict'
+import { useResponsive } from '@/hooks/useResponsive'
 
 const props = defineProps({
   data: {
@@ -209,203 +175,86 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['back'])
-
-// 使用 useDict hook 获取字典数据
-const { getLabelByValue } = useDict(['crop_type'])
+const { isMobile } = useResponsive()
 
 const handleBack = () => {
   emit('back')
 }
 </script>
 
-<style scoped>
-.distribution-detail-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
-.detail-header {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.header-left {
-  margin-bottom: 8px;
-}
-
-.detail-title {
-  font-size: 20px;
+.font-bold {
   font-weight: 600;
-  color: #009A44;
-  margin: 0;
 }
 
-.detail-content {
-  padding: 24px;
-}
-
-.info-section {
-  margin-bottom: 32px;
-}
-
-.info-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-}
-
-.section-title i {
-  font-size: 18px;
+.text-primary {
   color: #009A44;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.info-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.info-label {
-  font-size: 13px;
-  color: #909399;
-  font-weight: 500;
-}
-
-.info-value {
-  font-size: 15px;
-  color: #303133;
-}
-
-.info-value.highlight {
-  color: #009A44;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.detail-table {
-  display: block;
-}
-
-.mobile-detail-list {
-  display: none;
+:deep(.el-descriptions__label) {
+  width: 150px;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .mobile-detail-card {
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
   border: 1px solid #e9ecef;
-}
 
-.mobile-detail-card:last-child {
-  margin-bottom: 0;
-}
-
-.card-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 12px 0;
-}
-
-.card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-row .label {
-  font-size: 12px;
-  color: #909399;
-  flex-shrink: 0;
-}
-
-.info-row .value {
-  font-size: 14px;
-  color: #606266;
-  text-align: right;
-  word-break: break-all;
-}
-
-.info-row .value.highlight {
-  color: #009A44;
-  font-weight: 600;
-}
-
-.detail-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #f0f0f0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-@media screen and (max-width: 768px) {
-  .detail-content {
-    padding: 16px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
+  .card-header-item {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e9ecef;
+
+    .index-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: #009A44;
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .batch-id {
+      font-weight: 600;
+      color: #303133;
+    }
   }
 
-  .detail-table {
-    display: none;
+  .card-body-item {
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 14px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: #909399;
+      }
+
+      .value {
+        color: #606266;
+      }
+    }
   }
 
-  .mobile-detail-list {
-    display: block;
-  }
-
-  .detail-footer {
-    padding: 12px 16px;
-  }
-
-  .detail-footer .el-button {
-    width: 100%;
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 </style>

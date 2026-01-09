@@ -1,154 +1,170 @@
 <template>
-  <div class="batch-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-        <div class="back-btn" link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('research.c1BreedingBatch.edit') : $t('research.c1BreedingBatch.add') }}</h1>
+          </div>
         </div>
       </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ isEdit ? $t('research.c1BreedingBatch.edit') : $t('research.c1BreedingBatch.add') }}
-        </h1>
+
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.c1BreedingBatch.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <!-- 批次号选择 - 全宽 -->
+                <el-col :span="24">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.linkedBatchNo')" prop="propagationId">
+                    <el-select 
+                      v-model="formData.propagationId" 
+                      :placeholder="$t('research.c1BreedingBatch.placeholder.linkedBatchNo')"
+                      style="width: 100%"
+                      filterable
+                      @change="handlePropagationChange"
+                    >
+                      <el-option 
+                        v-for="item in propagationList" 
+                        :key="item.id" 
+                        :label="`${item.authId} - ${item.varietyName} (${item.applicantOrgName})`"
+                        :value="item.authId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
+                    <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" style="width: 100%" disabled>
+                      <el-option
+                        v-for="item in options.crop_type"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.varietyName')" prop="varietyName">
+                    <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable disabled/>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.plantingArea')">
+                    <el-input v-model.number="formData.plantingArea" :placeholder="$t('research.c1BreedingBatch.placeholder.plantingArea')" type="number" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.startDate')" prop="startDate">
+                    <el-date-picker
+                      v-model="formData.startDate"
+                      type="date"
+                      :placeholder="$t('research.c1BreedingBatch.placeholder.startDate')"
+                      value-format="YYYY-MM-DD"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.endDate')">
+                    <el-date-picker
+                      v-model="formData.endDate"
+                      type="date"
+                      :placeholder="$t('research.c1BreedingBatch.placeholder.endDate')"
+                      value-format="YYYY-MM-DD"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.expectedYield')">
+                    <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.c1BreedingBatch.placeholder.expectedYield')" type="number" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.quantityToMultiply')">
+                    <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 机构信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-line"></i>
+                <span>{{ $t('research.c1BreedingBatch.form.orgInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.orgType')">
+                    <el-select v-model="formData.orgType" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
+                      <el-option label="Union" value="union" />
+                      <el-option label="OSE" value="ose" />
+                      <el-option label="Cooperative" value="cooperative" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.c1BreedingBatch.form.orgName')">
+                    <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 备注卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-text-line"></i>
+                <span>{{ $t('common.remarks') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item :label="$t('common.remarks')">
+                    <el-input v-model="formData.remark" type="textarea" :rows="4" :placeholder="$t('research.c1BreedingBatch.placeholder.remark')" clearable />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作按钮区域 -->
+          <div class="form-actions">
+            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
+          </div>
+        </el-form>
       </div>
-    </div>
-
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="batch-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-information-line"></i>
-            <h3>{{ $t('research.c1BreedingBatch.form.basicInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <!-- 批次号选择 -->
-            <el-form-item :label="$t('research.c1BreedingBatch.form.linkedBatchNo')" prop="propagationId" class="full-width-item">
-              <el-select 
-                v-model="formData.propagationId" 
-                :placeholder="$t('research.c1BreedingBatch.placeholder.linkedBatchNo')"
-                class="full-width"
-                filterable
-                @change="handlePropagationChange"
-              >
-                <el-option 
-                  v-for="item in propagationList" 
-                  :key="item.id" 
-                  :label="`${item.authId} - ${item.varietyName} (${item.applicantOrgName})`"
-                  :value="item.authId"
-                />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
-              <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" class="full-width" disabled>
-                <el-option
-                  v-for="item in options.crop_type"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.varietyName')" prop="varietyName">
-              <el-input v-model="formData.varietyName" :placeholder="$t('research.c1BreedingBatch.placeholder.varietyName')" clearable  disabled/>
-            </el-form-item>
-
-            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.breedingMethod')">
-              <el-select v-model="formData.breedingMethod" :placeholder="$t('research.c1BreedingBatch.placeholder.breedingMethod')" class="full-width">
-                <el-option label="Hybridization" value="hybridization" />
-                <el-option label="Selection" value="selection" />
-                <el-option label="Mutation" value="mutation" />
-                <el-option label="Other" value="other" />
-              </el-select>
-            </el-form-item> -->
-
-            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.parentSeedSource')" class="full-width-item">
-              <el-input v-model="formData.parentSeedSource" :placeholder="$t('research.c1BreedingBatch.placeholder.parentSeedSource')" clearable />
-            </el-form-item> -->
-
-              <el-form-item :label="$t('research.c1BreedingBatch.form.plantingArea')">
-              <el-input v-model.number="formData.plantingArea" :placeholder="$t('research.c1BreedingBatch.placeholder.plantingArea')" type="number" clearable />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.startDate')" prop="startDate">
-              <el-date-picker
-                v-model="formData.startDate"
-                type="date"
-                :placeholder="$t('research.c1BreedingBatch.placeholder.startDate')"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.endDate')">
-              <el-date-picker
-                v-model="formData.endDate"
-                type="date"
-                :placeholder="$t('research.c1BreedingBatch.placeholder.endDate')"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.expectedYield')">
-              <el-input v-model.number="formData.expectedYield" :placeholder="$t('research.c1BreedingBatch.placeholder.expectedYield')" type="number" clearable />
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.quantityToMultiply')">
-              <el-input v-model.number="formData.quantityToMultiply" :placeholder="$t('common.pleaseEnter')" type="number" clearable />
-            </el-form-item>
-
-
-            <!-- <el-form-item :label="$t('research.c1BreedingBatch.form.location')" class="full-width-item">
-              <el-input v-model="formData.location" :placeholder="$t('research.c1BreedingBatch.placeholder.location')" clearable />
-            </el-form-item> -->
-          </div>
-        </div>
-
-        <!-- 机构信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-building-line"></i>
-            <h3>{{ $t('research.c1BreedingBatch.form.orgInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('research.c1BreedingBatch.form.orgType')">
-              <el-select v-model="formData.orgType" :placeholder="$t('common.pleaseSelect')" class="full-width">
-                <el-option label="Union" value="union" />
-                <el-option label="OSE" value="ose" />
-                <el-option label="Cooperative" value="cooperative" />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('research.c1BreedingBatch.form.orgName')">
-              <el-input v-model="formData.orgName" :placeholder="$t('research.c1BreedingBatch.placeholder.orgName')" disabled />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 备注 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-file-text-line"></i>
-            <h3>{{ $t('common.remarks') }}</h3>
-          </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('common.remarks')" class="full-width-item">
-              <el-input v-model="formData.remark" type="textarea" :rows="4" :placeholder="$t('research.c1BreedingBatch.placeholder.remark')" clearable />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 提交按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
-        </div>
-      </el-form>
     </div>
   </div>
 </template>
@@ -293,76 +309,13 @@ const goBack = () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
-.form-wrapper {
-  background: white;
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .form-block {
-    margin-bottom: 30px;
-
-    &:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .block-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #009A44;
-
-      i {
-        font-size: 20px;
-        color: #009A44;
-        margin-right: 10px;
-      }
-
-      h3 {
-        margin: 0;
-        font-size: 16px;
-        color: #333;
-        font-weight: 600;
-      }
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-
-      @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-      }
-
-      .full-width-item {
-        grid-column: 1 / -1;
-      }
-
-      :deep(.el-form-item) {
-        margin-bottom: 0;
-      }
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
-
-    button {
-      min-width: 120px;
-    }
-  }
-}
-
-.full-width {
-  width: 100%;
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 0;
 }
 </style>

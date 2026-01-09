@@ -1,246 +1,264 @@
 <template>
-  <div class="farmer-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('newFarm.farmer.edit') : $t('newFarm.farmer.add') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('newFarm.farmer.edit') : $t('newFarm.farmer.add') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper" v-loading="pageLoading">
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-position="top" class="farmer-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-user-line"></i>
-            <h3>{{ $t('newFarm.farmer.sections.basicInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('newFarm.farmer.form.farmerName')" prop="farmerName">
-              <el-input
-                  v-model="formData.farmerName"
-                  :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
-                  maxlength="100"
-                  show-word-limit
-              />
-            </el-form-item>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          v-loading="pageLoading"
+          :model="formData"
+          :rules="formRules"
+          label-width="140px">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.farmerName')" prop="farmerName">
+                    <el-input
+                      v-model="formData.farmerName"
+                      :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
+                      maxlength="100"
+                      show-word-limit />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.idCard')" prop="idCard">
-              <el-input
-                  v-model="formData.idCard"
-                  :placeholder="$t('newFarm.farmer.placeholder.idCard')"
-                  maxlength="50"
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.idCard')" prop="idCard">
+                    <el-input
+                      v-model="formData.idCard"
+                      :placeholder="$t('newFarm.farmer.placeholder.idCard')"
+                      maxlength="50" />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.gender')" prop="gender">
-              <el-radio-group v-model="formData.gender">
-                <el-radio label="MALE">{{ $t('newFarm.common.male') }}</el-radio>
-                <el-radio label="FEMALE">{{ $t('newFarm.common.female') }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.gender')" prop="gender">
+                    <el-radio-group v-model="formData.gender">
+                      <el-radio label="MALE">{{ $t('newFarm.common.male') }}</el-radio>
+                      <el-radio label="FEMALE">{{ $t('newFarm.common.female') }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('common.birthDate')" prop="birthday">
-              <el-date-picker
-                  v-model="formData.birthday"
-              type="date"
-              :placeholder="$t('common.birthDate')"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('common.birthDate')" prop="birthday">
+                    <el-date-picker
+                      v-model="formData.birthday"
+                      type="date"
+                      :placeholder="$t('common.birthDate')"
+                      value-format="YYYY-MM-DD"
+                      style="width: 100%" />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.youthCategory')" prop="youthCategory">
-              <el-radio-group v-model="formData.youthCategory">
-                <el-radio label="1">{{ $t('common.yes') }}</el-radio>
-                <el-radio label="0">{{ $t('common.no') }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.youthCategory')" prop="youthCategory">
+                    <el-radio-group v-model="formData.youthCategory">
+                      <el-radio label="1">{{ $t('common.yes') }}</el-radio>
+                      <el-radio label="0">{{ $t('common.no') }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.phone')" prop="phone">
-              <el-input
-                  v-model="formData.phone"
-                  :placeholder="$t('newFarm.farmer.placeholder.phone')"
-                  maxlength="20"
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.phone')" prop="phone">
+                    <el-input
+                      v-model="formData.phone"
+                      :placeholder="$t('newFarm.farmer.placeholder.phone')"
+                      maxlength="20" />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.email')" prop="email">
-              <el-input
-                  v-model="formData.email"
-                  :placeholder="$t('newFarm.farmer.placeholder.email')"
-                  maxlength="100"
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.email')" prop="email">
+                    <el-input
+                      v-model="formData.email"
+                      :placeholder="$t('newFarm.farmer.placeholder.email')"
+                      maxlength="100" />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="`${$t('newFarm.common.createTime')}`" prop="createTime">
-              <el-input
-                  v-model="formData.createTime"
-                  readonly
-                  :placeholder="$t('newFarm.common.createTime')"
-                  style="cursor: default;"
-              />
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.common.createTime')" prop="createTime">
+                    <el-input
+                      v-model="formData.createTime"
+                      readonly
+                      :placeholder="$t('newFarm.common.createTime')"
+                      style="cursor: default;" />
+                  </el-form-item>
+                </el-col>
 
-            <el-form-item :label="$t('newFarm.farmer.form.address')" prop="address" class="full-width-item">
-              <el-input
-                  v-model="formData.address"
-                  :placeholder="$t('newFarm.farmer.placeholder.address')"
-                  maxlength="200"
-                  show-word-limit
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 组织信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-building-line"></i>
-            <h3>{{ $t('newFarm.farmer.sections.orgInfo') }}</h3>
-          </div>
-
-          <div class="form-grid">
-            <el-form-item
-                :label="$t('newFarm.farmer.form.daId')"
-                prop="daId"
-                :error="daMatchError"
-            >
-              <el-select
-                  v-model="formData.daId"
-                  :placeholder="daPlaceholder"
-                  filterable
-                  clearable
-                  style="width: 100%"
-              >
-                <el-option
-                    v-for="item in daOptions"
-                    :key="item.daId"
-                    :label="item.daName"
-                    :value="item.daId"
-                />
-              </el-select>
-            </el-form-item>
-            <div></div>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('newFarm.farmer.form.address')" prop="address">
+                    <el-input
+                      v-model="formData.address"
+                      :placeholder="$t('newFarm.farmer.placeholder.address')"
+                      maxlength="200"
+                      show-word-limit />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
 
-          <!-- 三级联动下拉框：Zone→Woreda→Kebele -->
-          <div class="form-grid">
-            <!-- Zone下拉框 -->
-            <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
-              <el-select
-                  v-model="formData.zoneCode"
-                  :placeholder="$t('newFarm.common.selectZone')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleZoneChange"
-                  :loading="zoneLoading"
-              >
-                <el-option
-                    v-for="item in zoneOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
-                />
-              </el-select>
-            </el-form-item>
+          <!-- 组织信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-line"></i>
+                <span>{{ $t('newFarm.farmer.sections.orgInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item
+                    :label="$t('newFarm.farmer.form.daId')"
+                    prop="daId"
+                    :error="daMatchError">
+                    <el-select
+                      v-model="formData.daId"
+                      :placeholder="daPlaceholder"
+                      filterable
+                      clearable
+                      style="width: 100%">
+                      <el-option
+                        v-for="item in daOptions"
+                        :key="item.daId"
+                        :label="item.daName"
+                        :value="item.daId" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12" />
 
-            <!-- Woreda下拉框：选完后触发Cooperative加载（和Kebele加载时机一致） -->
-            <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
-              <el-select
-                  v-model="formData.woredaCode"
-                  :placeholder="$t('newFarm.common.selectWoreda')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleWoredaChange"
-                  :loading="woredaLoading"
-                  :disabled="!formData.zoneCode"
-              >
-                <el-option
-                    v-for="item in woredaOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
-                />
-              </el-select>
-            </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.common.zoneCode')" prop="zoneCode">
+                    <el-select
+                      v-model="formData.zoneCode"
+                      :placeholder="$t('newFarm.common.selectZone')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleZoneChange"
+                      :loading="zoneLoading">
+                      <el-option
+                        v-for="item in zoneOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.common.woredaCode')" prop="woredaCode">
+                    <el-select
+                      v-model="formData.woredaCode"
+                      :placeholder="$t('newFarm.common.selectWoreda')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleWoredaChange"
+                      :loading="woredaLoading"
+                      :disabled="!formData.zoneCode">
+                      <el-option
+                        v-for="item in woredaOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
+                    <el-select
+                      v-model="formData.kebeleCode"
+                      :placeholder="$t('newFarm.common.selectKebele')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="kebeleLoading"
+                      :disabled="!formData.woredaCode"
+                      @change="handleKebeleChange">
+                      <el-option
+                        v-for="item in kebeleOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('newFarm.farmer.form.cooperativeId')" prop="cooperativeId">
+                    <el-input
+                      v-model="formData.cooperativeId"
+                      :placeholder="$t('newFarm.farmer.placeholder.cooperativeId')"
+                      maxlength="50"
+                      readonly
+                      :disabled="!formData.woredaCode"
+                      style="cursor: default;" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
 
-          <div class="form-grid">
-            <!-- Kebele下拉框：禁用条件和Cooperative完全一致 -->
-            <el-form-item :label="$t('newFarm.common.kebeleCode')" prop="kebeleCode">
-              <el-select
-                  v-model="formData.kebeleCode"
-                  :placeholder="$t('newFarm.common.selectKebele')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  :loading="kebeleLoading"
-                  :disabled="!formData.woredaCode"
-                  @change="handleKebeleChange"
-              >
-                <el-option
-                    v-for="item in kebeleOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
-                />
-              </el-select>
-            </el-form-item>
-
-            <!-- Cooperative输入框：禁用条件和Kebele一致（!formData.woredaCode），时机完全对齐 -->
-            <el-form-item :label="$t('newFarm.farmer.form.cooperativeId')" prop="cooperativeId">
-              <el-input
-                  v-model="formData.cooperativeId"
-                  :placeholder="$t('newFarm.farmer.placeholder.cooperativeId')"
-                  maxlength="50"
-                  readonly
-                  :disabled="!formData.woredaCode"
-                  style="cursor: default;"
-              />
-            </el-form-item>
+          <!-- 备注卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-text-line"></i>
+                <span>{{ $t('newFarm.common.remark') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24">
+                  <el-form-item :label="$t('newFarm.common.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="4"
+                      :placeholder="$t('newFarm.farmer.placeholder.remark')"
+                      maxlength="500"
+                      show-word-limit />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-        </div>
 
-        <!-- 备注 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-file-text-line"></i>
-            <h3>{{ $t('newFarm.common.remark') }}</h3>
+          <!-- 操作按钮区域（底部） -->
+          <div class="form-actions">
+            <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
+            <el-button type="primary" :loading="saveLoading" @click="handleSubmit">
+              {{ $t('common.save') }}
+            </el-button>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('newFarm.common.remark')" prop="remark" class="full-width-item">
-              <el-input
-                  v-model="formData.remark"
-                  type="textarea"
-                  :rows="4"
-                  :placeholder="$t('newFarm.farmer.placeholder.remark')"
-                  maxlength="500"
-                  show-word-limit
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="saveLoading" @click="handleSubmit">
-            {{ $t('common.save') }}
-          </el-button>
-        </div>
-      </el-form>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -629,47 +647,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.farmer-form-page { min-height: calc(100vh - 120px); }
-
-.page-header { background: white; padding: 16px 0; margin: -24px 0 24px 0; border-radius: 0 0 12px 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-.header-left { display: flex; align-items: center; }
-.header-center { text-align: center; }
-.page-title { font-size: 20px; font-weight: 600; color: #303133; margin: 0; }
-
-.form-wrapper { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-.form-block { margin-bottom: 32px; }
-.block-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0f2f5; }
-.block-header i { font-size: 20px; color: #009A44; }
-.block-header h3 { font-size: 16px; font-weight: 600; color: #303133; margin: 0; }
-
-.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.full-width-item { grid-column: 1 / -1; }
-
-.form-actions { display: flex; justify-content: flex-end; gap: 16px; padding-top: 24px; border-top: 1px solid #f0f2f5; }
-
-/* 下拉框加载状态样式优化 */
-.el-select__loading { display: flex; align-items: center; justify-content: center; }
-
-/* 统一禁用状态样式：Cooperative和Kebele保持一致 */
-.el-input.is-disabled .el-input__inner,
-.el-select.is-disabled .el-select__wrapper {
-  background-color: #f5f7fa;
-  color: #c0c4cc;
-  cursor: not-allowed;
-}
-
-@media screen and (max-width: 1024px) {
-  .form-grid { grid-template-columns: 1fr; }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header { margin: -16px -16px 16px -16px; }
-  .header-content { padding: 0 16px; grid-template-columns: auto 1fr; gap: 16px; }
-  .header-center { text-align: left; }
-  .form-wrapper { padding: 16px; }
-  .form-actions { flex-direction: column; }
-  .form-actions .el-button { width: 100%; }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

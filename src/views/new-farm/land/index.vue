@@ -1,313 +1,246 @@
 <template>
-  <div class="land-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon-wrapper">
-          <i class="ri-landscape-line header-icon"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">{{ $t('newFarm.land.title') }}</h1>
-          <p class="page-subtitle">{{ $t('newFarm.land.subtitle') }}</p>
-        </div>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-landscape-line"
+        :title="$t('newFarm.land.title')"
+        :subtitle="$t('newFarm.land.subtitle')" />
 
-    <!-- 统计卡片 -->
-    <div class="stats-row" v-if="statistics">
-      <div class="stat-item">
-        <div class="stat-icon-wrapper">
-          <i class="ri-landscape-line"></i>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ statistics.totalCount || 0 }}</span>
-          <span class="stat-label">{{ $t('newFarm.land.stats.totalCount') }}</span>
-        </div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-icon-wrapper area">
-          <i class="ri-ruler-line"></i>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ formatArea(statistics.totalArea) }}</span>
-          <span class="stat-label">{{ $t('newFarm.land.stats.totalArea') }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-      <!-- 搜索栏 -->
-      <div class="search-bar">
-        <div class="search-row">
-          <el-input
-            v-model="searchFilters.keyword"
-            :placeholder="$t('newFarm.land.searchPlaceholder')"
-            class="search-input"
-            clearable
-            @clear="handleSearch"
-            @keyup.enter="handleSearch"
-          >
-            <template #prefix>
-              <i class="ri-search-line"></i>
-            </template>
-          </el-input>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 统计卡片（原页面已有，保留，仅做样式统一） -->
+        <div class="stats-row" v-if="statistics">
+          <div class="stat-item">
+            <div class="stat-icon-wrapper">
+              <i class="ri-landscape-line"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ statistics.totalCount || 0 }}</span>
+              <span class="stat-label">{{ $t('newFarm.land.stats.totalCount') }}</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon-wrapper area">
+              <i class="ri-ruler-line"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ formatArea(statistics.totalArea) }}</span>
+              <span class="stat-label">{{ $t('newFarm.land.stats.totalArea') }}</span>
+            </div>
+          </div>
         </div>
 
-        <div class="action-row">
-          <div class="action-left">
+        <!-- 搜索卡片（无标题） -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('newFarm.land.searchPlaceholder')">
+              <el-input
+                v-model="searchFilters.keyword"
+                :placeholder="$t('newFarm.land.searchPlaceholder')"
+                class="search-input"
+                clearable
+                @clear="handleSearch"
+                @keyup.enter="handleSearch">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('newFarm.land.form.currentStatus')">
+              <el-radio-group v-model="searchFilters.currentStatus" @change="handleSearch">
+                <el-radio-button label="">{{ $t('newFarm.common.all') }}</el-radio-button>
+                <el-radio-button label="CULTIVATING">{{ $t('newFarm.land.status.CULTIVATING') }}</el-radio-button>
+                <el-radio-button label="IDLE">{{ $t('newFarm.land.status.IDLE') }}</el-radio-button>
+                <el-radio-button label="FALLOW">{{ $t('newFarm.land.status.FALLOW') }}</el-radio-button>
+              </el-radio-group>
+            </SearchItem>
+
+            <SearchItem :label="$t('newFarm.land.form.landType')">
+              <el-select
+                v-model="searchFilters.landType"
+                :placeholder="$t('newFarm.land.placeholder.landType')"
+                clearable
+                style="width: 100%"
+                @change="handleSearch">
+                <el-option value="PADDY" :label="$t('newFarm.land.landType.PADDY')" />
+                <el-option value="DRY" :label="$t('newFarm.land.landType.DRY')" />
+                <el-option value="ORCHARD" :label="$t('newFarm.land.landType.ORCHARD')" />
+                <el-option value="FOREST" :label="$t('newFarm.land.landType.FOREST')" />
+                <el-option value="OTHER" :label="$t('newFarm.land.landType.OTHER')" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('newFarm.land.form.farmerName')">
+              <el-input
+                v-model="searchFilters.farmerName"
+                :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
+                clearable
+                class="search-input"
+                @clear="handleSearch" />
+            </SearchItem>
+
+            <SearchItem :label="$t('newFarm.farmer.form.phone')">
+              <el-input
+                v-model="searchFilters.phone"
+                :placeholder="$t('newFarm.farmer.placeholder.phone')"
+                clearable
+                class="search-input"
+                @clear="handleSearch" />
+            </SearchItem>
+
+            <SearchItem :label="$t('newFarm.common.kebeleCode')">
+              <el-input
+                v-model="searchFilters.kebeleCode"
+                :placeholder="$t('newFarm.common.selectKebele')"
+                clearable
+                class="search-input"
+                @clear="handleSearch" />
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('newFarm.land.title')" icon="ri-file-list-3-line">
+          <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              <span class="btn-text">{{ $t('common.add') }}</span>
-            </el-button>
-            <el-button type="primary" plain @click="handleSearch">
-              <i class="ri-search-line"></i>
-              <span class="btn-text">{{ $t('common.search') }}</span>
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-restart-line"></i>
-              <span class="btn-text">{{ $t('common.reset') }}</span>
+              {{ $t('common.add') }}
             </el-button>
             <el-button
               v-if="selectedIds.length > 0"
               type="danger"
               plain
-              @click="handleBatchDelete"
-            >
+              @click="handleBatchDelete">
               <i class="ri-delete-bin-line"></i>
-              <span class="btn-text">{{ $t('newFarm.land.actions.batchDelete') }} ({{ selectedIds.length }})</span>
+              {{ $t('newFarm.land.actions.batchDelete') }} ({{ selectedIds.length }})
             </el-button>
-          </div>
-        </div>
+          </template>
 
-        <!-- 筛选条件 -->
-        <div class="filter-row">
-          <el-row :gutter="16">
-            <el-col :xs="24" :sm="12" :md="6">
-              <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.land.form.currentStatus') }}</label>
-                <el-radio-group v-model="searchFilters.currentStatus" @change="handleSearch">
-                  <el-radio-button label="">{{ $t('newFarm.common.all') }}</el-radio-button>
-                  <el-radio-button label="CULTIVATING">{{ $t('newFarm.land.status.CULTIVATING') }}</el-radio-button>
-                  <el-radio-button label="IDLE">{{ $t('newFarm.land.status.IDLE') }}</el-radio-button>
-                  <el-radio-button label="FALLOW">{{ $t('newFarm.land.status.FALLOW') }}</el-radio-button>
-                </el-radio-group>
-              </div>
-            </el-col>
-
-            <el-col :xs="24" :sm="12" :md="6">
-              <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.land.form.landType') }}</label>
-                <el-select
-                  v-model="searchFilters.landType"
-                  :placeholder="$t('newFarm.land.placeholder.landType')"
-                  clearable
-                  style="width: 100%"
-                  @change="handleSearch"
-                >
-                  <el-option value="PADDY" :label="$t('newFarm.land.landType.PADDY')" />
-                  <el-option value="DRY" :label="$t('newFarm.land.landType.DRY')" />
-                  <el-option value="ORCHARD" :label="$t('newFarm.land.landType.ORCHARD')" />
-                  <el-option value="FOREST" :label="$t('newFarm.land.landType.FOREST')" />
-                  <el-option value="OTHER" :label="$t('newFarm.land.landType.OTHER')" />
-                </el-select>
-              </div>
-            </el-col>
-
-            <el-col :xs="24" :sm="12" :md="6">
-              <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.land.form.farmerName') }}</label>
-                <el-input
-                  v-model="searchFilters.farmerName"
-                  :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
-                  clearable
-                  @clear="handleSearch"
-                />
-              </div>
-            </el-col>
-
-            <el-col :xs="24" :sm="12" :md="6">
-              <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.farmer.form.phone') }}</label>
-                <el-input
-                  v-model="searchFilters.phone"
-                  :placeholder="$t('newFarm.farmer.placeholder.phone')"
-                  clearable
-                  @clear="handleSearch"
-                />
-              </div>
-            </el-col>
-
-            <el-col :xs="24" :sm="12" :md="6">
-              <div class="filter-item">
-                <label class="filter-label">{{ $t('newFarm.common.kebeleCode') }}</label>
-                <el-input
-                  v-model="searchFilters.kebeleCode"
-                  :placeholder="$t('newFarm.common.selectKebele')"
-                  clearable
-                  @clear="handleSearch"
-                />
-              </div>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-
-      <!-- PC端：数据表格 -->
-      <div class="table-card pc-view">
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="50" />
-          <el-table-column prop="landId" :label="$t('newFarm.land.columns.landId')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="landName" :label="$t('newFarm.land.columns.landName')" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="landType" :label="$t('newFarm.land.columns.landType')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag v-if="row.landType" size="small">
-                {{ $t(`newFarm.land.landType.${row.landType}`) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="areaSize" :label="$t('newFarm.land.columns.areaSize')" min-width="120" align="right">
-            <template #default="{ row }">
-              {{ formatArea(row.areaSize) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="farmerName" :label="$t('newFarm.land.columns.farmerName')" min-width="150" show-overflow-tooltip>
-            <template #default="{ row }">
-              <span v-if="row.farmerName">{{ row.farmerName }}</span>
-              <el-tag v-else type="info" size="small">{{ $t('newFarm.land.unbound') }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="currentStatus" :label="$t('newFarm.land.columns.currentStatus')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getLandStatusType(row.currentStatus)" size="small">
-                {{ $t(`newFarm.land.status.${row.currentStatus}`) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('newFarm.common.actions')" min-width="280" align="center" fixed="right">
-            <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.view') }}
-              </el-button>
-              <el-button link type="primary" @click="handleEdit(row)">
-                <i class="ri-edit-line"></i>
-                {{ $t('common.edit') }}
-              </el-button>
-              <el-button v-if="!row.farmerId" link type="success" @click="handleBindFarmer(row)">
-                <i class="ri-link"></i>
-                {{ $t('newFarm.land.actions.bindFarmer') }}
-              </el-button>
-              <el-button v-else link type="warning" @click="handleUnbindFarmer(row)">
-                <i class="ri-link-unlink"></i>
-                {{ $t('newFarm.land.actions.unbindFarmer') }}
-              </el-button>
-              <el-button link type="danger" @click="handleDelete(row)">
-                <i class="ri-delete-bin-line"></i>
-                {{ $t('common.delete') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <!-- 分页 -->
-        <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pagination.pageNum"
-            v-model:page-size="pagination.pageSize"
-            :total="pagination.total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
-      </div>
-
-      <!-- 移动端：卡片列表 -->
-      <div class="mobile-view">
-        <div class="mobile-add-btn">
-          <el-button type="primary" @click="handleAdd" style="width: 100%">
-            <i class="ri-add-line"></i>
-            {{ $t('common.add') }}
-          </el-button>
-        </div>
-
-        <div v-loading="loading" class="card-list">
-          <div v-if="tableData.length === 0" class="empty-state">
-            <i class="ri-inbox-line empty-icon"></i>
-            <p class="empty-text">{{ $t('newFarm.common.noData') }}</p>
-          </div>
-
-          <div v-for="item in tableData" :key="item.landId" class="land-card">
-            <div class="card-header">
-              <div class="land-name">
-                <i class="ri-landscape-line"></i>
-                {{ item.landName }}
-              </div>
-              <el-tag :type="getLandStatusType(item.currentStatus)" size="small">
-                {{ $t(`newFarm.land.status.${item.currentStatus}`) }}
-              </el-tag>
-            </div>
-
-            <div class="card-body">
-              <div class="info-row">
-                <span class="label">{{ $t('newFarm.land.columns.landId') }}:</span>
-                <span class="value">{{ item.landId }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('newFarm.land.columns.landType') }}:</span>
-                <span class="value">
-                  <el-tag v-if="item.landType" size="small">
-                    {{ $t(`newFarm.land.landType.${item.landType}`) }}
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table
+              v-loading="loading"
+              :data="tableData"
+              stripe
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="50" />
+              <el-table-column prop="landId" :label="$t('newFarm.land.columns.landId')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="landName" :label="$t('newFarm.land.columns.landName')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="landType" :label="$t('newFarm.land.columns.landType')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag v-if="row.landType" size="small">
+                    {{ $t(`newFarm.land.landType.${row.landType}`) }}
                   </el-tag>
-                </span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('newFarm.land.columns.areaSize') }}:</span>
-                <span class="value area">{{ formatArea(item.areaSize) }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">{{ $t('newFarm.land.columns.farmerName') }}:</span>
-                <span class="value">{{ item.farmerName || $t('newFarm.land.unbound') }}</span>
-              </div>
-            </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="areaSize" :label="$t('newFarm.land.columns.areaSize')" min-width="120" align="right">
+                <template #default="{ row }">
+                  {{ formatArea(row.areaSize) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="farmerName" :label="$t('newFarm.land.columns.farmerName')" min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <span v-if="row.farmerName">{{ row.farmerName }}</span>
+                  <el-tag v-else type="info" size="small">{{ $t('newFarm.land.unbound') }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="currentStatus" :label="$t('newFarm.land.columns.currentStatus')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getLandStatusType(row.currentStatus)" size="small">
+                    {{ $t(`newFarm.land.status.${row.currentStatus}`) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('newFarm.common.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    :custom-buttons="getRowActionButtons(row)"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
 
-            <div class="card-footer">
-              <el-button size="small" @click="handleView(item)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.view') }}
-              </el-button>
-              <el-button size="small" type="primary" @click="handleEdit(item)">
-                <i class="ri-edit-line"></i>
-                {{ $t('common.edit') }}
-              </el-button>
-              <el-button size="small" type="danger" plain @click="handleDelete(item)">
-                <i class="ri-delete-bin-line"></i>
-                {{ $t('common.delete') }}
-              </el-button>
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="pagination.pageNum"
+                v-model:page-size="pagination.pageSize"
+                :total="pagination.total"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
             </div>
           </div>
-        </div>
 
-        <!-- 移动端分页 -->
-        <div class="mobile-pagination">
-          <el-pagination
-            v-model:current-page="pagination.pageNum"
-            :total="pagination.total"
-            :page-size="pagination.pageSize"
-            layout="prev, pager, next"
-            @current-change="handleCurrentChange"
-          />
-        </div>
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only" v-loading="loading">
+            <div v-if="tableData.length === 0" class="text-center" style="padding: 32px 0;">
+              <i class="ri-inbox-line" style="font-size: 48px; color: #c0c4cc;"></i>
+              <div style="margin-top: 8px; color: #909399;">{{ $t('newFarm.common.noData') }}</div>
+            </div>
+
+            <div v-else>
+              <div v-for="item in tableData" :key="item.landId" class="mobile-card">
+                <div class="mobile-card-header">
+                  <div class="mobile-card-title">
+                    <i class="ri-landscape-line"></i>
+                    <span>{{ item.landName }}</span>
+                  </div>
+                  <el-tag :type="getLandStatusType(item.currentStatus)" size="small">
+                    {{ $t(`newFarm.land.status.${item.currentStatus}`) }}
+                  </el-tag>
+                </div>
+
+                <div class="mobile-card-body">
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('newFarm.land.columns.landId') }}:</span>
+                    <span class="value">{{ item.landId }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('newFarm.land.columns.landType') }}:</span>
+                    <span class="value">
+                      <el-tag v-if="item.landType" size="small">
+                        {{ $t(`newFarm.land.landType.${item.landType}`) }}
+                      </el-tag>
+                    </span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('newFarm.land.columns.areaSize') }}:</span>
+                    <span class="value">{{ formatArea(item.areaSize) }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('newFarm.land.columns.farmerName') }}:</span>
+                    <span class="value">{{ item.farmerName || $t('newFarm.land.unbound') }}</span>
+                  </div>
+                </div>
+
+                <div class="mobile-card-footer">
+                  <ActionButtons
+                    :workflow-status="'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    :custom-buttons="getRowActionButtons(item)"
+                    @action="(action) => handleAction(item, action)" />
+                </div>
+              </div>
+
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.pageNum"
+                  :total="pagination.total"
+                  :page-size="pagination.pageSize"
+                  layout="prev, pager, next"
+                  small
+                  @current-change="handleCurrentChange" />
+              </div>
+            </div>
+          </div>
+        </InfoCard>
       </div>
-    </div>
 
     <!-- 关联农民对话框 -->
     <el-dialog
@@ -343,6 +276,7 @@
         </el-button>
       </template>
     </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -351,6 +285,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import {
   getLandList,
   deleteLand,
@@ -363,6 +299,34 @@ import {
 
 const router = useRouter()
 const { t } = useI18n()
+
+const getRowActionButtons = (row) => {
+  const buttons = [
+    { type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' },
+    { type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' }
+  ]
+
+  if (!row.farmerId) {
+    buttons.push({
+      type: 'warning',
+      action: 'bind',
+      label: 'bind',
+      icon: 'ri-link',
+      text: t('newFarm.land.actions.bindFarmer')
+    })
+  } else {
+    buttons.push({
+      type: 'warning',
+      action: 'unbind',
+      label: 'unbind',
+      icon: 'ri-link-unlink',
+      text: t('newFarm.land.actions.unbindFarmer')
+    })
+  }
+
+  buttons.push({ type: 'danger', action: 'delete', label: 'delete', icon: 'ri-delete-bin-line' })
+  return buttons
+}
 
 // 搜索筛选条件
 const searchFilters = reactive({
@@ -502,6 +466,27 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push(`/input/land/edit/${row.landId}`)
+}
+
+// 统一动作处理（仅做 UI 按钮事件转发，不修改业务逻辑）
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'bind':
+      handleBindFarmer(row)
+      break
+    case 'unbind':
+      handleUnbindFarmer(row)
+      break
+    case 'delete':
+      handleDelete(row)
+      break
+  }
 }
 
 // 删除
@@ -663,94 +648,69 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.land-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding-bottom: 2rem;
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
+
+.stats-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.page-header { background: linear-gradient(135deg, #009A44 0%, #00b350 100%); padding: 24px 0; margin: -24px 0 24px 0; border-radius: 0 0 16px 16px; }
-.header-content { max-width: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-.header-icon-wrapper { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-shrink: 0; }
-.header-icon { font-size: 32px; color: white; }
-.header-text { flex: 1; color: white; min-width: 0; }
-.page-title { font-size: 24px; font-weight: 600; margin: 0 0 4px 0; }
-.page-subtitle { font-size: 14px; opacity: 0.9; margin: 0; }
-
-/* 统计卡片 */
-.stats-row { display: flex; gap: 16px; margin: 0 1rem 1.5rem; flex-wrap: wrap; }
-.stat-item { flex: 1; min-width: 200px; background: white; border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
-.stat-icon-wrapper { width: 56px; height: 56px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-.stat-icon-wrapper i { font-size: 28px; color: #009A44; }
-.stat-icon-wrapper.area { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
-.stat-icon-wrapper.area i { color: #f57c00; }
-.stat-info { display: flex; flex-direction: column; }
-.stat-value { font-size: 24px; font-weight: 700; color: #303133; }
-.stat-label { font-size: 14px; color: #909399; }
-
-.content-wrapper { margin: 0 auto; padding: 0 1rem; }
-
-.search-bar { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
-.search-row { margin-bottom: 1rem; }
-.search-input { width: 100%; }
-.action-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.action-left { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.filter-row { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e8f5e9; }
-.filter-item { margin-bottom: 1rem; }
-.filter-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #606266; font-size: 0.875rem; }
-
-.table-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
-.pagination-wrapper { margin-top: 1.5rem; display: flex; justify-content: center; }
-
-.mobile-view { display: none; }
-.mobile-add-btn { margin-bottom: 1rem; }
-.card-list { display: flex; flex-direction: column; gap: 1rem; }
-
-.land-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
-.land-card:hover { box-shadow: 0 4px 16px rgba(0, 154, 68, 0.15); transform: translateY(-2px); }
-
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e8f5e9; }
-.land-name { font-size: 1.125rem; font-weight: 600; color: #009A44; display: flex; align-items: center; gap: 0.5rem; }
-
-.card-body { margin-bottom: 1rem; }
-.info-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f5f7fa; }
-.info-row:last-child { border-bottom: none; }
-.info-row .label { font-weight: 500; color: #606266; font-size: 0.875rem; }
-.info-row .value { color: #303133; text-align: right; }
-.info-row .area { color: #009A44; font-weight: 600; }
-
-.card-footer { display: flex; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid #f5f7fa; }
-.card-footer .el-button { flex: 1; }
-
-.mobile-pagination { margin-top: 1.5rem; display: flex; justify-content: center; }
-
-.empty-state { text-align: center; padding: 3rem 1rem; }
-.empty-icon { font-size: 4rem; color: #dcdfe6; margin-bottom: 1rem; }
-.empty-text { color: #909399; font-size: 0.875rem; }
-
-@media screen and (max-width: 1024px) {
-  .page-title { font-size: 1.5rem; }
-  .header-icon-wrapper { width: 60px; height: 60px; }
-  .header-icon { font-size: 30px; }
+.stat-item {
+  flex: 1;
+  min-width: 240px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f2f5;
 }
 
-@media screen and (max-width: 768px) {
-  .pc-view { display: none !important; }
-  .mobile-view { display: block; }
-  .stats-row { flex-direction: column; margin: 0 1rem 1rem; }
-  .stat-item { min-width: 100%; }
-  .page-header { padding: 1.5rem 1rem; }
-  .header-content { gap: 1rem; }
-  .header-icon-wrapper { width: 50px; height: 50px; }
-  .header-icon { font-size: 24px; }
-  .page-title { font-size: 1.25rem; }
-  .page-subtitle { font-size: 0.875rem; }
-  .search-bar { padding: 1rem; }
-  .action-left { width: 100%; }
-  .action-left .el-button { flex: 1; }
-  .btn-text { display: none; }
-  .filter-row :deep(.el-radio-group) { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .filter-row :deep(.el-radio-button) { flex: 0 0 auto; }
+.stat-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 154, 68, 0.12);
+
+  i {
+    font-size: 22px;
+    color: #009a44;
+  }
+
+  &.area {
+    background: rgba(245, 124, 0, 0.12);
+
+    i {
+      color: #f57c00;
+    }
+  }
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #303133;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #909399;
 }
 </style>

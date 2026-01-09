@@ -103,7 +103,7 @@ export default {
     deleteFailed: 'Deletion failed',
     noDataFound: 'No input data found',
     invalidIdEdit: 'Invalid ID, cannot edit',
-    deleteConfirm: 'Are you sure to delete this input?',
+    deleteConfirm: 'Are you sure to void this input?',
 
     // 搜索和筛选
     searchPlaceholder: 'Search by product name, registration certificate number, production batch number',

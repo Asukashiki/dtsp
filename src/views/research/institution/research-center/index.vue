@@ -2,222 +2,155 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-building-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.researchCenter.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.researchCenter.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon="ri-building-line" :title="$t('research.breedingData.researchCenter.title')"
+        :subtitle="$t('research.breedingData.researchCenter.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.breedingData.researchCenter.list') }}</span>
-            </div>
-            <div class="header-actions">
-              <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-                <i class="ri-delete-bin-line"></i>
-                {{ $t('common.batchDelete') }}
-              </el-button>
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                {{ $t('research.breedingData.researchCenter.add') }}
-              </el-button>
-            </div>
-          </div>
+        <!-- 搜索区域 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('research.breedingData.researchCenter.form.locationName')">
+              <el-input v-model="queryParams.locationName"
+                :placeholder="$t('research.breedingData.researchCenter.placeholder.locationName')" clearable
+                @clear="handleQuery" @keyup.enter="handleQuery">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
 
-          <div class="card-body">
-            <!-- 搜索筛选区 -->
-            <div class="search-section">
-              <div class="search-item">
-                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.locationName') }}:</span>
-                <el-input
-                  v-model="queryParams.locationName"
-                  :placeholder="$t('research.breedingData.researchCenter.placeholder.locationName')"
-                  clearable
-                  class="search-input"
-                >
-                  <template #prefix><i class="ri-search-line"></i></template>
-                </el-input>
-              </div>
-              <div class="search-item">
-                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.region') }}:</span>
-                <el-input
-                  v-model="queryParams.region"
-                  :placeholder="$t('research.breedingData.researchCenter.placeholder.region')"
-                  clearable
-                  class="search-input"
-                />
-              </div>
-              <div class="search-item">
-                <span class="search-label">{{ $t('research.breedingData.researchCenter.form.zone') }}:</span>
-                <el-input
-                  v-model="queryParams.zone"
-                  :placeholder="$t('research.breedingData.researchCenter.placeholder.zone')"
-                  clearable
-                  class="search-input"
-                />
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>{{ $t('common.search') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
-                </el-button>
-              </div>
-            </div>
+            <SearchItem :label="$t('research.breedingData.researchCenter.form.region')">
+              <el-input v-model="queryParams.region"
+                :placeholder="$t('research.breedingData.researchCenter.placeholder.region')" clearable
+                @clear="handleQuery" @keyup.enter="handleQuery" />
+            </SearchItem>
 
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
-                <el-table-column
-                  prop="locationId"
-                  :label="$t('research.breedingData.researchCenter.columns.locationId')"
-                  min-width="200"
-                  show-overflow-tooltip
-                />
-                <el-table-column
-                  prop="locationName"
-                  :label="$t('research.breedingData.researchCenter.columns.locationName')"
-                  min-width="180"
-                  show-overflow-tooltip
-                />
-                <el-table-column
-                  prop="region"
-                  :label="$t('research.breedingData.researchCenter.columns.region')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="zone"
-                  :label="$t('research.breedingData.researchCenter.columns.zone')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="woneda"
-                  :label="$t('research.breedingData.researchCenter.columns.woneda')"
-                  min-width="120"
-                />
-                <el-table-column
-                  prop="latitude"
-                  :label="$t('research.breedingData.researchCenter.columns.latitude')"
-                  min-width="100"
-                />
-                <el-table-column
-                  prop="longitude"
-                  :label="$t('research.breedingData.researchCenter.columns.longitude')"
-                  min-width="110"
-                />
-                <el-table-column
-                  prop="createTime"
-                  :label="$t('research.breedingData.researchCenter.columns.createTime')"
-                  min-width="160"
-                />
-                <el-table-column
-                  :label="$t('research.breedingData.researchCenter.columns.actions')"
-                  width="200"
-                  fixed="right"
-                >
-                  <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                      </el-button>
-                      <el-button link type="primary" @click="handleEdit(row)">
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
-                      <el-button link type="danger" @click="handleDelete(row)">
-                        <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
+            <SearchItem :label="$t('research.breedingData.researchCenter.form.zone')">
+              <el-input v-model="queryParams.zone"
+                :placeholder="$t('research.breedingData.researchCenter.placeholder.zone')" clearable
+                @clear="handleQuery" @keyup.enter="handleQuery" />
+            </SearchItem>
 
-              <div class="pagination-wrapper">
-                <el-pagination
-                  :current-page="queryParams.pageNum"
-                  :page-size="queryParams.pageSize"
-                  :page-sizes="[10, 20, 50]"
-                  :total="total"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                />
-              </div>
-            </div>
-
-            <!-- 移动端卡片 -->
-            <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.locationId" class="mobile-card">
-                <div class="mobile-card-header">
-                  <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                  <div class="mobile-card-title">
-                    <i class="ri-building-line"></i>
-                    <span>{{ item.locationName }}</span>
-                  </div>
-                </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.locationId') }}:</span>
-                    <span class="value">{{ item.locationId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.region') }}:</span>
-                    <span class="value">{{ item.region || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.zone') }}:</span>
-                    <span class="value">{{ item.zone || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.woneda') }}:</span>
-                    <span class="value">{{ item.woneda || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.latitude') }}:</span>
-                    <span class="value">{{ item.latitude || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.breedingData.researchCenter.columns.longitude') }}:</span>
-                    <span class="value">{{ item.longitude || '-' }}</span>
-                  </div>
-                </div>
-                <div class="mobile-card-footer">
-                  <el-button size="small" @click="handleView(item)">
-                    <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                  </el-button>
-                  <el-button size="small" type="primary" @click="handleEdit(item)">
-                    <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                  </el-button>
-                  <el-button size="small" type="danger" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button>
-                </div>
-              </div>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                  :current-page="queryParams.pageNum"
-                  :page-size="queryParams.pageSize"
-                  :total="total"
-                  layout="prev, pager, next"
-                  small
-                  @current-change="handleCurrentChange"
-                />
-              </div>
-            </div>
-          </div>
+          </SearchForm>
         </div>
+
+        <!-- 列表区域 -->
+        <InfoCard :title="$t('research.breedingData.researchCenter.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
+              <i class="ri-delete-bin-line"></i>
+              {{ $t('common.batchDelete') }}
+            </el-button>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('research.breedingData.researchCenter.add') }}
+            </el-button>
+          </template>
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table v-loading="loading" :data="dataList" stripe @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="50" />
+              <el-table-column prop="locationId" :label="$t('research.breedingData.researchCenter.columns.locationId')"
+                min-width="200" show-overflow-tooltip />
+              <el-table-column prop="locationName"
+                :label="$t('research.breedingData.researchCenter.columns.locationName')" min-width="180"
+                show-overflow-tooltip />
+              <el-table-column prop="region" :label="$t('research.breedingData.researchCenter.columns.region')"
+                min-width="120" />
+              <el-table-column prop="zone" :label="$t('research.breedingData.researchCenter.columns.zone')"
+                min-width="120" />
+              <el-table-column prop="woneda" :label="$t('research.breedingData.researchCenter.columns.woneda')"
+                min-width="120" />
+              <el-table-column prop="latitude" :label="$t('research.breedingData.researchCenter.columns.latitude')"
+                min-width="100" />
+              <el-table-column prop="longitude" :label="$t('research.breedingData.researchCenter.columns.longitude')"
+                min-width="110" />
+              <el-table-column prop="createTime" :label="$t('research.breedingData.researchCenter.columns.createTime')"
+                min-width="160" />
+              <el-table-column :label="$t('research.breedingData.researchCenter.columns.actions')" width="280"
+                fixed="right">
+                <template #default="{ row }">
+                  <div class="action-buttons">
+                    <el-button link type="primary" @click="handleView(row)">
+                      <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                    </el-button>
+                    <el-button link type="primary" @click="handleEdit(row)">
+                      <i class="ri-edit-line"></i>{{ $t('common.edit') }}
+                    </el-button>
+                    <el-button link type="danger" @click="handleDelete(row)">
+                      <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination :current-page="queryParams.pageNum" :page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50]" :total="total" layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+            </div>
+          </div>
+
+          <!-- 移动端卡片列表 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-for="item in dataList" :key="item.locationId" class="mobile-card">
+              <div class="mobile-card-header">
+                <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+                <div class="mobile-card-title">
+                  <i class="ri-building-line"></i>
+                  <span>{{ item.locationName }}</span>
+                </div>
+              </div>
+              <div class="mobile-card-body">
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.locationId') }}:</span>
+                  <span class="value">{{ item.locationId }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.region') }}:</span>
+                  <span class="value">{{ item.region || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.zone') }}:</span>
+                  <span class="value">{{ item.zone || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.woneda') }}:</span>
+                  <span class="value">{{ item.woneda || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.latitude') }}:</span>
+                  <span class="value">{{ item.latitude || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breedingData.researchCenter.columns.longitude') }}:</span>
+                  <span class="value">{{ item.longitude || '-' }}</span>
+                </div>
+              </div>
+              <div class="mobile-card-footer">
+                <el-button size="small" link type="primary" @click="handleView(item)">
+                  <i class="ri-eye-line"></i>{{ $t('common.view') }}
+                </el-button>
+                <el-button size="small" link type="primary" @click="handleEdit(item)">
+                  <i class="ri-edit-line"></i>{{ $t('common.edit') }}
+                </el-button>
+                <el-button size="small" link type="danger" @click="handleDelete(item)">
+                  <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
+                </el-button>
+              </div>
+            </div>
+
+            <div v-if="dataList.length === 0 && !loading" class="empty-status">
+              <i class="ri-inbox-line"></i>
+              <p>{{ $t('common.noData') }}</p>
+            </div>
+
+            <div class="pagination-wrapper">
+              <el-pagination :current-page="queryParams.pageNum" :page-size="queryParams.pageSize" :total="total"
+                layout="prev, pager, next" small @current-change="handleCurrentChange" />
+            </div>
+          </div>
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -229,6 +162,8 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLocationMasterList, deleteLocationMaster } from '@/api/breedingData'
+
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -315,21 +250,32 @@ const handleDelete = (row) => {
   ElMessageBox.confirm(t('research.breedingData.researchCenter.deleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteLocationMaster(row.locationId)
-    ElMessage.success(t('research.breedingData.researchCenter.deleteSuccess'))
-    getList()
-  }).catch(() => {})
+    try {
+      const res = await deleteLocationMaster(row.locationId)
+      if (res.code === 200) {
+        ElMessage.success(t('common.deleteSuccess'))
+        getList()
+      }
+    } catch (error) {
+      console.error('删除失败:', error)
+    }
+  })
 }
 
 const handleBatchDelete = () => {
-  ElMessageBox.confirm(t('research.breedingData.researchCenter.deleteConfirm'), t('common.warning'), {
+  ElMessageBox.confirm(t('common.batchDeleteConfirm'), t('common.warning'), {
     type: 'warning'
   }).then(async () => {
-    await deleteLocationMaster(selectedIds.value.join(','))
-    ElMessage.success(t('research.breedingData.researchCenter.deleteSuccess'))
-    selectedIds.value = []
-    getList()
-  }).catch(() => {})
+    try {
+      const res = await deleteLocationMaster(selectedIds.value.join(','))
+      if (res.code === 200) {
+        ElMessage.success(t('common.deleteSuccess'))
+        getList()
+      }
+    } catch (error) {
+      console.error('批量删除失败:', error)
+    }
+  })
 }
 
 onMounted(() => {
@@ -339,62 +285,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .search-section {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 100px;
-      }
-
-      .search-input {
-        flex: 1;
-        width: auto;
-      }
-    }
-
-    .search-actions {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

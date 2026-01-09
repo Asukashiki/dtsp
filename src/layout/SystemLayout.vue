@@ -137,10 +137,10 @@
       <div class="system-content" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { marginLeft: menuWidth } : {}">
         <!-- 全局标签页导航 -->
         <PageBreadcrumb />
-        
-        <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <component :is="Component" />
+
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade" ><!-- mode="out-in"-->
+            <component :is="Component" :key="route.path" />
           </transition>
         </router-view>
       </div>
@@ -149,11 +149,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import { useLocaleStore } from '@/store'
 import { useI18n } from 'vue-i18n'
+import { parseI18nValue } from '@/utils/i18nHelper'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 
 const route = useRoute()
@@ -174,49 +175,82 @@ const isCollapsed = ref(false)
 const mobileMenuVisible = ref(false)
 
 // 从store获取用户信息
-const userName = computed(() => userStore.userInfo?.user?.name || 'user')
-const organName = computed(() => userStore.userInfo?.user?.organName || 'user')
+const userName = computed(() => userStore.userInfo?.nickName || userStore.userInfo?.userName || 'user')
+const organName = computed(() => parseI18nValue(userStore.userInfo?.dept?.deptName, locale.value, 'user'))
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
-// 获取用户角色列表
-const userRoles = computed(() => {
-  const roleStr = userStore.userInfo?.user?.LOGIN_ROLE_VALUE?.['SMART-AGR'] || ''
-  return roleStr.split(',').map(r => r.trim()).filter(r => r)
-})
-
-// 检查用户是否有权限访问菜单
-const hasPermission = (roles) => {
-  if (!roles || roles.length === 0) return true // 没有配置角色限制，默认所有人可访问
-  if (userRoles.value.includes('agri-admin')) return true // 超级管理员有所有权限
-  return roles.some(role => userRoles.value.includes(role))
+// 解析菜单名称 (使用统一的 i18n 解析工具)
+const resolveMenuTitle = (menuName) => {
+  return parseI18nValue(menuName, locale.value, menuName || '')
 }
 
-// 菜单列表（根据角色过滤）
-const menuList = computed(() => {
-  if (!config.value.menus) return []
-
-  return config.value.menus.map(menu => {
-    // 过滤子菜单
-    const filteredChildren = menu.children
-      ? menu.children
-          .map(child => ({
-            ...child,
-            title: t(child.titleKey)
-          }))
-      : undefined
-
-    // 如果父菜单有子菜单，且子菜单被过滤后为空，则不显示父菜单
-    if (menu.children && (!filteredChildren || filteredChildren.length === 0)) {
-      return null
+// 将新格式菜单转换为组件需要的格式
+// 新格式中子菜单的 path 已经是完整相对路径（如 system/menu），只需加前导斜杠
+const transformMenu = (menu, parentPath = '') => {
+  if (!menu || menu.hidden === true) return null
+  
+  // 构建完整路径：path 可能是 /system（绝对路径）或 system/menu（相对路径）
+  // 相对路径只需要加前导斜杠，不需要拼接父路径
+  let fullPath = menu.path || ''
+  if (!fullPath.startsWith('/')) {
+    fullPath = `/${fullPath}`
+  }
+  fullPath = fullPath.replace(/\/\//g, '/')
+  
+  // 解析标题（从 meta.title）
+  const title = menu.meta?.title ? resolveMenuTitle(menu.meta.title) : (menu.name || '')
+  
+  // 递归处理子菜单
+  let children = null
+  if (menu.children && menu.children.length > 0) {
+    const transformedChildren = menu.children
+      .map(child => transformMenu(child, fullPath))
+      .filter(child => child !== null)
+    if (transformedChildren.length > 0) {
+      children = transformedChildren
     }
+  }
+  
+  return {
+    index: fullPath,
+    icon: menu.meta?.icon || 'ri-file-list-line',
+    title: title,
+    children: children,
+    component: menu.component
+  }
+}
 
-    return {
-      ...menu,
-      title: t(menu.titleKey),
-      children: filteredChildren
-    }
-  }).filter(menu => menu !== null) // 移除被过滤掉的父菜单
+// 获取当前系统的根路径
+const currentSystemPath = computed(() => {
+  // 从当前路由获取系统路径，如 /system, /research, /input 等
+  const pathParts = route.path.split('/')
+  if (pathParts.length >= 2) {
+    return '/' + pathParts[1]  // 返回带 / 的系统标识
+  }
+  return ''
 })
+
+// 菜单列表 - 根据当前系统过滤后端返回的动态菜单（适配新格式）
+const menuList = computed(() => {
+  if (!userStore.menus || userStore.menus.length === 0) {
+    return []
+  }
+  
+  // 新格式：menus 已经是树形结构，path 是系统路径如 /system, /input
+  const systemRoot = userStore.menus.find(menu => 
+    menu.path === currentSystemPath.value
+  )
+  
+  if (systemRoot && systemRoot.children && systemRoot.children.length > 0) {
+    // 转换子菜单为组件需要的格式
+    return systemRoot.children
+      .map(child => transformMenu(child, systemRoot.path))
+      .filter(item => item !== null)
+  }
+  
+  return []
+})
+
 
 const menuWidth =  computed(() => {
   if (!config.value.width) return '300px'
@@ -275,6 +309,13 @@ const handleUserAction = (command) => {
     userStore.logoutAndRedirect()
   }
 }
+
+// 组件挂载时获取菜单数据和用户信息
+onMounted(async () => {
+  // 重新获取最新用户信息（确保刷新后数据是最新的）
+  await userStore.fetchUserInfo()
+  await userStore.getMenus()
+})
 </script>
 
 <style scoped>

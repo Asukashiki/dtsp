@@ -13,6 +13,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // 引入ECharts
 import * as echarts from 'echarts'
 import { useLocaleStore } from './store'
+import directive from './directive' // directive
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -29,6 +30,7 @@ app.use(pinia)
 app.use(router)
 app.use(i18n)
 app.use(ElementPlus)
+directive(app)
 
 // 设置默认语言
 const localeStore = useLocaleStore()

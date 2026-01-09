@@ -1,0 +1,451 @@
+/* System Management Styles - Ethiopia Theme Compatible */
+
+/* Page container */
+.system-page {
+  padding: 20px;
+  min-height: calc(100vh - 120px);
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-header .title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #009A44;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-header .title i {
+  font-size: 22px;
+}
+
+.page-header .actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Search Area */
+.search-area {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-area :deep(.el-form) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.search-area :deep(.el-form-item) {
+  margin-bottom: 0;
+  margin-right: 0;
+}
+
+.search-area :deep(.el-form-item__label) {
+  font-weight: 500;
+  color: #606266;
+}
+
+.search-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Card Styles */
+.system-page :deep(.el-card) {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.system-page :deep(.el-card:hover) {
+  box-shadow: 0 4px 16px rgba(0, 154, 68, 0.1);
+}
+
+.system-page :deep(.el-card__header) {
+  padding: 16px 20px;
+  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
+  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.02) 100%);
+}
+
+.system-page :deep(.el-card__body) {
+  padding: 20px;
+}
+
+/* Table Styles */
+.system-page :deep(.el-table) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.system-page :deep(.el-table__header th) {
+  background-color: rgba(0, 154, 68, 0.05) !important;
+  color: #303133;
+  font-weight: 600;
+}
+
+.system-page :deep(.el-table__row:hover td) {
+  background-color: rgba(0, 154, 68, 0.04) !important;
+}
+
+/* Switch styling */
+.system-page :deep(.el-switch.is-checked .el-switch__core) {
+  background-color: #009A44 !important;
+  border-color: #009A44 !important;
+}
+
+/* Tag styling */
+.system-page :deep(.el-tag--success) {
+  background-color: rgba(0, 154, 68, 0.1);
+  color: #009A44;
+  border-color: rgba(0, 154, 68, 0.2);
+}
+
+/* Action Buttons in Table */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.action-buttons .el-button {
+  padding: 6px 10px;
+}
+
+/* Tree Table - Level distinction */
+.tree-table :deep(.el-table__expand-icon) {
+  color: #009A44;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.tree-table :deep(.el-table__expand-icon--expanded) {
+  transform: rotate(90deg);
+}
+
+/* Tree row indent - visual hierarchy */
+.tree-table :deep(.el-table__row) {
+  transition: background-color 0.2s ease;
+}
+
+/* Level 1 (root) - darker background */
+.tree-table :deep(.el-table__row[data-level="0"]) td {
+  background-color: rgba(0, 154, 68, 0.04);
+  font-weight: 600;
+}
+
+/* Level 2 - lighter */
+.tree-table :deep(.el-table__row[data-level="1"]) td {
+  background-color: rgba(0, 154, 68, 0.02);
+}
+
+/* Add left border for tree hierarchy */
+.tree-table :deep(.el-table__indent) {
+  padding-left: 20px !important;
+}
+
+/* Tree cell with proper indent visualization */
+.tree-cell {
+  display: flex;
+  align-items: center;
+}
+
+.tree-icon {
+  margin-right: 8px;
+  color: #009A44;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Level indicator line */
+.level-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-left: 2px solid rgba(0, 154, 68, 0.3);
+  border-bottom: 2px solid rgba(0, 154, 68, 0.3);
+  margin-right: 8px;
+  margin-left: 4px;
+}
+
+/* Type Tags - solid colors for visibility */
+.type-tag-dir {
+  background: #009A44 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.type-tag-menu {
+  background: #17a2b8 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.type-tag-btn {
+  background: #ffc107 !important;
+  color: #303133 !important;
+  border: none !important;
+}
+
+/* Form Tree Container */
+.form-tree-container {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafafa;
+  width: 100%;
+}
+
+.form-tree-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-tree-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+/* Pagination */
+.modern-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modern-pagination :deep(.el-pagination__total) {
+  color: #606266;
+  font-weight: 500;
+}
+
+.modern-pagination :deep(.el-pager li.is-active) {
+  background-color: #009A44 !important;
+  color: #fff !important;
+}
+
+.modern-pagination :deep(.el-pager li:not(.is-disabled):hover) {
+  color: #009A44;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dict type link */
+.dict-type-link {
+  color: #009A44;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.dict-type-link:hover {
+  color: #007030;
+  text-decoration: underline;
+}
+
+/* Dialog Styles */
+.system-page :deep(.el-dialog) {
+  border-radius: 12px;
+}
+
+.system-page :deep(.el-dialog__header) {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-right: 0;
+}
+
+.system-page :deep(.el-dialog__title) {
+  font-weight: 600;
+  color: #303133;
+}
+
+.system-page :deep(.el-dialog__body) {
+  padding: 24px 20px;
+}
+
+.system-page :deep(.el-dialog__footer) {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Button Primary Color */
+.system-page :deep(.el-button--primary) {
+  background-color: #009a4381;
+  border-color: #009A44;
+}
+
+.system-page :deep(.el-button--primary:hover) {
+  background-color: #00803a42;
+  border-color: #00803a;
+}
+
+/* ==================== Responsive Design ==================== */
+@media screen and (max-width: 1024px) {
+  .system-page {
+    padding: 16px;
+  }
+
+  .search-area {
+    padding: 16px;
+  }
+
+  .page-header .title {
+    font-size: 16px;
+  }
+
+  .page-header .title i {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .system-page {
+    padding: 12px;
+  }
+
+  .search-area {
+    padding: 12px;
+  }
+
+  .search-area :deep(.el-form) {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-area :deep(.el-form-item) {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .search-area :deep(.el-input),
+  .search-area :deep(.el-select) {
+    width: 100% !important;
+  }
+
+  .search-buttons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .search-buttons .el-button {
+    flex: 1;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .page-header .actions {
+    justify-content: flex-end;
+  }
+
+  .page-header .actions .el-button {
+    flex: 1;
+  }
+
+  .modern-pagination {
+    justify-content: center;
+  }
+
+  .modern-pagination :deep(.el-pagination__jump) {
+    display: none;
+  }
+
+  .system-page :deep(.el-card__header) {
+    padding: 12px 16px;
+  }
+
+  .system-page :deep(.el-card__body) {
+    padding: 12px;
+  }
+
+  /* Dialog responsive */
+  .system-page :deep(.el-dialog) {
+    width: 95% !important;
+    max-width: 580px;
+    margin: 5vh auto !important;
+  }
+
+  .system-page :deep(.el-dialog__body) {
+    padding: 16px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* Table responsive */
+  .system-page :deep(.el-table) {
+    font-size: 13px;
+  }
+
+  .system-page :deep(.el-table__cell) {
+    padding: 8px 0;
+  }
+
+  /* Form responsive in dialog */
+  .system-page :deep(.el-form-item) {
+    margin-bottom: 16px;
+  }
+
+  .system-page :deep(.el-col-12) {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .system-page {
+    padding: 8px;
+  }
+
+  .search-area {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .page-header .title {
+    font-size: 15px;
+  }
+
+  .modern-pagination :deep(.el-pagination__sizes) {
+    display: none;
+  }
+
+  .form-tree-container {
+    max-height: 200px;
+  }
+}
+

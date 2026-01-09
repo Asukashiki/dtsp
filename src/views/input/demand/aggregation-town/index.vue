@@ -2,27 +2,19 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-database-2-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('townAggregation.title') }}</h1>
-            <p class="page-subtitle">{{ $t('townAggregation.subtitle') }}</p>
-          </div>
-        </div>
-<!--        <div class="header-right">-->
-<!--          <el-button type="primary" size="large" @click="handleAddYear">-->
-<!--            <i class="ri-add-line"></i>-->
-<!--            {{ $t('townAggregation.actions.addYear') }}-->
-<!--          </el-button>-->
-<!--        </div>-->
-      </div>
+      <PageHeader
+        icon="ri-database-2-line"
+        :title="$t('townAggregation.title')"
+        :subtitle="$t('townAggregation.subtitle')"
+      />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
+        <InfoCard 
+          :title="viewMode === 'main' ? $t('Aggregation List') : (currentDrillDownRow?.sourceName || $t('townAggregation.list'))" 
+          icon="ri-file-list-3-line"
+          :no-padding="true"
+        >
           <!-- 主列表视图 -->
           <template v-if="viewMode === 'main'">
             <!-- PC端表格 -->
@@ -39,11 +31,6 @@
                   :label="$t('townAggregation.columns.year')"
                   min-width="100"
                 />
-                <!-- <el-table-column
-                  prop="sourceCode"
-                  :label="$t('townAggregation.columns.sourceCode')"
-                  min-width="140"
-                /> -->
                 <el-table-column
                   prop="sourceName"
                   :label="$t('WoredaName')"
@@ -55,16 +42,6 @@
                     </el-button>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column
-                  prop="targetCode"
-                  :label="$t('townAggregation.columns.targetCode')"
-                  min-width="140"
-                />
-                <el-table-column
-                  prop="targetName"
-                  :label="$t('townAggregation.columns.targetName')"
-                  min-width="140"
-                /> -->
                 <el-table-column
                   prop="subQuantity"
                   :label="$t('townAggregation.columns.subQuantity')"
@@ -108,11 +85,6 @@
                     </el-tag>
                   </template>
                 </el-table-column>
-  <!--              <el-table-column-->
-  <!--                prop="creator"-->
-  <!--                :label="$t('townAggregation.columns.creator')"-->
-  <!--                min-width="120"-->
-  <!--              />-->
                 <el-table-column
                   prop="createTime"
                   :label="$t('townAggregation.columns.createTime')"
@@ -124,27 +96,33 @@
                   width="340"
                 >
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleApprove(row)">
-                        <i class="ri-file-list-3-line"></i>
-                        {{ $t('townAggregation.actions.approve') }}
-                      </el-button>
-                      <el-button v-if="row.status === '0'||row.status === '3'" link type="success" @click="handleSubmit(row)">
-                        <i class="ri-upload-cloud-line"></i>
-                        {{ $t('townAggregation.actions.submit') }}
-                      </el-button>
-                      <el-button link type="info" @click="handleDetail(row)">
-                        <i class="ri-list-check"></i>
-                        {{ $t('Aggregation detail') }}
-                      </el-button>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="mapWorkflowStatus(row.status)"
+                      mode="list"
+                      :show-audit="true"
+                      :custom-buttons="getMainTableButtons(row)"
+                      @action="(action) => handleAction(row, action)"
+                    />
                   </template>
                 </el-table-column>
               </el-table>
+
+              <!-- PC pagination -->
+              <div class="pagination-wrapper">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :total="pagination.total"
+                  :page-sizes="[10, 20, 50, 100]"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </div>
             </div>
 
             <!-- 移动端卡片 -->
-            <div class="mobile-cards mobile-only">
+            <div class="mobile-card-list mobile-only">
               <div v-for="item in tableData" :key="item.id" class="mobile-card">
                 <div class="mobile-card-header">
                   <div class="year-badge">
@@ -165,67 +143,46 @@
                   </el-tag>
                 </div>
                 <div class="mobile-card-body">
-                  <!-- <div class="mobile-card-row">
-                    <span class="label">{{ $t('townAggregation.columns.sourceCode') }}:</span>
-                    <span class="value">{{ item.sourceCode }}</span>
-                  </div> -->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('townAggregation.columns.sourceName') }}:</span>
                     <span class="value">{{ item.sourceName }}</span>
                   </div>
-                  <!-- <div class="mobile-card-row">
-                    <span class="label">{{ $t('townAggregation.columns.targetCode') }}:</span>
-                    <span class="value">{{ item.targetCode }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('townAggregation.columns.targetName') }}:</span>
-                    <span class="value">{{ item.targetName }}</span>
-                  </div> -->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('townAggregation.columns.subQuantity') }}:</span>
                     <span class="value">{{ (item.approvedQuantity || 0) + '/' + (item.subQuantity || 0) }}</span>
                   </div>
-  <!--                <div class="mobile-card-row">-->
-  <!--                  <span class="label">{{ $t('townAggregation.columns.creator') }}:</span>-->
-  <!--                  <span class="value">{{ item.creator }}</span>-->
-  <!--                </div>-->
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('townAggregation.columns.createTime') }}:</span>
                     <span class="value">{{ item.createTime }}</span>
                   </div>
                 </div>
-                <div class="mobile-card-actions">
-                  <el-button v-if="item.status === '0'||item.status === '3'" type="primary" size="small" @click="handleApprove(item)">
-                    {{ $t('townAggregation.actions.approve') }}
-                  </el-button>
-                  <el-button v-if="item.status === '0'||item.status === '3'" type="success" size="small" @click="handleSubmit(item)">
-                    {{ $t('townAggregation.actions.submit') }}
-                  </el-button>
-                  <el-button type="info" size="small" @click="handleDetail(item)">
-                    {{ $t('townAggregation.actions.detail') }}
-                  </el-button>
+                <!-- Mobile Footer Action Buttons -->
+                <div class="mobile-card-footer">
+                   <ActionButtons
+                      :workflow-status="mapWorkflowStatus(item.status)"
+                      mode="list"
+                      :show-audit="true"
+                      :custom-buttons="getMainTableButtons(item)"
+                      @action="(action) => handleAction(item, action)"
+                    />
                 </div>
+              </div>
+
+              <!-- Mobile pagination -->
+              <div class="pagination-wrapper mobile-pagination">
+                <el-pagination
+                  v-model:current-page="pagination.currentPage"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50]"
+                  :total="pagination.total"
+                  layout="total, prev, pager, next"
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
 
-            <!-- 分页 -->
-            <!-- <div v-if="pagination.total > 0" class="pagination-wrapper">
-              <el-pagination
-                :current-page="pagination.currentPage"
-                :page-size="pagination.pageSize"
-                :page-sizes="[10, 20, 50, 100]"
-                :total="pagination.total"
-                layout="total, sizes, prev, pager, next, jumper"
-                background
-                small
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                @update:current-page="pagination.currentPage = $event"
-                @update:page-size="pagination.pageSize = $event"
-              />
-            </div> -->
-
-            <!-- 空状态 -->
             <el-empty
               v-if="tableData.length === 0 && !loading"
               :description="$t('townAggregation.messages.noData')"
@@ -235,7 +192,7 @@
           <!-- 下钻列表视图 -->
           <template v-else-if="viewMode === 'drillDown'">
             <!-- 返回按钮和面包屑 -->
-            <div class="drill-down-header">
+            <div class="drill-down-header" style="padding: 16px;">
               <el-button type="primary" plain @click="handleBackToMain">
                 <i class="ri-arrow-left-line"></i>
                 {{ $t('common.back') }}
@@ -319,10 +276,13 @@
                   width="120"
                 >
                   <template #default="{ row }">
-                    <el-button link type="primary" @click="handleDrillDownDetail(row)">
-                      <i class="ri-eye-line"></i>
-                      {{ $t('common.view') }}
-                    </el-button>
+                    <ActionButtons
+                      :workflow-status="mapWorkflowStatus(row.status)"
+                      mode="list"
+                      :show-audit="false"
+                      :custom-buttons="getDrillDownButtons(row)"
+                      @action="(action) => handleDrillDownAction(row, action)"
+                    />
                   </template>
                 </el-table-column>
               </el-table>
@@ -351,7 +311,7 @@
               :description="$t('townAggregation.messages.noData')"
             />
           </template>
-        </div>
+        </InfoCard>
       </div>
     </div>
 
@@ -616,10 +576,13 @@
               width="100"
             >
               <template #default="{ row }">
-                <el-button link type="primary" @click="handleViewFarmerDemand(row)">
-                  <i class="ri-eye-line"></i>
-                  {{ $t('common.view') }}
-                </el-button>
+                <ActionButtons
+                  :workflow-status="mapWorkflowStatus(row.status)"
+                  mode="list"
+                  :show-audit="false"
+                  :custom-buttons="getFarmerDemandButtons(row)"
+                  @action="(action) => handleFarmerDemandAction(row, action)"
+                />
               </template>
             </el-table-column>
           </el-table>
@@ -670,6 +633,8 @@ import {
 } from '@/api/villageAggregation'
 import { getFarmerDemandPage } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
 const router = useRouter()
@@ -685,7 +650,7 @@ const viewMode = ref('main')
 // 分页
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 999999,
+  pageSize: 10,
   total: 0
 })
 
@@ -791,7 +756,7 @@ const loadData = async () => {
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      tableData.value = res.data.list || []
+      tableData.value = res.data.records || []
       pagination.total = res.data.total || 0
 
       // 为每一行加载已审批数量
@@ -978,7 +943,7 @@ const loadDrillDownData = async () => {
     const res = await getVillageDemandSummaryMainList(params)
 
     if (res.code === 200) {
-      drillDownData.value = res.data?.list || []
+      drillDownData.value = res.data?.records || []
       drillDownPagination.total = res.data?.total || 0
     }
   } catch (error) {
@@ -1006,7 +971,7 @@ const handleDrillDownDetail = async (row) => {
   activeDetailTab.value = 'aggregation'
   drillDownAggregationData.value = []
   farmerDemandData.value = []
-  
+
   // 重置搜索表单
   farmerSearchForm.farmerName = ''
   farmerSearchForm.farmerIdNumber = ''
@@ -1045,7 +1010,7 @@ const loadFarmerDemandData = async () => {
   farmerDemandLoading.value = true
   try {
     const params = {
-      pageNum: farmerDemandPagination.currentPage,
+      page: farmerDemandPagination.currentPage, // 修正为 page
       pageSize: farmerDemandPagination.pageSize,
       kebele: drillDownRecordDetail.value.sourceCode,
       year: drillDownRecordDetail.value.year,
@@ -1055,7 +1020,7 @@ const loadFarmerDemandData = async () => {
       orderByColumn: 'createdTime',
       isAsc: 'desc'
     }
-    
+
     const res = await getFarmerDemandPage(params)
     if (res.code === 200) {
       farmerDemandData.value = res.data?.records || []
@@ -1099,7 +1064,7 @@ const handleViewFarmerDemand = (row) => {
     kebeleName: drillDownRecordDetail.value.sourceName
   }
   sessionStorage.setItem('aggregation_nav_state', JSON.stringify(navigationState))
-  
+
   router.push({
     name: 'DemandAuditDetail',
     params: { id: row.id },
@@ -1144,7 +1109,7 @@ const handleCurrentChange = () => {
 // 初始化
 onMounted(() => {
   loadData()
-  
+
   // 检查是否需要恢复下钻状态
   const savedState = sessionStorage.getItem('aggregation_nav_state')
   if (savedState) {
@@ -1152,7 +1117,7 @@ onMounted(() => {
       const state = JSON.parse(savedState)
       // 清除保存的状态
       sessionStorage.removeItem('aggregation_nav_state')
-      
+
       // 恢复下钻状态
       if (state.viewMode === 'drillDown' && state.kebeleCode) {
         // 设置下钻记录详情
@@ -1164,7 +1129,7 @@ onMounted(() => {
         viewMode.value = 'drillDown'
         drillDownRecordDetailVisible.value = true
         activeDetailTab.value = 'farmers'
-        
+
         // 加载汇聚数据
         loadDrillDownData().then(() => {
           // 打开详情对话框并切换到农民需求标签页
@@ -1183,76 +1148,75 @@ onMounted(() => {
     }
   }
 })
+
+// Unified Action Button Handlers
+const mapWorkflowStatus = (status) => {
+  const map = {
+    '0': 'S0', // Draft
+    '1': 'S1', // Pending
+    '2': 'S2', // Approved
+    '3': 'S3'  // Rejected
+  }
+  return map[status] || 'S0'
+}
+
+const getMainTableButtons = (row) => {
+  const buttons = [
+    { type: 'primary', action: 'audit', label: 'townAggregation.actions.approve', icon: 'ri-file-list-3-line' }
+  ]
+  
+  if (row.status === '0' || row.status === '3') {
+     buttons.push({ type: 'success', action: 'submit', label: 'townAggregation.actions.submit', icon: 'ri-upload-cloud-line' })
+  }
+  
+  buttons.push({ type: 'primary', action: 'view', rawLabel: t('Aggregation detail'), icon: 'ri-list-check' })
+  
+  return buttons
+}
+
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'audit':
+      handleApprove(row)
+      break
+    case 'submit':
+      handleSubmit(row)
+      break
+    case 'view':
+      handleDetail(row)
+      break
+  }
+}
+
+const getDrillDownButtons = (row) => {
+  return [
+    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+  ]
+}
+
+const handleDrillDownAction = (row, action) => {
+  if (action === 'view') {
+    handleDrillDownDetail(row)
+  }
+}
+
+const getFarmerDemandButtons = (row) => {
+  return [
+    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+  ]
+}
+
+const handleFarmerDemandAction = (row, action) => {
+  if (action === 'view') {
+    handleViewFarmerDemand(row)
+  }
+}
 </script>
 
-<style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 24px;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-  flex-shrink: 0;
-}
-
-.header-content {
-  color: white;
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.content-wrapper {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.info-card {
-  background: white;
-  padding: 24px;
-}
-
-.table-wrapper {
-  margin-bottom: 16px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
 .drill-down-header {
   display: flex;
@@ -1260,162 +1224,6 @@ onMounted(() => {
   gap: 16px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.drill-down-header .breadcrumb {
-  font-size: 14px;
-}
-
-.drill-down-header .el-button i {
-  margin-right: 4px;
-}
-
-.aggregation-result-section {
-  margin-top: 24px;
-}
-
-.aggregation-result-section .section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #009A44;
-}
-
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.mobile-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.mobile-card-header {
-  padding: 16px;
-  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.year-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  color: #009A44;
-  font-size: 18px;
-}
-
-.mobile-card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 120px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-actions {
-  padding: 12px 16px;
-  background: #fafafa;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .header-right {
-    width: 100%;
-  }
-
-  .header-right .el-button {
-    width: 100%;
-  }
-
-  .info-card {
-    padding: 16px;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
+  border-bottom: 1px solid #eba4a4; // Will be handled by page-common styles usually, but keeping specific alignment
 }
 </style>

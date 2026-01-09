@@ -1,145 +1,148 @@
 <template>
-  <div class="feedback-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('input.feedback.edit') : $t('input.feedback.add') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ isEdit ? $t('input.feedback.edit') : $t('input.feedback.add') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="feedback-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-information-line"></i>
-            <h3>{{ $t('input.feedback.form.basicInfo') }}</h3>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" class="w-full">
+          <!-- 基本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.feedback.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.feedbackType')" prop="feedbackType">
+                    <el-select v-model="formData.feedbackType" :placeholder="$t('input.feedback.placeholder.feedbackType')" style="width: 100%">
+                      <el-option :label="$t('input.feedback.type.complaint')" value="0" />
+                      <el-option :label="$t('input.feedback.type.suggestion')" value="1" />
+                      <el-option :label="$t('input.feedback.type.inquiry')" value="2" />
+                      <el-option :label="$t('input.feedback.type.fault')" value="3" />
+                      <el-option :label="$t('input.feedback.type.other')" value="4" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.priority')" prop="priority">
+                    <el-select v-model="formData.priority" :placeholder="$t('input.feedback.placeholder.priority')" style="width: 100%">
+                      <el-option :label="$t('input.feedback.priority.low')" value="0" />
+                      <el-option :label="$t('input.feedback.priority.medium')" value="1" />
+                      <el-option :label="$t('input.feedback.priority.high')" value="2" />
+                      <el-option :label="$t('input.feedback.priority.urgent')" value="3" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.feedback.form.title')" prop="title">
+                    <el-input
+                      v-model="formData.title"
+                      :placeholder="$t('input.feedback.placeholder.title')"
+                      maxlength="200"
+                      show-word-limit
+                      clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.feedback.form.content')" prop="content">
+                    <el-input
+                      v-model="formData.content"
+                      :placeholder="$t('input.feedback.placeholder.content')"
+                      type="textarea"
+                      :rows="6"
+                      maxlength="2000"
+                      show-word-limit
+                      clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.inputName')" prop="inputName">
+                    <el-input v-model="formData.inputName" :placeholder="$t('input.feedback.placeholder.inputName')" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.supplierName')" prop="supplierName">
+                    <el-input v-model="formData.supplierName" :placeholder="$t('input.feedback.placeholder.supplierName')" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.feedback.form.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      :placeholder="$t('input.feedback.placeholder.remark')"
+                      type="textarea"
+                      :rows="3"
+                      maxlength="500"
+                      show-word-limit
+                      clearable />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.feedback.form.feedbackType')" prop="feedbackType">
-              <el-select v-model="formData.feedbackType" :placeholder="$t('input.feedback.placeholder.feedbackType')" class="full-width">
-                <el-option :label="$t('input.feedback.type.complaint')" value="0" />
-                <el-option :label="$t('input.feedback.type.suggestion')" value="1" />
-                <el-option :label="$t('input.feedback.type.inquiry')" value="2" />
-                <el-option :label="$t('input.feedback.type.fault')" value="3" />
-                <el-option :label="$t('input.feedback.type.other')" value="4" />
-              </el-select>
-            </el-form-item>
 
-            <el-form-item :label="$t('input.feedback.form.priority')" prop="priority">
-              <el-select v-model="formData.priority" :placeholder="$t('input.feedback.placeholder.priority')" class="full-width">
-                <el-option :label="$t('input.feedback.priority.low')" value="0" />
-                <el-option :label="$t('input.feedback.priority.medium')" value="1" />
-                <el-option :label="$t('input.feedback.priority.high')" value="2" />
-                <el-option :label="$t('input.feedback.priority.urgent')" value="3" />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.title')" prop="title" class="full-width-item">
-              <el-input
-                v-model="formData.title"
-                :placeholder="$t('input.feedback.placeholder.title')"
-                maxlength="200"
-                show-word-limit
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.content')" prop="content" class="full-width-item">
-              <el-input
-                v-model="formData.content"
-                :placeholder="$t('input.feedback.placeholder.content')"
-                type="textarea"
-                :rows="6"
-                maxlength="2000"
-                show-word-limit
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.inputName')" prop="inputName">
-              <el-input
-                v-model="formData.inputName"
-                :placeholder="$t('input.feedback.placeholder.inputName')"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.supplierName')" prop="supplierName">
-              <el-input
-                v-model="formData.supplierName"
-                :placeholder="$t('input.feedback.placeholder.supplierName')"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.remark')" prop="remark" class="full-width-item">
-              <el-input
-                v-model="formData.remark"
-                :placeholder="$t('input.feedback.placeholder.remark')"
-                type="textarea"
-                :rows="3"
-                maxlength="500"
-                show-word-limit
-                clearable
-              />
-            </el-form-item>
+          <!-- 联系信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-contacts-line"></i>
+                <span>{{ $t('input.feedback.form.contactInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.contactName')" prop="contactName">
+                    <el-input v-model="formData.contactName" :placeholder="$t('input.feedback.placeholder.contactName')" maxlength="100" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.feedback.form.contactPhone')" prop="contactPhone">
+                    <el-input v-model="formData.contactPhone" :placeholder="$t('input.feedback.placeholder.contactPhone')" maxlength="20" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.feedback.form.contactEmail')" prop="contactEmail">
+                    <el-input v-model="formData.contactEmail" :placeholder="$t('input.feedback.placeholder.contactEmail')" maxlength="100" clearable />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-        </div>
 
-        <!-- 联系信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-contacts-line"></i>
-            <h3>{{ $t('input.feedback.form.contactInfo') }}</h3>
+          <!-- 操作按钮（固定在底部） -->
+          <div class="form-actions">
+            <el-button
+              v-for="button in getActionButtons()"
+              :key="button.action"
+              :type="button.type"
+              :loading="submitLoading && button.action === 'submit'"
+              @click="handleAction(button.action)">
+              {{ $t(`common.${button.label}`) }}
+            </el-button>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.feedback.form.contactName')" prop="contactName">
-              <el-input
-                v-model="formData.contactName"
-                :placeholder="$t('input.feedback.placeholder.contactName')"
-                maxlength="100"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.contactPhone')" prop="contactPhone">
-              <el-input
-                v-model="formData.contactPhone"
-                :placeholder="$t('input.feedback.placeholder.contactPhone')"
-                maxlength="20"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.feedback.form.contactEmail')" prop="contactEmail" class="full-width-item">
-              <el-input
-                v-model="formData.contactEmail"
-                :placeholder="$t('input.feedback.placeholder.contactEmail')"
-                maxlength="100"
-                clearable
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
-            {{ $t('common.submit') }}
-          </el-button>
-        </div>
-      </el-form>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -230,6 +233,23 @@ const rules = computed(() => ({
   ]
 }))
 
+// 底部按钮配置（仅 UI）
+const getActionButtons = () => ([
+  { type: '', label: 'cancel', action: 'cancel' },
+  { type: 'primary', label: 'submit', action: 'submit' }
+])
+
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      goBack()
+      break
+    case 'submit':
+      handleSubmit()
+      break
+  }
+}
+
 // 返回
 const goBack = () => {
   router.back()
@@ -308,164 +328,6 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.feedback-form-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right {
-  justify-content: flex-end;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-block {
-  margin-bottom: 32px;
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.block-header i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.block-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.full-width-item {
-  grid-column: 1 / -1;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f2f5;
-  margin-top: 24px;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 1024px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-  }
-
-  .header-right {
-    display: none;
-  }
-
-  .header-center {
-    text-align: left;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-
-  .form-wrapper {
-    padding: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 0 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .form-wrapper {
-    padding: 12px;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

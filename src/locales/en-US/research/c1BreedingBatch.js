@@ -6,6 +6,7 @@ export default {
   edit: 'Edit Seed Multiplication Information',
   delete: 'Void',
   view: 'View Details',
+  list: 'Seed Multiplication Information List',
 
   searchPlaceholder: 'Search by batch ID, variety name...',
   filterByCrop: 'Filter by Crop',
@@ -139,7 +140,8 @@ export default {
     lotId: 'Lot ID',
     stage: 'Inspection Stage',
     score: 'Score',
-    inspectionValue: 'Inspection Value'
+    inspectionValue: 'Inspection Value',
+    remarks: 'Remarks'
   },
 
   test: {
@@ -154,6 +156,7 @@ export default {
     testResult: 'Test Result',
     tester: 'Tester',
     testOrg: 'Test Organization',
+    testLocation: 'Test Location',
     description: 'Description',
     resultPass: 'Pass',
     resultFail: 'Fail',
@@ -163,7 +166,10 @@ export default {
     testType: 'Test Type',
     unit: 'Unit',
     passStatus: 'Pass Status',
+    passed: 'Passed',
+    failed: 'Failed',
     passTrue: 'Passed',
-    passFalse: 'Failed'
+    passFalse: 'Failed',
+    remarks: 'Remarks'
   }
 }

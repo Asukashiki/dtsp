@@ -194,12 +194,9 @@ const handleConfirm = () => {
       loading.value = true
 
       try {
-        const userInfo = userStore.userInfo?.user || {}
         await postResetPassword({
-          userId: userInfo.ID,
-          password: form.value.currentPassword,
-          newPassword: form.value.newPassword,
-          confirmPassword: form.value.confirmPassword
+          oldPassword: form.value.currentPassword,
+          newPassword: form.value.newPassword
         })
         ElMessage.success(t('userInfo.modifySuccess'))
         resetForm()

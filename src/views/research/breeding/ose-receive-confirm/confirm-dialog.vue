@@ -232,7 +232,9 @@ const handleConfirm = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+
 .seed-details-section {
   margin-bottom: 24px;
   padding: 16px;

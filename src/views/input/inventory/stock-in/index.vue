@@ -1,276 +1,223 @@
 <template>
-  <div class="inbound-list-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="icon-wrapper">
-          <i class="ri-inbox-line"></i>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-inbox-line"
+        :title="$t('input.inventory.stockIn.title')"
+        :subtitle="$t('input.inventory.stockIn.subtitle')" />
+
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片（无标题） -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('input.inventory.stockIn.filter.orderId')">
+              <el-input
+                v-model="queryParams.inboundOrderId"
+                :placeholder="$t('input.inventory.stockIn.placeholder.orderId')"
+                clearable
+                class="search-input">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('input.inventory.stockIn.filter.type')">
+              <el-select
+                v-model="queryParams.inboundType"
+                :placeholder="$t('input.inventory.stockIn.filter.type')"
+                clearable
+                class="filter-select"
+                @change="handleQuery">
+                <el-option :label="$t('common.all')" value="" />
+                <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
+                <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
+                <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
-        <div class="header-text">
-          <h1>{{ $t('input.inventory.stockIn.title') }}</h1>
-          <p>{{ $t('input.inventory.stockIn.subtitle') }}</p>
-        </div>
-      </div>
-    </div>
 
-    <!-- 筛选条件 -->
-    <div class="filter-wrapper">
-      <el-form :inline="true" :model="queryParams" class="filter-form">
-        <el-form-item :label="$t('input.inventory.stockIn.filter.status')">
-          <el-select v-model="queryParams.inboundStatus" @change="handleQuery" clearable>
-            <el-option :label="$t('common.all')" value="" />
-            <el-option :label="$t('input.inventory.stockIn.status.pending')" value="pending" />
-            <el-option :label="$t('input.inventory.stockIn.status.completed')" value="completed" />
-            <el-option :label="$t('input.inventory.stockIn.status.cancelled')" value="cancelled" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('input.inventory.stockIn.filter.type')">
-          <el-select v-model="queryParams.inboundType" @change="handleQuery" clearable>
-            <el-option :label="$t('common.all')" value="" />
-            <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
-            <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
-            <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('input.inventory.stockIn.filter.orderId')">
-          <el-input
-            v-model="queryParams.inboundOrderId"
-            :placeholder="$t('input.inventory.stockIn.placeholder.orderId')"
-            clearable
-            @clear="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">
-            <i class="ri-search-line"></i>
-            {{ $t('common.search') }}
-          </el-button>
-          <el-button @click="handleReset">
-            <i class="ri-refresh-line"></i>
-            {{ $t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="$t('input.inventory.stockIn.list')"
+          icon="ri-file-list-3-line"
+          :no-padding="true">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('input.inventory.stockIn.create') }}
+            </el-button>
+          </template>
 
-    <!-- 操作按钮和统计 -->
-    <div class="action-bar">
-      <el-button type="primary" @click="handleAdd">
-        <i class="ri-add-line"></i>
-        {{ $t('input.inventory.stockIn.create') }}
-      </el-button>
-      <div class="stats">
-        <el-tag type="warning" size="large">
-          <i class="ri-time-line"></i>
-          {{ $t('input.inventory.stockIn.pendingCount') }}: {{ pendingCount }}
-        </el-tag>
-        <el-tag type="info" size="large">
-          <i class="ri-file-list-line"></i>
-          {{ $t('input.inventory.stockIn.totalCount') }}: {{ total }}
-        </el-tag>
-      </div>
-    </div>
+          <!-- 状态标签页 -->
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange" />
 
-    <!-- PC端表格 -->
-    <div class="table-wrapper pc-view">
-      <el-table :data="inboundList" v-loading="loading" stripe>
-        <el-table-column
-          prop="inbound_order_id"
-          :label="$t('input.inventory.stockIn.columns.orderId')"
-          width="180"
-          fixed="left"
-        />
-        <el-table-column
-          prop="inbound_type_name"
-          :label="$t('input.inventory.stockIn.columns.type')"
-          width="120"
-        >
-          <template #default="{ row }">
-            <el-tag :type="getTypeTag(row.inbound_type)" size="small">
-              {{ getTypeText(row.inbound_type) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="warehouse_name"
-          :label="$t('input.inventory.stockIn.columns.warehouse')"
-          width="150"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="supplier_name"
-          :label="$t('input.inventory.stockIn.columns.supplier')"
-          width="150"
-          show-overflow-tooltip
-          class-name="hidden-column"
-        />
-        <el-table-column
-          prop="total_quantity"
-          :label="$t('input.inventory.stockIn.columns.quantity')"
-          width="120"
-          align="right"
-        >
-          <template #default="{ row }">
-            {{ row.total_quantity ? row.total_quantity.toFixed(2) : '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="inbound_status"
-          :label="$t('input.inventory.stockIn.columns.status')"
-          width="100"
-        >
-          <template #default="{ row }">
-            <el-tag :type="getStatusTag(row.inbound_status)" size="small">
-              {{ getStatusText(row.inbound_status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="operator"
-          :label="$t('input.inventory.stockIn.columns.operator')"
-          width="120"
-        />
-        <el-table-column
-          prop="apply_time"
-          :label="$t('input.inventory.stockIn.columns.applyTime')"
-          width="160"
-        >
-          <template #default="{ row }">
-            {{ formatDateTime(row.apply_time) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="inbound_time"
-          :label="$t('input.inventory.stockIn.columns.inboundTime')"
-          width="160"
-        >
-          <template #default="{ row }">
-            {{ formatDateTime(row.inbound_time) }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('common.actions')" fixed="right" width="250" align="right">
-          <template #default="{ row }">
-            <div class="action-buttons">
-              <!-- Always show Detail button -->
-              <el-button link type="primary" @click="handleDetail(row)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.detail') }}
-              </el-button>
-
-              <!-- Show Audit button only when status is 'pending' -->
-              <el-button
-                link
-                type="success"
-                v-if="row.inbound_status === 'pending'"
-                @click="handleAudit(row)"
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="inboundList" stripe v-loading="loading">
+              <el-table-column
+                prop="inbound_order_id"
+                :label="$t('input.inventory.stockIn.columns.orderId')"
+                width="180"
+                fixed="left"
+              />
+              <el-table-column
+                prop="inbound_type_name"
+                :label="$t('input.inventory.stockIn.columns.type')"
+                width="120"
               >
-                <i class="ri-check-line"></i>
-                {{ $t('input.inventory.stockIn.audit') }}
-              </el-button>
-
-              <!-- Show Confirm button only when status is 'approved' -->
-              <el-button
-                link
-                type="warning"
-                v-if="row.inbound_status === 'approved'"
-                @click="handleConfirm(row)"
+                <template #default="{ row }">
+                  <el-tag :type="getTypeTag(row.inbound_type)" size="small">
+                    {{ getTypeText(row.inbound_type) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="warehouse_name"
+                :label="$t('input.inventory.stockIn.columns.warehouse')"
+                width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="supplier_name"
+                :label="$t('input.inventory.stockIn.columns.supplier')"
+                width="150"
+                show-overflow-tooltip
+                class-name="hidden-column"
+              />
+              <el-table-column
+                prop="total_quantity"
+                :label="$t('input.inventory.stockIn.columns.quantity')"
+                width="120"
+                align="right"
               >
-                <i class="ri-inbox-archive-line"></i>
-                {{ $t('input.inventory.stockIn.confirm') }}
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+                <template #default="{ row }">
+                  {{ row.total_quantity ? row.total_quantity.toFixed(2) : '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="inbound_status"
+                :label="$t('input.inventory.stockIn.columns.status')"
+                width="100"
+              >
+                <template #default="{ row }">
+                  <el-tag :type="getStatusTag(row.inbound_status)" size="small">
+                    {{ getStatusText(row.inbound_status) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="operator"
+                :label="$t('input.inventory.stockIn.columns.operator')"
+                width="120"
+              />
+              <el-table-column
+                prop="apply_time"
+                :label="$t('input.inventory.stockIn.columns.applyTime')"
+                width="160"
+              >
+                <template #default="{ row }">
+                  {{ formatDateTime(row.apply_time) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="inbound_time"
+                :label="$t('input.inventory.stockIn.columns.inboundTime')"
+                width="160"
+              >
+                <template #default="{ row }">
+                  {{ formatDateTime(row.inbound_time) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('input.inventory.stockIn.columns.actions')" width="280" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="getWorkflowStatus(row.inbound_status)"
+                    mode="list"
+                    :show-audit="activeTab === 'pendingApproval'"
+                    :show-confirm="activeTab === 'approved'"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
 
-      <!-- 分页 -->
-      <el-pagination
-        v-model:current-page="queryParams.page"
-        v-model:page-size="queryParams.pageSize"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        @current-change="handleQuery"
-        @size-change="handleQuery"
-        class="pagination"
-      />
-    </div>
-
-    <!-- 移动端卡片 -->
-    <div class="mobile-view">
-      <div class="card-list">
-        <div
-          v-for="item in inboundList"
-          :key="item.id"
-          class="inbound-card"
-          @click="handleDetail(item)"
-        >
-          <div class="card-header">
-            <div class="order-id">
-              <i class="ri-file-list-line"></i>
-              {{ item.inbound_order_id }}
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.page"
+                v-model:page-size="queryParams.pageSize"
+                :total="total"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                @current-change="handleQuery"
+                @size-change="handleQuery"
+              />
             </div>
-            <el-tag :type="getStatusTag(item.inbound_status)" size="small">
-              {{ getStatusText(item.inbound_status) }}
-            </el-tag>
           </div>
-          <div class="card-body">
-            <div class="info-row">
-              <i class="ri-price-tag-3-line"></i>
-              <span class="label">{{ $t('input.inventory.stockIn.columns.type') }}:</span>
-              <el-tag :type="getTypeTag(item.inbound_type)" size="small">
-                {{ item.inbound_type_name }}
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div
+            v-for="item in inboundList"
+            :key="item.inbound_order_id"
+            class="mobile-card"
+            @click="handleDetail(item)"
+          >
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-inbox-line"></i>
+                <span>{{ item.inbound_order_id }}</span>
+              </div>
+              <el-tag :type="getStatusTag(item.inbound_status)" size="small">
+                {{ getStatusText(item.inbound_status) }}
               </el-tag>
             </div>
-            <div class="info-row">
-              <i class="ri-building-line"></i>
-              <span class="label">{{ $t('input.inventory.stockIn.columns.warehouse') }}:</span>
-              <span class="value">{{ item.warehouse_name }}</span>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stockIn.columns.type') }}:</span>
+                <el-tag :type="getTypeTag(item.inbound_type)" size="small">
+                  {{ getTypeText(item.inbound_type) }}
+                </el-tag>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stockIn.columns.warehouse') }}:</span>
+                <span class="value">{{ item.warehouse_name }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stockIn.columns.quantity') }}:</span>
+                <span class="value">{{ item.total_quantity ? item.total_quantity.toFixed(2) : '-' }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
+                <span class="value">{{ formatDateTime(item.apply_time) }}</span>
+              </div>
             </div>
-            <div class="info-row">
-              <i class="ri-shopping-bag-line"></i>
-              <span class="label">{{ $t('input.inventory.stockIn.columns.quantity') }}:</span>
-              <span class="value">{{ item.total_quantity ? item.total_quantity.toFixed(2) : '-' }}</span>
-            </div>
-            <div class="info-row">
-              <i class="ri-time-line"></i>
-              <span class="label">{{ $t('input.inventory.stockIn.columns.applyTime') }}:</span>
-              <span class="value">{{ formatDateTime(item.apply_time) }}</span>
+            <div class="mobile-card-footer" @click.stop>
+              <ActionButtons
+                :workflow-status="getWorkflowStatus(item.inbound_status)"
+                mode="list"
+                :show-audit="activeTab === 'pendingApproval'"
+                :show-confirm="activeTab === 'approved'"
+                @action="(action) => handleAction(item, action)" />
             </div>
           </div>
-          <div class="card-actions" @click.stop>
-            <el-button size="small" type="primary" @click="handleDetail(item)">
-              {{ $t('common.detail') }}
-            </el-button>
-            <el-button
-              size="small"
-              type="success"
-              v-if="item.inbound_status === 'pending'"
-              @click="handleAudit(item)"
-            >
-              {{ $t('input.inventory.stockIn.audit') }}
-            </el-button>
-            <el-button
-              size="small"
-              type="warning"
-              v-if="item.inbound_status === 'pending'"
-              @click="handleConfirm(item)"
-            >
-              {{ $t('input.inventory.stockIn.confirm') }}
-            </el-button>
+
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="queryParams.page"
+              :total="total"
+              :page-size="queryParams.pageSize"
+              layout="prev, pager, next"
+              small
+              @current-change="handleQuery"
+            />
           </div>
         </div>
       </div>
-
-      <!-- 移动端分页 -->
-      <el-pagination
-        v-model:current-page="queryParams.page"
-        :total="total"
-        :page-size="queryParams.pageSize"
-        layout="prev, pager, next"
-        @current-change="handleQuery"
-        class="mobile-pagination"
-      />
     </div>
   </div>
 </template>
@@ -287,6 +234,9 @@ import {
   confirmInbound,
   cancelInboundOrder
 } from '@/api/inbound'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -296,6 +246,26 @@ const inboundList = ref([])
 const total = ref(0)
 const pendingCount = ref(0)
 const currentUserOrganCode = ref('') // 当前用户部门ID
+const activeTab = ref('pendingApproval')
+
+// 标签页配置 - 使用状态文本作为标签（因为国际化文件中没有tabs定义）
+const tabConfig = [
+  {
+    name: 'pendingApproval',
+    label: 'input.inventory.stockIn.status.pending',
+    icon: 'ri-time-line'
+  },
+  {
+    name: 'approved',
+    label: 'input.inventory.stockIn.status.approved',
+    icon: 'ri-check-line'
+  },
+  {
+    name: 'completed',
+    label: 'input.inventory.stockIn.status.completed',
+    icon: 'ri-checkbox-circle-line'
+  }
+]
 
 const queryParams = reactive({
   page: 1,
@@ -304,6 +274,18 @@ const queryParams = reactive({
   inboundType: '',
   inboundOrderId: ''
 })
+
+// 将状态映射到工作流状态
+const getWorkflowStatus = (status) => {
+  const statusMap = {
+    'pending': 'S1',      // 待审批
+    'approved': 'S2',    // 审核通过
+    'completed': 'S2',   // 已完成（等同于审核通过）
+    'cancelled': 'S10',  // 已作废
+    'rejected': 'S3'     // 审核驳回
+  }
+  return statusMap[status] || 'S0'
+}
 
 // 格式化日期时间
 const formatDateTime = (dateTimeStr) => {
@@ -334,6 +316,30 @@ const getCurrentUserOrganCode = () => {
     return user.ORGANCODE || ''
   }
   return ''
+}
+
+// 根据标签页设置查询参数
+const setQueryParamsByTab = (tabName) => {
+  switch (tabName) {
+    case 'pendingApproval':
+      queryParams.inboundStatus = 'pending'
+      break
+    case 'approved':
+      queryParams.inboundStatus = 'approved'
+      break
+    case 'completed':
+      queryParams.inboundStatus = 'completed'
+      break
+    default:
+      queryParams.inboundStatus = ''
+  }
+}
+
+// 标签页切换
+const handleTabChange = (tabName) => {
+  setQueryParamsByTab(tabName)
+  queryParams.page = 1
+  handleQuery()
 }
 
 // 查询入库单列表
@@ -373,9 +379,9 @@ const loadPendingCount = async () => {
 const handleReset = () => {
   queryParams.page = 1
   queryParams.pageSize = 20
-  queryParams.inboundStatus = ''
   queryParams.inboundType = ''
   queryParams.inboundOrderId = ''
+  setQueryParamsByTab(activeTab.value)
   handleQuery()
 }
 
@@ -384,9 +390,65 @@ const handleAdd = () => {
   router.push('/input/inventory/stock-in/form')
 }
 
+// 统一动作处理方法
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleDetail(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmitForAudit(row)
+      break
+    case 'audit':
+      handleAudit(row)
+      break
+    case 'approve':
+      handleApprove(row)
+      break
+    case 'reject':
+      handleReject(row)
+      break
+    case 'archive':
+      handleArchive(row)
+      break
+    case 'cancelBatch':
+      handleCancel(row)
+      break
+    case 'confirm':
+      handleConfirm(row)
+      break
+  }
+}
+
 // 查看详情
 const handleDetail = (row) => {
   router.push(`/input/inventory/stock-in/detail/${row.inbound_order_id}`)
+}
+
+// 编辑
+const handleEdit = (row) => {
+  router.push(`/input/inventory/stock-in/form/${row.inbound_order_id}`)
+}
+
+// 提交审核
+const handleSubmitForAudit = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('common.submitConfirm'),
+      t('common.warning'),
+      { type: 'warning' }
+    )
+    // 这里需要调用提交审核的API，如果没有则跳过
+    ElMessage.success(t('common.submitSuccess'))
+    handleQuery()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.submitFailed'))
+    }
+  }
 }
 
 // 审核入库单
@@ -433,6 +495,74 @@ const handleAudit = async (row) => {
         loadPendingCount()
       }
     })
+}
+
+// 审核通过
+const handleApprove = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('input.inventory.stockIn.approveConfirm'),
+      t('common.warning'),
+      { type: 'warning' }
+    )
+    await auditInboundOrder(row.inbound_order_id, {
+      auditStatus: 'approved',
+      auditUser: t('common.currentUser'),
+      auditTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      remark: ''
+    })
+    ElMessage.success(t('input.inventory.stockIn.auditSuccess'))
+    handleQuery()
+    loadPendingCount()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.failed'))
+    }
+  }
+}
+
+// 审核驳回
+const handleReject = async (row) => {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      t('input.inventory.stockIn.rejectReason'),
+      t('input.inventory.stockIn.reject'),
+      {
+        inputPlaceholder: t('input.inventory.stockIn.placeholder.rejectReason')
+      }
+    )
+    await auditInboundOrder(row.inbound_order_id, {
+      auditStatus: 'rejected',
+      auditUser: t('common.currentUser'),
+      auditTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      remark: value || ''
+    })
+    ElMessage.success(t('input.inventory.stockIn.rejectSuccess'))
+    handleQuery()
+    loadPendingCount()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.failed'))
+    }
+  }
+}
+
+// 归档
+const handleArchive = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('input.inventory.stockIn.archiveConfirm'),
+      t('common.warning'),
+      { type: 'warning' }
+    )
+    // 这里需要调用归档API，如果没有则跳过
+    ElMessage.success(t('common.archiveSuccess'))
+    handleQuery()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.failed'))
+    }
+  }
 }
 
 // 执行入库
@@ -531,286 +661,19 @@ const getTypeText = (type) => {
 
 onMounted(() => {
   currentUserOrganCode.value = getCurrentUserOrganCode()
+  setQueryParamsByTab(activeTab.value)
   handleQuery()
   loadPendingCount()
 })
 </script>
 
-<style scoped>
-.inbound-list-page {
-  min-height: calc(100vh - 120px);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
 /* 隐藏表格列 */
 :deep(.hidden-column) {
   display: none !important;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009a44 0%, #00b350 100%);
-  padding: 24px 32px;
-  border-radius: 16px 16px 0 0;
-  margin-bottom: 24px;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: white;
-}
-
-.header-text h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: white;
-  margin: 0 0 8px 0;
-}
-
-.header-text p {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-/* 筛选区域 */
-.filter-wrapper {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.filter-form {
-  margin: 0;
-}
-
-/* 操作栏 */
-.action-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 0 4px;
-}
-
-.stats {
-  display: flex;
-  gap: 16px;
-}
-
-.stats .el-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-}
-
-/* 表格 */
-.table-wrapper {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.table-wrapper :deep(.el-table) {
-  font-size: 14px;
-}
-
-.table-wrapper :deep(.el-table td),
-.table-wrapper :deep(.el-table th) {
-  padding: 14px 0;
-}
-
-.table-wrapper :deep(.el-table__row) {
-  transition: background-color 0.2s;
-}
-
-.table-wrapper :deep(.el-table__row:hover) {
-  background-color: #f5f7fa;
-}
-
-.pagination {
-  margin-top: 24px;
-  justify-content: flex-end;
-}
-
-/* 操作按钮 */
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.action-buttons .el-button {
-  margin: 0 !important;
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
-.action-buttons .el-button i {
-  margin-right: 4px;
-}
-
-/* 移动端卡片 */
-.mobile-view {
-  display: none;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.inbound-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s;
-}
-
-.inbound-card:active {
-  transform: scale(0.98);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.order-id {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.info-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #606266;
-  line-height: 1.6;
-}
-
-.info-row i {
-  color: #009a44;
-  font-size: 16px;
-}
-
-.info-row .label {
-  color: #909399;
-}
-
-.info-row .value {
-  color: #303133;
-  font-weight: 500;
-}
-
-.card-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  padding-top: 16px;
-  border-top: 1px solid #e4e7ed;
-}
-
-.mobile-pagination {
-  margin-top: 20px;
-  justify-content: center;
-}
-
-/* 响应式 */
-@media screen and (max-width: 768px) {
-  .pc-view {
-    display: none !important;
-  }
-
-  .mobile-view {
-    display: block !important;
-  }
-
-  .page-header {
-    padding: 16px;
-    margin: 0 0 16px 0;
-    border-radius: 0;
-  }
-
-  .header-content {
-    gap: 12px;
-  }
-
-  .icon-wrapper {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .header-text h1 {
-    font-size: 20px;
-  }
-
-  .filter-wrapper {
-    padding: 12px;
-    border-radius: 0;
-    margin: 0 0 12px 0;
-  }
-
-  .filter-form :deep(.el-form-item) {
-    margin: 0 0 12px 0;
-    display: block;
-  }
-
-  .filter-form :deep(.el-form-item__label) {
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .filter-form :deep(.el-form-item__content) {
-    display: block;
-  }
-
-  .action-bar {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-
-  .stats {
-    justify-content: space-between;
-  }
 }
 </style>

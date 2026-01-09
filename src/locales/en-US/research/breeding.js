@@ -1,6 +1,6 @@
 // 育种管理国际化文件
 export default {
-  title: 'Seed Multiplication Batch Information',
+  title: 'Seed Multiplication Batch Info',
   subtitle: 'Integrated management of seed multiplication batches, tracking records, and testing information',
   relatedRecords: 'Related Records',
 
@@ -190,7 +190,7 @@ export default {
       title: 'Seed Production Data',
       subtitle: 'Record Seed production data to ensure seed propagation process is traceable',
       list: 'Production Data List',
-      add: 'Add Production Data',
+      add: 'Add',
       detail: 'Production Data Details',
       delete: 'Delete Production Data',
       deleteConfirm: 'Are you sure to delete this production data?',
@@ -808,14 +808,14 @@ export default {
     },
   },
 
-  // Seed Multiplication Batch Information Collection
+  // Seed Multiplication Batch Info Collection
   breedingBatch: {
-    title: 'Seed Multiplication Batch Information Collection',
+    title: 'Seed Multiplication Batch Info',
     subtitle: 'Record seed multiplication batch basic information and yield data',
-    list: 'Seed Multiplication Batch Information List',
-    add: 'Add Seed Multiplication Batch Information',
-    edit: 'Edit Seed Multiplication Batch Information',
-    detail: 'Seed Multiplication Batch Information Details',
+    list: 'Seed Multiplication Batch Info List',
+    add: 'Add Seed Multiplication Batch Info',
+    edit: 'Edit Seed Multiplication Batch Info',
+    detail: 'Seed Multiplication Batch Info Details',
     delete: 'Delete Batch',
     deleteConfirm: 'Are you sure to delete this?',
     deleteSuccess: 'Deleted successfully',

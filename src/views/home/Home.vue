@@ -31,8 +31,8 @@
         </div>
         <div class="announcements-list">
           <div
-            v-for="(item, index) in announcementList.slice(0,2)"
-            :key="index"
+            v-for="(item, index) in displayAnnouncements"
+            :key="item.noticeId || index"
             class="announcement-item"
             @click="handleAnnouncementClick(item)"
           >
@@ -40,10 +40,10 @@
               <i class="ri-megaphone-line"></i>
             </div>
             <div class="announcement-content">
-              <div class="announcement-title">{{ item.name }}</div>
-              <div class="announcement-desc">{{ item.content }}</div>
+              <div class="announcement-title">{{ parseI18nValue(item.noticeTitle, locale, item.noticeTitle) }}</div>
+              <div class="announcement-desc" v-html="stripHtml(parseI18nValue(item.noticeContent, locale, item.noticeContent))"></div>
             </div>
-            <div class="announcement-time">{{ item.publicTime }}</div>
+            <div class="announcement-time">{{ item.createTime }}</div>
           </div>
           <div v-if="!announcementList || announcementList.length === 0" class="empty-state">
             <i class="ri-inbox-line"></i>
@@ -108,12 +108,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Announcement Detail Dialog -->
-    <announcement-detail
-      v-model:visible="detailDialogVisible"
-      :announcement="currentAnnouncement"
-    />
   </div>
 </template>
 
@@ -121,14 +115,12 @@
 import { reactive, onMounted, toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getNoticeList } from '@/api/home'
-import AnnouncementDetail from './components/AnnouncementDetail.vue'
+import { listPublicNotice } from '@/api/publicNotice'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-const detailDialogVisible = ref(false)
-const currentAnnouncement = ref({})
 const pages = ref({
   pageNum: 1,
   pageSize: 6
@@ -139,6 +131,17 @@ const state = reactive({
 })
 
 const { announcementList } = toRefs(state)
+
+// 只显示前2条公告
+const displayAnnouncements = computed(() => {
+  return announcementList.value.slice(0, 2)
+})
+
+// 移除 HTML 标签用于列表预览
+const stripHtml = (html) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '').substring(0, 100)
+}
 
 // 系统模块配置
 const systemModules = computed(() => ({
@@ -161,7 +164,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:31100/',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=farmland&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=farmland',
     external: true
   },
   production: {
@@ -169,24 +172,40 @@ const systemModules = computed(() => ({
     desc: t('home.modules.production.desc'),
     icon: 'ri-seedling-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
-    path: 'http://196.189.236.220:31100/',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=production&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=production',
     external: true
   },
   procurement: {
     name: t('home.modules.procurement.name'),
     desc: t('home.modules.procurement.desc'),
     icon: 'ri-shopping-cart-line',
-    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
-    path: '/procurement',
-    disabled: true // 禁用
+    gradient: 'linear-gradient(135deg, #1890FF 0%, #69C0FF 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=processing&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=processing',
+    external: true
   },
   traceability: {
     name: t('home.modules.traceability.name'),
     desc: t('home.modules.traceability.desc'),
-    icon: 'ri-qr-code-line',
-    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
-    path: '/traceability',
-    disabled: true // 禁用
+    icon: 'ri-map-pin-line',
+    gradient: 'linear-gradient(135deg, #722ED1 0%, #B37FEB 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=logistics&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=logistics',
+    external: true
+  },
+  sustainability: {
+    name: t('home.modules.sustainability.name'),
+    desc: t('home.modules.sustainability.desc'),
+    icon: 'ri-leaf-line',
+    gradient: 'linear-gradient(135deg, #13C2C2 0%, #5CDBD3 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=sustainability&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=sustainability',
+    external: true
+  },
+  harvest: {
+    name: t('home.modules.harvest.name'),
+    desc: t('home.modules.harvest.desc'),
+    icon: 'ri-shopping-basket-line',
+    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFC069 100%)',
+    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=harvest&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=harvest',
+    external: true
   },
   data: {
     name: t('home.modules.data.name'),
@@ -196,14 +215,14 @@ const systemModules = computed(() => ({
     path: '/data',
     disabled: true // 禁用
   },
-  farm: {
-    name: t('home.modules.farm.name'),
-    desc: t('home.modules.farm.desc'),
-    icon: 'ri-landscape-line',
-    gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:31100/',
-    external: true
-  }
+  // farm: {
+  //   name: t('home.modules.farm.name'),
+  //   desc: t('home.modules.farm.desc'),
+  //   icon: 'ri-landscape-line',
+  //   gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+  //   path: 'http://196.189.236.220:31100/',
+  //   external: true
+  // }
 }))
 
 // 操作指南配置
@@ -241,9 +260,9 @@ onMounted(() => {
 // 获取公告数据
 const getNoticeData = async () => {
   try {
-    const res = await getNoticeList(pages.value)
-    if (res.code === 200 && res.data) {
-      state.announcementList = res.data?.data || []
+    const res = await listPublicNotice(pages.value)
+    if (res.code === 200) {
+      state.announcementList = res.rows || []
     }
   } catch (error) {
     console.log('error', error)
@@ -251,8 +270,7 @@ const getNoticeData = async () => {
 }
 
 const handleAnnouncementClick = (item) => {
-  currentAnnouncement.value = { ...item }
-  detailDialogVisible.value = true
+  router.push(`/notice/${item.noticeId}`)
 }
 
 const handleMoreAnnouncements = () => {

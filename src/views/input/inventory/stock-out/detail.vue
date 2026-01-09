@@ -1,188 +1,171 @@
 <template>
-  <div class="stock-out-detail-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('input.inventory.stockOut.detail') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('input.inventory.stockOut.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('input.catalog.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundOrderId') }}:</span>
-              <span class="value">{{ detailData.outbound_order_id }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundBatchId') }}:</span>
-              <span class="value">{{ detailData.outbound_batch_id || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.type') }}:</span>
-              <el-tag :type="getTypeTag(detailData.outbound_type)">
-                {{ getTypeText(detailData.outbound_type) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.status') }}:</span>
-              <el-tag :type="getStatusTag(detailData.outbound_status)">
-                {{ getStatusText(detailData.outbound_status) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.warehouseId') }}:</span>
-              <span class="value">{{ detailData.warehouse_name }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.relatedOrderNo') }}:</span>
-              <span class="value">{{ detailData.related_order_no || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundUser') }}:</span>
-              <span class="value">{{ detailData.outbound_user || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundDept') }}:</span>
-              <span class="value">{{ detailData.outbound_dept || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.operator') }}:</span>
-              <span class="value">{{ detailData.operator }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.createTime') }}:</span>
-              <span class="value">{{ formatDateTime(detailData.created_at) }}</span>
-            </div>
-            <div class="detail-item" v-if="detailData.outbound_time">
-              <span class="label">{{ $t('input.inventory.stockOut.form.outboundTime') }}:</span>
-              <span class="value">{{ formatDateTime(detailData.outbound_time) }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.inventory.stockOut.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 审核信息 -->
-        <div class="detail-section" v-if="detailData.audit_user || detailData.audit_time">
-          <div class="section-title">
-            <i class="ri-file-list-line"></i>
-            {{ $t('input.inventory.stockOut.auditInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.auditUser') }}:</span>
-              <span class="value">{{ detailData.audit_user || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.inventory.stockOut.form.auditTime') }}:</span>
-              <span class="value">{{ formatDateTime(detailData.audit_time) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 出库明细 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-archive-line"></i>
-            {{ $t('input.inventory.stockOut.form.details') }}
-          </div>
-
-          <!-- PC端表格 -->
-          <div class="pc-view">
-            <el-table :data="detailData.details || []" stripe style="width: 100%">
-              <el-table-column type="index" label="#" width="60" />
-              <el-table-column prop="material_name" :label="$t('input.inventory.stockOut.form.inputName')" min-width="150" />
-              <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.form.inputType')" width="120">
-                <template #default="scope">
-                  {{ getLabelByValue('input_type', scope.row.material_type) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockOut.form.inputCategory')" width="120">
-                <template #default="scope">
-                  {{ getLabelByValue('input_category', scope.row.agricultural_input_type) || scope.row.agricultural_input_type }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockOut.form.batchNo')" width="150" />
-              <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
-              <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
-              <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100">
-                <template #default="scope">
-                  {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
-                </template>
-              </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
-                <template #default="{ row }">
-                  <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
-                    <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-
-          <!-- 移动端卡片 -->
-          <div class="mobile-view">
-            <div v-if="!detailData.details || detailData.details.length === 0" class="empty-state">
-              <p>{{ $t('input.inventory.stockOut.messages.noItems') }}</p>
-            </div>
-            <div v-for="(item, index) in detailData.details" :key="index" class="item-card">
-              <div class="item-header">
-                <span class="item-index">#{{ index + 1 }}</span>
-                <h4 class="item-name">{{ item.material_name }}</h4>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <template v-if="detailData">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
               </div>
-               <div class="item-info">
-                 <div class="info-row">
-                   <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
-                   <span class="value">{{ getLabelByValue('input_type', item.material_type) || item.material_type || '-' }}</span>
-                 </div>
-                 <div v-if="item.agricultural_input_type" class="info-row">
-                   <span class="label">{{ $t('input.inventory.stockOut.form.inputCategory') }}:</span>
-                   <span class="value">{{ getLabelByValue('input_category', item.agricultural_input_type) || item.agricultural_input_type }}</span>
-                 </div>
-                <div v-if="item.material_batch_id" class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
-                  <span class="value">{{ item.material_batch_id }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.quantity') }}:</span>
-                  <span class="value">{{ item.quantity }}</span>
-                </div>
-                <div v-if="item.spec_model" class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.specModel') }}:</span>
-                  <span class="value">{{ item.spec_model }}</span>
-                </div>
-                <div v-if="item.unit_of_measure" class="info-row">
-                  <span class="label">{{ $t('input.inventory.stockOut.form.unitOfMeasure') }}:</span>
-                  <span class="value">{{ getLabelByValue('input_material_unit', item.unit_of_measure) || item.unit_of_measure }}</span>
-                </div>
+            </div>
+            <div class="card-body">
+              <!-- 使用 el-descriptions 两列布局展示 -->
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.outboundOrderId')">
+                  {{ detailData.outbound_order_id }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.outboundBatchId')">
+                  {{ detailData.outbound_batch_id || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.type')">
+                  <el-tag :type="getTypeTag(detailData.outbound_type)">
+                    {{ getTypeText(detailData.outbound_type) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.status')">
+                  <el-tag :type="getStatusTag(detailData.outbound_status)">
+                    {{ getStatusText(detailData.outbound_status) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.warehouseId')">
+                  {{ detailData.warehouse_name }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')">
+                  {{ detailData.related_order_no || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.outboundUser')">
+                  {{ detailData.outbound_user || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.outboundDept')">
+                  {{ detailData.outbound_dept || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.operator')">
+                  {{ detailData.operator }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.createTime')">
+                  {{ formatDateTime(detailData.created_at) }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.outbound_time" :label="$t('input.inventory.stockOut.form.outboundTime')">
+                  {{ formatDateTime(detailData.outbound_time) }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.stockOut.form.remark')" :span="2">
+                  {{ detailData.remark || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </div>
+
+          <!-- 工作流信息（使用 WorkflowInfo 组件） -->
+          <WorkflowInfo
+            :workflow-status="getWorkflowStatus(detailData.outbound_status)"
+            mode="view"
+            :approval-history="approvalHistory"
+            :hide-for-states="['S0', 'S10']" />
+
+          <!-- 出库明细 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-archive-line"></i>
+                <span>{{ $t('input.inventory.stockOut.form.details') }}</span>
               </div>
-              <div v-if="item.batch_splits && item.batch_splits.length > 0" class="item-footer">
-                <el-button link type="primary" size="small" @click="showBatchSplits(item)">
-                  <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
-                </el-button>
+            </div>
+            <div class="card-body">
+              <!-- PC端表格 -->
+              <div class="pc-view">
+                <el-table :data="detailData.details || []" stripe style="width: 100%">
+                  <el-table-column type="index" label="#" width="60" />
+                  <el-table-column prop="material_name" :label="$t('input.inventory.stockOut.form.inputName')" min-width="150" />
+                  <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.form.inputType')" width="120">
+                    <template #default="scope">
+                      {{ getLabelByValue('input_type', scope.row.material_type) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="agricultural_input_type" :label="$t('input.inventory.stockOut.form.inputCategory')" width="120">
+                    <template #default="scope">
+                      {{ getLabelByValue('input_category', scope.row.agricultural_input_type) || scope.row.agricultural_input_type }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="material_batch_id" :label="$t('input.inventory.stockOut.form.batchNo')" width="150" />
+                  <el-table-column prop="quantity" :label="$t('input.inventory.stockOut.form.quantity')" width="120" align="center" />
+                  <el-table-column prop="spec_model" :label="$t('input.inventory.stockOut.form.specModel')" width="140" />
+                  <el-table-column prop="unit_of_measure" :label="$t('input.inventory.stockOut.form.unitOfMeasure')" width="100">
+                    <template #default="scope">
+                      {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
+                    <template #default="{ row }">
+                      <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
+                        <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+
+              <!-- 移动端卡片 -->
+              <div class="mobile-view">
+                <div v-if="!detailData.details || detailData.details.length === 0" class="empty-state">
+                  <p>{{ $t('input.inventory.stockOut.messages.noItems') }}</p>
+                </div>
+                <div v-for="(item, index) in detailData.details" :key="index" class="item-card">
+                  <div class="item-header">
+                    <span class="item-index">#{{ index + 1 }}</span>
+                    <h4 class="item-name">{{ item.material_name }}</h4>
+                  </div>
+                  <div class="item-info">
+                    <div class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.materialType') }}:</span>
+                      <span class="value">{{ getLabelByValue('input_type', item.material_type) || item.material_type || '-' }}</span>
+                    </div>
+                    <div v-if="item.agricultural_input_type" class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.inputCategory') }}:</span>
+                      <span class="value">{{ getLabelByValue('input_category', item.agricultural_input_type) || item.agricultural_input_type }}</span>
+                    </div>
+                    <div v-if="item.material_batch_id" class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.batchNo') }}:</span>
+                      <span class="value">{{ item.material_batch_id }}</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.quantity') }}:</span>
+                      <span class="value">{{ item.quantity }}</span>
+                    </div>
+                    <div v-if="item.spec_model" class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.specModel') }}:</span>
+                      <span class="value">{{ item.spec_model }}</span>
+                    </div>
+                    <div v-if="item.unit_of_measure" class="info-row">
+                      <span class="label">{{ $t('input.inventory.stockOut.form.unitOfMeasure') }}:</span>
+                      <span class="value">{{ getLabelByValue('input_material_unit', item.unit_of_measure) || item.unit_of_measure }}</span>
+                    </div>
+                  </div>
+                  <div v-if="item.batch_splits && item.batch_splits.length > 0" class="item-footer">
+                    <el-button link type="primary" size="small" @click="showBatchSplits(item)">
+                      <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}
+                    </el-button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
     </div>
 
     <!-- 批次拆分弹窗 -->
@@ -202,6 +185,7 @@
         <el-button @click="batchSplitsDialogVisible = false">{{ $t('common.close') }}</el-button>
       </template>
     </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -212,6 +196,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getOutboundOrderDetail } from '@/api/outbound'
 import { useDict } from '@/hooks/useDict'
+import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -223,6 +208,20 @@ const { getLabelByValue, options, loadAllDicts } = useDict(['input_type', 'input
 const loading = ref(false)
 const detailData = ref(null)
 const outboundOrderId = route.params.id
+
+// 将状态映射到工作流状态
+const getWorkflowStatus = (status) => {
+  const statusMap = {
+    'pending': 'S1',      // 待审批
+    'completed': 'S2',   // 已完成（等同于审核通过）
+    'cancelled': 'S10',  // 已作废
+    'rejected': 'S3'     // 审核驳回
+  }
+  return statusMap[status] || 'S0'
+}
+
+// 审批历史记录
+const approvalHistory = ref([])
 
 // 批次拆分弹窗
 const batchSplitsDialogVisible = ref(false)
@@ -328,6 +327,15 @@ const loadData = async () => {
     const res = await getOutboundOrderDetail(outboundOrderId)
     if (res.code === 200) {
       detailData.value = res.data
+
+      // 设置审批历史记录
+      if (res.data.audit_user) {
+        approvalHistory.value = [{
+          approver: res.data.audit_user,
+          approvalTime: res.data.audit_time,
+          comment: res.data.remark || ''
+        }]
+      }
     }
   } catch (error) {
     console.error('Failed to load outbound order detail:', error)
@@ -342,112 +350,9 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.stock-out-detail-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right {
-  justify-content: flex-end;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.detail-section {
-  margin-bottom: 32px;
-}
-
-.detail-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.section-title i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.detail-item .label {
-  font-size: 14px;
-  color: #909399;
-  flex-shrink: 0;
-  min-width: 120px;
-}
-
-.detail-item .value {
-  font-size: 14px;
-  color: #303133;
-  font-weight: 500;
-  flex: 1;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
 /* 移动端默认隐藏 */
 .mobile-view {

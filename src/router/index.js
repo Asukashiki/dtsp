@@ -1,19 +1,26 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
-import { getTokenFromUrl, getToken } from '../utils/auth'
+import { getToken, getTokenFromUrl, getLoginMode } from '../utils/auth'
 import { ElMessage } from 'element-plus'
 import farmLayoutConfig from '@/config/farm-layout.json'
 import inputLayoutConfig from '@/config/input-layout.json'
 import researchLayoutConfig from '@/config/research-layout.json'
 import newFarmLayoutConfig from '@/config/new-farm-layout.json'
+import systemLayoutConfig from '@/config/system-layout.json'
 
-// 外部登录系统URL - 在实际部署时配置正确的SSO地址
-const LOGIN_URL = import.meta.env.VITE_APP_SSO_URL || 'https://sso.company.com/login'
-// 当前系统的应用ID - 用于SSO系统识别来源
-const APP_ID = import.meta.env.VITE_APP_ID || 'dits-platform'
+// 路由白名单
+const routeWhitelist = [
+  // 首页相关
+  '/home',
+  '/user',
+  '/dataList',
+  '/print/seed/breeding-certification',
+  '/print/seed/c1-breeding-certificate',
+  '/notice',
+]
 
 const routes = [
-  // OAuth2回调页面（不需要认证）
+  // OAuth2回调页面（不需要认证）- SSO模式下使用
   {
     path: '/callback',
     name: 'Callback',
@@ -33,6 +40,19 @@ const routes = [
     name: 'C1BreedingCertificatePrint',
     component: () => import('../views/seed/c1-breeding-certificate/print.vue'),
     meta: { title: 'research.menu.c1BatchCertificate', hideInMenu: true, requiresAuth: true }
+  },
+  // 错误页面
+  {
+    path: '/401',
+    name: 'NoPermission',
+    component: () => import('../views/error/401.vue'),
+    meta: { title: '无权限', requiresAuth: false }
+  },
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: () => import('../views/error/404.vue'),
+    meta: { title: '页面未找到', requiresAuth: false }
   },
   {
     path: '/',
@@ -109,6 +129,12 @@ const routes = [
         name: 'DataList',
         component: () => import('../views/home/components/dataList.vue'),
         meta: { title: 'common.announcement', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'notice/:id',
+        name: 'NoticeDetail',
+        component: () => import('../views/home/components/NoticeDetail.vue'),
+        meta: { title: 'common.noticeDetail', hideInMenu: true, requiresAuth: false }
       }
     ]
   },
@@ -649,6 +675,38 @@ const routes = [
         component: () => import('../views/research/breeding/ose-receive-confirm/index.vue'),
         meta: { title: 'research.menu.oseReceiveConfirm', requiresAuth: true }
       },
+      {
+        path: 'breeding/ose-receive-confirm/detail/:id',
+        name: 'OseReceiveConfirmDetail',
+        component: () => import('../views/research/breeding/ose-receive-confirm/detail.vue'),
+        meta: { title: 'OSE接收确认详情', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-receive-confirm/confirm/:id',
+        name: 'OseReceiveConfirmConfirm',
+        component: () => import('../views/research/breeding/ose-receive-confirm/confirm.vue'),
+        meta: { title: 'OSE确认接收', hideInMenu: true, requiresAuth: true }
+      },
+
+      // OSE繁殖批次信息数据采集
+      {
+        path: 'breeding/ose-batch-collection',
+        name: 'OseBatchCollection',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/index.vue'),
+        meta: { title: 'OSE繁殖批次信息数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-batch-collection/add',
+        name: 'OseBatchCollectionAdd',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/collection-form.vue'),
+        meta: { title: '新增OSE繁殖批次采集', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-batch-collection/detail/:id',
+        name: 'OseBatchCollectionDetail',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/collection-detail.vue'),
+        meta: { title: 'OSE繁殖批次采集详情', hideInMenu: true, requiresAuth: true }
+      },
 
       // 种子扩繁批次信息采集
       {
@@ -749,6 +807,12 @@ const routes = [
         component: () => import('../views/research/c1-propagation-audit/detail.vue'),
         meta: { title: 'research.menu.c1SeedPropagationApplicationAuditDetail', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'c1-propagation-audit/audit/:id',
+        name: 'C1PropagationAuditForm',
+        component: () => import('../views/research/c1-propagation-audit/audit-form.vue'),
+        meta: { title: '审核繁殖申请', hideInMenu: true, requiresAuth: true }
+      },
 
       // C1繁殖批次管理
       {
@@ -789,6 +853,12 @@ const routes = [
         component: () => import('../views/research/detection/field-detection/add.vue'),
         meta: { title: 'research.menu.fieldDetection', hideInMenu: true, requiresAuth: true }
       },
+      {
+        path: 'field-detection/detail/:id',
+        name: 'FieldDetectionDetail',
+        component: () => import('../views/research/detection/field-detection/detail.vue'),
+        meta: { title: '田间检测详情', hideInMenu: true, requiresAuth: true }
+      },
 
       // 实验室检测
       {
@@ -802,6 +872,12 @@ const routes = [
         name: 'LabTestingAdd',
         component: () => import('../views/research/detection/lab-testing/add.vue'),
         meta: { title: 'research.menu.labTesting', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'lab-testing/detail/:id',
+        name: 'LabTestingDetail',
+        component: () => import('../views/research/detection/lab-testing/detail.vue'),
+        meta: { title: '实验室检测详情', hideInMenu: true, requiresAuth: true }
       },
 
       // 种子认证审核
@@ -858,7 +934,7 @@ const routes = [
       {
         path: 'institution/registration/detail/:id',
         name: 'RegistrationDetail',
-        component: () => import('../views/research/institution/registration/form.vue'),
+        component: () => import('../views/research/institution/registration/detail.vue'),
         meta: { title: 'research.menu.propagationOrgRegistrationDetail', hideInMenu: true, requiresAuth: true }
       },
       {
@@ -884,6 +960,24 @@ const routes = [
         name: 'OseManagement',
         component: () => import('../views/research/institution/ose-management/index.vue'),
         meta: { title: 'research.menu.oseManagement', requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/add',
+        name: 'OseAdd',
+        component: () => import('../views/research/institution/ose-management/form.vue'),
+        meta: { title: '新增OSE', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/edit/:id',
+        name: 'OseEdit',
+        component: () => import('../views/research/institution/ose-management/form.vue'),
+        meta: { title: '编辑OSE', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-management/detail/:id',
+        name: 'OseDetail',
+        component: () => import('../views/research/institution/ose-management/detail.vue'),
+        meta: { title: 'OSE详情', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
@@ -927,6 +1021,13 @@ const routes = [
         name: 'SeedPromotionDetail',
         component: () => import('../views/research/seed/SeedPromotionDetail.vue'),
         meta: { title: 'research.menu.seedPromotionManagementDetail', hideInMenu: true, requiresAuth: true }
+      },
+      // 种子推广新增
+      {
+        path: 'seed/promotion/form',
+        name: 'SeedPromotionForm',
+        component: () => import('../views/research/seed/SeedPromotionForm.vue'),
+        meta: { title: '新增推广内容', hideInMenu: true, requiresAuth: true }
       },
       // 种子信息公示
       {
@@ -1782,6 +1883,71 @@ const routes = [
         meta: { title: 'newFarm.menu.landDetail', hideInMenu: true, requiresAuth: true }
       }
     ]
+  },
+  // 登录页面（不需要认证）
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/login/index.vue'),
+    meta: { requiresAuth: false }
+  },
+  // 系统管理
+  {
+    path: '/system',
+    name: 'SystemManagement',
+    component: () => import('../layout/SystemLayout.vue'),
+    redirect: '/system/user',
+    meta: { requiresAuth: true, layoutConfig: systemLayoutConfig },
+    children: [
+      {
+        path: 'user',
+        name: 'SystemUser',
+        component: () => import('../views/system/user/index.vue'),
+        meta: { title: '用户管理', requiresAuth: true }
+      },
+      {
+        path: 'role',
+        name: 'SystemRole',
+        component: () => import('../views/system/role/index.vue'),
+        meta: { title: '角色管理', requiresAuth: true }
+      },
+      {
+        path: 'menu',
+        name: 'SystemMenu',
+        component: () => import('../views/system/menu/index.vue'),
+        meta: { title: '菜单管理', requiresAuth: true }
+      },
+      {
+        path: 'dept',
+        name: 'SystemDept',
+        component: () => import('../views/system/dept/index.vue'),
+        meta: { title: '部门管理', requiresAuth: true }
+      },
+      {
+        path: 'dict',
+        name: 'SystemDict',
+        component: () => import('../views/system/dict/index.vue'),
+        meta: { title: '字典管理', requiresAuth: true }
+      },
+      {
+        path: 'dict-data/:dictType',
+        name: 'SystemDictData',
+        component: () => import('../views/system/dict/data.vue'),
+        meta: { title: '字典数据', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'notice',
+        name: 'SystemNotice',
+        component: () => import('../views/system/notice/index.vue'),
+        meta: { title: '公告管理', requiresAuth: true }
+      },
+      {
+        path: 'config',
+        name: 'SystemConfig',
+        component: () => import('../views/system/config/index.vue'),
+        meta: { title: '参数配置', requiresAuth: true }
+      }
+    ]
   }
 ]
 
@@ -1802,27 +1968,34 @@ router.beforeEach(async (to, from, next) => {
   }
   const userStore = useUserStore()
 
-  // 1. 先判断 URL 上有没有 token
-  const urlToken = getTokenFromUrl()
+  // 1. 先判断 URL 上有没有 token (SSO模式)
+  const loginMode = getLoginMode()
+  const urlToken = loginMode === 'sso' ? getTokenFromUrl() : null
 
   // 2. 判断 localStorage 有没有 token
   const storedToken = getToken()
 
   // 3. 处理不同情况
-  if (urlToken) {
+  if (urlToken && loginMode === 'sso') {
+    // SSO模式下，URL中有token
     userStore.setToken(urlToken)
     try {
       await userStore.fetchUserInfo()
+      await userStore.getPermissions()
+      await userStore.getMenus()
+
+      // 清理URL中的token参数
       if (window.location.hash.includes('token=') || window.location.search.includes('token=')) {
-        window.history.replaceState(null, '', window.location.pathname)
+        window.history.replaceState(null, '', window.location.pathname + window.location.hash.split('?')[0])
         return next('/home')
       }
-
     } catch (error) {
-      redirectToLogin(to.fullPath, userStore)
+      console.error('路由守卫: SSO登录后获取用户信息失败:', error)
+      userStore.logoutAndRedirect(1000)
       return next(false)
     }
   } else if(!storedToken) {
+    // 没有token，跳转登录
     userStore.logoutAndRedirect(1000)
     return next(false)
   } else {
@@ -1833,6 +2006,10 @@ router.beforeEach(async (to, from, next) => {
       console.log('路由守卫: 用户信息不存在，开始获取')
       try {
         const result = await userStore.fetchUserInfo()
+        // 获取权限和菜单
+        await userStore.getPermissions()
+        await userStore.getMenus()
+        
         console.log('路由守卫: 用户信息获取完成:', result ? '成功' : '失败')
         console.log('路由守卫: 获取后状态 - hasUserInfo:', userStore.hasUserInfo)
       } catch (error) {
@@ -1842,8 +2019,54 @@ router.beforeEach(async (to, from, next) => {
         return next(false)
       }
     } else {
+      // 用户信息存在，但如果菜单或权限为空，也尝试获取一次
+      if (userStore.menus.length === 0) {
+        await userStore.getMenus()
+      }
+      if (userStore.permissions.length === 0) {
+        await userStore.getPermissions()
+      }
       console.log('路由守卫: 用户信息已存在，直接放行')
     }
+
+    // 检查路由权限
+    // 如果是白名单路由（如首页），直接放行
+    if (to.path === '/home' || to.path === '/user' || to.path === '/404' || to.path === '/401') {
+      return next()
+    }
+
+    // 检查是否有菜单权限
+    // 注意：这里假设所有受控路由都在菜单中定义。如果有一些隐藏路由不在菜单中但需要访问，
+    // 需要确保它们在 getRouters 返回的列表中（即使 hidden: true）
+    
+    // 检查是否在白名单中（前缀匹配）
+    const isInWhitelist = (path) => {
+      return routeWhitelist.some(prefix => path === prefix || path.startsWith(prefix + '/'))
+    }
+    
+    // 只有当路由需要认证时才检查权限
+    if (requiresAuth) {
+      // 首先检查白名单
+      if (isInWhitelist(to.path)) {
+        console.log('路由守卫: 白名单路径，允许访问:', to.path)
+        return next()
+      }
+      
+      // 如果用户没有任何菜单权限，阻止访问非白名单路由
+      if (userStore.menus.length === 0) {
+        console.warn('路由守卫: 用户没有任何菜单权限，无法访问:', to.path)
+        return next('/401')
+      }
+      
+      // 检查菜单权限
+      const hasPerm = userStore.hasMenuPermission(to.path)
+      if (!hasPerm) {
+        console.warn('路由守卫: 此路径未在菜单中找到:', to.path)
+        // 不在白名单也不是动态路由，拦截
+        return next('/401')
+      }
+    }
+
     next()
   }
 })
