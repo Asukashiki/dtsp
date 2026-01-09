@@ -176,7 +176,7 @@ const mobileMenuVisible = ref(false)
 
 // 从store获取用户信息
 const userName = computed(() => userStore.userInfo?.nickName || userStore.userInfo?.userName || 'user')
-const organName = computed(() => resolveMenuTitle(userStore.userInfo?.dept?.deptName) || 'user')
+const organName = computed(() => parseI18nValue(userStore.userInfo?.dept?.deptName, locale.value, 'user'))
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 解析菜单名称 (使用统一的 i18n 解析工具)

@@ -45,6 +45,14 @@ export const getLogout = () => {
   })
 }
 
+export const getSsoLogout = () => {
+  return request({
+    url: '/oauth2/logout',
+    method: 'get'
+  })
+}
+
+
 // OAuth2授权码登录
 export const oauth2LoginWithCode = (code, redirectUri, grantType) => {
   const data = {

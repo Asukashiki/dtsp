@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getCurrentUserInfo, getLogout, oauth2LoginWithCode } from '@/api/user'
+import { getCurrentUserInfo, getLogout, oauth2LoginWithCode, getSsoLogout } from '@/api/user'
 import { getRouters, getInfo } from '@/api/system/login'
 import {
   getToken,
@@ -111,7 +111,11 @@ export const useUserStore = defineStore('user', {
 
     async logoutAndRedirect(delay = 0) {
       try {
-        await getLogout()
+        if(getLoginMode() === 'system'){
+          await getLogout()
+        }else{
+          await getSsoLogout()
+        }
         this.logout()
         
         if (delay > 0) {

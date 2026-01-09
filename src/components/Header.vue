@@ -103,8 +103,8 @@ const resolveI18nLabel = (label) => {
 }
 
 // 从store获取用户信息
-const userName = computed(() => userStore.userInfo?.user?.name || 'user')
-const organName = computed(() => userStore.userInfo?.user?.organName || 'user')
+const userName = computed(() => userStore.userInfo?.nickName || userStore.userInfo?.userName || 'user')
+const organName = computed(() => resolveI18nLabel(userStore.userInfo?.dept?.deptName) || 'user')
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
 // 当前语言标签
