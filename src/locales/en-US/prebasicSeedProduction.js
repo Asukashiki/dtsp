@@ -1,6 +1,7 @@
 export default {
   title: 'Pre-basic Seed Batch Info',
-  subtitle: 'Pre-basic Seed Batch Information Management',
+  subtitle: 'Manage Pre-basic Seed Production Batch Information',
+  list: 'Batch List',
   add: 'Add Batch',
   detail: 'Batch Detail',
   searchPlaceholder: 'Search variety name or crop type',

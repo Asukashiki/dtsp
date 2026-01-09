@@ -2,51 +2,32 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-database-2-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.datasetCompilation.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.datasetCompilation.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon="ri-database-2-line"
+        :title="$t('research.datasetCompilation.title')"
+        :subtitle="$t('research.datasetCompilation.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.datasetCompilation.list') }}</span>
-            </div>
-            <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
-              {{ $t('common.add') }}
-            </el-button>
-          </div>
-
-          <div class="card-body">
-            <!-- 搜索区域 -->
-            <div class="search-section">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('research.datasetCompilation.columns.varietyName')">
               <el-input
                 v-model="searchForm.keyword"
                 :placeholder="$t('research.datasetCompilation.searchPlaceholder')"
                 clearable
-                class="search-input"
-              >
-                <template #prefix>
-                  <i class="ri-search-line"></i>
-                </template>
+                class="search-input">
+                <template #prefix><i class="ri-search-line"></i></template>
               </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.datasetCompilation.columns.datasetStatus')">
               <el-select
                 v-model="searchForm.datasetStatus"
                 :placeholder="$t('research.datasetCompilation.filterByStatus')"
                 clearable
-                class="search-select"
-              >
+                class="filter-select">
                 <el-option :label="$t('research.datasetCompilation.status.draft')" value="draft" />
                 <el-option :label="$t('research.datasetCompilation.status.submitted')" value="submitted" />
                 <el-option :label="$t('research.datasetCompilation.status.reviewing')" value="reviewing" />
@@ -54,25 +35,30 @@
                 <el-option :label="$t('research.datasetCompilation.status.rejected')" value="rejected" />
                 <el-option :label="$t('research.datasetCompilation.status.needs_revision')" value="needs_revision" />
               </el-select>
-              <el-button type="primary" @click="handleSearch">
-                <i class="ri-search-line"></i>
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-refresh-line"></i>
-                {{ $t('common.reset') }}
-              </el-button>
-            </div>
+            </SearchItem>
+          </SearchForm>
+        </div>
 
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe>
-                <el-table-column
-                  prop="datasetCode"
-                  :label="$t('research.datasetCompilation.columns.datasetCode')"
-                  min-width="180"
-                  show-overflow-tooltip
->
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="$t('research.datasetCompilation.list')"
+          icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('common.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table v-loading="loading" :data="tableData" stripe>
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column
+                prop="datasetCode"
+                :label="$t('research.datasetCompilation.columns.datasetCode')"
+                min-width="180"
+                show-overflow-tooltip>
                   <template #default="{ row }">
                     <template v-if="row.datasetCode">
                       <span class="dataset-code">{{ row.datasetCode }}</span>
@@ -150,32 +136,13 @@
                   :label="$t('research.datasetCompilation.columns.createTime')"
                    min-width="180"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" :width="410">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="240">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>
-                        {{ $t('common.view') }}
-                      </el-button>
-                      <el-button
-                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
-                        link
-                        type="primary"
-                        @click="handleEdit(row)"
-                      >
-                        <i class="ri-edit-line"></i>
-                        {{ $t('common.edit') }}
-                      </el-button>
-                      <el-button
-                        v-if="row.datasetStatus === 'draft' || row.datasetStatus === 'rejected'"
-                        link
-                        type="success"
-                        @click="handleSubmit(row)"
-                      >
-                        <i class="ri-send-plane-line"></i>
-                        {{ $t('research.datasetCompilation.actions.submit') }}
-                      </el-button>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="mapDatasetStatusToWorkflow(row.datasetStatus)"
+                      mode="list"
+                      :show-audit="false"
+                      @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -194,98 +161,84 @@
               </div>
             </div>
 
-            <!-- 移动端卡片 -->
-            <div class="mobile-card-list mobile-only">
-              <div v-for="item in tableData" :key="item.id" class="mobile-card">
-                <div class="mobile-card-header">
-                  <div class="mobile-card-title">
-                    <i class="ri-database-2-line"></i>
-                    <span>{{ item.varietyName }}</span>
-                  </div>
-                  <el-tag :type="getStatusType(item.datasetStatus)" size="small">
-                    {{ getStatusLabel(item.datasetStatus) }}
-                  </el-tag>
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-for="item in tableData" :key="item.id" class="mobile-card">
+              <div class="mobile-card-header">
+                <div class="mobile-card-title">
+                  <i class="ri-database-2-line"></i>
+                  <span>{{ item.varietyName }}</span>
                 </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.datasetCode') }}:</span>
-                    <span class="value">{{ item.datasetCode || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.trialId') }}:</span>
-                    <span class="value">{{ item.trialId || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.batchId') }}:</span>
-                    <span class="value">{{ item.batchId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.versionNo') }}:</span>
-                    <span class="value">{{ item.versionNo || '1.0' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
-                    <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType || '-' }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
-                    <span class="value">{{ item.varietyName }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.recordCount') }}:</span>
-                    <span class="value">{{ item.recordCount || 0 }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.labTestCount') }}:</span>
-                    <span class="value">{{ item.labTestCount || 0 }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.yieldDataCount') }}:</span>
-                    <span class="value">{{ item.yieldDataCount || 0 }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('research.datasetCompilation.columns.createTime') }}:</span>
-                    <span class="value">{{ item.createdTime || '-' }}</span>
-                  </div>
+                <el-tag :type="getStatusType(item.datasetStatus)" size="small">
+                  {{ getStatusLabel(item.datasetStatus) }}
+                </el-tag>
+              </div>
+              <div class="mobile-card-body">
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.datasetCode') }}:</span>
+                  <span class="value">{{ item.datasetCode || '-' }}</span>
                 </div>
-                <div class="mobile-card-actions">
-                  <el-button type="primary" size="small" @click="handleView(item)">
-                    {{ $t('common.view') }}
-                  </el-button>
-                  <el-button v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'" size="small" @click="handleEdit(item)">
-                    {{ $t('common.edit') }}
-                  </el-button>
-                  <el-button
-                    v-if="item.datasetStatus === 'draft' || item.datasetStatus === 'rejected'"
-                    type="success"
-                    size="small"
-                    @click="handleSubmit(item)"
-                  >
-                    {{ $t('research.datasetCompilation.actions.submit') }}
-                  </el-button>
-
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.trialId') }}:</span>
+                  <span class="value">{{ item.trialId || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.batchId') }}:</span>
+                  <span class="value">{{ item.batchId }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.versionNo') }}:</span>
+                  <span class="value">{{ item.versionNo || '1.0' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
+                  <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType || '-' }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
+                  <span class="value">{{ item.varietyName }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.recordCount') }}:</span>
+                  <span class="value">{{ item.recordCount || 0 }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.labTestCount') }}:</span>
+                  <span class="value">{{ item.labTestCount || 0 }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.yieldDataCount') }}:</span>
+                  <span class="value">{{ item.yieldDataCount || 0 }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.datasetCompilation.columns.createTime') }}:</span>
+                  <span class="value">{{ item.createdTime || '-' }}</span>
                 </div>
               </div>
-
-              <!-- 移动端分页 -->
-              <div class="pagination-wrapper mobile-pagination">
-                <el-pagination
-                  v-model:current-page="pagination.currentPage"
-                  v-model:page-size="pagination.pageSize"
-                  :page-sizes="[10, 20, 50]"
-                  :total="pagination.total"
-                  layout="total, prev, pager, next"
-                  small
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                />
+              <div class="mobile-card-footer">
+                <ActionButtons
+                  :workflow-status="mapDatasetStatusToWorkflow(item.datasetStatus)"
+                  mode="list"
+                  :show-audit="false"
+                  @action="(action) => handleAction(item, action)" />
               </div>
             </div>
 
-            <!-- 空状态 -->
-            <el-empty v-if="tableData.length === 0 && !loading" :description="$t('home.noData')" />
+            <!-- 移动端分页 -->
+            <div class="pagination-wrapper mobile-pagination">
+              <el-pagination
+                v-model:current-page="pagination.currentPage"
+                v-model:page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="pagination.total"
+                layout="total, prev, pager, next"
+                small
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              />
+            </div>
           </div>
-        </div>
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -298,6 +251,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getDatasetList, deleteDataset, submitDataset } from '@/api/dataset'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -316,6 +271,19 @@ const pagination = reactive({
   pageSize: 10,
   total: 0
 })
+
+// 将数据集状态映射为工作流状态
+const mapDatasetStatusToWorkflow = (datasetStatus) => {
+  const statusMap = {
+    'draft': 'S0',           // 草稿
+    'submitted': 'S1',       // 待审批
+    'reviewing': 'S1',       // 待审批
+    'approved': 'S2',        // 审核通过
+    'rejected': 'S3',        // 审核驳回
+    'needs_revision': 'S3'   // 需要修订（视为驳回）
+  }
+  return statusMap[datasetStatus] || 'S0'
+}
 
 // 加载数据
 const loadData = async () => {
@@ -372,6 +340,24 @@ const handleReset = () => {
 // 新增
 const handleAdd = () => {
   router.push({ name: 'DatasetCompilationAdd' })
+}
+
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmit(row)
+      break
+    case 'cancelBatch':
+      handleDelete(row)
+      break
+  }
 }
 
 // 查看
@@ -454,82 +440,15 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-
-/* 卡片 */
-.info-card {
-  background: white;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title i {
-  font-size: 22px;
-}
-
-.card-body {
-  padding: 24px;
-}
-
-/* 搜索区域 */
-.search-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
-
-.search-select {
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.search-section .el-button {
-  flex-shrink: 0;
-}
-
-/* 表格 */
-.table-wrapper {
-  margin-top: 16px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
 /* Dataset Code 样式 */
 .dataset-code {
   color: #009A44;
   font-weight: 600;
-}
-
-.temp-code {
-  display: inline-flex;
-  align-items: center;
 }
 
 .temp-tag {
@@ -548,161 +467,5 @@ onMounted(() => {
 .temp-tag i {
   font-size: 14px;
   color: #faad14;
-}
-/* 分页 */
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
-}
-
-/* 移动端卡片列表 */
-.mobile-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 16px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.mobile-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.mobile-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  flex: 1;
-}
-
-.mobile-card-title i {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.mobile-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
-  flex-wrap: wrap;
-}
-
-.mobile-card-actions .el-button {
-  flex: 1;
-  min-width: 70px;
-}
-
-/* 响应式 */
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .content-wrapper {
-    border-radius: 12px;
-  }
-
-  .card-header {
-    padding: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .search-section {
-    flex-direction: column;
-  }
-
-  .search-input,
-  .search-select {
-    width: 100%;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
 }
 </style>

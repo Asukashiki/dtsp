@@ -1,79 +1,74 @@
 <template>
-  <div class="dataset-audit-review-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.datasetAudit.title') }}</h1>
+          </div>
         </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('research.datasetAudit.title') }}</h1>
-        </div>
-        <div class="header-right"></div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
-        <!-- 基础信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.datasetAudit.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.datasetCode') }}:</span>
-              <span class="value highlight">{{ detailData.datasetCode || '-' }}</span>
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <template v-if="detailData">
+          <!-- 基础信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.datasetAudit.form.basicInfo') }}</span>
+              </div>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.datasetStatus') }}:</span>
-              <el-tag :type="getDatasetStatusType(detailData.datasetStatus)">
-                {{ $t(`research.datasetCompilation.status.${detailData.datasetStatus}`) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.trialId') }}:</span>
-              <span class="value">{{ detailData.trialId || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.batchId') }}:</span>
-              <span class="value">{{ detailData.batchId || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.versionNo') }}:</span>
-              <span class="value">{{ detailData.versionNo || '1.0' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.cropType') }}:</span>
-              <span class="value">{{ detailData.cropType || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.varietyName') }}:</span>
-              <span class="value">{{ detailData.varietyName || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.recordCount') }}:</span>
-              <span class="value">{{ detailData.recordCount || 0 }}</span>
-            </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('research.datasetAudit.form.remark') }}:</span>
-              <span class="value">{{ detailData.remark || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.datasetCode')">
+                  <span class="highlight-value">{{ detailData.datasetCode || '-' }}</span>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.datasetStatus')">
+                  <el-tag :type="getDatasetStatusType(detailData.datasetStatus)">
+                    {{ $t(`research.datasetCompilation.status.${detailData.datasetStatus}`) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.trialId')">
+                  {{ detailData.trialId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.batchId')">
+                  {{ detailData.batchId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.versionNo')">
+                  {{ detailData.versionNo || '1.0' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.cropType')">
+                  {{ detailData.cropType || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.varietyName')">
+                  {{ detailData.varietyName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.recordCount')">
+                  {{ detailData.recordCount || 0 }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.remark')" :span="2">
+                  {{ detailData.remark || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 数据统计 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetAudit.form.dataStatistics') }}
-          </div>
-          <div class="statistics-grid">
+          <!-- 数据统计 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-line"></i>
+                <span>{{ $t('research.datasetAudit.form.dataStatistics') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="statistics-grid">
             <div class="stat-card">
               <div class="stat-icon">
                 <i class="ri-flask-line"></i>
@@ -157,54 +152,61 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- 编制信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-user-line"></i>
-            {{ $t('research.datasetAudit.form.compilationInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.compiledBy') }}:</span>
-              <span class="value">{{ detailData.compiledByName || detailData.compiledBy || '-' }}</span>
+          <!-- 编制信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ $t('research.datasetAudit.form.compilationInfo') }}</span>
+              </div>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.compiledAt') }}:</span>
-              <span class="value">{{ detailData.compiledAt || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.compiledBy')">
+                  {{ detailData.compiledByName || detailData.compiledBy || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.compiledAt')">
+                  {{ detailData.compiledAt || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 提交信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-send-plane-line"></i>
-            {{ $t('research.datasetAudit.form.submitInfo') }}
+          <!-- 提交信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-send-plane-line"></i>
+                <span>{{ $t('research.datasetAudit.form.submitInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.submitTime')">
+                  {{ detailData.submitTime }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.submitterName')">
+                  {{ detailData.submitByName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.submitOrgName')" :span="2">
+                  {{ detailData.submitOrgName || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.submitTime') }}:</span>
-              <span class="value">{{ detailData.submitTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.submitterName') }}:</span>
-              <span class="value">{{ detailData.submitByName || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.submitOrgName') }}:</span>
-              <span class="value">{{ detailData.submitOrgName || '-' }}</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- 数据详情Tab页 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-data-line"></i>
-            {{ $t('research.datasetAudit.form.dataDetails') }}
-          </div>
-          <el-tabs v-model="activeTab" type="card" style="margin-top: 12px">
+          <!-- 数据详情Tab页 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-data-line"></i>
+                <span>{{ $t('research.datasetAudit.form.dataDetails') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-tabs v-model="activeTab" type="card">
             <!-- 地块及播种信息Tab -->
             <el-tab-pane :label="$t('research.datasetAudit.tab.plot')" name="plotInfo">
               <el-table
@@ -577,57 +579,57 @@
               </el-table>
             </el-tab-pane>
           </el-tabs>
-        </div>
-
-        <!-- 审核信息 (已审核时显示) -->
-        <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('research.datasetAudit.form.auditInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.auditStatus') }}:</span>
-              <el-tag :type="getAuditStatusType(detailData.auditStatus)">
-                {{ $t(`research.datasetAudit.auditStatus.${detailData.auditStatus}`) }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.lockedFlag') }}:</span>
-              <el-tag :type="detailData.lockedFlag === 1 ? 'danger' : 'success'">
-                <i :class="detailData.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
-                {{ detailData.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.auditTime') }}:</span>
-              <span class="value">{{ detailData.auditTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.datasetAudit.form.auditorName') }}:</span>
-              <span class="value">{{ detailData.auditorName || '-' }}</span>
-            </div>
-            <div v-if="detailData.auditOpinion" class="detail-item full-width">
-              <span class="label">{{ $t('research.datasetAudit.form.auditOpinion') }}:</span>
-              <span class="value">{{ detailData.auditOpinion }}</span>
             </div>
           </div>
-        </div>
 
-        <!-- 审核表单 (待审核时显示) -->
-        <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="detail-section audit-form-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('research.datasetAudit.form.auditInfo') }}
+          <!-- 审核信息 (已审核时显示) -->
+          <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-shield-check-line"></i>
+                <span>{{ $t('research.datasetAudit.form.auditInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.auditStatus')">
+                  <el-tag :type="getAuditStatusType(detailData.auditStatus)">
+                    {{ $t(`research.datasetAudit.auditStatus.${detailData.auditStatus}`) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.lockedFlag')">
+                  <el-tag :type="detailData.lockedFlag === 1 ? 'danger' : 'success'">
+                    <i :class="detailData.lockedFlag === 1 ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
+                    {{ detailData.lockedFlag === 1 ? $t('research.datasetAudit.form.locked') : $t('research.datasetAudit.form.unlocked') }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.auditTime')">
+                  {{ detailData.auditTime || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('research.datasetAudit.form.auditorName')">
+                  {{ detailData.auditorName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item v-if="detailData.auditOpinion" :label="$t('research.datasetAudit.form.auditOpinion')" :span="2">
+                  {{ detailData.auditOpinion }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
           </div>
 
-          <el-form
-              ref="auditFormRef"
-              :model="auditForm"
-              :rules="auditRules"
-              label-position="top"
-              class="audit-form"
-          >
+          <!-- 审核表单 (待审核时显示) -->
+          <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="info-card audit-form-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-shield-check-line"></i>
+                <span>{{ $t('research.datasetAudit.form.auditInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-form
+                ref="auditFormRef"
+                :model="auditForm"
+                :rules="auditRules"
+                label-position="top">
             <el-form-item :label="$t('research.datasetAudit.form.auditOpinion')" prop="auditOpinion">
               <el-input
                   v-model="auditForm.auditOpinion"
@@ -667,38 +669,31 @@
               </div>
             </el-form-item>
 
-            <div class="audit-actions">
-              <el-button
-                  type="success"
-                  size="large"
-                  :loading="submitting"
-                  @click="handleApprove"
-              >
-                <i class="ri-check-line"></i>
-                {{ $t('research.datasetAudit.actions.approve') }}
-              </el-button>
-              <!-- <el-button
-                  type="warning"
-                  size="large"
-                  :loading="submitting"
-                  @click="handleNeedsRevision"
-              >
-                <i class="ri-edit-line"></i>
-                {{ $t('research.datasetAudit.actions.needsRevision') }}
-              </el-button> -->
+            <div class="form-actions">
+              <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
               <el-button
                   type="danger"
-                  size="large"
+                  plain
                   :loading="submitting"
                   @click="handleReject"
               >
-                <i class="ri-close-line"></i>
+                <i class="ri-close-circle-line"></i>
                 {{ $t('research.datasetAudit.actions.reject') }}
+              </el-button>
+              <el-button
+                  type="success"
+                  :loading="submitting"
+                  @click="handleApprove"
+              >
+                <i class="ri-checkbox-circle-line"></i>
+                {{ $t('research.datasetAudit.actions.approve') }}
               </el-button>
             </div>
           </el-form>
-        </div>
-      </template>
+            </div>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -1239,114 +1234,21 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.dataset-audit-review-container {
-  min-height: calc(100vh - 120px);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* 详情分节 */
-.detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-/* 详情网格 */
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-  flex-direction: column;
-}
-
-.detail-item .label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.detail-item.full-width .label {
-  min-width: auto;
-  margin-bottom: 8px;
-}
-
-.detail-item .value {
-  color: #1f2937;
-  flex: 1;
-}
-
-.detail-item .value.highlight {
+/* 高亮值样式 */
+.highlight-value {
   color: #009A44;
   font-weight: 600;
   font-size: 16px;
+}
+
+/* 审核表单卡片特殊样式 */
+.audit-form-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  // border: 2px solid #fbbf24;
 }
 
 /* 统计卡片网格 */
@@ -1405,16 +1307,6 @@ onMounted(() => {
   line-height: 1;
 }
 
-/* 审核表单 */
-.audit-form-section {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border: 2px solid #fbbf24;
-}
-
-.audit-form {
-  margin-top: 20px;
-}
-
 /* 锁定数据集控件 */
 .lock-dataset-control {
   display: flex;
@@ -1451,230 +1343,14 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.audit-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.audit-actions .el-button {
-  min-width: 160px;
-}
-
-/* ========== Tab 页样式优化 ========== */
-.dataset-audit-review-container :deep(.el-tabs) {
-  --el-tabs-header-text-color: #6b7280;
-  --el-tabs-active-text-color: #009A44;
-  --el-tabs-border-color: #e5e7eb;
-  --el-tabs-card-header-background: #f9fafb;
-}
-
-.dataset-audit-review-container :deep(.el-tabs__header) {
-  margin-bottom: 16px;
-}
-
-.dataset-audit-review-container :deep(.el-tabs__item) {
-  padding: 0 20px;
-  height: 40px;
-  line-height: 40px;
-}
-
-.dataset-audit-review-container :deep(.el-tabs__item.is-active) {
-  background-color: #f0fdf4;
-  border-color: #009A44;
-}
-
-.dataset-audit-review-container :deep(.el-tabs--card > .el-tabs__header .el-tabs__item.is-active) {
-  border-bottom-color: #009A44;
-}
-
-.dataset-audit-review-container :deep(.el-tabs__ink-bar) {
-  height: 3px;
-  background-color: #009A44;
-}
-
-/* 表格样式适配 */
-.dataset-audit-review-container :deep(.el-table) {
-  --el-table-header-text-color: #009A44;
-  --el-table-row-hover-bg-color: #f0fdf4;
-}
-
-.dataset-audit-review-container :deep(.el-table th) {
-  background-color: #f8fff9 !important;
-}
-
-.dataset-audit-review-container :deep(.el-table td) {
-  border-color: #e8f5ec;
-}
-
-/* ==================== 响应式设计 ==================== */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .detail-section {
-    padding: 20px 16px;
-  }
-
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-}
-
+/* 响应式设计 */
 @media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-section {
-    padding: 16px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-  }
-
-  .section-title {    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  /* 单列布局 */
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    background: rgba(0, 154, 68, 0.02);
-    border-radius: 8px;
-    border-left: 3px solid #009A44;
-  }
-
-  .detail-item.full-width {
-    grid-column: auto;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 15px;
-  }
-
   .statistics-grid {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-
-  .audit-actions {
-    flex-direction: column;
-  }
-
-  .audit-actions .el-button {
-    width: 100%;
-    min-width: auto;
-  }
-
-  /* Tab 页移动端适配 */
-  .dataset-audit-review-container :deep(.el-tabs__nav) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .dataset-audit-review-container :deep(.el-tabs__item) {
-    padding: 0 16px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  /* 表格移动端适配 */
-  .dataset-audit-review-container :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  .dataset-audit-review-container :deep(.el-table th) {
-    padding: 8px 4px;
-  }
-
-  .dataset-audit-review-container :deep(.el-table td) {
-    padding: 8px 4px;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .detail-section {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .detail-grid {
-    gap: 12px;
-  }
-
-  .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .detail-item .value.highlight {
-    font-size: 14px;
-  }
-
   .statistics-grid {
     grid-template-columns: 1fr;
     gap: 12px;

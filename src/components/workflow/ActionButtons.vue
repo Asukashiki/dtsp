@@ -148,13 +148,8 @@ const getDefaultButtons = () => {
         // 审核页面：只显示审核按钮
         buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
       } else if (!props.showAudit) {
-        // 管理页面：显示查看按钮 + 作废按钮
-        if (userStore.hasWorkflowStatusPermission('approve')) {
-          buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        }
-        if (userStore.hasWorkflowStatusPermission('cancel')) {
-          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-        }
+        // 管理页面：只显示查看按钮（待审批状态不显示作废按钮）
+        buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
       }
       break
 

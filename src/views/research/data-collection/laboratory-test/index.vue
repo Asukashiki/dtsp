@@ -2,38 +2,19 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-microscope-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.dataCollection.laboratoryTest.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.dataCollection.laboratoryTest.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon="ri-microscope-line"
+        :title="$t('research.dataCollection.laboratoryTest.title')"
+        :subtitle="$t('research.dataCollection.laboratoryTest.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('research.dataCollection.laboratoryTest.list') }}</span>
-            </div>
-            <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line"></i>
-              {{ $t('common.add') }}
-            </el-button>
-          </div>
-
-          <div class="card-body">
-            <!-- 搜索区域 -->
-            <div class="search-section">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('research.dataCollection.laboratoryTest.form.batchId')">
               <el-select
                 v-model="searchForm.batchId"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.batchId')"
                 filterable
                 clearable
                 class="search-input"
@@ -45,9 +26,10 @@
                   :value="item.batchId"
                 />
               </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('research.dataCollection.laboratoryTest.form.auditStatus')">
               <el-select
                 v-model="searchForm.workflowStatus"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.auditStatus')"
                 clearable
                 class="search-input"
               >
@@ -58,9 +40,10 @@
                   :value="opt.value"
                 />
               </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('research.dataCollection.laboratoryTest.form.sampleType')">
               <el-input
                 v-model="searchForm.sampleType"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleType')"
                 clearable
                 class="search-input"
               >
@@ -68,18 +51,20 @@
                   <i class="ri-test-tube-line"></i>
                 </template>
               </el-input>
+            </SearchItem>
+            <SearchItem :label="$t('research.dataCollection.laboratoryTest.form.testStatus')">
               <el-select
                 v-model="searchForm.passFailFlag"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.testStatus')"
                 clearable
                 class="search-input"
               >
                 <el-option label="Pass" value="true" />
                 <el-option label="Fail" value="false" />
               </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('research.dataCollection.laboratoryTest.form.sampleId')">
               <el-input
                 v-model="searchForm.sampleId"
-                :placeholder="$t('research.dataCollection.laboratoryTest.form.sampleId')"
                 clearable
                 class="search-input"
               >
@@ -87,19 +72,23 @@
                   <i class="ri-search-line"></i>
                 </template>
               </el-input>
-              <el-button type="primary" @click="handleSearch">
-                <i class="ri-search-line"></i>
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-refresh-line"></i>
-                {{ $t('common.reset') }}
-              </el-button>
-            </div>
+            </SearchItem>
+          </SearchForm>
+        </div>
 
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe>
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.dataCollection.laboratoryTest.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('common.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table v-loading="loading" :data="tableData" stripe>
+              <el-table-column type="selection" width="55" align="center" />
                 <el-table-column
                   prop="batchId"
                   :label="$t('research.dataCollection.laboratoryTest.form.batchId')"
@@ -224,64 +213,13 @@
                   :label="$t('common.approveTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="240">
                   <template #default="{ row }">
-                    <div class="action-buttons">
-                      <!-- 查看按钮 - 非草稿状态显示 -->
-                      <el-button
-                        v-if="row.workflowStatus !== 'S0'"
-                        link
-                        type="primary"
-                        @click="handleView(row)"
-                      >
-                        <i class="ri-eye-line"></i>
-                        {{ $t('common.view') }}
-                      </el-button>
-
-                      <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                      <el-button
-                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
-                        link
-                        type="primary"
-                        @click="handleEdit(row)"
-                      >
-                        <i class="ri-edit-line"></i>
-                        {{ $t('common.edit') }}
-                      </el-button>
-
-                      <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                      <el-button
-                        v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S3'"
-                        link
-                        type="success"
-                        @click="handleSubmit(row)"
-                      >
-                        <i class="ri-send-plane-line"></i>
-                        {{ $t('research.dataCollection.laboratoryTest.submit') }}
-                      </el-button>
-
-                      <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
-                      <!-- <el-button
-                        v-if="row.workflowStatus === 'S2'"
-                        link
-                        type="warning"
-                        @click="handleArchive(row)"
-                      >
-                        <i class="ri-archive-line"></i>
-                        {{ $t('research.dataCollection.laboratoryTest.archive') }}
-                      </el-button> -->
-
-                      <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
-                      <el-button
-                        v-if="row.workflowStatus === 'S0'"
-                        link
-                        type="danger"
-                        @click="handleCancel(row)"
-                      >
-                        <i class="ri-close-circle-line"></i>
-                        {{ $t('research.dataCollection.laboratoryTest.cancel') }}
-                      </el-button>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="row.workflowStatus || 'S0'"
+                      mode="list"
+                      :show-audit="false"
+                      @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -390,54 +328,12 @@
                   </div>
                 </div>
                 <div class="mobile-card-actions">
-                  <!-- 查看按钮 - 非草稿状态显示 -->
-                  <el-button
-                    v-if="item.workflowStatus !== 'S0'"
-                    type="primary"
+                  <ActionButtons
+                    :workflow-status="item.workflowStatus || 'S0'"
+                    mode="list"
+                    :show-audit="false"
                     size="small"
-                    @click="handleView(item)"
-                  >
-                    {{ $t('common.view') }}
-                  </el-button>
-
-                  <!-- 编辑按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                  <el-button
-                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
-                    size="small"
-                    @click="handleEdit(item)"
-                  >
-                    {{ $t('common.edit') }}
-                  </el-button>
-
-                  <!-- 提交审核按钮 - 草稿(S0)和已退回(S3)状态显示 -->
-                  <el-button
-                    v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S3'"
-                    type="success"
-                    size="small"
-                    @click="handleSubmit(item)"
-                  >
-                    {{ $t('research.dataCollection.laboratoryTest.submit') }}
-                  </el-button>
-
-                  <!-- 归档按钮 - 仅已审批(S2)状态显示 -->
-                  <el-button
-                    v-if="item.workflowStatus === 'S2'"
-                    type="warning"
-                    size="small"
-                    @click="handleArchive(item)"
-                  >
-                    {{ $t('research.dataCollection.laboratoryTest.archive') }}
-                  </el-button>
-
-                  <!-- 作废按钮 - 仅草稿(S0)状态显示 -->
-                  <el-button
-                    v-if="item.workflowStatus === 'S0'"
-                    type="danger"
-                    size="small"
-                    @click="handleCancel(item)"
-                  >
-                    {{ $t('research.dataCollection.laboratoryTest.cancel') }}
-                  </el-button>
+                    @action="(action) => handleAction(item, action)" />
                 </div>
               </div>
 
@@ -458,8 +354,7 @@
 
             <!-- 空状态 -->
             <el-empty v-if="tableData.length === 0 && !loading" :description="$t('home.noData')" />
-          </div>
-        </div>
+        </InfoCard>
       </div>
     </div>
   </div>
@@ -470,6 +365,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getLabTestList, deleteLabTest, submitLabTest, archiveLabTest, cancelLabTest } from '@/api/labTest'
 import { getBatchOptions } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
@@ -674,6 +571,27 @@ const handleCancel = async (row) => {
   }
 }
 
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmit(row)
+      break
+    case 'archive':
+      handleArchive(row)
+      break
+    case 'cancelBatch':
+      handleCancel(row)
+      break
+  }
+}
+
 // 分页
 const handleSizeChange = () => {
   pagination.currentPage = 1
@@ -691,220 +609,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-/* 页面容器 */
-
-/* 卡片 */
-.info-card {
-  background: white;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e8f5e9;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title i {
-  font-size: 22px;
-}
-
-.card-body {
-  padding: 24px;
-}
-
-/* 搜索区域 */
-.search-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
-
-.search-section .el-button {
-  flex-shrink: 0;
-}
-
-/* 表格 */
-.table-wrapper {
-  margin-top: 16px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* 分页 */
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e8f5e9;
-}
-
-/* 移动端卡片列表 */
-.mobile-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.mobile-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 16px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.mobile-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.mobile-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  flex: 1;
-}
-
-.mobile-card-title i {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.mobile-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-card-row {
-  display: flex;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.mobile-card-row .label {
-  color: #666;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-.mobile-card-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.mobile-card-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.mobile-card-actions .el-button {
-  flex: 1;
-}
-
-/* 响应式 */
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
-
-  .page-header {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 30px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-  }
-
-  .content-wrapper {
-    border-radius: 12px;
-  }
-
-  .card-header {
-    padding: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .card-body {
-    padding: 16px;
-  }
-
-  .search-section {
-    flex-direction: column;
-  }
-
-  .search-input {
-    width: 100%;
-  }
-
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

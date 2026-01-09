@@ -1,117 +1,179 @@
 <template>
-  <div class="result-container">
-    <div v-show="!showForm && !showDetail" class="list-view">
-       <div class="page-header">
-       
-            <div class="header-left header-icon">
-            <i class="ri-file-list-3-line "></i>
-            </div>
-             <div class="header-content">
-            <div class="header-text">
-            <h1 class="page-title">{{ $t('research.breeding.seed.production.result.title') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
-            </div>
-        </div>
-       </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-scales-3-line"
+        :title="$t('research.breeding.seed.production.result.list')"
+        :subtitle="$t('research.breeding.seed.production.subtitle')" />
 
-       <div class="content-wrapper">
-          <!-- Search -->
-          <el-form :model="queryParams" ref="queryRef" :inline="true" class="search-form">
-            <el-form-item :label="$t('research.breeding.seed.production.form.produceBatchName')" prop="produceBatchName">
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="resetQuery">
+            <SearchItem :label="$t('research.breeding.seed.production.columns.produceBatchName')">
               <el-input
                 v-model="queryParams.produceBatchName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.produceBatchName')"
+                :placeholder="$t('research.breeding.seed.production.columns.produceBatchName')"
                 clearable
-                @keyup.enter="handleQuery"
-              />
-            </el-form-item>
-             <el-form-item :label="$t('research.breeding.seed.production.form.varietyName')" prop="varietyName">
+                class="search-input">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
+
+            <SearchItem :label="$t('research.breeding.seed.production.columns.varietyName')">
               <el-input
                 v-model="queryParams.varietyName"
-                :placeholder="$t('research.breeding.seed.production.placeholder.varietyName')"
+                :placeholder="$t('research.breeding.seed.production.columns.varietyName')"
                 clearable
-                @keyup.enter="handleQuery"
-              />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" icon="Search" @click="handleQuery">{{ $t('common.search') }}</el-button>
-              <el-button icon="Refresh" @click="resetQuery">{{ $t('common.reset') }}</el-button>
-            </el-form-item>
-          </el-form>
+                class="search-input" />
+            </SearchItem>
+          </SearchForm>
+        </div>
 
-          <!-- Toolbar -->
-          <div class="table-toolbar">
-            <el-button type="primary" icon="Plus" @click="handleAdd">
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('research.breeding.seed.production.result.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
               {{ $t('common.add') }}
             </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="resultList" stripe v-loading="loading">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column
+                prop="produceBatchId"
+                :label="$t('research.breeding.seed.production.columns.produceBatchId')"
+                min-width="200"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="produceBatchName"
+                :label="$t('research.breeding.seed.production.columns.produceBatchName')"
+                min-width="180"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="varietyName"
+                :label="$t('research.breeding.seed.production.columns.varietyName')"
+                min-width="150"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="breedBatchName"
+                :label="$t('research.breeding.seed.production.columns.breedBatchName')"
+                min-width="180"
+                show-overflow-tooltip />
+              <el-table-column
+                prop="producedAmount"
+                :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')"
+                min-width="150"
+                align="right">
+                <template #default="{ row }">
+                  {{ row.producedAmount }} kg
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="collectionDate"
+                :label="$t('research.breeding.seed.production.form.time')"
+                min-width="160" />
+              <el-table-column
+                prop="operator"
+                :label="$t('research.breeding.seed.production.columns.operatorName')"
+                min-width="120" />
+              <el-table-column
+                :label="$t('common.actions')"
+                width="240"
+                fixed="right">
+                <template #default="{ row }">
+                  <div class="action-buttons">
+                    <el-button type="primary" size="small" @click="handleDetail(row)">
+                      <i class="ri-eye-line"></i>
+                      <span class="btn-text">{{ $t('common.view') }}</span>
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="getList"
+                @current-change="getList" />
+            </div>
           </div>
 
-          <!-- Table -->
-          <el-table v-loading="loading" :data="resultList" style="width: 100%">
-             <el-table-column type="index" width="50" align="center" />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchId')" prop="produceBatchId" min-width="150" show-overflow-tooltip />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.produceBatchName')" prop="produceBatchName" min-width="150" show-overflow-tooltip />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.varietyName')" prop="varietyName" min-width="120" show-overflow-tooltip />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.breedBatchName')" prop="breedBatchName" min-width="150" show-overflow-tooltip />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.produceSeedQuantrity')" prop="producedAmount" min-width="120" align="right">
-                <template #default="{ row }">
-                   {{ row.producedAmount }} kg
-                </template>
-             </el-table-column>
-             <el-table-column :label="$t('research.breeding.seed.production.form.time')" prop="collectionDate" width="160" align="center" />
-             <el-table-column :label="$t('research.breeding.seed.production.columns.operatorName')" prop="operator" width="120" align="center" />
-             <el-table-column :label="$t('common.action')" align="center" width="150" fixed="right">
-              <template #default="scope">
-                <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">
-                  {{ $t('common.view') }}
-                </el-button>
-                <!-- <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">
-                  {{ $t('common.delete') }}
-                </el-button> -->
-              </template>
-            </el-table-column>
-          </el-table>
-          
-          <pagination
-            v-show="total>0"
-            :total="total"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            @pagination="getList"
-          />
-       </div>
-    </div>
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only">
+            <div
+              v-for="item in resultList"
+              :key="item.resultId"
+              class="mobile-card"
+              @click="handleDetail(item)">
+              <div class="mobile-card-header">
+                <div class="mobile-card-title">
+                  <i class="ri-scales-3-line"></i>
+                  <span>{{ item.produceBatchName }}</span>
+                </div>
+              </div>
+              <div class="mobile-card-body">
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breeding.seed.production.columns.varietyName') }}:</span>
+                  <span class="value">{{ item.varietyName }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breeding.seed.production.columns.produceSeedQuantrity') }}:</span>
+                  <span class="value">{{ item.producedAmount }} kg</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breeding.seed.production.form.time') }}:</span>
+                  <span class="value">{{ item.collectionDate }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('research.breeding.seed.production.columns.operatorName') }}:</span>
+                  <span class="value">{{ item.operator }}</span>
+                </div>
+              </div>
+            </div>
 
-    <ResultForm 
-        v-if="showForm"
-        @cancel="showForm = false"
-        @success="handleSuccess"
-    />
-    
-    <ResultDetail
-      v-if="showDetail"
-      :result-id="currentResultId"
-      @close="showDetail = false"
-    />
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="total"
+                layout="total, prev, pager, next"
+                small
+                @size-change="getList"
+                @current-change="getList" />
+            </div>
+          </div>
+        </InfoCard>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedSeedProduceResultList, deleteBreedSeedProduceResult } from '@/api/breedSeed'
-import ResultForm from './form.vue'
-import ResultDetail from './detail.vue'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const loading = ref(true)
-const showForm = ref(false)
-const showDetail = ref(false)
 const resultList = ref([])
 const total = ref(0)
-const currentResultId = ref(null)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -127,7 +189,7 @@ const getList = async () => {
     resultList.value = res.rows
     total.value = res.total
   } catch (error) {
-     console.error(error)
+    console.error(error)
   } finally {
     loading.value = false
   }
@@ -145,12 +207,14 @@ const resetQuery = () => {
 }
 
 const handleAdd = () => {
-    showForm.value = true
+  router.push({ name: 'SeedProductionResultAdd' })
 }
 
 const handleDetail = (row) => {
-    currentResultId.value = row.resultId
-    showDetail.value = true
+  router.push({ 
+    name: 'SeedProductionResultDetail', 
+    params: { id: row.resultId } 
+  })
 }
 
 const handleDelete = (row) => {
@@ -165,23 +229,40 @@ const handleDelete = (row) => {
   })
 }
 
-const handleSuccess = () => {
-    showForm.value = false
-    getList()
-}
-
 onMounted(() => {
   getList()
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.search-form {
-  margin-bottom: 20px;
-}
+// 操作按钮样式 - 匹配 ActionButtons 组件的样式
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
 
-.table-toolbar {
-  margin-bottom: 16px;
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .btn-text {
+      white-space: nowrap;
+    }
+  }
 }
 </style>

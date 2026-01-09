@@ -1,368 +1,390 @@
 <template>
-  <div class="laboratory-test-form-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-left">
-        <div class="back-btn" link @click="goBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
+          </div>
         </div>
       </div>
-      <div class="header-content">
-        <h1 class="page-title">
-          {{ isEdit ? $t('research.dataCollection.laboratoryTest.edit') :
-            $t('research.dataCollection.laboratoryTest.add') }}
-        </h1>
+
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          v-loading="loading"
+          :model="formData"
+          :rules="rules"
+          label-width="200px"
+        >
+          <!-- 基础信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')" prop="trialId">
+                    <el-select
+                      v-model="formData.trialId"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.trialId')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleTrialChange"
+                    >
+                      <el-option
+                        v-for="item in trialOptions"
+                        :key="item.trialId"
+                        :label="`${item.trialId} - ${item.trialName}`"
+                        :value="item.trialId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
+                    <el-input
+                      v-model="formData.batchId"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchIdAuto')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="批次ID将根据试验ID自动填充" placement="top">
+                          <i class="ri-information-line" style="color: #909399"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 样本信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-test-tube-line"></i>
+                <span>{{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')" prop="sampleId">
+                    <el-input
+                      v-model="formData.sampleId"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleId')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="样本编号自动生成" placement="top">
+                          <i class="ri-barcode-line" style="color: #909399"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleType')" prop="sampleType">
+                    <el-select
+                      v-model="formData.sampleType"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleType')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="onSampleTypeChange"
+                    >
+                      <el-option v-for="opt in sampleTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labParameter')" prop="labParameter">
+                    <el-select
+                      v-model="formData.labParameter"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.labParameter')"
+                      :disabled="!formData.sampleType"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="onLabParameterChange"
+                    >
+                      <el-option v-for="param in labParameterOptions" :key="param.value" :label="param.label" :value="param.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围'">
+                    <el-input :model-value="expectedRangeText" disabled readonly />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.resultValue')" prop="resultValue">
+                    <!-- pH：0-14，精度1 -->
+                    <template v-if="currentParamRule && currentParamRule.key === 'pH'">
+                      <el-input-number v-model="formData.resultValue" :min="0" :max="14" :precision="1" :controls="false" style="width: 100%" />
+                    </template>
+                    <!-- 含百分比的参数（moisture、protein） -->
+                    <template v-else-if="currentParamRule && currentParamRule.unit === '%'">
+                      <div class="input-with-unit">
+                        <el-input-number v-model="formData.resultValue" :min="0" :max="100" :precision="2" :controls="false" style="width: 100%" />
+                        <span class="unit-hint">%</span>
+                      </div>
+                    </template>
+                    <!-- EC，默认 0-100 -->
+                    <template v-else-if="currentParamRule && currentParamRule.key === 'EC'">
+                      <div class="input-with-unit">
+                        <el-input-number v-model="formData.resultValue" :min="0" :precision="2" :controls="false" style="width: 100%" />
+                        <span class="unit-hint">mS/cm</span>
+                      </div>
+                    </template>
+                    <!-- 其他（如 NPK、mycotoxin），先用文本输入兜底 -->
+                    <template v-else>
+                      <el-input v-model="formData.resultValue" :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.resultValue')" clearable />
+                    </template>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 测试数据 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-line"></i>
+                <span>{{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')" prop="germinationRate">
+                    <div class="input-with-unit">
+                      <el-input-number
+                        v-model="formData.germinationRate"
+                        :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.germinationRate')"
+                        :min="0"
+                        :max="100"
+                        :precision="2"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                      <span class="unit-hint">%</span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')" prop="purityPercent">
+                    <div class="input-with-unit">
+                      <el-input-number
+                        v-model="formData.purityPercent"
+                        :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.purityPercent')"
+                        :min="0"
+                        :max="100"
+                        :precision="2"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                      <span class="unit-hint">%</span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')" prop="moistureContentPercent">
+                    <div class="input-with-unit">
+                      <el-input-number
+                        v-model="formData.moistureContentPercent"
+                        :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.moistureContentPercent')"
+                        :min="0"
+                        :max="100"
+                        :precision="2"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                      <span class="unit-hint">%</span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')" prop="proteinPercent">
+                    <div class="input-with-unit">
+                      <el-input-number
+                        v-model="formData.proteinPercent"
+                        :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.proteinPercent')"
+                        :min="0"
+                        :max="100"
+                        :precision="2"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                      <span class="unit-hint">%</span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.toxinLevelPpm')" prop="toxinLevelPpm">
+                    <div class="input-with-unit">
+                      <el-input-number
+                        v-model="formData.toxinLevelPpm"
+                        :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.toxinLevelPpm')"
+                        :min="0"
+                        :precision="2"
+                        :controls="false"
+                        style="width: 100%"
+                      />
+                      <span class="unit-hint">PPM</span>
+                    </div>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 健康与追溯 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-heart-pulse-line"></i>
+                <span>{{ $t('research.dataCollection.laboratoryTest.form.qualityInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.seedHealthFindings')" prop="seedHealthFindings">
+                    <el-input
+                      v-model="formData.seedHealthFindings"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.seedHealthFindings')"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.chainResponsibility')" prop="traceabilityLink">
+                    <el-input
+                      v-model="formData.traceabilityLink"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.chainResponsibility')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labReportFile')" prop="labReportFile">
+                    <el-upload
+                      class="doc-upload"
+                      :http-request="handleUploadFile"
+                      :file-list="labReportFileList"
+                      :on-remove="handleRemoveFile"
+                      :on-preview="handlePreviewFile"
+                      :limit="1"
+                      accept=".pdf"
+                    >
+                      <el-button type="primary" link>
+                        <i class="ri-upload-2-line"></i>
+                        {{ $t('research.dataCollection.laboratoryTest.placeholder.labReportFile') }}
+                      </el-button>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 检测信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-calendar-check-line"></i>
+                <span>{{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')" prop="passFailFlag">
+                    <el-input v-model="passFailFlagDisplay" disabled readonly>
+                      <template #prefix>
+                        <el-tag v-if="formData.passFailFlag === 'true' || formData.passFailFlag === true" type="success"
+                          size="small">
+                          Pass
+                        </el-tag>
+                        <el-tag v-else-if="formData.passFailFlag === 'false' || formData.passFailFlag === false" type="danger"
+                          size="small">
+                          Fail
+                        </el-tag>
+                      </template>
+                      <template #suffix>
+                        <el-tooltip content="基于实验参数和实验结果值自动判定" placement="top">
+                          <i class="ri-information-line" style="color: #909399"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testDate')" prop="testDate">
+                    <el-date-picker
+                      v-model="formData.testDate"
+                      type="date"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testDate')"
+                      style="width: 100%"
+                      format="YYYY-MM-DD"
+                      value-format="YYYY-MM-DD"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testOrganization')" prop="testOrganization">
+                    <el-input
+                      disabled
+                      v-model="formData.testOrganization"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testOrganization')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testerName')" prop="testerName">
+                    <el-input
+                      disabled
+                      v-model="formData.testerName"
+                      :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testerName')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="goBack">
+              {{ $t('common.cancel') }}
+            </el-button>
+            <el-button type="primary" @click="handleSubmit">
+              <i class="ri-save-line"></i>
+              {{ $t('common.save') }}
+            </el-button>
+          </div>
+        </el-form>
       </div>
-    </div>
-
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form
-        ref="formRef"
-        v-loading="loading"
-        :model="formData"
-        :rules="rules"
-        label-position="right"
-        label-width="200px"
-        class="lab-form"
-      >
-        <!-- 基础信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.basicInfo') }}
-          </div>
-
-          <!-- 试验ID -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.trialId')" prop="trialId">
-            <el-select
-              v-model="formData.trialId"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.trialId')"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="handleTrialChange"
-            >
-              <el-option
-                v-for="item in trialOptions"
-                :key="item.trialId"
-                :label="`${item.trialId} - ${item.trialName}`"
-                :value="item.trialId"
-              />
-            </el-select>
-          </el-form-item>
-
-          <!-- 批次ID（自动带出，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.batchId')" prop="batchId">
-            <el-input
-              v-model="formData.batchId"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.batchIdAuto')"
-              disabled
-              readonly
-            >
-              <template #suffix>
-                <el-tooltip content="批次ID将根据试验ID自动填充" placement="top">
-                  <i class="ri-information-line" style="color: #909399"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-
-        <!-- 样本信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-test-tube-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.sampleInfo') }}
-          </div>
-
-          <!-- 样本编号（自动生成UUID，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleId')" prop="sampleId">
-            <el-input
-              v-model="formData.sampleId"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleId')"
-              disabled
-              readonly
-            >
-              <template #suffix>
-                <el-tooltip content="样本编号自动生成" placement="top">
-                  <i class="ri-barcode-line" style="color: #909399"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-
-
-
-          <!-- 关联地块（用于报表关联样本）
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.plotId') || '地块编号'" prop="plotId">
-            <el-select
-              v-model="formData.plotId"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.plotId') || '请选择地块'"
-              filterable
-              clearable
-              style="width: 100%"
-              :loading="plotLoading"
-            >
-              <el-option v-for="p in plotOptions" :key="p.plotId" :label="p.plotId" :value="p.plotId" />
-            </el-select>
-          </el-form-item> -->
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.sampleType')" prop="sampleType">
-            <el-select
-              v-model="formData.sampleType"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.sampleType')"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="onSampleTypeChange"
-            >
-              <el-option v-for="opt in sampleTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labParameter')" prop="labParameter">
-            <el-select
-              v-model="formData.labParameter"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.labParameter')"
-              :disabled="!formData.sampleType"
-              filterable
-              clearable
-              style="width: 100%"
-              @change="onLabParameterChange"
-            >
-              <el-option v-for="param in labParameterOptions" :key="param.value" :label="param.label" :value="param.value" />
-            </el-select>
-          </el-form-item>
-
-          <!-- 新增：预期范围（自动填充，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.expectedRange') || '预期范围'">
-            <el-input :model-value="expectedRangeText" disabled readonly />
-          </el-form-item>
-
-          <!-- 实验结果值（随参数动态渲染） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.resultValue')" prop="resultValue">
-            <!-- pH：0-14，精度1 -->
-            <template v-if="currentParamRule && currentParamRule.key === 'pH'">
-              <el-input-number v-model="formData.resultValue" :min="0" :max="14" :precision="1" :controls="false" style="width: 100%" />
-            </template>
-            <!-- 含百分比的参数（moisture、protein） -->
-            <template v-else-if="currentParamRule && currentParamRule.unit === '%'">
-              <div class="input-with-unit">
-                <el-input-number v-model="formData.resultValue" :min="0" :max="100" :precision="2" :controls="false" style="width: 100%" />
-                <span class="unit-hint">%</span>
-              </div>
-            </template>
-            <!-- EC，默认 0-100 -->
-            <template v-else-if="currentParamRule && currentParamRule.key === 'EC'">
-              <div class="input-with-unit">
-                <el-input-number v-model="formData.resultValue" :min="0" :precision="2" :controls="false" style="width: 100%" />
-                <span class="unit-hint">mS/cm</span>
-              </div>
-            </template>
-            <!-- 其他（如 NPK、mycotoxin），先用文本输入兜底 -->
-            <template v-else>
-              <el-input v-model="formData.resultValue" :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.resultValue')" clearable />
-            </template>
-          </el-form-item>
-
-
-        </div>
-
-        <!-- 测试数据 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.germinationRate')" prop="germinationRate">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.germinationRate"
-                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.germinationRate')"
-                :min="0"
-                :max="100"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">%</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.purityPercent')" prop="purityPercent">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.purityPercent"
-                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.purityPercent')"
-                :min="0"
-                :max="100"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">%</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.moistureContentPercent')" prop="moistureContentPercent">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.moistureContentPercent"
-                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.moistureContentPercent')"
-                :min="0"
-                :max="100"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">%</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.proteinPercent')" prop="proteinPercent">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.proteinPercent"
-                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.proteinPercent')"
-                :min="0"
-                :max="100"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">%</span>
-            </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.toxinLevelPpm')" prop="toxinLevelPpm">
-            <div class="input-with-unit">
-              <el-input-number
-                v-model="formData.toxinLevelPpm"
-                :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.toxinLevelPpm')"
-                :min="0"
-                :precision="2"
-                :controls="false"
-                style="width: 100%"
-              />
-              <span class="unit-hint">PPM</span>
-            </div>
-          </el-form-item>
-        </div>
-
-        <!-- 健康与追溯 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-heart-pulse-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.qualityInfo') }}
-          </div>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.seedHealthFindings')" prop="seedHealthFindings">
-            <el-input
-              v-model="formData.seedHealthFindings"
-              type="textarea"
-              :rows="3"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.seedHealthFindings')"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.chainResponsibility')" prop="traceabilityLink">
-            <el-input
-              v-model="formData.traceabilityLink"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.chainResponsibility')"
-              clearable
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.labReportFile')" prop="labReportFile">
-            <el-upload
-              class="doc-upload"
-              :http-request="handleUploadFile"
-              :file-list="labReportFileList"
-              :on-remove="handleRemoveFile"
-              :on-preview="handlePreviewFile"
-              :limit="1"
-              accept=".pdf"
-            >
-              <el-button type="primary" link>
-                <i class="ri-upload-2-line"></i>
-                {{ $t('research.dataCollection.laboratoryTest.placeholder.labReportFile') }}
-              </el-button>
-            </el-upload>
-          </el-form-item>
-        </div>
-
-        <!-- 检测信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-calendar-check-line"></i>
-            {{ $t('research.dataCollection.laboratoryTest.form.testingInfo') }}
-          </div>
-
-          <!-- Test Status（自动计算，只读） -->
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testStatus')" prop="passFailFlag">
-            <el-input v-model="passFailFlagDisplay" disabled readonly>
-              <template #prefix>
-                <el-tag v-if="formData.passFailFlag === 'true' || formData.passFailFlag === true" type="success"
-                  size="small">
-                  Pass
-                </el-tag>
-                <el-tag v-else-if="formData.passFailFlag === 'false' || formData.passFailFlag === false" type="danger"
-                  size="small">
-                  Fail
-                </el-tag>
-              </template>
-              <template #suffix>
-                <el-tooltip content="基于实验参数和实验结果值自动判定" placement="top">
-                  <i class="ri-information-line" style="color: #909399"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testDate')" prop="testDate">
-            <el-date-picker
-              v-model="formData.testDate"
-              type="date"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testDate')"
-              style="width: 100%"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testOrganization')" prop="testOrganization">
-            <el-input
-              disabled
-              v-model="formData.testOrganization"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testOrganization')"
-              clearable
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.dataCollection.laboratoryTest.form.testerName')" prop="testerName">
-            <el-input
-              disabled
-              v-model="formData.testerName"
-              :placeholder="$t('research.dataCollection.laboratoryTest.placeholder.testerName')"
-              clearable
-            />
-          </el-form-item>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit">
-            <i class="ri-save-line"></i>
-            {{ isEdit ? $t('common.save') : $t('common.add') }}
-          </el-button>
-        </div>
-      </el-form>
     </div>
   </div>
 </template>
@@ -386,6 +408,7 @@ const { t } = useI18n()
 const formRef = ref(null)
 const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
+const pageTitle = computed(() => isEdit.value ? t('research.dataCollection.laboratoryTest.edit') : t('research.dataCollection.laboratoryTest.add'))
 
 // 下拉选项数据
 const trialOptions = ref([])
@@ -810,34 +833,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.lab-form {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 表单分节 */
-.form-section {
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss';
 
 /* 带单位的输入框容器 */
 .input-with-unit {
@@ -857,19 +854,6 @@ onMounted(() => {
   font-size: 14px;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-/* 操作按钮 */
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.form-actions .el-button {
-  min-width: 120px;
 }
 
 /* 文件上传组件样式 */

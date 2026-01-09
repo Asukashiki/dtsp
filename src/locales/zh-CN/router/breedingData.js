@@ -14,7 +14,8 @@ export default {
     add: '新增地块信息',
     edit: '编辑地块信息',
     detail: '地块信息详情',
-    audit: '地块及播种信息管理审核'
+    audit: '地块及播种信息管理审核',
+    auditReview: '审核地块'
   },
   // 试验基础信息管理
   trial: {
@@ -67,7 +68,9 @@ export default {
     add: '新增实验室测试数据',
     edit: '编辑实验室测试数据',
     detail: '实验室测试数据详情',
-    audit: '实验室测试数据采集审核'
+    audit: '实验室测试数据采集审核',
+    auditDetail: '审核实验室测试数据',
+    viewDetail: '查看实验室测试数据'
   },
   // 育种数据集编制
   datasetCompilation: {

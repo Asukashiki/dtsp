@@ -1,71 +1,67 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon"><i class="ri-plant-line"></i></div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('research.breedingData.farming.titleAudit') }}</h1>
-            <p class="page-subtitle">{{ $t('research.breedingData.farming.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-plant-line"
+        :title="$t('research.breedingData.farming.titleAudit')"
+        :subtitle="$t('research.breedingData.farming.subtitle')" />
 
+      <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-file-list-3-line"></i><span>{{ $t('research.breedingData.farming.list') }}</span></div>
-<!--            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>{{ $t('research.breedingData.farming.add') }}
-              </el-button>
-            </div>-->
-          </div>
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem label="Plot ID">
+              <el-select 
+                v-model="queryParams.plotId" 
+                placeholder="Please select Plot ID" 
+                clearable 
+                filterable 
+                class="filter-select">
+                <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
+              </el-select>
+            </SearchItem>
 
-          <div class="card-body">
-            <div class="search-section">
-              <div class="search-item">
-                <span class="search-label">Plot ID:</span>
-                <el-select v-model="queryParams.plotId" placeholder="Please select Plot ID" clearable filterable class="filter-select">
-                  <el-option v-for="item in plotOptions" :key="item.plotId" :label="item.plotId" :value="item.plotId" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">Activity Type:</span>
-                <el-select v-model="queryParams.activityType" placeholder="Please select Activity Type" clearable class="filter-select">
-                  <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">Activity Date:</span>
-                <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" class="filter-select" />
-              </div>
-              <div class="search-item">
-                <span class="search-label">Audit Status:</span>
-                <el-select v-model="queryParams.auditStatus" placeholder="Please select Audit Status" clearable class="filter-select">
-                  <el-option
-                    v-for="item in auditStatusOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>{{ $t('common.search') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
-                </el-button>
-              </div>
-            </div>
+            <SearchItem label="Activity Type">
+              <el-select 
+                v-model="queryParams.activityType" 
+                placeholder="Please select Activity Type" 
+                clearable 
+                class="filter-select">
+                <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
 
-            <div class="table-wrapper pc-only">
+            <SearchItem label="Activity Date">
+              <el-date-picker 
+                v-model="queryParams.activityDate" 
+                type="date" 
+                placeholder="Select Activity Date" 
+                clearable 
+                value-format="YYYY-MM-DD" 
+                style="width: 100%" />
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard
+          :title="$t('research.breedingData.farming.list')"
+          icon="ri-file-list-3-line"
+          :no-padding="true">
+          <!-- 状态标签页 -->
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange" />
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
               <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
+                <el-table-column type="selection" width="55" align="center" />
                 <el-table-column prop="farmingRecordId" label="Farming Record ID" min-width="180" show-overflow-tooltip />
-                <el-table-column prop="auditStatus" label="auditStatus" align="center" width="120">
+                <el-table-column prop="workflowStatus" label="Workflow Status" align="center" width="120">
                   <template #default="{ row }">
                     <el-tag :type="getStatusType(row.workflowStatus || row.auditStatus || 'S1')">
                       {{ getLabelByValue('flow_status', row.workflowStatus || row.auditStatus || 'S1') }}
@@ -102,31 +98,14 @@
                     {{ formatDateTime(row.auditedDatetime) }}
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="250" fixed="right">
+                <el-table-column :label="$t('research.breedingData.farming.columns.actions')" width="240" fixed="right">
                   <template #default="{ row }">
-                    <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 5px;">
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button link type="primary" @click="handleView(row)">
-                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                        </el-button>
-                        <el-button
-                          v-if="row.workflowStatus === 'S1' || row.workflowStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S0'"
-                          link type="success"
-                          @click="handleAudit(row)"
-                        >
-                          <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                        </el-button>
-                      </div>
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button
-                          v-if="row.workflowStatus === 'S0' || row.workflowStatus === 'S1' || row.workflowStatus === 'S3' || row.auditStatus === 'S0' || row.auditStatus === 'S1' || row.auditStatus === 'S3'"
-                          link type="warning"
-                          @click="handleCancel(row)"
-                        >
-                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                        </el-button>
-                      </div>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="row.workflowStatus || row.auditStatus || 'S1'"
+                      mode="list"
+                      :show-audit="activeTab === 'pendingApproval'"
+                      :is-voided-tab="activeTab === 'voided'"
+                      @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -135,9 +114,11 @@
                 <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :page-sizes="[10, 20, 50]" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
               </div>
             </div>
+          </InfoCard>
 
-            <div class="mobile-card-list mobile-only">
-                <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
+          <!-- 移动端卡片 -->
+          <div class="mobile-card-list mobile-only">
+            <div v-for="item in dataList" :key="item.farmingId" class="mobile-card">
                   <div class="mobile-card-header">
                     <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
                     <div class="mobile-card-title"><i class="ri-seedling-line"></i><span>{{ item.activityType }} - {{ formatDateTime(item.activityDate) }}</span></div>
@@ -165,74 +146,68 @@
                     <div class="mobile-card-row"><span class="label">Audited Time:</span><span class="value">{{ formatDateTime(item.auditedDatetime) }}</span></div>
                   </div>
                   <div class="mobile-card-footer">
-                    <div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%;">
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button size="small" @click="handleView(item)">
-                          <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                        </el-button>
-                        <el-button
-                          v-if="item.workflowStatus === 'S1' || item.workflowStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S0'"
-                          size="small"
-                          type="success"
-                          @click="handleAudit(item)"
-                        >
-                          <i class="ri-check-line"></i>{{ $t('trait-audit.auditBtn') }}
-                        </el-button>
-                      </div>
-                      <div style="display: flex; gap: 5px; width: 100%;">
-                        <el-button
-                          v-if="item.workflowStatus === 'S0' || item.workflowStatus === 'S1' || item.workflowStatus === 'S3' || item.auditStatus === 'S0' || item.auditStatus === 'S1' || item.auditStatus === 'S3'"
-                          size="small"
-                          type="warning"
-                          @click="handleCancel(item)"
-                        >
-                          <i class="ri-close-circle-line"></i>{{ $t('research.breedingData.plot.cancel') }}
-                        </el-button>
-                      </div>
-                    </div>
+                    <ActionButtons
+                      :workflow-status="item.workflowStatus || item.auditStatus || 'S1'"
+                      mode="list"
+                      :show-audit="activeTab === 'pendingApproval'"
+                      :is-voided-tab="activeTab === 'voided'"
+                      @action="(action) => handleAction(item, action)" />
                   </div>
                 </div>
-              <div class="pagination-wrapper">
-                <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :total="total" layout="prev, pager, next" small @current-change="getList" />
-              </div>
+
+            <div class="pagination-wrapper">
+              <el-pagination v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize" :total="total" layout="prev, pager, next" small @current-change="getList" />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</template>
+  </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getFarmingRecordList, deleteFarmingRecord, getPlotOptions } from '@/api/breedingData'
 import { cancelFarmingRecord } from '@/api/farmingRecordAudit'
 import { useDict } from '@/hooks/useDict'
 
+const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-
-// Determine tag type based on status value
-const getStatusType = (status) => {
-  const typeMap = {
-    'S0': 'info',     // Draft
-    'S1': 'warning',  // Pending Approval
-    'S2': 'success',  // Approved
-    'S3': 'danger',   // Rejected
-    'S10': 'info'     // Invalid
-  }
-  return typeMap[status] || 'warning'
-}
 
 const loading = ref(false)
 const dataList = ref([])
 const total = ref(0)
 const selectedIds = ref([])
 const plotOptions = ref([])
+const activeTab = ref('pendingApproval')
+
+// 使用 useDict hook 获取字典数据
 const { options: dictOptions, getLabelByValue } = useDict('flow_status')
+
+// Tab configuration
+const tabConfig = [
+  {
+    name: 'pendingApproval',
+    label: 'research.breedingData.farming.tabs.pendingApproval',
+    icon: 'ri-time-line'
+  },
+  {
+    name: 'approved',
+    label: 'research.breedingData.farming.tabs.approved',
+    icon: 'ri-check-line'
+  },
+  {
+    name: 'voided',
+    label: 'research.breedingData.farming.tabs.voided',
+    icon: 'ri-forbid-line'
+  }
+]
 
 const queryParams = reactive({
   pageNum: 1,
@@ -240,8 +215,21 @@ const queryParams = reactive({
   plotId: '',
   activityType: '',
   activityDate: '',
-  auditStatus: ''
+  workflowStatus: ''
 })
+
+// Determine tag type based on status value
+const getStatusType = (status) => {
+  const typeMap = {
+    'S0': 'info',     // Draft
+    'S1': 'warning',  // Pending Approval
+    'S2': 'primary',  // Approved
+    'S3': 'danger',   // Rejected
+    'S9': 'info',     // Archived
+    'S10': 'danger'   // Invalid
+  }
+  return typeMap[status] || 'warning'
+}
 
 // Format date time to 'YYYY-MM-DD HH:mm:ss'
 const formatDateTime = (val) => {
@@ -274,33 +262,38 @@ const activityTypeOptions = [
   { label: 'Harvest', value: 'harvest' }
 ]
 
+const setQueryParamsByTab = (tabName) => {
+  switch (tabName) {
+    case 'pendingApproval':
+      queryParams.workflowStatus = 'S1'
+      break
+    case 'approved':
+      queryParams.workflowStatus = 'S2'
+      break
+    case 'voided':
+      queryParams.workflowStatus = 'S10'
+      break
+  }
+}
+
+const handleTabChange = (tabName) => {
+  setQueryParamsByTab(tabName)
+  getList()
+}
 
 const getList = async () => {
   loading.value = true
   try {
-    // 添加过滤条件：不显示S0和S3状态的单子
-    const params = {
-      ...queryParams,
-      excludeStatuses: 'S0,S3' // 排除S0和S3状态
-    }
-
-    const res = await getFarmingRecordList(params)
-
-    // 前端再次过滤，确保不显示S0和S3状态的数据
-    const filteredData = (res.rows || []).filter(item => {
-      const status = item.workflowStatus || item.auditStatus
-      return status !== 'S0' && status !== 'S3'
-    })
-
-    dataList.value = filteredData.map(item => ({
+    // 注意：如果后端 getFarmingRecordList 接口不支持 S10 状态查询
+    // 可以暂时在已作废标签页返回空数据，等待接口支持后再对接
+    // 如需使用专门的已作废接口，可以根据 activeTab 调用不同的 API
+    
+    const res = await getFarmingRecordList(queryParams)
+    dataList.value = (res.rows || []).map(item => ({
       ...item,
-      checked: false // Ensure each item has checked property
+      checked: false
     }))
     total.value = res.total || 0
-
-    // Debug: View dictionary options and data
-    console.log('Dictionary options dictOptions.flow_status:', dictOptions.flow_status)
-    console.log('First 3 items of data list:', dataList.value.slice(0, 3))
   } catch (error) {
     console.error('Failed to get list:', error)
   } finally {
@@ -326,9 +319,26 @@ const handleReset = () => {
   queryParams.plotId = ''
   queryParams.activityType = ''
   queryParams.activityDate = ''
-  queryParams.auditStatus = ''
   queryParams.pageNum = 1
+  setQueryParamsByTab(activeTab.value)
   getList()
+}
+
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'audit':
+      handleAudit(row)
+      break
+    case 'cancelBatch':
+      handleCancel(row)
+      break
+  }
 }
 
 const handleSelectionChange = (selection) => {
@@ -390,6 +400,10 @@ const handleBatchDelete = () => {
 }
 
 onMounted(() => {
+  if (route.query.tab) {
+    activeTab.value = route.query.tab
+  }
+  setQueryParamsByTab(activeTab.value)
   loadPlotOptions()
   getList()
 })
@@ -397,67 +411,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .search-input {
-      width: 200px;
-    }
-
-    .filter-select {
-      width: 180px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .search-section {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 80px;
-      }
-
-      .search-input,
-      .filter-select {
-        flex: 1;
-        width: auto;
-      }
-    }
-
-    .search-actions {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

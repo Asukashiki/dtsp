@@ -1,126 +1,140 @@
 <template>
-  <div class="form-container">
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i class="ri-file-list-3-line"></i>
-          <span>{{ $t('prebasicSeedProductionResult.add') }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleCancel">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('prebasicSeedProductionResult.add') }}</h1>
+          </div>
         </div>
-        <el-button @click="handleCancel">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
       </div>
 
-      <div class="card-body">
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
         <el-form
           ref="formRef"
           :model="formData"
           :rules="rules"
-          label-width="180px"
-          label-position="right"
-        >
-          <!-- Production Selection -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-seedling-line"></i>
-              {{ $t('prebasicSeedProductionResult.form.batchInfo') }}
+          label-width="180px">
+          <!-- 生产批次选择卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ $t('prebasicSeedProductionResult.form.batchInfo') }}</span>
+              </div>
             </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.produceBatchId')" prop="produceBatchId">
+                    <el-select
+                      v-model="formData.produceBatchId"
+                      :placeholder="$t('prebasicSeedProductionResult.placeholder.produceBatchId')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleBatchChange">
+                      <el-option
+                        v-for="batch in batchList"
+                        :key="batch.produceBatchId"
+                        :label="batch.produceBatchName"
+                        :value="batch.produceBatchId">
+                        <div style="display: flex; align-items: center;">
+                          <span>{{ batch.produceBatchName }}</span>
+                          <span style="color: #909399; font-size: 13px; margin-left: 8px;">(ID: {{ batch.produceBatchId }})</span>
+                        </div>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.produceBatchId')" prop="produceBatchId">
-                <el-select
-                  v-model="formData.produceBatchId"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.produceBatchId')"
-                  filterable
-                  clearable
-                  style="width: 100%"
-                  @change="handleBatchChange"
-                >
-                  <el-option
-                    v-for="batch in batchList"
-                    :key="batch.produceBatchId"
-                    :label="batch.produceBatchName"
-                    :value="batch.produceBatchId"
-                  >
-                    <div style="display: flex; align-items: center;">
-                      <span>{{ batch.produceBatchName }}</span>
-                      <span style="color: #909399; font-size: 13px; margin-left: 8px;">(ID: {{ batch.produceBatchId }})</span>
-                    </div>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.varietyName')" prop="varietyName">
-                <el-input v-model="formData.varietyName" disabled />
-              </el-form-item>
-            </div>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.varietyName')" prop="varietyName">
+                    <el-input v-model="formData.varietyName" disabled />
+                  </el-form-item>
+                </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.breedBatchName')" prop="breedBatchName">
-                <el-input v-model="formData.breedBatchName" disabled />
-              </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.breedBatchName')" prop="breedBatchName">
+                    <el-input v-model="formData.breedBatchName" disabled />
+                  </el-form-item>
+                </el-col>
 
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.trialName')" prop="trialName">
-                <el-input v-model="formData.trialName" disabled />
-              </el-form-item>
-            </div>
-            
-            <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.fromSeedLevel')" prop="fromSeedLevel">
-                <el-input v-model="formData.fromSeedLevel" disabled />
-              </el-form-item>
-              
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.toSeedLevel')" prop="toSeedLevel">
-                <el-input v-model="formData.toSeedLevel" disabled />
-              </el-form-item>
-            </div>
-            
-            <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.cropType')" prop="cropType">
-                <el-input
-                  v-model="cropTypeLabel"
-                  disabled
-                />
-              </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.trialName')" prop="trialName">
+                    <el-input v-model="formData.trialName" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.fromSeedLevel')" prop="fromSeedLevel">
+                    <el-input v-model="formData.fromSeedLevel" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.toSeedLevel')" prop="toSeedLevel">
+                    <el-input v-model="formData.toSeedLevel" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.cropType')" prop="cropType">
+                    <el-input v-model="cropTypeLabel" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </div>
 
-          <!-- Result Data -->
-          <div class="form-section">
-            <div class="section-title">
-              <i class="ri-scales-3-line"></i>
-              {{ $t('prebasicSeedProductionResult.form.resultInfo') }}
+          <!-- 采集数据卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-scales-3-line"></i>
+                <span>{{ $t('prebasicSeedProductionResult.form.resultInfo') }}</span>
+              </div>
             </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.outputQuantity') + ' (kg)'" prop="outputQuantity">
+                    <el-input-number
+                      v-model="formData.outputQuantity"
+                      :min="0"
+                      :precision="2"
+                      :placeholder="$t('prebasicSeedProductionResult.placeholder.outputQuantity')"
+                      style="width: 100%" />
+                  </el-form-item>
+                </el-col>
 
-            <div class="form-row">
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.outputQuantity')" prop="outputQuantity">
-                <el-input-number
-                  v-model="formData.outputQuantity"
-                  :min="0"
-                  :precision="2"
-                  style="width: 100%"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.outputQuantity')"
-                />
-              </el-form-item>
-              
-              <el-form-item :label="$t('prebasicSeedProductionResult.form.operator')">
-                <el-input v-model="operatorName" disabled />
-              </el-form-item>
-            </div>
-            
-            <div class="form-row">
-               <el-form-item :label="$t('prebasicSeedProductionResult.form.collectionDate')" prop="collectionDate">
-                <el-date-picker
-                  v-model="formData.collectionDate"
-                  type="datetime"
-                  :placeholder="$t('prebasicSeedProductionResult.placeholder.collectionDate')"
-                  style="width: 100%"
-                />
-              </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.operator')">
+                    <el-input v-model="operatorName" disabled />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.collectionDate')" prop="collectionDate">
+                    <el-date-picker
+                      v-model="formData.collectionDate"
+                      type="datetime"
+                      :placeholder="$t('prebasicSeedProductionResult.placeholder.collectionDate')"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </div>
 
+          <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSubmit" :loading="submitting">
@@ -287,98 +301,6 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.form-container {
-  padding: 20px 0;
-}
-
-.info-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.card-title i {
-  font-size: 20px;
-}
-
-.card-body {
-  padding: 30px 24px;
-}
-
-.form-section {
-  margin-bottom: 30px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  border-left: 4px solid #009A44;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-.form-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.form-row > .el-form-item {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-@media screen and (max-width: 768px) {
-  :deep(.el-form-item__label) {
-    text-align: left !important;
-  }
-
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-  
-  .form-actions button {
-    width: 100%;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

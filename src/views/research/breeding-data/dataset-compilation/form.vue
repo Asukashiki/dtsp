@@ -1,23 +1,23 @@
 <template>
-  <div class="dataset-form-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-          <div class="back-btn" link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">
+              {{ isEdit ? $t('research.datasetCompilation.edit') : $t('research.datasetCompilation.add') }}
+            </h1>
           </div>
         </div>
-        <div class="header-content">
-          <h1 class="page-title">
-            {{ isEdit ? $t('research.datasetCompilation.edit') : $t('research.datasetCompilation.add') }}
-          </h1>
-        </div>
-    </div>
+      </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
           ref="formRef"
           v-loading="loading"
           :model="formData"
@@ -25,230 +25,261 @@
           label-position="right"
           label-width="200px"
           class="dataset-form"
-      >
-        <!-- 基础信息（备注已保留） -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.datasetCompilation.form.basicInfo') }}
-          </div>
-          <el-form-item :label="$t('research.datasetCompilation.form.trialId')" prop="trialId">
-            <el-select
-                v-model="formData.trialId"
-                :placeholder="$t('research.datasetCompilation.placeholder.trialId')"
-                :disabled="!isEditable"
-                filterable
-                clearable
-                @change="handleTrialChange"
-            >
-              <el-option
-                  v-for="item in trialOptions"
-                  :key="item.trialId"
-                  :label="`${item.trialId} - ${item.trialName}`"
-                  :value="item.trialId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.batchId')" prop="batchId">
-            <el-input
-                v-model="formData.batchId"
-                :placeholder="$t('research.datasetCompilation.placeholder.batchIdAuto')"
-                disabled
-                readonly
-            >
-              <template #suffix>
-                <el-tooltip content="$t('research.datasetCompilation.tooltip.batchIdAuto')" placement="top">
-                  <i class="ri-information-line"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.compiledBy')" prop="compiledBy">
-            <el-input
-                v-model="formData.compiledByName"
-                :placeholder="$t('research.datasetCompilation.placeholder.compiledBy')"
-                disabled
-                readonly
-            >
-              <template #suffix>
-                <el-tooltip content="$t('research.datasetCompilation.tooltip.compiledByAuto')" placement="top">
-                  <i class="ri-user-line"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.compiledAt')" prop="compiledAt">
-            <el-date-picker
-                v-model="formData.compiledAt"
-                type="datetime"
-                :placeholder="$t('research.datasetCompilation.placeholder.compiledAt')"
-                :disabled="!isEditable"
-                value-format="YYYY-MM-DD HH:mm:ss"
-                style="width: 100%"
-            />
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.recordCount')" prop="recordCount">
-            <el-input-number
-                v-model="recordCountComputed"
-                :min="0"
-                :placeholder="$t('research.datasetCompilation.placeholder.recordCount')"
-                disabled
-                readonly
-                style="width: 100%"
-            />
-            <template #extra>
-              <div style="font-size: 12px; color: #909399; margin-top: 4px;">
+        >
+          <!-- 基础信息 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
                 <i class="ri-information-line"></i>
-                {{ $t('research.datasetCompilation.placeholder.recordCountAutoCalculate') }}
+                <span>{{ $t('research.datasetCompilation.form.basicInfo') }}</span>
               </div>
-            </template>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.status')" prop="status">
-            <el-select
-                v-model="formData.status"
-                :placeholder="$t('research.datasetCompilation.placeholder.status')"
-                disabled
-                style="width: 100%"
-            >
-              <el-option :label="$t('research.datasetCompilation.status.draft')" value="Draft" />
-              <el-option :label="$t('research.datasetCompilation.status.submitted')" value="Submitted" />
-              <el-option :label="$t('research.datasetCompilation.status.approved')" value="Approved" />
-              <el-option :label="$t('research.datasetCompilation.status.rejected')" value="Rejected" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.cropType')" prop="cropType">
-            <el-input
-                :value="getLabelByValue('crop_type', formData.cropType) || formData.cropType"
-                :placeholder="$t('research.datasetCompilation.placeholder.cropType')"
-                disabled
-                readonly
-            >
-              <template #suffix>
-                <el-tooltip content="$t('research.datasetCompilation.tooltip.cropTypeAuto')" placement="top">
-                  <i class="ri-information-line"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.varietyName')" prop="varietyName">
-            <el-input
-                v-model="formData.varietyName"
-                :placeholder="$t('research.datasetCompilation.placeholder.varietyName')"
-                disabled
-                readonly
-            >
-              <template #suffix>
-                <el-tooltip content="$t('research.datasetCompilation.tooltip.varietyNameAuto')" placement="top">
-                  <i class="ri-information-line"></i>
-                </el-tooltip>
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item :label="$t('research.datasetCompilation.form.remark')" prop="remark">
-            <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.datasetCompilation.placeholder.remark')"
-                :disabled="!isEditable"
-            />
-          </el-form-item>
-        </div>
-
-        <!-- 编辑时显示统计信息，放在基础信息下面、Tab页上面 -->
-        <div v-if="isEdit" class="form-section">
-          <div class="section-title">
-            <i class="ri-bar-chart-line"></i>
-            {{ $t('research.datasetCompilation.form.statisticsInfo') }}
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.trialId')" prop="trialId">
+                    <el-select
+                      v-model="formData.trialId"
+                      :placeholder="$t('research.datasetCompilation.placeholder.trialId')"
+                      :disabled="!isEditable"
+                      filterable
+                      clearable
+                      @change="handleTrialChange"
+                    >
+                      <el-option
+                        v-for="item in trialOptions"
+                        :key="item.trialId"
+                        :label="`${item.trialId} - ${item.trialName}`"
+                        :value="item.trialId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.batchId')" prop="batchId">
+                    <el-input
+                      v-model="formData.batchId"
+                      :placeholder="$t('research.datasetCompilation.placeholder.batchIdAuto')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="$t('research.datasetCompilation.tooltip.batchIdAuto')" placement="top">
+                          <i class="ri-information-line"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.compiledBy')" prop="compiledBy">
+                    <el-input
+                      v-model="formData.compiledByName"
+                      :placeholder="$t('research.datasetCompilation.placeholder.compiledBy')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="$t('research.datasetCompilation.tooltip.compiledByAuto')" placement="top">
+                          <i class="ri-user-line"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.compiledAt')" prop="compiledAt">
+                    <el-date-picker
+                      v-model="formData.compiledAt"
+                      type="datetime"
+                      :placeholder="$t('research.datasetCompilation.placeholder.compiledAt')"
+                      :disabled="!isEditable"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.recordCount')" prop="recordCount">
+                    <el-input-number
+                      v-model="recordCountComputed"
+                      :min="0"
+                      :placeholder="$t('research.datasetCompilation.placeholder.recordCount')"
+                      disabled
+                      readonly
+                      style="width: 100%"
+                    />
+                    <template #extra>
+                      <div style="font-size: 12px; color: #909399; margin-top: 4px;">
+                        <i class="ri-information-line"></i>
+                        {{ $t('research.datasetCompilation.placeholder.recordCountAutoCalculate') }}
+                      </div>
+                    </template>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.status')" prop="status">
+                    <el-select
+                      v-model="formData.status"
+                      :placeholder="$t('research.datasetCompilation.placeholder.status')"
+                      disabled
+                      style="width: 100%"
+                    >
+                      <el-option :label="$t('research.datasetCompilation.status.draft')" value="Draft" />
+                      <el-option :label="$t('research.datasetCompilation.status.submitted')" value="Submitted" />
+                      <el-option :label="$t('research.datasetCompilation.status.approved')" value="Approved" />
+                      <el-option :label="$t('research.datasetCompilation.status.rejected')" value="Rejected" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.cropType')" prop="cropType">
+                    <el-input
+                      :value="getLabelByValue('crop_type', formData.cropType) || formData.cropType"
+                      :placeholder="$t('research.datasetCompilation.placeholder.cropType')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="$t('research.datasetCompilation.tooltip.cropTypeAuto')" placement="top">
+                          <i class="ri-information-line"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.datasetCompilation.form.varietyName')" prop="varietyName">
+                    <el-input
+                      v-model="formData.varietyName"
+                      :placeholder="$t('research.datasetCompilation.placeholder.varietyName')"
+                      disabled
+                      readonly
+                    >
+                      <template #suffix>
+                        <el-tooltip content="$t('research.datasetCompilation.tooltip.varietyNameAuto')" placement="top">
+                          <i class="ri-information-line"></i>
+                        </el-tooltip>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('research.datasetCompilation.form.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('research.datasetCompilation.placeholder.remark')"
+                      :disabled="!isEditable"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="statistics-grid">
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-flask-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.trialCount') }}</div>
-                <div class="stat-value">{{ statistics.trialCount }}</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-map-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.plotCount') }}</div>
-                <div class="stat-value">{{ statistics.plotCount }}</div>
+
+          <!-- 编辑时显示统计信息 -->
+          <div v-if="isEdit" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-line"></i>
+                <span>{{ $t('research.datasetCompilation.form.statisticsInfo') }}</span>
               </div>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-calendar-todo-line"></i>
+            <div class="card-body">
+              <div class="statistics-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-flask-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.trialCount') }}</div>
+                    <div class="stat-value">{{ statistics.trialCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-map-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.plotCount') }}</div>
+                    <div class="stat-value">{{ statistics.plotCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-calendar-todo-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.farmingCount') }}</div>
+                    <div class="stat-value">{{ statistics.farmingCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-plant-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.agronomicCount') }}</div>
+                    <div class="stat-value">{{ statistics.agronomicCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-cloud-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.envCount') }}</div>
+                    <div class="stat-value">{{ statistics.envCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-scissors-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.yieldCount') }}</div>
+                    <div class="stat-value">{{ statistics.yieldCount }}</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <i class="ri-test-tube-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
+                    <div class="stat-value">{{ statistics.labCount }}</div>
+                  </div>
+                </div>
               </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.farmingCount') }}</div>
-                <div class="stat-value">{{ statistics.farmingCount }}</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-plant-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.agronomicCount') }}</div>
-                <div class="stat-value">{{ statistics.agronomicCount }}</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-cloud-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.envCount') }}</div>
-                <div class="stat-value">{{ statistics.envCount }}</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-scissors-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.yieldCount') }}</div>
-                <div class="stat-value">{{ statistics.yieldCount }}</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="ri-test-tube-line"></i>
-              </div>
-              <div class="stat-content">
-                <div class="stat-label">{{ $t('research.datasetCompilation.form.statistics.labCount') }}</div>
-                <div class="stat-value">{{ statistics.labCount }}</div>
-              </div>
+              <el-alert
+                v-if="formData.datasetStatus === 'draft'"
+                :title="$t('research.datasetCompilation.message.submitRequirement')"
+                type="info"
+                :closable="false"
+                show-icon
+                style="margin-top: 16px"
+              />
             </div>
           </div>
-          <el-alert
-              v-if="formData.datasetStatus === 'draft'"
-              :title="$t('research.datasetCompilation.message.submitRequirement')"
-              type="info"
-              :closable="false"
-              show-icon
-              style="margin-top: 16px"
-          />
-        </div>
 
-        <!-- 状态提示 -->
-        <div v-if="isEdit && !isEditable" class="form-section">
-          <el-alert
-              :title="$t('research.datasetCompilation.message.cannotEditApproved')"
-              type="warning"
-              :closable="false"
-              show-icon
-          />
-        </div>
+          <!-- 状态提示 -->
+          <div v-if="isEdit && !isEditable" class="info-card">
+            <div class="card-body">
+              <el-alert
+                :title="$t('research.datasetCompilation.message.cannotEditApproved')"
+                type="warning"
+                :closable="false"
+                show-icon
+              />
+            </div>
+          </div>
 
-        <!-- ========== 六个数据模块改为Tab页切换 ========== -->
-        <div class="form-section" v-if="formData.trialId">
-          <el-tabs v-model="activeTab" type="card" class="data-tabs">
+          <!-- 数据模块Tab页 -->
+          <div class="info-card" v-if="formData.trialId">
+            <div class="card-body">
+              <el-tabs v-model="activeTab" type="card" class="data-tabs">
             <!-- 地块与播种信息 -->
             <el-tab-pane :label="$t('research.datasetCompilation.tab.plot')" name="plot">
               <el-table
@@ -666,19 +697,21 @@
               </el-table>
             </el-tab-pane>
           </el-tabs>
-        </div>
+            </div>
+          </div>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">
-            {{ $t('common.cancel') }}
-          </el-button>
-          <el-button v-if="isEditable" type="primary" @click="handleSubmit">
-            <i class="ri-save-line"></i>
-            {{ isEdit ? $t('common.save') : $t('research.datasetCompilation.compile') }}
-          </el-button>
-        </div>
-      </el-form>
+          <!-- 操作按钮 -->
+          <div class="form-actions">
+            <el-button @click="goBack">
+              {{ $t('common.cancel') }}
+            </el-button>
+            <el-button v-if="isEditable" type="primary" @click="handleSubmit">
+              <i class="ri-save-line"></i>
+              {{ isEdit ? $t('common.save') : $t('research.datasetCompilation.compile') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -1165,271 +1198,57 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.dataset-form {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-.form-section {
-  margin-bottom: 32px;
-}
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-title i {
-  font-size: 20px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+
+/* 统计卡片样式 */
 .statistics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
+
 .stat-card {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #86efac;
-  border-radius: 12px;
-  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
   transition: all 0.3s ease;
 }
+
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.1);
 }
+
 .stat-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-}
-.stat-icon i {
+  background: white;
+  border-radius: 12px;
+  color: #009A44;
   font-size: 24px;
-  color: white;
 }
+
 .stat-content {
   flex: 1;
 }
+
 .stat-label {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 14px;
+  color: #666;
   margin-bottom: 4px;
 }
+
 .stat-value {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #009A44;
-  line-height: 1;
-}
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-.form-actions .el-button {
-  min-width: 120px;
-}
-
-/* Tab页样式优化 */
-.data-tabs {
-  --el-tabs-header-text-color: #6b7280;
-  --el-tabs-active-text-color: #009A44;
-  --el-tabs-border-color: #e5e7eb;
-  --el-tabs-card-header-background: #f9fafb;
-}
-.data-tabs :deep(.el-tabs__header) {
-  margin-bottom: 16px;
-}
-.data-tabs :deep(.el-tabs__item) {
-  padding: 0 20px;
-}
-.data-tabs :deep(.el-tabs__item.is-active) {
-  background-color: #f0fdf4;
-  border-color: #009A44;
-}
-
-/* 表格样式适配 */
-.dataset-form :deep(.el-table) {
-  --el-table-header-text-color: #009A44;
-  --el-table-row-hover-bg-color: #f0fdf4;
-}
-.dataset-form :deep(.el-table th) {
-  background-color: #f8fff9 !important;
-}
-
-/* 备注输入框样式优化 */
-.dataset-form :deep(.el-textarea) {
-  --el-textarea-input-font-size: 12px;
-}
-.dataset-form :deep(.el-textarea__inner) {
-  padding: 6px 8px;
-  border-radius: 4px;
-}
-
-/* 响应式适配 */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-  .header-content {
-    padding: 16px;
-  }
-  .dataset-form {
-    padding: 20px 16px;
-  }
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-}
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-  .header-content {
-    padding: 12px;
-  }
-  .page-title {
-    font-size: 16px;
-  }
-  .dataset-form {
-    padding: 16px 12px;
-    border-radius: 8px;
-  }
-  .dataset-form :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-  .dataset-form :deep(.el-form-item__label) {
-    text-align: left;
-    display: block;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    padding: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-  }
-  .dataset-form :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-  .section-title i {
-    font-size: 18px;
-  }
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-  .stat-card {
-    padding: 12px;
-  }
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-  }
-  .stat-icon i {
-    font-size: 20px;
-  }
-  .stat-label {
-    font-size: 12px;
-  }
-  .stat-value {
-    font-size: 20px;
-  }
-  .form-actions {
-    flex-direction: column;
-    padding-top: 20px;
-  }
-  .form-actions .el-button {
-    width: 100%;
-    min-width: auto;
-  }
-  .form-actions .el-button:first-child {
-    order: 2;
-  }
-  .form-actions .el-button:last-child {
-    order: 1;
-  }
-  /* 表格移动端适配 */
-  .dataset-form :deep(.el-table) {
-    font-size: 12px;
-  }
-  .dataset-form :deep(.el-table th) {
-    padding: 8px 4px;
-  }
-  .dataset-form :deep(.el-table td) {
-    padding: 8px 4px;
-  }
-  /* 备注输入框移动端适配 */
-  .dataset-form :deep(.el-textarea__inner) {
-    font-size: 11px;
-    padding: 4px 6px;
-  }
-  /* Tab页移动端适配 */
-  .data-tabs :deep(.el-tabs__item) {
-    padding: 0 12px;
-    font-size: 12px;
-  }
-}
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-  .header-content {
-    padding: 10px 8px;
-  }
-  .page-title {
-    font-size: 15px;
-  }
-  .dataset-form {
-    padding: 12px 8px;
-  }
-  .dataset-form :deep(.el-form-item) {
-    margin-bottom: 16px;
-  }
-  .dataset-form :deep(.el-form-item__label) {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-  .stat-card {
-    padding: 10px;
-  }
-  .stat-icon {
-    width: 36px;
-    height: 36px;
-  }
-  .stat-icon i {
-    font-size: 18px;
-  }
-  .stat-label {
-    font-size: 11px;
-  }
-  .stat-value {
-    font-size: 18px;
-  }
 }
 </style>

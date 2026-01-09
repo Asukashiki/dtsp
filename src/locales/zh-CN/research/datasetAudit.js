@@ -14,6 +14,13 @@ export default {
     needsRevision: '确定将该数据集标记为需要修订吗？'
   },
 
+  // 标签页
+  tabs: {
+    pendingApproval: '待审批',
+    approved: '已审批',
+    voided: '已作废'
+  },
+
   // 搜索筛选
   searchPlaceholder: '搜索品种名称',
   filterByAuditStatus: '按审核状态筛选',

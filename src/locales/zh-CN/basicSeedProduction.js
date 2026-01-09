@@ -4,6 +4,7 @@ export default {
   searchPlaceholder: '搜索批次ID或名称',
   add: '新增批次',
   detail: '批次详情',
+  list: '批次列表',
   
   columns: {
     produceBatchId: '批次ID',

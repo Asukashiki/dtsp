@@ -37,6 +37,13 @@ export default {
     rejected: "Rejected"
   },
 
+  // Tabs
+  tabs: {
+    pendingApproval: "Pending Approval",
+    approved: "Approved",
+    voided: "Voided"
+  },
+
   // Mobile label copy
   mobileLabels: {
     plotId: "Plot ID",

@@ -1,97 +1,92 @@
 <template>
-  <div class="detail-container">
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i class="ri-file-info-line"></i>
-          <span>{{ $t('research.breeding.seed.production.detail') }}</span>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('research.breeding.seed.production.detail') }}</h1>
+          </div>
         </div>
-        <el-button @click="handleBack">
-          <i class="ri-arrow-left-line"></i>
-          {{ $t('common.back') }}
-        </el-button>
       </div>
 
-      <div class="card-body">
-        <!-- 基础信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.breeding.seed.production.form.basicInfo') }}
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 基本信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('research.breeding.seed.production.form.basicInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchId') }}:</span>
-              <span class="value">{{ data.produceBatchId }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.produceBatchName') }}:</span>
-              <span class="value">{{ data.produceBatchName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.breedBatchName') }}:</span>
-              <span class="value">{{ data.breedBatchName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.trialName') }}:</span>
-              <span class="value">{{ data.trialName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.varietyName') }}:</span>
-              <span class="value">{{ data.varietyName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.cropType') }}:</span>
-              <span class="value">{{ getLabelByValue('crop_type', data.cropType) }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.time') }}:</span>
-              <span class="value">{{ data.time }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.landName') }}:</span>
-              <span class="value">{{ data.landName }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.produceBatchId')">
+                {{ data.produceBatchId }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.produceBatchName')">
+                {{ data.produceBatchName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.breedBatchName')">
+                {{ data.breedBatchName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.trialName')">
+                {{ data.trialName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.varietyName')">
+                {{ data.varietyName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.cropType')">
+                {{ getLabelByValue('crop_type', data.cropType) }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.time')">
+                {{ data.time }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.landName')">
+                {{ data.landName }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
-        <!-- 生产信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('research.breeding.seed.production.form.productionInfo') }}
+        <!-- 生产信息卡片 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-plant-line"></i>
+              <span>{{ $t('research.breeding.seed.production.form.productionInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.inputSeedQuantity') }}:</span>
-              <span class="value">{{ data.inputSeedQuantity }} kg</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.fromSeedLevel') }}:</span>
-              <span class="value">{{ data.fromSeedLevel }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.toSeedLevel') }}:</span>
-              <span class="value">{{ data.toSeedLevel }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.operatorName') }}:</span>
-              <span class="value">{{ data.operatorName }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.produceStatus') }}:</span>
-              <el-tag type="success">
-                {{ data.produceStatus }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.createTime') }}:</span>
-              <span class="value">{{ data.createTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('research.breeding.seed.production.form.updateTime') }}:</span>
-              <span class="value">{{ data.updateTime }}</span>
-            </div>
+          <div class="card-body">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')">
+                {{ data.inputSeedQuantity }} kg
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.fromSeedLevel')">
+                {{ data.fromSeedLevel }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.toSeedLevel')">
+                {{ data.toSeedLevel }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.operatorName')">
+                {{ data.operatorName }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.produceStatus')">
+                <el-tag type="success">
+                  {{ data.produceStatus }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.createTime')">
+                {{ data.createTime }}
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breeding.seed.production.form.updateTime')">
+                {{ data.updateTime }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
       </div>
@@ -120,92 +115,7 @@ const handleBack = () => {
 }
 </script>
 
-<style scoped>
-.detail-container {
-  padding: 20px 0;
-}
-
-.info-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.03) 0%, rgba(254, 221, 0, 0.03) 100%);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #009A44;
-}
-
-.card-title i {
-  font-size: 20px;
-}
-
-.card-body {
-  padding: 30px 24px;
-}
-
-.detail-section {
-  margin-bottom: 30px;
-}
-
-.detail-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.05) 100%);
-  border-left: 4px solid #009A44;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.detail-item .label {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
-
-.detail-item .value {
-  font-size: 15px;
-  color: #333;
-}
-
-@media screen and (max-width: 768px) {
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

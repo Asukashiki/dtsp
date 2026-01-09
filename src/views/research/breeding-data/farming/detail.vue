@@ -1,22 +1,27 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
       <div class="page-header">
         <div class="header-left">
-          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ $t('research.breedingData.farming.detail') }}</h1>
           </div>
         </div>
-        <div class="header-actions">
-          <el-button type="primary" @click="handleEdit"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-        </div>
       </div>
 
+      <!-- 内容区域 -->
       <div class="content-wrapper" v-loading="loading">
+        <!-- 基本信息卡片 -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-information-line"></i><span>Farming Record Information</span></div>
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>Farming Record Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -37,7 +42,10 @@
         <!-- Audit Information -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-file-info-line"></i><span>Audit Information</span></div>
+            <div class="card-title">
+              <i class="ri-file-info-line"></i>
+              <span>Audit Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -50,6 +58,8 @@
             </el-descriptions>
           </div>
         </div>
+
+        <!-- 详情页不显示底部操作按钮 -->
       </div>
     </div>
   </div>
@@ -95,7 +105,6 @@ const getInfo = async () => {
   }
 }
 
-const handleEdit = () => router.push(`/research/breeding-data/farming/edit/${route.params.farmingId}`)
 const goBack = () => router.push('/research/breeding-data/farming')
 
 onMounted(() => getInfo())
@@ -103,4 +112,5 @@ onMounted(() => getInfo())
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
 </style>

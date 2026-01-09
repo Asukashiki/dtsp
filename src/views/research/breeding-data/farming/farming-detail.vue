@@ -1,9 +1,12 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
       <div class="page-header">
         <div class="header-left">
-          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ $t('research.breedingData.farming.detailAudit') }}</h1>
           </div>
@@ -17,14 +20,18 @@
           >
             <i class="ri-check-line"></i>Approval
           </el-button>
-<!--          <el-button type="primary" @click="handleEdit"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>-->
         </div>
       </div>
 
+      <!-- 内容区域 -->
       <div class="content-wrapper" v-loading="loading">
+        <!-- Farming Record Information -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-information-line"></i><span>Farming Record Information</span></div>
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>Farming Record Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -45,7 +52,10 @@
         <!-- Audit Information -->
         <div class="info-card">
           <div class="card-header">
-            <div class="card-title"><i class="ri-file-info-line"></i><span>Audit Information</span></div>
+            <div class="card-title">
+              <i class="ri-file-info-line"></i>
+              <span>Audit Information</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>

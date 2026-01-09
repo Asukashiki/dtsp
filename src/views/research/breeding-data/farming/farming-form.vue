@@ -1,9 +1,12 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
       <div class="page-header">
         <div class="header-left">
-          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <el-button class="back-btn" @click="goBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
           <div class="header-content">
             <h1 class="page-title">{{ isEdit ? $t('research.breedingData.farming.edit') : $t('research.breedingData.farming.add') }}</h1>
           </div>
@@ -189,7 +192,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24">
-                  <el-form-item label="Remark" >
+                  <el-form-item label="Remark">
                     <el-input
                       v-model="formData.remark"
                       type="textarea"
@@ -258,7 +261,9 @@
               </el-button>
             </template>
             <template v-else>
-              <el-button type="primary" @click="handleSubmit" :loading="submitLoading">{{ $t('common.save') }}</el-button>
+              <el-button type="primary" @click="handleSubmit" :loading="submitLoading">
+                {{ $t('common.save') }}
+              </el-button>
             </template>
           </div>
         </el-form>

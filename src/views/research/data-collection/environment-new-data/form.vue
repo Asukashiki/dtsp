@@ -1,42 +1,39 @@
 <template>
-  <div class="environment-new-data-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="handleCancel">
+          <el-button class="back-btn" @click="handleCancel">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">
-            {{ isEdit ? $t('research.environmentNewData.edit') : $t('research.environmentNewData.add') }}
-          </h1>
-        </div>
-        <div class="header-right"></div>
-      </div>
-    </div>
-
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-position="right"
-        label-width="160px"
-        class="data-form"
-        v-loading="loading"
-      >
-        <!-- 地块信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-map-pin-line"></i>
-            {{ $t('research.environmentNewData.form.plotInfo') || 'Plot Information' }}
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
           </div>
+        </div>
+      </div>
 
-          <el-form-item :label="$t('research.environmentNewData.form.plotId')" prop="plotId">
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="rules"
+          label-width="180px"
+          v-loading="loading"
+        >
+        <!-- 地块信息 -->
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-map-pin-line"></i>
+              <span>{{ $t('research.environmentNewData.form.plotInfo') || 'Plot Information' }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.plotId')" prop="plotId">
             <el-select
               v-model="formData.plotId"
               :placeholder="$t('research.environmentNewData.placeholder.plotId')"
@@ -54,33 +51,42 @@
                 :value="item.plotId"
               />
             </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.batchId')" prop="batchId">
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.batchId')" prop="batchId">
             <el-input
               v-model="formData.batchId"
               :placeholder="$t('research.environmentNewData.placeholder.batchId')"
               disabled
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.trialId')" prop="trialId">
+                />
+              </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.trialId')" prop="trialId">
             <el-input
               v-model="formData.trialId"
               :placeholder="$t('research.environmentNewData.placeholder.trialId')"
               disabled
-            />
-          </el-form-item>
+                />
+              </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
         </div>
 
         <!-- 监测站信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-base-station-line"></i>
-            {{ $t('research.environmentNewData.form.stationInfo') || 'Station Information' }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-base-station-line"></i>
+              <span>{{ $t('research.environmentNewData.form.stationInfo') || 'Station Information' }}</span>
+            </div>
           </div>
-
-          <el-form-item :label="$t('research.environmentNewData.form.stationId')" prop="stationId">
+          <div class="card-body">
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.stationId')" prop="stationId">
             <el-select
               v-model="formData.stationId"
               :placeholder="$t('research.environmentNewData.placeholder.stationId')"
@@ -97,9 +103,10 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.timestamp')" prop="timestamp">
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.timestamp')" prop="timestamp">
             <el-date-picker
               v-model="formData.timestamp"
               type="datetime"
@@ -109,23 +116,31 @@
               style="width: 100%"
               :disabled="isReadOnly || isAuditMode"
               :default-value="new Date()"
-            />
-          </el-form-item>
-
-          <!-- Observer Name (disabled, default to current user name) -->
-          <el-form-item :label="$t('research.environmentNewData.form.observerId')">
-            <el-input v-model="observerName" disabled />
-          </el-form-item>
+                />
+              </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <!-- Observer Name (disabled, default to current user name) -->
+                <el-form-item :label="$t('research.environmentNewData.form.observerId')">
+                  <el-input v-model="observerName" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
         </div>
 
         <!-- 测量信息 -->
-        <div class="form-section">
-          <div class="section-title">
-            <i class="ri-dashboard-3-line"></i>
-            {{ $t('research.environmentNewData.form.measurementInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-dashboard-3-line"></i>
+              <span>{{ $t('research.environmentNewData.form.measurementInfo') }}</span>
+            </div>
           </div>
-
-          <el-form-item :label="$t('research.environmentNewData.form.parameterCode')" prop="parameterCode">
+          <div class="card-body">
+            <el-row :gutter="20">
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.parameterCode')" prop="parameterCode">
             <el-select
               v-model="formData.parameterCode"
               :placeholder="$t('research.environmentNewData.placeholder.parameterCode')"
@@ -145,9 +160,10 @@
                 </div>
               </el-option>
             </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.value')" prop="value">
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.value')" prop="value">
             <div class="input-with-unit">
               <el-input-number
                 v-model="formData.value"
@@ -159,18 +175,20 @@
               />
               <span class="unit-hint">{{ formData.unit || '-' }}</span>
             </div>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.unit')" prop="unit">
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.unit')" prop="unit">
             <el-select
               v-model="formData.unit"
               :placeholder="$t('research.environmentNewData.placeholder.unit')"
               maxlength="20"
               disabled
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.source')" prop="source">
+                />
+              </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item :label="$t('research.environmentNewData.form.source')" prop="source">
             <el-select
               v-model="formData.source"
               :placeholder="$t('research.environmentNewData.placeholder.source')"
@@ -180,9 +198,10 @@
               <el-option label="IOT" value="IOT" />
               <el-option label="Metrology" value="metrology" />
             </el-select>
-          </el-form-item>
-
-          <el-form-item :label="$t('research.environmentNewData.form.remark')" prop="remark">
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24">
+                <el-form-item :label="$t('research.environmentNewData.form.remark')" prop="remark">
             <el-input
               v-model="formData.remark"
               type="textarea"
@@ -191,40 +210,51 @@
               maxlength="500"
               show-word-limit
               :disabled="isReadOnly || isAuditMode"
-            />
-          </el-form-item>
+                />
+              </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
         </div>
 
         <!-- 审批意见 (仅在审批模式下显示) -->
-        <div v-if="pageMode === 'audit'" class="form-section">
-          <div class="section-title">
-            <i class="ri-discuss-line"></i>
-            {{ $t('research.environmentNewData.form.approvalComment') }}
+        <div v-if="pageMode === 'audit'" class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-discuss-line"></i>
+              <span>{{ $t('research.environmentNewData.form.approvalComment') }}</span>
+            </div>
           </div>
-
-          <el-form-item :label="$t('research.environmentNewData.form.approvalComment')" prop="approvalComment">
+          <div class="card-body">
+            <el-row :gutter="20">
+              <el-col :xs="24">
+                <el-form-item :label="$t('research.environmentNewData.form.approvalComment')" prop="approvalComment">
             <el-input 
               v-model="formData.approvalComment" 
               type="textarea" 
               :rows="4" 
               :placeholder="$t('research.environmentNewData.placeholder.approvalComment')" 
               :disabled="isReadOnly"
-            />
-          </el-form-item>
+                />
+              </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
         </div>
 
         <!-- 操作按钮 -->
-          <div class="form-actions">
+        <div class="form-actions">
             <el-button 
               v-for="button in getActionButtons()" 
               :key="button.action"
               :type="button.type" 
               @click="handleAction(button.action)"
               :loading="submitLoading && button.action === 'save'">
-              {{ button.label }}
+              {{ $t(`common.${button.label}`) }}
             </el-button>
-          </div>
-      </el-form>
+        </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -293,9 +323,37 @@ const plotOptions = ref([])
 const { options, loading: dictLoading, getActualValueByValue } = useDict(['weather_station', 'env_parameter_code'])
 
 const isEdit = computed(() => !!route.params.envRecordId)
-const pageMode = computed(() => route.query.mode || (isEdit.value ? 'edit' : 'add'))
-const isReadOnly = computed(() => pageMode.value === 'view')
+
+// 根据路由路径和参数判断页面模式
+const pageMode = computed(() => {
+  if (route.query.mode) {
+    return route.query.mode
+  }
+  if (route.path.includes('/audit/')) {
+    return 'audit'
+  }
+  if (route.path.includes('/detail/')) {
+    return 'view'
+  }
+  return isEdit.value ? 'edit' : 'add'
+})
+
+const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
 const isAuditMode = computed(() => pageMode.value === 'audit')
+
+// 页面标题
+const pageTitle = computed(() => {
+  switch (pageMode.value) {
+    case 'audit':
+      return t('research.environmentNewData.audit')
+    case 'view':
+      return t('research.environmentNewData.detail')
+    case 'edit':
+      return t('research.environmentNewData.edit')
+    default:
+      return t('research.environmentNewData.add')
+  }
+})
 
 const formData = reactive({
   envRecordId: '',
@@ -545,77 +603,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.environment-new-data-form-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.data-form {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 表单分节 */
-.form-section {
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 /* 带单位的输入框容器 */
 .input-with-unit {
@@ -636,81 +625,5 @@ onMounted(() => {
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 40px;
-}
-
-/* 操作按钮 */
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.form-actions .el-button {
-  min-width: 120px;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .data-form {
-    padding: 16px 12px;
-    border-radius: 8px;
-  }
-
-  .data-form :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  .data-form :deep(.el-form-item__label) {
-    text-align: left;
-    display: block;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    padding: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-  }
-
-  .data-form :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    padding-top: 20px;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .form-actions .el-button:first-child {
-    order: 2;
-  }
-
-  .form-actions .el-button:last-child {
-    order: 1;
-  }
 }
 </style>

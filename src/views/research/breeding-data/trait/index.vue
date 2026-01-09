@@ -2,229 +2,147 @@
   <div class="page-container">
     <div class="page-wrapper">
       <!-- 页面头部 -->
-      <div class="page-header">
-        <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-leaf-line"></i>
-          </div>
-          <div class="header-content">
-            <h1 class="page-title">{{ $t('trait.title') }}</h1>
-            <p class="page-subtitle">{{ $t('trait.subtitle') }}</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon="ri-leaf-line"
+        :title="$t('trait.title')"
+        :subtitle="$t('trait.subtitle')" />
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-list-3-line"></i>
-              <span>{{ $t('trait.list') }}</span>
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('trait.growthStage')">
+              <el-select
+                v-model="queryParams.growthStage"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option v-for="item in options.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('trait.columns.status')">
+              <el-select
+                v-model="queryParams.workflowStatus"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option
+                  v-for="opt in options.flow_status || []"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('trait.list')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('trait.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160" show-overflow-tooltip />
+              <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
+              <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
+              <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
+                <template #default="{ row }">
+                  {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('trait.columns.status')" min-width="140">
+                <template #default="{ row }">
+                  <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus || row.status) || row.workflowStatus || row.status || '-' }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
+              <el-table-column :label="$t('trait.columns.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="mapStatusToWorkflowStatus(row.workflowStatus || row.status || 'S0')"
+                    mode="list"
+                    :show-audit="false"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList" />
             </div>
-            <div class="header-actions">
-              <el-button type="primary" @click="handleAdd">
-                <i class="ri-add-line"></i>
-                {{ $t('trait.add') }}
-              </el-button>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in dataList" :key="item.recordId" class="mobile-card">
+            <div class="mobile-card-header">
+              <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
+              <div class="mobile-card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ item.recordId }}</span>
+              </div>
+              <el-tag type="success" size="small">{{ item.traitCount || 0 }} {{ $t('trait.traitDetails') }}</el-tag>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('trait.plotId') }}:</span>
+                <span class="value">{{ item.plotId }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('trait.observationDate') }}:</span>
+                <span class="value">{{ item.observationDate }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('trait.growthStage') }}:</span>
+                <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('trait.columns.status') }}:</span>
+                <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus || item.status) || item.workflowStatus || item.status || '-' }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="mapStatusToWorkflowStatus(item.workflowStatus || item.status || 'S0')"
+                mode="list"
+                :show-audit="false"
+                @action="(action) => handleAction(item, action)" />
             </div>
           </div>
 
-          <div class="card-body">
-            <!-- 搜索筛选区 -->
-            <div class="search-section">
-              <div class="search-item">
-                <span class="search-label">{{ $t('trait.growthStage') }}:</span>
-                <el-select
-                    v-model="queryParams.growthStage"
-                    :placeholder="$t('common.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option v-for="item in options.growth_cycle || []" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </div>
-              <div class="search-item">
-                <span class="search-label">{{ $t('trait.columns.status') }}:</span>
-                <el-select
-                    v-model="queryParams.workflowStatus"
-                    :placeholder="$t('common.pleaseSelect')"
-                    clearable
-                    class="filter-select"
-                >
-                  <el-option
-                      v-for="opt in options.flow_status || []"
-                      :key="opt.value"
-                      :label="opt.label"
-                      :value="opt.value"
-                  />
-                </el-select>
-              </div>
-              <div class="search-actions">
-                <el-button type="primary" @click="handleQuery">
-                  <i class="ri-search-line"></i>{{ $t('common.search') }}
-                </el-button>
-                <el-button @click="handleReset">
-                  <i class="ri-refresh-line"></i>{{ $t('common.reset') }}
-                </el-button>
-              </div>
-            </div>
-
-            <!-- PC端表格 -->
-            <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
-                <el-table-column prop="recordId" :label="$t('trait.columns.recordId')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="plotId" :label="$t('trait.columns.plotId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
-                <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
-                <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
-                  <template #default="{ row }">
-                    {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="traitCount" :label="$t('trait.columns.traitCount')" min-width="100" align="center">
-                  <template #default="{ row }">
-                    <el-tag type="success">{{ row.traitCount || 0 }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('trait.columns.status')" min-width="140">
-                  <template #default="{ row }">
-                    <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus || row.status) || row.workflowStatus || row.status || '-' }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
-                <el-table-column prop="createTime" :label="$t('trait.columns.createTime')" min-width="160" />
-                <el-table-column :label="$t('trait.columns.actions')" width="360" fixed="right">
-                  <template #default="{ row }">
-                    <div class="action-buttons">
-                      <el-button link type="primary" @click="handleView(row)">
-                        <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                      </el-button>
-                      <!-- 编辑按钮：仅草稿/驳回状态可见 -->
-                      <el-button
-                          v-if="row.status === 'draft' || row.status === 'rejected'"
-                          link
-                          type="primary"
-                          @click="handleEdit(row)"
-                      >
-                        <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                      </el-button>
-                      <!-- 新增：作废按钮 - 显示场景与编辑按钮完全一致 -->
-                      <el-button
-                          v-if="row.status === 'draft' || row.status === 'rejected'"
-                          link
-                          type="warning"
-                          @click="handleInvalid(row)"
-                      >
-                        <i class="ri-ban-line"></i>{{ $t('trait.invalid') }}
-                      </el-button>
-                      <!-- 发起审核按钮：仅草稿/驳回状态可见 -->
-                      <el-button
-                          v-if="row.status === 'draft' || row.status === 'rejected'"
-                          link
-                          type="success"
-                          @click="handleSubmitAudit(row)"
-                      >
-                        <i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}
-                      </el-button>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                    v-model:current-page="queryParams.pageNum"
-                    v-model:page-size="queryParams.pageSize"
-                    :page-sizes="[10, 20, 50]"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    @size-change="getList"
-                    @current-change="getList"
-                />
-              </div>
-            </div>
-
-            <!-- 移动端卡片 -->
-            <div class="mobile-card-list mobile-only">
-              <div v-for="item in dataList" :key="item.recordId" class="mobile-card">
-                <div class="mobile-card-header">
-                  <el-checkbox v-model="item.checked" @change="handleMobileSelect(item)" />
-                  <div class="mobile-card-title">
-                    <i class="ri-plant-line"></i>
-                    <span>{{ item.recordId }}</span>
-                  </div>
-                  <el-tag type="success" size="small">{{ item.traitCount || 0 }} {{ $t('trait.traitDetails') }}</el-tag>
-                </div>
-                <div class="mobile-card-body">
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait.plotId') }}:</span>
-                    <span class="value">{{ item.plotId }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait.observationDate') }}:</span>
-                    <span class="value">{{ item.observationDate }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait.growthStage') }}:</span>
-                    <span class="value">{{ getLabelByValue('growth_cycle', item.growthStage) || item.growthStage }}</span>
-                  </div>
-                  <div class="mobile-card-row">
-                    <span class="label">{{ $t('trait.columns.status') }}:</span>
-                    <span class="value">{{ getLabelByValue('flow_status', item.workflowStatus || item.status) || item.workflowStatus || item.status || '-' }}</span>
-                  </div>
-                </div>
-                <div class="mobile-card-footer">
-                  <el-button size="small" @click="handleView(item)">
-                    <i class="ri-eye-line"></i>{{ $t('common.view') }}
-                  </el-button>
-                  <!-- 编辑按钮：仅草稿/驳回状态可见 -->
-                  <el-button
-                      v-if="item.status === 'draft' || item.status === 'rejected'"
-                      size="small"
-                      type="primary"
-                      @click="handleEdit(item)"
-                  >
-                    <i class="ri-edit-line"></i>{{ $t('common.edit') }}
-                  </el-button>
-                  <!-- 新增：作废按钮 - 显示场景与编辑按钮完全一致 -->
-                  <el-button
-                      v-if="item.status === 'draft' || item.status === 'rejected'"
-                      size="small"
-                      type="warning"
-                      @click="handleInvalid(item)"
-                  >
-                    <i class="ri-ban-line"></i>{{ $t('common.void') }}
-                  </el-button>
-                  <!-- 发起审核按钮：仅草稿/驳回状态可见 -->
-                  <el-button
-                      v-if="item.status === 'draft' || item.status === 'rejected'"
-                      size="small"
-                      type="success"
-                      @click="handleSubmitAudit(item)"
-                  >
-                    <i class="ri-send-plane-line"></i>{{ $t('trait.submitAudit') }}
-                  </el-button>
-                  <!-- 删除按钮 -->
-                  <el-button size="small" type="danger" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                  </el-button>
-                </div>
-              </div>
-
-              <div class="pagination-wrapper">
-                <el-pagination
-                    v-model:current-page="queryParams.pageNum"
-                    v-model:page-size="queryParams.pageSize"
-                    :total="total"
-                    layout="prev, pager, next"
-                    small
-                    @current-change="getList"
-                />
-              </div>
-            </div>
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="queryParams.pageNum"
+              v-model:page-size="queryParams.pageSize"
+              :total="total"
+              layout="prev, pager, next"
+              small
+              @current-change="getList" />
           </div>
         </div>
       </div>
@@ -237,12 +155,14 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import {
   getTraitRecordList,
   getBatchOptions,
   getTrialOptions,
   submitTraitRecordAudit,
-  deleteTraitRecord // 仅保留该删除方法，移除deleteTraitRecord
+  deleteTraitRecord
 } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 
@@ -273,6 +193,15 @@ const getList = async () => {
     // 兼容后端返回格式，和数据集页面保持一致
     dataList.value = res.data?.list || res.rows || []
     total.value = res.data?.total || res.total || 0
+    
+    // 调试：查看第一条数据的状态字段
+    if (dataList.value.length > 0) {
+      console.log('🔍 Trait 数据状态字段调试:', {
+        workflowStatus: dataList.value[0].workflowStatus,
+        status: dataList.value[0].status,
+        mapped: mapStatusToWorkflowStatus(dataList.value[0].workflowStatus || dataList.value[0].status)
+      })
+    }
   } catch (error) {
     console.error('获取列表失败:', error)
     ElMessage.error(t('common.loadFailed'))
@@ -420,6 +349,53 @@ const handleSubmitAudit = async (row) => {
   }
 }
 
+// 统一动作处理
+// 状态映射：将字符串状态转换为标准工作流状态码
+// 兼容两种情况：1. 后端返回标准状态码（S0-S10）2. 后端返回字符串状态（draft, pending等）
+const mapStatusToWorkflowStatus = (status) => {
+  if (!status) return 'S0'
+  
+  // 如果已经是标准状态码（S0-S10），直接返回
+  if (/^S\d+$/.test(status)) {
+    return status
+  }
+  
+  // 字符串状态映射表
+  const statusMap = {
+    'draft': 'S0',           // 草稿
+    'pending': 'S1',         // 待审批
+    'submitted': 'S1',       // 已提交（待审批）
+    'approved': 'S2',        // 审核通过
+    'rejected': 'S3',        // 审核驳回
+    'archived': 'S9',        // 已归档
+    'voided': 'S10',         // 已作废
+    'invalid': 'S10',        // 已作废
+    'cancelled': 'S10'       // 已作废
+  }
+  
+  // 转换为小写进行匹配
+  const lowerStatus = status.toLowerCase()
+  return statusMap[lowerStatus] || 'S0'
+}
+
+// 统一动作处理
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'submit':
+      handleSubmitAudit(row)
+      break
+    case 'cancelBatch':
+      handleInvalid(row)
+      break
+  }
+}
+
 onMounted(() => {
   loadBatchOptions()
   loadTrialOptions()
@@ -429,148 +405,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
-
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: center;
-
-  .search-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-
-    .search-label {
-      font-size: 14px;
-      color: #606266;
-      white-space: nowrap;
-      font-weight: 500;
-    }
-
-    .filter-select {
-      width: 180px;
-    }
-  }
-
-  .search-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 768px) {
-  .search-section {
-    .search-item {
-      width: 100%;
-
-      .search-label {
-        min-width: 80px;
-      }
-
-      .filter-select {
-        flex: 1;
-        width: auto;
-      }
-    }
-
-    .search-actions {
-      margin-left: 0;
-      width: 100%;
-
-      .el-button {
-        flex: 1;
-      }
-    }
-  }
-
-  .mobile-card-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .mobile-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 16px;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .mobile-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  .mobile-card-title {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .mobile-card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .mobile-card-row {
-    display: flex;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .mobile-card-row .label {
-    color: #666;
-    min-width: 80px;
-    flex-shrink: 0;
-  }
-
-  .mobile-card-footer {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .mobile-card-footer .el-button {
-    flex: 1;
-    min-width: 70px;
-  }
-}
-
-.pc-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media screen and (max-width: 768px) {
-  .pc-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

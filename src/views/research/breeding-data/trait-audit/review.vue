@@ -1,29 +1,26 @@
 <template>
-  <div class="trait-audit-review-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
-            <i class="ri-arrow-left-line"></i>
-            {{ $t('trait-audit.backBtn') }}
-          </el-button>
+          <el-button class="back-btn" @click="goBack"><i class="ri-arrow-left-line"></i></el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('trait-audit.detailTitle') }}</h1>
+          </div>
         </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('trait-audit.detailTitle') }}</h1>
-        </div>
-        <div class="header-right"></div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading" class="detail-wrapper">
-      <template v-if="detailData">
+      <!-- 详情区域 -->
+      <div class="content-wrapper" v-loading="loading">
+        <template v-if="detailData">
         <!-- 基本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('trait-audit.cards.basicInfo') }}
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-information-line"></i>
+              <span>{{ $t('trait-audit.cards.basicInfo') }}</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -48,11 +45,13 @@
         </div>
 
         <!-- 性状明细 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-list-check"></i>
-            <span>{{ $t('trait-audit.cards.traitDetails') }}</span>
-            <el-tag type="success" style="margin-left: 12px;">{{ detailData.traitCount || 0 }} {{ $t('trait-audit.cards.traitDetails') }}</el-tag>
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-list-check"></i>
+              <span>{{ $t('trait-audit.cards.traitDetails') }}</span>
+              <el-tag type="success" style="margin-left: 12px;">{{ detailData.traitCount || 0 }} {{ $t('trait-audit.cards.traitDetails') }}</el-tag>
+            </div>
           </div>
           <div class="card-body">
             <!-- PC端表格 -->
@@ -97,10 +96,12 @@
         </div>
 
         <!-- 照片信息 -->
-        <div class="detail-section" v-if="detailData.photoUrl">
-          <div class="section-title">
-            <i class="ri-image-line"></i>
-            <span>{{ $t('trait-audit.cards.photoInfo') }}</span>
+        <div class="info-card" v-if="detailData.photoUrl">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-image-line"></i>
+              <span>{{ $t('trait-audit.cards.photoInfo') }}</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="1" border>
@@ -112,10 +113,12 @@
         </div>
 
         <!-- 系统信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-time-line"></i>
-            <span>{{ $t('trait-audit.cards.systemInfo') }}</span>
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-time-line"></i>
+              <span>{{ $t('trait-audit.cards.systemInfo') }}</span>
+            </div>
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
@@ -128,12 +131,15 @@
         </div>
 
         <!-- 审核信息 (已审核时显示) -->
-        <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('trait-audit.cards.auditInfo') }}
+        <div v-if="detailData.auditStatus && detailData.auditStatus !== 'pending'" class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-shield-check-line"></i>
+              <span>{{ $t('trait-audit.cards.auditInfo') }}</span>
+            </div>
           </div>
-          <div class="detail-grid">
+          <div class="card-body">
+            <div class="detail-grid">
             <div class="detail-item">
               <span class="label">{{ $t('trait-audit.auditStatus') }}:</span>
               <el-tag :type="getTraitAuditStatusType(detailData.auditStatus)">
@@ -151,58 +157,63 @@
             <div v-if="detailData.auditOpinion" class="detail-item full-width">
               <span class="label">{{ $t('trait-audit.auditOpinion') }}:</span>
               <span class="value">{{ detailData.auditOpinion }}</span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- 审核表单 (待审核时显示) -->
-        <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="detail-section audit-form-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('trait-audit.cards.auditInfo') }}
+        <div v-if="!detailData.auditStatus || detailData.auditStatus === 'pending'" class="info-card audit-form-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-shield-check-line"></i>
+              <span>{{ $t('trait-audit.cards.auditInfo') }}</span>
+            </div>
           </div>
-
-          <el-form
+          <div class="card-body">
+            <el-form
               ref="auditFormRef"
               :model="auditForm"
               :rules="auditRules"
               label-position="top"
               class="audit-form"
-          >
-            <el-form-item :label="$t('trait-audit.auditOpinion')" prop="auditOpinion">
-              <el-input
+            >
+              <el-form-item :label="$t('trait-audit.auditOpinion')" prop="auditOpinion">
+                <el-input
                   v-model="auditForm.auditOpinion"
                   type="textarea"
                   :rows="4"
                   :placeholder="$t('trait-audit.auditOpinionPlaceholder')"
                   maxlength="1000"
                   show-word-limit
-              />
-            </el-form-item>
+                />
+              </el-form-item>
 
-            <div class="audit-actions">
-              <el-button
+              <div class="audit-actions">
+                <el-button
                   type="success"
                   size="large"
                   :loading="submitting"
                   @click="handleApprove"
-              >
-                <i class="ri-check-line"></i>
-                {{ $t('trait-audit.approveBtn') }}
-              </el-button>
-              <el-button
+                >
+                  <i class="ri-check-line"></i>
+                  {{ $t('trait-audit.approveBtn') }}
+                </el-button>
+                <el-button
                   type="danger"
                   size="large"
                   :loading="submitting"
                   @click="handleReject"
-              >
-                <i class="ri-close-line"></i>
-                {{ $t('trait-audit.rejectBtn') }}
-              </el-button>
-            </div>
-          </el-form>
+                >
+                  <i class="ri-close-line"></i>
+                  {{ $t('trait-audit.rejectBtn') }}
+                </el-button>
+              </div>
+            </el-form>
+          </div>
         </div>
       </template>
+      </div>
     </div>
   </div>
 </template>
@@ -471,76 +482,29 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.trait-audit-review-container {
-  min-height: calc(100vh - 120px);
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+
+/* 审核表单样式 */
+.audit-form-section {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  // border: 2px solid #fbbf24;
 }
 
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
+.audit-form {
+  margin-top: 20px;
 }
 
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
+.audit-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
 }
 
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-.card-body {
-  margin-top: 16px;
+.audit-actions .el-button {
+  min-width: 160px;
 }
 
 /* 详情网格 */
@@ -576,27 +540,6 @@ onMounted(() => {
 .detail-item .value {
   color: #1f2937;
   flex: 1;
-}
-
-/* 审核表单样式 */
-.audit-form-section {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border: 2px solid #fbbf24;
-}
-
-.audit-form {
-  margin-top: 20px;
-}
-
-.audit-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.audit-actions .el-button {
-  min-width: 160px;
 }
 
 /* 性状明细移动端样式 */
@@ -687,30 +630,6 @@ onMounted(() => {
     display: block;
   }
 
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-section {
-    padding: 16px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
   .detail-grid {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -732,31 +651,6 @@ onMounted(() => {
   .audit-actions .el-button {
     width: 100%;
     min-width: auto;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .detail-section {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
   }
 }
 </style>

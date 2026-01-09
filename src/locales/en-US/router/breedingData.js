@@ -14,7 +14,8 @@ export default {
     add: 'Add Plot Information',
     edit: 'Edit Plot Information',
     detail: 'Plot Information Detail',
-    audit: 'Plot and Sowing Information Audit'
+    audit: 'Plot and Sowing Information Audit',
+    auditReview: 'Review Plot'
   },
   // Trial Basic Information Management
   trial: {
@@ -67,7 +68,9 @@ export default {
     add: 'Add Laboratory Test',
     edit: 'Edit Laboratory Test',
     detail: 'Laboratory Test Detail',
-    audit: 'Laboratory Test Data Audit'
+    audit: 'Laboratory Test Data Audit',
+    auditDetail: 'Audit Laboratory Test',
+    viewDetail: 'View Laboratory Test'
   },
   // Breeding Dataset Compilation
   datasetCompilation: {

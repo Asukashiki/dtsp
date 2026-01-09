@@ -1,86 +1,73 @@
 <template>
-  <div class="seed-production-container">
-    <div class="page-header">
-      <div class="header-left">
-          <div class="header-icon">
-            <i class="ri-seedling-line"></i>
-          </div>
-      </div>
-      <div class="header-content">
-        <h1 class="page-title">{{ $t('research.breeding.seed.production.title') }}</h1>
-        <p class="page-subtitle">{{ $t('research.breeding.seed.production.subtitle') }}</p>
-      </div>
-    </div>
-
-    <div class="content-wrapper">
+  <div class="page-container">
+    <div class="page-wrapper">
       <!-- 列表视图 -->
-      <div v-if="!showForm && !showDetail" class="list-view">
-        <div class="search-bar">
-          <div class="search-row">
-            <el-input
-              v-model="searchQuery"
-              :placeholder="$t('research.breeding.seed.production.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @clear="loadData"
-              @keyup.enter="loadData"
-            >
-              <template #prefix>
-                <i class="ri-search-line"></i>
-              </template>
-            </el-input>
+      <template v-if="!showForm && !showDetail">
+        <!-- 页面头部 -->
+        <PageHeader
+          icon="ri-seedling-line"
+          :title="$t('research.breeding.seed.production.title')"
+          :subtitle="$t('research.breeding.seed.production.subtitle')" />
 
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-              range-separator="-"
-              :start-placeholder="$t('common.startDate')"
-              :end-placeholder="$t('common.endDate')"
-              class="date-filter"
-              clearable
-              @change="loadData"
-            />
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+          <!-- 搜索卡片 -->
+          <div class="search-card">
+            <SearchForm @search="loadData" @reset="handleReset">
+              <SearchItem :label="$t('research.breeding.seed.production.columns.varietyName')">
+                <el-input
+                  v-model="searchQuery"
+                  :placeholder="$t('research.breeding.seed.production.columns.varietyName')"
+                  clearable
+                  class="search-input">
+                  <template #prefix><i class="ri-search-line"></i></template>
+                </el-input>
+              </SearchItem>
+
+              <SearchItem :label="$t('research.breeding.seed.production.columns.time')">
+                <el-date-picker
+                  v-model="dateRange"
+                  type="daterange"
+                  range-separator="-"
+                  :start-placeholder="$t('common.startDate')"
+                  :end-placeholder="$t('common.endDate')"
+                  format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD"
+                  clearable
+                  style="width: 100%" />
+              </SearchItem>
+            </SearchForm>
           </div>
 
-          <div class="action-row">
-            <div class="action-left">
-              <el-button type="primary" @click="loadData">
-                <i class="ri-search-line"></i>
-                <span class="btn-text">{{ $t('common.search') }}</span>
-              </el-button>
-              <el-button @click="handleReset">
-                <i class="ri-restart-line"></i>
-                <span class="btn-text">{{ $t('common.reset') }}</span>
-              </el-button>
-            </div>
-            <div class="action-right">
+          <!-- 列表卡片 -->
+          <InfoCard :title="$t('research.breeding.seed.production.list')" icon="ri-file-list-3-line">
+            <template #actions>
               <el-button type="primary" @click="handleAdd">
                 <i class="ri-add-line"></i>
-                <span class="btn-text">{{ $t('research.breeding.seed.production.add') }}</span>
+                {{ $t('research.breeding.seed.production.add') }}
               </el-button>
-            </div>
-          </div>
-        </div>
+            </template>
 
-        <!-- PC端表格 -->
-        <div class="table-card pc-view">
-          <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+            <!-- PC端表格 -->
+            <div class="table-wrapper pc-only">
+              <el-table :data="filteredList" stripe v-loading="loading">
+                <el-table-column type="selection" width="55" align="center" />
             <el-table-column
               prop="produceBatchId"
               :label="$t('research.breeding.seed.production.columns.produceBatchId')"
-              width="260"
+              min-width="260"
               show-overflow-tooltip
             />
             <el-table-column
               prop="produceBatchName"
               :label="$t('research.breeding.seed.production.columns.produceBatchName')"
-              width="210"
+              min-width="210"
               show-overflow-tooltip
             />
             <el-table-column
               prop="breedBatchName"
               :label="$t('research.breeding.seed.production.columns.breedBatchName')"
-              width="200"
+              min-width="200"
               show-overflow-tooltip
             />
             <el-table-column
@@ -112,7 +99,7 @@
             <el-table-column
               prop="inputSeedQuantity"
               :label="$t('research.breeding.seed.production.columns.inputSeedQuantity')"
-              width="180"
+              min-width="180"
               align="right"
             >
               <template #default="{ row }">
@@ -134,12 +121,12 @@
             <el-table-column
               prop="operatorName"
               :label="$t('research.breeding.seed.production.columns.operatorName')"
-              width="110"
+              min-width="110"
             />
             <el-table-column
               prop="produceStatus"
               :label="$t('research.breeding.seed.production.columns.produceStatus')"
-              width="180"
+              min-width="180"
               align="center"
             >
               <template #default="{ row }">
@@ -149,19 +136,21 @@
               </template>
             </el-table-column>
             <el-table-column
-              :label="$t('research.breeding.seed.production.columns.actions')"
-              width="220"
+              :label="$t('common.actions')"
+              width="240"
               fixed="right"
             >
               <template #default="{ row }">
-                <el-button link type="primary" @click="handleView(row)">
-                  <i class="ri-eye-line"></i>
-                  {{ $t('common.view') }}
-                </el-button>
-                <el-button link type="danger" @click="handleDelete(row)">
-                  <i class="ri-delete-bin-line"></i>
-                  {{ $t('common.delete') }}
-                </el-button>
+                <div class="action-buttons">
+                  <el-button type="primary" size="small" @click="handleView(row)">
+                    <i class="ri-eye-line"></i>
+                    <span class="btn-text">{{ $t('common.view') }}</span>
+                  </el-button>
+                  <el-button type="danger" size="small" @click="handleDelete(row)">
+                    <i class="ri-delete-bin-line"></i>
+                    <span class="btn-text">{{ $t('common.delete') }}</span>
+                  </el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -180,77 +169,76 @@
         </div>
 
         <!-- 移动端卡片 -->
-        <div class="mobile-view" v-loading="loading">
-          <div class="card-list">
-            <div
-              v-for="item in filteredList"
-              :key="item.produceBatchName"
-              class="production-card"
-              @click="handleView(item)"
-            >
-              <div class="card-header">
-                <el-tag type="success" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
-                <el-tag type="warning" size="small">{{ $t(`research.breeding.seed.production.status.${item.produceStatus}`) }}</el-tag>
+        <div class="mobile-card-list mobile-only">
+          <div
+            v-for="item in filteredList"
+            :key="item.produceBatchName"
+            class="mobile-card"
+            @click="handleView(item)"
+          >
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ item.varietyName }}</span>
               </div>
-              <h3 class="card-title">{{ item.varietyName }}</h3>
-              <div class="card-info">
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchId') }}</span>
-                  <span class="info-value">{{ item.produceBatchId }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceBatchName') }}</span>
-                  <span class="info-value">{{ item.produceBatchName }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.time') }}</span>
-                  <span class="info-value">{{ item.time }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.inputSeedQuantity') }}</span>
-                  <span class="info-value">{{ item.inputSeedQuantity }} kg</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.produceSeedQuantrity') }}</span>
-                  <span class="info-value">{{ item.produceSeedQuantrity }} kg</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.fromSeedLevel') }}</span>
-                  <span class="info-value">{{ item.fromSeedLevel }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">{{ $t('research.breeding.seed.production.columns.toSeedLevel') }}</span>
-                  <span class="info-value">{{ item.toSeedLevel }}</span>
-                </div>
+              <el-tag type="success" size="small">{{ item.produceStatus }}</el-tag>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.produceBatchId') }}:</span>
+                <span class="value">{{ item.produceBatchId }}</span>
               </div>
-              <div class="card-footer">
-                <span class="create-time">{{ item.createTime }}</span>
-                <div class="card-actions" @click.stop>
-                  <el-button link type="danger" size="small" @click="handleDelete(item)">
-                    <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
-                  </el-button>
-                </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.produceBatchName') }}:</span>
+                <span class="value">{{ item.produceBatchName }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.cropType') }}:</span>
+                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.time') }}:</span>
+                <span class="value">{{ item.time }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.inputSeedQuantity') }}:</span>
+                <span class="value">{{ item.inputSeedQuantity }} kg</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.fromSeedLevel') }}:</span>
+                <span class="value">{{ item.fromSeedLevel }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('research.breeding.seed.production.columns.toSeedLevel') }}:</span>
+                <span class="value">{{ item.toSeedLevel }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-footer">
+              <span class="create-time">{{ item.createTime }}</span>
+              <div class="card-actions" @click.stop>
+                <el-button link type="danger" size="small" @click="handleDelete(item)">
+                  <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
+                </el-button>
               </div>
             </div>
           </div>
 
-          <div v-if="filteredList.length === 0 && !loading" class="empty-state">
-            <i class="ri-inbox-line"></i>
-            <p>{{ $t('home.noData') }}</p>
-          </div>
-
-          <div class="mobile-pagination">
+          <div class="pagination-wrapper">
             <el-pagination
               v-model:current-page="currentPage"
+              v-model:page-size="pageSize"
+              :page-sizes="[10, 20, 50]"
               :total="total"
-              :page-size="pageSize"
-              layout="prev, pager, next"
+              layout="total, prev, pager, next"
               small
+              @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
             />
           </div>
         </div>
-      </div>
+      </InfoCard>
+        </div>
+      </template>
 
       <!-- 新增表单视图 -->
       <ProductionForm
@@ -267,10 +255,6 @@
         @back="showDetail = false"
       />
     </div>
-
-    <div class="mobile-fab" @click="handleAdd" v-if="!showForm && !showDetail">
-      <i class="ri-add-line"></i>
-    </div>
   </div>
 </template>
 
@@ -280,6 +264,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBreedSeedProduceList, deleteBreedSeedProduce } from '@/api/breedSeed'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import ProductionForm from './form.vue'
 import ProductionDetail from './detail.vue'
 
@@ -374,6 +359,11 @@ const handleAdd = () => {
   showDetail.value = false
 }
 
+const handleEdit = (row) => {
+  // 编辑功能暂未实现
+  ElMessage.info('编辑功能开发中')
+}
+
 const handleView = (row) => {
   currentRow.value = row
   showDetail.value = true
@@ -418,278 +408,35 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.search-bar {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
-.search-row {
+// 操作按钮样式 - 匹配 ActionButtons 组件的样式
+.action-buttons {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-filter {
-  width: 300px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left,
-.action-right {
-  display: flex;
-  gap: 8px;
-}
-
-.table-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mobile-view,
-.mobile-fab {
-  display: none;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.production-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.production-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-}
-
-.card-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.info-label {
-  font-size: 12px;
-  color: #909399;
-}
-
-.info-value {
-  font-size: 14px;
-  color: #606266;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
+  gap: 6px;
   align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
+  justify-content: flex-start;
 
-.create-time {
-  font-size: 12px;
-  color: #909399;
-}
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
 
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
 
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #909399;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.mobile-pagination {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
-
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-    padding: 20px 0;
-  }
-  .header-content {
-    padding: 0 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-    padding: 16px 0;
-  }
-  .header-content {
-    padding: 0 12px;
-    gap: 12px;
-  }
-  .header-icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-  }
-  .header-icon {
-    font-size: 24px;
-  }
-  .page-title {
-    font-size: 18px;
-  }
-  .page-subtitle {
-    display: none;
-  }
-
-  .search-row {
-    flex-direction: column;
-  }
-  .date-filter {
-    width: 100%;
-  }
-  .action-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .action-left,
-  .action-right {
-    justify-content: stretch;
-  }
-  .action-left .el-button,
-  .action-right .el-button {
-    flex: 1;
-  }
-  .action-right {
-    display: none;
-  }
-
-  .pc-view {
-    display: none;
-  }
-  .mobile-view {
-    display: block;
-  }
-
-  .mobile-fab {
-    display: flex;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    cursor: pointer;
-    z-index: 50;
-    transition: all 0.3s ease;
-  }
-  .mobile-fab:active {
-    transform: scale(0.9);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-    padding: 12px 0;
-  }
-  .header-content {
-    padding: 0 8px;
-  }
-  .header-icon-wrapper {
-    width: 40px;
-    height: 40px;
-  }
-  .header-icon {
-    font-size: 20px;
-  }
-  .page-title {
-    font-size: 16px;
-  }
-  .search-bar {
-    padding: 12px;
-  }
-  .production-card {
-    padding: 12px;
-  }
-  .card-title {
-    font-size: 15px;
-  }
-  .mobile-fab {
-    bottom: 16px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+    .btn-text {
+      white-space: nowrap;
+    }
   }
 }
 </style>

@@ -39,6 +39,9 @@ export default {
         landName: '地块名称',
         inputSeedQuantity: '投入种子数量',
         produceSeedQuantrity: '产出种子数量',
+        producedAmount: '产出数量',
+        collectionDate: '采集日期',
+        operator: '操作人',
         fromSeedLevel: '种子等级来源',
         toSeedLevel: '种子等级去向',
         operatorId: '操作人ID',
@@ -101,9 +104,14 @@ export default {
 
       result: {
         title: '生产数据采集详情',
+        add: '新增生产数据采集',
+        list: '生产数据采集列表',
+        detail: '采集详情',
         selection: '生产批次选择',
+        productionBatchSelection: '生产批次选择',
+        collectionData: '采集数据',
         section: {
-          productionBatchSelection: '生产批次选择',
+          productionBatchSelection: '生产批次信息',
           collectionData: '采集数据',
         },
       },
