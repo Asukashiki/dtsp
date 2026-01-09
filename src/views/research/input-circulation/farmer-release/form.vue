@@ -1,149 +1,187 @@
 <template>
-  <div class="ose-release-form-container">
-    <el-page-header @back="handleBack" :title="$t('common.back')">
-      <template #content>
-        <span>{{ isEdit ? $t('inputCirculation.editRelease') : $t('inputCirculation.addRelease') }}</span>
-      </template>
-    </el-page-header>
-
-    <el-card v-loading="loading" class="form-card">
-      <el-form :model="formData" :rules="rules" ref="formRef" label-width="190px">
-        <h3>{{ $t('inputCirculation.basicInfo') }}</h3>
-        <!-- 农民选择 - 改为下拉框 -->
-        <el-form-item :label="$t('inputCirculation.farmerName')" prop="farmerId">
-          <el-select v-model="formData.farmerId" :placeholder="$t('common.pleaseSelect')" filterable
-            @change="handleFarmerChange" style="width: 100%">
-            <el-option v-for="farmer in farmerList" :key="farmer.farmerId" :label="farmer.farmerName"
-              :value="farmer.farmerId" />
-          </el-select>
-        </el-form-item>
-
-        <!-- 农民联系电话 - 自动带出 -->
-        <el-form-item :label="$t('inputCirculation.farmerPhone')">
-          <el-input v-model="formData.farmerPhone" :placeholder="$t('common.pleaseInput')" readonly />
-        </el-form-item>
-
-        <!-- 农民联系地址 - 自动带出 -->
-        <el-form-item :label="$t('inputCirculation.farmerAddress')">
-          <el-input v-model="formData.farmerAddress" :placeholder="$t('common.pleaseInput')" readonly />
-        </el-form-item>
-
-        <el-form-item :label="$t('inputCirculation.releaseYear')">
-          <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" style="width: 100%" @change="handleYearChange" />
-        </el-form-item>
-
-        <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
-          <el-date-picker v-model="formData.releaseDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-        </el-form-item>
-
-        <!-- 分发人 - 自动带出当前登录人 -->
-        <el-form-item :label="$t('inputCirculation.releaseBy')">
-          <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" readonly />
-        </el-form-item>
-
-        <el-form-item :label="$t('inputCirculation.releaseOrg')">
-          <el-input v-model="formData.releaseOrg" :placeholder="$t('common.pleaseInput')" />
-        </el-form-item>
-
-        <!-- 需求列表 -->
-        <h3>{{ $t('inputCirculation.demandSelectionTitle') }}</h3>
-        <el-table :data="demandList" border v-loading="demandLoading" style="margin-bottom: 16px">
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_type', row.inputType) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
-            <template #default="{ row }">
-              {{ getLabelByValue('input_category', row.inputCategory) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity"
-            min-width="120" />
-        </el-table>
-
-        <div class="flex justify-between">
-          <h3>{{ $t('inputCirculation.detailInfo') }}</h3>
-          <el-button type="primary" @click="addDetail">{{ $t('inputCirculation.addDetail') }}</el-button>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
+        <div class="header-left">
+          <el-button class="back-btn" @click="handleBack">
+            <i class="ri-arrow-left-line"></i>
+          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
+          </div>
         </div>
-        <el-table :data="formData.details" border style="margin-top: 16px">
-          <el-table-column type="index" width="50" />
+      </div>
 
-          <!-- 投入品类型选择 -->
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
-            <template #default="scope">
-              <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
-                @change="handleInputTypeChange(scope.$index)" style="width: 100%">
-                <el-option v-for="item in inputTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </template>
-          </el-table-column>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('inputCirculation.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.farmerName')" prop="farmerId">
+                    <el-select v-model="formData.farmerId" :placeholder="$t('common.pleaseSelect')" filterable
+                      @change="handleFarmerChange" style="width: 100%">
+                      <el-option v-for="farmer in farmerList" :key="farmer.farmerId" :label="farmer.farmerName"
+                        :value="farmer.farmerId" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.farmerPhone')">
+                    <el-input v-model="formData.farmerPhone" :placeholder="$t('common.pleaseInput')" readonly />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.farmerAddress')">
+                    <el-input v-model="formData.farmerAddress" :placeholder="$t('common.pleaseInput')" readonly />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.releaseYear')">
+                    <el-date-picker v-model="formData.releaseYear" type="year" value-format="YYYY" style="width: 100%" @change="handleYearChange" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.releaseDate')" prop="releaseDate">
+                    <el-date-picker v-model="formData.releaseDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.releaseBy')">
+                    <el-input v-model="formData.releaseBy" :placeholder="$t('common.pleaseInput')" readonly />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('inputCirculation.releaseOrg')">
+                    <el-input v-model="formData.releaseOrg" :placeholder="$t('common.pleaseInput')" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
 
-          <!-- 投入品类别选择 -->
-          <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
-            <template #default="scope">
-              <el-select v-model="scope.row.inputCategory" :placeholder="$t('common.pleaseSelect')"
-                @change="handleInputCategoryChange(scope.$index)" style="width: 100%">
-                <el-option v-for="item in getFilteredCategories(scope.row.inputType)" :key="item.value"
-                  :label="item.label" :value="item.value" />
-              </el-select>
-            </template>
-          </el-table-column>
+          <!-- 需求选择卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-list-check-line"></i>
+                <span>{{ $t('inputCirculation.demandSelectionTitle') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table :data="demandList" border v-loading="demandLoading">
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_type', row.inputType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+                  <template #default="{ row }">
+                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
+              </el-table>
+            </div>
+          </div>
 
-          <!-- 需求数量 -->
-          <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
-            <template #default="scope">
-              {{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}
-            </template>
-          </el-table-column>
+          <!-- 分发明细卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-list-line"></i>
+                <span>{{ $t('inputCirculation.detailInfo') }}</span>
+              </div>
+              <div class="card-actions">
+                <el-button type="primary" @click="addDetail">
+                  <i class="ri-add-line"></i>
+                  {{ $t('inputCirculation.addDetail') }}
+                </el-button>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table :data="formData.details" border>
+                <el-table-column type="index" width="50" />
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
+                      @change="handleInputTypeChange(scope.$index)" style="width: 100%">
+                      <el-option v-for="item in inputTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.inputCategory" :placeholder="$t('common.pleaseSelect')"
+                      @change="handleInputCategoryChange(scope.$index)" style="width: 100%">
+                      <el-option v-for="item in getFilteredCategories(scope.row.inputType)" :key="item.value"
+                        :label="item.label" :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
+                  <template #default="scope">
+                    {{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
+                  <template #default="scope">
+                    <span>{{ scope.row.currentStock }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.quantity')" min-width="160">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.quantity" :min="0" :max="scope.row.maxQuantity || 999999"
+                      :precision="2" @change="validateQuantity(scope.$index)" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
+                      <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="140">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2"
+                      @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="140">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('common.actions')" width="80" fixed="right">
+                  <template #default="scope">
+                    <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
 
-          <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
-            <template #default="scope">
-              <span>{{ scope.row.currentStock }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.quantity')" min-width="160">
-            <template #default="scope">
-              <el-input-number v-model="scope.row.quantity" :min="0" :max="scope.row.maxQuantity || 999999"
-                :precision="2" @change="validateQuantity(scope.$index)" style="width: 100%" />
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
-            <template #default="scope">
-              <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
-                <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="140">
-            <template #default="scope">
-              <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2"
-                @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="140">
-            <template #default="scope">
-              <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('common.actions')" width="80" fixed="right">
-            <template #default="scope">
-              <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div style="margin-top: 24px" class="flex justify-center">
-          <el-button type="primary" @click="handleSubmit">{{ $t('common.save') }}</el-button>
-          <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
-        </div>
-      </el-form>
-    </el-card>
+          <!-- 操作按钮区域（固定在底部） -->
+          <div class="form-actions">
+            <el-button v-for="button in getActionButtons()" :key="button.action"
+              :type="button.type" @click="handleAction(button.action)"
+              :loading="loading && button.action === 'save'">
+              {{ $t(`common.${button.label}`) }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -168,6 +206,33 @@ const userStore = useUserStore()
 const loading = ref(false)
 const formRef = ref(null)
 const isEdit = computed(() => !!route.params.id)
+
+// 根据路由路径和参数判断页面模式
+const pageMode = computed(() => {
+  // 优先使用 query 参数
+  if (route.query.mode) {
+    return route.query.mode
+  }
+  // 根据路由路径判断
+  if (route.path.includes('/audit/')) {
+    return 'audit'
+  }
+  if (route.path.includes('/detail/')) {
+    return 'view'
+  }
+  // 默认逻辑
+  return isEdit.value ? 'edit' : 'add'
+})
+
+// 页面标题
+const pageTitle = computed(() => {
+  switch (pageMode.value) {
+    case 'edit':
+      return t('inputCirculation.editRelease')
+    default:
+      return t('inputCirculation.addRelease')
+  }
+})
 
 // 农民列表
 const farmerList = ref([])
@@ -476,6 +541,37 @@ const handleBack = () => {
   router.back()
 }
 
+// 根据页面模式返回不同的按钮
+const getActionButtons = () => {
+  const mode = pageMode.value
+
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+
+  // 默认按钮
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
+
+// 统一的动作处理方法
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      handleBack()
+      break
+    case 'save':
+      handleSubmit()
+      break
+  }
+}
+
 onMounted(async () => {
   await fetchFarmerList()
 
@@ -493,12 +589,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.ose-release-form-container {
-  padding: 20px;
-}
-
-.form-card {
-  margin-top: 20px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 </style>

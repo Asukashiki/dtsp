@@ -59,7 +59,7 @@ export default {
   inputName: 'Input Name',
   required: 'Required Quantity',
   quantity: 'Quantity',
-  currentStock: 'Current Stock',
+  currentStock: 'Current Stock(KG)',
   demandQuantity: 'Demand Quantity',
   quantityExceedsDemand: 'Quantity exceeds demand limit',
   quantityCannotBeZero: 'Quantity cannot be zero',

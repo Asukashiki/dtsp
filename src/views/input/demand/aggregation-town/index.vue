@@ -971,7 +971,7 @@ const handleDrillDownDetail = async (row) => {
   activeDetailTab.value = 'aggregation'
   drillDownAggregationData.value = []
   farmerDemandData.value = []
-  
+
   // 重置搜索表单
   farmerSearchForm.farmerName = ''
   farmerSearchForm.farmerIdNumber = ''
@@ -1020,7 +1020,7 @@ const loadFarmerDemandData = async () => {
       orderByColumn: 'createdTime',
       isAsc: 'desc'
     }
-    
+
     const res = await getFarmerDemandPage(params)
     if (res.code === 200) {
       farmerDemandData.value = res.data?.records || []
@@ -1064,7 +1064,7 @@ const handleViewFarmerDemand = (row) => {
     kebeleName: drillDownRecordDetail.value.sourceName
   }
   sessionStorage.setItem('aggregation_nav_state', JSON.stringify(navigationState))
-  
+
   router.push({
     name: 'DemandAuditDetail',
     params: { id: row.id },
@@ -1109,7 +1109,7 @@ const handleCurrentChange = () => {
 // 初始化
 onMounted(() => {
   loadData()
-  
+
   // 检查是否需要恢复下钻状态
   const savedState = sessionStorage.getItem('aggregation_nav_state')
   if (savedState) {
@@ -1117,7 +1117,7 @@ onMounted(() => {
       const state = JSON.parse(savedState)
       // 清除保存的状态
       sessionStorage.removeItem('aggregation_nav_state')
-      
+
       // 恢复下钻状态
       if (state.viewMode === 'drillDown' && state.kebeleCode) {
         // 设置下钻记录详情
@@ -1129,7 +1129,7 @@ onMounted(() => {
         viewMode.value = 'drillDown'
         drillDownRecordDetailVisible.value = true
         activeDetailTab.value = 'farmers'
-        
+
         // 加载汇聚数据
         loadDrillDownData().then(() => {
           // 打开详情对话框并切换到农民需求标签页

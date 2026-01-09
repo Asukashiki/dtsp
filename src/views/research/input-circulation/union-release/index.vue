@@ -1,147 +1,151 @@
 <template>
-  <div class="union-release-container">
-    <!-- 查询表单 -->
-    <el-card class="search-card">
-      <el-form :model="queryParams" :inline="true">
-        <el-form-item :label="t('releaseName')">
-          <el-input
-            v-model="queryParams.releaseName"
-            :placeholder="t('common.pleaseInput')"
-            clearable
-            @change="handleQuery"
-          />
-        </el-form-item>
-<!--        <el-form-item :label="t('inputType')">
-          <el-select
-            v-model="queryParams.inputType"
-            :placeholder="t('pleaseSelectInputType')"
-            clearable
-            @change="handleQuery"
-          >
-            <el-option label="化肥" value="化肥" />
-            <el-option label="农药" value="农药" />
-          </el-select>
-        </el-form-item>-->
-        <el-form-item :label="t('timeRange')">
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="-"
-            :start-placeholder="t('startDate')"
-            :end-placeholder="t('endDate')"
-            value-format="YYYY-MM-DD"
-            @change="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">{{ t('search') }}</el-button>
-          <el-button @click="handleReset">{{ t('reset') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-file-transfer-line"
+        :title="$t('inputCirculation.unionReleaseToCooperative')"
+        :subtitle="$t('inputCirculation.unionReleaseToCooperative')" />
 
-    <!-- 操作按钮 -->
-    <el-card class="toolbar-card">
-      <el-button type="primary" @click="handleAdd">
-        <el-icon><Plus /></el-icon>
-        {{ t('add') }}
-      </el-button>
-      <el-button type="danger" :disabled="selectedIds.length === 0" @click="handleBatchDelete">
-        <el-icon><Delete /></el-icon>
-        {{ t('common.batchDelete') }}
-      </el-button>
-    </el-card>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片（无标题） -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('inputCirculation.releaseName')">
+              <el-input
+                v-model="queryParams.releaseName"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
+            </SearchItem>
 
-    <!-- 桌面端表格 -->
-    <el-card v-if="!isMobile" class="table-card">
-      <el-table
-        :data="releaseList"
-        v-loading="loading"
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="releaseId" :label="t('releaseId')" min-width="150" />
-        <el-table-column prop="releaseName" :label="t('releaseName')" min-width="180" />
-        <el-table-column prop="targetId" :label="t('targetWoreda')" min-width="150" />
-<!--        <el-table-column prop="releaseYear" :label="t('releaseYear')" width="150" />-->
-        <el-table-column prop="releaseDate" :label="t('releaseDate')" width="180">
-          <template #default="{ row }">
-            {{ formatDateTime(row.releaseDate) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" :label="$t('inputCirculation.status')" width="120" />
-        <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">
-          <template #default="scope">
-            <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
-              {{ getStockStatusText(scope.row.stockStatus) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="releaseBy" :label="t('releaseBy')" width="120" />
-        <el-table-column :label="t('actions')" width="280" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row.id)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>
-            <el-button link type="primary" @click="handleEdit(row.id)"><i class="ri-edit-line"></i>{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" @click="handleDelete(row.id)"><i class="ri-delete-bin-line"></i>{{ $t('common.void') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- 分页 -->
-      <el-pagination
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :page-sizes="[10, 20, 50]"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleQuery"
-        @current-change="handleQuery"
-      />
-    </el-card>
-
-    <!-- 移动端卡片列表 -->
-    <div v-else class="card-list">
-      <el-card v-for="item in releaseList" :key="item.id" class="mobile-card">
-        <div class="card-header">
-          <span class="card-title">{{ item.releaseName }}</span>
-          <el-tag type="success">{{ item.releaseYear }}</el-tag>
+            <SearchItem :label="$t('inputCirculation.timeRange')">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
+                value-format="YYYY-MM-DD"
+                class="search-input" />
+            </SearchItem>
+          </SearchForm>
         </div>
-        <div class="card-content">
-          <div class="info-row">
-            <span class="label">{{ t('releaseId') }}:</span>
-            <span>{{ item.releaseId }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">{{ t('targetWoreda') }}:</span>
-            <span>{{ item.targetId }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">{{ t('releaseDate') }}:</span>
-            <span>{{ formatDateTime(item.releaseDate) }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">{{ t('releaseBy') }}:</span>
-            <span>{{ item.releaseBy }}</span>
-          </div>
-        </div>
-        <div class="card-actions">
-          <el-button size="small" @click="handleDetail(item.id)">{{ t('detail') }}</el-button>
-          <el-button size="small" type="primary" @click="handleEdit(item.id)">{{ t('edit') }}</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(item.id)">{{ t('delete') }}</el-button>
-        </div>
-      </el-card>
 
-      <!-- 移动端分页 -->
-      <el-pagination
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :page-sizes="[10, 20, 50]"
-        :total="total"
-        layout="total, prev, pager, next"
-        @size-change="handleQuery"
-        @current-change="handleQuery"
-      />
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('inputCirculation.unionReleaseToCooperative')" icon="ri-file-list-3-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('inputCirculation.addRelease') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="releaseList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="50" />
+              <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="180" show-overflow-tooltip />
+              <el-table-column prop="targetId" :label="$t('inputCirculation.targetWoreda')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="releaseDate" :label="$t('inputCirculation.releaseDate')" width="180">
+                <template #default="{ row }">
+                  {{ formatDateTime(row.releaseDate) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="status" :label="$t('inputCirculation.status')" width="120" />
+              <el-table-column :label="$t('inputCirculation.stockStatus')" min-width="140">
+                <template #default="scope">
+                  <el-tag :type="getStockStatusTag(scope.row.stockStatus)" size="small">
+                    {{ getStockStatusText(scope.row.stockStatus) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="releaseBy" :label="$t('inputCirculation.releaseBy')" width="120" show-overflow-tooltip />
+              <el-table-column :label="$t('common.actions')" width="240" fixed="right">
+                <template #default="{ row }">
+                  <ActionButtons
+                    :workflow-status="row.workflowStatus || 'S0'"
+                    mode="list"
+                    :show-audit="false"
+                    :custom-buttons="getCustomButtons(row)"
+                    @action="(action) => handleAction(row, action)" />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :total="total"
+                :page-sizes="[10, 20, 50]"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleQuery"
+                @current-change="handleQuery"
+              />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in releaseList" :key="item.id" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-file-transfer-line"></i>
+                <span>{{ item.releaseName }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('inputCirculation.releaseId') }}:</span>
+                <span class="value">{{ item.releaseId }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('inputCirculation.targetWoreda') }}:</span>
+                <span class="value">{{ item.targetId }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('inputCirculation.releaseDate') }}:</span>
+                <span class="value">{{ formatDateTime(item.releaseDate) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('inputCirculation.releaseBy') }}:</span>
+                <span class="value">{{ item.releaseBy }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('inputCirculation.stockStatus') }}:</span>
+                <el-tag :type="getStockStatusTag(item.stockStatus)" size="small">
+                  {{ getStockStatusText(item.stockStatus) }}
+                </el-tag>
+              </div>
+            </div>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="item.workflowStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                :custom-buttons="getCustomButtons(item)"
+                @action="(action) => handleAction(item, action)" />
+            </div>
+          </div>
+
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="queryParams.pageNum"
+              v-model:page-size="queryParams.pageSize"
+              :total="total"
+              layout="prev, pager, next"
+              small
+              @current-change="handleQuery"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -151,13 +155,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete } from '@element-plus/icons-vue'
 import { getUnionReleaseList, deleteUnionRelease, getReleaseStockStatus } from '@/api/inputCirculation'
-import { useResponsive } from '@/hooks/useResponsive'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const router = useRouter()
 const { t } = useI18n()
-const { isMobile } = useResponsive()
 
 const loading = ref(false)
 const releaseList = ref([])
@@ -297,73 +300,37 @@ const formatDateTime = (dateTime) => {
   return dateTime.replace('T', ' ')
 }
 
+// 统一的动作处理方法
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleDetail(row.id)
+      break
+    case 'edit':
+      handleEdit(row.id)
+      break
+    case 'cancelBatch':
+      handleDelete(row.id)
+      break
+  }
+}
+
+// 获取自定义按钮配置（因为这个页面没有工作流状态，使用自定义按钮）
+const getCustomButtons = (row) => {
+  return [
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
+    { type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' },
+    { type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' }
+  ]
+}
+
 onMounted(() => {
   handleQuery()
 })
 </script>
 
-<style scoped lang="scss">
-.union-release-container {
-  padding: 20px;
-
-  .search-card,
-  .toolbar-card,
-  .table-card {
-    margin-bottom: 20px;
-  }
-
-  .el-pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  // 移动端样式
-  .card-list {
-    .mobile-card {
-      margin-bottom: 16px;
-
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #ebeef5;
-
-        .card-title {
-          font-weight: bold;
-          font-size: 16px;
-        }
-      }
-
-      .card-content {
-        .info-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 8px 0;
-          border-bottom: 1px dashed #ebeef5;
-
-          .label {
-            color: #909399;
-            font-weight: 500;
-          }
-        }
-      }
-
-      .card-actions {
-        margin-top: 12px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-    }
-
-    .el-pagination {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-    }
-  }
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 </style>

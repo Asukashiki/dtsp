@@ -1,212 +1,231 @@
 <template>
-  <div class="inbound-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ isEdit ? $t('input.inventory.stockIn.edit') : $t('input.inventory.stockIn.create') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="inbound-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-information-line"></i>
-            <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
-          </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockIn.form.type')" prop="inboundType">
-              <el-select v-model="formData.inboundType" :placeholder="$t('input.inventory.stockIn.placeholder.type')" class="full-width">
-                <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
-                <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
-                <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.warehouseName')" prop="warehouseId">
-              <el-select
-                v-model="formData.warehouseId"
-                :placeholder="$t('input.inventory.stockIn.placeholder.warehouseName')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="warehouseLoading"
-              >
-                <el-option
-                  v-for="warehouse in warehouseList"
-                  :key="warehouse.warehouse_id"
-                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code})`"
-                  :value="warehouse.warehouse_id"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.relatedOrderNo')" prop="relatedOrderNo">
-              <el-select
-                v-model="formData.relatedOrderNo"
-                :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="distributionLoading"
-                @change="handleDistributionChange"
-              >
-                <el-option
-                  v-for="distribution in distributionList"
-                  :key="distribution.id"
-                  :label="distribution.releaseName"
-                  :value="distribution.id"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierName')" prop="supplierName" class="hidden-field">
-              <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierContact')" prop="supplierContact" class="hidden-field">
-              <el-input v-model="formData.supplierContact" :placeholder="$t('input.inventory.stockIn.placeholder.supplierContact')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.supplierPhone')" prop="supplierPhone" class="hidden-field">
-              <el-input v-model="formData.supplierPhone" :placeholder="$t('input.inventory.stockIn.placeholder.supplierPhone')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.operator')" prop="operator">
-              <el-input v-model="formData.operator" :placeholder="$t('input.inventory.stockIn.placeholder.operator')" clearable />
-            </el-form-item>
-            <el-form-item :label="$t('input.inventory.stockIn.form.remark')" prop="remark" class="full-width-item">
-              <el-input v-model="formData.remark" :placeholder="$t('input.inventory.stockIn.placeholder.remark')" type="textarea" :rows="2" />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 入库投入品明细 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-archive-line"></i>
-            <h3>{{ $t('input.inventory.stockIn.inputDetails') }}</h3>
-          </div>
-
-          <div class="items-list">
-            <div v-for="(item, index) in formData.details" :key="index" class="item-row">
-              <div class="item-fields">
-                <el-form-item :label="$t('input.inventory.stockIn.form.inputName')" :prop="`details.${index}.inputId`" :rules="detailRules.inputId">
-                  <el-select
-                    v-model="item.inputId"
-                    :placeholder="$t('input.inventory.stockIn.placeholder.inputName')"
-                    filterable
-                    clearable
-                    class="full-width"
-                    :loading="inputLoading"
-                    @change="handleInputChange(item, index)"
-                  >
-                    <el-option
-                      v-for="input in getFilteredInputs(item)"
-                      :key="input.inputId"
-                      :label="input.inputName"
-                      :value="input.inputId"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.inputId')" :prop="`details.${index}.inputCode`">
-                  <el-input v-model="item.inputCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputId')" />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.inboundBatch')" :prop="`details.${index}.batchNo`">
-                  <el-input v-model="item.batchNo" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inboundBatch')" />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.productionBatch')" :prop="`details.${index}.productionBatchNo`">
-                  <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.inputType')" :prop="`details.${index}.inputType`">
-                  <el-select
-                    v-model="item.inputType"
-                    :placeholder="$t('input.inventory.stockIn.placeholder.inputType')"
-                    class="full-width"
-                    @change="handleItemTypeChange(item, index)"
-                    v-loading="dictLoading"
-                  >
-                    <el-option
-                      v-for="typeItem in options.input_type"
-                      :key="typeItem.value"
-                      :label="typeItem.label"
-                      :value="typeItem.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
-                  <el-select
-                    v-model="item.agriculturalInputType"
-                    :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')"
-                    class="full-width"
-                    @change="handleItemCategoryChange(item, index)"
-                    v-loading="dictLoading"
-                  >
-                    <el-option
-                      v-for="categoryItem in getFilteredCategories(item.inputType)"
-                      :key="categoryItem.value"
-                      :label="categoryItem.label"
-                      :value="categoryItem.value"
-                    />
-                  </el-select>
-                </el-form-item>
-<!--                <el-form-item :label="$t('input.inventory.stockIn.form.variety')" :prop="`details.${index}.variety`">
-                  <el-input v-model="item.variety" disabled :placeholder="$t('input.inventory.stockIn.placeholder.variety')" />
-                </el-form-item>-->
-                <el-form-item :label="$t('input.inventory.stockIn.form.specification')" :prop="`details.${index}.specification`">
-                  <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
-                  <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" class="full-width" />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
-                  <el-select
-                    v-model="item.unit"
-                    :placeholder="$t('input.inventory.stockIn.placeholder.unit')"
-                    class="full-width"
-                    clearable
-                    v-loading="dictLoading"
-                  >
-                    <el-option
-                      v-for="unitItem in options.input_material_unit"
-                      :key="unitItem.value"
-                      :label="unitItem.label"
-                      :value="unitItem.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`" :rules="detailRules.expiryDate">
-                  <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" class="full-width" value-format="YYYY-MM-DD" />
-                </el-form-item>
-                <el-form-item :label="$t('input.inventory.stockIn.form.qrCode')" :prop="`details.${index}.qrCode`" class="hidden-field">
-                  <el-input v-model="item.qrCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.qrCode')" />
-                </el-form-item>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
               </div>
-              <div class="item-actions">
-                <el-button type="danger" link @click="removeDetail(index)" :disabled="formData.details.length === 1">
-                  <i class="ri-delete-bin-line"></i>
-                  <span class="btn-text">{{ $t('common.delete') }}</span>
-                </el-button>
-              </div>
+            </div>
+            <div class="card-body">
+              <!-- 两列布局 -->
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.type')" prop="inboundType">
+                    <el-select v-model="formData.inboundType" :placeholder="$t('input.inventory.stockIn.placeholder.type')" style="width: 100%">
+                      <el-option :label="$t('input.inventory.stockIn.type.production')" :value="0" />
+                      <el-option :label="$t('input.inventory.stockIn.type.purchase')" :value="1" />
+                      <el-option :label="$t('input.inventory.stockIn.type.transfer')" :value="2" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.warehouseName')" prop="warehouseId">
+                    <el-select
+                      v-model="formData.warehouseId"
+                      :placeholder="$t('input.inventory.stockIn.placeholder.warehouseName')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="warehouseLoading"
+                    >
+                      <el-option
+                        v-for="warehouse in warehouseList"
+                        :key="warehouse.warehouse_id"
+                        :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code})`"
+                        :value="warehouse.warehouse_id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.relatedOrderNo')" prop="relatedOrderNo">
+                    <el-select
+                      v-model="formData.relatedOrderNo"
+                      :placeholder="$t('input.inventory.stockIn.placeholder.relatedOrderNo')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="distributionLoading"
+                      @change="handleDistributionChange"
+                    >
+                      <el-option
+                        v-for="distribution in distributionList"
+                        :key="distribution.id"
+                        :label="distribution.releaseName"
+                        :value="distribution.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12" class="hidden-field">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.supplierName')" prop="supplierName">
+                    <el-input v-model="formData.supplierName" :placeholder="$t('input.inventory.stockIn.placeholder.supplierName')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12" class="hidden-field">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.supplierContact')" prop="supplierContact">
+                    <el-input v-model="formData.supplierContact" :placeholder="$t('input.inventory.stockIn.placeholder.supplierContact')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12" class="hidden-field">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.supplierPhone')" prop="supplierPhone">
+                    <el-input v-model="formData.supplierPhone" :placeholder="$t('input.inventory.stockIn.placeholder.supplierPhone')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.operator')" prop="operator">
+                    <el-input v-model="formData.operator" :placeholder="$t('input.inventory.stockIn.placeholder.operator')" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.inventory.stockIn.form.remark')" prop="remark">
+                    <el-input v-model="formData.remark" :placeholder="$t('input.inventory.stockIn.placeholder.remark')" type="textarea" :rows="2" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </div>
 
-          <el-button type="primary" plain @click="addDetail" class="add-item-btn">
-            <i class="ri-add-line"></i>
-            {{ $t('input.inventory.stockIn.addInput') }}
-          </el-button>
-        </div>
+          <!-- 入库投入品明细 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-archive-line"></i>
+                <span>{{ $t('input.inventory.stockIn.inputDetails') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="items-list">
+                <div v-for="(item, index) in formData.details" :key="index" class="item-row">
+                  <div class="item-fields">
+                    <el-form-item :label="$t('input.inventory.stockIn.form.inputName')" :prop="`details.${index}.inputId`" :rules="detailRules.inputId">
+                      <el-select
+                        v-model="item.inputId"
+                        :placeholder="$t('input.inventory.stockIn.placeholder.inputName')"
+                        filterable
+                        clearable
+                        style="width: 100%"
+                        :loading="inputLoading"
+                        @change="handleInputChange(item, index)">
+                        <el-option
+                          v-for="input in getFilteredInputs(item)"
+                          :key="input.inputId"
+                          :label="input.inputName"
+                          :value="input.inputId"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.inputId')" :prop="`details.${index}.inputCode`">
+                      <el-input v-model="item.inputCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inputId')" />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.inboundBatch')" :prop="`details.${index}.batchNo`">
+                      <el-input v-model="item.batchNo" disabled :placeholder="$t('input.inventory.stockIn.placeholder.inboundBatch')" />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.productionBatch')" :prop="`details.${index}.productionBatchNo`">
+                      <el-input v-model="item.productionBatchNo" :placeholder="$t('input.inventory.stockIn.placeholder.productionBatch')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.inputType')" :prop="`details.${index}.inputType`">
+                      <el-select
+                        v-model="item.inputType"
+                        :placeholder="$t('input.inventory.stockIn.placeholder.inputType')"
+                        style="width: 100%"
+                        @change="handleItemTypeChange(item, index)"
+                        v-loading="dictLoading">
+                        <el-option
+                          v-for="typeItem in options.input_type"
+                          :key="typeItem.value"
+                          :label="typeItem.label"
+                          :value="typeItem.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.agriculturalInputType')" :prop="`details.${index}.agriculturalInputType`">
+                      <el-select
+                        v-model="item.agriculturalInputType"
+                        :placeholder="$t('input.inventory.stockIn.placeholder.agriculturalInputType')"
+                        style="width: 100%"
+                        @change="handleItemCategoryChange(item, index)"
+                        v-loading="dictLoading">
+                        <el-option
+                          v-for="categoryItem in getFilteredCategories(item.inputType)"
+                          :key="categoryItem.value"
+                          :label="categoryItem.label"
+                          :value="categoryItem.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.specification')" :prop="`details.${index}.specification`">
+                      <el-input v-model="item.specification" :placeholder="$t('input.inventory.stockIn.placeholder.specification')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.quantity')" :prop="`details.${index}.quantity`" :rules="detailRules.quantity">
+                      <el-input-number v-model="item.quantity" :min="0.01" :step="1" :precision="2" :placeholder="$t('input.inventory.stockIn.placeholder.quantity')" style="width: 100%" />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.unit')" :prop="`details.${index}.unit`" :rules="detailRules.unit">
+                      <el-select
+                        v-model="item.unit"
+                        :placeholder="$t('input.inventory.stockIn.placeholder.unit')"
+                        style="width: 100%"
+                        clearable
+                        v-loading="dictLoading">
+                        <el-option
+                          v-for="unitItem in options.input_material_unit"
+                          :key="unitItem.value"
+                          :label="unitItem.label"
+                          :value="unitItem.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.expiryDate')" :prop="`details.${index}.expiryDate`" :rules="detailRules.expiryDate">
+                      <el-date-picker v-model="item.expiryDate" type="date" :placeholder="$t('input.inventory.stockIn.placeholder.expiryDate')" style="width: 100%" value-format="YYYY-MM-DD" />
+                    </el-form-item>
+                    <el-form-item :label="$t('input.inventory.stockIn.form.qrCode')" :prop="`details.${index}.qrCode`" class="hidden-field">
+                      <el-input v-model="item.qrCode" disabled :placeholder="$t('input.inventory.stockIn.placeholder.qrCode')" />
+                    </el-form-item>
+                  </div>
+                  <div class="item-actions">
+                    <el-button type="danger" link @click="removeDetail(index)" :disabled="formData.details.length === 1">
+                      <i class="ri-delete-bin-line"></i>
+                      <span class="btn-text">{{ $t('common.delete') }}</span>
+                    </el-button>
+                  </div>
+                </div>
+              </div>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.submit') }}</el-button>
-        </div>
-      </el-form>
+              <el-button type="primary" plain @click="addDetail" class="add-item-btn">
+                <i class="ri-add-line"></i>
+                {{ $t('input.inventory.stockIn.addInput') }}
+              </el-button>
+            </div>
+          </div>
+
+          <!-- 操作按钮区域（固定在底部） -->
+          <div class="form-actions">
+            <el-button v-for="button in getActionButtons()" :key="button.action"
+              :type="button.type" @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ $t(`common.${button.label}`) }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -221,6 +240,104 @@ import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
 import { getDistributionList, getDistributionDetail } from '@/api/distribution'
 import { useDict, clearDictCache } from '@/hooks/useDict'
+
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
+
+const loading = ref(false)
+const isEdit = computed(() => !!route.params.id)
+
+// 根据路由路径和参数判断页面模式
+const pageMode = computed(() => {
+  // 优先使用 query 参数
+  if (route.query.mode) {
+    return route.query.mode
+  }
+  // 根据路由路径判断
+  if (route.path.includes('/audit/')) {
+    return 'audit'
+  }
+  if (route.path.includes('/detail/')) {
+    return 'view'
+  }
+  // 默认逻辑
+  return isEdit.value ? 'edit' : 'add'
+})
+
+// 页面标题
+const pageTitle = computed(() => {
+  switch (pageMode.value) {
+    case 'audit':
+      return t('input.inventory.stockIn.audit.title')
+    case 'view':
+      return t('input.inventory.stockIn.detail')
+    case 'edit':
+      return t('input.inventory.stockIn.edit')
+    default:
+      return t('input.inventory.stockIn.create')
+  }
+})
+
+// 根据页面模式返回不同的按钮
+const getActionButtons = () => {
+  const mode = pageMode.value
+
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+
+  // 审批模式
+  if (mode === 'audit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'success', label: 'approve', action: 'approve' },
+      { type: 'danger', label: 'reject', action: 'reject' }
+    ]
+  }
+
+  // 查看模式
+  if (mode === 'view') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'archive', action: 'archive' },
+      { type: 'danger', label: 'void', action: 'cancelBatch' }
+    ]
+  }
+
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
+
+// 统一的动作处理方法
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      goBack()
+      break
+    case 'save':
+      handleSubmit()
+      break
+    case 'approve':
+      // 审批通过逻辑
+      break
+    case 'reject':
+      // 审批驳回逻辑
+      break
+    case 'archive':
+      // 归档逻辑
+      break
+    case 'cancelBatch':
+      // 作废逻辑
+      break
+  }
+}
 
 // 格式化日期时间，将ISO格式(2025-12-14T01:40:59)改为标准格式(2025-12-04 01:40:59)
 const formatDateTime = (dateTimeStr) => {
@@ -241,10 +358,6 @@ const formatDateTime = (dateTimeStr) => {
 
   return dateTimeStr
 }
-
-const router = useRouter()
-const route = useRoute()
-const { t } = useI18n()
 
 // 清除字典缓存并初始化
 clearDictCache('input_type')
@@ -269,7 +382,6 @@ const warehouseLoading = ref(false)
 const inputLoading = ref(false)
 const distributionLoading = ref(false)
 
-const isEdit = computed(() => !!route.params.id)
 const inboundOrderId = route.params.id
 
 // 当前用户部门ID
@@ -733,95 +845,12 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.inbound-form-page {
-  min-height: calc(100vh - 120px);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 /* 隐藏字段样式 */
 .hidden-field {
   display: none !important;
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-block {
-  margin-bottom: 32px;
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.block-header i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.block-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.full-width-item {
-  grid-column: 1 / -1;
-}
-
-.full-width {
-  width: 100%;
 }
 
 /* 投入品明细 */
@@ -918,7 +947,6 @@ onMounted(async () => {
     display: none;
   }
 }
-</style>
 
 @media screen and (max-width: 480px) {
   .page-header {
@@ -957,3 +985,4 @@ onMounted(async () => {
     display: none;
   }
 }
+</style>

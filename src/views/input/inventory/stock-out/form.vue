@@ -1,121 +1,132 @@
 <template>
-  <div class="stock-out-form-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('input.inventory.stockOut.add') }}</h1>
+          <div class="header-content">
+            <h1 class="page-title">{{ pageTitle }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 表单区域 -->
-    <div class="form-wrapper">
-      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" class="stock-out-form">
-        <!-- 基本信息 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-information-line"></i>
-            <h3>{{ $t('input.catalog.form.basicInfo') }}</h3>
+      <!-- 表单区域 -->
+      <div class="content-wrapper">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 两列布局 -->
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.type')" prop="outbound_type">
+                    <el-select
+                      v-model="formData.outbound_type"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.type')"
+                      style="width: 100%">
+                      <el-option :label="$t('input.inventory.stockOut.type.sale')" :value="1" />
+                      <el-option :label="$t('input.inventory.stockOut.type.transfer')" :value="2" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.warehouseId')" prop="warehouse_id">
+                    <el-select
+                      v-model="formData.warehouse_id"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.warehouseId')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="warehouseLoading"
+                      @change="handleWarehouseChange">
+                      <el-option
+                        v-for="warehouse in warehouseList"
+                        :key="warehouse.warehouse_id"
+                        :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code || warehouse.warehouse_id})`"
+                        :value="warehouse.warehouse_id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')" prop="related_order_no">
+                    <el-select
+                      v-model="formData.related_order_no"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.relatedOrderNo')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="distributionLoading"
+                      @focus="handleDistributionFocus"
+                      @change="handleDistributionChange">
+                      <el-option
+                        v-for="distribution in distributionList"
+                        :key="distribution.id"
+                        :label="distribution.releaseName"
+                        :value="distribution.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.outboundUser')" prop="outbound_user">
+                    <el-input
+                      v-model="formData.outbound_user"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.outboundUser')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.outboundDept')" prop="outbound_dept">
+                    <el-input
+                      v-model="formData.outbound_dept"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.outboundDept')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.operator')" prop="operator">
+                    <el-input
+                      v-model="formData.operator"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.operator')"
+                      clearable
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24">
+                  <el-form-item :label="$t('input.inventory.stockOut.form.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      :placeholder="$t('input.inventory.stockOut.placeholder.remark')"
+                      type="textarea"
+                      :rows="2"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
           </div>
-          <div class="form-grid">
-            <el-form-item :label="$t('input.inventory.stockOut.form.type')" prop="outbound_type">
-              <el-select
-                v-model="formData.outbound_type"
-                :placeholder="$t('input.inventory.stockOut.placeholder.type')"
-                class="full-width"
-              >
-                <el-option :label="$t('input.inventory.stockOut.type.sale')" :value="1" />
-                <el-option :label="$t('input.inventory.stockOut.type.transfer')" :value="2" />
-              </el-select>
-            </el-form-item>
 
-            <el-form-item :label="$t('input.inventory.stockOut.form.warehouseId')" prop="warehouse_id">
-              <el-select
-                v-model="formData.warehouse_id"
-                :placeholder="$t('input.inventory.stockOut.placeholder.warehouseId')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="warehouseLoading"
-                @change="handleWarehouseChange"
-              >
-                <el-option
-                  v-for="warehouse in warehouseList"
-                  :key="warehouse.warehouse_id"
-                  :label="`${warehouse.warehouse_name} (${warehouse.warehouse_code || warehouse.warehouse_id})`"
-                  :value="warehouse.warehouse_id"
-                />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.relatedOrderNo')" prop="related_order_no">
-              <el-select
-                v-model="formData.related_order_no"
-                :placeholder="$t('input.inventory.stockOut.placeholder.relatedOrderNo')"
-                filterable
-                clearable
-                class="full-width"
-                :loading="distributionLoading"
-                @focus="handleDistributionFocus"
-                @change="handleDistributionChange"
-              >
-                <el-option
-                  v-for="distribution in distributionList"
-                  :key="distribution.id"
-                  :label="distribution.releaseName"
-                  :value="distribution.id"
-                />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.outboundUser')" prop="outbound_user">
-              <el-input
-                v-model="formData.outbound_user"
-                :placeholder="$t('input.inventory.stockOut.placeholder.outboundUser')"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.outboundDept')" prop="outbound_dept">
-              <el-input
-                v-model="formData.outbound_dept"
-                :placeholder="$t('input.inventory.stockOut.placeholder.outboundDept')"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.operator')" prop="operator">
-              <el-input
-                v-model="formData.operator"
-                :placeholder="$t('input.inventory.stockOut.placeholder.operator')"
-                clearable
-              />
-            </el-form-item>
-
-            <el-form-item :label="$t('input.inventory.stockOut.form.remark')" prop="remark" class="full-width-item">
-              <el-input
-                v-model="formData.remark"
-                :placeholder="$t('input.inventory.stockOut.placeholder.remark')"
-                type="textarea"
-                :rows="2"
-              />
-            </el-form-item>
-          </div>
-        </div>
-
-        <!-- 出库明细 -->
-        <div class="form-block">
-          <div class="block-header">
-            <i class="ri-archive-line"></i>
-            <h3>{{ $t('input.inventory.stockOut.form.details') }}</h3>
-          </div>
+          <!-- 出库明细 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-archive-line"></i>
+                <span>{{ $t('input.inventory.stockOut.form.details') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
 
           <div class="items-list">
             <div v-for="(item, index) in formData.details" :key="index" class="item-row">
@@ -251,7 +262,7 @@
                     @change="handleUnitChange(item, index)"
                   >
                     <el-option
-                      v-for="unitItem in options.input_material_unit"
+                      v-for="unitItem in getFilteredUnits(item)"
                       :key="unitItem.value"
                       :label="unitItem.label"
                       :value="unitItem.value"
@@ -286,23 +297,26 @@
             <i class="ri-add-line"></i>
             {{ $t('input.inventory.stockOut.actions.addItem') }}
           </el-button>
-        </div>
+            </div>
+          </div>
 
-        <!-- 操作按钮 -->
-        <div class="form-actions">
-          <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
-            {{ $t('common.submit') }}
-          </el-button>
-        </div>
-      </el-form>
+          <!-- 操作按钮区域（固定在底部） -->
+          <div class="form-actions">
+            <el-button v-for="button in getActionButtons()" :key="button.action"
+              :type="button.type" @click="handleAction(button.action)"
+              :loading="submitLoading && button.action === 'save'">
+              {{ $t(`common.${button.label}`) }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createOutboundOrder, validateStock } from '@/api/outbound'
@@ -341,7 +355,103 @@ const formatDate = (dateStr) => {
 }
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
+
+const loading = ref(false)
+
+const isEdit = computed(() => !!route.params.id)
+
+// 根据路由路径和参数判断页面模式
+const pageMode = computed(() => {
+  // 优先使用 query 参数
+  if (route.query.mode) {
+    return route.query.mode
+  }
+  // 根据路由路径判断
+  if (route.path.includes('/audit/')) {
+    return 'audit'
+  }
+  if (route.path.includes('/detail/')) {
+    return 'view'
+  }
+  // 默认逻辑
+  return isEdit.value ? 'edit' : 'add'
+})
+
+// 页面标题
+const pageTitle = computed(() => {
+  switch (pageMode.value) {
+    case 'audit':
+      return t('input.inventory.stockOut.audit.title')
+    case 'view':
+      return t('input.inventory.stockOut.detail')
+    case 'edit':
+      return t('input.inventory.stockOut.edit')
+    default:
+      return t('input.inventory.stockOut.add')
+  }
+})
+
+// 根据页面模式返回不同的按钮
+const getActionButtons = () => {
+  const mode = pageMode.value
+
+  // 新建/编辑模式
+  if (mode === 'add' || mode === 'edit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'save', action: 'save' }
+    ]
+  }
+
+  // 审批模式
+  if (mode === 'audit') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'success', label: 'approve', action: 'approve' },
+      { type: 'danger', label: 'reject', action: 'reject' }
+    ]
+  }
+
+  // 查看模式
+  if (mode === 'view') {
+    return [
+      { type: '', label: 'cancel', action: 'cancel' },
+      { type: 'primary', label: 'archive', action: 'archive' },
+      { type: 'danger', label: 'void', action: 'cancelBatch' }
+    ]
+  }
+
+  return [
+    { type: '', label: 'cancel', action: 'cancel' },
+    { type: 'primary', label: 'save', action: 'save' }
+  ]
+}
+
+// 统一的动作处理方法
+const handleAction = (action) => {
+  switch (action) {
+    case 'cancel':
+      goBack()
+      break
+    case 'save':
+      handleSubmit()
+      break
+    case 'approve':
+      // 审批通过逻辑
+      break
+    case 'reject':
+      // 审批驳回逻辑
+      break
+    case 'archive':
+      // 归档逻辑
+      break
+    case 'cancelBatch':
+      // 作废逻辑
+      break
+  }
+}
 
 // 清除字典缓存并初始化
 clearDictCache('input_type')
@@ -670,10 +780,10 @@ const handleDistributionChange = async (distributionId) => {
           const requiredQuantity = detail.required || detail.quantity || 0
           const requiredCapacityKg = detail.requiredCapacityKg || 0
           const requiredVolumeL = detail.requiredVolumeL || 0
-          
+
           let isInsufficient = false
           let insufficientReason = ''
-          
+
           if (totalAvailable <= 0 || totalAvailable < requiredQuantity) {
             isInsufficient = true
             insufficientReason = `Quantity insufficient (Required: ${requiredQuantity}, Available: ${totalAvailable})`
@@ -684,7 +794,7 @@ const handleDistributionChange = async (distributionId) => {
             isInsufficient = true
             insufficientReason = `Volume insufficient (Required: ${requiredVolumeL} L, Available: ${totalVolumeL} L)`
           }
-          
+
           if (isInsufficient) {
             // 库存不足
             insufficientItems.push({
@@ -920,6 +1030,7 @@ const loadBatchList = async (detail) => {
           quantity: item.quantity,
           capacityKg: item.capacity || 0, // 总容量(KG)
           volumeL: item.warehouse_area || 0, // 总容积(L)
+          unitOfMeasure: item.unit_of_measure || '', // 计量单位
           expiryDate: item.expiry_date,
           createdAt: item.created_at
         }))
@@ -938,6 +1049,10 @@ const loadBatchList = async (detail) => {
         detail.available_quantity = batches[0].quantity
         detail.available_capacity_kg = batches[0].capacityKg
         detail.available_volume_l = batches[0].volumeL
+        // 自动带出该批次的计量单位
+        if (batches[0].unitOfMeasure) {
+          detail.unitOfMeasure = batches[0].unitOfMeasure
+        }
       } else {
         detail.materialBatchId = ''
         detail.available_quantity = 0
@@ -967,6 +1082,7 @@ const handleBatchChange = (item, index) => {
     item.available_quantity = 0
     item.available_capacity_kg = 0
     item.available_volume_l = 0
+    item.unitOfMeasure = '' // 清空计量单位
     return
   }
 
@@ -976,10 +1092,13 @@ const handleBatchChange = (item, index) => {
     item.available_quantity = selectedBatch.quantity
     item.available_capacity_kg = selectedBatch.capacityKg || 0
     item.available_volume_l = selectedBatch.volumeL || 0
+    // 强制更新计量单位为该批次的计量单位
+    item.unitOfMeasure = selectedBatch.unitOfMeasure || ''
   } else {
     item.available_quantity = 0
     item.available_capacity_kg = 0
     item.available_volume_l = 0
+    item.unitOfMeasure = '' // 清空计量单位
   }
 }
 
@@ -1099,6 +1218,26 @@ const getFilteredInputs = (item) => {
   }
 
   return filteredList
+}
+
+// 根据已选批次号筛选计量单位列表
+// 如果已选择批次号，则只显示该批次对应的计量单位
+const getFilteredUnits = (item) => {
+  const allUnits = options.value.input_material_unit || []
+
+  // 如果没有选择批次号，返回所有计量单位
+  if (!item.materialBatchId || !item.batchList || item.batchList.length === 0) {
+    return allUnits
+  }
+
+  // 找到已选批次的计量单位
+  const selectedBatch = item.batchList.find(batch => batch.materialBatchId === item.materialBatchId)
+  if (!selectedBatch || !selectedBatch.unitOfMeasure) {
+    return allUnits
+  }
+
+  // 只返回该批次对应的计量单位
+  return allUnits.filter(unit => unit.value === selectedBatch.unitOfMeasure)
 }
 
 // 处理投入品类型变化
@@ -1239,7 +1378,6 @@ const calculateRequiredCapacity = (unitOfMeasure, quantity) => {
 const handleUnitChange = async (item, index) => {
   // 清空之前的警告
   item.capacityWarning = ''
-
   if (!item.unitOfMeasure || !item.quantity || item.quantity <= 0) {
     return
   }
@@ -1509,91 +1647,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.stock-out-form-page {
-  min-height: calc(100vh - 120px);
-}
-
-/* 页面头部 */
-.page-header {
-  background: white;
-  padding: 16px 0;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-/* 表单区域 */
-.form-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-block {
-  margin-bottom: 32px;
-}
-
-.block-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f0f2f5;
-}
-
-.block-header i {
-  font-size: 20px;
-  color: #009A44;
-}
-
-.block-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.full-width-item {
-  grid-column: 1 / -1;
-}
-
-.full-width {
-  width: 100%;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
 /* 明细列表 */
 .items-list {

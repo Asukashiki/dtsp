@@ -1,105 +1,73 @@
 <template>
-  <div class="stock-management-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-icon-wrapper">
-        <i class="ri-database-2-line"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ $t('input.inventory.stock.title') }}</h1>
-        <p class="page-subtitle">{{ $t('input.inventory.stock.subtitle') }}</p>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-database-2-line"
+        :title="$t('input.inventory.stock.title')"
+        :subtitle="$t('input.inventory.stock.subtitle')" />
 
-    <!-- 内容区域 -->
-    <div class="content-wrapper">
-      <!-- 搜索和筛选栏 -->
-      <div class="search-bar">
-        <div class="search-row">
-          <el-select
-            v-model="filterWarehouse"
-            :placeholder="$t('input.inventory.stock.filterByWarehouse')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('input.inventory.stock.allWarehouses')" value="" />
-            <el-option
-              v-for="warehouse in warehouseList"
-              :key="warehouse.warehouse_id"
-              :label="warehouse.warehouse_name"
-              :value="warehouse.warehouse_id"
-            />
-          </el-select>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片（无标题） -->
+        <div class="search-card">
+          <SearchForm @search="handleSearch" @reset="handleReset">
+            <SearchItem :label="$t('input.inventory.stock.filterByWarehouse')">
+              <el-select
+                v-model="filterWarehouse"
+                :placeholder="$t('input.inventory.stock.filterByWarehouse')"
+                clearable
+                class="search-input">
+                <el-option :label="$t('input.inventory.stock.allWarehouses')" value="" />
+                <el-option
+                  v-for="warehouse in warehouseList"
+                  :key="warehouse.warehouse_id"
+                  :label="warehouse.warehouse_name"
+                  :value="warehouse.warehouse_id" />
+              </el-select>
+            </SearchItem>
 
-          <el-select
-            v-model="filterMaterialType"
-            :placeholder="$t('input.catalog.form.inputType')"
-            class="filter-select"
-            clearable
-            @change="handleMaterialTypeFilterChange"
-          >
-            <el-option :label="$t('input.catalog.type.all')" value="" />
-            <el-option
-              v-for="item in materialTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+            <SearchItem :label="$t('input.catalog.form.inputType')">
+              <el-select
+                v-model="filterMaterialType"
+                :placeholder="$t('input.catalog.form.inputType')"
+                clearable
+                class="search-input"
+                @change="handleMaterialTypeFilterChange">
+                <el-option :label="$t('input.catalog.type.all')" value="" />
+                <el-option
+                  v-for="item in materialTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </SearchItem>
 
-          <el-select
-            v-model="filterAgriculturalInputType"
-            :placeholder="$t('input.catalog.form.agriculturalInputType')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('common.all')" value="" />
-            <el-option
-              v-for="item in agriculturalInputTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-
-<!--          <el-select
-            v-model="filterStatus"
-            :placeholder="$t('input.inventory.stock.filterByStatus')"
-            class="filter-select"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option :label="$t('input.inventory.stock.allStatus')" value="" />
-            <el-option :label="$t('input.inventory.stock.status.normal')" value="0" />
-            <el-option :label="$t('input.inventory.stock.status.nearExpiry')" value="1" />
-            <el-option :label="$t('input.inventory.stock.status.expired')" value="2" />
-          </el-select>-->
+            <SearchItem :label="$t('input.catalog.form.agriculturalInputType')">
+              <el-select
+                v-model="filterAgriculturalInputType"
+                :placeholder="$t('input.catalog.form.agriculturalInputType')"
+                clearable
+                class="search-input">
+                <el-option :label="$t('common.all')" value="" />
+                <el-option
+                  v-for="item in agriculturalInputTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <div class="action-row">
-          <div class="action-left">
-            <el-button type="primary" @click="handleSearch">
-              <i class="ri-search-line"></i>
-              <span class="btn-text">{{ $t('common.search') }}</span>
-            </el-button>
-            <el-button @click="handleReset">
-              <i class="ri-restart-line"></i>
-              <span class="btn-text">{{ $t('common.reset') }}</span>
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <!-- PC端：数据表格 -->
-      <div class="table-card pc-view">
-        <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-        >
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('input.inventory.stock.list')" icon="ri-file-list-3-line">
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table
+              v-loading="loading"
+              :data="tableData"
+              stripe>
           <el-table-column prop="material_name" :label="$t('input.inventory.stock.columns.inputName')" min-width="150" fixed="left" show-overflow-tooltip />
           <el-table-column prop="material_type" :label="$t('input.catalog.form.inputType')" min-width="120">
             <template #default="{ row }">
@@ -133,100 +101,101 @@
               </el-tag>
             </template>
           </el-table-column>-->
-          <el-table-column :label="$t('input.inventory.stock.columns.actions')" width="120" fixed="right">
+          <el-table-column :label="$t('input.inventory.stock.columns.actions')" width="240" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" @click="handleView(row)">
-                <i class="ri-eye-line"></i>
-                {{ $t('common.view') }}
-              </el-button>
+              <ActionButtons
+                :workflow-status="row.workflowStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                :custom-buttons="getCustomButtons(row)"
+                @action="(action) => handleAction(row, action)" />
             </template>
           </el-table-column>
         </el-table>
 
-        <div class="pagination-wrapper">
-          <div class="statistics-summary">
-            <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
-              ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ',    ' : '' }}
-            </span>
-          </div>
-          <el-pagination
-            v-model:current-page="pagination.page"
-            v-model:page-size="pagination.pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="pagination.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
-          />
-        </div>
-      </div>
-
-      <!-- 移动端：卡片列表 -->
-      <div class="mobile-view" v-loading="loading">
-        <div class="card-list">
-          <div v-for="item in tableData" :key="item.inventory_id" class="stock-card" @click="handleView(item)">
-            <div class="card-header">
-              <div class="stock-info">
-                <h3 class="stock-name">{{ item.input_name }}</h3>
-                <span class="batch-no">{{ $t('input.inventory.stock.columns.batchNo') }}: {{ item.batch_no }}</span>
+            <div class="pagination-wrapper">
+              <div class="statistics-summary">
+                <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
+                  ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ',    ' : '' }}
+                </span>
               </div>
-              <div class="card-tags">
-                <el-tag :type="getStatusTag(item.stock_status)" size="small">
-                  {{ getStatusText(item.stock_status) }}
-                </el-tag>
-              </div>
-            </div>
-
-            <div class="card-body">
-              <div class="info-row">
-                <i class="ri-home-3-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stock.columns.warehouseName') }}:</span>
-                <span class="info-value">{{ item.warehouse_name }}</span>
-              </div>
-
-              <div class="info-row">
-                <i class="ri-archive-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stock.columns.currentQuantity') }}:</span>
-                <span class="info-value">{{ item.current_quantity }}</span>
-              </div>
-
-              <div class="info-row">
-                <i class="ri-calendar-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stock.columns.inDate') }}:</span>
-                <span class="info-value">{{ formatDateTime(item.in_date) }}</span>
-              </div>
-
-              <div class="info-row">
-                <i class="ri-calendar-check-line info-icon"></i>
-                <span class="info-label">{{ $t('input.inventory.stock.columns.expiredDate') }}:</span>
-                <span class="info-value">{{ formatDate(item.expired_date) }}</span>
-              </div>
+              <el-pagination
+                v-model:current-page="pagination.page"
+                v-model:page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="pagination.total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange"
+                @current-change="handlePageChange"
+              />
             </div>
           </div>
-        </div>
+        </InfoCard>
 
-        <div v-if="tableData.length === 0 && !loading" class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <p>{{ $t('home.noData') }}</p>
-        </div>
-
-        <div class="mobile-statistics">
-          <div class="statistics-summary">
-            <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
-              ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ', ' : '' }}
-            </span>
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in tableData" :key="item.inventory_id" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-database-line"></i>
+                <span>{{ item.material_name || item.input_name }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stock.columns.batchNo') }}:</span>
+                <span class="value">{{ item.material_batch_id || item.batch_no }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stock.columns.warehouseName') }}:</span>
+                <span class="value">{{ item.warehouse_name }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stock.columns.currentQuantity') }}:</span>
+                <span class="value">{{ item.quantity || item.current_quantity }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stock.columns.inDate') }}:</span>
+                <span class="value">{{ formatDateTime(item.created_at || item.in_date) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('input.inventory.stock.columns.expiredDate') }}:</span>
+                <span class="value">{{ formatDate(item.expiry_date || item.expired_date) }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-footer">
+              <ActionButtons
+                :workflow-status="item.workflowStatus || 'S0'"
+                mode="list"
+                :show-audit="false"
+                :custom-buttons="getCustomButtons(item)"
+                @action="(action) => handleAction(item, action)" />
+            </div>
           </div>
-        </div>
 
-        <div class="mobile-pagination">
-          <el-pagination
-            v-model:current-page="pagination.page"
-            :total="pagination.total"
-            :page-size="pagination.pageSize"
-            layout="prev, pager, next"
-            small
-            @current-change="handlePageChange"
-          />
+          <div v-if="tableData.length === 0 && !loading" class="empty-state">
+            <i class="ri-inbox-line"></i>
+            <p>{{ $t('home.noData') }}</p>
+          </div>
+
+          <div class="mobile-statistics">
+            <div class="statistics-summary">
+              <span v-for="(item, index) in typeStatistics" :key="index" class="stat-item">
+                ({{ getLabelByValue('input_type', item.materialType) }}) {{ $t('input.inventory.stock.summary.total') }}{{ item.total }}{{ index < typeStatistics.length - 1 ? ', ' : '' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-model:current-page="pagination.page"
+              :total="pagination.total"
+              :page-size="pagination.pageSize"
+              layout="prev, pager, next"
+              small
+              @current-change="handlePageChange"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -242,6 +211,8 @@ import { getStockList, getStockSummary } from '@/api/stock'
 import { getWarehouseList } from '@/api/inventory'
 import { getInputList } from '@/api/input'
 import { useDict } from '@/hooks/useDict'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
 const { getLabelByValue } = useDict(['input_type', 'input_category'])
 
@@ -550,6 +521,22 @@ const handleView = (row) => {
   router.push(`/input/inventory/stock/detail/${row.stock_id || row.id}`)
 }
 
+// 统一的动作处理方法
+const handleAction = (row, action) => {
+  switch (action) {
+    case 'view':
+      handleView(row)
+      break
+  }
+}
+
+// 获取自定义按钮配置
+const getCustomButtons = (row) => {
+  return [
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
+  ]
+}
+
 // 切换每页条数
 const handleSizeChange = () => {
   pagination.page = 1
@@ -571,142 +558,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.stock-management-page {
-  min-height: calc(100vh - 120px);
-  position: relative;
-}
-
-/* 页面头部 */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-  padding: 32px;
-  margin: -24px 0 24px 0;
-  border-radius: 0 0 16px 16px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.header-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
-
-.header-icon-wrapper i {
-  font-size: 40px;
-  color: white;
-}
-
-.header-text {
-  flex: 1;
-  color: white;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  font-size: 15px;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* 内容区域 */
-.content-wrapper {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* 搜索栏 */
-.search-bar {
-  margin-bottom: 24px;
-}
-
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
-
-.filter-select {
-  width: 160px;
-  flex-shrink: 0;
-}
-
-.action-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.action-left {
-  display: flex;
-  gap: 8px;
-}
-
-/* 合计统计 */
-.summary-section {
-  background: #f5f7fa;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 24px;
-}
-
-.summary-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 12px;
-}
-
-.summary-content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.summary-item {
-  background: white;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 14px;
-  color: #606266;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* PC端表格 */
-.table-card {
-  background: white;
-}
-
-.pagination-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
+@use '@/assets/styles/workflow-common.scss';
+@use '@/assets/styles/table-enhanced.scss';
 
 .statistics-summary {
   display: flex;
@@ -719,11 +574,6 @@ onMounted(() => {
 
 .stat-item {
   white-space: nowrap;
-}
-
-/* 移动端默认隐藏 */
-.mobile-view {
-  display: none;
 }
 
 /* 移动端卡片样式 */

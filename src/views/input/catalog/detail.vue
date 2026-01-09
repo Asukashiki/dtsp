@@ -1,199 +1,180 @@
 <template>
-  <div class="input-detail-container">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部（带返回按钮） -->
+      <div class="page-header">
         <div class="header-left">
-          <el-button link @click="goBack">
+          <el-button class="back-btn" @click="goBack">
             <i class="ri-arrow-left-line"></i>
-            {{ $t('common.back') }}
           </el-button>
-        </div>
-        <div class="header-center">
-          <h1 class="page-title">{{ $t('input.catalog.detail') }}</h1>
-        </div>
-        <div class="header-right">
-          <el-button type="primary" @click="handleEdit">
-            <i class="ri-edit-line"></i>
-            {{ $t('common.edit') }}
-          </el-button>
+          <div class="header-content">
+            <h1 class="page-title">{{ $t('input.catalog.detail') }}</h1>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 详情区域 -->
-    <div v-loading="loading || dictLoading" class="detail-wrapper">
+      <!-- 内容区域 -->
+      <div class="content-wrapper" v-loading="loading || dictLoading">
       <!-- 无数据兜底 -->
       <div v-if="!loading && !dictLoading && !detailData" class="empty-state">
         <i class="ri-inbox-line"></i>
         <p>{{ $t('common.noData') }}</p>
       </div>
 
-      <!-- 有数据时渲染 -->
-      <div v-if="!loading && !dictLoading && detailData">
-        <!-- 基本信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('input.catalog.form.basicInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.inputName') }}:</span>
-              <span class="value">{{ detailData.inputName || '-' }}</span>
+        <!-- 有数据时渲染 -->
+        <div v-if="!loading && !dictLoading && detailData">
+          <!-- 基本信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('input.catalog.form.basicInfo') }}</span>
+              </div>
             </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.inputType') }}:</span>
-              <el-tag :type="getTypeTagType">
-                {{ getTypeLabel }}
-              </el-tag>
-            </div>
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.agriculturalInputType') }}:</span>
-              <span class="value">{{ getAgriculturalInputTypeLabel }}</span>
-            </div>
-<!--            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.variety') }}:</span>
-              <span class="value">{{ detailData.variety || '-' }}</span>
-            </div>-->
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.inputSku') }}:</span>
-              <span class="value">{{ detailData.inputSku || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.inputBizId') }}:</span>
-              <span class="value">{{ detailData.inputBizId || '-' }}</span>
-            </div>
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.trademark') }}:</span>
-              <span class="value">{{ detailData.trademark || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.specificationModel') }}:</span>
-              <span class="value">{{ detailData.specificationModel || '-' }}</span>
-            </div>
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.unit') }}:</span>
-              <span class="value">{{ detailData.unit || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.referencePrice') }}:</span>
-              <span class="value">{{ detailData.referencePrice || 0 }} Br</span>
-            </div>
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.isImport') }}:</span>
-              <el-tag :type="detailData.isImport === 1 ? 'primary' : 'info'">
-                {{ detailData.isImport === 1 ? $t('input.catalog.isImport.yes') : $t('input.catalog.isImport.no') }}
-              </el-tag>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.status') }}:</span>
-              <el-tag :type="detailData.status === 'active' ? 'success' : 'info'">
-                {{ $t(`input.catalog.statusOptions.${detailData.status}`) }}
-              </el-tag>
-            </div>
-
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.form.description') }}:</span>
-              <span class="value text-block">{{ detailData.description || '-' }}</span>
-            </div>
-
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.createTime') }}:</span>
-              <span class="value">{{ detailData.createTime || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.createPeople') }}:</span>
-              <span class="value">{{ detailData.createPeople || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.catalog.form.inputName')">
+                  {{ detailData.inputName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.inputType')">
+                  <el-tag :type="getTypeTagType">
+                    {{ getTypeLabel }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.agriculturalInputType')">
+                  {{ getAgriculturalInputTypeLabel }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.inputSku')">
+                  {{ detailData.inputSku || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.inputBizId')">
+                  {{ detailData.inputBizId || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.trademark')">
+                  {{ detailData.trademark || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.specificationModel')">
+                  {{ detailData.specificationModel || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.unit')">
+                  {{ detailData.unit || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.referencePrice')">
+                  {{ detailData.referencePrice || 0 }} Br
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.isImport')">
+                  <el-tag :type="detailData.isImport === 1 ? 'primary' : 'info'">
+                    {{ detailData.isImport === 1 ? $t('input.catalog.isImport.yes') : $t('input.catalog.isImport.no') }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.status')">
+                  <el-tag :type="detailData.status === 'active' ? 'success' : 'info'">
+                    {{ $t(`input.catalog.statusOptions.${detailData.status}`) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.description')" :span="2">
+                  {{ detailData.description || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.createTime')">
+                  {{ detailData.createTime || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.createPeople')">
+                  {{ detailData.createPeople || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 法规与许可信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-shield-check-line"></i>
-            {{ $t('input.catalog.form.regulatoryInfo') }}
+          <!-- 法规与许可信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-shield-check-line"></i>
+                <span>{{ $t('input.catalog.form.regulatoryInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.catalog.form.registerCode')">
+                  {{ detailData.registerCode || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.productionLicense')">
+                  {{ detailData.productionLicense || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.productionStandard')">
+                  {{ detailData.productionStandard || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.registerCode') }}:</span>
-              <span class="value">{{ detailData.registerCode || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.productionLicense') }}:</span>
-              <span class="value">{{ detailData.productionLicense || '-' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.form.productionStandard') }}:</span>
-              <span class="value">{{ detailData.productionStandard || '-' }}</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- 生产与责任信息 -->
-        <div class="detail-section">
-          <div class="section-title">
-            <i class="ri-building-line"></i>
-            {{ $t('input.catalog.form.productionInfo') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.form.producerName') }}:</span>
-              <span class="value">{{ detailData.producerName || '-' }}</span>
+          <!-- 生产与责任信息卡片 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-line"></i>
+                <span>{{ $t('input.catalog.form.productionInfo') }}</span>
+              </div>
             </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.form.producerAddress') }}:</span>
-              <span class="value">{{ detailData.producerAddress || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.catalog.form.producerName')" :span="2">
+                  {{ detailData.producerName || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.form.producerAddress')" :span="2">
+                  {{ detailData.producerAddress || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 种子特性信息（IN01=种子） -->
-        <div v-if="detailData.type === 'IN01'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-seedling-line"></i>
-            {{ $t('input.catalog.seed.title') }}
-          </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="label">{{ $t('input.catalog.seed.breeder') }}:</span>
-              <span class="value">{{ detailData.breeder || '-' }}</span>
+          <!-- 种子特性信息（IN01=种子） -->
+          <div v-if="detailData.type === 'IN01'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-seedling-line"></i>
+                <span>{{ $t('input.catalog.seed.title') }}</span>
+              </div>
             </div>
-            <div class="detail-item full-width">
-              <span class="label">{{ $t('input.catalog.seed.varietySource') }}:</span>
-              <span class="value">{{ detailData.varietySource || '-' }}</span>
+            <div class="card-body">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item :label="$t('input.catalog.seed.breeder')">
+                  {{ detailData.breeder || '-' }}
+                </el-descriptions-item>
+                <el-descriptions-item :label="$t('input.catalog.seed.varietySource')" :span="2">
+                  {{ detailData.varietySource || '-' }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
           </div>
-        </div>
 
-        <!-- 化肥特性信息（IN02=化肥） -->
-        <div v-if="detailData.type === 'IN02'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('input.catalog.fertilizer.title') }}
-          </div>
-          <div class="detail-grid">
-            <div class="text-center text-gray-500 detail-item full-width">
-              {{ $t('input.catalog.fertilizer.emptyTip') }}
+          <!-- 化肥特性信息（IN02=化肥） -->
+          <div v-if="detailData.type === 'IN02'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ $t('input.catalog.fertilizer.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="text-center text-gray-500">
+                {{ $t('input.catalog.fertilizer.emptyTip') }}
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- 其他类型信息（IN09=其他） -->
-        <div v-if="detailData.type === 'IN09'" class="detail-section">
-          <div class="section-title">
-            <i class="ri-more-line"></i>
-            {{ $t('input.catalog.other.title') }}
-          </div>
-          <div class="detail-grid">
-            <div class="text-center text-gray-500 detail-item full-width">
-              {{ $t('input.catalog.other.emptyTip') }}
+          <!-- 其他类型信息（IN09=其他） -->
+          <div v-if="detailData.type === 'IN09'" class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-more-line"></i>
+                <span>{{ $t('input.catalog.other.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="text-center text-gray-500">
+                {{ $t('input.catalog.other.emptyTip') }}
+              </div>
             </div>
           </div>
         </div>
@@ -294,16 +275,6 @@ const loadDetail = async () => {
   }
 }
 
-// 编辑
-const handleEdit = () => {
-  const id = Number(route.params.id)
-  if (id && id > 0) {
-    router.push(`/input/catalog/edit/${id}`)
-  } else {
-    ElMessage.error(t('input.catalog.invalidIdEdit'))
-  }
-}
-
 // 返回
 const goBack = () => {
   router.back()
@@ -315,311 +286,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.input-detail-container {
-  min-height: calc(100vh - 120px);
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/page-common.scss';
 
-/* 页面头部 */
-.page-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  margin: -24px -24px 24px -24px;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left,
-.header-right {
-  flex: 1;
-}
-
-.header-center {
-  flex: 2;
-  text-align: center;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-/* 详情区域 */
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* 无数据状态 */
-.empty-state {
-  text-align: center;
-  padding: 80px 20px;
+.text-gray-500 {
   color: #909399;
-}
-.empty-state i {
-  font-size: 64px;
-  margin-bottom: 16px;
-  display: block;
-}
-.empty-state p {
-  font-size: 16px;
-  margin: 0;
-}
-
-/* 详情分节 */
-.detail-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #009A44;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #009A44;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  font-size: 20px;
-}
-
-/* 详情网格 */
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.detail-item .label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.detail-item .value {
-  color: #1f2937;
-  flex: 1;
-}
-
-.detail-item .value.text-block {
-  white-space: pre-wrap;
-  line-height: 1.6;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 1024px) {
-  .page-header {
-    margin: -16px -16px 16px -16px;
-  }
-
-  .header-content {
-    padding: 16px;
-  }
-
-  .detail-section {
-    padding: 20px 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .page-header {
-    margin: -12px -12px 12px -12px;
-  }
-
-  .header-content {
-    padding: 12px;
-    flex-wrap: wrap;
-  }
-
-  .header-left,
-  .header-center,
-  .header-right {
-    flex: auto;
-  }
-
-  .header-left {
-    order: 1;
-  }
-
-  .header-center {
-    order: 2;
-    width: 100%;
-    margin-top: 8px;
-    text-align: left;
-  }
-
-  .header-right {
-    order: 3;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 50;
-  }
-
-  .header-right .el-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    padding: 0;
-    background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
-    border: none;
-    box-shadow: 0 4px 16px rgba(0, 154, 68, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-right .el-button i {
-    font-size: 24px;
-    margin-right: 0;
-  }
-
-  .header-right .el-button span {
-    display: none;
-  }
-
-  .header-left .el-button {
-    font-size: 14px;
-  }
-
-  .page-title {
-    font-size: 16px;
-  }
-
-  .detail-section {
-    padding: 16px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-  }
-
-  .section-title {
-    font-size: 15px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-  }
-
-  .section-title i {
-    font-size: 18px;
-  }
-
-  /* 单列布局 */
-  .detail-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .detail-item.full-width {
-    grid-column: 1;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    background: rgba(0, 154, 68, 0.02);
-    border-radius: 8px;
-    border-left: 3px solid #009A44;
-  }
-
-  .detail-item .label {
-    min-width: auto;
-    font-size: 13px;
-    color: #009A44;
-    font-weight: 600;
-  }
-
-  .detail-item .value {
-    font-size: 14px;
-    color: #303133;
-  }
-
-  .detail-item .value.text-block {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .page-header {
-    margin: -8px -8px 8px -8px;
-  }
-
-  .header-content {
-    padding: 10px 8px;
-  }
-
-  .page-title {
-    font-size: 15px;
-  }
-
-  .header-right .el-button {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .header-right .el-button i {
-    font-size: 20px;
-  }
-
-  .detail-section {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-  }
-
-  .detail-grid {
-    gap: 12px;
-  }
-
-  .detail-item {
-    padding: 10px;
-  }
-
-  .detail-item .label {
-    font-size: 12px;
-  }
-
-  .detail-item .value {
-    font-size: 13px;
-  }
-
-  .detail-item .value.text-block {
-    font-size: 12px;
-  }
 }
 </style>
