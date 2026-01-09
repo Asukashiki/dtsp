@@ -31,15 +31,15 @@ export default {
     },
     production: {
       name: 'Production Management',
-      desc: 'Systematizes the full agricultural production process to boost productivity, reduce risks, and enhance transparency and traceability.',
+      desc: 'Systematizes the full agricultural production process to boost productivity.',
     },
     procurement: {
       name: 'Processing & Value Addition',
-      desc: 'Transforms primary agricultural products into higher-value goods via workflow, quality, output and batch management to extend the value chain and boost market competitiveness.',
+      desc: 'Transforms primary agricultural products into higher-value goods.',
     },
     traceability: {
       name: 'Logistics delivery',
-      desc: 'Manages agricultural product supply chain circulation to improve visibility, cut costs, and ensure timely, efficient, secure deliveries.',
+      desc: 'Manages agricultural product supply chain circulation to improve visibility.',
     },
     data: {
       name: 'Data Services',
@@ -51,11 +51,11 @@ export default {
     },
     sustainability: {
       name: 'Sustainability and Climate Resilience Stage',
-      desc: 'Oversees agricultural environmental and climate risk management via monitoring, analysis, assessment and guidance to advance climate-smart agriculture and enhance system resilience and sustainability.',
+      desc: 'Oversees agricultural environmental and climate risk management.',
     },
     harvest: {
       name: 'Harvest Storage',
-      desc: 'Manages post-harvest activities via standardized workflows and data recording to reduce losses, ensure quality and safety, and support subsequent processing and distribution.',
+      desc: 'Manages post-harvest activities to ensure quality and safety',
     }
   },
 
