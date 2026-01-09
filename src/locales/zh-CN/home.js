@@ -38,7 +38,7 @@ export default {
         desc: '采购订单、供应商管理及合同管理',
       },
       traceability: {
-        name: '产品追溯',
+        name: '物流管理',
         desc: '全程追溯、质量检测及溯源查询',
       },
       data: {
@@ -49,6 +49,14 @@ export default {
         name: '农田管理系统',
         desc: '农民认证、土地信息管理及农田数据服务',
       },
+        sustainability: {
+            name: '可持续性管理',
+            desc: '可持续性管理',
+        },
+        harvest: {
+            name: '收获管理',
+            desc: '收获管理',
+        }
     },
 
     // 操作指南板块

@@ -31,24 +31,32 @@ export default {
     },
     production: {
       name: 'Production Management',
-      desc: 'Farm records, production planning and crop monitoring',
+      desc: 'Systematizes the full agricultural production process to boost productivity, reduce risks, and enhance transparency and traceability.',
     },
     procurement: {
-      name: 'Procurement Management',
-      desc: 'Purchase orders, supplier management and contract management',
+      name: 'Processing & Value Addition',
+      desc: 'Transforms primary agricultural products into higher-value goods via workflow, quality, output and batch management to extend the value chain and boost market competitiveness.',
     },
     traceability: {
-      name: 'Product Traceability',
-      desc: 'Full traceability, quality testing and traceability query',
+      name: 'Logistics delivery',
+      desc: 'Manages agricultural product supply chain circulation to improve visibility, cut costs, and ensure timely, efficient, secure deliveries.',
     },
     data: {
       name: 'Data Services',
       desc: 'Data collection, analysis display and decision support',
     },
     farm: {
-      name: 'Farm Management System',
-      desc: 'Farmer authentication, land information management and farm data services',
+      name: 'Farmland Management',
+      desc: 'Foundational component of the digital agriculture system',
     },
+    sustainability: {
+      name: 'Sustainability and Climate Resilience Stage',
+      desc: 'Oversees agricultural environmental and climate risk management via monitoring, analysis, assessment and guidance to advance climate-smart agriculture and enhance system resilience and sustainability.',
+    },
+    harvest: {
+      name: 'Harvest Storage',
+      desc: 'Manages post-harvest activities via standardized workflows and data recording to reduce losses, ensure quality and safety, and support subsequent processing and distribution.',
+    }
   },
 
   // Operation Guide Section
