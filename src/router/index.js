@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
+import { useLoadingStore } from '@/store/loading'
 import { getToken, getTokenFromUrl, getLoginMode } from '../utils/auth'
 import { ElMessage } from 'element-plus'
 import farmLayoutConfig from '@/config/farm-layout.json'
@@ -1959,13 +1960,19 @@ const router = createRouter({
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-
   // 检查是否需要身份验证
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false)
 
   if (!requiresAuth) {
     return next()
   }
+  
+  // 路由切换时显示加载状态
+  if (to.path !== from.path) {
+    const loadingStore = useLoadingStore()
+    loadingStore.setRouteLoading(true)
+  }
+  
   const userStore = useUserStore()
 
   // 1. 先判断 URL 上有没有 token (SSO模式)
@@ -2071,13 +2078,13 @@ router.beforeEach(async (to, from, next) => {
   }
 })
 
-function redirectToLogin(fullPath, userStore) {
-  ElMessage({
-    message: '请先登录后再访问此页面',
-    type: 'warning',
-    duration: 1000
-  })
-  userStore.logoutAndRedirect(1000)
-}
+// 全局后置守卫 - 路由切换完成后关闭loading
+router.afterEach(() => {
+  const loadingStore = useLoadingStore()
+  // 延迟关闭loading，确保页面已经渲染完成
+  setTimeout(() => {
+    loadingStore.setRouteLoading(false)
+  }, 200)
+})
 
 export default router

@@ -30,21 +30,12 @@ const handleNavChange = (index, path) => {
 
 // 确保用户信息已加载
 onMounted(async () => {
-  console.log('Layout mounted - token:', !!userStore.token, 'hasUserInfo:', userStore.hasUserInfo)
-
-  // 如果有 token 但没有用户信息，主动获取
   if (userStore.token && !userStore.hasUserInfo) {
-    console.log('Layout: 检测到有token但无用户信息，开始获取')
     try {
-      const result = await userStore.fetchUserInfo()
-      console.log('Layout: 用户信息获取结果:', result ? '成功' : '失败')
+      await userStore.fetchUserInfo()
     } catch (error) {
       console.error('Layout: 获取用户信息失败:', error)
     }
-  } else if (userStore.hasUserInfo) {
-    console.log('Layout: 用户信息已存在，无需重新获取')
-  } else {
-    console.log('Layout: 无token，跳过用户信息获取')
   }
 })
 </script>

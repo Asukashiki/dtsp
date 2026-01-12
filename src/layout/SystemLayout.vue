@@ -138,11 +138,17 @@
         <!-- 全局标签页导航 -->
         <PageBreadcrumb />
 
-        <router-view v-slot="{ Component, route }">
-          <transition name="fade" ><!-- mode="out-in"-->
-            <component :is="Component" :key="route.path" />
-          </transition>
-        </router-view>
+        <!-- 内容容器 -->
+        <div class="content-inner">
+          <!-- 页面加载骨架屏 -->
+          <PageLoadingOverlay />
+
+          <router-view v-slot="{ Component, route }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" :key="route.path" />
+            </transition>
+          </router-view>
+        </div>
       </div>
     </div>
   </div>
@@ -156,6 +162,7 @@ import { useLocaleStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import { parseI18nValue } from '@/utils/i18nHelper'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageLoadingOverlay from '@/components/common/PageLoadingOverlay.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -617,10 +624,17 @@ onMounted(async () => {
   background-color: #f0f2f5;
   margin-left: 280px;
   transition: margin-left 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 .system-content.collapsed {
   margin-left: 64px;
+}
+
+.content-inner {
+  flex: 1;
+  position: relative;
 }
 
 /* 过渡动画 */
