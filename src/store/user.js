@@ -45,8 +45,9 @@ export const useUserStore = defineStore('user', {
     // 获取用户角色列表
     userRoles() {
       const userInfo = this._userInfo || getUserInfo() || {}
-      const roleStr = userInfo.user?.LOGIN_ROLE_VALUE?.['SMART-AGR'] || ''
-      return roleStr.split(',').map(r => r.trim()).filter(r => r)
+      const roleKeys = userInfo.roleKeys
+      if (!roleKeys) return []
+      return Array.isArray(roleKeys) ? roleKeys : roleKeys.split(',').map(r => r.trim()).filter(r => r)
     },
     // 检查用户是否有指定角色
     hasRole() {
@@ -154,7 +155,7 @@ export const useUserStore = defineStore('user', {
           this.roles = roles || []
           this.permissions = permissions || []
           this.deptPath = deptPath || []
-          this.setUserInfo(res.user)
+          this.setUserInfo({...res.user, roleKeys: res.roleKeys})
           console.log('权限信息已加载:', this.permissions.length, '个权限')
           console.log('区划路径链已加载:', this.deptPath.length, '级')
           return { roles, permissions, deptPath, ...res.user }
@@ -226,7 +227,7 @@ export const useUserStore = defineStore('user', {
           const { roles, permissions } = res
           this.roles = roles || []
           this.permissions = permissions || []
-          this.setUserInfo(res.user)
+          this.setUserInfo({...res.user, roleKeys: res.roleKeys})
           console.log('权限信息已加载:', this.permissions.length, '个权限')
           return { roles, permissions }
         }

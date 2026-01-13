@@ -150,7 +150,6 @@
               :data="menuOptions"
               show-checkbox
               node-key="id"
-              :default-checked-keys="form.menuIds"
               :props="{ label: 'label', children: 'children' }"
               :default-expand-all="menuExpand"
             />
@@ -166,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listRole, getRole, addRole, updateRole, delRole, changeRoleStatus } from '@/api/system/role'
@@ -255,7 +254,7 @@ const getMenuTreeByRole = async (roleId) => {
     if (roleId) {
       // 编辑角色时，获取该角色的菜单权限
       const res = await roleMenuTreeselect(roleId)
-      // 处理菜单树的国际化标签
+      // 处理菜单树的国际化标签 - 显示完整菜单树
       menuOptions.value = processTreeLabels(res.menus || [])
       return res.checkedKeys || []
     } else {
@@ -318,6 +317,17 @@ const handleEdit = async (row) => {
     const checkedKeys = await getMenuTreeByRole(row.roleId)
     form.value = { ...res.data, menuIds: checkedKeys }
     dialogVisible.value = true
+    
+    // 使用 nextTick 确保 DOM 更新后再设置选中状态
+    await nextTick()
+    if (menuTreeRef.value && checkedKeys && checkedKeys.length > 0) {
+      // 先清空所有选中
+      menuTreeRef.value.setCheckedKeys([])
+      // 然后逐个设置选中的节点
+      checkedKeys.forEach(key => {
+        menuTreeRef.value.setChecked(key, true, false)
+      })
+    }
   } catch (error) {
     console.error('Failed to fetch role:', error)
   }

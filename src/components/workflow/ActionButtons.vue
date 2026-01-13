@@ -179,7 +179,7 @@ const getDefaultButtons = () => {
     case 'S1': // Pending Approval
       if (props.showAudit) {
         // 审核页面：显示查看按钮 + 审核按钮
-        buttons.push({ type: '', action: 'view', label: 'view', icon: 'ri-eye-line' })
+        // buttons.push({ type: '', action: 'view', label: 'view', icon: 'ri-eye-line' })
         if (userStore.hasWorkflowStatusPermission('approve')) {
           buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
         }
@@ -188,9 +188,9 @@ const getDefaultButtons = () => {
         if (userStore.hasWorkflowStatusPermission('approve')) {
           buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
         }
-        if (userStore.hasWorkflowStatusPermission('cancel')) {
-          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-        }
+        // if (userStore.hasWorkflowStatusPermission('cancel')) {
+        //   buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
+        // }
       }
       break
 
