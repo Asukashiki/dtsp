@@ -236,7 +236,7 @@ const isEdit = computed(() => !!route.params.traitId)
 
 // 获取当前登录用户信息
 const currentUser = getUserInfo()
-const defaultObserverId = currentUser?.user?.id || ''
+const defaultObserverId = currentUser?.userId || ''
 
 const formData = reactive({
   recordId: '',
@@ -288,12 +288,12 @@ const loadFarmerOptions = async () => {
     
     // 将当前用户添加到选项列表（如果不存在）
     const currentUser = getUserInfo()
-    if (currentUser?.user?.id && currentUser?.user?.name) {
-      const userExists = farmerOptions.value.some(item => item.farmerId === currentUser.user.id)
+    if (currentUser?.userId && currentUser?.userName) {
+      const userExists = farmerOptions.value.some(item => item.farmerId === currentUser.userId)
       if (!userExists) {
         farmerOptions.value.unshift({
-          farmerId: currentUser.user.id,
-          farmerName: currentUser.user.name
+          farmerId: currentUser.userId,
+          farmerName: currentUser.userName
         })
       }
     }

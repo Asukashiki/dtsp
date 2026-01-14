@@ -807,6 +807,7 @@ export default {
     title: 'Field Inspection Data Audit',
     subtitle: 'Audit field inspection data',
     list: 'Pending Field Inspection Data List',
+    detail: 'Field Inspection Audit Details',
     audit: 'Audit',
 
     // Form fields
@@ -836,11 +837,13 @@ export default {
       auditDepartment: 'Please enter audit department',
       approvalTime: 'Please select approval time',
       inspectionDate: 'Please select inspection date',
+      voidReason: 'Please enter void reason',
     },
 
     // Form validation
     rules: {
       auditCommentRequired: 'Audit comment is required',
+      voidReasonRequired: 'Void reason is required',
     },
 
     // Action buttons
@@ -860,16 +863,6 @@ export default {
     voidReason: 'Void Reason',
     confirmVoid: 'Are you sure to void this audit?',
     voidSuccess: 'Void successful',
-
-    // Form placeholders
-    placeholder: {
-      voidReason: 'Please enter void reason',
-    },
-
-    // Form validation
-    rules: {
-      voidReasonRequired: 'Void reason is required',
-    },
   },
 
   // Farming Record Data Collection Audit

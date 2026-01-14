@@ -164,6 +164,18 @@ const operatorName = computed(() => {
   return user?.nickName || user?.userName || user?.name || '-'
 })
 
+// 获取当前时间（格式：YYYY-MM-DD HH:mm:ss）
+const getCurrentDateTime = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
 const formRef = ref(null)
 const submitting = ref(false)
 const batchList = ref([])
@@ -171,7 +183,7 @@ const batchList = ref([])
 const formData = reactive({
   produceBatchId: '',
   producedAmount: null,
-  collectionDate: '',
+  collectionDate: getCurrentDateTime(),
   // Auto-filled for display
   produceBatchName: '',
   varietyName: '',
@@ -183,14 +195,14 @@ const formData = reactive({
 
 const rules = computed(() => ({
   produceBatchId: [
-    { required: true, message: t('Please select a production batch'), trigger: 'change' }
+    { required: true, message: t('research.breeding.seed.production.rules.produceBatchIdRequired'), trigger: 'change' }
   ],
   producedAmount: [
-    { required: true, message: t('Please enter produced amount'), trigger: 'blur' },
-    { type: 'number', min: 0, message: t('Amount must be positive'), trigger: 'blur' }
+    { required: true, message: t('research.breeding.seed.production.rules.producedAmountRequired'), trigger: 'blur' },
+    { type: 'number', min: 0, message: t('research.breeding.seed.production.rules.producedAmountMin'), trigger: 'blur' }
   ],
   collectionDate: [
-    { required: true, message: t('Please select collection date'), trigger: 'change' }
+    { required: true, message: t('research.breeding.seed.production.rules.collectionDateRequired'), trigger: 'change' }
   ]
 }))
 

@@ -812,12 +812,11 @@ onMounted(() => {
     // 默认检测信息：检测人员、检测机构、检测日期
     try {
       const currentUser = getUserInfo()
-      const user = currentUser && currentUser.user ? currentUser.user : {}
-      if (!formData.testerName && user.name) {
-        formData.testerName = user.name
+      if (!formData.testerName && currentUser.userName) {
+        formData.testerName = currentUser.userName
       }
-      if (!formData.testOrganization && (user.organName || user.organ_name)) {
-        formData.testOrganization = user.organName || user.organ_name
+      if (!formData.testOrganization && currentUser.deptName) {
+        formData.testOrganization = currentUser.deptName
       }
     } catch (e) {
       // 忽略从本地获取用户信息的异常

@@ -45,7 +45,7 @@
                     <el-input :value="data.applicantOrgId" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12" v-if="data.authId">
+                <el-col :xs="24" :sm="12" v-if="data && data.authId">
                   <el-form-item :label="$t('research.c1Propagation.columns.authId')">
                     <el-input :value="data.authId" disabled />
                   </el-form-item>
@@ -184,23 +184,19 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { auditC1Propagation } from '@/api/c1Propagation'
+import { auditC1Propagation, getC1PropagationAuditById } from '@/api/c1Propagation'
 import { getUserInfo } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
 
+const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
-
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true
-  }
-})
 
 const emit = defineEmits(['cancel', 'success'])
 
@@ -208,6 +204,9 @@ const emit = defineEmits(['cancel', 'success'])
 const formRef = ref(null)
 const submitting = ref(false)
 const loading = ref(false)
+
+// 数据
+const data = ref({})
 
 // 表单数据
 const formData = reactive({
@@ -232,7 +231,28 @@ onMounted(() => {
   if (currentUser && currentUser.user) {
     formData.auditOrg = currentUser.user.organName || ''
   }
+  loadData()
 })
+
+// 加载数据
+const loadData = async () => {
+  loading.value = true
+  try {
+    const res = await getC1PropagationAuditById(route.params.id)
+    if (res.code === 200 && res.data) {
+      data.value = res.data
+    } else {
+      ElMessage.error(t('common.loadFailed'))
+      handleCancel()
+    }
+  } catch (error) {
+    console.error('Failed to load data:', error)
+    ElMessage.error(t('common.loadFailed'))
+    handleCancel()
+  } finally {
+    loading.value = false
+  }
+}
 
 // 提交审核
 const handleSubmit = async () => {
@@ -241,7 +261,7 @@ const handleSubmit = async () => {
     submitting.value = true
 
     const submitData = {
-      id: props.data.id,
+      id: data.value.id,
       auditResult: formData.auditResult,
       auditOpinion: formData.auditOpinion,
       auditOrg: formData.auditOrg
@@ -250,7 +270,7 @@ const handleSubmit = async () => {
     const res = await auditC1Propagation(submitData)
     if (res.code === 200) {
       ElMessage.success(t('research.c1Propagation.auditSuccess'))
-      emit('success')
+      router.back()
     } else {
       ElMessage.error(res.msg || t('common.submitFailed'))
     }
@@ -266,7 +286,7 @@ const handleSubmit = async () => {
 
 // 取消
 const handleCancel = () => {
-  emit('cancel')
+  router.back()
 }
 </script>
 

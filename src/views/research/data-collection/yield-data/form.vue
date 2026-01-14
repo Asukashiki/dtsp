@@ -293,7 +293,7 @@ const isEdit = computed(() => !!route.params.id)
 
 // 当前登录用户信息（用于默认记录人员）
 const currentUser = getUserInfo && typeof getUserInfo === 'function' ? getUserInfo() : null
-const defaultRecorderName = currentUser?.user?.name || ''
+const defaultRecorderName = currentUser?.userName || ''
 
 const formData = reactive({
   id: null,

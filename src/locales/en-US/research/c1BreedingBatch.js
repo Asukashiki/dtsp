@@ -158,6 +158,7 @@ export default {
     testOrg: 'Test Organization',
     testLocation: 'Test Location',
     description: 'Description',
+    testDesc: 'Test Description',
     resultPass: 'Pass',
     resultFail: 'Fail',
     resultRetest: 'Pending Retest',

@@ -234,7 +234,8 @@
               type="textarea" 
               :rows="4" 
               :placeholder="$t('research.environmentNewData.placeholder.approvalComment')" 
-              :disabled="isReadOnly"
+              maxlength="500"
+              show-word-limit
                 />
               </el-form-item>
               </el-col>

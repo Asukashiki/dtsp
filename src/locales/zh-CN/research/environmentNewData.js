@@ -9,6 +9,7 @@ export default {
   add: '新增记录',
   edit: '编辑记录',
   detail: '记录详情',
+  audit: '审核记录',
   delete: '删除记录',
   deleteConfirm: '确定要删除该记录吗？',
   deleteSuccess: '删除成功',

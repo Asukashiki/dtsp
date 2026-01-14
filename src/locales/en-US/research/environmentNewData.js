@@ -9,6 +9,7 @@ export default {
   add: 'Add Record',
   edit: 'Edit Record',
   detail: 'Record Details',
+  audit: 'Audit Record',
   delete: 'Delete Record',
   deleteConfirm: 'Are you sure you want to delete this record?',
   deleteSuccess: 'Deleted successfully',

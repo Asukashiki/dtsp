@@ -31,6 +31,7 @@ export default {
   // Batch related
   batch: {
     title: 'Breeding Batch Information',
+    list: 'Breeding Batch List',
     add: 'Add',
     edit: 'Edit',
     delete: 'Delete',
@@ -291,6 +292,12 @@ export default {
         section: {
           productionBatchSelection: 'Production Batch Information',
           collectionData: 'Collection Data',
+        },
+        rules: {
+          produceBatchIdRequired: 'Please select a production batch',
+          producedAmountRequired: 'Please enter produced amount',
+          producedAmountMin: 'Amount must be positive',
+          collectionDateRequired: 'Please select collection date',
         },
       },
     },

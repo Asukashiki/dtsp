@@ -292,7 +292,7 @@ const loadFarmerOptions = async () => {
       const exists = farmerOptions.value.some((x) => String(x.farmerId) === String(opId))
       if (!exists) {
         const ui = getUserInfo() || {}
-        const displayName = ui?.user?.name || ''
+        const displayName = ui?.userName || ''
         farmerOptions.value.unshift({ farmerId: opId, farmerName: displayName || String(opId) })
       }
       // 若为新建且尚未设置，赋默认值

@@ -114,6 +114,12 @@ export default {
           productionBatchSelection: '生产批次信息',
           collectionData: '采集数据',
         },
+        rules: {
+          produceBatchIdRequired: '请选择生产批次',
+          producedAmountRequired: '请输入产出数量',
+          producedAmountMin: '产出数量必须大于0',
+          collectionDateRequired: '请选择采集日期',
+        },
       },
     },
 
@@ -681,6 +687,7 @@ export default {
   // 批次相关
   batch: {
     title: '繁殖批次信息',
+    list: '繁殖批次列表',
     add: '新增批次',
     edit: '编辑批次',
     delete: '删除批次',

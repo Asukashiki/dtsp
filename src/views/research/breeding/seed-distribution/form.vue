@@ -266,8 +266,8 @@ const toSeedLevelOptions = ref([])
 
 // 从用户信息中获取当前用户名称和组织名称
 const userInfo = userStore.userInfo || {}
-const currentUserName = userInfo.user?.NAME || userInfo.user?.USER_NAME || ''
-const currentOrgName = userInfo.user?.ORGAN_NAME || ''
+const currentUserName = userInfo.userName|| ''
+const currentOrgName = userInfo.userName || ''
 
 const formData = reactive({
   distributeName: '',
@@ -282,9 +282,11 @@ const formData = reactive({
     {
       produceBatchId: '',
       produceBatchName: '',
+      breedBatchId: '',
       breedBatchName: '',
       parentalSeedSource: '',
       varietyName: '',
+      cropType: '',
       distributeQuantity: null,
       maxQuantity: null
     }
@@ -438,7 +440,8 @@ const handleBatchChange = async (index) => {
     detail.breedBatchName = selectedBatch.breedBatchName || ''
     detail.varietyName = selectedBatch.varietyName || ''
     // 也复制 parentalSeedSource（如果在结果列表中有这个字段）
-    detail.parentalSeedSource = selectedBatch.parentalSeedSource || ''
+    detail.parentalSeedSource = selectedBatch.parentalSeedSource || '',
+    detail.breedBatchId = selectedBatch.breedBatchId || ''
   } else {
     // 如果在列表中找不到对应的批次，清空相关字段
     detail.maxQuantity = null

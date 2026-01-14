@@ -203,8 +203,8 @@ const formData = reactive({
   time: getCurrentDateTime(),
   landId: '',
   landName: '',
-  operatorId: currentUser?.user?.id || '',
-  operatorName: currentUser?.user?.name || '',
+  operatorId: currentUser?.userId || '',
+  operatorName: currentUser?.userName || '',
   inputSeedQuantity: null,
   fromSeedLevel: 'Pre-Basic',
   toSeedLevel: 'Basic'

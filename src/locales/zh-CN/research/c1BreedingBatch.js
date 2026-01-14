@@ -169,6 +169,7 @@ export default {
     testOrg: '检测机构',
     testLocation: '检测地点',
     description: '检测描述',
+    testDesc: '检测描述',
     resultPass: '合格',
     resultFail: '不合格',
     resultRetest: '待复检',

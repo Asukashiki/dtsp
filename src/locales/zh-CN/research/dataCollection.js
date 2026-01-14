@@ -848,6 +848,7 @@ export default {
     title: '田间检验数据采集审核',
     subtitle: '对田间检验数据进行审核操作',
     list: '待审核田间检验数据列表',
+    detail: '田间检验审核详情',
     audit: '审核',
     
     // 搜索筛选
@@ -884,11 +885,13 @@ export default {
       auditDepartment: '请输入审核部门',
       approvalTime: '请选择审批时间',
       inspectionDate: '请选择检验日期',
+      voidReason: '请输入作废原因',
     },
     
     // 表单验证
     rules: {
       auditCommentRequired: '审核意见为必填项',
+      voidReasonRequired: '作废原因为必填项',
     },
     
     // 操作按钮
@@ -911,16 +914,6 @@ export default {
     voidReason: '作废原因',
     confirmVoid: '确定作废该审核吗？',
     voidSuccess: '作废成功',
-
-    // 表单占位符
-    placeholder: {
-      voidReason: '请输入作废原因',
-    },
-
-    // 表单验证
-    rules: {
-      voidReasonRequired: '作废原因为必填项',
-    },
   },
 
   // 农事记录数据采集审核

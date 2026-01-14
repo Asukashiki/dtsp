@@ -173,6 +173,18 @@ const cropTypeLabel = computed(() => {
   return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
 })
 
+// 获取当前时间（格式：YYYY-MM-DD HH:mm:ss）
+const getCurrentDateTime = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
 const formRef = ref(null)
 const submitting = ref(false)
 const batchList = ref([])
@@ -180,7 +192,7 @@ const batchList = ref([])
 const formData = reactive({
   produceBatchId: '',
   outputQuantity: null,
-  collectionDate: new Date(),
+  collectionDate: getCurrentDateTime(),
   // Auto-filled for display
   produceBatchName: '',
   varietyName: '',
@@ -252,16 +264,6 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     submitting.value = true
-    
-    // Format date manually to YYYY-MM-DD HH:mm:ss
-    const date = new Date(formData.collectionDate)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    const seconds = String(date.getSeconds()).padStart(2, '0')
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
     const submitData = {
       produceBatchId: formData.produceBatchId,
@@ -275,7 +277,7 @@ const handleSubmit = async () => {
       varietyId: formData.varietyId,
       cropType: formData.cropType,
       outputQuantity: formData.outputQuantity,
-      collectionDate: formattedDate,
+      collectionDate: formData.collectionDate,
       operator: operatorName.value
     }
     

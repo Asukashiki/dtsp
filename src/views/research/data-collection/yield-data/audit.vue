@@ -172,7 +172,7 @@ const detailData = ref({})
 
 // 当前登录用户信息
 const currentUser = getUserInfo()
-const defaultAuditor = currentUser?.user?.name || currentUser?.user?.REALNAME || currentUser?.user?.USERNAME || ''
+const defaultAuditor = currentUser?.userName || currentUser?.user?.REALNAME || currentUser?.user?.USERNAME || ''
 const defaultAuditDepartment = currentUser?.user?.organName || currentUser?.user?.ORGANNAME || ''
 
 const formData = reactive({

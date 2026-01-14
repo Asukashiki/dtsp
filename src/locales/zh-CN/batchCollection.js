@@ -1,6 +1,7 @@
 export default {
   title: 'OSE繁殖批次信息数据采集',
   subtitle: 'Seed Multiplication Batch Data',
+  list: '繁殖批次采集列表',
   add: '新增批次采集',
   detail: '批次详情',
   searchPlaceholder: '搜索批次ID、分发ID或品种名称',
