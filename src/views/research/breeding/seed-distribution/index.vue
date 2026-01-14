@@ -108,7 +108,7 @@
                     mode="list"
                     :workflow-status="row.distributeStatus === 'Finalized' ? 'S2' : 'S0'"
                     :show-audit="false"
-                    :exclude-actions="['submit', 'edit']"
+                    :exclude-actions="getExcludeActions(row)"
                     :force-view="true"
                     @action="(action) => handleAction(row, action)" />
                 </template>
@@ -168,7 +168,7 @@
                   mode="list"
                   :workflow-status="item.distributeStatus === 'Finalized' ? 'S2' : 'S0'"
                   :show-audit="false"
-                  :exclude-actions="['submit', 'edit']"
+                  :exclude-actions="getExcludeActions(item)"
                   :force-view="true"
                   @action="(action) => handleAction(item, action)" />
               </div>
@@ -322,6 +322,17 @@ const handleAction = (row, action) => {
       handleDelete(row)
       break
   }
+}
+
+// 根据分发状态获取需要排除的操作
+const getExcludeActions = (row) => {
+  console.log('row',row);
+  const excludeList = ['submit', 'edit']
+  // 当分发状态为"已收到的"时，隐藏"作废"按钮
+  if (row.distributeStatus === 'Received') {
+    excludeList.push('cancelBatch')
+  }
+  return excludeList
 }
 
 onMounted(() => {
