@@ -6,7 +6,7 @@ export default {
   // Actions
   actions: {
     addYear: 'Add Year',
-    approve: 'Approve',
+    approve: 'Audit',
     submit: 'Submit',
     detail: 'Detail',
     view: 'View',
