@@ -135,7 +135,7 @@ export default {
   propagationTrackingEdit: 'Edit Tracking Information',
   propagationTrackingDetail: 'Tracking Information Detail',
 
-  c1PropagationBatchCollection: 'C1 Propagation Batch Information',
+  c1PropagationBatchCollection: 'Seed Multiplication Information',
   c1PropagationBatchCollectionSubtitle: 'Manage C1 propagation batch information',
   c1PropagationBatchAdd: 'Add Propagation Batch',
   c1PropagationBatchEdit: 'Edit Propagation Batch',

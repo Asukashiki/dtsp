@@ -20,7 +20,7 @@
           ref="formRef"
           :model="formData"
           :rules="rules"
-          label-width="280px"
+          label-width="160px"
           label-position="right"
         >
           <!-- 机构信息 -->
@@ -33,7 +33,7 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.applicantOrgType')" prop="applicantOrgType">
                     <el-select v-model="formData.applicantOrgType"
                       :placeholder="$t('research.c1Propagation.placeholder.applicantOrgType')" style="width: 100%"
@@ -45,14 +45,14 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.applicantOrgName')" prop="applicantOrgName">
                     <el-input v-model="formData.applicantOrgName"
                       :placeholder="$t('research.c1Propagation.placeholder.applicantOrgName')" />
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.applicantOrgId')" prop="applicantOrgId">
                     <el-input v-model="formData.applicantOrgId"
                       :placeholder="$t('research.c1Propagation.placeholder.applicantOrgId')" />
@@ -72,14 +72,14 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.propagationBatchId')" prop="propagationBatchId">
                     <BasicSeedSelector ref="seedSelectorRef" v-model="formData.propagationBatchId"
                       :placeholder="$t('research.c1Propagation.selectBasicSeed')" @seed-selected="handleSeedSelected" />
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.cropType')" prop="cropType">
                     <el-select v-model="formData.cropType"
                       :placeholder="$t('research.c1Propagation.placeholder.cropType')" disabled style="width: 100%">
@@ -89,14 +89,14 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.varietyName')" prop="varietyName">
                     <el-input v-model="formData.varietyName"
                       :placeholder="$t('research.c1Propagation.placeholder.varietyName')" disabled />
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.applyDate')">
                     <el-date-picker v-model="formData.applyDate" type="date"
                       :placeholder="$t('research.c1Propagation.placeholder.applyDate')" format="YYYY-MM-DD"
@@ -111,28 +111,31 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.demandQuantity')" prop="demandQuantity">
-                    <div style="display: flex; align-items: center; width: 100%;">
-                      <el-input-number v-model="formData.demandQuantity"
-                        :placeholder="$t('research.c1Propagation.placeholder.demandQuantity')" controls-position="right"
-                        style="flex: 1; max-width: 300px;" :min="1"
-                        :max="selectedSeed ? maxAvailableQuantity : undefined" :disabled="!selectedSeed" />
-                      <span v-if="selectedSeed"
-                        style="margin-left: 12px; color: #909399; font-size: 14px; white-space: nowrap;">
-                        {{ $t('research.c1Propagation.unit') }}: kg
-                        <span style="margin-left: 8px; color: #67c23a; font-weight: 500;">
-                          {{ $t('research.c1Propagation.maxAvailable') }}: {{ maxAvailableQuantity }} kg
+                    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <el-input-number v-model="formData.demandQuantity"
+                          :placeholder="$t('research.c1Propagation.placeholder.demandQuantity')" controls-position="right"
+                          style="flex: 1; min-width: 150px;" :min="1"
+                          :max="selectedSeed ? maxAvailableQuantity : undefined" :disabled="!selectedSeed" />
+                        <span v-if="selectedSeed"
+                          style="color: #909399; font-size: 14px; white-space: nowrap;">
+                          kg
                         </span>
-                      </span>
-                      <span v-else style="margin-left: 12px; color: #f56c6c; font-size: 14px;">
-                        {{ $t('research.c1Propagation.selectBasicSeed') }}
+                        <span v-else style="color: #f56c6c; font-size: 14px;">
+                          {{ $t('research.c1Propagation.selectBasicSeed') }}
+                        </span>
+                      </div>
+                      <span v-if="selectedSeed"
+                        style="color: #67c23a; font-weight: 500; font-size: 13px;">
+                        {{ $t('research.c1Propagation.maxAvailable') }}: {{ maxAvailableQuantity }} kg
                       </span>
                     </div>
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.fromSeedType')" prop="fromSeedType">
                     <el-select v-model="formData.fromSeedType"
                       :placeholder="$t('research.c1Propagation.placeholder.fromSeedType')" style="width: 100%">
@@ -142,7 +145,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="24" :md="12">
                   <el-form-item :label="$t('research.c1Propagation.form.toSeedType')" prop="toSeedType">
                     <el-select v-model="formData.toSeedType"
                       :placeholder="$t('research.c1Propagation.placeholder.toSeedType')" style="width: 100%">

@@ -99,7 +99,7 @@
                 align="center"
               >
                 <template #default="{ row }">
-                  <el-button link type="primary" @click="handleView(row)">
+                  <el-button size="small" type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i>
                     {{ $t('common.view') }}
                   </el-button>

@@ -2,7 +2,7 @@ export default {
   title: 'Pre-basic Seed Batch Info',
   subtitle: 'Manage Pre-basic Seed Production Batch Information',
   list: 'Batch List',
-  add: 'Add Batch',
+  add: 'Add',
   detail: 'Batch Detail',
   searchPlaceholder: 'Search variety name or crop type',
   voidConfirm: 'Are you sure you want to void this batch? This action cannot be undone.',

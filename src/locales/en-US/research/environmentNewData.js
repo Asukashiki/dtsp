@@ -6,7 +6,7 @@ export default {
   subtitle: 'Manage environmental monitoring data records',
   subtitleAuth: 'Review and manage environmental monitoring data',
   list: 'Data List',
-  add: 'Add Record',
+  add: 'Add',
   edit: 'Edit Record',
   detail: 'Record Details',
   audit: 'Audit Record',

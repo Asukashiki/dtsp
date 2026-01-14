@@ -65,10 +65,10 @@
               <el-table-column :label="$t('common.actions')" width="200" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button link type="primary" @click="handleView(row)">
+                    <el-button size="small" type="primary" @click="handleView(row)">
                       <i class="ri-eye-line"></i>{{ $t('common.view') }}
                     </el-button>
-                    <el-button link type="primary" v-if="row.auditStatus === 0" @click="handleAudit(row)">
+                    <el-button size="small" type="primary" v-if="row.auditStatus === 0" @click="handleAudit(row)">
                       <i class="ri-check-line"></i>{{ $t('orgRegistration.actions.audit') }}
                     </el-button>
                   </div>
@@ -245,5 +245,9 @@ onMounted(() => {
 
 .filter-select {
   width: 100%;
+}
+
+.action-buttons button {
+  margin-left: 0;
 }
 </style>

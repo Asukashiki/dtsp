@@ -2,7 +2,7 @@ export default {
   title: 'Seed Multiplication Information',
   subtitle: 'Manage Seed Multiplication Information',
 
-  add: 'Add Seed Multiplication Information',
+  add: 'Add',
   edit: 'Edit Seed Multiplication Information',
   delete: 'Void',
   view: 'View Details',

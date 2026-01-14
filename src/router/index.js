@@ -18,10 +18,14 @@ const routeWhitelist = [
   '/print/seed/breeding-certification',
   '/print/seed/c1-breeding-certificate',
   '/notice',
-  '/research',
-  // '/research/breeding-data/batch/audit',
-  // '/research/breeding-data/trial-audit',
-  // '/research/breeding-data/plot-audit'
+  // '/research',
+  '/research/breeding-data/batch/audit',
+  '/research/breeding-data/trial-audit',
+  '/research/breeding-data/plot-audit',
+  '/research/breeding-data/farming/farming-detail',
+  '/research/breeding-data/farming/farming-form',
+  '/breeding/batch/add',
+  '/research/breeding/batch/add'
 ]
 
 const routes = [

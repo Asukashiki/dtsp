@@ -15,7 +15,7 @@
 
       <!-- 表单区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="220px">
           <!-- 基本信息卡片 -->
           <div class="info-card">
             <div class="card-header">

@@ -398,7 +398,7 @@ import { getLabTestDetail, addLabTest, updateLabTest } from '@/api/labTest'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
 import { getTrialBasicList, getTrialBasicInfo } from '@/api/breedingData'
-import { getUserInfo } from '@/utils/auth'
+import { getUserInfo,getUserOrgName, getUserOrgId } from '@/utils/auth'
 import { getPlotInfoList } from '@/api/breedingData'
 
 const route = useRoute()
@@ -816,7 +816,7 @@ onMounted(() => {
         formData.testerName = currentUser.userName
       }
       if (!formData.testOrganization && currentUser.deptName) {
-        formData.testOrganization = currentUser.deptName
+        formData.testOrganization = getUserOrgName()
       }
     } catch (e) {
       // 忽略从本地获取用户信息的异常

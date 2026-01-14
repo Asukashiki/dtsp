@@ -103,7 +103,7 @@
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('prebasicSeedProductionResult.form.outputQuantity') + ' (kg)'" prop="outputQuantity">
+                  <el-form-item :label="$t('prebasicSeedProductionResult.form.outputQuantity')" prop="outputQuantity">
                     <el-input-number
                       v-model="formData.outputQuantity"
                       :min="0"

@@ -63,10 +63,10 @@
               <el-table-column :label="$t('common.actions')" width="200" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button link type="primary" @click="handleViewDetail(row)">
+                    <el-button size="small" type="primary" @click="handleViewDetail(row)">
                       <i class="ri-eye-line"></i> {{ $t('common.view') }}
                     </el-button>
-                    <el-button link type="danger" @click="handleDelete(row)">
+                    <el-button size="small" type="danger" @click="handleDelete(row)">
                       <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
                     </el-button>
                   </div>
@@ -296,5 +296,9 @@ onMounted(() => {
   gap: 4px;
   color: #64748b;
   font-size: 13px;
+}
+
+.action-buttons button {
+  margin-left: 0;
 }
 </style>

@@ -71,13 +71,13 @@
               </el-table-column>
               <el-table-column prop="lastPrintTime" :label="$t('seed.c1Certificate.columns.lastPrintTime')" width="160"
                 align="center" />
-              <el-table-column :label="$t('common.action')" width="200" align="center" fixed="right">
+              <el-table-column :label="$t('common.action')" width="260" align="center" fixed="right">
                 <template #default="{ row }">
-                  <el-button link type="primary" @click="handleView(row)">
+                  <el-button size="small" type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i>
                     {{ $t('common.view') }}
                   </el-button>
-                  <el-button link type="success" @click="handlePrint(row)">
+                  <el-button size="small" type="success" @click="handlePrint(row)">
                     <i class="ri-printer-line"></i>
                     {{ $t('seed.c1Certificate.print') }}
                   </el-button>

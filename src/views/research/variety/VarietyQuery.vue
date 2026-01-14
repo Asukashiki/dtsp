@@ -93,7 +93,7 @@
               <el-table-column :label="$t('common.actions')" width="120" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button link type="primary" @click="handleView(row)">
+                    <el-button size="small" type="primary" @click="handleView(row)">
                       <i class="ri-eye-line"></i>
                       {{ $t('common.view') }}
                     </el-button>

@@ -65,15 +65,15 @@
               <el-table-column :label="$t('common.actions')" width="280" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button link type="primary" @click="handleView(row)">
+                    <el-button size="small" type="primary" @click="handleView(row)">
                       <i class="ri-eye-line"></i>
                       {{ $t('common.view') }}
                     </el-button>
-                    <el-button link type="primary" @click="handleEdit(row)">
+                    <el-button size="small" type="primary" @click="handleEdit(row)">
                       <i class="ri-edit-line"></i>
                       {{ $t('common.edit') }}
                     </el-button>
-                    <el-button link type="danger" @click="handleDelete(row)">
+                    <el-button size="small" type="danger" @click="handleDelete(row)">
                       <i class="ri-delete-bin-line"></i>
                       {{ $t('common.delete') }}
                     </el-button>
@@ -271,4 +271,9 @@ onMounted(() => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
+
+
+.action-buttons button {
+  margin-left: 0;
+}
 </style>

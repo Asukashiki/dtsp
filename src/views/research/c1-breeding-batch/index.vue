@@ -302,7 +302,7 @@ const getActionButtons = (row) => {
 
   // 如果未审核通过,显示编辑和删除按钮
   if (row.auditStatus !== 'approved') {
-    buttons.push({ type: '', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+    buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
     buttons.push({ type: 'danger', action: 'delete', label: 'delete', icon: 'ri-delete-bin-line' })
   }
 

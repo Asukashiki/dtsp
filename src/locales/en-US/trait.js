@@ -4,7 +4,7 @@ export default {
   title: 'Agronomic Trait Data Collection',
   subtitle: 'Record and manage agronomic trait data in breeding trials',
   list: 'Trait Record List',
-  add: 'Add New Record',
+  add: 'Add',
   edit: 'Edit Record',
   detail: 'Record Detail',
 

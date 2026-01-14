@@ -76,19 +76,19 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('orgRegistration.columns.actions')" width="220" fixed="right">
+              <el-table-column :label="$t('orgRegistration.columns.actions')" width="260" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
-                    <el-button link type="primary" @click="handleView(row)">
+                    <el-button size="small" type="primary" @click="handleView(row)">
                       <i class="ri-eye-line"></i>{{ $t('orgRegistration.actions.view') }}
                     </el-button>
                     <!-- <el-button link type="primary" v-if="row.auditStatus === 0" @click="handleAudit(row)">
                       <i class="ri-check-double-line"></i>{{ $t('orgRegistration.actions.audit') }}
                     </el-button> -->
-                    <el-button link type="primary" v-if="row.auditStatus === 2" @click="handleEdit(row)">
+                    <el-button size="small" type="primary" v-if="row.auditStatus === 2" @click="handleEdit(row)">
                       <i class="ri-edit-line"></i>{{ $t('orgRegistration.actions.edit') }}
                     </el-button>
-                    <el-button link type="danger" @click="handleDelete(row)">
+                    <el-button size="small" type="danger" @click="handleDelete(row)">
                       <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
                     </el-button>
                   </div>
@@ -317,4 +317,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+
+.action-buttons button {
+  margin-left: 0;
+}
 </style>

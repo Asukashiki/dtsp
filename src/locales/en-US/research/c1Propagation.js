@@ -7,7 +7,7 @@ export default {
   auditSubtitle: 'OIA reviews seed propagation applications',
 
   // Actions
-  add: 'Add Application',
+  add: 'Add',
   edit: 'Edit Application',
   delete: 'Delete Application',
   audit: 'Audit',

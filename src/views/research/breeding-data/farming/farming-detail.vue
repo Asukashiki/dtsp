@@ -11,16 +11,16 @@
             <h1 class="page-title">{{ $t('research.breedingData.farming.detailAudit') }}</h1>
           </div>
         </div>
-        <div class="header-actions">
+        <!-- <div class="header-actions"> -->
           <!-- Show "Approval" button when status is empty or pending approval -->
-          <el-button
+          <!-- <el-button
             v-if="!detailData.workflowStatus || detailData.workflowStatus === 'S1' || detailData.auditStatus === 'S1'"
             type="success"
             @click="handleAudit"
           >
             <i class="ri-check-line"></i>Approval
-          </el-button>
-        </div>
+          </el-button> -->
+        <!-- </div> -->
       </div>
 
       <!-- 内容区域 -->

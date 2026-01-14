@@ -2,7 +2,7 @@ export default {
   title: 'Seed Multiplication Batch Data',
   subtitle: 'Multiplication Batch Information Collection',
   list: 'Breeding Batch Collection List',
-  add: 'Add Batch Collection',
+  add: 'Add',
   detail: 'Batch Details',
   searchPlaceholder: 'Search batch ID, distribution ID or variety name',
   section: {

@@ -670,7 +670,7 @@ export default {
     title: 'Yield Data Collection',
     subtitle: 'Record field yield verification data',
     list: 'Data List',
-    add: 'Add Yield Data',
+    add: 'Add',
     edit: 'Edit Yield Data',
     detail: 'Yield Data Details',
     delete: 'Delete Data',

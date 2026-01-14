@@ -134,25 +134,27 @@
                 </template>
               </el-table-column>
               <el-table-column prop="createTime" :label="$t('research.breeding.seed.receiveConfirm.columns.createTime')" width="240" />
-              <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.actions')" width="150" fixed="right">
+              <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.actions')" width="260" fixed="right" align="center">
                 <template #default="{ row }">
-                  <el-button
+                  <div class="action-buttons">
+                    <el-button
                       v-if="row.receiveStatus === 'PENDING'"
-                    link
-                    type="primary"
-                    @click="handleConfirm(row)"
-                  >
-                    <i class="ri-checkbox-line"></i>
-                    {{ $t('research.breeding.seed.receiveConfirm.confirm') }}
-                  </el-button>
-                  <el-button
-                    link
-                    type="primary"
-                    @click="handleView(row)"
-                  >
-                    <i class="ri-eye-line"></i>
-                    {{ $t('common.view') }}
-                  </el-button>
+                      type="primary"
+                      size="small"
+                      @click="handleConfirm(row)"
+                    >
+                      <i class="ri-checkbox-line"></i>
+                      <span class="btn-text">{{ $t('research.breeding.seed.receiveConfirm.confirm') }}</span>
+                    </el-button>
+                    <el-button
+                      type="primary"
+                      size="small"
+                      @click="handleView(row)"
+                    >
+                      <i class="ri-eye-line"></i>
+                      <span class="btn-text">{{ $t('common.view') }}</span>
+                    </el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -336,6 +338,33 @@ onMounted(() => {
   font-size: 28px;
   font-weight: 600;
   color: #009A44;
+}
+
+/* 操作按钮样式 - 匹配 ActionButtons 组件的样式 */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .btn-text {
+      white-space: nowrap;
+    }
+  }
 }
 
 @media screen and (max-width: 768px) {

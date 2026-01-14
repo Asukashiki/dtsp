@@ -435,7 +435,7 @@ export default {
       title: 'OSE Maintenance Management',
       subtitle: 'Manage OSE basic information to ensure accurate seed recipient information',
       list: 'OSE List',
-      add: 'Add OSE',
+      add: 'Add',
       edit: 'Edit OSE',
       detail: 'OSE Details',
       delete: 'Delete OSE',

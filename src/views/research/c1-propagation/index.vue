@@ -121,13 +121,13 @@
                 align="center"
               >
                 <template #default="{ row }">
-                  <el-button link type="primary" @click="handleView(row)">
+                  <el-button size="small"  type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i> {{ $t('common.view') }}
                   </el-button>
-                  <el-button link type="primary" @click="handleEdit(row)" v-if="row.applyStatus === 'pending'">
+                  <el-button size="small"  type="primary" @click="handleEdit(row)" v-if="row.applyStatus === 'pending'">
                     <i class="ri-edit-line"></i>
                   </el-button>
-                  <el-button link type="danger" @click="handleDelete(row)" v-if="row.applyStatus === 'pending'">
+                  <el-button  size="small"  type="danger" @click="handleDelete(row)" v-if="row.applyStatus === 'pending'">
                     <i class="ri-delete-bin-line"></i>
                   </el-button>
                 </template>

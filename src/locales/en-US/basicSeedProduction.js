@@ -2,7 +2,7 @@ export default {
   title: 'Basic Seed Batch Info',
   subtitle: 'Manage Basic Seed batches',
   searchPlaceholder: 'Search by batch ID or name',
-  add: 'Add Batch',
+  add: 'Add',
   detail: 'Batch Detail',
   list: 'Batch List',
   

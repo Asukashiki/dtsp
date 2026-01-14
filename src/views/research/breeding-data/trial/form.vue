@@ -67,7 +67,7 @@
                 </el-col>
                 <!-- Variety Code -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Variety Code">
+                  <el-form-item :label="$t('research.breedingData.trial.form.varietyCode')">
                     <el-input v-model="formData.varietyCode" disabled :placeholder="$t('research.breedingData.trial.placeholder.autoFilledFromBatch')" />
                   </el-form-item>
                 </el-col>
