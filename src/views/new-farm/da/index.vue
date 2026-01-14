@@ -303,13 +303,9 @@ const passwordRules = computed(() => ({
 const getRowActionButtons = (row) => ([
   { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
   { type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' },
-  {
-    type: row?.accountStatus === '1' ? 'warning' : 'success',
-    action: 'toggleStatus',
-    label: 'view', // 占位：实际显示使用 text（不改国际化结构）
-    text: row?.accountStatus === '1' ? t('newFarm.da.actions.disable') : t('newFarm.da.actions.enable'),
-    icon: row?.accountStatus === '1' ? 'ri-forbid-line' : 'ri-checkbox-circle-line'
-  },
+  row?.accountStatus === '1'
+    ? { type: 'warning', action: 'disable', rawLabel: t('newFarm.da.actions.disable'), icon: 'ri-forbid-line' }
+    : { type: 'success', action: 'enable', rawLabel: t('newFarm.da.actions.enable'), icon: 'ri-checkbox-circle-line' },
   { type: 'danger', action: 'delete', label: 'delete', icon: 'ri-delete-bin-line' }
 ])
 
@@ -322,7 +318,8 @@ const handleAction = (row, action) => {
     case 'edit':
       handleEdit(row)
       break
-    case 'toggleStatus':
+    case 'disable':
+    case 'enable':
       handleToggleStatus(row)
       break
     case 'delete':

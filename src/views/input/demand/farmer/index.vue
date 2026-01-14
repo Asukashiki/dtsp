@@ -133,12 +133,8 @@
                 />
                 <el-table-column :label="$t('common.actions')" fixed="right" width="240">
                   <template #default="{ row }">
-                    <ActionButtons
-                      :workflow-status="mapStatusToWorkflow(row.status)"
-                      mode="list"
-                      :show-audit="false"
-                      :exclude-actions="['cancelBatch']"
-                      :force-view="true"
+                    <FarmerActionButtons
+                      :status="row.status"
                       @action="(action) => handleAction(row, action)"
                     />
                   </template>
@@ -204,12 +200,8 @@
                   </div>
                 </div>
                 <div class="mobile-card-footer">
-                   <ActionButtons
-                      :workflow-status="mapStatusToWorkflow(item.status)"
-                      mode="list"
-                      :show-audit="false"
-                      :exclude-actions="['cancelBatch']"
-                      :force-view="true"
+                   <FarmerActionButtons
+                      :status="item.status"
                       @action="(action) => handleAction(item, action)"
                     />
                 </div>
@@ -246,7 +238,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmerDemandPage, deleteFarmerDemand, submitForAudit } from '@/api/farmerDemand'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
-import ActionButtons from '@/components/workflow/ActionButtons.vue'
+import FarmerActionButtons from './components/FarmerActionButtons.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -290,18 +282,6 @@ const getStatusType = (status) => {
     '4': '', // locked
   }
   return typeMap[status] || 'info'
-}
-
-// 映射状态到工作流状态
-const mapStatusToWorkflow = (status) => {
-  const map = {
-    '0': 'S0', // Draft
-    '1': 'S1', // Submitted -> Pending Approval
-    '2': 'S2', // Approved
-    '3': 'S3', // Rejected
-    '4': 'S9'  // Locked -> Archived/Locked
-  }
-  return map[status] || 'S0'
 }
 
 // 统一动作处理
@@ -379,11 +359,6 @@ const handleView = (row) => {
 // 编辑
 const handleEdit = (row) => {
   router.push({ name: 'FarmerDemandEdit', params: { id: row.id } })
-}
-
-// 审批
-const handleApprove = (row) => {
-  router.push({ name: 'FarmerDemandApprove', params: { id: row.id } })
 }
 
 // 判断行是否可选择（只有草稿(0)和驳回(3)状态可以提交审核）

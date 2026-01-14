@@ -56,7 +56,7 @@ export default {
 
   // Detail Dialog
   detailDialog: {
-    title: 'Aggregation Data Detail',
+    title: 'Aggregation Detail',
     columns: {
       inputCategory: 'Category',
       inputType: 'Input Type',

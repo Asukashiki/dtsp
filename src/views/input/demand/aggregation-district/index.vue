@@ -974,7 +974,7 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).deptId,
       level: '2',
       orderByColumn: 'year',
       isAsc: 'desc'
@@ -1012,10 +1012,10 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).deptId,
       status: '0',
       level: '2',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
+      creator: JSON.parse(localStorage.getItem('userInfo')).userName,
     })
 
     if (res.code === 200) {

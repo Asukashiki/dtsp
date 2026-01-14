@@ -38,7 +38,7 @@
           <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              {{ $t('Add') }}
+              {{ $t('basicSeedProductionResult.add') }}
             </el-button>
           </template>
 

@@ -68,6 +68,19 @@ export function deleteZoneAllocation(id) {
 }
 
 /**
+ * Submit zone allocation for approval
+ * @param {String} id - Allocation ID
+ * @returns {Promise}
+ */
+export function submitZoneAllocation(id) {
+  return request({
+    url: '/api/allocation/zone/submit',
+    method: 'post',
+    data: { id }
+  })
+}
+
+/**
  * Get demand data by year and zone
  * @param {Object} params - Query parameters (year, zone)
  * @returns {Promise}

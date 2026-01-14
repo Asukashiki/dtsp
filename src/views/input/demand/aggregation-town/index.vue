@@ -746,7 +746,7 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode:JSON.parse(localStorage.getItem('userInfo')).deptId,
       level: "1",
       orderByColumn: 'year',
       isAsc: 'desc'
@@ -786,11 +786,11 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).deptId,
       // sourceCode: 'huangshan',
       status: '0',
       level: '1',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
+      creator: JSON.parse(localStorage.getItem('userInfo')).userName,
       // subQuantity: 0//农民数||村的数量||
     })
 

@@ -123,7 +123,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getZoneAllocationList, deleteZoneAllocation } from '@/api/allocation'
+import { getZoneAllocationList, deleteZoneAllocation, submitZoneAllocation } from '@/api/allocation'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
@@ -215,6 +215,23 @@ const handleDelete = async (row) => {
   }
 }
 
+const handleSubmit = async (row) => {
+  try {
+    await ElMessageBox.confirm(t('common.confirmSubmit'), t('common.warning'), { type: 'warning' })
+    const response = await submitZoneAllocation(row.id)
+    if (response.code === 200) {
+      ElMessage.success(t('common.submitSuccess'))
+      handleQuery()
+    } else {
+      ElMessage.error(response.msg || t('common.submitFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.submitFailed'))
+    }
+  }
+}
+
 // 统一动作处理
 const handleAction = (row, action) => {
   switch (action) {
@@ -223,6 +240,9 @@ const handleAction = (row, action) => {
       break
     case 'edit':
       handleEdit(row)
+      break
+    case 'submit':
+      handleSubmit(row)
       break
     case 'cancelBatch': // 对应 ActionButtons 中的删除/作废
       handleDelete(row)

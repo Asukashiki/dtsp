@@ -668,9 +668,23 @@ const handleSubmit = async () => {
       return
     }
 
-    const user = JSON.parse(localStorage.getItem('userInfo')).user
-    formData.daUserId = user.ID;
-    formData.daUserName = user.NAME;
+    // 获取用户信息
+    const userInfoStr = localStorage.getItem('userInfo')
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr)
+        // userInfo 直接就是 user 对象，不需要再 .user
+        formData.daUserId = userInfo.userId || userInfo.id || ''
+        formData.daUserName = userInfo.nickName || userInfo.userName || ''
+      } catch (e) {
+        console.error('解析用户信息失败:', e)
+        ElMessage.error(t('common.tips.parseUserInfoFailed'))
+        return
+      }
+    } else {
+      ElMessage.warning(t('common.tips.noUserInfo'))
+      return
+    }
     // 处理提交数据
     const submitData = {
       ...formData,

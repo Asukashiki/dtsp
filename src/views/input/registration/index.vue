@@ -124,12 +124,12 @@
                   :label="$t('orgRegistration.columns.createTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="240">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
                   <template #default="{ row }">
                     <ActionButtons
-                      :workflow-status="mapStatusToWorkflow(row.auditStatus)"
+                      :custom-buttons="getCustomButtons(row.auditStatus)"
+                      workflow-status="S0"
                       mode="list"
-                      :show-audit="false"
                       @action="(action) => handleAction(row, action)" />
                   </template>
                 </el-table-column>
@@ -189,9 +189,9 @@
                 </div>
                 <div class="mobile-card-footer">
                   <ActionButtons
-                    :workflow-status="mapStatusToWorkflow(item.auditStatus)"
+                    :custom-buttons="getCustomButtons(item.auditStatus)"
+                    workflow-status="S0"
                     mode="list"
-                    :show-audit="false"
                     @action="(action) => handleAction(item, action)" />
                 </div>
               </div>
@@ -247,14 +247,27 @@ const pagination = reactive({
   total: 0
 })
 
-// Add new status mapping helper
-const mapStatusToWorkflow = (status) => {
-  const map = {
-    0: 'S1', // Pending -> S1 (Pending Approval)
-    1: 'S2', // Approved -> S2 (Approved)
-    2: 'S3'  // Rejected -> S3 (Rejected)
+// 根据审核状态获取自定义按钮配置
+const getCustomButtons = (status) => {
+  switch (status) {
+    case 0: // 待审核 - 只能查看
+      return [
+        { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
+      ]
+    case 1: // 已通过 - 只能查看
+      return [
+        { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
+      ]
+    case 2: // 已拒绝 - 可查看、重新提交
+      return [
+        { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
+        { type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' }
+      ]
+    default:
+      return [
+        { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
+      ]
   }
-  return map[status] || 'S0'
 }
 
 // 获取状态标签

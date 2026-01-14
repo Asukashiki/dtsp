@@ -1104,7 +1104,7 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).deptId,
       level: '3',
       orderByColumn: 'year',
       isAsc: 'desc'
@@ -1586,7 +1586,7 @@ const mapWorkflowStatus = (status) => {
 
 const getMainTableButtons = (row) => {
   return [
-    { type: 'primary', action: 'view', rawLabel: t('Aggregation detail'), icon: 'ri-list-check' }
+    { type: 'primary', action: 'view', label:'view', icon: 'ri-list-check' }
   ]
 }
 
@@ -1598,7 +1598,7 @@ const handleAction = (row, action) => {
 
 const getDrillDownButtons = (row) => {
   return [
-    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
   ]
 }
 
@@ -1610,7 +1610,7 @@ const handleDrillDownAction = (row, action) => {
 
 const getDrillDown2Buttons = (row) => {
   return [
-    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
   ]
 }
 
@@ -1622,7 +1622,7 @@ const handleDrillDown2Action = (row, action) => {
 
 const getDrillDown3Buttons = (row) => {
   return [
-    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
   ]
 }
 
@@ -1634,7 +1634,7 @@ const handleDrillDown3Action = (row, action) => {
 
 const getFarmerDemandButtons = (row) => {
   return [
-    { type: 'primary', action: 'view', label: 'common.view', icon: 'ri-eye-line' }
+    { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
   ]
 }
 

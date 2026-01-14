@@ -312,7 +312,7 @@ const getRowActionButtons = (row) => {
       action: 'bind',
       label: 'bind',
       icon: 'ri-link',
-      text: t('newFarm.land.actions.bindFarmer')
+      rawLabel: t('newFarm.land.actions.bindFarmer')
     })
   } else {
     buttons.push({
@@ -320,7 +320,7 @@ const getRowActionButtons = (row) => {
       action: 'unbind',
       label: 'unbind',
       icon: 'ri-link-unlink',
-      text: t('newFarm.land.actions.unbindFarmer')
+      rawLabel: t('newFarm.land.actions.unbindFarmer')
     })
   }
 

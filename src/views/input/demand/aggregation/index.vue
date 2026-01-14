@@ -329,7 +329,8 @@ const loadApprovedCountForRow = async (row) => {
     const params = {
       pageNum: 1,
       pageSize: 1,
-      kebele: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      kebele: JSON.parse(localStorage.getItem('userInfo')).deptId
+      ,
       year: row.year
     }
     const res = await getApprovedDemandPage(params)
@@ -362,12 +363,11 @@ const getCustomButtons = (row) => {
     })
   }
 
-  // Detail button (using rawLabel for unkeyed text if needed, or key)
-  // User code used $t('Aggregation detail'). I'll use rawLabel.
+  // Detail button
   buttons.push({ 
     type: 'primary', 
     action: 'detail', 
-    rawLabel: t('Aggregation detail'), 
+    label: 'villageAggregation.detailDialog.title', 
     icon: 'ri-list-check' 
   })
 
@@ -390,7 +390,7 @@ const loadData = async () => {
     const params = {
       page: pagination.currentPage, // 修正为 page
       pageSize: pagination.pageSize,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).deptId,
       level: '0',
       orderByColumn: 'year',
       isAsc: 'desc'
@@ -428,11 +428,11 @@ const confirmAddYear = async () => {
     submitting.value = true
     const res = await createVillageDemandSummaryMain({
       year: addYearForm.year,
-      sourceCode: JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      sourceCode: JSON.parse(localStorage.getItem('userInfo')).deptId,
       // sourceCode: 'huangshan',
       status: '0',
       level: '0',
-      creator: JSON.parse(localStorage.getItem('userInfo')).user.username,
+      creator: JSON.parse(localStorage.getItem('userInfo')).userName,
       // subQuantity: 0//农民数||村的数量||
     })
 
