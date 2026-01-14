@@ -1,15 +1,15 @@
 <template>
   <div class="workflow-action-buttons" :class="{ 'is-table-mode': mode === 'list' }">
     <el-button
-      v-for="button in visibleButtons"
-      :key="button.action"
-      :type="button.type"
-      :size="mode === 'list' ? 'small' : 'default'"
-      :loading="loading && currentAction === button.action"
-      :disabled="disabled || (loading && currentAction !== button.action)"
-      @click="handleAction(button)">
+        v-for="button in visibleButtons"
+        :key="button.action"
+        :type="button.type"
+        :size="mode === 'list' ? 'small' : 'default'"
+        :loading="loading && currentAction === button.action"
+        :disabled="disabled || (loading && currentAction !== button.action)"
+        @click="handleAction(button)">
       <i :class="button.icon"></i>
-      <span class="btn-text">{{ button.text || $t(`common.${button.label}`) }}</span>
+      <span class="btn-text">{{ getButtonLabel(button) }}</span>
     </el-button>
   </div>
 </template>
@@ -17,7 +17,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useUserStore } from '@/store'
 
 const props = defineProps({
   /**
@@ -112,7 +111,6 @@ const getButtonLabel = (button) => {
   return t(`common.${button.label}`)
 }
 
-const userStore = useUserStore()
 const currentAction = ref('')
 
 /**
@@ -124,7 +122,7 @@ const getDefaultButtons = () => {
   // If on voided tab, only show view button
   if (isVoidedTab) {
     return [
-      { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' }
+      { type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' }
     ]
   }
 
@@ -164,33 +162,19 @@ const getDefaultButtons = () => {
 
   switch (workflowStatus) {
     case 'S0': // Draft
-      if (userStore.hasWorkflowStatusPermission('edit')) {
-        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-      }
-      if (userStore.hasWorkflowStatusPermission('submit')) {
-        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-      }
+      buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+      buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
       // 管理页面显示作废按钮，审核页面不显示
-      if (!props.showAudit && userStore.hasWorkflowStatusPermission('cancel')) {
+      if (!props.showAudit) {
         buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
 
     case 'S1': // Pending Approval
+      buttons.push({ type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' })
       if (props.showAudit) {
         // 审核页面：显示查看按钮 + 审核按钮
-        // buttons.push({ type: '', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        if (userStore.hasWorkflowStatusPermission('approve')) {
-          buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
-        }
-      } else {
-        // 管理页面：显示查看按钮 + 作废按钮
-        if (userStore.hasWorkflowStatusPermission('approve')) {
-          buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
-        }
-        // if (userStore.hasWorkflowStatusPermission('cancel')) {
-        //   buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-        // }
+        buttons.push({ type: 'primary', action: 'audit', label: 'audit', icon: 'ri-check-line' })
       }
       break
 
@@ -199,32 +183,25 @@ const getDefaultButtons = () => {
         // 显示确认入库按钮（用于入库管理的已审核状态）
         buttons.push({ type: 'success', action: 'confirm', label: 'confirmInbound', icon: 'ri-checkbox-circle-line' })
       }
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      buttons.push({ type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
 
     case 'S3': // Rejected
+      buttons.push({ type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' })
       if (props.showAudit) {
-        // 审核页面：只显示编辑按钮
-        if (userStore.hasWorkflowStatusPermission('edit')) {
-          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-        }
+        // 审核页面：显示查看和编辑按钮
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
       } else {
         // 管理页面：显示编辑、提交、作废按钮
-        if (userStore.hasWorkflowStatusPermission('edit')) {
-          buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
-        }
-        if (userStore.hasWorkflowStatusPermission('submit')) {
-          buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
-        }
-        if (userStore.hasWorkflowStatusPermission('cancel')) {
-          buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
-        }
+        buttons.push({ type: 'primary', action: 'edit', label: 'edit', icon: 'ri-edit-line' })
+        buttons.push({ type: 'success', action: 'submit', label: 'submit', icon: 'ri-send-plane-line' })
+        buttons.push({ type: 'danger', action: 'cancelBatch', label: 'void', icon: 'ri-delete-bin-line' })
       }
       break
 
     case 'S9': // Archived
     case 'S10': // Voided
-      buttons.push({ type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' })
+      buttons.push({ type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' })
       break
   }
 
@@ -238,7 +215,7 @@ const visibleButtons = computed(() => {
   // Force View if enabled and not present
   if (props.forceView && !buttons.find(b => b.action === 'view')) {
     buttons = [
-      { type: 'primary', action: 'view', label: 'view', icon: 'ri-eye-line' },
+      { type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' },
       ...buttons
     ]
   }
