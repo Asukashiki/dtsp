@@ -1,7 +1,8 @@
 /**
  * 认证相关的工具函数
  */
-import {getLogout } from '@/api/user'
+import { getLogout } from '@/api/user'
+import { parseI18nValue, localeToJsonKey } from './i18nHelper'
 
 /**
  * 获取登录模式配置
@@ -101,6 +102,33 @@ export function setUserInfo(userInfo) {
  */
 export function removeUserInfo() {
   localStorage.removeItem('userInfo')
+}
+
+/**
+ * 解析部门名称（处理 JSON 字符串格式，支持国际化）
+ */
+function parseDeptName(deptName) {
+  if (!deptName) return ''
+  const locale = localStorage.getItem('i18n_locale') || 'zh-CN'
+  return parseI18nValue(deptName, locale)
+}
+
+/**
+ * 获取用户的组织名称（支持国际化）
+ * @returns {string} 组织名称
+ */
+export function getUserOrgName() {
+  const userInfo = getUserInfo()
+  return parseDeptName(userInfo.deptName) || ''
+}
+
+/**
+ * 获取用户的组织ID
+ * @returns {string} 组织ID
+ */
+export function getUserOrgId() {
+  const userInfo = getUserInfo()
+  return userInfo.deptId  || ''
 }
 
 export function redirectToLogin() {

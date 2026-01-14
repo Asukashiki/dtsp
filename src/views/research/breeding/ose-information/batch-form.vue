@@ -197,7 +197,7 @@ import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { getBreedSeedProduceList, getOseReceiveConfirmList } from '@/api/breedSeed'
 import { useDict } from '@/hooks/useDict'
-import { getUserInfo } from '@/utils/auth'
+import { getUserOrgName, getUserOrgId } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -373,9 +373,8 @@ const handleParentalSeedSourceChange = (value) => {
 // 初始化
 onMounted(async () => {
   // 默认填充机构信息
-  const currentUser = getUserInfo()?.user || {}
-  formData.value.orgName = currentUser.organName || currentUser.ORGAN_NAME || formData.value.orgName
-  formData.value.orgId = currentUser.organCode || currentUser.ORGAN_CODE || formData.value.orgId
+  formData.value.orgName = getUserOrgName()
+  formData.value.orgId = getUserOrgId()
 
   // 并行加载数据
   await Promise.all([loadBreedSeedProduceList(), loadConfirmedDistributionList()])

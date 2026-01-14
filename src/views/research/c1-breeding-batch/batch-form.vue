@@ -177,6 +177,7 @@ import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, addC1BreedingBatch, updateC1BreedingBatch, getApprovedPropagations } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
 import { useDict } from '@/hooks/useDict'
+import { getUserOrgName, getUserOrgId } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -224,8 +225,8 @@ const rules = computed(() => ({
 onMounted(async () => {
   // 从用户信息自动填充组织信息
   const userInfo = userStore.userInfo?.user || {}
-  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
-  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  formData.value.orgId = getUserOrgId()
+  formData.value.orgName = getUserOrgName()
   
   await loadPropagations()
   if (isEdit.value) {

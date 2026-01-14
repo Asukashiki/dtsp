@@ -143,6 +143,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTestList, getTestById, addTest, updateTest, deleteTest, checkRule } from '@/api/detection'
 import { useUserStore } from '@/store/user'
+import { getUserOrgName, getUserOrgId } from '@/utils/auth'
 
 const props = defineProps({
   batchId: { type: String, required: false },  // 改为可选
@@ -241,8 +242,8 @@ const handleAdd = () => {
   editingId.value = null
   // 从用户信息自动填充检测员和检测机构
   const userInfo = userStore.userInfo?.user || {}
-  const testerName = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
-  const testOrgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  const testerName = userInfo.name || userInfo.NAME || userInfo.userName || userInfo.USERNAME || ''
+  const testOrgName = getUserOrgName()
   // 自动生成lotId，直接使用批次号
   const lotId = props.batchId || ''
   formData.value = {

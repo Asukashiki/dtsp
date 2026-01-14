@@ -119,6 +119,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { useUserStore } from '@/store/user'
+import { getUserOrgName, getUserOrgId } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -154,8 +155,8 @@ const rules = {
 onMounted(async () => {
   // 从用户信息自动填充组织信息
   const userInfo = userStore.userInfo?.user || {}
-  formData.value.orgId = userInfo.organCode || userInfo.ORGAN_CODE || ''
-  formData.value.orgName = userInfo.organName || userInfo.ORGAN_NAME || ''
+  formData.value.orgId = getUserOrgId()
+  formData.value.orgName = getUserOrgName()
   
   if (isEdit.value) {
     await loadDetail()

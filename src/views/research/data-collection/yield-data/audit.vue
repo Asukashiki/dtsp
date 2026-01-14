@@ -159,7 +159,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFieldInspectionAuditInfo, approveFieldInspection, rejectFieldInspection } from '@/api/fieldInspectionAudit'
 import { useUserStore } from '@/store'
-import { getUserInfo } from '@/utils/auth'
+import { getUserInfo, getUserOrgName, getUserOrgId } from '@/utils/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -173,7 +173,7 @@ const detailData = ref({})
 // 当前登录用户信息
 const currentUser = getUserInfo()
 const defaultAuditor = currentUser?.userName || currentUser?.user?.REALNAME || currentUser?.user?.USERNAME || ''
-const defaultAuditDepartment = currentUser?.user?.organName || currentUser?.user?.ORGANNAME || ''
+// const defaultAuditDepartment = currentUser?.user?.organName || currentUser?.user?.ORGANNAME || ''
 
 const formData = reactive({
   remark: '',

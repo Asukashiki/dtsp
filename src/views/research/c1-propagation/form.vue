@@ -173,7 +173,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1PropagationById, addC1Propagation, updateC1Propagation } from '@/api/c1Propagation'
-import { getUserInfo } from '@/utils/auth'
+import { getUserOrgName, getUserOrgId } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
 import BasicSeedSelector from './BasicSeedSelector.vue'
 
@@ -366,14 +366,8 @@ const handleSubmit = async () => {
 
 // 机构类型变更时自动填充机构名称与ID(使用当前登录用户信息)
 const handleOrgTypeChange = (value) => {
-  const currentUser = getUserInfo()
-  if (currentUser && currentUser.user) {
-    formData.applicantOrgName = currentUser.user.organName || ''
-    formData.applicantOrgId = currentUser.user.organCode || ''
-  } else {
-    formData.applicantOrgName = ''
-    formData.applicantOrgId = ''
-  }
+    formData.applicantOrgName = getUserOrgName()
+    formData.applicantOrgId = getUserOrgId()
 }
 
 // 返回

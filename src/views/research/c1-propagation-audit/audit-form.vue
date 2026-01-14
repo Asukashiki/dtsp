@@ -188,8 +188,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { auditC1Propagation, getC1PropagationAuditById } from '@/api/c1Propagation'
-import { getUserInfo } from '@/utils/auth'
+import { getUserInfom, getUserOrgName, getUserOrgId  } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
+
 
 const router = useRouter()
 const route = useRoute()
@@ -228,8 +229,8 @@ const rules = computed(() => ({
 // 默认值：从当前登录用户信息中获取审核机构
 onMounted(() => {
   const currentUser = getUserInfo()
-  if (currentUser && currentUser.user) {
-    formData.auditOrg = currentUser.user.organName || ''
+  if (currentUser && currentUser) {
+    formData.auditOrg = getUserOrgName()
   }
   loadData()
 })

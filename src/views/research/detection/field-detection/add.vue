@@ -304,8 +304,8 @@ onMounted(() => {
   const { id, batchId, seedClass } = route.query
 
   // 从用户信息自动填充操作人
-  const userInfo = userStore.userInfo?.user || {}
-  formData.value.operator = userInfo.name || userInfo.NAME || userInfo.username || userInfo.USERNAME || ''
+  const userInfo = userStore.userInfo || {}
+  formData.value.operator = userInfo.userName
 
   if (id) {
     // 编辑模式
