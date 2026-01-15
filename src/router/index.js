@@ -62,13 +62,13 @@ const routes = [
     path: '/401',
     name: 'NoPermission',
     component: () => import('../views/error/401.vue'),
-    meta: { title: '无权限', requiresAuth: false }
+    meta: { title: 'common.noPermission', requiresAuth: false }
   },
   {
     path: '/404',
     name: 'NotFound',
     component: () => import('../views/error/404.vue'),
-    meta: { title: '页面未找到', requiresAuth: false }
+    meta: { title: 'common.pageNotFound', requiresAuth: false }
   },
   {
     path: '/',
@@ -981,19 +981,19 @@ const routes = [
         path: 'breeding/ose-management/add',
         name: 'OseAdd',
         component: () => import('../views/research/institution/ose-management/form.vue'),
-        meta: { title: '新增OSE', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseManagementAdd', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/ose-management/edit/:id',
         name: 'OseEdit',
         component: () => import('../views/research/institution/ose-management/form.vue'),
-        meta: { title: '编辑OSE', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseManagementEdit', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'breeding/ose-management/detail/:id',
         name: 'OseDetail',
         component: () => import('../views/research/institution/ose-management/detail.vue'),
-        meta: { title: 'OSE详情', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.oseManagementDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // ==================== 研究中心管理 ====================
@@ -1043,7 +1043,7 @@ const routes = [
         path: 'seed/promotion/form',
         name: 'SeedPromotionForm',
         component: () => import('../views/research/seed/SeedPromotionForm.vue'),
-        meta: { title: '新增推广内容', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'research.menu.seedPromotionManagementAdd', hideInMenu: true, requiresAuth: true }
       },
       // 种子信息公示
       {
@@ -1616,7 +1616,7 @@ const routes = [
         path: 'input-circulation/union-release',
         name: 'UnionReleaseList',
         component: () => import('../views/research/input-circulation/union-release/index.vue'),
-        meta: { title: 'Union Distribution to Cooperative', requiresAuth: true }
+        meta: { title: 'inputCirculation.unionReleaseToCooperative', requiresAuth: true }
       },
       {
         path: 'input-circulation/union-release/add',
@@ -1642,7 +1642,7 @@ const routes = [
         path: 'input-circulation/woreda-receive',
         name: 'WoredaReceiveList',
         component: () => import('../views/research/input-circulation/woreda-receive/index.vue'),
-        meta: { title: 'Cooperative Receive Confirmation', requiresAuth: true }
+        meta: { title: 'inputCirculation.woredaReceiveConfirm', requiresAuth: true }
       },
       {
         path: 'input-circulation/woreda-receive/confirm/:id',
@@ -1662,7 +1662,7 @@ const routes = [
         path: 'input-circulation/farmer-release',
         name: 'FarmerReleaseList',
         component: () => import('../views/research/input-circulation/farmer-release/index.vue'),
-        meta: { title: 'Cooperative Distribution to Farmer', requiresAuth: true }
+        meta: { title: 'inputCirculation.cooperativeReleaseToFarmer', requiresAuth: true }
       },
       {
         path: 'input-circulation/farmer-release/add',
@@ -1688,7 +1688,7 @@ const routes = [
         path: 'input-circulation/farmer-receive',
         name: 'FarmerReceiveList',
         component: () => import('../views/research/input-circulation/farmer-receive/index.vue'),
-        meta: { title: 'Farmer Receive Confirmation', requiresAuth: true }
+        meta: { title: 'inputCirculation.farmerReceive', requiresAuth: true }
       },
       {
         path: 'input-circulation/farmer-receive/detail/:id',
@@ -1919,49 +1919,49 @@ const routes = [
         path: 'user',
         name: 'SystemUser',
         component: () => import('../views/system/user/index.vue'),
-        meta: { title: '用户管理', requiresAuth: true }
+        meta: { title: 'system.menu.user', requiresAuth: true }
       },
       {
         path: 'role',
         name: 'SystemRole',
         component: () => import('../views/system/role/index.vue'),
-        meta: { title: '角色管理', requiresAuth: true }
+        meta: { title: 'system.menu.role', requiresAuth: true }
       },
       {
         path: 'menu',
         name: 'SystemMenu',
         component: () => import('../views/system/menu/index.vue'),
-        meta: { title: '菜单管理', requiresAuth: true }
+        meta: { title: 'system.menu.menu', requiresAuth: true }
       },
       {
         path: 'dept',
         name: 'SystemDept',
         component: () => import('../views/system/dept/index.vue'),
-        meta: { title: '部门管理', requiresAuth: true }
+        meta: { title: 'system.menu.dept', requiresAuth: true }
       },
       {
         path: 'dict',
         name: 'SystemDict',
         component: () => import('../views/system/dict/index.vue'),
-        meta: { title: '字典管理', requiresAuth: true }
+        meta: { title: 'system.menu.dict', requiresAuth: true }
       },
       {
         path: 'dict-data/:dictType',
         name: 'SystemDictData',
         component: () => import('../views/system/dict/data.vue'),
-        meta: { title: '字典数据', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'system.menu.dict', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'notice',
         name: 'SystemNotice',
         component: () => import('../views/system/notice/index.vue'),
-        meta: { title: '公告管理', requiresAuth: true }
+        meta: { title: 'system.menu.notice', requiresAuth: true }
       },
       {
         path: 'config',
         name: 'SystemConfig',
         component: () => import('../views/system/config/index.vue'),
-        meta: { title: '参数配置', requiresAuth: true }
+        meta: { title: 'system.menu.config', requiresAuth: true }
       }
     ]
   }

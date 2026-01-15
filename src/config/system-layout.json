@@ -1,7 +1,7 @@
 {
   "systemName": "system.name",
   "icon": "ri-settings-3-line",
-  "headerGradient": "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)",
+  "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
   "backToHome": "common.backToHome",
   "width": "260px",
   "menus": [

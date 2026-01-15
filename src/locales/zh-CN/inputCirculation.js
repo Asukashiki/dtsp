@@ -132,6 +132,8 @@ export default {
   unionReleaseToCooperative: 'Union分发投入品到Cooperative',
   cooperativeReceiveConfirm: 'Cooperative确认接收',
   cooperativeReleaseToFarmer: 'Cooperative分发投入品到农民',
+  woredaReceiveConfirm: 'Woreda确认接收',
+  farmerReceive: '农民领用列表',
 
   // 通用
   pleaseSelectInputType: '请选择投入品类别',

@@ -10,6 +10,8 @@ export default {
   },
   user: {
     title: '用户管理',
+    subtitle: '系统用户信息管理',
+    list: '用户列表',
     username: '用户名',
     nickname: '用户昵称',
     dept: '所属部门',
@@ -26,6 +28,8 @@ export default {
   },
   role: {
     title: '角色管理',
+    subtitle: '系统角色权限管理',
+    list: '角色列表',
     roleName: '角色名称',
     roleKey: '权限字符',
     roleSort: '显示顺序',
@@ -75,6 +79,8 @@ export default {
   },
   dict: {
     title: '字典管理',
+    subtitle: '系统字典数据管理',
+    list: '字典列表',
     dictName: '字典名称',
     dictType: '字典类型',
     status: '状态',
@@ -91,6 +97,8 @@ export default {
   },
   notice: {
     title: '公告管理',
+    subtitle: '系统公告信息管理',
+    list: '公告列表',
     noticeTitle: '公告标题',
     noticeType: '公告类型',
     noticeContent: '公告内容',
@@ -100,8 +108,19 @@ export default {
     add: '新增公告',
     edit: '编辑公告'
   },
+  menu: {
+    user: '用户管理',
+    role: '角色管理',
+    menu: '菜单管理',
+    dept: '部门管理',
+    dict: '字典管理',
+    notice: '公告管理',
+    config: '参数配置'
+  },
   config: {
     title: '参数配置',
+    subtitle: '系统参数配置管理',
+    list: '参数列表',
     configName: '参数名称',
     configKey: '参数键名',
     configValue: '参数键值',

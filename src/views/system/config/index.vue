@@ -1,104 +1,144 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 md:p-6">
-    <div class="max-w-7xl mx-auto space-y-6">
-      <!-- Search Area -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
-        <el-form :model="queryParams" inline class="flex flex-wrap gap-4">
-          <el-form-item :label="$t('system.config.configName')" class="mb-0">
-            <el-input
-              v-model="queryParams.configName"
-              :placeholder="$t('common.pleaseInput')"
-              clearable
-              class="w-48"
-              @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item :label="$t('system.config.configKey')" class="mb-0">
-            <el-input
-              v-model="queryParams.configKey"
-              :placeholder="$t('common.pleaseInput')"
-              clearable
-              class="w-48"
-              @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item :label="$t('system.config.configType')" class="mb-0">
-            <el-select v-model="queryParams.configType" clearable :placeholder="$t('common.pleaseSelect')" class="w-28">
-              <el-option :label="$t('common.yes')" value="Y" />
-              <el-option :label="$t('common.no')" value="N" />
-            </el-select>
-          </el-form-item>
-          <el-form-item class="mb-0">
-            <el-button type="primary" @click="handleQuery">
-              <i class="ri-search-line mr-1"></i>
-              {{ $t('system.common.search') }}
-            </el-button>
-            <el-button @click="resetQuery">
-              <i class="ri-refresh-line mr-1"></i>
-              {{ $t('system.common.reset') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-settings-3-line"
+        :title="$t('system.config.title')"
+        :subtitle="$t('system.config.subtitle')" />
 
-      <!-- Main Content -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <div class="flex items-center gap-3 text-lg font-semibold text-green-600">
-            <i class="ri-settings-3-line text-xl"></i>
-            <span>{{ $t('system.config.title') }}</span>
-          </div>
-          <div class="flex gap-2">
-            <el-button type="danger" plain @click="handleRefreshCache">
-              <i class="ri-refresh-line mr-1"></i>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('system.config.configName')">
+              <el-input
+                v-model="queryParams.configName"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('system.config.configKey')">
+              <el-input
+                v-model="queryParams.configKey"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('system.config.configType')">
+              <el-select
+                v-model="queryParams.configType"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option :label="$t('common.yes')" value="Y" />
+                <el-option :label="$t('common.no')" value="N" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('system.config.list')" icon="ri-settings-line">
+          <template #actions>
+            <el-button type="danger" @click="handleRefreshCache">
+              <i class="ri-refresh-line"></i>
               {{ $t('system.config.refreshCache') }}
             </el-button>
             <el-button type="primary" @click="handleAdd">
-              <i class="ri-add-line mr-1"></i>
+              <i class="ri-add-line"></i>
               {{ $t('system.common.add') }}
             </el-button>
-          </div>
-        </div>
+          </template>
 
-        <el-table v-loading="loading" :data="configList" class="w-full">
-          <el-table-column prop="configName" :label="$t('system.config.configName')" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="configKey" :label="$t('system.config.configKey')" min-width="200" show-overflow-tooltip />
-          <el-table-column :label="$t('system.config.configValue')" min-width="200" show-overflow-tooltip>
-            <template #default="{ row }">
-              {{ parseConfigValueDisplay(row.configValue) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('system.config.configType')" width="120" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.configType === 'Y' ? 'success' : 'info'" effect="light">
-                {{ row.configType === 'Y' ? $t('common.yes') : $t('common.no') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" :label="$t('system.user.createTime')" width="160" />
-          <el-table-column :label="$t('system.common.operate')" width="180" fixed="right" align="center">
-            <template #default="{ row }">
-              <el-button type="primary" link @click="handleEdit(row)">
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="configList" stripe v-loading="loading">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="configName" :label="$t('system.config.configName')" min-width="180" show-overflow-tooltip />
+              <el-table-column prop="configKey" :label="$t('system.config.configKey')" min-width="200" show-overflow-tooltip />
+              <el-table-column :label="$t('system.config.configValue')" min-width="200" show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ parseConfigValueDisplay(row.configValue) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('system.config.configType')" width="120" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="row.configType === 'Y' ? 'success' : 'info'" effect="plain">
+                    {{ row.configType === 'Y' ? $t('common.yes') : $t('common.no') }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="createTime" :label="$t('system.user.createTime')" width="160" />
+              <el-table-column :label="$t('system.common.operate')" width="240" fixed="right" align="center">
+                <template #default="{ row }">
+                  <el-button type="primary" size="small" @click="handleEdit(row)">
+                    {{ $t('system.common.edit') }}
+                  </el-button>
+                  <el-button type="danger" size="small" @click="handleDelete(row)">
+                    {{ $t('system.common.delete') }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in configList" :key="item.configId" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-settings-line"></i>
+                <span>{{ item.configName }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.config.configKey') }}:</span>
+                <span class="value">{{ item.configKey }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.config.configValue') }}:</span>
+                <span class="value">{{ parseConfigValueDisplay(item.configValue) }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.config.configType') }}:</span>
+                <span class="value">
+                  <el-tag :type="item.configType === 'Y' ? 'success' : 'info'" effect="plain">
+                    {{ item.configType === 'Y' ? $t('common.yes') : $t('common.no') }}
+                  </el-tag>
+                </span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.user.createTime') }}:</span>
+                <span class="value">{{ item.createTime }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-actions">
+              <el-button type="primary" size="small" @click="handleEdit(item)">
                 {{ $t('system.common.edit') }}
               </el-button>
-              <el-button type="danger" link @click="handleDelete(row)">
+              <el-button type="danger" size="small" @click="handleDelete(item)">
                 {{ $t('system.common.delete') }}
               </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div class="px-6 py-4 border-t border-gray-100">
-          <el-pagination
-            v-model:current-page="queryParams.pageNum"
-            v-model:page-size="queryParams.pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="total"
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="getList"
-            @current-change="getList"
-          />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -170,6 +210,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listConfig, getConfig, addConfig, updateConfig, delConfig, refreshCache } from '@/api/system/config'
 import { parseI18nValue, extractI18nValues, buildI18nValue, SUPPORTED_LOCALES } from '@/utils/i18nHelper'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import '@/assets/styles/page-common.scss'
+import '@/assets/styles/workflow-common.scss'
+import '@/assets/styles/table-enhanced.scss'
 
 const { t, locale } = useI18n()
 
@@ -257,7 +301,7 @@ const handleQuery = () => {
   getList()
 }
 
-const resetQuery = () => {
+const handleReset = () => {
   queryParams.configName = ''
   queryParams.configKey = ''
   queryParams.configType = ''

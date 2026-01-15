@@ -1,109 +1,149 @@
 <template>
-  <div class="system-page">
-    <!-- Search Area -->
-    <div class="search-area fade-in">
-      <el-form :model="queryParams" inline>
-        <el-form-item :label="$t('system.user.username')">
-          <el-input
-            v-model="queryParams.userName"
-            :placeholder="$t('common.pleaseInput')"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item :label="$t('system.user.phone')">
-          <el-input
-            v-model="queryParams.phoneNumber"
-            :placeholder="$t('common.pleaseInput')"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item :label="$t('system.user.status')">
-          <el-select v-model="queryParams.status" clearable :placeholder="$t('common.pleaseSelect')" style="width: 120px">
-            <el-option :label="$t('system.user.normal')" value="0" />
-            <el-option :label="$t('system.user.disable')" value="1" />
-          </el-select>
-        </el-form-item>
-        <el-form-item class="search-buttons">
-          <el-button type="primary" @click="handleQuery">
-            <i class="ri-search-line"></i>
-            {{ $t('system.common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            <i class="ri-refresh-line"></i>
-            {{ $t('system.common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-user-settings-line"
+        :title="$t('system.user.title')"
+        :subtitle="$t('system.user.title')" />
 
-    <!-- Main Content Card -->
-    <el-card class="fade-in" shadow="hover">
-      <template #header>
-        <div class="page-header">
-          <span class="title">
-            <i class="ri-user-settings-line"></i>
-            {{ $t('system.user.title') }}
-          </span>
-          <div class="actions">
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('system.user.username')">
+              <el-input
+                v-model="queryParams.userName"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('system.user.phone')">
+              <el-input
+                v-model="queryParams.phoneNumber"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('system.user.status')">
+              <el-select
+                v-model="queryParams.status"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option :label="$t('system.user.normal')" value="0" />
+                <el-option :label="$t('system.user.disable')" value="1" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
+        </div>
+
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('system.user.list')" icon="ri-user-line">
+          <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
               {{ $t('system.common.add') }}
             </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="userList" stripe v-loading="loading">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column prop="userName" :label="$t('system.user.username')" min-width="120" />
+              <el-table-column prop="nickName" :label="$t('system.user.nickname')" min-width="120" />
+              <el-table-column :label="$t('system.user.dept')" min-width="200" show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ getDeptFullPath(row.deptId) || resolveI18nLabel(row.deptName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="phoneNumber" :label="$t('system.user.phone')" min-width="130" />
+              <el-table-column :label="$t('system.user.status')" width="100" align="center">
+                <template #default="{ row }">
+                  <el-switch
+                    v-model="row.status"
+                    active-value="0"
+                    inactive-value="1"
+                    @change="handleStatusChange(row)"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column prop="createTime" :label="$t('system.user.createTime')" width="160" />
+              <el-table-column :label="$t('system.common.operate')" width="320" fixed="right" align="center">
+                <template #default="{ row }">
+                  <el-button type="primary" size="small"  @click="handleEdit(row)">
+                    {{ $t('system.common.edit') }}
+                  </el-button>
+                  <el-button type="warning" size="small"  @click="handleResetPwd(row)">
+                    {{ $t('system.user.resetPwd') }}
+                  </el-button>
+                  <el-button type="danger" size="small"  @click="handleDelete(row)">
+                    {{ $t('system.common.delete') }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in userList" :key="item.userId" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-user-line"></i>
+                <span>{{ item.userName }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.user.nickname') }}:</span>
+                <span class="value">{{ item.nickName }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.user.phone') }}:</span>
+                <span class="value">{{ item.phoneNumber }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.user.status') }}:</span>
+                <span class="value">
+                  <el-tag :type="item.status === '0' ? 'success' : 'danger'" effect="plain">
+                    {{ item.status === '0' ? $t('system.user.normal') : $t('system.user.disable') }}
+                  </el-tag>
+                </span>
+              </div>
+            </div>
+            <div class="mobile-card-actions">
+              <el-button type="primary" size="small" @click="handleEdit(item)">
+                {{ $t('system.common.edit') }}
+              </el-button>
+              <el-button type="warning" size="small" @click="handleResetPwd(item)">
+                {{ $t('system.user.resetPwd') }}
+              </el-button>
+              <el-button type="danger" size="small" @click="handleDelete(item)">
+                {{ $t('system.common.delete') }}
+              </el-button>
+            </div>
           </div>
         </div>
-      </template>
-
-      <el-table v-loading="loading" :data="userList" stripe>
-        <el-table-column prop="userName" :label="$t('system.user.username')" min-width="120" />
-        <el-table-column prop="nickName" :label="$t('system.user.nickname')" min-width="120" />
-        <el-table-column :label="$t('system.user.dept')" min-width="200" show-overflow-tooltip>
-          <template #default="{ row }">
-            {{ getDeptFullPath(row.deptId) || resolveI18nLabel(row.deptName) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="phoneNumber" :label="$t('system.user.phone')" min-width="130" />
-        <el-table-column :label="$t('system.user.status')" width="100" align="center">
-          <template #default="{ row }">
-            <el-switch
-              v-model="row.status"
-              active-value="0"
-              inactive-value="1"
-              @change="handleStatusChange(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" :label="$t('system.user.createTime')" width="160" />
-        <el-table-column :label="$t('system.common.operate')" width="350" fixed="right" align="center">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="handleEdit(row)">
-              {{ $t('system.common.edit') }}
-            </el-button>
-            <el-button type="warning" link @click="handleResetPwd(row)">
-              {{ $t('system.user.resetPwd') }}
-            </el-button>
-            <el-button type="danger" link @click="handleDelete(row)">
-              {{ $t('system.common.delete') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-pagination
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="total"
-        class="modern-pagination"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="getList"
-        @current-change="getList"
-      />
-    </el-card>
+      </div>
+    </div>
 
     <!-- Add/Edit Dialog -->
     <el-dialog
@@ -211,7 +251,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listUser, getUser, addUser, updateUser, delUser, resetUserPwd, changeUserStatus, deptTreeSelect } from '@/api/system/user'
 import { rsaEncrypt } from '@/utils/rsaEncrypt'
-import '@/styles/system.css'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import '@/assets/styles/page-common.scss'
+import '@/assets/styles/workflow-common.scss'
+import '@/assets/styles/table-enhanced.scss'
 
 const { t, locale } = useI18n()
 
@@ -358,7 +401,7 @@ const handleQuery = () => {
   getList()
 }
 
-const resetQuery = () => {
+const handleReset = () => {
   queryParams.userName = ''
   queryParams.phoneNumber = ''
   queryParams.status = ''
@@ -459,5 +502,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import '@/styles/system.css';
+/* 页面样式由标准样式文件提供 */
 </style>

@@ -1,101 +1,153 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 md:p-6">
-    <div class="max-w-7xl mx-auto space-y-6">
-      <!-- Search Area -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
-        <el-form :model="queryParams" inline class="flex flex-wrap gap-4">
-          <el-form-item :label="$t('system.notice.noticeTitle')" class="mb-0">
-            <el-input
-              v-model="queryParams.noticeTitle"
-              :placeholder="$t('common.pleaseInput')"
-              clearable
-              class="w-48"
-              @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item :label="$t('system.notice.noticeType')" class="mb-0">
-            <el-select v-model="queryParams.noticeType" clearable :placeholder="$t('common.pleaseSelect')" class="w-32">
-              <el-option :label="$t('system.notice.typeNotice')" value="1" />
-              <el-option :label="$t('system.notice.typeAnnouncement')" value="2" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('system.notice.status')" class="mb-0">
-            <el-select v-model="queryParams.status" clearable :placeholder="$t('common.pleaseSelect')" class="w-28">
-              <el-option :label="$t('system.user.normal')" value="0" />
-              <el-option :label="$t('system.user.disable')" value="1" />
-            </el-select>
-          </el-form-item>
-          <el-form-item class="mb-0">
-            <el-button type="primary" @click="handleQuery">
-              <i class="ri-search-line mr-1"></i>
-              {{ $t('system.common.search') }}
-            </el-button>
-            <el-button @click="resetQuery">
-              <i class="ri-refresh-line mr-1"></i>
-              {{ $t('system.common.reset') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <!-- 页面头部 -->
+      <PageHeader
+        icon="ri-notification-line"
+        :title="$t('system.notice.title')"
+        :subtitle="$t('system.notice.subtitle')" />
 
-      <!-- Main Content -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <div class="flex items-center gap-3 text-lg font-semibold text-green-600">
-            <i class="ri-notification-line text-xl"></i>
-            <span>{{ $t('system.notice.title') }}</span>
-          </div>
-          <el-button type="primary" @click="handleAdd">
-            <i class="ri-add-line mr-1"></i>
-            {{ $t('system.common.add') }}
-          </el-button>
+      <!-- 内容区域 -->
+      <div class="content-wrapper">
+        <!-- 搜索卡片 -->
+        <div class="search-card">
+          <SearchForm @search="handleQuery" @reset="handleReset">
+            <SearchItem :label="$t('system.notice.noticeTitle')">
+              <el-input
+                v-model="queryParams.noticeTitle"
+                :placeholder="$t('common.pleaseInput')"
+                clearable
+                class="search-input" />
+            </SearchItem>
+
+            <SearchItem :label="$t('system.notice.noticeType')">
+              <el-select
+                v-model="queryParams.noticeType"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option :label="$t('system.notice.typeNotice')" value="1" />
+                <el-option :label="$t('system.notice.typeAnnouncement')" value="2" />
+              </el-select>
+            </SearchItem>
+
+            <SearchItem :label="$t('system.notice.status')">
+              <el-select
+                v-model="queryParams.status"
+                :placeholder="$t('common.pleaseSelect')"
+                clearable
+                class="filter-select">
+                <el-option :label="$t('system.user.normal')" value="0" />
+                <el-option :label="$t('system.user.disable')" value="1" />
+              </el-select>
+            </SearchItem>
+          </SearchForm>
         </div>
 
-        <el-table v-loading="loading" :data="noticeList" class="w-full">
-          <el-table-column :label="$t('system.notice.noticeTitle')" min-width="200" show-overflow-tooltip>
-            <template #default="{ row }">
-              {{ parseI18nValue(row.noticeTitle, locale, row.noticeTitle) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('system.notice.noticeType')" min-width="120" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.noticeType === '1' ? 'warning' : 'success'" effect="light">
-                {{ row.noticeType === '1' ? $t('system.notice.typeNotice') : $t('system.notice.typeAnnouncement') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('system.notice.status')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === '0' ? 'success' : 'danger'" effect="light">
-                {{ row.status === '0' ? $t('system.user.normal') : $t('system.user.disable') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createBy" :label="$t('system.common.createBy')" min-width="120" />
-          <el-table-column prop="createTime" :label="$t('system.user.createTime')" min-width="160" />
-          <el-table-column :label="$t('system.common.operate')" width="220" fixed="right" align="center">
-            <template #default="{ row }">
-              <el-button type="primary" link @click="handleEdit(row)">
+        <!-- 列表卡片 -->
+        <InfoCard :title="$t('system.notice.list')" icon="ri-notification-2-line">
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i>
+              {{ $t('system.common.add') }}
+            </el-button>
+          </template>
+
+          <!-- PC端表格 -->
+          <div class="table-wrapper pc-only">
+            <el-table :data="noticeList" stripe v-loading="loading">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column :label="$t('system.notice.noticeTitle')" min-width="200" show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ parseI18nValue(row.noticeTitle, locale, row.noticeTitle) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('system.notice.noticeType')" min-width="120" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="row.noticeType === '1' ? 'warning' : 'success'" effect="plain">
+                    {{ row.noticeType === '1' ? $t('system.notice.typeNotice') : $t('system.notice.typeAnnouncement') }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('system.notice.status')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="row.status === '0' ? 'success' : 'danger'" effect="plain">
+                    {{ row.status === '0' ? $t('system.user.normal') : $t('system.user.disable') }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="createBy" :label="$t('system.common.createBy')" min-width="120" />
+              <el-table-column prop="createTime" :label="$t('system.user.createTime')" min-width="160" />
+              <el-table-column :label="$t('system.common.operate')" width="240" fixed="right" align="center">
+                <template #default="{ row }">
+                  <el-button type="primary" size="small" @click="handleEdit(row)">
+                    {{ $t('system.common.edit') }}
+                  </el-button>
+                  <el-button type="danger" size="small" @click="handleDelete(row)">
+                    {{ $t('system.common.delete') }}
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination-wrapper">
+              <el-pagination
+                v-model:current-page="queryParams.pageNum"
+                v-model:page-size="queryParams.pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="getList"
+                @current-change="getList"
+              />
+            </div>
+          </div>
+        </InfoCard>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-card-list mobile-only">
+          <div v-for="item in noticeList" :key="item.noticeId" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">
+                <i class="ri-notification-2-line"></i>
+                <span>{{ parseI18nValue(item.noticeTitle, locale, item.noticeTitle) }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.notice.noticeType') }}:</span>
+                <span class="value">
+                  <el-tag :type="item.noticeType === '1' ? 'warning' : 'success'" effect="plain">
+                    {{ item.noticeType === '1' ? $t('system.notice.typeNotice') : $t('system.notice.typeAnnouncement') }}
+                  </el-tag>
+                </span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.notice.status') }}:</span>
+                <span class="value">
+                  <el-tag :type="item.status === '0' ? 'success' : 'danger'" effect="plain">
+                    {{ item.status === '0' ? $t('system.user.normal') : $t('system.user.disable') }}
+                  </el-tag>
+                </span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.common.createBy') }}:</span>
+                <span class="value">{{ item.createBy }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('system.user.createTime') }}:</span>
+                <span class="value">{{ item.createTime }}</span>
+              </div>
+            </div>
+            <div class="mobile-card-actions">
+              <el-button type="primary" size="small" @click="handleEdit(item)">
                 {{ $t('system.common.edit') }}
               </el-button>
-              <el-button type="danger" link @click="handleDelete(row)">
+              <el-button type="danger" size="small" @click="handleDelete(item)">
                 {{ $t('system.common.delete') }}
               </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <div class="px-6 py-4 border-t border-gray-100">
-          <el-pagination
-            v-model:current-page="queryParams.pageNum"
-            v-model:page-size="queryParams.pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="total"
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="getList"
-            @current-change="getList"
-          />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -150,8 +202,12 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listNotice, getNotice, addNotice, updateNotice, delNotice } from '@/api/system/notice'
 import { parseI18nValue, extractI18nValues, buildI18nValue } from '@/utils/i18nHelper'
+import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import I18nInput from '@/components/I18nInput/index.vue'
 import I18nRichText from '@/components/I18nRichText/index.vue'
+import '@/assets/styles/page-common.scss'
+import '@/assets/styles/workflow-common.scss'
+import '@/assets/styles/table-enhanced.scss'
 
 const { t, locale } = useI18n()
 
@@ -206,7 +262,7 @@ const handleQuery = () => {
   getList()
 }
 
-const resetQuery = () => {
+const handleReset = () => {
   queryParams.noticeTitle = ''
   queryParams.noticeType = ''
   queryParams.status = ''

@@ -10,6 +10,8 @@ export default {
   },
   user: {
     title: 'User Management',
+    subtitle: 'System User Information Management',
+    list: 'User List',
     username: 'Username',
     nickname: 'Nickname',
     dept: 'Department',
@@ -26,6 +28,8 @@ export default {
   },
   role: {
     title: 'Role Management',
+    subtitle: 'System Role Permission Management',
+    list: 'Role List',
     roleName: 'Role Name',
     roleKey: 'Role Key',
     roleSort: 'Sort',
@@ -75,6 +79,8 @@ export default {
   },
   dict: {
     title: 'Dictionary Management',
+    subtitle: 'System Dictionary Data Management',
+    list: 'Dictionary List',
     dictName: 'Dict Name',
     dictType: 'Dict Type',
     status: 'Status',
@@ -91,6 +97,8 @@ export default {
   },
   notice: {
     title: 'Notice Management',
+    subtitle: 'System Notice Information Management',
+    list: 'Notice List',
     noticeTitle: 'Notice Title',
     noticeType: 'Notice Type',
     noticeContent: 'Notice Content',
@@ -100,8 +108,19 @@ export default {
     add: 'Add Notice',
     edit: 'Edit Notice'
   },
+  menu: {
+    user: 'User Management',
+    role: 'Role Management',
+    menu: 'Menu Management',
+    dept: 'Department',
+    dict: 'Dictionary',
+    notice: 'Notice Management',
+    config: 'System Config'
+  },
   config: {
     title: 'System Config',
+    subtitle: 'System Parameter Configuration Management',
+    list: 'Config List',
     configName: 'Config Name',
     configKey: 'Config Key',
     configValue: 'Config Value',

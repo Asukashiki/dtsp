@@ -118,6 +118,8 @@ export default {
   unionReleaseToCooperative: 'Union Distribution to Cooperative',
   cooperativeReceiveConfirm: 'Cooperative Receive Confirmation',
   cooperativeReleaseToFarmer: 'Cooperative Distribution to Farmer',
+  woredaReceiveConfirm: 'Woreda Receive Confirmation',
+  farmerReceive: 'Farmer Receive List',
 
   //General
   timeRange: 'Time Range'
