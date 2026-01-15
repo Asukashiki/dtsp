@@ -40,7 +40,7 @@ export default {
   upload: 'Upload File',
   uploadSuccess: 'Uploaded successfully',
   uploadFailed: 'Upload failed',
-  add: 'add',
+  add: 'Add',
   close: 'Close',
   startDate: 'Start Date',
   endDate: 'End Date',

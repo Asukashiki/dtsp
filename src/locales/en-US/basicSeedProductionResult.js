@@ -2,7 +2,7 @@ export default {
   title: 'Basic Seed Batch Data',
   subtitle: 'Manage Basic Seed batch data',
   searchPlaceholder: 'Search by batch ID or name',
-  add: 'Submit',
+  add: 'Add',
 
   columns: {
     resultId: 'Result ID',

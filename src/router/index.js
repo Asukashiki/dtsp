@@ -22,10 +22,17 @@ const routeWhitelist = [
   '/research/breeding-data/batch/audit',
   '/research/breeding-data/trial-audit',
   '/research/breeding-data/plot-audit',
-  '/research/breeding-data/farming/farming-detail',
-  '/research/breeding-data/farming/farming-form',
+  '/research/breeding-data/farming',
   '/breeding/batch/add',
-  '/research/breeding/batch/add'
+  '/research/breeding/batch/add',
+  '/research/breeding-data/trait-audit',
+  '/research/data-collection/environment-new-data/audit',
+  '/research/breeding-data/field-inspection',
+  '/research/breeding-data/dataset-audit',
+  '/research/breeding/ose-receive-confirm',
+  '/research/breeding/batch/edit',
+  '/research/institution/approval/audit',
+  '/research/variety'
 ]
 
 const routes = [

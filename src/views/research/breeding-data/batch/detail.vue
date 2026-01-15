@@ -110,7 +110,21 @@ const getInfo = async () => {
 }
 
 const handleEdit = () => router.push(`/research/breeding-data/batch/edit/${route.params.dataId}`)
-const goBack = () => router.push('/research/breeding-data/batch')
+const goBack = () => {
+  const fromPath = route.query.from
+  const tab = route.query.tab
+  
+  if (fromPath === '/research/breeding-data/batch/approve') {
+    // 从审核列表返回
+    router.push({
+      path: '/research/breeding-data/batch/approve',
+      query: tab ? { tab } : {}
+    })
+  } else {
+    // 默认返回到普通列表
+    router.push('/research/breeding-data/batch')
+  }
+}
 
 // 处理状态流转操作
 const handleAction = async (action) => {

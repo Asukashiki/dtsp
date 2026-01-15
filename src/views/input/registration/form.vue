@@ -21,7 +21,6 @@
           :rules="rules"
           :label-width="labelWidth"
           :label-position="labelPosition"
-          class="registration-form"
           v-loading="submitting"
         >
           <!-- 基本信息 -->

@@ -10,11 +10,11 @@
             <h1 class="page-title">{{ $t('research.breedingData.researchCenter.detail') }}</h1>
           </div>
         </div>
-        <div class="header-actions">
+        <!-- <div class="header-actions">
           <el-button type="primary" @click="handleEdit">
             <i class="ri-edit-line"></i>{{ $t('common.edit') }}
           </el-button>
-        </div>
+        </div> -->
       </div>
 
       <div class="content-wrapper" v-loading="loading">

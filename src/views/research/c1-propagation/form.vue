@@ -20,7 +20,7 @@
           ref="formRef"
           :model="formData"
           :rules="rules"
-          label-width="160px"
+          label-width="260px"
           label-position="right"
         >
           <!-- 机构信息 -->

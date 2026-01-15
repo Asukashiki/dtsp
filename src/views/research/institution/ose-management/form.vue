@@ -8,7 +8,7 @@
 
       <!-- 内容区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="loading">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="190px" v-loading="loading">
           <!-- 基础信息 -->
           <InfoCard :title="$t('research.breeding.seed.ose.form.basicInfo')" icon="ri-information-line">
             <el-row :gutter="20">
