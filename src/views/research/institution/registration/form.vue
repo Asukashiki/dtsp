@@ -528,10 +528,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 
-.registration-form {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+// .registration-form {
+//   // max-width: 1200px;
+//   margin: 0 auto;
+// }
 
 .form-actions {
   display: flex;
