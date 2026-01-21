@@ -31,7 +31,7 @@ export const getFeedbackList = (params = {}) => {
     requestParams.priority = params.priority
   }
   if (params.handlerId) requestParams.handlerId = params.handlerId
-  if (params.keyword) requestParams.keyword = params.keyword
+  if (params.keyword || params.contentKeyword) requestParams.contentKeyword = params.keyword || params.contentKeyword
   if (params.startTime) requestParams.startTime = params.startTime
   if (params.endTime) requestParams.endTime = params.endTime
 

@@ -164,7 +164,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.farm.desc'),
     icon: 'ri-landscape-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=farmland&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=farmland',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=farmland&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   production: {
@@ -172,7 +172,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.production.desc'),
     icon: 'ri-seedling-line',
     gradient: 'linear-gradient(135deg, #52C41A 0%, #73D13D 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=production&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=production',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=production&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   procurement: {
@@ -180,7 +180,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.procurement.desc'),
     icon: 'ri-shopping-cart-line',
     gradient: 'linear-gradient(135deg, #1890FF 0%, #69C0FF 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=processing&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=processing',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=processing&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   traceability: {
@@ -188,7 +188,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.traceability.desc'),
     icon: 'ri-map-pin-line',
     gradient: 'linear-gradient(135deg, #722ED1 0%, #B37FEB 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=logistics&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=logistics',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=logistics&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   sustainability: {
@@ -196,7 +196,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.sustainability.desc'),
     icon: 'ri-leaf-line',
     gradient: 'linear-gradient(135deg, #13C2C2 0%, #5CDBD3 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=sustainability&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=sustainability',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=sustainability&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   harvest: {
@@ -204,7 +204,7 @@ const systemModules = computed(() => ({
     desc: t('home.modules.harvest.desc'),
     icon: 'ri-shopping-basket-line',
     gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFC069 100%)',
-    path: 'http://196.189.236.220:30005/auth/oauth2/authorize?response_type=token&client_id=harvest&redirect_uri=http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=harvest',
+    path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=harvest&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
   data: {
