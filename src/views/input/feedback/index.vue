@@ -106,13 +106,6 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="status" :label="$t('input.feedback.columns.status')" width="100" align="center">
-                <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.status)" size="small">
-                    {{ getStatusText(row.status) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
               <el-table-column prop="contactName" :label="$t('input.feedback.columns.contactName')" width="120" />
               <el-table-column prop="createTime" :label="$t('input.feedback.columns.createTime')" width="160" />
               <el-table-column :label="$t('input.feedback.columns.actions')" width="240" fixed="right">
@@ -165,12 +158,6 @@
                 <span class="label">{{ $t('input.feedback.columns.priority') }}:</span>
                 <el-tag :type="getPriorityTag(item.priority)" effect="plain" size="small">
                   {{ getPriorityText(item.priority) }}
-                </el-tag>
-              </div>
-              <div class="mobile-card-row">
-                <span class="label">{{ $t('input.feedback.columns.status') }}:</span>
-                <el-tag :type="getStatusTag(item.status)" effect="plain" size="small">
-                  {{ getStatusText(item.status) }}
                 </el-tag>
               </div>
               <div class="mobile-card-row">
@@ -275,23 +262,23 @@ const getFeedbackTypeText = (type) => {
 // 获取优先级标签
 const getPriorityTag = (priority) => {
   const priorityMap = {
-    '0': 'info',     // 低
-    '1': '',         // 中
-    '2': 'warning',  // 高
-    '3': 'danger'    // 紧急
+    0: 'info',     // 低
+    1: '',         // 中
+    2: 'warning',  // 高
+    3: 'danger'    // 紧急
   }
-  return priorityMap[priority] || ''
+  return priorityMap[priority] ?? priorityMap[String(priority)] ?? ''
 }
 
 // 获取优先级文本
 const getPriorityText = (priority) => {
   const priorityMap = {
-    '0': t('input.feedback.priority.low'),
-    '1': t('input.feedback.priority.medium'),
-    '2': t('input.feedback.priority.high'),
-    '3': t('input.feedback.priority.urgent')
+    0: t('input.feedback.priority.low'),
+    1: t('input.feedback.priority.medium'),
+    2: t('input.feedback.priority.high'),
+    3: t('input.feedback.priority.urgent')
   }
-  return priorityMap[priority] || ''
+  return priorityMap[priority] ?? priorityMap[String(priority)] ?? ''
 }
 
 // 获取状态标签
@@ -321,7 +308,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getFeedbackList({
-      keyword: searchKeyword.value,
+      contentKeyword: searchKeyword.value,
       feedbackType: filterType.value,
       status: filterStatus.value,
       priority: filterPriority.value,
