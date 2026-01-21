@@ -169,7 +169,7 @@ const selectedIds = ref([])
 const dateRange = ref([])
 
 const queryParams = reactive({
-  woredaName: '',
+  releaseName: '',
   inputType: '',
   startTime: '',
   endTime: '',

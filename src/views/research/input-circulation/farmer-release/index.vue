@@ -54,6 +54,7 @@
                 :placeholder="$t('common.pleaseSelect')"
                 clearable
                 class="filter-select">
+                <el-option label="completed" value="completed" />
                 <el-option label="pending" value="pending" />
                 <el-option label="noReceived" value="noReceived" />
                 <el-option label="received" value="received" />

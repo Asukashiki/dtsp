@@ -22,7 +22,7 @@
               </el-input>
             </SearchItem>
 
-            <SearchItem :label="$t('input.inventory.warehouse.filterByType')">
+<!--            <SearchItem :label="$t('input.inventory.warehouse.filterByType')">
               <el-select
                 v-model="filterType"
                 :placeholder="$t('input.inventory.warehouse.filterByType')"
@@ -33,7 +33,7 @@
                 <el-option :label="$t('input.inventory.warehouse.type.cold')" value="cold" />
                 <el-option :label="$t('input.inventory.warehouse.type.dangerous')" value="dangerous" />
               </el-select>
-            </SearchItem>
+            </SearchItem>-->
 
             <SearchItem :label="$t('input.inventory.warehouse.filterByStatus')">
               <el-select
