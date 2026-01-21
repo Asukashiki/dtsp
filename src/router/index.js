@@ -615,6 +615,26 @@ const routes = [
         meta: { title: 'OSE确认接收育种家种子', requiresAuth: true }
       },
 
+      // OSE繁殖批次信息数据采集
+      {
+        path: 'breeding/ose-batch-collection',
+        name: 'OseBatchCollection',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/index.vue'),
+        meta: { title: 'OSE繁殖批次信息数据采集', requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-batch-collection/add',
+        name: 'OseBatchCollectionAdd',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/collection-form.vue'),
+        meta: { title: '新增OSE繁殖批次采集', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'breeding/ose-batch-collection/detail/:id',
+        name: 'OseBatchCollectionDetail',
+        component: () => import('../views/research/breeding/ose-information/batch-collection/collection-detail.vue'),
+        meta: { title: 'OSE繁殖批次采集详情', hideInMenu: true, requiresAuth: true }
+      },
+
       // 种子扩繁批次信息采集
       {
         path: 'breeding',

@@ -63,24 +63,12 @@
             </div>
 
             <el-form-item :label="$t('research.c1Propagation.form.propagationBatchId')" prop="propagationBatchId">
-              <el-select
+              <BasicSeedSelector
+                ref="seedSelectorRef"
                 v-model="formData.propagationBatchId"
-                :placeholder="$t('research.c1Propagation.placeholder.propagationBatchId')"
-                style="width: 100%"
-                filterable
-                :loading="batchLoading"
-                @change="handleBatchChange"
-              >
-                <el-option
-                  v-for="batch in batchList"
-                  :key="batch.id"
-                  :label="batch.batchId"
-                  :value="batch.batchId"
-                >
-                  <span style="float: left">{{ batch.batchId }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ batch.varietyName }}</span>
-                </el-option>
-              </el-select>
+                :placeholder="$t('research.c1Propagation.selectBasicSeed')"
+                @seed-selected="handleSeedSelected"
+              />
             </el-form-item>
 
             <el-form-item :label="$t('research.c1Propagation.form.cropType')" prop="cropType">
@@ -143,13 +131,26 @@
             </el-form-item>
 
             <el-form-item :label="$t('research.c1Propagation.form.demandQuantity')" prop="demandQuantity">
-              <el-input-number
-                v-model="formData.demandQuantity"
-                :placeholder="$t('research.c1Propagation.placeholder.demandQuantity')"
-                controls-position="right"
-                style="width: 100%"
-                :min="1"
-              />
+              <div style="display: flex; align-items: center; width: 100%;">
+                <el-input-number
+                  v-model="formData.demandQuantity"
+                  :placeholder="$t('research.c1Propagation.placeholder.demandQuantity')"
+                  controls-position="right"
+                  style="flex: 1; max-width: 300px;"
+                  :min="1"
+                  :max="selectedSeed ? maxAvailableQuantity : undefined"
+                  :disabled="!selectedSeed"
+                />
+                <span v-if="selectedSeed" style="margin-left: 12px; color: #909399; font-size: 14px; white-space: nowrap;">
+                  {{ $t('research.c1Propagation.unit') }}: kg
+                  <span style="margin-left: 8px; color: #67c23a; font-weight: 500;">
+                    {{ $t('research.c1Propagation.maxAvailable') }}: {{ maxAvailableQuantity }} kg
+                  </span>
+                </span>
+                <span v-else style="margin-left: 12px; color: #f56c6c; font-size: 14px;">
+                  {{ $t('research.c1Propagation.selectBasicSeed') }}
+                </span>
+              </div>
             </el-form-item>
 
             <el-form-item :label="$t('research.c1Propagation.form.fromSeedType')" prop="fromSeedType">
@@ -192,9 +193,9 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addC1Propagation, updateC1Propagation } from '@/api/c1Propagation'
-import { getBreedingBatchPageList } from '@/api/breeding'
 import { getUserInfo } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
+import BasicSeedSelector from './BasicSeedSelector.vue'
 
 const { t } = useI18n()
 
@@ -216,9 +217,10 @@ const emit = defineEmits(['cancel', 'success'])
 
 // 表单状态
 const formRef = ref(null)
+const seedSelectorRef = ref(null)
 const submitting = ref(false)
-const batchLoading = ref(false)
-const batchList = ref([])
+const selectedSeed = ref(null)
+const maxAvailableQuantity = ref(999999) // 初始化为一个大值，避免 min > max 错误
 
 // 表单数据
 const formData = reactive({
@@ -227,6 +229,7 @@ const formData = reactive({
   applicantOrgName: '',
   applicantOrgId: '',
   propagationBatchId: '',
+  sourceType: '', // 新增：数据来源类型
   cropType: '',
   varietyName: '',
   varietyCode: '',
@@ -234,8 +237,8 @@ const formData = reactive({
   applyDate: '',
   applyDescription: '',
   demandQuantity: null,
-  fromSeedType: '',
-  toSeedType: ''
+  fromSeedType: 'Basic', // 默认为 Basic
+  toSeedType: 'C1' // 默认为 C1
 })
 
 // 作物类型映射
@@ -271,7 +274,21 @@ const rules = computed(() => ({
     { required: true, message: t('research.c1Propagation.rules.varietyNameRequired'), trigger: 'blur' }
   ],
   demandQuantity: [
-    { required: true, message: t('research.c1Propagation.rules.demandQuantityRequired'), trigger: 'blur' }
+    { required: true, message: t('research.c1Propagation.rules.demandQuantityRequired'), trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback(new Error(t('research.c1Propagation.rules.demandQuantityRequired')))
+        } else if (value < 1) {
+          callback(new Error(t('research.c1Propagation.rules.demandQuantityMinRequired')))
+        } else if (selectedSeed.value && value > maxAvailableQuantity.value) {
+          callback(new Error(t('research.c1Propagation.rules.demandQuantityExceedMax', { max: maxAvailableQuantity.value })))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
   ],
   fromSeedType: [
     { required: true, message: t('research.c1Propagation.rules.fromSeedTypeRequired'), trigger: 'change' }
@@ -281,38 +298,43 @@ const rules = computed(() => ({
   ]
 }))
 
-// 加载繁育批次列表
-const loadBatchList = async () => {
-  batchLoading.value = true
-  try {
-    const res = await getBreedingBatchPageList({
-      pageNum: 1,
-      pageSize: 1000
-    })
-    if (res.code === 200) {
-      batchList.value = res.data?.records || []
-    }
-  } catch (error) {
-    console.error('Failed to load batch list:', error)
-  } finally {
-    batchLoading.value = false
-  }
-}
+// 处理种子选择
+const handleSeedSelected = (seed) => {
+  selectedSeed.value = seed
 
-// 繁育批次变更时联动
-const handleBatchChange = (batchId) => {
-  const selectedBatch = batchList.value.find(item => item.batchId === batchId)
-  if (selectedBatch) {
-    // 联动设置作物类型、品种名称、品种代码
-    formData.cropType = cropTypeMap[selectedBatch.cropType] || selectedBatch.cropType || ''
-    formData.varietyName = selectedBatch.varietyName || ''
-    formData.varietyCode = selectedBatch.varietyCode || ''
+  if (seed) {
+    // 提取 batchId 和 sourceType
+    const [batchId, sourceType] = formData.propagationBatchId.split('|')
+
+    // 更新表单数据
+    formData.propagationBatchId = batchId
+    formData.sourceType = sourceType
+    formData.cropType = seed.cropType || ''
+    formData.varietyName = seed.varietyName || ''
+    formData.varietyCode = seed.varietyCode || ''
+
+    // 设置最大可用数量
+    maxAvailableQuantity.value = seed.availableQuantity || 0
+
+    // 如果当前需求数量超过可用数量，自动调整
+    if (formData.demandQuantity && formData.demandQuantity > maxAvailableQuantity.value) {
+      formData.demandQuantity = maxAvailableQuantity.value
+    }
   } else {
+    // 清空选择
+    formData.propagationBatchId = ''
+    formData.sourceType = ''
     formData.cropType = ''
     formData.varietyName = ''
     formData.varietyCode = ''
+    maxAvailableQuantity.value = 999999 // 重置为大值
+    formData.demandQuantity = null
   }
 }
+
+// 移除旧的批次加载和变更逻辑
+// const loadBatchList = ...
+// const handleBatchChange = ...
 
 // 监听编辑数据变化
 watch(() => props.editData, (newVal) => {
@@ -322,12 +344,23 @@ watch(() => props.editData, (newVal) => {
         formData[key] = newVal[key]
       }
     })
+
+    // 如果是编辑模式，需要组合 batchId 和 sourceType
+    if (newVal.propagationBatchId && newVal.sourceType) {
+      formData.propagationBatchId = `${newVal.propagationBatchId}|${newVal.sourceType}`
+
+      // 标记为已选择种子，避免输入框被禁用
+      selectedSeed.value = {
+        batchId: newVal.propagationBatchId,
+        sourceType: newVal.sourceType
+      }
+    }
   }
 }, { immediate: true })
 
-// 初始化
+// 初始化（不再需要加载批次列表）
 onMounted(() => {
-  loadBatchList()
+  // loadBatchList() // 已移除
 })
 
 // 提交表单
@@ -337,6 +370,13 @@ const handleSubmit = async () => {
     submitting.value = true
 
     const submitData = { ...formData }
+
+    // 确保 batchId 和 sourceType 正确分离
+    if (submitData.propagationBatchId && submitData.propagationBatchId.includes('|')) {
+      const [batchId, sourceType] = submitData.propagationBatchId.split('|')
+      submitData.propagationBatchId = batchId
+      submitData.sourceType = sourceType
+    }
 
     let res
     if (props.isEdit) {

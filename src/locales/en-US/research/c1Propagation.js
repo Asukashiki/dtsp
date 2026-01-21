@@ -95,6 +95,8 @@ export default {
     auditResultRequired: 'Please select audit result',
     auditOpinionRequired: 'Please enter audit opinion',
     demandQuantityRequired: 'Please enter demand quantity',
+    demandQuantityMinRequired: 'Demand quantity must be greater than 0',
+    demandQuantityExceedMax: 'Demand quantity cannot exceed maximum available {max} kg',
     fromSeedTypeRequired: 'Please select from seed type',
     toSeedTypeRequired: 'Please select to seed type'
   },
@@ -124,5 +126,20 @@ export default {
   auditResult: {
     approved: 'Approved',
     rejected: 'Rejected'
-  }
+  },
+
+  // Seed selection related
+  batchId: 'Batch ID',
+  sourceType: 'Data Source',
+  sourceOseReceive: 'OSE Receive Confirm',
+  sourceOseBatch: 'OSE Batch Collection',
+  varietyName: 'Variety Name',
+  cropType: 'Crop Type',
+  totalQuantity: 'Total Quantity',
+  appliedQuantity: 'Applied Quantity',
+  availableQuantity: 'Available Quantity',
+  parentalSeedSource: 'Parental Seed Source',
+  maxAvailable: 'Max Available',
+  unit: 'Unit',
+  selectBasicSeed: 'Please select Basic seed batch'
 }

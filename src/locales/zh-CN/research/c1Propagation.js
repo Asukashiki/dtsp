@@ -95,6 +95,8 @@ export default {
     auditResultRequired: '请选择审核结果',
     auditOpinionRequired: '请输入审核意见',
     demandQuantityRequired: '请输入需求数量',
+    demandQuantityMinRequired: '需求数量必须大于0',
+    demandQuantityExceedMax: '需求数量不能超过最大可用数量 {max} kg',
     fromSeedTypeRequired: '请选择从种子类型',
     toSeedTypeRequired: '请选择到种子类型'
   },
@@ -124,5 +126,20 @@ export default {
   auditResult: {
     approved: '通过',
     rejected: '拒绝'
-  }
+  },
+
+  // 种子选择相关
+  batchId: '批次ID',
+  sourceType: '数据来源',
+  sourceOseReceive: 'OSE接收确认',
+  sourceOseBatch: 'OSE批次采集',
+  varietyName: '品种名称',
+  cropType: '作物类型',
+  totalQuantity: '总数量',
+  appliedQuantity: '已申请数量',
+  availableQuantity: '可用数量',
+  parentalSeedSource: '亲本种子来源',
+  maxAvailable: '最大可用',
+  unit: '单位',
+  selectBasicSeed: '请选择Basic种子批次'
 }
