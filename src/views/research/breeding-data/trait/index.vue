@@ -189,7 +189,17 @@ const queryParams = reactive({
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getTraitRecordList(queryParams)
+    const params = { ...queryParams }
+    
+    // 使用字典获取后端存储值
+    if (params.workflowStatus) {
+      const actualValue = getLabelByValue('flow_status', params.workflowStatus)
+      if (actualValue) {
+        params.workflowStatus = actualValue
+      }
+    }
+
+    const res = await getTraitRecordList(params)
     // 兼容后端返回格式，和数据集页面保持一致
     dataList.value = res.data?.list || res.rows || []
     total.value = res.data?.total || res.total || 0

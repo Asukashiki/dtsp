@@ -26,7 +26,7 @@
               <el-date-picker v-model="queryParams.activityDate" type="date" placeholder="Select Activity Date" clearable value-format="YYYY-MM-DD" style="width: 100%" />
             </SearchItem>
             <SearchItem label="Audit Status">
-              <el-select v-model="queryParams.auditStatus" placeholder="Please select Audit Status" clearable class="filter-select">
+              <el-select v-model="queryParams.workflowStatus" placeholder="Please select Audit Status" clearable class="filter-select">
                 <el-option
                   v-for="dict in dictOptions.flow_status"
                   :key="dict.value"
@@ -170,7 +170,7 @@ const queryParams = reactive({
   plotId: '',
   activityType: '',
   activityDate: '',
-  auditStatus: ''
+  workflowStatus: ''
 })
 
 // 格式化日期时间为 'YYYY-MM-DD HH:mm:ss'
@@ -235,7 +235,7 @@ const handleReset = () => {
   queryParams.plotId = ''
   queryParams.activityType = ''
   queryParams.activityDate = ''
-  queryParams.auditStatus = ''
+  queryParams.workflowStatus = ''
   queryParams.pageNum = 1
   getList()
 }

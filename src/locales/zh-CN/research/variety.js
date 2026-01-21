@@ -325,7 +325,7 @@ export default {
     searchTitle: '品种查询',
 
     // 搜索
-    searchPlaceholder: '搜索品种名称、登记号',
+    searchPlaceholder: '搜索品种名称',
     filterByYear: '按年度筛选',
     filterByCrop: '按作物类型筛选',
     filterByDataType: '按数据来源筛选',
