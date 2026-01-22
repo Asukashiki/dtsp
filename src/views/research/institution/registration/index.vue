@@ -76,7 +76,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('orgRegistration.columns.actions')" width="260" fixed="right">
+              <el-table-column :label="$t('orgRegistration.columns.actions')" width="120" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button size="small" type="primary" @click="handleView(row)">
@@ -88,9 +88,9 @@
                     <el-button size="small" type="primary" v-if="row.auditStatus === 2" @click="handleEdit(row)">
                       <i class="ri-edit-line"></i>{{ $t('orgRegistration.actions.edit') }}
                     </el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(row)">
+                    <!-- <el-button size="small" type="danger" @click="handleDelete(row)">
                       <i class="ri-delete-bin-line"></i>{{ $t('common.delete') }}
-                    </el-button>
+                    </el-button> -->
                   </div>
                 </template>
               </el-table-column>

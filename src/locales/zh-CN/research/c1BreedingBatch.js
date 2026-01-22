@@ -10,7 +10,7 @@ export default {
   view: '查看详情',
 
   // 搜索
-  searchPlaceholder: '搜索批次编号、品种名称...',
+  searchPlaceholder: '搜索批次编号',
   filterByCrop: '按作物筛选',
   filterByStatus: '按状态筛选',
   allCrops: '全部作物',

@@ -308,14 +308,14 @@ export default {
 
       // 表单验证
       rules: {
-        oseCode: '请输入OSE行政编码',
+        oseCodeRequired: '请输入OSE行政编码',
         oseCodeUnique: 'OSE行政编码已存在',
-        oseName: '请输入OSE名称',
+        oseNameRequired: '请输入OSE名称',
         oseNameUnique: 'OSE名称已存在',
-        location: '请输入详细地址',
-        regionCode: '请选择行政区划',
-        contactName: '请输入联系人姓名',
-        contactNumber: '请输入联系人电话',
+        locationRequired: '请输入详细地址',
+        regionCodeRequired: '请选择行政区划',
+        contactNameRequired: '请输入联系人姓名',
+        contactNumberRequired: '请输入联系人电话',
         contactNumberFormat: '请输入正确的联系人电话格式(251开头12位)',
         contactNumberUnique: '联系人电话已存在',
       },

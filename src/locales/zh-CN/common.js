@@ -50,6 +50,10 @@ export default {
     loadFailed: '加载失败',
     saveFailed: '保存失败',
     submitFailed: '提交失败',
+    // 审核状态
+    pending: '待审核',
+    approved: '已通过',
+    rejected: '已拒绝',
     actions: '操作',
     action: '操作',
     days: '天',

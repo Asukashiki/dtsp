@@ -12,8 +12,7 @@
           <SearchForm @search="handleSearch" @reset="handleReset">
             <SearchItem :label="$t('research.c1BreedingBatch.searchPlaceholder')">
               <el-input v-model="queryData.keyword" :placeholder="$t('research.c1BreedingBatch.searchPlaceholder')"
-                clearable
-@keyup.enter="handleSearch">
+                clearable @keyup.enter="handleSearch">
                 <template #prefix>
                   <i class="ri-search-line"></i>
                 </template>
@@ -22,8 +21,7 @@
 
             <SearchItem :label="$t('research.c1BreedingBatch.filterByCrop')">
               <el-select v-model="queryData.cropType" :placeholder="$t('research.c1BreedingBatch.filterByCrop')"
-                clearable
-@change="handleSearch">
+                clearable @change="handleSearch">
                 <el-option :label="$t('research.c1BreedingBatch.allCrops')" value="" />
                 <el-option label="Wheat" value="Wheat" />
                 <el-option label="Maize" value="Maize" />
@@ -35,8 +33,7 @@
 
             <SearchItem :label="$t('research.c1BreedingBatch.filterByStatus')">
               <el-select v-model="queryData.batchStatus" :placeholder="$t('research.c1BreedingBatch.filterByStatus')"
-                clearable
-@change="handleSearch">
+                clearable @change="handleSearch">
                 <el-option :label="$t('research.c1BreedingBatch.allStatus')" value="" />
                 <el-option :label="$t('research.c1BreedingBatch.status.ongoing')" value="01" />
                 <el-option :label="$t('research.c1BreedingBatch.status.completed')" value="02" />
@@ -70,11 +67,11 @@
               </el-table-column>
               <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.columns.startDate')"
                 min-width="120" align="center" />
-              <el-table-column prop="batchStatus" :label="$t('research.c1BreedingBatch.columns.status')" min-width="100"
+              <el-table-column prop="auditStatus" :label="$t('research.c1BreedingBatch.columns.status')" min-width="100"
                 align="center">
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTagType(row.batchStatus)" size="small">
-                    {{ getStatusName(row.batchStatus) }}
+                  <el-tag :type="getAuditStatusTagType(row.auditStatus)" size="small">
+                    {{ getAuditStatusName(row.auditStatus) }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -103,8 +100,8 @@
                 <i class="ri-seedling-line"></i>
                 <span>{{ item.batchId }}</span>
               </div>
-              <el-tag :type="getStatusTagType(item.batchStatus)" size="small">
-                {{ getStatusName(item.batchStatus) }}
+              <el-tag :type="getAuditStatusTagType(item.auditStatus)" size="small">
+                {{ getAuditStatusName(item.auditStatus) }}
               </el-tag>
             </div>
             <div class="mobile-card-body">
@@ -179,11 +176,11 @@ const queryData = ref({
   pageSize: 10
 })
 
-// 状态映射
-const statusMap = computed(() => ({
-  '01': t('research.c1BreedingBatch.status.ongoing'),
-  '02': t('research.c1BreedingBatch.status.completed'),
-  '03': t('research.c1BreedingBatch.status.terminated')
+// 审核状态映射
+const auditStatusMap = computed(() => ({
+  'pending': t('common.pending'),
+  'approved': t('common.approved'),
+  'rejected': t('common.rejected')
 }))
 
 // 初始化
@@ -260,7 +257,7 @@ const handleDelete = (id) => {
       ElMessage.error(t('common.deleteFailed'))
       console.error(error)
     }
-  }).catch(() => {})
+  }).catch(() => { })
 }
 
 // 操作处理
@@ -278,17 +275,17 @@ const handleAction = (row, action) => {
   }
 }
 
-// 获取状态名称
-const getStatusName = (status) => {
-  return statusMap.value[status] || status
+// 获取审核状态名称
+const getAuditStatusName = (status) => {
+  return auditStatusMap.value[status] || status
 }
 
-// 获取状态标签类型
-const getStatusTagType = (status) => {
+// 获取审核状态标签类型
+const getAuditStatusTagType = (status) => {
   const map = {
-    '01': 'primary',
-    '02': 'success',
-    '03': 'info'
+    'pending': 'warning',
+    'approved': 'success',
+    'rejected': 'danger'
   }
   return map[status] || 'info'
 }
@@ -318,15 +315,15 @@ const getActionButtons = (row) => {
 .mobile-card-title {
   display: flex;
   align-items: center;
-    gap: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #303133;
-  
-    i {
-      color: #009A44;
-    }
-    }
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+
+  i {
+    color: #009A44;
+  }
+}
 
 .empty-state {
   text-align: center;
@@ -337,6 +334,6 @@ const getActionButtons = (row) => {
 .empty-state i {
   font-size: 48px;
   margin-bottom: 12px;
-    display: block;
+  display: block;
 }
 </style>

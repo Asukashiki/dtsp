@@ -154,6 +154,8 @@ export default {
     applyPasswordRequired: 'Please enter login password',
     confirmPasswordRequired: 'Please confirm password',
     passwordMismatch: 'Passwords do not match',
+    passwordMinLength: 'Password must be at least 8 characters',
+    passwordStrength: 'Password must contain uppercase, lowercase letters and numbers',
     usernameExists: 'This username already exists',
     auditResultRequired: 'Please select audit result',
     inputTypesRequired: 'Please select input types',

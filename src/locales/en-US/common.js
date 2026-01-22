@@ -51,6 +51,10 @@ export default {
   loadFailed: 'Load failed',
   saveFailed: 'Save failed',
   submitFailed: 'Submit failed',
+  // Audit status
+  pending: 'Pending',
+  approved: 'Approved',
+  rejected: 'Rejected',
   actions: 'Actions',
   action: 'Action',
   days: 'days',

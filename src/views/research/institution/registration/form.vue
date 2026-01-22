@@ -268,6 +268,30 @@ const formData = reactive({
   contactEmail: ''
 })
 
+// 密码强度验证
+const validatePasswordStrength = (rule, value, callback) => {
+  if (!value && isEdit.value) {
+    callback()
+    return
+  }
+  if (!value) {
+    callback(new Error(t('orgRegistration.rules.applyPasswordRequired')))
+    return
+  }
+  if (value.length < 8) {
+    callback(new Error(t('orgRegistration.rules.passwordMinLength')))
+    return
+  }
+  const hasUpperCase = /[A-Z]/.test(value)
+  const hasLowerCase = /[a-z]/.test(value)
+  const hasNumber = /[0-9]/.test(value)
+  if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+    callback(new Error(t('orgRegistration.rules.passwordStrength')))
+    return
+  }
+  callback()
+}
+
 // 密码确认验证
 const validateConfirmPassword = (rule, value, callback) => {
   if (!isEdit.value && formData.applyPassword && value !== formData.applyPassword) {
@@ -287,7 +311,11 @@ const rules = reactive({
   cropTypes: [{ required: true, message: t('research.variety.cropType'), trigger: 'change' }],
   regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }],
   applyUsername: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
-  applyPassword: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' }],
+  applyPassword: [
+    { required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' },
+    { min: 8, message: t('orgRegistration.rules.passwordMinLength'), trigger: 'blur' },
+    { validator: validatePasswordStrength, trigger: 'blur' }
+  ],
   confirmPassword: [
     { required: !isEdit.value, message: t('orgRegistration.rules.confirmPasswordRequired'), trigger: 'blur' },
     { validator: validateConfirmPassword, trigger: 'blur' }

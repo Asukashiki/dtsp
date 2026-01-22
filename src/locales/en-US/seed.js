@@ -283,7 +283,7 @@ export default {
   c1Certificate: {
     title: 'Seed Certificate Issuance',
     subtitle: 'Manage approved breeding batch certificates',
-    searchPlaceholder: 'Search batch ID, variety name',
+    searchPlaceholder: 'Search batch ID',
     print: 'Print Certificate',
     columns: {
       batchId: 'Batch ID',

@@ -28,7 +28,7 @@
                 <el-form-item :label="$t('research.breeding.seed.ose.form.regionCode')" prop="regionCode">
                   <el-select v-model="formData.regionCode"
                     :placeholder="$t('research.breeding.seed.ose.placeholder.regionCode')" filterable clearable
-                    style="width: 100%">
+                    style="width: 100%" @change="handleRegionChange">
                     <el-option v-for="region in regionList" :key="region.regionCode" :label="region.regionName"
                       :value="region.regionCode" />
                   </el-select>
@@ -114,13 +114,19 @@ const formData = reactive({
   oseName: '',
   location: '',
   regionCode: '',
+  regionName: '',
   contactName: '',
   contactNumber: ''
 })
 
+const handleRegionChange = (val) => {
+  const region = regionList.value.find(item => item.regionCode === val)
+  formData.regionName = region ? region.regionName : ''
+}
+
 const phoneValidator = (rule, value, callback) => {
   if (!value) {
-    callback(new Error(t('research.breeding.seed.ose.rules.contactNumber')))
+    callback(new Error(t('research.breeding.seed.ose.rules.contactNumberRequired')))
   } else {
     const phoneRegex = /^251\d{9}$/
     if (!phoneRegex.test(value)) {
@@ -133,19 +139,19 @@ const phoneValidator = (rule, value, callback) => {
 
 const rules = computed(() => ({
   oseCode: [
-    { required: true, message: t('research.breeding.seed.ose.rules.oseCode'), trigger: 'blur' }
+    { required: true, message: t('research.breeding.seed.ose.rules.oseCodeRequired'), trigger: 'blur' }
   ],
   oseName: [
-    { required: true, message: t('research.breeding.seed.ose.rules.oseName'), trigger: 'blur' }
+    { required: true, message: t('research.breeding.seed.ose.rules.oseNameRequired'), trigger: 'blur' }
   ],
   location: [
-    { required: true, message: t('research.breeding.seed.ose.rules.location'), trigger: 'blur' }
+    { required: true, message: t('research.breeding.seed.ose.rules.locationRequired'), trigger: 'blur' }
   ],
   regionCode: [
-    { required: true, message: t('research.breeding.seed.ose.rules.regionCode'), trigger: 'change' }
+    { required: true, message: t('research.breeding.seed.ose.rules.regionCodeRequired'), trigger: 'change' }
   ],
   contactName: [
-    { required: true, message: t('research.breeding.seed.ose.rules.contactName'), trigger: 'blur' }
+    { required: true, message: t('research.breeding.seed.ose.rules.contactNameRequired'), trigger: 'blur' }
   ],
   contactNumber: [
     { required: true, validator: phoneValidator, trigger: 'blur' }

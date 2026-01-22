@@ -151,6 +151,8 @@ export default {
     applyPasswordRequired: '请输入登录密码',
     confirmPasswordRequired: '请确认密码',
     passwordMismatch: '两次输入的密码不一致',
+    passwordMinLength: '密码长度不能少于8位',
+    passwordStrength: '密码必须包含大写字母、小写字母和数字',
     usernameExists: '该用户名已存在',
     auditResultRequired: '请选择审核结果',
     inputTypesRequired: '请选择投入品类型',
