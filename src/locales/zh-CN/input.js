@@ -107,7 +107,7 @@ export default {
     deleteConfirm: '确定删除该投入品吗？',
 
     // 搜索和筛选
-    searchPlaceholder: '搜索产品名称、登记证号、生产批号',
+    searchPlaceholder: '按产品名称搜索',
     filterByType: '按投入品类型筛选',
     allTypes: '全部类型',
 

@@ -106,7 +106,7 @@ export default {
     deleteConfirm: 'Are you sure to void this input?',
 
     // 搜索和筛选
-    searchPlaceholder: 'Search by product name, registration certificate number, production batch number',
+    searchPlaceholder: 'Search by product name',
     filterByType: 'Filter by input type',
     allTypes: 'All Types',
 
