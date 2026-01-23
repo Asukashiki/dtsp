@@ -284,7 +284,7 @@ const handleSystemClick = (module) => {
   console.log('点击系统模块:', module)
   if (module.path) {
     if (module.external) {
-      window.open(module.path, '_blank')
+      window.location.href = module.path
     } else {
       router.push(module.path)
     }
