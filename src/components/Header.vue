@@ -31,10 +31,10 @@
       <!-- 右侧功能区 -->
       <div class="header-right">
         <!-- 语言切换按钮 -->
-        <div class="language-switcher" @click="toggleLanguage">
+        <!-- <div class="language-switcher" @click="toggleLanguage">
           <i class="ri-translate-2"></i>
           <span class="language-text">{{ currentLanguageLabel }}</span>
-        </div>
+        </div> -->
 
         <div class="user-info" @click="toUser">
           <el-avatar :size="38" :src="userAvatar" class="user-avatar">
