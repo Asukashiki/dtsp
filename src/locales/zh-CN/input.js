@@ -899,7 +899,7 @@ export default {
       addSuccess: '新增成功',
       editSuccess: '编辑成功',
       confirmSuccess: '出库确认成功',
-      searchPlaceholder: '搜索出库单号、关联单号、出库对象',
+      searchPlaceholder: '搜索出库单号',
       filterByWarehouse: '按仓库筛选',
       filterByType: '按出库类型筛选',
       filterByStatus: '按状态筛选',

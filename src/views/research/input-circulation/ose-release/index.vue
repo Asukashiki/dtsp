@@ -167,7 +167,7 @@ const selectedIds = ref([])
 const dateRange = ref([])
 
 const queryParams = reactive({
-  unionName: '',
+  releaseName: '',
   inputType: '',
   startTime: '',
   endTime: '',

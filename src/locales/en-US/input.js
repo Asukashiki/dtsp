@@ -888,7 +888,7 @@ export default {
       addSuccess: 'Added successfully',
       editSuccess: 'Edited successfully',
       confirmSuccess: 'Stock out confirmed successfully',
-      searchPlaceholder: 'Search by stock out order number, associated order number, outbound object',
+      searchPlaceholder: 'Search by stock out order numbe',
       filterByWarehouse: 'Filter by Warehouse',
       filterByType: 'Filter by Stock Out Type',
       filterByStatus: 'Filter by Status',
