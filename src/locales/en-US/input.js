@@ -106,7 +106,7 @@ export default {
     deleteConfirm: 'Are you sure to void this input?',
 
     // 搜索和筛选
-    searchPlaceholder: 'Search by product name, registration certificate number, production batch number',
+    searchPlaceholder: 'Search by product name',
     filterByType: 'Filter by input type',
     allTypes: 'All Types',
 
@@ -1293,7 +1293,7 @@ export default {
     editSuccess: 'Edited successfully',
     batchDelete: 'Batch Delete',
     batchDeleteConfirm: 'Are you sure to delete the selected {count} feedback records?',
-    searchPlaceholder: 'Search by feedback title, content, feedback number',
+    searchPlaceholder: 'Search by feedback title',
     filterByType: 'Filter by Feedback Type',
     filterByStatus: 'Filter by Processing Status',
     filterByPriority: 'Filter by Priority',

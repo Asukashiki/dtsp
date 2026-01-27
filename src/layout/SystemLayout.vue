@@ -16,7 +16,7 @@
             <i class="ri-home-line"></i>
             <span class="btn-text">{{ $t(config.backToHome) }}</span>
           </el-button>
-          <el-dropdown @command="handleLanguageChange">
+          <!-- <el-dropdown @command="handleLanguageChange">
             <el-button link class="header-btn">
               <i class="ri-translate"></i>
               <span class="btn-text">{{ currentLanguage }}</span>
@@ -27,7 +27,7 @@
                 <el-dropdown-item command="en-US">English</el-dropdown-item>
               </el-dropdown-menu>
             </template>
-          </el-dropdown>
+          </el-dropdown> -->
           <el-dropdown @command="handleUserAction">
             <div class="user-info">
               <el-avatar :size="38" :src="userAvatar" class="user-avatar">
@@ -35,16 +35,16 @@
               </el-avatar>
               <div class="user-detail">
                 <span class="user-name">{{ userName }}</span>
-                <span class="user-role">{{ organName }}</span>
+                <!-- <span class="user-role">{{ organName }}</span> -->
               </div>
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="profile">
+                <!-- <el-dropdown-item command="profile">
                   <i class="ri-user-line"></i>
                   {{ $t('header.userInfo') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="logout" divided>
+                </el-dropdown-item> -->
+                <el-dropdown-item command="logout">
                   <i class="ri-logout-box-line"></i>
                   {{ $t('header.logout') }}
                 </el-dropdown-item>

@@ -46,9 +46,10 @@ export const getLogout = () => {
 }
 
 export const getSsoLogout = () => {
-  return request({
-    url: '/oauth2/logout',
-    method: 'get'
+  return agricultureRequest({
+    url: '/ucif/oauth/logout',
+    method: 'post',
+    params: { useGrantType: 'bsp' }
   })
 }
 

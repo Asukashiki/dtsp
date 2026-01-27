@@ -107,7 +107,7 @@ export default {
     deleteConfirm: '确定删除该投入品吗？',
 
     // 搜索和筛选
-    searchPlaceholder: '搜索产品名称、登记证号、生产批号',
+    searchPlaceholder: '按产品名称搜索',
     filterByType: '按投入品类型筛选',
     allTypes: '全部类型',
 
@@ -1304,7 +1304,7 @@ export default {
     editSuccess: '编辑成功',
     batchDelete: '批量删除',
     batchDeleteConfirm: '确定删除选中的 {count} 条反馈吗？',
-    searchPlaceholder: '搜索反馈标题、内容、反馈编号',
+    searchPlaceholder: '搜索反馈标题',
     filterByType: '按反馈类型筛选',
     filterByStatus: '按处理状态筛选',
     filterByPriority: '按优先级筛选',

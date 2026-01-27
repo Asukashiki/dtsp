@@ -51,7 +51,7 @@
           <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              {{ $t('input.catalog.add') }}
+              {{ $t('common.add') }}
             </el-button>
           </template>
 

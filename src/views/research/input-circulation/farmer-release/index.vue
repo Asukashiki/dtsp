@@ -78,7 +78,7 @@
           <template #actions>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i>
-              {{ $t('inputCirculation.addRelease') }}
+              {{ $t('common.add') }}
             </el-button>
           </template>
 

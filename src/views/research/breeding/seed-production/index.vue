@@ -146,10 +146,10 @@
                     <i class="ri-eye-line"></i>
                     <span class="btn-text">{{ $t('common.view') }}</span>
                   </el-button>
-                  <el-button type="danger" size="small" @click="handleDelete(row)">
+                  <!-- <el-button type="danger" size="small" @click="handleDelete(row)">
                     <i class="ri-delete-bin-line"></i>
                     <span class="btn-text">{{ $t('common.delete') }}</span>
-                  </el-button>
+                  </el-button> -->
                 </div>
               </template>
             </el-table-column>

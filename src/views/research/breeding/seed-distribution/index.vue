@@ -16,9 +16,7 @@
               <el-input
                 v-model="searchQuery"
                 :placeholder="$t('research.breeding.seed.distribution.searchPlaceholder')"
-                clearable
-                @clear="loadData"
-                @keyup.enter="loadData">
+                clearable>
                 <template #prefix>
                   <i class="ri-search-line"></i>
                 </template>
@@ -31,8 +29,8 @@
                 range-separator="-"
                 :start-placeholder="$t('common.startDate')"
                 :end-placeholder="$t('common.endDate')"
-                clearable
-                @change="loadData" />
+                value-format="YYYY-MM-DD"
+                clearable />
             </SearchItem>
           </SearchForm>
         </div>
@@ -106,7 +104,7 @@
                   <ActionButtons
                     class="table-actions"
                     mode="list"
-                    :workflow-status="row.distributeStatus === 'Finalized' ? 'S2' : 'S0'"
+                    :workflow-status="row.distributeStatus === 'Finalized' ? 'S2' : ''"
                     :show-audit="false"
                     :exclude-actions="getExcludeActions(row)"
                     :force-view="true"
@@ -232,15 +230,15 @@ const currentRow = ref(null)
 
 const filteredList = computed(() => {
   let list = dataList.value
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    list = list.filter(item =>
-      item.distributeName?.toLowerCase().includes(query) ||
-      item.oseName?.toLowerCase().includes(query) ||
-      item.fromSeedLevel?.toLowerCase().includes(query) ||
-      item.toSeedLevel?.toLowerCase().includes(query)
-    )
-  }
+  // if (searchQuery.value) {
+  //   const query = searchQuery.value.toLowerCase()
+  //   list = list.filter(item =>
+  //     item.distributeName?.toLowerCase().includes(query) ||
+  //     item.oseName?.toLowerCase().includes(query) ||
+  //     item.fromSeedLevel?.toLowerCase().includes(query) ||
+  //     item.toSeedLevel?.toLowerCase().includes(query)
+  //   )
+  // }
   return list
 })
 
@@ -248,6 +246,13 @@ const loadData = async () => {
   loading.value = true
   try {
     const params = { pageNum: currentPage.value, pageSize: pageSize.value }
+    if (searchQuery.value) {
+      params.oseName = searchQuery.value
+    }
+    if (dateRange.value && dateRange.value.length === 2) {
+      params.startTime = dateRange.value[0]
+      params.endTime = dateRange.value[1]
+    }
     const res = await getBreedSeedDistributeList(params)
     if (res.code === 200) {
       dataList.value = res.rows || []
