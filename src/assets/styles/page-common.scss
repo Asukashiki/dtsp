@@ -96,6 +96,18 @@ $color-bg-lighter: #F8F9FA;
   gap: 12px;
   align-items: center;
   flex-shrink: 0;
+  
+
+   .el-button {
+      min-height: 44px;
+      min-width: 96px; 
+      
+      span, i {
+        margin-right: 4px;
+        font-size: 16px;
+      }
+
+    }
 }
 
 .back-btn {
@@ -227,6 +239,8 @@ $color-bg-lighter: #F8F9FA;
   height: 40px;
 
   .el-button {
+    min-height: 44px;
+    font-size: 18px;
     i {
       margin-right: 4px;
     }
@@ -251,6 +265,19 @@ $color-bg-lighter: #F8F9FA;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
+  
+
+  .el-button {
+    min-height: 36px;
+    min-width: 80px !important;
+    font-size: 16px !important;
+  }
+
+  i {
+      margin-right: 6px;
+      font-size: 16px !important;
+      vertical-align: middle;
+    }
 }
 
 // ==================== 分页 ====================

@@ -21,6 +21,7 @@ $primary-green-light: #00b350;
     // 表头样式
     .el-table__header-wrapper {
       .el-table__header {
+        min-height: 56px;
         th.el-table__cell {
           background: #E5F4EC;
           color: $primary-green;
