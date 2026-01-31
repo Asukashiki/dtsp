@@ -344,7 +344,7 @@ const handleAction = (row, action) => {
 const handleSubmitForAudit = async (row) => {
   try {
     await ElMessageBox.confirm(
-      t('research.dataCollection.yieldData.submitForAuditConfirm') || 'Are you sure you want to submit this record for review?',
+      t('research.dataCollection.yieldData.submitForReviewConfirm') || 'Are you sure you want to submit this record for review?',
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
@@ -357,7 +357,7 @@ const handleSubmitForAudit = async (row) => {
       workflowStatus: 'S1'
     })
     if (res.code === 200) {
-      ElMessage.success(t('research.dataCollection.yieldData.submitForAuditSuccess') || 'Submit for review successfully')
+      ElMessage.success(t('research.dataCollection.yieldData.submitForReviewSuccess') || 'Submit for review successfully')
       handleSearch()
     } else {
       ElMessage.error(res.msg || t('common.failed'))

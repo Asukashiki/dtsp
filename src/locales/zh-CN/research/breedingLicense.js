@@ -7,6 +7,10 @@ export default {
   edit: '编辑许可',
   detail: '许可详情',
   viewDetail: '查看详情',
+  editTitle: '编辑育种许可',
+  addTitle: '新增育种许可',
+  editSubtitle: '编辑育种许可信息',
+  addSubtitle: '新增育种许可信息',
 
   // 搜索和筛选
   searchPlaceholder: '搜索许可证号、批次名称',
@@ -49,6 +53,7 @@ export default {
 
   // 表单字段
   form: {
+    title: '许可信息',
     // 基础信息
     basicInfo: '基础信息',
     batchId: '育种批次',
@@ -86,6 +91,8 @@ export default {
     createBy: '创建人',
     updateTime: '更新时间',
     updateBy: '更新人',
+    datePlaceholder: '请选择日期',
+    fileTip: '支持 PDF, JPG, PNG 格式，大小不超过 5MB',
   },
 
   // 表单占位符
@@ -128,6 +135,14 @@ export default {
     maturityDaysMin: '成熟期天数必须大于0',
     plantHeightMin: '株高必须大于0',
     jsonFormat: '请输入有效的JSON格式',
+    batchRequired: '请选择育种批次',
+    materialRequired: '请输入材料名称',
+    numberRequired: '请输入许可证号',
+    applyDateRequired: '请选择申请日期',
+    expiryDateRequired: '请选择截止日期',
+    statusRequired: '请选择状态',
+    agencyRequired: '请输入发证机构',
+    holderRequired: '请输入持有人',
   },
 
   // 操作按钮

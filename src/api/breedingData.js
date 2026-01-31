@@ -310,3 +310,8 @@ export function performAgronomicTraitAudit(data) {
 export function submitTraitRecordAudit(recordId) {
     return request({ url: `${API_BASE_URL}/breeding/traitRecord/submit/${recordId}`, method: 'post' })
 }
+
+// ============ 田间检查数据 ============
+export function getFieldInspectionList(params) {
+    return request({ url: `${API_BASE_URL}/seed/field-inspection/list`, method: 'get', params })
+}

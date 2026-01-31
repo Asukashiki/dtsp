@@ -107,7 +107,7 @@
                   min-width="140"
                 >
                   <template #default="{ row }">
-                    <el-tag>{{ getLabelByValue('flow_status', row.workflowStatus) || '-' }}</el-tag>
+                    <el-tag :type="getWorkflowStatusType(row.workflowStatus)" >{{ getLabelByValue('flow_status', row.workflowStatus) || '-' }}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -370,7 +370,7 @@ import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getLabTestList, deleteLabTest, submitLabTest, archiveLabTest, cancelLabTest } from '@/api/labTest'
 import { getBatchOptions } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
-
+import { getWorkflowStatusType } from '@/utils/workflow'
 const router = useRouter()
 const { t } = useI18n()
 

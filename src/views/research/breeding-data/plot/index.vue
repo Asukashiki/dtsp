@@ -83,7 +83,7 @@
               </el-table-column>
               <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
                 <template #default="{ row }">
-                  <el-tag :type="row.auditStatus === 'S2' ? 'success' : row.auditStatus === 'S1' ? 'warning' : ''">
+                  <el-tag :type="getWorkflowStatusType(row.auditStatus)" effect="plain">
                     {{ getLabelByValue('flow_status', row.auditStatus) }}
                   </el-tag>
                 </template>
@@ -154,7 +154,7 @@
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.breedingData.plot.columns.auditStatus') }}:</span>
                 <span class="value">
-                  <el-tag :type="item.auditStatus === 'S2' ? 'success' : item.auditStatus === 'S1' ? 'warning' : ''">
+                  <el-tag :type="getWorkflowStatusType(item.auditStatus)" effect="plain">
                     {{ getLabelByValue('flow_status', String(item.auditStatus).toUpperCase()) }}
                   </el-tag>
                 </span>
@@ -220,6 +220,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
+import { getWorkflowStatusType } from '@/utils/workflow'
 import { getPlotInfoList, deletePlotInfo, getBatchOptions, submitPlotAudit, archivePlot, cancelPlot, getIrrigationCount } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
 

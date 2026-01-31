@@ -14,6 +14,19 @@ export const getLabTestList = (data) => {
 }
 
 /**
+ * 查询实验室测试审核列表
+ * @param {Object} data 查询条件
+ * @returns Promise
+ */
+export const getLabTestAuditList = (data) => {
+  return request({
+    url: '/seed/laboratory/test/audit/list',
+    method: 'post',
+    data
+  })
+}
+
+/**
  * 获取实验室测试数据详情
  * @param {String} id 主键ID
  * @returns Promise
@@ -142,15 +155,4 @@ export const cancelLabTestAudit = (data) => {
   })
 }
 
-/**
- * 查询审核列表
- * @param {Object} data 查询条件
- * @returns Promise
- */
-export const getLabTestAuditList = (data) => {
-  return request({
-    url: '/seed/laboratory/test/audit/list',
-    method: 'post',
-    data
-  })
-}
+

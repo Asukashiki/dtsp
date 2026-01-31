@@ -584,11 +584,10 @@ import { ElMessage } from 'element-plus'
 import { useDict } from '@/hooks/useDict'
 import { getDatasetById } from '@/api/dataset'
 import {
-  getPlotInfoList, getFarmingRecordList, getTraitRecordList,
-  getEnvironmentDataList
+  getPlotInfoList, getFarmingRecordList, getAgronomicTraitAuditList,
+  getEnvironmentDataList, getFieldInspectionList
 } from '@/api/breedingData'
-import { getLabTestList } from '@/api/labTest'
-import { getYieldDataList } from '@/api/yieldData'
+import { getLabTestAuditList } from '@/api/labTest'
 
 const route = useRoute()
 const router = useRouter()
@@ -655,28 +654,28 @@ const loadAllDataLists = async (trialId) => {
       plotRes, farmingRes, agronomicRes, environmentDataRes,
       labRes, yieldRes
     ] = await Promise.all([
-      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'S2' }).catch(err => {
         console.error('获取地块及播种信息失败:', err)
         return { rows: [], total: 0 }
       }),
-      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取农事记录失败:', err)
         return { rows: [], total: 0 }
       }),
-      getTraitRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getAgronomicTraitAuditList({ pageNum: 1, pageSize: 9999, trialId, batchId: detailData.value?.batchId || '', auditStatus: 'approved' }).catch(err => {
         console.error('获取农艺性状数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取环境监测数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getLabTestList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getLabTestAuditList({ pageNum: 1, pageSize: 9999, trialId, batchId: detailData.value?.batchId || '', workflowStatus: 'S2', auditCanceled: 0 }).catch(err => {
         console.error('获取实验室测试数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getYieldDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
-        console.error('获取产量数据失败:', err)
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
+        console.error('获取田间检查数据失败:', err)
         return ({ msg: "", code: 500, data: [] })
       })
     ])

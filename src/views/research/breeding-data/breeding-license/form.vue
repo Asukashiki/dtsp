@@ -1,437 +1,375 @@
 <template>
-  <div class="breeding-license-form-container">
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="icon-wrapper">
-          <i class="ri-shield-check-line"></i>
-        </div>
-        <div class="header-text">
-          <h1>{{ isEdit ? $t('research.breedingLicense.edit') : $t('research.breedingLicense.add') }}</h1>
-          <p class="subtitle">{{ $t('research.breedingLicense.subtitle') }}</p>
-        </div>
-      </div>
-    </div>
+  <div class="page-container">
+    <div class="page-wrapper">
+      <PageHeader
+        icon="ri-shield-check-line"
+        :title="isEdit ? $t('research.breedingLicense.editTitle') : $t('research.breedingLicense.addTitle')"
+        :subtitle="isEdit ? $t('research.breedingLicense.editSubtitle') : $t('research.breedingLicense.addSubtitle')"
+        showBack
+        @back="handleBack"
+      />
 
-    <!-- Form Content -->
-    <div class="form-content">
-      <el-form
+      <div class="content-wrapper">
+        <el-form
           ref="formRef"
           :model="formData"
-          :rules="formRules"
+          :rules="rules"
           label-width="200px"
+          class="breeding-license-form"
           v-loading="loading"
-      >
-        <!-- Basic Information Section -->
-        <div class="form-section">
-          <h2 class="section-title">
-            <i class="ri-information-line"></i>
-            {{ $t('research.breedingLicense.form.basicInfo') }}
-          </h2>
+        >
+          <!-- Basic Information -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-information-line"></i>
+                <span>{{ $t('research.breedingLicense.form.basicInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="24">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.batchId')" prop="batchId">
+                    <el-select
+                      v-model="formData.batchId"
+                      :placeholder="$t('research.breedingLicense.form.batchId')"
+                      filterable
+                      class="full-width"
+                    >
+                      <el-option
+                        v-for="item in batchList"
+                        :key="item.dataId"
+                        :label="item.batchName"
+                        :value="item.dataId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.batchId')" prop="batchId">
-            <el-select
-                v-model="formData.batchId"
-                :placeholder="$t('research.breedingLicense.placeholder.batchId')"
-                filterable
-                clearable
-                disabled
-                style="width: 100%"
-                @change="handleBatchChange"
-            >
-              <el-option
-                  v-for="batch in batchList"
-                  :key="batch.id"
-                  :label="batch.batchName"
-                  :value="batch.id"
-              />
-            </el-select>
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.datasetId')" prop="datasetId">
+                    <el-select
+                      v-model="formData.datasetId"
+                      :placeholder="$t('research.breedingLicense.form.datasetId')"
+                      filterable
+                      clearable
+                      class="full-width"
+                    >
+                      <el-option
+                        v-for="item in datasetList"
+                        :key="item.dataId"
+                        :label="item.datasetName"
+                        :value="item.dataId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.datasetId')" prop="datasetId">
-            <el-select
-                v-model="formData.datasetId"
-                :placeholder="$t('research.breedingLicense.placeholder.datasetId')"
-                filterable
-                clearable
-                style="width: 100%"
-                @change="handleDatasetChange"
-            >
-              <el-option
-                  v-for="dataset in datasetList"
-                  :key="dataset.id"
-                  :label="`${dataset.datasetCode}`"
-                  :value="dataset.id"
-              />
-            </el-select>
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.varietyName')" prop="varietyName">
+                    <el-input
+                      v-model="formData.varietyName"
+                      :placeholder="$t('research.breedingLicense.form.varietyName')"
+                    />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.cropType')" prop="cropType">
-            <el-input
-                v-model="formData.cropType"
-                :placeholder="$t('research.breedingLicense.placeholder.cropType')"
-                clearable
-                disabled
-            />
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.licenseNo')" prop="licenseNo">
+                    <el-input
+                      v-model="formData.licenseNo"
+                      :placeholder="$t('research.breedingLicense.form.licenseNo')"
+                    />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.varietyName')" prop="varietyName">
-            <el-input
-                v-model="formData.varietyName"
-                :placeholder="$t('research.breedingLicense.placeholder.varietyName')"
-                clearable
-                disabled
-            />
-          </el-form-item>
-        </div>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.licenseStatus')" prop="licenseStatus">
+                    <el-select
+                      v-model="formData.licenseStatus"
+                      :placeholder="$t('research.breedingLicense.form.licenseStatus')"
+                      class="full-width"
+                    >
+                      <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
+                      <el-option :label="$t('research.breedingLicense.status.expired')" value="expired" />
+                      <el-option :label="$t('research.breedingLicense.status.revoked')" value="revoked" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
 
-        <!-- License Information Section -->
-        <div class="form-section">
-          <h2 class="section-title">
-            <i class="ri-file-shield-line"></i>
-            {{ $t('research.breedingLicense.form.licenseInfo') }}
-          </h2>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.approvalDate')" prop="approvalDate">
+                    <el-date-picker
+                      v-model="formData.approvalDate"
+                      type="date"
+                      :placeholder="$t('research.breedingLicense.form.datePlaceholder')"
+                      value-format="YYYY-MM-DD"
+                      class="full-width"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.licenseNo')" prop="licenseNo">
-            <el-input
-                v-model="formData.licenseNo"
-                :placeholder="$t('research.breedingLicense.placeholder.licenseNo')"
-                clearable
-            />
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.validStartDate')" prop="validStartDate">
+                    <el-date-picker
+                      v-model="formData.validStartDate"
+                      type="date"
+                      :placeholder="$t('research.breedingLicense.form.datePlaceholder')"
+                      value-format="YYYY-MM-DD"
+                      class="full-width"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.approvalOrg')" prop="approvalOrg">
-            <el-input
-                v-model="formData.approvalOrg"
-                :placeholder="$t('research.breedingLicense.placeholder.approvalOrg')"
-                clearable
-            />
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.validEndDate')" prop="validEndDate">
+                    <el-date-picker
+                      v-model="formData.validEndDate"
+                      type="date"
+                      :placeholder="$t('research.breedingLicense.form.datePlaceholder')"
+                      value-format="YYYY-MM-DD"
+                      class="full-width"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
 
-          <el-form-item :label="$t('research.breedingLicense.form.approvalDate')" prop="approvalDate">
-            <el-date-picker
-                v-model="formData.approvalDate"
-                type="date"
-                :placeholder="$t('research.breedingLicense.placeholder.approvalDate')"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-            />
-          </el-form-item>
+          <!-- License Information -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-paper-line"></i>
+                <span>{{ $t('research.breedingLicense.form.licenseInfo') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="24">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.approvalOrg')" prop="approvalOrg">
+                    <el-input
+                      v-model="formData.approvalOrg"
+                      :placeholder="$t('research.breedingLicense.form.approvalOrg')"
+                    />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.validStartDate')" prop="validStartDate">
-            <el-date-picker
-                v-model="formData.validStartDate"
-                type="date"
-                :placeholder="$t('research.breedingLicense.placeholder.validStartDate')"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-            />
-          </el-form-item>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('research.breedingLicense.form.certificateFile')" prop="certificateFile">
+                    <el-upload
+                      class="doc-upload"
+                      action="#"
+                      :auto-upload="false"
+                      :on-change="handleFileChange"
+                      :on-remove="handleRemoveFile"
+                      :on-preview="handlePreviewFile"
+                      :file-list="certificateFileList"
+                      :limit="1"
+                      accept=".pdf,.jpg,.png,.jpeg"
+                      drag
+                    >
+                      <i class="el-icon-upload"></i>
+                      <div class="el-upload__text">
+                        {{ $t('common.dragFile') }} <em>{{ $t('common.clickUpload') }}</em>
+                      </div>
+                      <template #tip>
+                        <div class="el-upload__tip">
+                          {{ $t('research.breedingLicense.form.fileTip') }}
+                        </div>
+                      </template>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.validEndDate')" prop="validEndDate">
-            <el-date-picker
-                v-model="formData.validEndDate"
-                type="date"
-                :placeholder="$t('research.breedingLicense.placeholder.validEndDate')"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-            />
-          </el-form-item>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('research.breedingLicense.form.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('research.breedingLicense.form.remark')"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
 
-          <el-form-item :label="$t('research.breedingLicense.form.certificateFile')" prop="certificateFile">
-            <el-upload
-                class="doc-upload"
-                :http-request="handleUploadFile"
-                :file-list="certificateFileList"
-                :on-remove="handleRemoveFile"
-                :on-preview="handlePreviewFile"
-                :limit="1"
-                accept=".pdf"
-            >
-              <el-button type="primary" link>
-                <i class="ri-upload-2-line"></i>
-                {{ $t('research.breedingLicense.placeholder.certificateFile') }}
-              </el-button>
-            </el-upload>
-          </el-form-item>
+          <!-- Variety Traits -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-plant-line"></i>
+                <span>{{ $t('research.breedingLicense.form.varietyTraits') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-row :gutter="24">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.minYieldPotential')" prop="minYieldPotential">
+                    <el-input-number v-model="formData.minYieldPotential" :precision="2" :step="0.1" class="full-width" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.maxYieldPotential')" prop="maxYieldPotential">
+                    <el-input-number v-model="formData.maxYieldPotential" :precision="2" :step="0.1" class="full-width" />
+                  </el-form-item>
+                </el-col>
+                
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.maturityDays')" prop="maturityDays">
+                    <el-input-number v-model="formData.maturityDays" :precision="0" :step="1" class="full-width" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.plantHeight')" prop="plantHeight">
+                    <el-input-number v-model="formData.plantHeight" :precision="1" :step="1" class="full-width" />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.licenseStatus')" prop="licenseStatus">
-            <el-select
-                v-model="formData.licenseStatus"
-                :placeholder="$t('research.breedingLicense.placeholder.licenseStatus')"
-                style="width: 100%"
-            >
-              <el-option :label="$t('research.breedingLicense.status.valid')" value="valid" />
-            </el-select>
-          </el-form-item>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.diseaseResistance')" prop="diseaseResistance">
+                    <el-input v-model="formData.diseaseResistance" />
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breedingLicense.form.stressTolerance')" prop="stressTolerance">
+                    <el-input v-model="formData.stressTolerance" />
+                  </el-form-item>
+                </el-col>
 
-          <el-form-item :label="$t('research.breedingLicense.form.remark')" prop="remark">
-            <el-input
-                v-model="formData.remark"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.breedingLicense.placeholder.remark')"
-            />
-          </el-form-item>
-        </div>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('research.breedingLicense.form.grainQualityTraits')" prop="grainQualityTraits">
+                    <el-input v-model="formData.grainQualityTraits" type="textarea" :rows="2" />
+                  </el-form-item>
+                </el-col>
+                
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('research.breedingLicense.form.otherTraits')" prop="otherTraits">
+                    <el-input v-model="formData.otherTraits" type="textarea" :rows="2" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
 
-        <!-- Variety Traits Section -->
-        <div class="form-section">
-          <h2 class="section-title">
-            <i class="ri-plant-line"></i>
-            {{ $t('research.breedingLicense.form.varietyTraits') }}
-          </h2>
-
-          <el-form-item :label="$t('research.breedingLicense.form.minYieldPotential')" prop="minYieldPotential">
-            <el-input-number
-                v-model="formData.minYieldPotential"
-                :placeholder="$t('research.breedingLicense.placeholder.minYieldPotential')"
-                :min="0"
-                :precision="2"
-                :step="0.1"
-                style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.maxYieldPotential')" prop="maxYieldPotential">
-            <el-input-number
-                v-model="formData.maxYieldPotential"
-                :placeholder="$t('research.breedingLicense.placeholder.maxYieldPotential')"
-                :min="0"
-                :precision="2"
-                :step="0.1"
-                style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.diseaseResistance')" prop="diseaseResistance">
-            <el-input
-                v-model="formData.diseaseResistance"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.breedingLicense.placeholder.diseaseResistance')"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.stressTolerance')" prop="stressTolerance">
-            <el-input
-                v-model="formData.stressTolerance"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.breedingLicense.placeholder.stressTolerance')"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.maturityDays')" prop="maturityDays">
-            <el-input-number
-                v-model="formData.maturityDays"
-                :placeholder="$t('research.breedingLicense.placeholder.maturityDays')"
-                :min="0"
-                :step="1"
-                style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.plantHeight')" prop="plantHeight">
-            <el-input-number
-                v-model="formData.plantHeight"
-                :placeholder="$t('research.breedingLicense.placeholder.plantHeight')"
-                :min="0"
-                :precision="2"
-                :step="1"
-                style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.grainQualityTraits')" prop="grainQualityTraits">
-            <el-input
-                v-model="formData.grainQualityTraits"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.breedingLicense.placeholder.grainQualityTraits')"
-            />
-          </el-form-item>
-
-          <el-form-item :label="$t('research.breedingLicense.form.otherTraits')" prop="otherTraits">
-            <el-input
-                v-model="formData.otherTraits"
-                type="textarea"
-                :rows="3"
-                :placeholder="$t('research.breedingLicense.placeholder.otherTraits')"
-            />
-          </el-form-item>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <el-button @click="handleCancel" size="large">
-            <i class="ri-close-line"></i>
-            {{ $t('research.breedingLicense.actions.cancel') }}
-          </el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting" size="large">
-            <i class="ri-check-line"></i>
-            {{ $t('research.breedingLicense.actions.submit') }}
-          </el-button>
-        </div>
-      </el-form>
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <el-button @click="handleCancel" size="large">
+              <i class="ri-close-line"></i>
+              {{ $t('research.breedingLicense.actions.cancel') }}
+            </el-button>
+            <el-button type="primary" @click="handleSubmit" :loading="submitting" size="large">
+              <i class="ri-check-line"></i>
+              {{ $t('research.breedingLicense.actions.submit') }}
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getLicenseById, addLicense, updateLicense } from '@/api/breedingLicense'
+import { PageHeader } from '@/components/common'
+import {
+  getLicenseById,
+  addLicense,
+  updateLicense
+} from '@/api/breedingLicense'
+import { getBreedingBatchList } from '@/api/breedingData'
+import { uploadFile, getFilePreviewUrl } from '@/api/file'
 import { getDatasetList } from '@/api/dataset'
-import { uploadFile } from '@/api/seed'
-import { getFilePreviewUrl } from '@/api/file'
 
-const router = useRouter()
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 
+// Back Handler
+const handleBack = () => {
+  router.back()
+}
+
 // State
-const formRef = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
-const isEdit = computed(() => !!route.params.id)
+const formRef = ref(null)
 const batchList = ref([])
 const datasetList = ref([])
+const certificateFileList = ref([])
 
-// Form Data
 const formData = reactive({
-  id: '',
   batchId: '',
-  batchName: '',
   datasetId: '',
-  datasetCode: '',
-  cropType: '',
   varietyName: '',
   licenseNo: '',
-  approvalOrg: '',
   approvalDate: '',
   validStartDate: '',
   validEndDate: '',
-  certificateFile: '',
-  certificateFileName: '',  // 新增:保存原始文件名
   licenseStatus: 'valid',
+  approvalOrg: '',
   remark: '',
-  // Variety Traits（已存在，无需新增）
-  traitsId: '',
+  certificateFile: '',
+  certificateFileName: '',
+  // Traits
   minYieldPotential: null,
   maxYieldPotential: null,
-  diseaseResistance: '',
-  stressTolerance: '',
   maturityDays: null,
   plantHeight: null,
+  diseaseResistance: '',
+  stressTolerance: '',
   grainQualityTraits: '',
   otherTraits: ''
 })
 
-// 认证文件列表
-const certificateFileList = ref([])
-
-// // JSON Validator
-// const validateJson = (rule, value, callback) => {
-//   if (!value) {
-//     callback()
-//     return
-//   }
-//   try {
-//     JSON.parse(value)
-//     callback()
-//   } catch (e) {
-//     callback(new Error(t('research.breedingLicense.rules.jsonFormat')))
-//   }
-// }
-
-// Form Rules
-const formRules = computed(() => ({
+// Validation Rules
+const rules = computed(() => ({
   batchId: [
-    { required: true, message: t('research.breedingLicense.rules.batchIdRequired'), trigger: 'change' }
-  ],
-  cropType: [
-    { required: true, message: t('research.breedingLicense.rules.cropTypeRequired'), trigger: 'blur' }
+    { required: true, message: t('research.breedingLicense.rules.batchRequired'), trigger: 'change' }
   ],
   varietyName: [
-    { required: true, message: t('research.breedingLicense.rules.varietyNameRequired'), trigger: 'blur' }
+    { required: true, message: t('research.breedingLicense.rules.varietyNameRequired') || 'Please enter variety name', trigger: 'blur' }
   ],
   licenseNo: [
-    { required: true, message: t('research.breedingLicense.rules.licenseNoRequired'), trigger: 'blur' }
-  ],
-  approvalOrg: [
-    { required: true, message: t('research.breedingLicense.rules.approvalOrgRequired'), trigger: 'blur' }
-  ],
-  approvalDate: [
-    { required: true, message: t('research.breedingLicense.rules.approvalDateRequired'), trigger: 'change' }
+    { required: true, message: t('research.breedingLicense.rules.numberRequired'), trigger: 'blur' }
   ],
   validStartDate: [
-    { required: true, message: t('research.breedingLicense.rules.validStartDateRequired'), trigger: 'change' }
+    { required: true, message: t('research.breedingLicense.rules.applyDateRequired'), trigger: 'change' }
   ],
   validEndDate: [
-    { required: true, message: t('research.breedingLicense.rules.validEndDateRequired'), trigger: 'change' }
+    { required: true, message: t('research.breedingLicense.rules.expiryDateRequired'), trigger: 'change' }
   ],
   licenseStatus: [
-    { required: true, message: t('research.breedingLicense.rules.licenseStatusRequired'), trigger: 'change' }
+    { required: true, message: t('research.breedingLicense.rules.statusRequired'), trigger: 'change' }
   ],
-  minYieldPotential: [
-    { type: 'number', min: 0, message: t('research.breedingLicense.rules.minYieldPotentialMin'), trigger: 'change' }
-  ],
-  maxYieldPotential: [
-    { type: 'number', min: 0, message: t('research.breedingLicense.rules.maxYieldPotentialMin'), trigger: 'change' }
-  ],
-  diseaseResistance: [
-
-  ],
-  stressTolerance: [
-
-  ],
-  otherTraits: [
-
-  ],
-  maturityDays: [
-    { type: 'number', min: 0, message: t('research.breedingLicense.rules.maturityDaysMin'), trigger: 'change' }
-  ],
-  plantHeight: [
-    { type: 'number', min: 0, message: t('research.breedingLicense.rules.plantHeightMin'), trigger: 'change' }
+  approvalOrg: [
+    { required: true, message: t('research.breedingLicense.rules.agencyRequired'), trigger: 'blur' }
   ]
 }))
 
-// Fetch Batch List (从已审核通过的数据集中获取批次信息)
+const isEdit = computed(() => !!route.params.id)
+
+// Fetch Batches
 const fetchBatchList = async () => {
   try {
-    const res = await getDatasetList({
-      pageNum: 1,
-      pageSize: 1000,
-      datasetStatus: 'approved' // 只获取审核通过的数据集
-    })
+    const res = await getBreedingBatchList({ pageSize: 1000 })
     if (res.code === 200) {
-      const datasets = res.data?.list || res.data || []
-      // 从已审核通过的数据集中提取唯一的批次信息
-      const batchMap = new Map()
-      datasets.forEach(dataset => {
-        if (dataset.batchId && !batchMap.has(dataset.batchId)) {
-          batchMap.set(dataset.batchId, {
-            id: dataset.batchId,
-            batchName: dataset.batchName || dataset.batchId,
-            cropType: dataset.cropType,
-            varietyName: dataset.varietyName
-          })
-        }
-      })
-      batchList.value = Array.from(batchMap.values())
+      batchList.value = res.rows || []
     }
   } catch (error) {
     console.error('Failed to fetch batch list:', error)
   }
 }
 
-// Fetch Dataset List (only approved ones)
+// Fetch Datasets
 const fetchDatasetList = async () => {
   try {
     const res = await getDatasetList({
@@ -440,62 +378,39 @@ const fetchDatasetList = async () => {
       datasetStatus: 'approved'
     })
     if (res.code === 200) {
-      datasetList.value = res.data.list || []
+      datasetList.value = res.rows || res.data || []
     }
   } catch (error) {
     console.error('Failed to fetch dataset list:', error)
   }
 }
 
-// Handle Batch Change
-const handleBatchChange = (batchId) => {
-  const batch = batchList.value.find(b => b.id === batchId)
-  if (batch) {
-    formData.batchName = batch.batchName
-    formData.cropType = batch.cropType || ''
-    formData.varietyName = batch.varietyName || ''
-  }
-}
+// File Upload Handler
+const handleFileChange = async (file) => {
+  if (!file) return
 
-// Handle Dataset Change
-const handleDatasetChange = (datasetId) => {
-  const dataset = datasetList.value.find(d => d.id === datasetId)
-  if (dataset) {
-    formData.datasetCode = dataset.datasetCode
-    formData.batchId = dataset.batchId
-    formData.batchName = dataset.batchName
-    formData.cropType = dataset.cropType
-    formData.varietyName = dataset.varietyName
+  const isLt5M = file.size / 1024 / 1024 < 5
+  if (!isLt5M) {
+    ElMessage.error(t('common.uploadSizeLimit', { size: '5MB' }))
+    certificateFileList.value = []
+    return
   }
-}
-
-// 文件上传处理
-const handleUploadFile = async (options) => {
-  const { file } = options
-  const uploadFormData = new FormData()
-  uploadFormData.append('file', file)
 
   try {
-    const res = await uploadFile(uploadFormData)
-    if (res.code === 200 && res.data) {
-      const fileData = res.data
-      const dataId = fileData.id || fileData.dataId
-
-      const fileObj = {
+    const res = await uploadFile(file.raw)
+    if (res.code === 200) {
+      formData.certificateFile = res.data.fileId
+      formData.certificateFileName = file.name
+      certificateFileList.value = [{
         name: file.name,
-        uid: file.uid,
-        dataId: dataId,
-        fileId: dataId,
-        url: dataId
-      }
-
-      certificateFileList.value = [fileObj]
-      formData.certificateFile = dataId
-      formData.certificateFileName = file.name  // 保存原始文件名
-
+        url: res.data.url || '',
+        dataId: res.data.fileId,
+        fileId: res.data.fileId
+      }]
       ElMessage.success(t('common.uploadSuccess'))
     } else {
       ElMessage.error(res.msg || t('common.uploadFailed'))
+      certificateFileList.value = []
     }
   } catch (error) {
     console.error('Upload error:', error)
@@ -503,14 +418,14 @@ const handleUploadFile = async (options) => {
   }
 }
 
-// 文件移除处理
+// File Remove Handler
 const handleRemoveFile = () => {
   certificateFileList.value = []
   formData.certificateFile = ''
   formData.certificateFileName = ''
 }
 
-// 文件预览处理
+// File Preview Handler
 const handlePreviewFile = async (file) => {
   if (!file.url && !file.dataId && !file.fileId) return
 
@@ -543,7 +458,7 @@ const fetchLicenseDetail = async (id) => {
     const res = await getLicenseById(id)
     if (res.code === 200) {
       Object.assign(formData, res.data)
-      // 处理认证文件
+      // Handle certificate file
       if (res.data.certificateFile) {
         const fileId = res.data.certificateFile
         const fileName = res.data.certificateFileName || (t('research.breedingLicense.form.certificateFile') + '.pdf')
@@ -575,7 +490,7 @@ const handleSubmit = async () => {
 
     submitting.value = true
 
-    // 准备提交数据
+    // Prepare submit data
     const submitData = {
       ...formData,
       certificateFile: certificateFileList.value.length > 0
@@ -626,151 +541,9 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.breeding-license-form-container {
-  padding: 24px;
-  background-color: #f5f7fa;
-  min-height: 100vh;
-}
+<style scoped lang="scss">
+@use '@/assets/styles/page-common.scss' as *;
 
-/* Page Header */
-.page-header {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 50%, #FEDD00 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 154, 68, 0.15);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.icon-wrapper i {
-  font-size: 48px;
-  color: white;
-}
-
-.header-text h1 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 600;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.subtitle {
-  margin: 8px 0 0 0;
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* Form Content */
-.form-content {
-  background: white;
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.form-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.form-section:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 24px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.section-title i {
-  font-size: 24px;
-  color: #009A44;
-}
-
-.form-actions {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e4e7ed;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-/* Responsive */
-@media screen and (max-width: 768px) {
-  .breeding-license-form-container {
-    padding: 16px;
-  }
-
-  .page-header {
-    padding: 20px;
-  }
-
-  .header-content {
-    gap: 12px;
-  }
-
-  .icon-wrapper {
-    width: 60px;
-    height: 60px;
-  }
-
-  .icon-wrapper i {
-    font-size: 32px;
-  }
-
-  .header-text h1 {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  .form-content {
-    padding: 20px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 14px;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .form-actions .el-button {
-    width: 100%;
-  }
-}
-
-/* 文件上传组件样式 */
 .doc-upload {
   width: 100%;
 }
@@ -779,26 +552,16 @@ onMounted(async () => {
   width: 100%;
 }
 
-:deep(.el-upload-list) {
-  margin-top: 8px;
+:deep(.el-upload-dragger) {
+  width: 100%;
 }
 
-:deep(.el-upload-list__item) {
-  transition: all 0.3s;
-  cursor: pointer;
+.full-width {
+  width: 100% !important;
 }
 
-:deep(.el-upload-list__item:hover) {
-  background-color: #f5f7fa;
-}
-
-:deep(.el-upload-list__item-name) {
-  color: #009A44;
-  text-decoration: none;
-}
-
-:deep(.el-upload-list__item-name:hover) {
-  color: #007a36;
-  text-decoration: underline;
+:deep(.el-date-editor.el-input),
+:deep(.el-date-editor.el-input__wrapper) {
+  width: 100%;
 }
 </style>
