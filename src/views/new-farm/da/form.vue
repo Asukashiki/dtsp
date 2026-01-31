@@ -247,10 +247,12 @@ import CryptoJS from 'crypto-js'
 import { getDaDetail, addDa, updateDa, checkDaAccountUnique } from '@/api/newFarm'
 import { listSubRegionByCode } from '@/api/application'
 import { getRegionTree, buildRegionPath } from '@/api/orgRegistration'
+import { useUserStore } from '@/store'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const userStore = useUserStore()
 const isRegionDisabled = ref(false) // 控制地区元素禁用
 // AES encryption key
 const keyStr = 'ab489fe897hh78ha';
@@ -521,6 +523,18 @@ const handleSubmit = async () => {
 
         if (res.code === 200) {
           ElMessage.success(isEdit.value ? t('newFarm.da.messages.editSuccess') : t('newFarm.da.messages.addSuccess'))
+          
+          // 如果修改的是当前登录用户的信息，刷新用户信息
+          const currentUserAccount = userStore.userInfo?.user?.username || userStore.userInfo?.user?.account
+          if (currentUserAccount && formData.account === currentUserAccount) {
+            try {
+              await userStore.fetchUserInfo()
+              console.log('The DA information has been successfully modified and the current login user information has been refreshed.')
+            } catch (error) {
+              console.error('Failed to update user information:', error)
+            }
+          }
+          
           setTimeout(() => router.back(), 1000)
         } else {
           ElMessage.error(res.msg || t('common.failed'))
