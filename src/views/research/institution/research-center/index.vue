@@ -66,7 +66,7 @@
                 min-width="110" />
               <el-table-column prop="createTime" :label="$t('research.breedingData.researchCenter.columns.createTime')"
                 min-width="160" />
-              <el-table-column :label="$t('research.breedingData.researchCenter.columns.actions')" width="280"
+              <el-table-column :label="$t('research.breedingData.researchCenter.columns.actions')" width="300"
                 fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
