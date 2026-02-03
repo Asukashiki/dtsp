@@ -99,10 +99,12 @@
                 align="center"
               >
                 <template #default="{ row }">
+                 <div class="action-buttons"> 
                   <el-button size="small" type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i>
                     {{ $t('common.view') }}
                   </el-button>
+                </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -316,6 +318,32 @@ onMounted(() => {
 
     &:active {
       transform: scale(0.9);
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .btn-text {
+      white-space: nowrap;
     }
   }
 }
