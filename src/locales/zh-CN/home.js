@@ -56,6 +56,10 @@ export default {
         harvest: {
             name: '收获管理',
             desc: '收获管理',
+        },
+        marketing: {
+            name: '市场信息系统',
+            desc: '农产品价格采集、分析与发布的市场信息系统',
         }
     },
 

@@ -56,6 +56,10 @@ export default {
     harvest: {
       name: 'Harvest Storage',
       desc: 'Manages post-harvest activities to ensure quality and safety',
+    },
+    marketing: {
+      name: 'Marketing Information System',
+      desc: 'Marketing Information System for agricultural price collection, analysis and dissemination',
     }
   },
 

@@ -207,6 +207,14 @@ const systemModules = computed(() => ({
     path: `http://196.189.236.220:31100/prod-api/sso/ssoLogin?contextPath=harvest&token=${localStorage.getItem('token') || ''}`,
     external: true
   },
+  marketing: {
+    name: t('home.modules.marketing.name'),
+    desc: t('home.modules.marketing.desc'),
+    icon: 'ri-line-chart-line',
+    gradient: 'linear-gradient(135deg, #EB2F96 0%, #FF85C0 100%)',
+    path: `http://196.189.236.220:8088/?token=${localStorage.getItem('token') || ''}`,
+    external: true
+  },
   data: {
     name: t('home.modules.data.name'),
     desc: t('home.modules.data.desc'),
