@@ -191,7 +191,7 @@
                   {{ detailData.submitByName || '-' }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('research.datasetAudit.form.submitOrgName')" :span="2">
-                  {{ detailData.submitOrgName || '-' }}
+                  {{ resolveLabel(detailData.submitOrgName) }}
                 </el-descriptions-item>
               </el-descriptions>
             </div>
@@ -642,7 +642,7 @@
             </el-form-item>
 
             <!-- 锁定数据集开关 -->
-            <el-form-item :label="$t('research.datasetAudit.form.lockDataset')">
+            <!-- <el-form-item :label="$t('research.datasetAudit.form.lockDataset')">
               <div class="lock-dataset-control">
                 <el-switch
                     v-model="auditForm.lockedFlag"
@@ -667,7 +667,7 @@
                 <i class="ri-information-line"></i>
                 {{ $t('research.datasetAudit.form.lockDatasetTip') }}
               </div>
-            </el-form-item>
+            </el-form-item> -->
 
             <div class="form-actions">
               <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
@@ -705,18 +705,19 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useDict } from '@/hooks/useDict' // 移到import区域，只加一次
+import { useI18nLabel } from '@/utils/i18nHelper'
 
 import { getDatasetById } from '@/api/dataset'
 import { getAuditByDatasetId, performAudit } from '@/api/datasetAudit'
-import { getAgronomicTraitList,getTraitRecordList, getFarmingRecordList, getPlotInfoList, getEnvironmentDataList } from '@/api/breedingData'
-import { getLabTestList } from '@/api/labTest'
-import { getYieldDataList } from '@/api/yieldData'
+import { getAgronomicTraitList, getAgronomicTraitAuditList, getFarmingRecordList, getPlotInfoList, getEnvironmentDataList, getFieldInspectionList } from '@/api/breedingData'
+import { getLabTestAuditList } from '@/api/labTest'
 import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 
 // ========== 第二步：初始化路由、i18n、字典 ==========
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const { resolveLabel } = useI18nLabel()
 const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status'])
 // ========== 第三步：数据Ref声明（删除重复的agronomicTraitList） ==========
 const loading = ref(false)
@@ -790,27 +791,27 @@ const loadAllDataLists = async (trialId) => {
       plotRes, farmingRes, agronomicRes, environmentDataRes,
       labRes, yieldRes
     ] = await Promise.all([
-      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'S2' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadPlotFailed'), err)
         return { rows: [], total: 0 }
       }),
-      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadFarmingFailed'), err)
         return { rows: [], total: 0 }
       }),
-      getTraitRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getAgronomicTraitAuditList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'approved' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadAgronomicFailed'), err)
         return { rows: [], total: 0 }
       }),
-      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadEnvironmentFailed'), err)
         return { rows: [], total: 0 }
       }),
-      getLabTestList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getLabTestAuditList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2', auditCanceled: 0 }).catch(err => {
         console.error(t('research.datasetAudit.log.loadLabFailed'), err)
         return ({ data: { list: [], total: 0 } })
       }),
-      getYieldDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadYieldFailed'), err)
         return ({ msg: t('research.datasetAudit.log.loadYieldError'), code: 500, data: [] })
       })
@@ -835,11 +836,11 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    labTestList.value = (labRes?.data?.list || []).map(item => ({
+    labTestList.value = (labRes?.rows || labRes?.data?.rows || labRes?.data?.list || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
-    yieldDataList.value = (yieldRes?.data || []).map(item => ({
+    yieldDataList.value = (yieldRes?.rows || yieldRes?.data?.rows || yieldRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
@@ -939,17 +940,20 @@ const loadStatisticsData = async (trialId) => {
       getFarmingRecordList({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        workflowStatus: 'S2'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadFarmingStatsFailed'), err)
         return { total: 0 }
       }),
 
       // 2. 田间数据（农艺性状数据）
-      getTraitRecordList({
+      getAgronomicTraitAuditList({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        batchId: detailData.value?.batchId || '',
+        auditStatus: 'approved'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadFieldStatsFailed'), err)
         return { total: 0 }
@@ -959,27 +963,33 @@ const loadStatisticsData = async (trialId) => {
       getEnvironmentNewDataPage({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        workflowStatus: 'S2'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadEnvStatsFailed'), err)
         return { total: 0 }
       }),
 
       // 4. 实验室测试数据
-      getLabTestList({
+      getLabTestAuditList({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        batchId: detailData.value?.batchId || '',
+        workflowStatus: 'S2',
+        auditCanceled: 0
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadLabStatsFailed'), err)
         return { total: 0 }
       }),
 
       // 5. 产量数据
-      getYieldDataList({
+      getFieldInspectionList({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        status: 1,
+        workflowStatus: 'S1'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadYieldStatsFailed'), err)
         return { total: 0 }
@@ -989,7 +999,8 @@ const loadStatisticsData = async (trialId) => {
       getPlotInfoList({
         pageNum: 1,
         pageSize: 9999,
-        trialId: trialId
+        trialId: trialId,
+        auditStatus: 'S2'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadPlotStatsFailed'), err)
         return { total: 0 }

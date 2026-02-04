@@ -76,7 +76,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('orgRegistration.columns.actions')" width="120" fixed="right">
+              <el-table-column :label="$t('orgRegistration.columns.actions')" width="230" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button size="small" type="primary" @click="handleView(row)">

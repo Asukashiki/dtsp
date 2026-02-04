@@ -7,6 +7,10 @@ export default {
   edit: 'Edit License',
   detail: 'License Detail',
   viewDetail: 'View Detail',
+  editTitle: 'Edit Breeding License',
+  addTitle: 'Add Breeding License',
+  editSubtitle: 'Edit breeding license information',
+  addSubtitle: 'Add breeding license information',
 
   // Search and Filter
   searchPlaceholder: 'Search license number, batch name',
@@ -49,6 +53,7 @@ export default {
 
   // Form Fields
   form: {
+    title: 'License Information',
     // Basic Information
     basicInfo: 'Basic Information',
     batchId: 'Breeding Batch',
@@ -86,6 +91,8 @@ export default {
     createBy: 'Created By',
     updateTime: 'Updated Time',
     updateBy: 'Updated By',
+    datePlaceholder: 'Please select date',
+    fileTip: 'Supports PDF, JPG, PNG format, size not exceeding 5MB',
   },
 
   // Form Placeholders
@@ -128,6 +135,14 @@ export default {
     maturityDaysMin: 'Maturity days must be greater than 0',
     plantHeightMin: 'Plant height must be greater than 0',
     jsonFormat: 'Please enter valid JSON format',
+    batchRequired: 'Please select breeding batch',
+    materialRequired: 'Please enter material name',
+    numberRequired: 'Please enter license number',
+    applyDateRequired: 'Please select apply date',
+    expiryDateRequired: 'Please select expiry date',
+    statusRequired: 'Please select status',
+    agencyRequired: 'Please enter agency',
+    holderRequired: 'Please enter holder',
   },
 
   // Action Buttons：

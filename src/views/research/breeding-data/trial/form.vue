@@ -200,9 +200,9 @@
           <div class="form-actions">
             <el-button @click="goBack">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSave" :loading="saveLoading">{{ $t('common.save') }}</el-button>
-            <el-button v-if="canSubmit" type="success" @click="handleSubmitAudit" :loading="submitLoading">
+            <!-- <el-button v-if="canSubmit" type="success" @click="handleSubmitAudit" :loading="submitLoading">
               {{ $t('research.trialBasicAudit.action.submit') }}
-            </el-button>
+            </el-button> -->
           </div>
         </el-form>
       </div>

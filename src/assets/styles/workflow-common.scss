@@ -341,9 +341,11 @@ $workflow-status-colors: (
   // border-top: 1px solid $color-border-lighter;
 
   .el-button {
-    min-width: 100px;
+    min-height: 36px;
+    min-width: 80px !important;
     font-weight: 500;
     transition: all 0.3s ease;
+    font-size: 16px !important;
 
     &:hover {
       transform: translateY(-1px);
@@ -357,7 +359,7 @@ $workflow-status-colors: (
     // Icon alignment
     i {
       margin-right: 6px;
-      font-size: 16px;
+      font-size: 16px !important;
       vertical-align: middle;
     }
   }

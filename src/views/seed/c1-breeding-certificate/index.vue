@@ -73,14 +73,16 @@
                 align="center" />
               <el-table-column :label="$t('common.action')" width="260" align="center" fixed="right">
                 <template #default="{ row }">
-                  <el-button size="small" type="primary" @click="handleView(row)">
-                    <i class="ri-eye-line"></i>
-                    {{ $t('common.view') }}
-                  </el-button>
-                  <el-button size="small" type="success" @click="handlePrint(row)">
-                    <i class="ri-printer-line"></i>
-                    {{ $t('seed.c1Certificate.print') }}
-                  </el-button>
+                  <div class="action-buttons">
+                    <el-button size="small" type="primary" @click="handleView(row)">
+                      <i class="ri-eye-line"></i>
+                      <span class="btn-text">{{ $t('common.view') }}</span>
+                    </el-button>
+                    <el-button size="small" type="success" @click="handlePrint(row)">
+                      <i class="ri-printer-line"></i>
+                      <span class="btn-text">{{ $t('seed.c1Certificate.print') }}</span>
+                    </el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -294,6 +296,33 @@ onMounted(() => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
+
+/* 操作按钮样式 */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .btn-text {
+      white-space: nowrap;
+    }
+  }
+}
 
 .pagination-wrapper {
   margin-top: 16px;

@@ -70,7 +70,7 @@
               </el-table-column>
               <el-table-column prop="auditStatus" :label="$t('research.breedingData.plot.columns.auditStatus')" min-width="120">
                 <template #default="{ row }">
-                  <el-tag :type="row.auditStatus === 'S2' ? 'success' : (row.auditStatus === 'S10' ? 'danger' : 'warning')">
+                  <el-tag :type="getWorkflowStatusType(row.auditStatus)" effect="plain">
                     {{ getStatusLabel(row.auditStatus) }}
                   </el-tag>
                 </template>
@@ -128,7 +128,7 @@ import StatusTabs from '@/components/workflow/StatusTabs.vue'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 import { getPlotInfoList, getBreedingBatchOptions, cancelPlotAuditRecord } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
-
+import { getWorkflowStatusType } from '@/utils/workflow'
 const { t } = useI18n()
 const router = useRouter()
 const { options: dictOptions } = useDict('flow_status')

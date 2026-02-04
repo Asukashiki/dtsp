@@ -68,7 +68,7 @@
               </el-table-column>
               <el-table-column :label="$t('trait.columns.status')" min-width="140">
                 <template #default="{ row }">
-                  <el-tag type="info">{{ getLabelByValue('flow_status', row.workflowStatus || row.status) || row.workflowStatus || row.status || '-' }}</el-tag>
+                  <el-tag :type="getWorkflowStatusType(mapStatusToWorkflowStatus(row.workflowStatus || row.status))">{{ getLabelByValue('flow_status', row.workflowStatus || row.status) || row.workflowStatus || row.status || '-' }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="createBy" :label="$t('trait.columns.createBy')" min-width="120" show-overflow-tooltip />
@@ -165,7 +165,7 @@ import {
   deleteTraitRecord
 } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
-
+import { getWorkflowStatusType } from '@/utils/workflow'
 const router = useRouter()
 const { t } = useI18n()
 const { options, getLabelByValue } = useDict(['flow_status', 'growth_cycle'])

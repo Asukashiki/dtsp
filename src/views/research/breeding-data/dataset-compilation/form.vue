@@ -726,9 +726,9 @@ import { getDatasetById, addDataset, updateDataset } from '@/api/dataset'
 import {
   getTrialBasicList, getTrialBasicInfo,
   getPlotInfoList, getFarmingRecordList, getEnvironmentDataList,
-  getTraitRecordList // 替换原有的getAgronomicTraitList
+  getTraitRecordList, getAgronomicTraitAuditList, getFieldInspectionList // 替换原有的getAgronomicTraitList
 } from '@/api/breedingData'
-import { getLabTestList } from '@/api/labTest'
+import { getLabTestList, getLabTestAuditList } from '@/api/labTest'
 import { getYieldDataList } from '@/api/yieldData'
 import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 import { useUserStore } from '@/store'
@@ -916,29 +916,35 @@ const loadStatisticsData = async (trialId) => {
     const [
       plotRes, farmingRes, agronomicRes, environmentDataRes, labRes, yieldRes
     ] = await Promise.all([
-      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      // 地块与播种信息: auditStatus=S2
+      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'S2' }).catch(err => {
         console.error('获取地块及播种信息失败:', err)
         return { rows: [], total: 0 }
       }),
-      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      // 农事记录: workflowStatus=S2
+      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取农事记录失败:', err)
         return { rows: [], total: 0 }
       }),
-      getTraitRecordList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => { // 替换为getTraitRecordList
+      // 农艺性状: auditStatus=approved
+      getAgronomicTraitAuditList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'approved' }).catch(err => {
         console.error('获取农艺性状数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      // 环境检测: workflowStatus=S2
+      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取环境监测数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getLabTestList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
+      // 实验室测试: workflowStatus=S2, auditCanceled=0
+      getLabTestAuditList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2', auditCanceled: 0 }).catch(err => {
         console.error('获取实验室测试数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getYieldDataList({ pageNum: 1, pageSize: 9999, trialId }).catch(err => {
-        console.error('获取产量数据失败:', err)
-        return { msg: "", code: 500, data: [] }
+      // 田间检查: status=1, workflowStatus=S1
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
+        console.error('获取田间检查数据失败:', err)
+        return { rows: [], total: 0 }
       })
     ])
 

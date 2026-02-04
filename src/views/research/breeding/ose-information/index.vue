@@ -85,9 +85,20 @@
               </el-table-column>
               <el-table-column :label="$t('common.actions')" width="260" fixed="right" align="center">
                 <template #default="{ row }">
-                  <el-button  size="small" type="primary" @click="handleDetail(row.id)">{{ $t('common.view') }}</el-button>
-                  <el-button  size="small" type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>
-                  <el-button  size="small" type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>
+                 <div class="action-buttons" >
+                  <el-button  size="small" type="primary" @click="handleDetail(row.id)">
+                    <i class="ri-eye-line"></i>
+                    <span class="btn-text">{{ $t('common.view') }}</span>
+                  </el-button>
+                  <el-button  size="small" type="primary" @click="handleEdit(row.id)">
+                    <i class="ri-edit-line"></i>
+                    <span class="btn-text">{{ $t('common.edit') }}</span>
+                  </el-button>
+                  <el-button  size="small" type="danger" @click="handleDelete(row.id)">
+                    <i class="ri-delete-bin-line"></i>
+                    <span class="btn-text">{{ $t('common.delete') }}</span>
+                  </el-button>
+                 </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -318,4 +329,31 @@ const getStatusTagType = (status) => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
+
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+
+  :deep(.el-button) {
+    min-width: auto;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .btn-text {
+      white-space: nowrap;
+    }
+  }
+}
 </style>

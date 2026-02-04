@@ -603,4 +603,29 @@ const goBack = () => {
 .text-gray-500 {
   color: #909399;
 }
+
+// 允许表单标签换行，解决长文本显示问题
+// 使用更高优先级的选择器
+:deep(.card-body .el-form-item .el-form-item__label) {
+  white-space: normal !important;
+  line-height: 1.4 !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  height: auto !important;
+  word-break: break-all !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+// 特别针对法规与许可信息卡片中的标签
+:deep(.info-card:nth-child(2) .el-form-item__label) {
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  height: auto !important;
+  word-break: break-all !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
 </style>
