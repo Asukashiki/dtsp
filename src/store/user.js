@@ -227,7 +227,7 @@ export const useUserStore = defineStore('user', {
           const { roles, permissions } = res
           this.roles = roles || []
           this.permissions = permissions || []
-          this.setUserInfo({...res.user, roleKeys: res.roleKeys})
+          this.setUserInfo({...res.user, roleKeys: res.roleKeys, user: {...res.user}})
           console.log('权限信息已加载:', this.permissions.length, '个权限')
           return { roles, permissions }
         }
