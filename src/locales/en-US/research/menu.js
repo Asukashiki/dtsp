@@ -240,6 +240,12 @@ export default {
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
   oseReleaseToUnion: 'Release Agri Input to Union',
+  oseReleaseToUnionAdd: 'Add',
+  oseReleaseToUnionEdit: 'Edit',
+  oseReleaseToUnionDetail: 'Detail',
+  unionReceiveDetail: 'Detail',
+  farmerReceiveDetail: 'Detail',
+
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToWoreda: 'Union Distribution to Woreda',
   woredaReceiveConfirm: 'Woreda Receive Confirmation',

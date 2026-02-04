@@ -34,18 +34,6 @@
                 <el-option :label="$t('input.inventory.warehouse.type.dangerous')" value="dangerous" />
               </el-select>
             </SearchItem>-->
-
-            <SearchItem :label="$t('input.inventory.warehouse.filterByStatus')">
-              <el-select
-                v-model="filterStatus"
-                :placeholder="$t('input.inventory.warehouse.filterByStatus')"
-                clearable
-                class="search-input">
-                <el-option :label="$t('input.inventory.warehouse.allStatus')" value="" />
-                <el-option :label="$t('input.inventory.warehouse.status.enabled')" value="1" />
-                <el-option :label="$t('input.inventory.warehouse.status.disabled')" value="0" />
-              </el-select>
-            </SearchItem>
           </SearchForm>
         </div>
 
@@ -102,13 +90,7 @@
           </el-table-column>
           <el-table-column prop="contact_person" :label="$t('input.inventory.warehouse.columns.contactPerson')" min-width="140" />
           <el-table-column prop="contact_phone" :label="$t('input.inventory.warehouse.columns.contactPhone')" min-width="140" />
-          <el-table-column prop="status" :label="$t('input.inventory.warehouse.columns.status')" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === '1' ? 'success' : 'info'" size="small">
-                {{ row.status === '1' ? $t('input.inventory.warehouse.status.enabled') : $t('input.inventory.warehouse.status.disabled') }}
-              </el-tag>
-            </template>
-          </el-table-column>
+
           <el-table-column :label="$t('input.inventory.warehouse.columns.actions')" width="240" fixed="right">
             <template #default="{ row }">
               <ActionButtons
@@ -216,7 +198,7 @@ const { t } = useI18n()
 
 const searchKeyword = ref('')
 const filterType = ref('')
-const filterStatus = ref('')
+
 const loading = ref(false)
 const tableData = ref([])
 const currentUserOrganCode = ref('') // 当前用户部门ID
@@ -286,7 +268,6 @@ const loadData = async () => {
     const res = await getWarehouseList({
       warehouseName: searchKeyword.value,
       warehouseType: filterType.value,
-      status: filterStatus.value,
       organCode: currentUserOrganCode.value, // 按部门过滤
       page: pagination.page,
       pageSize: pagination.pageSize
@@ -314,7 +295,6 @@ const handleSearch = () => {
 const handleReset = () => {
   searchKeyword.value = ''
   filterType.value = ''
-  filterStatus.value = ''
   pagination.page = 1
   loadData()
 }

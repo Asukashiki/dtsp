@@ -184,6 +184,7 @@ export default {
     daUserName: 'Entered by DA',
     createdTime: 'Created Time',
     actions: 'Actions',
+    phone: 'Phone'
   },
 
   // Action Buttons

@@ -32,7 +32,12 @@ const routeWhitelist = [
   '/research/breeding/ose-receive-confirm',
   '/research/breeding/batch/edit',
   '/research/institution/approval/audit',
-  '/research/variety'
+  '/research/variety',
+  '/input/registration/audit',
+  '/input/demand/audit',
+  '/input/demand/audit-district',
+  '/input/demand/audit-state',
+  '/input/demand/audit-town',
 ]
 
 const routes = [

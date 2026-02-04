@@ -12,33 +12,16 @@
         <!-- 搜索卡片（无标题） -->
         <div class="search-card">
           <SearchForm @search="handleSearch" @reset="handleReset">
-            <SearchItem :label="$t('newFarm.farmer.searchPlaceholder')">
-              <el-input
-                v-model="searchFilters.keyword"
-                :placeholder="$t('newFarm.farmer.searchPlaceholder')"
-                class="search-input"
-                clearable
-                @clear="handleSearch"
-                @keyup.enter="handleSearch">
-                <template #prefix><i class="ri-search-line"></i></template>
-              </el-input>
-            </SearchItem>
-
-            <SearchItem :label="$t('newFarm.farmer.form.gender')">
-              <el-radio-group v-model="searchFilters.gender" @change="handleSearch">
-                <el-radio-button label="">{{ $t('newFarm.common.all') }}</el-radio-button>
-                <el-radio-button label="MALE">{{ $t('newFarm.common.male') }}</el-radio-button>
-                <el-radio-button label="FEMALE">{{ $t('newFarm.common.female') }}</el-radio-button>
-              </el-radio-group>
-            </SearchItem>
-
             <SearchItem :label="$t('newFarm.farmer.form.farmerName')">
               <el-input
                 v-model="searchFilters.farmerName"
                 :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
                 clearable
                 class="search-input"
-                @clear="handleSearch" />
+                @clear="handleSearch"
+                @keyup.enter="handleSearch">
+                <template #prefix><i class="ri-search-line"></i></template>
+              </el-input>
             </SearchItem>
 
             <SearchItem :label="$t('newFarm.farmer.form.phone')">
@@ -47,16 +30,8 @@
                 :placeholder="$t('newFarm.farmer.placeholder.phone')"
                 clearable
                 class="search-input"
-                @clear="handleSearch" />
-            </SearchItem>
-
-            <SearchItem :label="$t('newFarm.common.kebeleName')">
-              <el-input
-                v-model="searchFilters.kebeleName"
-                :placeholder="$t('newFarm.common.selectKebele')"
-                clearable
-                class="search-input"
-                @clear="handleSearch" />
+                @clear="handleSearch"
+                @keyup.enter="handleSearch" />
             </SearchItem>
           </SearchForm>
         </div>
@@ -269,13 +244,8 @@ const { t } = useI18n()
 
 // 搜索筛选条件
 const searchFilters = reactive({
-  keyword: '',
   farmerName: '',
-  phone: '',
-  idCard: '',
-  gender: '',
-  kebeleName: '',
-  daId: ''
+  phone: ''
 })
 
 // 分页
@@ -310,24 +280,11 @@ const fetchData = async () => {
   try {
     const params = {
       pageNum: pagination.pageNum,
-      pageSize: pagination.pageSize,
-      kebeleCode: searchFilters.kebeleCode,
-      daId: searchFilters.daId,
-      searchValue: searchFilters.keyword,
-      kebeleName: searchFilters.kebeleName
+      pageSize: pagination.pageSize
     }
 
-    // 核心逻辑：
-    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
-    // 此时忽略 farmerName/phone/idCard 等单个字段的严格筛选
-    if (searchFilters.keyword) {
-      params.searchValue = searchFilters.keyword
-    } else {
-      // 当顶部搜索框为空时，使用具体的字段筛选
-      if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
-      if (searchFilters.phone) params.phone = searchFilters.phone
-      if (searchFilters.idCard) params.idCard = searchFilters.idCard
-    }
+    if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
+    if (searchFilters.phone) params.phone = searchFilters.phone
 
     const res = await getFarmerList(params)
     if (res.code === 200 && res.data) {
@@ -350,13 +307,8 @@ const handleSearch = () => {
 
 // 重置
 const handleReset = () => {
-  searchFilters.keyword = ''
   searchFilters.farmerName = ''
   searchFilters.phone = ''
-  searchFilters.idCard = ''
-  searchFilters.gender = ''
-  searchFilters.kebeleName = ''
-  searchFilters.daId = ''
   handleSearch()
 }
 

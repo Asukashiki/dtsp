@@ -209,7 +209,7 @@ const detailData = ref([])
 const loadData = async () => {
   loading.value = true
   try {
-    const stateCode = JSON.parse(localStorage.getItem('userInfo')).user.regionCode
+    const stateCode = JSON.parse(localStorage.getItem('userInfo')).deptId
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,

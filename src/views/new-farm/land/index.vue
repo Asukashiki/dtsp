@@ -88,14 +88,6 @@
                 @clear="handleSearch" />
             </SearchItem>
 
-            <SearchItem :label="$t('newFarm.common.kebeleCode')">
-              <el-input
-                v-model="searchFilters.kebeleCode"
-                :placeholder="$t('newFarm.common.selectKebele')"
-                clearable
-                class="search-input"
-                @clear="handleSearch" />
-            </SearchItem>
           </SearchForm>
         </div>
 

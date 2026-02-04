@@ -115,9 +115,9 @@
         <!-- 操作按钮区域（固定在底部） -->
         <div class="form-actions">
           <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleConfirm" :loading="submitLoading">
+          <!-- <el-button type="primary" @click="handleConfirm" :loading="submitLoading">
             {{ $t('inputCirculation.confirmReceive') }}
-          </el-button>
+          </el-button> -->
         </div>
       </div>
     </div>

@@ -520,7 +520,7 @@ const loadData = async () => {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
       farmerName: searchForm.keyword || undefined,
-      kebele:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      kebele:JSON.parse(localStorage.getItem('userInfo')).deptId,
       // kebele:'huangshan',
       year: yearParam.value // 添加年份参数
     }
@@ -548,7 +548,7 @@ const loadApprovedData = async () => {
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
       farmerName: searchForm.keyword || undefined,
-      kebele:JSON.parse(localStorage.getItem('userInfo')).user.regionCode,
+      kebele:JSON.parse(localStorage.getItem('userInfo')).deptId,
       // kebele:'huangshan',
       year: yearParam.value // 添加年份参数
     }

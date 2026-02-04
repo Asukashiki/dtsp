@@ -393,7 +393,13 @@ const fetchStock = async (index) => {
   }
   
   try {
-    const organCode = userStore.userInfo?.user?.organCode
+    // organCode 从 userInfo 中获取，优先使用 organCode，其次使用 deptId
+    const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
+    if (!organCode) {
+      console.warn('organCode is not available in userInfo')
+      detail.currentStock = 0
+      return
+    }
     const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
     if (res.code === 200 && res.data) {
       detail.currentStock = res.data.availableStock || 0
@@ -441,7 +447,11 @@ const validateQuantity = async (index) => {
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
   
   try {
-    const organCode = userStore.userInfo?.user?.organCode
+    const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
+    if (!organCode) {
+      console.warn('organCode is not available for stock validation')
+      return
+    }
     const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
     if (stockRes.code === 200 && stockRes.data) {
       const available = stockRes.data.availableStock || 0
@@ -559,7 +569,13 @@ const handleSubmit = async () => {
       
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
-        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, userStore.userInfo.user.organCode)
+        const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
+        if (!organCode) {
+          ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
+          loading.value = false
+          return
+        }
+        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, organCode)
         if (stockRes.code === 200 && stockRes.data) {
           const available = stockRes.data.availableStock || 0
           if (item.quantity > available) {

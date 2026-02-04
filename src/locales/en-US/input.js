@@ -32,6 +32,9 @@ export default {
     dashboard: 'Data Overview',
     registrationManagement: 'Registration Management',
     registration: 'Union/Cooperative Registration Application',
+    registrationAdd: 'Add',
+    registrationDetail: 'Detail',
+    registrationAudit: 'Audit',
     registrationApproval: 'Union/Cooperative Registration Approval',
     demandManagement: 'Input Demand Management',
     farmerDemand: 'DA Farmer Demand Entry',
@@ -52,6 +55,9 @@ export default {
     supplierInfo: 'Supplier Information Maintenance',
     inputManagement: 'Input Management',
     inputCatalog: 'Input Catalog Management',
+    inputCatalogAdd: 'Input Catalog Add',
+    inputCatalogDetail: 'Input Catalog Detail',
+    inputCatalogEdit: 'Input Catalog Edit',
     supplierInput: 'Supplier Input Information Management',
     inputSupply: 'Input Supply Management',
     inventoryManagement: 'Inventory Management',
@@ -61,6 +67,9 @@ export default {
     stockQuery: 'Inventory Query',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
     feedback: 'Information Feedback',
+    feedbackAdd: 'Feedback Add',
+    feedbackEdit: 'Feedback Edit',
+    feedbackDetail: 'Feedback Detail',
     // 仓库管理 - 操作后缀
     warehouseList: 'Warehouse List',
     warehouseAdd: 'Add Warehouse',
@@ -86,6 +95,10 @@ export default {
     // 信息反馈 - 操作后缀
     feedbackList: 'Feedback List',
     feedbackDetail: 'Feedback Details',
+    farmerDemandAdd: 'Farmer Demand Add',
+    farmerDemandDetail: 'Farmer Demand Detail',
+    farmerDemandEdit: 'Farmer Demand Edit',
+
   },
 
   // 投入品目录管理
@@ -106,7 +119,7 @@ export default {
     deleteConfirm: 'Are you sure to void this input?',
 
     // 搜索和筛选
-    searchPlaceholder: 'Search by product name',
+    searchPlaceholder: 'Search by input name',
     filterByType: 'Filter by input type',
     allTypes: 'All Types',
 

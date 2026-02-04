@@ -37,11 +37,6 @@
                     {{ $t(`input.inventory.warehouse.type.${detailData.warehouse_type}`) }}
                   </el-tag>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('input.inventory.warehouse.form.status')">
-                  <el-tag :type="detailData.status === '1' ? 'success' : 'info'">
-                    {{ detailData.status === '1' ? $t('input.inventory.warehouse.status.enabled') : $t('input.inventory.warehouse.status.disabled') }}
-                  </el-tag>
-                </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouse.form.location')" :span="2">
                   {{ detailData.location || '-' }}
                 </el-descriptions-item>

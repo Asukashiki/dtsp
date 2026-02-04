@@ -45,14 +45,6 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.inventory.warehouse.form.status')" prop="status">
-                    <el-select v-model="formData.status" :placeholder="$t('input.inventory.warehouse.placeholder.status')" style="width: 100%">
-                      <el-option :label="$t('input.inventory.warehouse.status.enabled')" value="1" />
-                      <el-option :label="$t('input.inventory.warehouse.status.disabled')" value="0" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
                 <el-col :xs="24" :sm="24">
                   <el-form-item :label="$t('input.inventory.warehouse.form.location')" prop="location">
                     <el-input v-model="formData.location" :placeholder="$t('input.inventory.warehouse.placeholder.location')" clearable />
@@ -252,8 +244,7 @@ const formData = reactive({
   contactPerson: '',
   contactPhone: '',
   siteCertificate: '',
-  remark: '',
-  status: '1' // 默认启用
+  remark: ''
 })
 
 // 文件上传相关
@@ -353,8 +344,7 @@ const loadData = async () => {
         contactPerson: res.data.contact_person,
         contactPhone: res.data.contact_phone,
         siteCertificate: res.data.site_certificate || '',
-        remark: res.data.remark || '',
-        status: res.data.status || '1'
+        remark: res.data.remark || ''
       })
       // 设置容量显示值
       if (res.data.capacity) {
@@ -398,8 +388,7 @@ const handleSubmit = async () => {
       contactPerson: formData.contactPerson,
       contactPhone: formData.contactPhone,
       siteCertificate: formData.siteCertificate || '',
-      remark: formData.remark || '',
-      status: formData.status
+      remark: formData.remark || ''
     }
 
     if (isEdit.value) {

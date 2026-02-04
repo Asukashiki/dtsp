@@ -13,27 +13,19 @@
         <!-- 搜索卡片 -->
         <div class="search-card">
           <SearchForm @search="handleSearch" @reset="handleReset">
-            <SearchItem :label="$t('farmerDemand.list')">
+            <SearchItem :label="$t('farmerDemand.columns.farmerName')">
               <el-input
-                v-model="searchForm.keyword"
-                :placeholder="$t('farmerDemand.searchPlaceholder')"
+                v-model="searchForm.farmerName"
+                :placeholder="$t('farmerDemand.columns.farmerName')"
                 clearable
               />
             </SearchItem>
-            <SearchItem :label="$t('farmerDemand.filterByStatus')">
-              <el-select
-                v-model="searchForm.status"
-                :placeholder="$t('farmerDemand.filterByStatus')"
+            <SearchItem :label="$t('farmerDemand.columns.phone')">
+              <el-input
+                v-model="searchForm.phone"
+                :placeholder="$t('farmerDemand.columns.phone')"
                 clearable
-              >
-                <el-option value="" :label="$t('farmerDemand.allStatus')"></el-option>
-                <el-option
-                  v-for="(label, value) in statusOptions"
-                  :key="value"
-                  :label="label"
-                  :value="value"
-                ></el-option>
-              </el-select>
+              />
             </SearchItem>
           </SearchForm>
         </div>
@@ -248,8 +240,8 @@ const tableData = ref([])
 const selectedRows = ref([])
 
 const searchForm = reactive({
-  keyword: '',
-  status: ''
+  farmerName: '',
+  phone: ''
 })
 
 const pagination = reactive({
@@ -310,10 +302,8 @@ const loadData = async () => {
     const res = await getFarmerDemandPage({
       pageNum: pagination.currentPage,
       pageSize: pagination.pageSize,
-      farmerName: searchForm.keyword,
-      farmerIdNumber: searchForm.keyword,
-      village: searchForm.keyword,
-      status: searchForm.status,
+      farmerName: searchForm.farmerName,
+      phone: searchForm.phone,
       orderByColumn: 'createdTime',
       isAsc: 'desc'
     })
@@ -341,8 +331,8 @@ const handleSearch = () => {
 
 // 重置
 const handleReset = () => {
-  searchForm.keyword = ''
-  searchForm.status = ''
+  searchForm.farmerName = ''
+  searchForm.phone = ''
   handleSearch()
 }
 

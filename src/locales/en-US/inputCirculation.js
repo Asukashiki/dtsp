@@ -122,5 +122,8 @@ export default {
   farmerReceive: 'Farmer Receive List',
 
   //General
-  timeRange: 'Time Range'
+  timeRange: 'Time Range',
+  stockStatus_completed: 'complete',
+  targetWoreda: 'Woreda'
+
 }

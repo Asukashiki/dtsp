@@ -57,20 +57,7 @@
               </el-select>
             </SearchItem>
 
-            <SearchItem :label="$t('input.feedback.filterByPriority')">
-              <el-select
-                v-model="filterPriority"
-                :placeholder="$t('input.feedback.filterByPriority')"
-                class="filter-select"
-                clearable
-                @change="handleSearch">
-                <el-option :label="$t('input.feedback.allPriority')" value="" />
-                <el-option :label="$t('input.feedback.priority.low')" value="0" />
-                <el-option :label="$t('input.feedback.priority.medium')" value="1" />
-                <el-option :label="$t('input.feedback.priority.high')" value="2" />
-                <el-option :label="$t('input.feedback.priority.urgent')" value="3" />
-              </el-select>
-            </SearchItem>
+
           </SearchForm>
         </div>
 
@@ -99,13 +86,7 @@
               <el-table-column prop="title" :label="$t('input.feedback.columns.title')" min-width="200" show-overflow-tooltip />
               <el-table-column prop="inputName" :label="$t('input.feedback.columns.inputName')" width="150" show-overflow-tooltip />
               <el-table-column prop="supplierName" :label="$t('input.feedback.columns.supplierName')" width="150" show-overflow-tooltip />
-              <el-table-column prop="priority" :label="$t('input.feedback.columns.priority')" width="100" align="center">
-                <template #default="{ row }">
-                  <el-tag :type="getPriorityTag(row.priority)" size="small">
-                    {{ getPriorityText(row.priority) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
+
               <el-table-column prop="contactName" :label="$t('input.feedback.columns.contactName')" width="120" />
               <el-table-column prop="createTime" :label="$t('input.feedback.columns.createTime')" width="160" />
               <el-table-column :label="$t('input.feedback.columns.actions')" width="240" fixed="right">
@@ -154,12 +135,7 @@
                   {{ getFeedbackTypeText(item.feedbackType) }}
                 </el-tag>
               </div>
-              <div class="mobile-card-row">
-                <span class="label">{{ $t('input.feedback.columns.priority') }}:</span>
-                <el-tag :type="getPriorityTag(item.priority)" effect="plain" size="small">
-                  {{ getPriorityText(item.priority) }}
-                </el-tag>
-              </div>
+
               <div class="mobile-card-row">
                 <span class="label">{{ $t('input.feedback.columns.contactName') }}:</span>
                 <span class="value">{{ item.contactName }}</span>
@@ -210,7 +186,7 @@ const { t } = useI18n()
 const searchKeyword = ref('')
 const filterType = ref('')
 const filterStatus = ref('')
-const filterPriority = ref('')
+
 const loading = ref(false)
 const tableData = ref([])
 
@@ -259,27 +235,7 @@ const getFeedbackTypeText = (type) => {
   return typeMap[type] || ''
 }
 
-// 获取优先级标签
-const getPriorityTag = (priority) => {
-  const priorityMap = {
-    0: 'info',     // 低
-    1: '',         // 中
-    2: 'warning',  // 高
-    3: 'danger'    // 紧急
-  }
-  return priorityMap[priority] ?? priorityMap[String(priority)] ?? ''
-}
 
-// 获取优先级文本
-const getPriorityText = (priority) => {
-  const priorityMap = {
-    0: t('input.feedback.priority.low'),
-    1: t('input.feedback.priority.medium'),
-    2: t('input.feedback.priority.high'),
-    3: t('input.feedback.priority.urgent')
-  }
-  return priorityMap[priority] ?? priorityMap[String(priority)] ?? ''
-}
 
 // 获取状态标签
 const getStatusTag = (status) => {
@@ -311,7 +267,7 @@ const loadData = async () => {
       contentKeyword: searchKeyword.value,
       feedbackType: filterType.value,
       status: filterStatus.value,
-      priority: filterPriority.value,
+
       pageNum: pagination.page,
       pageSize: pagination.pageSize
     })
@@ -339,7 +295,7 @@ const handleReset = () => {
   searchKeyword.value = ''
   filterType.value = ''
   filterStatus.value = ''
-  filterPriority.value = ''
+
   pagination.page = 1
   loadData()
 }
