@@ -155,7 +155,7 @@ export const useUserStore = defineStore('user', {
           this.roles = roles || []
           this.permissions = permissions || []
           this.deptPath = deptPath || []
-          this.setUserInfo({...res.user, roleKeys: res.roleKeys})
+          this.setUserInfo({...res.user, roleKeys: res.roleKeys,user: {...res.user}})
           console.log('权限信息已加载:', this.permissions.length, '个权限')
           console.log('区划路径链已加载:', this.deptPath.length, '级')
           return { roles, permissions, deptPath, ...res.user }
