@@ -1,5 +1,5 @@
 <template>
-  <div class="farmer-action-buttons">
+  <div class="farmer-action-buttons workflow-action-buttons is-table-mode">
     <el-button
       v-for="btn in visibleButtons"
       :key="btn.action"
@@ -8,7 +8,7 @@
       @click="$emit('action', btn.action)"
     >
       <i :class="btn.icon"></i>
-      {{ $t(btn.label) }}
+      <span class="btn-text">{{ $t(btn.label) }}</span>
     </el-button>
   </div>
 </template>
@@ -51,7 +51,10 @@ const visibleButtons = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/styles/workflow-common.scss';
+
 .farmer-action-buttons {
+  // 保持原有布局特性作为基础，样式由 workflow-common.scss 覆盖
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
