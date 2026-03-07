@@ -66,6 +66,14 @@ export default {
       warehouseAdd: '新增仓库',
       warehouseEdit: '编辑仓库',
       warehouseDetail: '仓库详情',
+      warehouseManage: '仓库主数据管理',
+      warehouseManageAdd: '新增仓库主数据',
+      warehouseManageEdit: '编辑仓库主数据',
+      warehouseManageDetail: '仓库主数据详情',
+      productManage: '商品主数据管理',
+      productManageAdd: '新增商品主数据',
+      productManageEdit: '编辑商品主数据',
+      productManageDetail: '商品主数据详情',
       // 入库管理 - 操作后缀
       stockInList: '入库单列表',
       stockInAdd: '新增入库单',
@@ -659,6 +667,182 @@ export default {
       viewFile: '查看文件',
       messages: {
         noData: '暂无数据'
+      }
+    },
+
+    warehouseManage: {
+      title: '仓库主数据管理',
+      subtitle: '维护仓库编码、层级、归属组织与启停状态等基础主数据',
+      list: '仓库主数据列表',
+      detail: '仓库主数据详情',
+      add: '新增仓库主数据',
+      edit: '编辑仓库主数据',
+      deleteConfirm: '确定删除该仓库主数据吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+      systemInfo: '系统信息',
+      form: {
+        warehouseCode: '仓库编码',
+        warehouseName: '仓库名称',
+        type: '仓库类型',
+        storeType: '存储形态',
+        orgName: '归属组织',
+        adminLevel: '行政层级',
+        parentId: '上级仓库',
+        parentWarehouseName: '上级仓库',
+        location: '地理位置',
+        capacity: '存储容量',
+        address: '详细地址',
+        status: '状态',
+        remark: '备注',
+        createPeople: '创建人',
+        createTime: '创建时间',
+        updatePeople: '更新人',
+        updateTime: '更新时间'
+      },
+      placeholder: {
+        warehouseCode: '请输入仓库编码',
+        warehouseName: '请输入仓库名称',
+        type: '请选择仓库类型',
+        storeType: '请选择存储形态',
+        orgName: '请输入归属组织',
+        adminLevel: '请选择行政层级',
+        parentId: '请选择上级仓库（选填）',
+        location: '请输入地理位置',
+        capacity: '请输入存储容量',
+        address: '请输入详细地址',
+        status: '请选择状态',
+        remark: '请输入备注信息（选填）'
+      },
+      rules: {
+        warehouseCodeRequired: '请输入仓库编码',
+        warehouseNameRequired: '请输入仓库名称',
+        typeRequired: '请选择仓库类型',
+        storeTypeRequired: '请选择存储形态',
+        orgNameRequired: '请输入归属组织',
+        adminLevelRequired: '请选择行政层级',
+        locationRequired: '请输入地理位置',
+        capacityRequired: '请输入存储容量',
+        statusRequired: '请选择状态'
+      },
+      columns: {
+        warehouseCode: '仓库编码',
+        warehouseName: '仓库名称',
+        type: '仓库类型',
+        storeType: '存储形态',
+        orgName: '归属组织',
+        adminLevel: '行政层级',
+        parentWarehouseName: '上级仓库',
+        location: '地理位置',
+        address: '详细地址',
+        capacity: '存储容量',
+        status: '状态',
+        updateTime: '更新时间',
+        actions: '操作'
+      },
+      adminLevelOptions: {
+        province: '省级',
+        city: '市级',
+        county: '县级'
+      },
+      storageTypeOptions: {
+        fertilizer: '化肥',
+        pesticide: '农药',
+        seed: '种子',
+        agriculturalProduct: '农产品'
+      },
+      ownerEntityOptions: {
+        oab: '奥罗米亚农业局',
+        union: '联盟',
+        cooperative: '合作社',
+        ose: '奥罗米亚种子企业'
+      },
+      operationStatusOptions: {
+        active: '活跃',
+        inactive: '停用',
+        maintenance: '维护中'
+      }
+    },
+
+    productManage: {
+      title: '商品主数据管理',
+      subtitle: '维护库存商品编码、分类、品牌、规格与启停状态等基础主数据',
+      list: '商品主数据列表',
+      detail: '商品主数据详情',
+      add: '新增商品主数据',
+      edit: '编辑商品主数据',
+      deleteConfirm: '确定删除该商品主数据吗？',
+      deleteSuccess: '删除成功',
+      addSuccess: '新增成功',
+      editSuccess: '编辑成功',
+      systemInfo: '系统信息',
+      form: {
+        productCode: '商品编码',
+        productName: '商品名称',
+        categoryName: '分类名称',
+        mainCategory: '商品大类',
+        subCategory: '商品小类',
+        brand: '商品品牌',
+        model: '规格型号',
+        unit: '单位',
+        price: '参考价格',
+        licenseNo: '生产许可证号',
+        status: '状态',
+        remark: '备注',
+        createPeople: '创建人',
+        createTime: '创建时间',
+        updatePeople: '更新人',
+        updateTime: '更新时间'
+      },
+      placeholder: {
+        productCode: '请输入商品编码',
+        productName: '请输入商品名称',
+        categoryName: '请输入分类名称',
+        mainCategory: '请选择商品大类',
+        subCategory: '请输入商品小类',
+        brand: '请输入商品品牌',
+        model: '请输入规格型号',
+        unit: '请输入单位',
+        price: '请输入参考价格',
+        licenseNo: '请输入生产许可证号',
+        status: '请选择状态',
+        remark: '请输入备注信息（选填）'
+      },
+      rules: {
+        productCodeRequired: '请输入商品编码',
+        productNameRequired: '请输入商品名称',
+        categoryNameRequired: '请输入分类名称',
+        mainCategoryRequired: '请选择商品大类',
+        unitRequired: '请输入单位',
+        priceRequired: '请输入参考价格',
+        statusRequired: '请选择状态'
+      },
+      columns: {
+        productCode: '商品编码',
+        productName: '商品名称',
+        categoryName: '分类名称',
+        mainCategory: '商品大类',
+        subCategory: '商品小类',
+        brand: '商品品牌',
+        model: '规格型号',
+        unit: '单位',
+        price: '参考价格',
+        licenseNo: '生产许可证号',
+        status: '状态',
+        updateTime: '更新时间',
+        actions: '操作'
+      },
+      status: {
+        enabled: '启用',
+        disabled: '停用'
+      },
+      mainCategoryOptions: {
+        fertilizer: '化肥',
+        seed: '种子',
+        agriculturalProduct: '农产品',
+        pesticide: '农药',
+        other: '其他'
       }
     },
 
