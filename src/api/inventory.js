@@ -170,7 +170,7 @@ export const getStockInList = (params = {}) => {
   }
 
   return agricultureRequest({
-    url: '/inventory/stock-in/list',
+    url: '/inventory/inbound/list',
     method: 'get',
     params: requestParams
   }).then(res => {
@@ -187,7 +187,7 @@ export const getStockInList = (params = {}) => {
  */
 export const getStockInDetail = (stockInId) => {
   return agricultureRequest({
-    url: `/inventory/stock-in/${stockInId}`,
+    url: `/inventory/inbound/${stockInId}`,
     method: 'get'
   }).then(res => {
     if (res.data) {
@@ -230,7 +230,7 @@ export const createStockIn = (data) => {
   }
 
   return agricultureRequest({
-    url: '/inventory/stock-in',
+    url: '/inventory/inbound',
     method: 'post',
     data: requestData
   }).then(res => {
@@ -247,7 +247,7 @@ export const createStockIn = (data) => {
  */
 export const confirmStockIn = (stockInId) => {
   return agricultureRequest({
-    url: `/inventory/stock-in/${stockInId}/confirm`,
+    url: `/inventory/inbound/${stockInId}/confirm`,
     method: 'post'
   })
 }
@@ -258,7 +258,7 @@ export const confirmStockIn = (stockInId) => {
  */
 export const deleteStockIn = (stockInId) => {
   return agricultureRequest({
-    url: `/inventory/stock-in/${stockInId}`,
+    url: `/inventory/inbound/${stockInId}`,
     method: 'delete'
   })
 }
@@ -291,7 +291,7 @@ export const getStockOutList = (params = {}) => {
   }
 
   return agricultureRequest({
-    url: '/inventory/stock-out/list',
+    url: '/inventory/outbound/list',
     method: 'get',
     params: requestParams
   }).then(res => {
@@ -308,7 +308,7 @@ export const getStockOutList = (params = {}) => {
  */
 export const getStockOutDetail = (stockOutId) => {
   return agricultureRequest({
-    url: `/inventory/stock-out/${stockOutId}`,
+    url: `/inventory/outbound/${stockOutId}`,
     method: 'get'
   }).then(res => {
     if (res.data) {
@@ -347,7 +347,7 @@ export const createStockOut = (data) => {
   }
 
   return agricultureRequest({
-    url: '/inventory/stock-out',
+    url: '/inventory/outbound',
     method: 'post',
     data: requestData
   }).then(res => {
@@ -364,7 +364,7 @@ export const createStockOut = (data) => {
  */
 export const confirmStockOut = (stockOutId) => {
   return agricultureRequest({
-    url: `/inventory/stock-out/${stockOutId}/confirm`,
+    url: `/inventory/outbound/${stockOutId}/confirm`,
     method: 'post'
   })
 }
@@ -375,7 +375,7 @@ export const confirmStockOut = (stockOutId) => {
  */
 export const deleteStockOut = (stockOutId) => {
   return agricultureRequest({
-    url: `/inventory/stock-out/${stockOutId}`,
+    url: `/inventory/outbound/${stockOutId}`,
     method: 'delete'
   })
 }
@@ -524,5 +524,442 @@ export const getBatchList = (params = {}) => {
       res.data = res.data.map(item => toSnakeCase(item))
     }
     return res
+  })
+}
+
+// ==================== 入库管理 API (新) ====================
+
+/**
+ * 查询入库单列表
+ * @param {Object} params - 查询参数
+ * @param {number} params.page - 页码
+ * @param {number} params.pageSize - 每页数量
+ * @param {number} params.warehouseId - 仓库ID
+ * @param {string} params.type - 入库类型
+ * @param {string} params.status - 状态
+ */
+export const getInboundList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.type !== undefined && params.type !== null && params.type !== '') {
+    requestParams.type = params.type
+  }
+  if (params.status !== undefined && params.status !== null && params.status !== '') {
+    requestParams.status = params.status
+  }
+
+  return agricultureRequest({
+    url: '/inventory/inbound/list',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    if (res.data && res.data.list) {
+      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}
+
+/**
+ * 查询入库单详情
+ * @param {number} id - 入库单ID
+ */
+export const getInboundDetail = (id) => {
+  return agricultureRequest({
+    url: `/inventory/inbound/${id}`,
+    method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 创建入库单
+ * @param {Object} data - 入库单数据
+ */
+export const createInbound = (data) => {
+  const requestData = {
+    warehouseId: data.warehouseId,
+    type: data.type,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      supplier: item.supplier,
+      planQty: item.planQty,
+      realQty: item.realQty,
+      unit: item.unit,
+      expireDate: item.expireDate
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/inbound',
+    method: 'post',
+    data: requestData
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 更新入库单
+ * @param {number} id - 入库单ID
+ * @param {Object} data - 入库单数据
+ */
+export const updateInbound = (id, data) => {
+  const requestData = {
+    id: id,
+    warehouseId: data.warehouseId,
+    type: data.type,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      supplier: item.supplier,
+      planQty: item.planQty,
+      realQty: item.realQty,
+      unit: item.unit,
+      expireDate: item.expireDate
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/inbound',
+    method: 'put',
+    data: requestData
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 删除入库单
+ * @param {number} id - 入库单ID
+ */
+export const deleteInbound = (id) => {
+  return agricultureRequest({
+    url: `/inventory/inbound/${id}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 审核入库单
+ * @param {number} id - 入库单ID
+ * @param {Object} data - 审核数据
+ * @param {string} data.auditStatus - 审核状态 (approved/rejected)
+ * @param {string} data.auditComment - 审核意见
+ */
+export const auditInbound = (id, data) => {
+  return agricultureRequest({
+    url: `/inventory/inbound/${id}/audit`,
+    method: 'post',
+    data: {
+      auditStatus: data.auditStatus,
+      auditComment: data.auditComment
+    }
+  })
+}
+
+// ==================== Additional API functions for pages ====================
+
+/**
+ * Submit inbound order (for approval)
+ * @param {Object} data - inbound order data
+ */
+export const submitInbound = (data) => {
+  const requestData = {
+    warehouseId: data.warehouseId,
+    type: data.type,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      supplier: item.supplier,
+      planQty: item.planQty,
+      realQty: item.realQty,
+      unit: item.unit,
+      expireDate: item.expireDate
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/inbound/submit',
+    method: 'post',
+    data: requestData
+  })
+}
+
+/**
+ * Submit outbound order (for approval)
+ * @param {Object} data - outbound order data
+ */
+export const submitOutbound = (data) => {
+  const requestData = {
+    warehouseId: data.warehouseId,
+    type: data.type,
+    receiverType: data.receiverType,
+    receiver: data.receiver,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      applyQty: item.applyQty,
+      realQty: item.realQty,
+      unit: item.unit
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/outbound/submit',
+    method: 'post',
+    data: requestData
+  })
+}
+
+/**
+ * Get inbound detail (alias for getInboundDetail)
+ * @param {number} id - inbound order ID
+ */
+export const getInbound = (id) => {
+  return getInboundDetail(id)
+}
+
+/**
+ * Get outbound detail (alias for getOutboundDetail)
+ * @param {number} id - outbound order ID
+ */
+export const getOutbound = (id) => {
+  return getOutboundDetail(id)
+}
+
+/**
+ * Add inbound (alias for createInbound)
+ * @param {Object} data - inbound order data
+ */
+export const addInbound = (data) => {
+  return createInbound(data)
+}
+
+/**
+ * Add outbound (alias for createOutbound)
+ * @param {Object} data - outbound order data
+ */
+export const addOutbound = (data) => {
+  return createOutbound(data)
+}
+
+/**
+ * Get product list
+ * @param {Object} params - 查询参数
+ * @param {number} params.page - 页码
+ * @param {number} params.pageSize - 每页数量
+ * @param {string} params.productName - 商品名称
+ * @param {string} params.category - 分类
+ */
+export const getProductList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.productName) requestParams.keyword = params.productName
+
+  return agricultureRequest({
+    url: '/agriculture/input/list',
+    method: 'get',
+    params: requestParams
+  })
+}
+
+// ==================== 出库管理 API (新) ====================
+
+/**
+ * 查询出库单列表
+ * @param {Object} params - 查询参数
+ * @param {number} params.page - 页码
+ * @param {number} params.pageSize - 每页数量
+ * @param {number} params.warehouseId - 仓库ID
+ * @param {string} params.type - 出库类型
+ * @param {string} params.status - 状态
+ */
+export const getOutboundList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.type !== undefined && params.type !== null && params.type !== '') {
+    requestParams.type = params.type
+  }
+  if (params.status !== undefined && params.status !== null && params.status !== '') {
+    requestParams.status = params.status
+  }
+
+  return agricultureRequest({
+    url: '/inventory/outbound/list',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    if (res.data && res.data.list) {
+      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}
+
+/**
+ * 查询出库单详情
+ * @param {number} id - 出库单ID
+ */
+export const getOutboundDetail = (id) => {
+  return agricultureRequest({
+    url: `/inventory/outbound/${id}`,
+    method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 创建出库单
+ * @param {Object} data - 出库单数据
+ */
+export const createOutbound = (data) => {
+  const requestData = {
+    warehouseId: data.warehouseId,
+    type: data.type,
+    receiverType: data.receiverType,
+    receiver: data.receiver,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      applyQty: item.applyQty,
+      realQty: item.realQty,
+      unit: item.unit
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/outbound',
+    method: 'post',
+    data: requestData
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 更新出库单
+ * @param {number} id - 出库单ID
+ * @param {Object} data - 出库单数据
+ */
+export const updateOutbound = (id, data) => {
+  const requestData = {
+    id: id,
+    warehouseId: data.warehouseId,
+    type: data.type,
+    receiverType: data.receiverType,
+    receiver: data.receiver,
+    bizNo: data.bizNo,
+    operator: data.operator,
+    orderDate: data.orderDate,
+    remark: data.remark,
+    items: data.items ? data.items.map(item => ({
+      productName: item.productName,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      batchNo: item.batchNo,
+      applyQty: item.applyQty,
+      realQty: item.realQty,
+      unit: item.unit
+    })) : []
+  }
+
+  return agricultureRequest({
+    url: '/inventory/outbound',
+    method: 'put',
+    data: requestData
+  }).then(res => {
+    if (res.data) {
+      res.data = toSnakeCase(res.data)
+    }
+    return res
+  })
+}
+
+/**
+ * 删除出库单
+ * @param {number} id - 出库单ID
+ */
+export const deleteOutbound = (id) => {
+  return agricultureRequest({
+    url: `/inventory/outbound/${id}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 审核出库单
+ * @param {number} id - 出库单ID
+ * @param {Object} data - 审核数据
+ * @param {string} data.auditStatus - 审核状态 (approved/rejected)
+ * @param {string} data.auditComment - 审核意见
+ */
+export const auditOutbound = (id, data) => {
+  return agricultureRequest({
+    url: `/inventory/outbound/${id}/audit`,
+    method: 'post',
+    data: {
+      auditStatus: data.auditStatus,
+      auditComment: data.auditComment
+    }
   })
 }

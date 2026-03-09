@@ -1,5 +1,6 @@
 export default {
   confirm: 'Confirm',
+  remark: 'Remark',
   cancel: 'Cancel',
   save: 'Save',
   delete: 'Void',
@@ -139,7 +140,7 @@ export default {
   farmerDemands: 'Farmer Demands',
   noPermissionDesc: 'You do not have permission to access this page or perform this action',
   dateRange: 'Date Range',
-  
+
   // Notice related
   notice: 'Notice',
   noticeDetail: 'Notice Details',

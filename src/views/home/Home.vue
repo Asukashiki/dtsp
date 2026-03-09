@@ -223,6 +223,13 @@ const systemModules = computed(() => ({
     path: '/data',
     disabled: true // 禁用
   },
+  inventory: {
+    name: t('home.modules.inventory.name'),
+    desc: t('home.modules.inventory.desc'),
+    icon: 'ri-stack-line',
+    gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFC069 100%)',
+    path: '/inventory'
+  },
   // farm: {
   //   name: t('home.modules.farm.name'),
   //   desc: t('home.modules.farm.desc'),

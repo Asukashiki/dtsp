@@ -1,5 +1,6 @@
 export default {
     confirm: '确认',
+    remark: '备注',
     cancel: '取消',
     save: '保存',
     delete: '删除',
@@ -135,7 +136,7 @@ export default {
     aggregationResults: '汇聚结果',
     farmerDemands: '农民需求',
     noPermissionDesc: '您没有权限访问此页面或执行此操作',
-    
+
     // 公告相关
     notice: '公告',
     noticeDetail: '公告详情',
