@@ -45,6 +45,10 @@ export default {
       name: 'Data Services',
       desc: 'Data collection, analysis display and decision support',
     },
+    inventory: {
+      name: 'Inventory Management',
+      desc: 'Inbound, outbound and stock query management',
+    },
     farm: {
       name: 'Farmland Management',
       desc: 'Foundational component of the digital agriculture system',

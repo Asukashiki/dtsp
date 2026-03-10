@@ -64,6 +64,7 @@ export default {
     warehouse: 'Warehouse Management',
     stockIn: 'Stock In Management',
     stockOut: 'Stock Out Management',
+    inboundOutboundManagement: 'Inbound/Outbound Management',
     stockQuery: 'Inventory Query',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
     feedback: 'Information Feedback',

@@ -8,6 +8,7 @@ import inputLayoutConfig from '@/config/input-layout.json'
 import researchLayoutConfig from '@/config/research-layout.json'
 import newFarmLayoutConfig from '@/config/new-farm-layout.json'
 import systemLayoutConfig from '@/config/system-layout.json'
+import inventoryLayoutConfig from '@/config/inventory-layout.json'
 
 // 路由白名单
 const routeWhitelist = [
@@ -1953,6 +1954,52 @@ const routes = [
       }
     ]
   },
+  // Inventory Management System
+  {
+    path: '/inventory',
+    name: 'InventorySystem',
+    component: () => import('../layout/SystemLayout.vue'),
+    redirect: '/inventory/inbound',
+    meta: { requiresAuth: true, layoutConfig: inventoryLayoutConfig },
+    children: [
+      {
+        path: 'inbound',
+        name: 'InventoryInbound',
+        component: () => import('../views/inventory/inbound/index.vue'),
+        meta: { title: 'inventory.inbound.title', requiresAuth: true }
+      },
+      {
+        path: 'inbound/add',
+        name: 'InventoryInboundAdd',
+        component: () => import('../views/inventory/inbound/form.vue'),
+        meta: { title: 'inventory.inbound.add', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inbound/detail/:id',
+        name: 'InventoryInboundDetail',
+        component: () => import('../views/inventory/inbound/detail.vue'),
+        meta: { title: 'inventory.inbound.detail', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'outbound',
+        name: 'InventoryOutbound',
+        component: () => import('../views/inventory/outbound/index.vue'),
+        meta: { title: 'inventory.outbound.title', requiresAuth: true }
+      },
+      {
+        path: 'outbound/add',
+        name: 'InventoryOutboundAdd',
+        component: () => import('../views/inventory/outbound/form.vue'),
+        meta: { title: 'inventory.outbound.add', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'outbound/detail/:id',
+        name: 'InventoryOutboundDetail',
+        component: () => import('../views/inventory/outbound/detail.vue'),
+        meta: { title: 'inventory.outbound.detail', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      }
+    ]
+  },
   // 登录页面（不需要认证）
   {
     path: '/login',
@@ -2034,13 +2081,13 @@ router.beforeEach(async (to, from, next) => {
   if (!requiresAuth) {
     return next()
   }
-  
+
   // 路由切换时显示加载状态
   if (to.path !== from.path) {
     const loadingStore = useLoadingStore()
     loadingStore.setRouteLoading(true)
   }
-  
+
   const userStore = useUserStore()
 
   // 1. 先判断 URL 上有没有 token (SSO模式)
@@ -2084,7 +2131,7 @@ router.beforeEach(async (to, from, next) => {
         // 获取权限和菜单
         await userStore.getPermissions()
         await userStore.getMenus()
-        
+
         console.log('路由守卫: 用户信息获取完成:', result ? '成功' : '失败')
         console.log('路由守卫: 获取后状态 - hasUserInfo:', userStore.hasUserInfo)
       } catch (error) {
@@ -2113,12 +2160,12 @@ router.beforeEach(async (to, from, next) => {
     // 检查是否有菜单权限
     // 注意：这里假设所有受控路由都在菜单中定义。如果有一些隐藏路由不在菜单中但需要访问，
     // 需要确保它们在 getRouters 返回的列表中（即使 hidden: true）
-    
+
     // 检查是否在白名单中（前缀匹配）
     const isInWhitelist = (path) => {
       return routeWhitelist.some(prefix => path === prefix || path.startsWith(prefix + '/'))
     }
-    
+
     // 只有当路由需要认证时才检查权限
     if (requiresAuth) {
       // 首先检查白名单
@@ -2126,13 +2173,13 @@ router.beforeEach(async (to, from, next) => {
         console.log('路由守卫: 白名单路径，允许访问:', to.path)
         return next()
       }
-      
+
       // 如果用户没有任何菜单权限，阻止访问非白名单路由
       if (userStore.menus.length === 0) {
         console.warn('路由守卫: 用户没有任何菜单权限，无法访问:', to.path)
         return next('/401')
       }
-      
+
       // 检查菜单权限
       const hasPerm = userStore.hasMenuPermission(to.path)
       if (!hasPerm) {

@@ -58,6 +58,7 @@ export default {
       warehouse: '仓库管理',
       stockIn: '入库管理',
       stockOut: '出库管理',
+      inboundOutboundManagement: '出入库管理',
       stockQuery: '库存查询',
       dashboard: '大屏管理',
       feedback: '信息反馈',

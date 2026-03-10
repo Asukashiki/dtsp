@@ -45,6 +45,10 @@ export default {
         name: '数据服务',
         desc: '数据采集、分析展示及决策支持',
       },
+      inventory: {
+        name: '出入库管理',
+        desc: '入库管理、出库管理及库存查询',
+      },
       farm: {
         name: '农田管理系统',
         desc: '农民认证、土地信息管理及农田数据服务',

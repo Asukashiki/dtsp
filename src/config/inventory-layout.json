@@ -1,0 +1,25 @@
+{
+  "systemName": "inventory.systemName",
+  "backToHome": "common.backToHome",
+  "icon": "ri-stack-line",
+  "headerGradient": "linear-gradient(135deg, #009A44 0%, #00b350 100%)",
+  "menus": [
+    {
+      "index": "inbound-outbound-management",
+      "icon": "ri-exchange-line",
+      "titleKey": "inventory.inboundOutboundManagement",
+      "children": [
+        {
+          "index": "/inventory/inbound",
+          "icon": "ri-inbox-line",
+          "titleKey": "inventory.inbound.title"
+        },
+        {
+          "index": "/inventory/outbound",
+          "icon": "ri-truck-line",
+          "titleKey": "inventory.outbound.title"
+        }
+      ]
+    }
+  ]
+}
