@@ -159,9 +159,14 @@
       "titleKey": "input.menu.inventoryManagement",
       "children": [
         {
-          "index": "/input/inventory/warehouse",
+          "index": "/input/inventory/warehouse-manage",
           "icon": "ri-home-3-line",
-          "titleKey": "input.menu.warehouse"
+          "titleKey": "input.menu.warehouseManage"
+        },
+        {
+          "index": "/input/inventory/product-manage",
+          "icon": "ri-price-tag-3-line",
+          "titleKey": "input.menu.productManage"
         },
         {
           "index": "/input/inventory/stock-in",

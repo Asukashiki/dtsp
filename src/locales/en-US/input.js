@@ -76,6 +76,14 @@ export default {
     warehouseAdd: 'Add Warehouse',
     warehouseEdit: 'Edit Warehouse',
     warehouseDetail: 'Warehouse Details',
+    warehouseManage: 'Warehouse Master Data',
+    warehouseManageAdd: 'Add Warehouse Master Data',
+    warehouseManageEdit: 'Edit Warehouse Master Data',
+    warehouseManageDetail: 'Warehouse Master Data Details',
+    productManage: 'Product Master Data',
+    productManageAdd: 'Add Product Master Data',
+    productManageEdit: 'Edit Product Master Data',
+    productManageDetail: 'Product Master Data Details',
     // 入库管理 - 操作后缀
     stockInList: 'Stock In Order List',
     stockInAdd: 'Add Stock In Order',
@@ -672,6 +680,182 @@ export default {
       viewFile: 'View File',
       messages: {
         noData: 'No data available'
+      }
+    },
+
+    warehouseManage: {
+      title: 'Warehouse Master Data Management',
+      subtitle: 'Maintain warehouse codes, hierarchy, ownership organization, and activation status as master data',
+      list: 'Warehouse Master Data List',
+      detail: 'Warehouse Master Data Details',
+      add: 'Add Warehouse Master Data',
+      edit: 'Edit Warehouse Master Data',
+      deleteConfirm: 'Are you sure to delete this warehouse master data?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      systemInfo: 'System Information',
+      form: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        type: 'Warehouse Type',
+        storeType: 'Storage Type',
+        orgName: 'Owning Organization',
+        adminLevel: 'Administrative Level',
+        parentId: 'Parent Warehouse',
+        parentWarehouseName: 'Parent Warehouse',
+        location: 'Geographic Location',
+        capacity: 'Storage Capacity',
+        address: 'Address',
+        status: 'Status',
+        remark: 'Remark',
+        createPeople: 'Creator',
+        createTime: 'Creation Time',
+        updatePeople: 'Updater',
+        updateTime: 'Update Time'
+      },
+      placeholder: {
+        warehouseCode: 'Enter warehouse code',
+        warehouseName: 'Enter warehouse name',
+        type: 'Select warehouse type',
+        storeType: 'Select storage type',
+        orgName: 'Enter owning organization',
+        adminLevel: 'Select administrative level',
+        parentId: 'Select parent warehouse (optional)',
+        location: 'Enter geographic location',
+        capacity: 'Enter storage capacity',
+        address: 'Enter address',
+        status: 'Select status',
+        remark: 'Enter remarks (optional)'
+      },
+      rules: {
+        warehouseCodeRequired: 'Please enter warehouse code',
+        warehouseNameRequired: 'Please enter warehouse name',
+        typeRequired: 'Please select warehouse type',
+        storeTypeRequired: 'Please select storage type',
+        orgNameRequired: 'Please enter owning organization',
+        adminLevelRequired: 'Please select administrative level',
+        locationRequired: 'Please enter geographic location',
+        capacityRequired: 'Please enter storage capacity',
+        statusRequired: 'Please select status'
+      },
+      columns: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        type: 'Warehouse Type',
+        storeType: 'Storage Type',
+        orgName: 'Owning Organization',
+        adminLevel: 'Administrative Level',
+        parentWarehouseName: 'Parent Warehouse',
+        location: 'Geographic Location',
+        address: 'Address',
+        capacity: 'Storage Capacity',
+        status: 'Status',
+        updateTime: 'Update Time',
+        actions: 'Actions'
+      },
+      adminLevelOptions: {
+        province: 'Province',
+        city: 'City',
+        county: 'County'
+      },
+      storageTypeOptions: {
+        fertilizer: 'Fertilizer',
+        pesticide: 'Pesticide',
+        seed: 'Seed',
+        agriculturalProduct: 'Agricultural Product'
+      },
+      ownerEntityOptions: {
+        oab: 'Oromia Agriculture Bureau',
+        union: 'Union',
+        cooperative: 'Cooperative',
+        ose: 'Oromia Seed Enterprise'
+      },
+      operationStatusOptions: {
+        active: 'Active',
+        inactive: 'Inactive',
+        maintenance: 'Under Maintenance'
+      }
+    },
+
+    productManage: {
+      title: 'Product Master Data Management',
+      subtitle: 'Maintain inventory product codes, categories, brands, specifications, and activation status as master data',
+      list: 'Product Master Data List',
+      detail: 'Product Master Data Details',
+      add: 'Add Product Master Data',
+      edit: 'Edit Product Master Data',
+      deleteConfirm: 'Are you sure to delete this product master data?',
+      deleteSuccess: 'Deleted successfully',
+      addSuccess: 'Added successfully',
+      editSuccess: 'Edited successfully',
+      systemInfo: 'System Information',
+      form: {
+        productCode: 'Product Code',
+        productName: 'Product Name',
+        categoryName: 'Category Name',
+        mainCategory: 'Main Category',
+        subCategory: 'Sub Category',
+        brand: 'Brand',
+        model: 'Model',
+        unit: 'Unit',
+        price: 'Reference Price',
+        licenseNo: 'Production License No.',
+        status: 'Status',
+        remark: 'Remark',
+        createPeople: 'Creator',
+        createTime: 'Creation Time',
+        updatePeople: 'Updater',
+        updateTime: 'Update Time'
+      },
+      placeholder: {
+        productCode: 'Enter product code',
+        productName: 'Enter product name',
+        categoryName: 'Enter category name',
+        mainCategory: 'Select main category',
+        subCategory: 'Enter sub category',
+        brand: 'Enter brand',
+        model: 'Enter model',
+        unit: 'Enter unit',
+        price: 'Enter reference price',
+        licenseNo: 'Enter production license number',
+        status: 'Select status',
+        remark: 'Enter remarks (optional)'
+      },
+      rules: {
+        productCodeRequired: 'Please enter product code',
+        productNameRequired: 'Please enter product name',
+        categoryNameRequired: 'Please enter category name',
+        mainCategoryRequired: 'Please select main category',
+        unitRequired: 'Please enter unit',
+        priceRequired: 'Please enter reference price',
+        statusRequired: 'Please select status'
+      },
+      columns: {
+        productCode: 'Product Code',
+        productName: 'Product Name',
+        categoryName: 'Category Name',
+        mainCategory: 'Main Category',
+        subCategory: 'Sub Category',
+        brand: 'Brand',
+        model: 'Model',
+        unit: 'Unit',
+        price: 'Reference Price',
+        licenseNo: 'Production License No.',
+        status: 'Status',
+        updateTime: 'Update Time',
+        actions: 'Actions'
+      },
+      status: {
+        enabled: 'Enabled',
+        disabled: 'Disabled'
+      },
+      mainCategoryOptions: {
+        fertilizer: 'Fertilizer',
+        seed: 'Seed',
+        agriculturalProduct: 'Agricultural Product',
+        pesticide: 'Pesticide',
+        other: 'Other'
       }
     },
 

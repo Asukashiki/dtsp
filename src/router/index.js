@@ -1289,6 +1289,54 @@ const routes = [
         meta: { title: 'input.menu.warehouse', requiresAuth: true }
       },
       {
+        path: 'inventory/warehouse-manage',
+        name: 'WarehouseManageList',
+        component: () => import('../views/input/inventory/warehouse-manage/index.vue'),
+        meta: { title: 'input.menu.warehouseManage', requiresAuth: true }
+      },
+      {
+        path: 'inventory/warehouse-manage/add',
+        name: 'WarehouseManageAdd',
+        component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
+        meta: { title: 'input.menu.warehouseManageAdd', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/warehouse-manage/edit/:id',
+        name: 'WarehouseManageEdit',
+        component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
+        meta: { title: 'input.menu.warehouseManageEdit', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/warehouse-manage/detail/:id',
+        name: 'WarehouseManageDetail',
+        component: () => import('../views/input/inventory/warehouse-manage/detail.vue'),
+        meta: { title: 'input.menu.warehouseManageDetail', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/product-manage',
+        name: 'ProductManageList',
+        component: () => import('../views/input/inventory/product-manage/index.vue'),
+        meta: { title: 'input.menu.productManage', requiresAuth: true }
+      },
+      {
+        path: 'inventory/product-manage/add',
+        name: 'ProductManageAdd',
+        component: () => import('../views/input/inventory/product-manage/form.vue'),
+        meta: { title: 'input.menu.productManageAdd', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/product-manage/edit/:id',
+        name: 'ProductManageEdit',
+        component: () => import('../views/input/inventory/product-manage/form.vue'),
+        meta: { title: 'input.menu.productManageEdit', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'inventory/product-manage/detail/:id',
+        name: 'ProductManageDetail',
+        component: () => import('../views/input/inventory/product-manage/detail.vue'),
+        meta: { title: 'input.menu.productManageDetail', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'inventory/warehouse/add',
         name: 'WarehouseAdd',
         component: () => import('../views/input/inventory/warehouse/form.vue'),
