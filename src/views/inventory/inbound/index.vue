@@ -224,9 +224,14 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
-const activeTab = ref('pendingApproval')
+const activeTab = ref('all')
 
 const tabConfig = [
+  {
+    name: 'all',
+    label: 'common.all',
+    icon: 'ri-list-check'
+  },
   {
     name: 'pendingApproval',
     label: 'inventory.inbound.status.pending',
@@ -262,10 +267,12 @@ const formatDateTime = (dateTimeStr) => {
 }
 
 const handleTabChange = (tabName) => {
-  if (tabName === 'pendingApproval') {
-    queryParams.status = 'DRAFT'
+  if (tabName === 'all') {
+    queryParams.status = ''
+  } else if (tabName === 'pendingApproval') {
+    queryParams.status = 'SUBMITTED'
   } else if (tabName === 'approved') {
-    queryParams.status = 'SUBMITTED,APPROVED,REJECTED'
+    queryParams.status = 'APPROVED,REJECTED'
   }
   queryParams.page = 1
   handleQuery()
@@ -373,7 +380,6 @@ const getTypeText = (type) => {
 
 onMounted(() => {
   handleTabChange(activeTab.value)
-  handleQuery()
 })
 </script>
 

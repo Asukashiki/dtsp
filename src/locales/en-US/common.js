@@ -91,6 +91,7 @@ export default {
   noData: 'No Data',
   filter: 'Filter',
   loadMore: 'Load More',
+  status: 'Status',
   // Crop Types (Common)
   cropTypes: {
     wheat: 'Wheat',

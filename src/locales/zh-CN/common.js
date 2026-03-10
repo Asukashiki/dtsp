@@ -88,6 +88,7 @@ export default {
     noData: '暂无数据',
     filter: '筛选',
     loadMore: '加载更多',
+    status: '状态',
     // 作物类型(通用)
     cropTypes: {
       wheat: '小麦',

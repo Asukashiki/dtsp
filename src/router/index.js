@@ -1949,6 +1949,24 @@ const routes = [
         name: 'InventoryOutboundDetail',
         component: () => import('../views/inventory/outbound/detail.vue'),
         meta: { title: 'inventory.outbound.detail', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'transfer',
+        name: 'InventoryTransfer',
+        component: () => import('../views/inventory/transfer/index.vue'),
+        meta: { title: 'inventory.transfer.title', requiresAuth: true }
+      },
+      {
+        path: 'transfer/add',
+        name: 'InventoryTransferAdd',
+        component: () => import('../views/inventory/transfer/form.vue'),
+        meta: { title: 'inventory.transfer.add', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'transfer/detail/:id',
+        name: 'InventoryTransferDetail',
+        component: () => import('../views/inventory/transfer/detail.vue'),
+        meta: { title: 'inventory.transfer.detail', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

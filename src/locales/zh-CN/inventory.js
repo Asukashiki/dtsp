@@ -7,9 +7,8 @@ export default {
     subtitle: '管理入库单据',
     list: '入库单列表',
     add: '新增入库单',
-    detail: '入库单详情',
+    details: '入库单详情',
     no: '入库单号',
-    type: '入库类型',
     types: '入库类型',
     warehouse: '仓库',
     bizNo: '关联业务单号',
@@ -38,10 +37,11 @@ export default {
     },
     detail: {
       product: '商品',
+      mainCategory: '商品大类',
+      subCategory: '商品小类',
       batchNo: '批次号',
       supplier: '供应商',
-      planQty: '计划数量',
-      realQty: '实际数量',
+      qty: '数量',
       unit: '单位',
       expireDate: '有效期'
     }
@@ -91,10 +91,67 @@ export default {
     },
     detail: {
       product: '商品',
+      mainCategory: '商品大类',
+      subCategory: '商品小类',
       batchNo: '批次号',
+      qty: '数量',
+      unit: '单位',
+      supplier:"供应商",
+      expireDate:"过期时间"
+    }
+  },
+
+  transfer: {
+    title: '调拨管理',
+    subtitle: '管理库存调拨单据',
+    list: '调拨单列表',
+    add: '新增调拨单',
+    detail: '调拨单详情',
+    no: '调拨单编号',
+    types: '调拨类型',
+    applyDate: '调拨申请日期',
+    expectedDate: '期望到货日期',
+    applicant: '申请人',
+    department: '申请人归属部门',
+    outWarehouse: '调出仓库',
+    outTime: '调出时间',
+    inWarehouse: '调入仓库',
+    inTime: '调入时间',
+    status: '状态',
+    remark: '备注',
+    auditBy: '审批人',
+    auditTime: '审批时间',
+    auditComment: '审批意见',
+    detailList: '调拨明细',
+    addDetail: '添加调拨明细',
+    detailRequired: '请至少添加一条明细',
+    confirmAudit: '确定要审批该调拨单吗？',
+    approve: '同意',
+    reject: '不同意',
+    type: {
+      stockWarning: '库存预警',
+      fullTransfer: '满仓调离'
+    },
+    status: {
+      draft: '草稿',
+      pending: '待审批',
+      submitted: '待审批',
+      approved: '已完成',
+      rejected: '未通过'
+    },
+    detail: {
+      product: '商品',
+      batchNo: '批次号',
+      supplier: '供应商',
       applyQty: '申请数量',
       realQty: '实际数量',
       unit: '单位'
+    },
+    search: {
+      type: '调拨类型',
+      dateRange: '调拨申请日期',
+      outWarehouse: '调出仓库',
+      inWarehouse: '调入仓库'
     }
   }
 }

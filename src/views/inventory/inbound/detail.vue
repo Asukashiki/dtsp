@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
-        :title="$t('inventory.inbound.detail')"
+        :title="$t('inventory.inbound.details')"
         :show-back="true"
         @back="handleBack"
         class="page-header-green"
@@ -12,7 +12,7 @@
         <InfoCard :title="$t('common.basicInfo')" icon="ri-file-info-line">
           <el-descriptions :column="3" border>
             <el-descriptions-item :label="$t('inventory.inbound.no')">{{ form.inboundNo }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.inbound.type')">{{ getLabel(typeOptions, form.type) }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.inbound.types')">{{ getLabel(typeOptions, form.type) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.warehouse')">{{ form.warehouseName }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.bizNo')">{{ form.bizNo }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.operator')">{{ form.operator }}</el-descriptions-item>

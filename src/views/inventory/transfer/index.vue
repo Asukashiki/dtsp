@@ -2,42 +2,64 @@
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
-        icon="ri-logout-box-line"
-        :title="$t('inventory.outbound.title')"
-        :subtitle="$t('inventory.outbound.subtitle')"
-        class="page-header-green"
+        icon="ri-arrow-left-right-line"
+        :title="$t('inventory.transfer.title')"
+        :subtitle="$t('inventory.transfer.subtitle')"
+        class="page-header-blue"
       />
 
       <div class="content-wrapper">
         <div class="search-card">
           <SearchForm @search="handleQuery" @reset="handleReset">
-            <SearchItem :label="$t('inventory.outbound.no')">
-              <el-input
-                v-model="queryParams.outboundNo"
-                :placeholder="$t('inventory.outbound.no')"
-                clearable
-                class="search-input">
-                <template #prefix><i class="ri-search-line"></i></template>
-              </el-input>
-            </SearchItem>
-
-            <SearchItem :label="$t('inventory.outbound.types')">
+            <SearchItem :label="$t('inventory.transfer.search.type')">
               <el-select
-                v-model="queryParams.type"
-                :placeholder="$t('inventory.outbound.types')"
+                v-model="queryParams.transferType"
+                :placeholder="$t('inventory.transfer.search.type')"
                 clearable
                 class="filter-select"
                 @change="handleQuery">
                 <el-option :label="$t('common.all')" value="" />
-                <el-option :label="$t('inventory.outbound.type.general')" value="GENERAL" />
-                <el-option :label="$t('inventory.outbound.type.transfer')" value="TRANSFER" />
+                <el-option :label="$t('inventory.transfer.type.stockWarning')" value="STOCK_WARNING" />
+                <el-option :label="$t('inventory.transfer.type.fullTransfer')" value="FULL_TRANSFER" />
+              </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('inventory.transfer.search.dateRange')">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                range-separator="-"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
+                value-format="YYYY-MM-DD"
+                class="date-range-picker"
+                @change="handleDateChange"
+              />
+            </SearchItem>
+            <SearchItem :label="$t('inventory.transfer.search.outWarehouse')">
+              <el-select
+                v-model="queryParams.outWarehouseId"
+                :placeholder="$t('inventory.transfer.search.outWarehouse')"
+                clearable
+                filterable
+                class="filter-select">
+                <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
+              </el-select>
+            </SearchItem>
+            <SearchItem :label="$t('inventory.transfer.search.inWarehouse')">
+              <el-select
+                v-model="queryParams.inWarehouseId"
+                :placeholder="$t('inventory.transfer.search.inWarehouse')"
+                clearable
+                filterable
+                class="filter-select">
+                <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
               </el-select>
             </SearchItem>
           </SearchForm>
         </div>
 
         <InfoCard
-          :title="$t('inventory.outbound.list')"
+          :title="$t('inventory.transfer.list')"
           icon="ri-file-list-3-line"
           :no-padding="true">
           <template #actions>
@@ -55,52 +77,63 @@
           <div class="table-wrapper pc-only">
             <el-table :data="tableData" stripe v-loading="loading">
               <el-table-column
-                prop="outboundNo"
-                :label="$t('inventory.outbound.no')"
-                width="180"
-                fixed="left"
-              />
-              <el-table-column
-                prop="type"
-                :label="$t('inventory.outbound.types')"
+                prop="transferType"
+                :label="$t('inventory.transfer.types')"
                 width="120"
               >
                 <template #default="{ row }">
-                  <el-tag :type="getTypeTag(row.type)" size="small">
-                    {{ getTypeText(row.type) }}
+                  <el-tag :type="getTypeTag(row.transferType)" size="small">
+                    {{ getTypeText(row.transferType) }}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="warehouseName"
-                :label="$t('inventory.outbound.warehouse')"
-                width="150"
-                show-overflow-tooltip
-              />
-              <el-table-column
-                prop="receiver"
-                :label="$t('inventory.outbound.receiver')"
-                width="120"
-                show-overflow-tooltip
-              />
-              <el-table-column
-                prop="bizNo"
-                :label="$t('inventory.outbound.bizNo')"
-                width="150"
-                show-overflow-tooltip
-              />
-              <el-table-column
-                prop="operator"
-                :label="$t('inventory.outbound.operator')"
-                width="120"
-              />
-              <el-table-column
-                prop="orderDate"
-                :label="$t('inventory.outbound.orderDate')"
+                prop="applyDate"
+                :label="$t('inventory.transfer.applyDate')"
                 width="160"
               >
                 <template #default="{ row }">
-                  {{ formatDateTime(row.orderDate) }}
+                  {{ formatDateTime(row.applyDate) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="transferNo"
+                :label="$t('inventory.transfer.no')"
+                width="180"
+              />
+              <el-table-column
+                prop="outWarehouseName"
+                :label="$t('inventory.transfer.outWarehouse')"
+                width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="outTime"
+                :label="$t('inventory.transfer.outTime')"
+                width="160"
+              >
+                <template #default="{ row }">
+                  {{ formatDateTime(row.outTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="applicant"
+                :label="$t('inventory.transfer.applicant')"
+                width="100"
+              />
+              <el-table-column
+                prop="inWarehouseName"
+                :label="$t('inventory.transfer.inWarehouse')"
+                width="150"
+                show-overflow-tooltip
+              />
+              <el-table-column
+                prop="inTime"
+                :label="$t('inventory.transfer.inTime')"
+                width="160"
+              >
+                <template #default="{ row }">
+                  {{ formatDateTime(row.inTime) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -120,22 +153,15 @@
                     type="primary"
                     size="small"
                     @click="handleView(row)"
-                    class="btn-green"
+                    class="btn-blue"
                   >{{ $t('common.view') }}</el-button>
-
-                  <el-button
-                    v-if="row.status === 'DRAFT'"
-                    type="success"
-                    size="small"
-                    @click="handleSubmit(row)"
-                  >{{ $t('common.submit') }}</el-button>
 
                   <el-button
                     v-if="row.status === 'SUBMITTED'"
                     type="warning"
                     size="small"
                     @click="handleAudit(row)"
-                  >{{ $t('inventory.outbound.approve') }}</el-button>
+                  >{{ $t('inventory.transfer.approve') }}</el-button>
 
                   <el-button
                     v-if="row.status === 'DRAFT'"
@@ -169,8 +195,8 @@
             >
               <div class="mobile-card-header">
                 <div class="mobile-card-title">
-                  <i class="ri-logout-box-line"></i>
-                  <span>{{ item.outboundNo }}</span>
+                  <i class="ri-arrow-left-right-line"></i>
+                  <span>{{ item.transferNo }}</span>
                 </div>
                 <el-tag :type="getStatusTag(item.status)" size="small">
                   {{ getStatusText(item.status) }}
@@ -178,24 +204,27 @@
               </div>
               <div class="mobile-card-body">
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('inventory.outbound.types') }}:</span>
-                  <el-tag :type="getTypeTag(item.type)" size="small">
-                    {{ getTypeText(item.type) }}
+                  <span class="label">{{ $t('inventory.transfer.types') }}:</span>
+                  <el-tag :type="getTypeTag(item.transferType)" size="small">
+                    {{ getTypeText(item.transferType) }}
                   </el-tag>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('inventory.outbound.warehouse') }}:</span>
-                  <span class="value">{{ item.warehouseName }}</span>
+                  <span class="label">{{ $t('inventory.transfer.outWarehouse') }}:</span>
+                  <span class="value">{{ item.outWarehouseName }}</span>
                 </div>
                 <div class="mobile-card-row">
-                  <span class="label">{{ $t('inventory.outbound.orderDate') }}:</span>
-                  <span class="value">{{ formatDateTime(item.orderDate) }}</span>
+                  <span class="label">{{ $t('inventory.transfer.inWarehouse') }}:</span>
+                  <span class="value">{{ item.inWarehouseName }}</span>
+                </div>
+                <div class="mobile-card-row">
+                  <span class="label">{{ $t('inventory.transfer.applyDate') }}:</span>
+                  <span class="value">{{ formatDateTime(item.applyDate) }}</span>
                 </div>
               </div>
               <div class="mobile-card-footer">
                 <el-button size="small" @click.stop="handleView(item)">{{ $t('common.view') }}</el-button>
-                <el-button v-if="item.status === 'DRAFT'" type="primary" size="small" @click.stop="handleSubmit(item)">{{ $t('common.submit') }}</el-button>
-                <el-button v-if="item.status === 'SUBMITTED'" type="warning" size="small" @click.stop="handleAudit(item)">{{ $t('inventory.outbound.approve') }}</el-button>
+                <el-button v-if="item.status === 'SUBMITTED'" type="warning" size="small" @click.stop="handleAudit(item)">{{ $t('inventory.transfer.approve') }}</el-button>
               </div>
             </div>
 
@@ -213,6 +242,28 @@
         </InfoCard>
       </div>
     </div>
+
+    <el-dialog
+      v-model="auditDialogVisible"
+      :title="$t('inventory.transfer.approve')"
+      width="500px"
+    >
+      <el-form :model="auditForm" label-width="100px">
+        <el-form-item :label="$t('inventory.transfer.auditComment')">
+          <el-input
+            v-model="auditForm.auditComment"
+            type="textarea"
+            :rows="3"
+            :placeholder="$t('inventory.transfer.auditComment')"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="auditDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="danger" @click="handleAuditSubmit(false)">{{ $t('inventory.transfer.reject') }}</el-button>
+        <el-button type="success" @click="handleAuditSubmit(true)">{{ $t('inventory.transfer.approve') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -221,7 +272,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getOutboundList, submitOutbound, auditOutbound, deleteOutbound } from '@/api/inventory'
+import { getTransferList, deleteTransfer, auditTransfer, getWarehouseList } from '@/api/inventory'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import StatusTabs from '@/components/workflow/StatusTabs.vue'
 
@@ -230,7 +281,14 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
+const warehouseOptions = ref([])
 const activeTab = ref('all')
+const dateRange = ref([])
+const auditDialogVisible = ref(false)
+const currentTransfer = ref(null)
+const auditForm = reactive({
+  auditComment: ''
+})
 
 const tabConfig = [
   {
@@ -240,12 +298,12 @@ const tabConfig = [
   },
   {
     name: 'pendingApproval',
-    label: 'inventory.outbound.status.pending',
+    label: 'inventory.transfer.status.pending',
     icon: 'ri-time-line'
   },
   {
     name: 'approved',
-    label: 'inventory.outbound.status.approved',
+    label: 'inventory.transfer.status.approved',
     icon: 'ri-check-line'
   }
 ]
@@ -253,8 +311,11 @@ const tabConfig = [
 const queryParams = reactive({
   page: 1,
   pageSize: 20,
-  outboundNo: '',
-  type: '',
+  transferType: '',
+  startDate: '',
+  endDate: '',
+  outWarehouseId: '',
+  inWarehouseId: '',
   status: ''
 })
 
@@ -270,6 +331,16 @@ const formatDateTime = (dateTimeStr) => {
     return dateTimeStr.replace('T', ' ')
   }
   return dateTimeStr
+}
+
+const handleDateChange = (val) => {
+  if (val) {
+    queryParams.startDate = val[0]
+    queryParams.endDate = val[1]
+  } else {
+    queryParams.startDate = ''
+    queryParams.endDate = ''
+  }
 }
 
 const handleTabChange = (tabName) => {
@@ -292,13 +363,13 @@ const handleQuery = async () => {
       page: queryParams.page,
       pageSize: queryParams.pageSize
     }
-    const res = await getOutboundList(params)
+    const res = await getTransferList(params)
     if (res.rows) {
       tableData.value = res.rows || []
       pagination.total = res.total || 0
     }
   } catch (error) {
-    console.error('Failed to load outbound list:', error)
+    console.error('Failed to load transfer list:', error)
     ElMessage.error(t('common.loadFailed'))
   } finally {
     loading.value = false
@@ -307,38 +378,38 @@ const handleQuery = async () => {
 
 const handleReset = () => {
   queryParams.page = 1
-  queryParams.outboundNo = ''
-  queryParams.type = ''
+  queryParams.transferType = ''
+  queryParams.startDate = ''
+  queryParams.endDate = ''
+  queryParams.outWarehouseId = ''
+  queryParams.inWarehouseId = ''
+  dateRange.value = []
   handleTabChange(activeTab.value)
 }
 
 const handleAdd = () => {
-  router.push('/inventory/outbound/add')
+  router.push('/inventory/transfer/add')
 }
 
 const handleView = (row) => {
-  router.push(`/inventory/outbound/detail/${row.id}`)
-}
-
-const handleSubmit = async (row) => {
-  try {
-    await ElMessageBox.confirm(
-      t('common.confirmSubmit'),
-      t('common.warning'),
-      { type: 'warning' }
-    )
-    await submitOutbound({ id: row.id })
-    ElMessage.success(t('common.submitSuccess'))
-    handleQuery()
-  } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error(t('common.submitFailed'))
-    }
-  }
+  router.push(`/inventory/transfer/detail/${row.id}`)
 }
 
 const handleAudit = (row) => {
-  router.push(`/inventory/outbound/detail/${row.id}?mode=audit`)
+  currentTransfer.value = row
+  auditForm.auditComment = ''
+  auditDialogVisible.value = true
+}
+
+const handleAuditSubmit = async (approved) => {
+  try {
+    await auditTransfer(currentTransfer.value.id, approved, auditForm.auditComment)
+    ElMessage.success(t('common.submitSuccess'))
+    auditDialogVisible.value = false
+    handleQuery()
+  } catch (error) {
+    ElMessage.error(t('common.submitFailed'))
+  }
 }
 
 const handleDelete = async (row) => {
@@ -348,7 +419,7 @@ const handleDelete = async (row) => {
       t('common.warning'),
       { type: 'warning' }
     )
-    await deleteOutbound(row.id)
+    await deleteTransfer(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     handleQuery()
   } catch (error) {
@@ -356,6 +427,14 @@ const handleDelete = async (row) => {
       ElMessage.error(t('common.deleteFailed'))
     }
   }
+}
+
+const loadWarehouses = () => {
+  getWarehouseList({ pageSize: 1000 }).then(res => {
+    warehouseOptions.value = res.rows || []
+  }).catch(() => {
+    warehouseOptions.value = []
+  })
 }
 
 const getStatusTag = (status) => {
@@ -369,22 +448,28 @@ const getStatusTag = (status) => {
 }
 
 const getStatusText = (status) => {
-  return t(`inventory.outbound.status.${status.toLowerCase()}`)
+  return t(`inventory.transfer.status.${status.toLowerCase()}`)
 }
 
 const getTypeTag = (type) => {
   const map = {
-    'GENERAL': '',
-    'TRANSFER': 'warning'
+    'STOCK_WARNING': 'warning',
+    'FULL_TRANSFER': 'primary'
   }
   return map[type] || ''
 }
 
 const getTypeText = (type) => {
-  return t(`inventory.outbound.type.${type.toLowerCase()}`)
+  if (type === 'STOCK_WARNING') {
+    return t('inventory.transfer.type.stockWarning')
+  } else if (type === 'FULL_TRANSFER') {
+    return t('inventory.transfer.type.fullTransfer')
+  }
+  return type
 }
 
 onMounted(() => {
+  loadWarehouses()
   handleTabChange(activeTab.value)
 })
 </script>
@@ -392,8 +477,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 
-:deep(.page-header-green) {
-  background-color: #009A44 !important;
+:deep(.page-header-blue) {
+  background-color: #1890ff !important;
   color: white !important;
 
   .title, .subtitle, .ri-icon {
@@ -401,14 +486,14 @@ onMounted(() => {
   }
 }
 
-.btn-green {
-  background-color: #009A44;
-  border-color: #009A44;
+.btn-blue {
+  background-color: #1890ff;
+  border-color: #1890ff;
   color: white;
 
   &:hover {
-    background-color: #007a36;
-    border-color: #007a36;
+    background-color: #096dd9;
+    border-color: #096dd9;
   }
 }
 </style>

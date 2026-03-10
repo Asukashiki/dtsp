@@ -544,6 +544,7 @@ export const getInboundList = (params = {}) => {
     pageSize: params.pageSize || 10
   }
 
+  if (params.inboundNo) requestParams.inboundNo = params.inboundNo
   if (params.warehouseId) requestParams.warehouseId = params.warehouseId
   if (params.type !== undefined && params.type !== null && params.type !== '') {
     requestParams.type = params.type
@@ -586,27 +587,28 @@ export const getInboundDetail = (id) => {
  */
 export const createInbound = (data) => {
   const requestData = {
+    inboundNo: data.inboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     bizNo: data.bizNo,
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      productId: item.productId,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
       supplier: item.supplier,
-      planQty: item.planQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit,
       expireDate: item.expireDate
     })) : []
   }
 
   return agricultureRequest({
-    url: '/inventory/inbound',
+    url: '/inventory/inbound/create',
     method: 'post',
     data: requestData
   }).then(res => {
@@ -625,20 +627,22 @@ export const createInbound = (data) => {
 export const updateInbound = (id, data) => {
   const requestData = {
     id: id,
+    inboundNo: data.inboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     bizNo: data.bizNo,
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      inputId: item.inputId,
+      inputCode: item.inputCode,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
       supplier: item.supplier,
-      planQty: item.planQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit,
       expireDate: item.expireDate
     })) : []
@@ -693,20 +697,22 @@ export const auditInbound = (id, data) => {
  */
 export const submitInbound = (data) => {
   const requestData = {
+    inboundNo: data.inboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     bizNo: data.bizNo,
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      inputId: item.inputId,
+      inputCode: item.inputCode,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
       supplier: item.supplier,
-      planQty: item.planQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit,
       expireDate: item.expireDate
     })) : []
@@ -725,7 +731,9 @@ export const submitInbound = (data) => {
  */
 export const submitOutbound = (data) => {
   const requestData = {
+    outboundNo: data.outboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     receiverType: data.receiverType,
     receiver: data.receiver,
@@ -733,13 +741,13 @@ export const submitOutbound = (data) => {
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      inputId: item.inputId,
+      inputCode: item.inputCode,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
-      applyQty: item.applyQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit
     })) : []
   }
@@ -823,6 +831,7 @@ export const getOutboundList = (params = {}) => {
     pageSize: params.pageSize || 10
   }
 
+  if (params.outboundNo) requestParams.outboundNo = params.outboundNo
   if (params.warehouseId) requestParams.warehouseId = params.warehouseId
   if (params.type !== undefined && params.type !== null && params.type !== '') {
     requestParams.type = params.type
@@ -865,7 +874,9 @@ export const getOutboundDetail = (id) => {
  */
 export const createOutbound = (data) => {
   const requestData = {
+    outboundNo: data.outboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     receiverType: data.receiverType,
     receiver: data.receiver,
@@ -873,19 +884,19 @@ export const createOutbound = (data) => {
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      inputId: item.inputId,
+      inputCode: item.inputCode,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
-      applyQty: item.applyQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit
     })) : []
   }
 
   return agricultureRequest({
-    url: '/inventory/outbound',
+    url: '/inventory/outbound/create',
     method: 'post',
     data: requestData
   }).then(res => {
@@ -904,7 +915,9 @@ export const createOutbound = (data) => {
 export const updateOutbound = (id, data) => {
   const requestData = {
     id: id,
+    outboundNo: data.outboundNo,
     warehouseId: data.warehouseId,
+    warehouseName: data.warehouseName,
     type: data.type,
     receiverType: data.receiverType,
     receiver: data.receiver,
@@ -912,13 +925,13 @@ export const updateOutbound = (id, data) => {
     operator: data.operator,
     orderDate: data.orderDate,
     remark: data.remark,
-    items: data.items ? data.items.map(item => ({
-      productName: item.productName,
+    detailList: data.detailList ? data.detailList.map(item => ({
+      inputId: item.inputId,
+      inputCode: item.inputCode,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
-      applyQty: item.applyQty,
-      realQty: item.realQty,
+      qty: item.qty,
       unit: item.unit
     })) : []
   }
@@ -961,5 +974,111 @@ export const auditOutbound = (id, data) => {
       auditStatus: data.auditStatus,
       auditComment: data.auditComment
     }
+  })
+}
+
+// ==================== 调拨管理 API ====================
+
+/**
+ * 查询调拨单列表
+ * @param {Object} params - 查询参数
+ * @param {number} params.page - 页码
+ * @param {number} params.pageSize - 每页数量
+ * @param {string} params.transferType - 调拨类型
+ * @param {string} params.startDate - 开始日期
+ * @param {string} params.endDate - 结束日期
+ * @param {number} params.outWarehouseId - 调出仓库ID
+ * @param {number} params.inWarehouseId - 调入仓库ID
+ * @param {string} params.status - 状态
+ */
+export const getTransferList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.transferType) requestParams.transferType = params.transferType
+  if (params.startDate) requestParams.startDate = params.startDate
+  if (params.endDate) requestParams.endDate = params.endDate
+  if (params.outWarehouseId) requestParams.outWarehouseId = params.outWarehouseId
+  if (params.inWarehouseId) requestParams.inWarehouseId = params.inWarehouseId
+  if (params.status) requestParams.status = params.status
+
+  return agricultureRequest({
+    url: '/inventory/transfer/list',
+    method: 'get',
+    params: requestParams
+  })
+}
+
+/**
+ * 查询调拨单详情
+ * @param {number} id - 调拨单ID
+ */
+export const getTransferDetail = (id) => {
+  return agricultureRequest({
+    url: `/inventory/transfer/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 创建调拨单
+ * @param {Object} data - 调拨单数据
+ */
+export const createTransfer = (data) => {
+  return agricultureRequest({
+    url: '/inventory/transfer/create',
+    method: 'post',
+    data: toSnakeCase(data)
+  })
+}
+
+/**
+ * 更新调拨单
+ * @param {Object} data - 调拨单数据
+ */
+export const updateTransfer = (data) => {
+  return agricultureRequest({
+    url: '/inventory/transfer',
+    method: 'put',
+    data: toSnakeCase(data)
+  })
+}
+
+/**
+ * 删除调拨单
+ * @param {number} id - 调拨单ID
+ */
+export const deleteTransfer = (id) => {
+  return agricultureRequest({
+    url: `/inventory/transfer/${id}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 提交调拨单
+ * @param {number} id - 调拨单ID
+ */
+export const submitTransfer = (id) => {
+  return agricultureRequest({
+    url: '/inventory/transfer/submit',
+    method: 'post',
+    data: { id }
+  })
+}
+
+/**
+ * 审批调拨单
+ * @param {number} id - 调拨单ID
+ * @param {boolean} approved - 是否通过
+ * @param {string} auditComment - 审批意见
+ */
+export const auditTransfer = (id, approved, auditComment) => {
+  return agricultureRequest({
+    url: '/inventory/transfer/audit',
+    method: 'post',
+    data: { id, approved, auditComment }
   })
 }

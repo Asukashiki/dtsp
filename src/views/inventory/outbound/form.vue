@@ -25,7 +25,7 @@
               </el-col>
               <el-col :xs="24" :sm="12" :md="8">
                 <el-form-item :label="$t('inventory.outbound.warehouse')" prop="warehouseId">
-                  <el-select v-model="form.warehouseId" :placeholder="$t('inventory.outbound.warehouse')" style="width: 100%">
+                  <el-select v-model="form.warehouseId" :placeholder="$t('inventory.outbound.warehouse')" style="width: 100%" filterable @change="handleWarehouseChange">
                     <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
                   </el-select>
                 </el-form-item>
@@ -74,33 +74,30 @@
           <div class="items-list">
             <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item :label="$t('inventory.outbound.detail.product')" :prop="`detailList.${index}.inputId`" :rules="detailRules.inputId">
-                  <el-select
-                    v-model="item.inputId"
-                    :placeholder="$t('inventory.outbound.detail.product')"
-                    filterable
-                    clearable
-                    style="width: 100%"
-                    @change="(val) => handleInputChange(val, item)">
-                    <el-option
-                      v-for="input in inputList"
-                      :key="input.inputId"
-                      :label="input.inputName"
-                      :value="input.inputId"
-                    />
+                <el-form-item :label="$t('inventory.outbound.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
+                  <el-select v-model="item.mainCategory" :placeholder="$t('inventory.outbound.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
+                    <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('inventory.outbound.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
+                  <el-select v-model="item.subCategory" :placeholder="$t('inventory.outbound.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategory">
+                    <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('inventory.outbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
                   <el-input v-model="item.batchNo" :placeholder="$t('inventory.outbound.detail.batchNo')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('inventory.outbound.detail.applyQty')" :prop="`detailList.${index}.applyQty`" :rules="detailRules.applyQty">
-                  <el-input-number v-model="item.applyQty" :min="0" :precision="2" :placeholder="$t('inventory.outbound.detail.applyQty')" style="width: 100%" />
+                <el-form-item :label="$t('inventory.outbound.detail.supplier')" :prop="`detailList.${index}.supplier`">
+                  <el-input v-model="item.supplier" :placeholder="$t('inventory.outbound.detail.supplier')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('inventory.outbound.detail.realQty')" :prop="`detailList.${index}.realQty`" :rules="detailRules.realQty">
-                  <el-input-number v-model="item.realQty" :min="0" :precision="2" :placeholder="$t('inventory.outbound.detail.realQty')" style="width: 100%" />
+                <el-form-item :label="$t('inventory.outbound.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
+                  <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.outbound.detail.qty')" style="width: 100%" />
                 </el-form-item>
                 <el-form-item :label="$t('inventory.outbound.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
                   <el-input v-model="item.unit" :placeholder="$t('inventory.outbound.detail.unit')" clearable />
+                </el-form-item>
+                <el-form-item :label="$t('inventory.outbound.detail.expireDate')" :prop="`detailList.${index}.expireDate`">
+                  <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.outbound.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" />
                 </el-form-item>
               </div>
               <div class="item-actions">
@@ -132,7 +129,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addOutbound, getWarehouseList, getProductList } from '@/api/inventory'
+import { addOutbound, getWarehouseList } from '@/api/inventory'
+import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 
 const router = useRouter()
@@ -141,7 +139,8 @@ const { t } = useI18n()
 const formRef = ref(null)
 const submitting = ref(false)
 const warehouseOptions = ref([])
-const inputList = ref([])
+const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
 
 const generateOutboundNo = () => {
   const now = new Date()
@@ -156,6 +155,7 @@ const form = reactive({
   outboundNo: '',
   type: '',
   warehouseId: '',
+  warehouseName: '',
   receiverType: '',
   receiver: '',
   bizNo: '',
@@ -164,12 +164,14 @@ const form = reactive({
   remark: '',
   detailList: [
     {
-      inputId: '',
-      inputCode: '',
+      productId: '',
+      mainCategory: '',
+      subCategory: '',
       batchNo: '',
-      applyQty: 0,
-      realQty: 0,
-      unit: ''
+      supplier: '',
+      qty: 0,
+      unit: '',
+      expireDate: ''
     }
   ]
 })
@@ -181,10 +183,19 @@ const rules = {
 }
 
 const detailRules = {
-  inputId: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  applyQty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  realQty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+  mainCategory: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  subCategory: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  qty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   unit: [{ required: true, message: t('common.required'), trigger: 'blur' }]
+}
+
+const getSubCategoryOptions = (mainCategory) => {
+  if (!mainCategory) return []
+  return subCategoryOptions.value.filter(item => item.parentValue === mainCategory)
+}
+
+const handleMainCategoryChange = (val, row) => {
+  row.subCategory = ''
 }
 
 const handleBack = () => {
@@ -193,12 +204,14 @@ const handleBack = () => {
 
 const handleAddDetail = () => {
   form.detailList.push({
-    inputId: '',
-    inputCode: '',
+    productId: '',
+    mainCategory: '',
+    subCategory: '',
     batchNo: '',
-    applyQty: 0,
-    realQty: 0,
-    unit: ''
+    supplier: '',
+    qty: 0,
+    unit: '',
+    expireDate: ''
   })
 }
 
@@ -206,15 +219,10 @@ const handleDeleteDetail = (index) => {
   form.detailList.splice(index, 1)
 }
 
-const handleInputChange = (inputId, row) => {
-  const input = inputList.value.find(item => item.inputId === inputId)
-  if (input) {
-    row.inputId = input.inputId
-    row.inputCode = input.inputSku || ''
-    row.unit = input.unit || '件'
-  } else {
-    row.inputCode = ''
-    row.unit = ''
+const handleWarehouseChange = (val) => {
+  const warehouse = warehouseOptions.value.find(item => item.id === val)
+  if (warehouse) {
+    form.warehouseName = warehouse.warehouseName
   }
 }
 
@@ -226,12 +234,23 @@ const loadWarehouses = () => {
   })
 }
 
-const loadProducts = () => {
-  getProductList({ pageSize: 1000 }).then(res => {
-    inputList.value = res.rows || []
-  }).catch(() => {
-    inputList.value = []
-  })
+const loadDictionaries = async () => {
+  try {
+    const mainRes = await getDicts('inventory_main_category')
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: item.dictLabel,
+      value: item.dictValue
+    }))
+
+    const subRes = await getDicts('inventory_sub_category')
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: item.dictLabel,
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
+  } catch (e) {
+    console.error('Failed to load dictionaries', e)
+  }
 }
 
 const handleSubmit = () => {
@@ -241,7 +260,7 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item => !item.inputId || !item.unit)
+      const hasEmptyDetail = form.detailList.some(item => !item.mainCategory || !item.subCategory || !item.unit)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
@@ -262,7 +281,7 @@ const handleSubmit = () => {
 onMounted(() => {
   form.outboundNo = generateOutboundNo()
   loadWarehouses()
-  loadProducts()
+  loadDictionaries()
 })
 </script>
 
