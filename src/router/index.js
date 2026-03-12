@@ -39,6 +39,8 @@ const routeWhitelist = [
   '/input/demand/audit-district',
   '/input/demand/audit-state',
   '/input/demand/audit-town',
+  '/inventory/stock-check-review',
+  '/inventory/stock-check-review/review'
 ]
 
 const routes = [
@@ -196,7 +198,7 @@ const routes = [
         meta: { title: 'research.menu.breedingBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
-        {
+      {
         path: 'breeding-data/batch/audit/:dataId',
         name: 'BreedingBatchAudit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
@@ -2008,7 +2010,43 @@ const routes = [
         path: 'outbound/detail/:id',
         name: 'InventoryOutboundDetail',
         component: () => import('../views/inventory/outbound/detail.vue'),
-        meta: { title: 'inventory.outbound.details', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.outbound.detail', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check',
+        name: 'StockCheckList',
+        component: () => import('../views/inventory/stock-check/index.vue'),
+        meta: { title: 'stockCheck.title', requiresAuth: true }
+      },
+      {
+        path: 'stock-check/form',
+        name: 'StockCheckAdd',
+        component: () => import('../views/inventory/stock-check/form.vue'),
+        meta: { title: 'stockCheck.addTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check/form/:id',
+        name: 'StockCheckEdit',
+        component: () => import('../views/inventory/stock-check/form.vue'),
+        meta: { title: 'stockCheck.editTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check/detail/:id',
+        name: 'StockCheckDetail',
+        component: () => import('../views/inventory/stock-check/detail.vue'),
+        meta: { title: 'stockCheck.detailTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check-review',
+        name: 'StockCheckReviewList',
+        component: () => import('../views/inventory/stock-check-review/index.vue'),
+        meta: { title: 'stockCheckReview.title', requiresAuth: true }
+      },
+      {
+        path: 'stock-check-review/review/:id',
+        name: 'StockCheckReview',
+        component: () => import('../views/inventory/stock-check-review/review.vue'),
+        meta: { title: 'stockCheckReview.reviewTitle', activeMenu: '/inventory/stock-check-review', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'transfer',

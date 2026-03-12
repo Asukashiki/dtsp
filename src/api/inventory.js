@@ -52,6 +52,30 @@ export const getWarehouseOptions = (params = {}) => {
   })
 }
 
+export const getWarehouseManageList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.warehouseName) requestParams.warehouseName = params.warehouseName
+  if (params.status !== undefined && params.status !== null && params.status !== '') {
+    requestParams.status = params.status
+  }
+  if (params.organCode) requestParams.organCode = params.organCode
+
+  return agricultureRequest({
+    url: '/inventory/warehouse-manage/list',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    if (res.data && res.data.list) {
+      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}
+
 /**
  * 查询仓库详情
  * @param {number} warehouseId - 仓库ID
