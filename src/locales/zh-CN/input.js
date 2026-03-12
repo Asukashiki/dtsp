@@ -652,6 +652,11 @@ export default {
         enabled: '启用',
         disabled: '停用'
       },
+      operatingStatusOptions: {
+        active: '启用',
+        inactive: '停用',
+        maintenance: '维护中'
+      },
       actions: {
         view: '查看',
         edit: '编辑',
@@ -682,20 +687,30 @@ export default {
       deleteSuccess: '删除成功',
       addSuccess: '新增成功',
       editSuccess: '编辑成功',
+      generateCodeFailed: '生成仓库编码失败',
       systemInfo: '系统信息',
+      warning: {
+        title: '预警配置',
+        maxStock: '库存上限',
+        maxStockRequired: '请输入库存上限',
+        saveSuccess: '预警配置已保存'
+      },
+      actions: {
+        warningConfig: '预警配置'
+      },
       form: {
         warehouseCode: '仓库编码',
         warehouseName: '仓库名称',
         type: '仓库类型',
-        storeType: '存储形态',
-        orgName: '归属组织',
+        storeType: '存储类型',
+        orgName: '所属机构',
         adminLevel: '行政层级',
         parentId: '上级仓库',
         parentWarehouseName: '上级仓库',
         location: '地理位置',
         capacity: '存储容量',
         address: '详细地址',
-        status: '状态',
+        status: '运营状态',
         remark: '备注',
         createPeople: '创建人',
         createTime: '创建时间',
@@ -703,49 +718,51 @@ export default {
         updateTime: '更新时间'
       },
       placeholder: {
-        warehouseCode: '请输入仓库编码',
+        warehouseCode: '选择仓库类型后自动生成',
         warehouseName: '请输入仓库名称',
         type: '请选择仓库类型',
-        storeType: '请选择存储形态',
-        orgName: '请输入归属组织',
+        storeType: '请选择存储类型',
+        orgName: '请选择所属机构',
         adminLevel: '请选择行政层级',
-        parentId: '请选择上级仓库（选填）',
+        parentId: '请选择上级仓库',
         location: '请输入地理位置',
         capacity: '请输入存储容量',
         address: '请输入详细地址',
-        status: '请选择状态',
+        status: '请选择运营状态',
         remark: '请输入备注信息（选填）'
       },
       rules: {
         warehouseCodeRequired: '请输入仓库编码',
         warehouseNameRequired: '请输入仓库名称',
         typeRequired: '请选择仓库类型',
-        storeTypeRequired: '请选择存储形态',
-        orgNameRequired: '请输入归属组织',
+        storeTypeRequired: '请选择存储类型',
+        orgNameRequired: '请选择所属机构',
         adminLevelRequired: '请选择行政层级',
+        parentIdRequired: '请选择上级仓库',
         locationRequired: '请输入地理位置',
         capacityRequired: '请输入存储容量',
-        statusRequired: '请选择状态'
+        statusRequired: '请选择运营状态'
       },
       columns: {
         warehouseCode: '仓库编码',
         warehouseName: '仓库名称',
         type: '仓库类型',
-        storeType: '存储形态',
-        orgName: '归属组织',
+        storeType: '存储类型',
+        orgName: '所属机构',
         adminLevel: '行政层级',
         parentWarehouseName: '上级仓库',
         location: '地理位置',
         address: '详细地址',
         capacity: '存储容量',
-        status: '状态',
+        maxStock: '库存上限',
+        operatingStatus: '运营状态',
         updateTime: '更新时间',
         actions: '操作'
       },
       adminLevelOptions: {
-        province: '省级',
-        city: '市级',
-        county: '县级'
+        province: '省',
+        city: '市',
+        county: '县'
       },
       storageTypeOptions: {
         fertilizer: '化肥',
@@ -759,7 +776,7 @@ export default {
         cooperative: '合作社',
         ose: '奥罗米亚种子企业'
       },
-      operationStatusOptions: {
+      operatingStatusOptions: {
         active: '活跃',
         inactive: '停用',
         maintenance: '维护中'

@@ -69,3 +69,11 @@ export const deleteWarehouseManage = (id) => {
     method: 'delete'
   })
 }
+
+export const generateWarehouseCode = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-manage/generate-code',
+    method: 'post',
+    data
+  })
+}

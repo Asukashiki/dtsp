@@ -664,6 +664,11 @@ export default {
         enabled: 'Enabled',
         disabled: 'Disabled'
       },
+      operatingStatusOptions: {
+        active: 'Enabled',
+        inactive: 'Disabled',
+        maintenance: 'Under Maintenance'
+      },
       actions: {
         view: 'View',
         edit: 'Edit',
@@ -694,7 +699,17 @@ export default {
       deleteSuccess: 'Deleted successfully',
       addSuccess: 'Added successfully',
       editSuccess: 'Edited successfully',
+      generateCodeFailed: 'Failed to generate warehouse code',
       systemInfo: 'System Information',
+      warning: {
+        title: 'Warning Config',
+        maxStock: 'Max Stock',
+        maxStockRequired: 'Please enter max stock',
+        saveSuccess: 'Warning config saved'
+      },
+      actions: {
+        warningConfig: 'Warning Config'
+      },
       form: {
         warehouseCode: 'Warehouse Code',
         warehouseName: 'Warehouse Name',
@@ -707,7 +722,7 @@ export default {
         location: 'Geographic Location',
         capacity: 'Storage Capacity',
         address: 'Address',
-        status: 'Status',
+        status: 'Operating Status',
         remark: 'Remark',
         createPeople: 'Creator',
         createTime: 'Creation Time',
@@ -715,17 +730,17 @@ export default {
         updateTime: 'Update Time'
       },
       placeholder: {
-        warehouseCode: 'Enter warehouse code',
+        warehouseCode: 'Auto-generated after selecting warehouse type',
         warehouseName: 'Enter warehouse name',
         type: 'Select warehouse type',
         storeType: 'Select storage type',
-        orgName: 'Enter owning organization',
+        orgName: 'Select owning organization',
         adminLevel: 'Select administrative level',
-        parentId: 'Select parent warehouse (optional)',
+        parentId: 'Select parent warehouse',
         location: 'Enter geographic location',
         capacity: 'Enter storage capacity',
         address: 'Enter address',
-        status: 'Select status',
+        status: 'Select operating status',
         remark: 'Enter remarks (optional)'
       },
       rules: {
@@ -733,11 +748,12 @@ export default {
         warehouseNameRequired: 'Please enter warehouse name',
         typeRequired: 'Please select warehouse type',
         storeTypeRequired: 'Please select storage type',
-        orgNameRequired: 'Please enter owning organization',
+        orgNameRequired: 'Please select owning organization',
         adminLevelRequired: 'Please select administrative level',
+        parentIdRequired: 'Please select parent warehouse',
         locationRequired: 'Please enter geographic location',
         capacityRequired: 'Please enter storage capacity',
-        statusRequired: 'Please select status'
+        statusRequired: 'Please select operating status'
       },
       columns: {
         warehouseCode: 'Warehouse Code',
@@ -750,7 +766,8 @@ export default {
         location: 'Geographic Location',
         address: 'Address',
         capacity: 'Storage Capacity',
-        status: 'Status',
+        maxStock: 'Max Stock',
+        operatingStatus: 'Operating Status',
         updateTime: 'Update Time',
         actions: 'Actions'
       },
@@ -771,7 +788,7 @@ export default {
         cooperative: 'Cooperative',
         ose: 'Oromia Seed Enterprise'
       },
-      operationStatusOptions: {
+      operatingStatusOptions: {
         active: 'Active',
         inactive: 'Inactive',
         maintenance: 'Under Maintenance'
