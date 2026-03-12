@@ -14,6 +14,7 @@ export default {
   reset: 'Reset',
   submit: 'Submit',
   confirmSubmit: 'Confirm Submit',
+  auditSuccess:'Audit Success',
   back: 'Back',
   loading: 'Loading...',
   more: 'View More',

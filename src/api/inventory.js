@@ -692,8 +692,7 @@ export const updateInbound = (id, data) => {
     orderDate: data.orderDate,
     remark: data.remark,
     detailList: data.detailList ? data.detailList.map(item => ({
-      inputId: item.inputId,
-      inputCode: item.inputCode,
+      productId: item.productId,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
@@ -828,6 +827,29 @@ export const getProductList = (params = {}) => {
   })
 }
 
+/**
+ * Get inventory product list (inventory_product)
+ * @param {Object} params - query params
+ * @param {number} params.pageNum - page number
+ * @param {number} params.pageSize - page size
+ * @param {string|number} params.parentId - parent product id (0 for top-level)
+ * @param {string} params.status - status
+ */
+export const getInventoryProductList = (params = {}) => {
+  const requestParams = {
+    pageNum: params.pageNum || 1,
+    pageSize: params.pageSize || 10000
+  }
+  if (params.parentId !== undefined && params.parentId !== null) requestParams.parentId = params.parentId
+  if (params.status !== undefined && params.status !== null && params.status !== '') requestParams.status = params.status
+
+  return agricultureRequest({
+    url: '/inventory/product-manage/list',
+    method: 'get',
+    params: requestParams
+  })
+}
+
 // ==================== 出库管理 API (新) ====================
 
 /**
@@ -894,8 +916,7 @@ export const createOutbound = (data) => {
     orderDate: data.orderDate,
     remark: data.remark,
     detailList: data.detailList ? data.detailList.map(item => ({
-      inputId: item.inputId,
-      inputCode: item.inputCode,
+      productId: item.productId,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,
@@ -937,8 +958,7 @@ export const updateOutbound = (id, data) => {
     orderDate: data.orderDate,
     remark: data.remark,
     detailList: data.detailList ? data.detailList.map(item => ({
-      inputId: item.inputId,
-      inputCode: item.inputCode,
+      productId: item.productId,
       mainCategory: item.mainCategory,
       subCategory: item.subCategory,
       batchNo: item.batchNo,

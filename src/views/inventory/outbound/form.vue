@@ -95,7 +95,7 @@
                     <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.outbound.detail.qty')" style="width: 100%" />
                   </el-form-item>
                   <el-form-item :label="$t('inventory.outbound.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
-                    <el-select v-model="item.unit" :placeholder="$t('inventory.outbound.detail.unit')" style="width: 100%">
+                    <el-select v-model="item.unit" :placeholder="$t('inventory.outbound.detail.unit')" style="width: 100%" disabled>
                       <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
@@ -200,10 +200,6 @@ const detailRules = {
   qty: [{ required: true, message: 'This field is required', trigger: 'blur' }],
   unit: [{ required: true, message: 'This field is required', trigger: 'blur' }]
 }
-],
-  qty: [{ required: true, message: '璇ラ」蹇呭～', trigger: 'blur' }],
-  unit: [{ required: true, message: '璇ラ」蹇呭～', trigger: 'blur' }]
-}
 
 const getSubCategoryOptions = (mainCategory) => {
   if (!mainCategory) return []
@@ -240,25 +236,26 @@ const handleWarehouseChange = async (val) => {
   if (warehouse) {
     form.warehouseName = warehouse.warehouseName
   }
-  
-  // 娓呯┖鎵€鏈夋槑缁嗙殑鎵规鍙峰拰鐩稿叧瀛楁
+
   form.detailList.forEach(item => {
     item.batchNo = ''
     item.mainCategory = ''
     item.subCategory = ''
     item.expireDate = ''
+    item.unit = ''
+    item.qty = null
+    item.productId = ''
   })
-  
-  // 鍔犺浇璇ヤ粨搴撶殑鎵规鍙峰垪琛?  await loadBatchesByWarehouse(val)
+
+  await loadBatchesByWarehouse(val)
 }
 
-// 鍔犺浇鎸囧畾浠撳簱鐨勬壒娆″彿鍒楄〃
 const loadBatchesByWarehouse = async (warehouseCode) => {
   if (!warehouseCode) {
     batchOptions.value = []
     return
   }
-  
+
   try {
     const res = await getBatchesByWarehouse(warehouseCode)
     batchOptions.value = (res.data || []).map(item => ({
@@ -268,7 +265,9 @@ const loadBatchesByWarehouse = async (warehouseCode) => {
       subCategory: item.subCategory,
       expireDate: item.expireDate,
       supplier: item.supplier,
-      unit: item.unit
+      unit: item.unit,
+      qty: item.qty,
+      productId: item.productId
     }))
   } catch (e) {
     console.error('Failed to load batches', e)
@@ -276,11 +275,11 @@ const loadBatchesByWarehouse = async (warehouseCode) => {
   }
 }
 
-// 澶勭悊鎵规鍙峰彉鏇?const handleBatchChange = async (batchNo, item) => {
+const handleBatchChange = async (batchNo, item) => {
   if (!batchNo || !form.warehouseCode) {
     return
   }
-  
+
   // 浠庢壒娆￠€夐」涓煡鎵惧搴旂殑鎵规淇℃伅
   const batchInfo = batchOptions.value.find(b => b.value === batchNo)
   if (batchInfo) {
@@ -289,6 +288,8 @@ const loadBatchesByWarehouse = async (warehouseCode) => {
     item.expireDate = batchInfo.expireDate
     item.supplier = batchInfo.supplier || ''
     item.unit = batchInfo.unit || ''
+    item.qty = batchInfo.qty != null ? batchInfo.qty : item.qty
+    item.productId = batchInfo.productId || ''
   }
 }
 
@@ -341,11 +342,11 @@ const loadOutboundData = async (id) => {
       form.operator = data.operator
       form.orderDate = data.orderDate ? new Date(data.orderDate) : new Date()
       form.remark = data.remark
-      
-      // 鍔犺浇璇ヤ粨搴撶殑鎵规鍙峰垪琛?      if (data.warehouseCode) {
+
+      if (data.warehouseCode) {
         await loadBatchesByWarehouse(data.warehouseCode)
       }
-      
+
       if (data.detailList && data.detailList.length > 0) {
         form.detailList = data.detailList.map(item => ({
           id: item.id,
@@ -411,7 +412,7 @@ const handleSubmit = () => {
 onMounted(async () => {
   await loadWarehouses()
   await loadDictionaries()
-  
+
   if (isEdit.value) {
     await loadOutboundData(route.params.id)
   } else {
@@ -480,6 +481,5 @@ onMounted(async () => {
   }
 }
 </style>
-
 
 

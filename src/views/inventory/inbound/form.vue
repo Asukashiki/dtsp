@@ -59,14 +59,14 @@
             <div class="items-list">
               <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
                 <div class="item-fields">
-                  <el-form-item :label="$t('inventory.inbound.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
-                    <el-select v-model="item.mainCategory" :placeholder="$t('inventory.inbound.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
+                  <el-form-item :label="$t('inventory.inbound.detail.mainCategory')" :prop="`detailList.${index}.mainCategoryId`" :rules="detailRules.mainCategoryId">
+                    <el-select v-model="item.mainCategoryId" :placeholder="$t('inventory.inbound.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
                       <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item :label="$t('inventory.inbound.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
-                    <el-select v-model="item.subCategory" :placeholder="$t('inventory.inbound.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategory">
-                      <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
+                  <el-form-item :label="$t('inventory.inbound.detail.subCategory')" :prop="`detailList.${index}.subCategoryId`" :rules="detailRules.subCategoryId">
+                    <el-select v-model="item.subCategoryId" :placeholder="$t('inventory.inbound.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategoryId" @change="(val) => handleSubCategoryChange(val, item)">
+                      <el-option v-for="dict in getSubCategoryOptions(item.mainCategoryId)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
                   <el-form-item :label="$t('inventory.inbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
@@ -117,7 +117,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addInbound, getInboundDetail, updateInbound, getWarehouseOptions } from '@/api/inventory'
+import { addInbound, getInboundDetail, updateInbound, getWarehouseOptions, getInventoryProductList } from '@/api/inventory'
 import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { useUserStore } from '@/store/user'
@@ -133,6 +133,7 @@ const submitting = ref(false)
 const warehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const productMap = ref(new Map())
 const unitOptions = ref([])
 
 const isEdit = computed(() => !!route.params.id)
@@ -160,7 +161,9 @@ const form = reactive({
     {
       productId: '',
       mainCategory: '',
+      mainCategoryId: '',
       subCategory: '',
+      subCategoryId: '',
       batchNo: '',
       supplier: '',
       qty: null,
@@ -177,19 +180,36 @@ const rules = {
 }
 
 const detailRules = {
-  mainCategory: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  subCategory: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  mainCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  subCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
   qty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   unit: [{ required: true, message: t('common.required'), trigger: 'blur' }]
 }
 
-const getSubCategoryOptions = (mainCategory) => {
-  if (!mainCategory) return []
-  return subCategoryOptions.value.filter(item => item.parentValue === mainCategory)
+const getSubCategoryOptions = (mainCategoryId) => {
+  if (!mainCategoryId) return []
+  return subCategoryOptions.value.filter(item => item.parentId === mainCategoryId)
 }
 
 const handleMainCategoryChange = (val, row) => {
+  row.subCategoryId = ''
   row.subCategory = ''
+  row.productId = ''
+  row.unit = ''
+  const mainProduct = productMap.value.get(val)
+  row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || '') : ''
+}
+
+const handleSubCategoryChange = (val, row) => {
+  const subProduct = productMap.value.get(val)
+  if (subProduct) {
+    row.productId = subProduct.id
+    row.unit = subProduct.unit || row.unit
+    row.subCategory = subProduct.subCategory || subProduct.productName || row.subCategory
+    const mainProduct = productMap.value.get(subProduct.parentId)
+    row.mainCategoryId = subProduct.parentId || row.mainCategoryId
+    row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || row.mainCategory) : row.mainCategory
+  }
 }
 
 const handleBack = () => {
@@ -200,7 +220,9 @@ const handleAddDetail = () => {
   form.detailList.push({
     productId: '',
     mainCategory: '',
+    mainCategoryId: '',
     subCategory: '',
+    subCategoryId: '',
     batchNo: '',
     supplier: '',
     qty: null,
@@ -230,19 +252,6 @@ const loadWarehouses = () => {
 
 const loadDictionaries = async () => {
   try {
-    const mainRes = await getDicts('inventory_main_category')
-    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
-      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
-      value: item.dictValue
-    }))
-
-    const subRes = await getDicts('inventory_sub_category')
-    subCategoryOptions.value = (subRes.data || []).map(item => ({
-      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
-      value: item.dictValue,
-      parentValue: item.remark
-    }))
-
     const unitRes = await getDicts('inventory_unit')
     unitOptions.value = (unitRes.data || []).map(item => ({
       label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
@@ -250,6 +259,63 @@ const loadDictionaries = async () => {
     }))
   } catch (e) {
     console.error('Failed to load dictionaries', e)
+  }
+}
+
+const syncDetailProductRefs = () => {
+  if (!form.detailList || form.detailList.length === 0) return
+  const map = productMap.value
+  form.detailList = form.detailList.map(item => {
+    const next = { ...item }
+    if (next.productId && map.has(next.productId)) {
+      const subProduct = map.get(next.productId)
+      next.subCategoryId = subProduct.id
+      next.subCategory = subProduct.subCategory || subProduct.productName || next.subCategory
+      next.unit = next.unit || subProduct.unit || ''
+      if (subProduct.parentId && map.has(subProduct.parentId)) {
+        const mainProduct = map.get(subProduct.parentId)
+        next.mainCategoryId = subProduct.parentId
+        next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+      }
+    } else if (next.subCategoryId && map.has(next.subCategoryId)) {
+      const subProduct = map.get(next.subCategoryId)
+      next.productId = subProduct.id
+      next.subCategory = subProduct.subCategory || subProduct.productName || next.subCategory
+      next.unit = next.unit || subProduct.unit || ''
+      if (subProduct.parentId && map.has(subProduct.parentId)) {
+        const mainProduct = map.get(subProduct.parentId)
+        next.mainCategoryId = subProduct.parentId
+        next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+      }
+    } else if (next.mainCategoryId && map.has(next.mainCategoryId)) {
+      const mainProduct = map.get(next.mainCategoryId)
+      next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+    }
+    return next
+  })
+}
+
+const loadProducts = async () => {
+  try {
+    const res = await getInventoryProductList({ pageNum: 1, pageSize: 10000, status: '0' })
+    const list = res.rows || res.data?.list || res.data || []
+    const map = new Map()
+    list.forEach(item => {
+      if (item && item.id) map.set(item.id, item)
+    })
+    productMap.value = map
+    mainCategoryOptions.value = list
+      .filter(item => item && (!item.parentId || item.parentId === 0))
+      .map(item => ({ label: item.mainCategory || item.productName, value: item.id }))
+    subCategoryOptions.value = list
+      .filter(item => item && item.parentId && item.parentId !== 0)
+      .map(item => ({ label: item.subCategory || item.productName, value: item.id, parentId: item.parentId, unit: item.unit }))
+    syncDetailProductRefs()
+  } catch (e) {
+    console.error('Failed to load products', e)
+    mainCategoryOptions.value = []
+    subCategoryOptions.value = []
+    productMap.value = new Map()
   }
 }
 
@@ -272,13 +338,16 @@ const loadInboundData = async (id) => {
           id: item.id,
           productId: item.productId,
           mainCategory: item.mainCategory,
+          mainCategoryId: '',
           subCategory: item.subCategory,
+          subCategoryId: '',
           batchNo: item.batchNo,
           supplier: item.supplier,
           qty: item.qty,
           unit: item.unit,
           expireDate: item.expireDate
         }))
+        syncDetailProductRefs()
       }
     }
   } catch (e) {
@@ -306,14 +375,26 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item => !item.mainCategory || !item.subCategory || !item.unit || item.qty === null || item.qty === undefined)
+      const hasEmptyDetail = form.detailList.some(item => !item.mainCategoryId || !item.subCategoryId || !item.unit || item.qty === null || item.qty === undefined)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
       }
       submitting.value = true
+      const mappedDetailList = form.detailList.map(item => {
+        const mainProduct = productMap.value.get(item.mainCategoryId)
+        const subProduct = productMap.value.get(item.subCategoryId)
+        return {
+          ...item,
+          productId: subProduct?.id || item.productId,
+          mainCategory: mainProduct?.mainCategory || mainProduct?.productName || item.mainCategory || '',
+          subCategory: subProduct?.subCategory || subProduct?.productName || item.subCategory || '',
+          unit: item.unit || subProduct?.unit || ''
+        }
+      })
       const submitData = {
         ...form,
+        detailList: mappedDetailList,
         orderDate: form.orderDate ? formatDateTime(form.orderDate) : ''
       }
       const apiCall = isEdit.value ? updateInbound(form.id, submitData) : addInbound(submitData)
@@ -331,6 +412,7 @@ const handleSubmit = () => {
 
 onMounted(async () => {
   await loadWarehouses()
+  await loadProducts()
   await loadDictionaries()
 
   if (isEdit.value) {
