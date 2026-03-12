@@ -22,6 +22,8 @@ export default {
     auditBy: 'Audit By',
     auditTime: 'Audit Time',
     auditComment: 'Audit Comment',
+    auditInfo: 'Audit Info',
+    auditCommentPlaceholder: 'Please enter audit comment',
     approve: 'Approve',
     reject: 'Reject',
     type: {
@@ -52,7 +54,7 @@ export default {
     subtitle: 'Manage outbound orders',
     list: 'Outbound List',
     add: 'Add Outbound',
-    detail: 'Outbound Detail',
+    details: 'Outbound Detail',
     no: 'Outbound No',
     type: 'Type',
     types: 'Type',
@@ -71,6 +73,8 @@ export default {
     auditBy: 'Audit By',
     auditTime: 'Audit Time',
     auditComment: 'Audit Comment',
+    auditInfo: 'Audit Info',
+    auditCommentPlaceholder: 'Please enter audit comment',
     approve: 'Approve',
     reject: 'Reject',
     type: {
@@ -140,12 +144,16 @@ export default {
       rejected: 'Rejected'
     },
     detail: {
+      mainCategory: 'Main Category',
+      subCategory: 'Sub Category',
       product: 'Product',
       batchNo: 'Batch No',
       supplier: 'Supplier',
+      qty: 'Quantity',
       applyQty: 'Apply Qty',
       realQty: 'Real Qty',
-      unit: 'Unit'
+      unit: 'Unit',
+      expireDate: 'Expire Date'
     },
     search: {
       type: 'Transfer Type',

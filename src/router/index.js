@@ -1975,10 +1975,16 @@ const routes = [
         meta: { title: 'inventory.inbound.add', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'inbound/edit/:id',
+        name: 'InventoryInboundEdit',
+        component: () => import('../views/inventory/inbound/form.vue'),
+        meta: { title: 'inventory.inbound.edit', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'inbound/detail/:id',
         name: 'InventoryInboundDetail',
         component: () => import('../views/inventory/inbound/detail.vue'),
-        meta: { title: 'inventory.inbound.detail', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.inbound.details', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'outbound',
@@ -1993,10 +1999,16 @@ const routes = [
         meta: { title: 'inventory.outbound.add', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'outbound/edit/:id',
+        name: 'InventoryOutboundEdit',
+        component: () => import('../views/inventory/outbound/form.vue'),
+        meta: { title: 'inventory.outbound.edit', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'outbound/detail/:id',
         name: 'InventoryOutboundDetail',
         component: () => import('../views/inventory/outbound/detail.vue'),
-        meta: { title: 'inventory.outbound.detail', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.outbound.details', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'transfer',
@@ -2009,6 +2021,12 @@ const routes = [
         name: 'InventoryTransferAdd',
         component: () => import('../views/inventory/transfer/form.vue'),
         meta: { title: 'inventory.transfer.add', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'transfer/edit/:id',
+        name: 'InventoryTransferEdit',
+        component: () => import('../views/inventory/transfer/form.vue'),
+        meta: { title: 'inventory.transfer.edit', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'transfer/detail/:id',

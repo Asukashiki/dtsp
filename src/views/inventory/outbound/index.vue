@@ -114,7 +114,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="250" fixed="right">
                 <template #default="{ row }">
                   <el-button
                     type="primary"
@@ -122,6 +122,13 @@
                     @click="handleView(row)"
                     class="btn-green"
                   >{{ $t('common.view') }}</el-button>
+
+                  <el-button
+                    v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'"
+                    type="primary"
+                    size="small"
+                    @click="handleEdit(row)"
+                  >{{ $t('common.edit') }}</el-button>
 
                   <el-button
                     v-if="row.status === 'DRAFT'"
@@ -194,7 +201,8 @@
               </div>
               <div class="mobile-card-footer">
                 <el-button size="small" @click.stop="handleView(item)">{{ $t('common.view') }}</el-button>
-                <el-button v-if="item.status === 'DRAFT'" type="primary" size="small" @click.stop="handleSubmit(item)">{{ $t('common.submit') }}</el-button>
+                <el-button v-if="item.status === 'DRAFT' || item.status === 'SUBMITTED'" type="primary" size="small" @click.stop="handleEdit(item)">{{ $t('common.edit') }}</el-button>
+                <el-button v-if="item.status === 'DRAFT'" type="success" size="small" @click.stop="handleSubmit(item)">{{ $t('common.submit') }}</el-button>
                 <el-button v-if="item.status === 'SUBMITTED'" type="warning" size="small" @click.stop="handleAudit(item)">{{ $t('inventory.outbound.approve') }}</el-button>
               </div>
             </div>
@@ -318,6 +326,10 @@ const handleAdd = () => {
 
 const handleView = (row) => {
   router.push(`/inventory/outbound/detail/${row.id}`)
+}
+
+const handleEdit = (row) => {
+  router.push(`/inventory/outbound/edit/${row.id}`)
 }
 
 const handleSubmit = async (row) => {

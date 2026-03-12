@@ -1,10 +1,10 @@
-<template>
+﻿<template>
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
-        :title="$t('inventory.transfer.add')"
-        :show-back="true"
-        @back="handleBack" />
+          :title="isEdit ? $t('inventory.transfer.edit') : $t('inventory.transfer.add')"
+          :show-back="true"
+          @back="handleBack" />
 
       <div class="content-wrapper">
         <InfoCard :title="$t('common.basicInfo')" icon="ri-file-info-line">
@@ -44,16 +44,16 @@
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.transfer.outWarehouse')" prop="outWarehouseId">
-                  <el-select v-model="form.outWarehouseId" :placeholder="$t('inventory.transfer.outWarehouse')" style="width: 100%" @change="handleOutWarehouseChange">
-                    <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
+                <el-form-item :label="$t('inventory.transfer.outWarehouse')" prop="outWarehouseCode">
+                  <el-select v-model="form.outWarehouseCode" :placeholder="$t('inventory.transfer.outWarehouse')" style="width: 100%" filterable @change="handleOutWarehouseChange">
+                    <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.transfer.inWarehouse')" prop="inWarehouseId">
-                  <el-select v-model="form.inWarehouseId" :placeholder="$t('inventory.transfer.inWarehouse')" style="width: 100%" @change="handleInWarehouseChange">
-                    <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
+                <el-form-item :label="$t('inventory.transfer.inWarehouse')" prop="inWarehouseCode">
+                  <el-select v-model="form.inWarehouseCode" :placeholder="$t('inventory.transfer.inWarehouse')" style="width: 100%" filterable @change="handleInWarehouseChange">
+                    <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -72,20 +72,14 @@
           <div class="items-list">
             <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
               <div class="item-fields">
-                <el-form-item :label="$t('inventory.transfer.detail.product')" :prop="`detailList.${index}.inputId`" :rules="detailRules.inputId">
-                  <el-select
-                    v-model="item.inputId"
-                    :placeholder="$t('inventory.transfer.detail.product')"
-                    filterable
-                    clearable
-                    style="width: 100%"
-                    @change="(val) => handleInputChange(val, item)">
-                    <el-option
-                      v-for="input in inputList"
-                      :key="input.inputId"
-                      :label="input.inputName"
-                      :value="input.inputId"
-                    />
+                <el-form-item :label="$t('inventory.transfer.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
+                  <el-select v-model="item.mainCategory" :placeholder="$t('inventory.transfer.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
+                    <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('inventory.transfer.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
+                  <el-select v-model="item.subCategory" :placeholder="$t('inventory.transfer.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategory">
+                    <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('inventory.transfer.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
@@ -94,14 +88,16 @@
                 <el-form-item :label="$t('inventory.transfer.detail.supplier')" :prop="`detailList.${index}.supplier`">
                   <el-input v-model="item.supplier" :placeholder="$t('inventory.transfer.detail.supplier')" clearable />
                 </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.applyQty')" :prop="`detailList.${index}.applyQty`" :rules="detailRules.applyQty">
-                  <el-input-number v-model="item.applyQty" :min="0" :precision="2" :placeholder="$t('inventory.transfer.detail.applyQty')" style="width: 100%" />
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.realQty')" :prop="`detailList.${index}.realQty`" :rules="detailRules.realQty">
-                  <el-input-number v-model="item.realQty" :min="0" :precision="2" :placeholder="$t('inventory.transfer.detail.realQty')" style="width: 100%" />
+                <el-form-item :label="$t('inventory.transfer.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
+                  <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.transfer.detail.qty')" style="width: 100%" />
                 </el-form-item>
                 <el-form-item :label="$t('inventory.transfer.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
-                  <el-input v-model="item.unit" :placeholder="$t('inventory.transfer.detail.unit')" clearable />
+                  <el-select v-model="item.unit" :placeholder="$t('inventory.transfer.detail.unit')" style="width: 100%">
+                    <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('inventory.transfer.detail.expireDate')" :prop="`detailList.${index}.expireDate`">
+                  <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.transfer.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" />
                 </el-form-item>
               </div>
               <div class="item-actions">
@@ -129,23 +125,30 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createTransfer, getWarehouseList, getProductList } from '@/api/inventory'
+import { createTransfer, updateTransfer, getTransferDetail, getWarehouseOptions } from '@/api/inventory'
+import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { useUserStore } from '@/store/user'
 import { getUserOrgName } from '@/utils/auth'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
-const { t } = useI18n()
+const route = useRoute()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 
 const formRef = ref(null)
 const submitting = ref(false)
 const warehouseOptions = ref([])
-const inputList = ref([])
+const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
+const unitOptions = ref([])
+
+const isEdit = computed(() => !!route.params.id)
 
 const generateTransferNo = () => {
   const now = new Date()
@@ -157,41 +160,52 @@ const generateTransferNo = () => {
 }
 
 const form = reactive({
+  id: null,
   transferNo: '',
   transferType: '',
   applyDate: new Date(),
   expectedDate: '',
   applicant: '',
   department: '',
-  outWarehouseId: '',
+  outWarehouseCode: '',
   outWarehouseName: '',
-  inWarehouseId: '',
+  inWarehouseCode: '',
   inWarehouseName: '',
   remark: '',
   detailList: [
     {
-      inputId: '',
-      inputCode: '',
+      productId: null, // 灏嗗湪onMounted涓敓鎴愭暟瀛桰D
+      mainCategory: '',
+      subCategory: '',
       batchNo: '',
       supplier: '',
-      applyQty: 0,
-      realQty: 0,
-      unit: ''
+      qty: null,
+      unit: '',
+      expireDate: ''
     }
   ]
 })
 
 const rules = {
-  transferType: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  outWarehouseId: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  inWarehouseId: [{ required: true, message: t('common.required'), trigger: 'change' }]
+  transferType: [{ required: true, message: 'This field is required', trigger: 'change' }],
+  outWarehouseCode: [{ required: true, message: 'This field is required', trigger: 'change' }],
+  inWarehouseCode: [{ required: true, message: 'This field is required', trigger: 'change' }]
 }
 
 const detailRules = {
-  inputId: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  applyQty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  realQty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  unit: [{ required: true, message: t('common.required'), trigger: 'blur' }]
+  mainCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
+  subCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
+  qty: [{ required: true, message: 'This field is required', trigger: 'blur' }],
+  unit: [{ required: true, message: 'This field is required', trigger: 'blur' }]
+}
+
+const getSubCategoryOptions = (mainCategory) => {
+  if (!mainCategory) return []
+  return subCategoryOptions.value.filter(item => item.parentValue === mainCategory)
+}
+
+const handleMainCategoryChange = (val, row) => {
+  row.subCategory = ''
 }
 
 const handleBack = () => {
@@ -200,13 +214,14 @@ const handleBack = () => {
 
 const handleAddDetail = () => {
   form.detailList.push({
-    inputId: '',
-    inputCode: '',
+    productId: null, // 璋冩嫧鍦烘櫙涓笉闇€瑕佸叿浣撶殑鍟嗗搧ID
+    mainCategory: '',
+    subCategory: '',
     batchNo: '',
     supplier: '',
-    applyQty: 0,
-    realQty: 0,
-    unit: ''
+    qty: null,
+    unit: '',
+    expireDate: ''
   })
 }
 
@@ -214,46 +229,88 @@ const handleDeleteDetail = (index) => {
   form.detailList.splice(index, 1)
 }
 
-const handleInputChange = (inputId, row) => {
-  const input = inputList.value.find(item => item.inputId === inputId)
-  if (input) {
-    row.inputId = input.inputId
-    row.inputCode = input.inputSku || ''
-    row.unit = input.unit || '件'
-  } else {
-    row.inputCode = ''
-    row.unit = ''
-  }
-}
-
 const handleOutWarehouseChange = (val) => {
-  const warehouse = warehouseOptions.value.find(item => item.id === val)
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === val)
   if (warehouse) {
     form.outWarehouseName = warehouse.warehouseName
   }
 }
 
 const handleInWarehouseChange = (val) => {
-  const warehouse = warehouseOptions.value.find(item => item.id === val)
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === val)
   if (warehouse) {
     form.inWarehouseName = warehouse.warehouseName
   }
 }
 
 const loadWarehouses = () => {
-  getWarehouseList({ pageSize: 1000 }).then(res => {
-    warehouseOptions.value = res.rows || []
+  getWarehouseOptions({ status: '0' }).then(res => {
+    warehouseOptions.value = res.data || []
   }).catch(() => {
     warehouseOptions.value = []
   })
 }
 
-const loadProducts = () => {
-  getProductList({ pageSize: 1000 }).then(res => {
-    inputList.value = res.rows || []
-  }).catch(() => {
-    inputList.value = []
-  })
+const loadDictionaries = async () => {
+  try {
+    const mainRes = await getDicts('inventory_main_category')
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
+
+    const subRes = await getDicts('inventory_sub_category')
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
+
+    const unitRes = await getDicts('inventory_unit')
+    unitOptions.value = (unitRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
+  } catch (e) {
+    console.error('Failed to load dictionaries', e)
+  }
+}
+
+const loadTransferData = async (id) => {
+  try {
+    const res = await getTransferDetail(id)
+    if (res.data) {
+      const data = res.data
+      form.id = data.id
+      form.transferNo = data.transferNo
+      form.transferType = data.transferType
+      form.applyDate = data.applyDate ? new Date(data.applyDate) : new Date()
+      form.expectedDate = data.expectedDate
+      form.applicant = data.applicant
+      form.department = data.department
+      form.outWarehouseCode = data.outWarehouseCode
+      form.outWarehouseName = data.outWarehouseName
+      form.inWarehouseCode = data.inWarehouseCode
+      form.inWarehouseName = data.inWarehouseName
+      form.remark = data.remark
+      if (data.detailList && data.detailList.length > 0) {
+        form.detailList = data.detailList.map(item => ({
+          id: item.id,
+          productId: item.productId,
+          mainCategory: item.mainCategory,
+          subCategory: item.subCategory,
+          batchNo: item.batchNo,
+          supplier: item.supplier,
+          qty: item.qty,
+          unit: item.unit,
+          expireDate: item.expireDate
+        }))
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load transfer data', e)
+    ElMessage.error(t('common.loadFailed'))
+  }
 }
 
 const handleSubmit = () => {
@@ -263,13 +320,21 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.transfer.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item => !item.inputId || !item.unit)
+      const hasEmptyDetail = form.detailList.some(item =>
+          !item.mainCategory ||
+          !item.subCategory ||
+          !item.unit ||
+          item.qty === null ||
+          item.qty === undefined ||
+          item.qty === 0
+      )
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.transfer.detailRequired'))
         return
       }
       submitting.value = true
-      createTransfer(form).then(() => {
+      const apiCall = isEdit.value ? updateTransfer(form) : createTransfer(form)
+      apiCall.then(() => {
         ElMessage.success(t('common.submitSuccess'))
         handleBack()
       }).catch(() => {
@@ -281,12 +346,18 @@ const handleSubmit = () => {
   })
 }
 
-onMounted(() => {
-  form.transferNo = generateTransferNo()
-  form.applicant = userStore.userInfo?.userName || ''
-  form.department = getUserOrgName() || ''
-  loadWarehouses()
-  loadProducts()
+onMounted(async () => {
+  await loadWarehouses()
+  await loadDictionaries()
+
+  if (isEdit.value) {
+    await loadTransferData(route.params.id)
+  } else {
+    form.transferNo = generateTransferNo()
+    form.applicant = userStore.userInfo?.userName || ''
+    form.department = getUserOrgName() || ''
+    // 璋冩嫧鍦烘櫙涓笉闇€瑕佸叿浣撶殑鍟嗗搧ID锛屼繚鎸佷负null鍗冲彲
+  }
 })
 </script>
 
@@ -349,3 +420,6 @@ onMounted(() => {
   }
 }
 </style>
+
+
+

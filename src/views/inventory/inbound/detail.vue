@@ -22,23 +22,19 @@
                 {{ getLabel(statusOptions, form.status) }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('common.remark')" :span="2">{{ form.remark }}</el-descriptions-item>
-
-            <template v-if="form.status === 'APPROVED' || form.status === 'REJECTED'">
-              <el-descriptions-item :label="$t('inventory.inbound.auditBy')">{{ form.auditBy }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('inventory.inbound.auditTime')">{{ formatDateTime(form.auditTime) }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('inventory.inbound.auditComment')" :span="3">{{ form.auditComment }}</el-descriptions-item>
-            </template>
+          </el-descriptions>
+          <el-descriptions :column="1" border style="margin-top: 12px;">
+            <el-descriptions-item :label="$t('common.remark')">{{ form.remark || '-' }}</el-descriptions-item>
           </el-descriptions>
         </InfoCard>
 
         <InfoCard :title="$t('inventory.inbound.detailList')" icon="ri-list-check">
           <el-table :data="form.detailList" stripe border header-cell-class-name="table-header-green">
-            <el-table-column prop="productName" :label="$t('inventory.inbound.detail.product')" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="mainCategory" :label="$t('inventory.inbound.detail.mainCategory')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="subCategory" :label="$t('inventory.inbound.detail.subCategory')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="batchNo" :label="$t('inventory.inbound.detail.batchNo')" min-width="120" />
             <el-table-column prop="supplier" :label="$t('inventory.inbound.detail.supplier')" min-width="120" show-overflow-tooltip />
-            <el-table-column prop="planQty" :label="$t('inventory.inbound.detail.planQty')" min-width="100" align="right" />
-            <el-table-column prop="realQty" :label="$t('inventory.inbound.detail.realQty')" min-width="100" align="right" />
+            <el-table-column prop="qty" :label="$t('inventory.inbound.detail.qty')" min-width="100" align="right" />
             <el-table-column prop="unit" :label="$t('inventory.inbound.detail.unit')" min-width="80" />
             <el-table-column prop="expireDate" :label="$t('inventory.inbound.detail.expireDate')" min-width="120">
               <template #default="{ row }">
@@ -48,11 +44,19 @@
           </el-table>
         </InfoCard>
 
+        <InfoCard :title="$t('inventory.inbound.auditInfo')" icon="ri-chat-check-line" v-if="form.status === 'APPROVED' || form.status === 'REJECTED'">
+          <el-descriptions :column="3" border>
+            <el-descriptions-item :label="$t('inventory.inbound.auditBy')">{{ form.auditBy || '-' }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.inbound.auditTime')">{{ formatDateTime(form.auditTime) }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.inbound.auditComment')">{{ form.auditComment || '-' }}</el-descriptions-item>
+          </el-descriptions>
+        </InfoCard>
+
         <div class="audit-section" v-if="isAuditMode">
           <InfoCard :title="$t('inventory.inbound.auditComment')" icon="ri-chat-check-line">
             <el-form>
               <el-form-item>
-                <el-input v-model="auditForm.comment" type="textarea" :rows="3" :placeholder="$t('inventory.inbound.auditComment')" />
+                <el-input v-model="auditForm.comment" type="textarea" :rows="3" :placeholder="$t('inventory.inbound.auditCommentPlaceholder')" />
               </el-form-item>
               <div class="form-actions">
                 <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
@@ -157,11 +161,9 @@ const loadData = () => {
 
 const handleAudit = (status) => {
   submitting.value = true
-  auditInbound({
-    id: form.id,
-    status: status,
-    auditComment: auditForm.comment,
-    auditBy: 'CurrentUser'
+  auditInbound(form.id, {
+    auditStatus: status,
+    auditComment: auditForm.comment
   }).then(() => {
     ElMessage.success(t('common.auditSuccess'))
     handleBack()

@@ -13,6 +13,7 @@ export default {
   uploadSizeLimit: 'File size cannot exceed {size}',
   reset: 'Reset',
   submit: 'Submit',
+  confirmSubmit: 'Confirm Submit',
   back: 'Back',
   loading: 'Loading...',
   more: 'View More',
