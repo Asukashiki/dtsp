@@ -37,22 +37,22 @@
             </SearchItem>
             <SearchItem :label="$t('inventory.transfer.search.outWarehouse')">
               <el-select
-                v-model="queryParams.outWarehouseId"
+                v-model="queryParams.outWarehouseCode"
                 :placeholder="$t('inventory.transfer.search.outWarehouse')"
                 clearable
                 filterable
                 class="filter-select">
-                <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
+                <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
               </el-select>
             </SearchItem>
             <SearchItem :label="$t('inventory.transfer.search.inWarehouse')">
               <el-select
-                v-model="queryParams.inWarehouseId"
+                v-model="queryParams.inWarehouseCode"
                 :placeholder="$t('inventory.transfer.search.inWarehouse')"
                 clearable
                 filterable
                 class="filter-select">
-                <el-option v-for="item in warehouseOptions" :key="item.id" :label="item.warehouseName" :value="item.id" />
+                <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
               </el-select>
             </SearchItem>
           </SearchForm>
@@ -147,7 +147,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="250" fixed="right">
                 <template #default="{ row }">
                   <el-button
                     type="primary"
@@ -155,6 +155,20 @@
                     @click="handleView(row)"
                     class="btn-blue"
                   >{{ $t('common.view') }}</el-button>
+
+                  <el-button
+                    v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'"
+                    type="primary"
+                    size="small"
+                    @click="handleEdit(row)"
+                  >{{ $t('common.edit') }}</el-button>
+
+                  <el-button
+                    v-if="row.status === 'DRAFT'"
+                    type="success"
+                    size="small"
+                    @click="handleSubmit(row)"
+                  >{{ $t('common.submit') }}</el-button>
 
                   <el-button
                     v-if="row.status === 'SUBMITTED'"
@@ -224,6 +238,8 @@
               </div>
               <div class="mobile-card-footer">
                 <el-button size="small" @click.stop="handleView(item)">{{ $t('common.view') }}</el-button>
+                <el-button v-if="item.status === 'DRAFT' || item.status === 'SUBMITTED'" type="primary" size="small" @click.stop="handleEdit(item)">{{ $t('common.edit') }}</el-button>
+                <el-button v-if="item.status === 'DRAFT'" type="success" size="small" @click.stop="handleSubmit(item)">{{ $t('common.submit') }}</el-button>
                 <el-button v-if="item.status === 'SUBMITTED'" type="warning" size="small" @click.stop="handleAudit(item)">{{ $t('inventory.transfer.approve') }}</el-button>
               </div>
             </div>
@@ -272,7 +288,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTransferList, deleteTransfer, auditTransfer, getWarehouseList } from '@/api/inventory'
+import { getTransferList, deleteTransfer, auditTransfer, submitTransfer, getWarehouseOptions } from '@/api/inventory'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import StatusTabs from '@/components/workflow/StatusTabs.vue'
 
@@ -314,8 +330,8 @@ const queryParams = reactive({
   transferType: '',
   startDate: '',
   endDate: '',
-  outWarehouseId: '',
-  inWarehouseId: '',
+  outWarehouseCode: '',
+  inWarehouseCode: '',
   status: ''
 })
 
@@ -381,8 +397,8 @@ const handleReset = () => {
   queryParams.transferType = ''
   queryParams.startDate = ''
   queryParams.endDate = ''
-  queryParams.outWarehouseId = ''
-  queryParams.inWarehouseId = ''
+  queryParams.outWarehouseCode = ''
+  queryParams.inWarehouseCode = ''
   dateRange.value = []
   handleTabChange(activeTab.value)
 }
@@ -393,6 +409,27 @@ const handleAdd = () => {
 
 const handleView = (row) => {
   router.push(`/inventory/transfer/detail/${row.id}`)
+}
+
+const handleEdit = (row) => {
+  router.push(`/inventory/transfer/edit/${row.id}`)
+}
+
+const handleSubmit = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmSubmit'),
+      t('common.warning'),
+      { type: 'warning' }
+    )
+    await submitTransfer({ id: row.id })
+    ElMessage.success(t('common.submitSuccess'))
+    handleQuery()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('common.submitFailed'))
+    }
+  }
 }
 
 const handleAudit = (row) => {
@@ -430,8 +467,8 @@ const handleDelete = async (row) => {
 }
 
 const loadWarehouses = () => {
-  getWarehouseList({ pageSize: 1000 }).then(res => {
-    warehouseOptions.value = res.rows || []
+  getWarehouseOptions({ status: '0' }).then(res => {
+    warehouseOptions.value = res.data || []
   }).catch(() => {
     warehouseOptions.value = []
   })

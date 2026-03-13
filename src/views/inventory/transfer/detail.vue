@@ -55,12 +55,17 @@
         <InfoCard :title="$t('inventory.transfer.detailList')" icon="ri-list-check">
           <el-table :data="detail.detailList" stripe border>
             <el-table-column type="index" width="50" />
-            <el-table-column prop="productName" :label="$t('inventory.transfer.detail.product')" min-width="150" />
+            <el-table-column prop="mainCategory" :label="$t('inventory.transfer.detail.mainCategory')" min-width="120" />
+            <el-table-column prop="subCategory" :label="$t('inventory.transfer.detail.subCategory')" min-width="120" />
             <el-table-column prop="batchNo" :label="$t('inventory.transfer.detail.batchNo')" min-width="120" />
             <el-table-column prop="supplier" :label="$t('inventory.transfer.detail.supplier')" min-width="120" />
-            <el-table-column prop="applyQty" :label="$t('inventory.transfer.detail.applyQty')" min-width="100" />
-            <el-table-column prop="realQty" :label="$t('inventory.transfer.detail.realQty')" min-width="100" />
+            <el-table-column prop="qty" :label="$t('inventory.transfer.detail.qty')" min-width="100" />
             <el-table-column prop="unit" :label="$t('inventory.transfer.detail.unit')" min-width="80" />
+            <el-table-column prop="expireDate" :label="$t('inventory.transfer.detail.expireDate')" min-width="120">
+              <template #default="{ row }">
+                {{ formatDate(row.expireDate) }}
+              </template>
+            </el-table-column>
           </el-table>
         </InfoCard>
 
@@ -161,6 +166,14 @@ const formatDateTime = (dateTimeStr) => {
     return dateTimeStr.replace('T', ' ')
   }
   return dateTimeStr
+}
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+  if (dateStr.includes('T')) {
+    return dateStr.split('T')[0]
+  }
+  return dateStr
 }
 
 const handleBack = () => {

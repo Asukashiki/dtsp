@@ -39,6 +39,8 @@ const routeWhitelist = [
   '/input/demand/audit-district',
   '/input/demand/audit-state',
   '/input/demand/audit-town',
+  '/inventory/stock-check-review',
+  '/inventory/stock-check-review/review'
 ]
 
 const routes = [
@@ -196,7 +198,7 @@ const routes = [
         meta: { title: 'research.menu.breedingBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
-        {
+      {
         path: 'breeding-data/batch/audit/:dataId',
         name: 'BreedingBatchAudit',
         component: () => import('../views/research/breeding-data/batch/form.vue'),
@@ -1927,10 +1929,16 @@ const routes = [
         meta: { title: 'inventory.inbound.add', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'inbound/edit/:id',
+        name: 'InventoryInboundEdit',
+        component: () => import('../views/inventory/inbound/form.vue'),
+        meta: { title: 'inventory.inbound.edit', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'inbound/detail/:id',
         name: 'InventoryInboundDetail',
         component: () => import('../views/inventory/inbound/detail.vue'),
-        meta: { title: 'inventory.inbound.detail', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.inbound.details', activeMenu: '/inventory/inbound', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'outbound',
@@ -1945,6 +1953,12 @@ const routes = [
         meta: { title: 'inventory.outbound.add', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'outbound/edit/:id',
+        name: 'InventoryOutboundEdit',
+        component: () => import('../views/inventory/outbound/form.vue'),
+        meta: { title: 'inventory.outbound.edit', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'outbound/detail/:id',
         name: 'InventoryOutboundDetail',
         component: () => import('../views/inventory/outbound/detail.vue'),
@@ -1955,6 +1969,48 @@ const routes = [
         name: 'WarehouseManageList',
         component: () => import('../views/input/inventory/warehouse-manage/index.vue'),
         meta: { title: 'input.menu.warehouseManage', requiresAuth: true }
+      },
+      {
+        path: 'stock-check',
+        name: 'StockCheckList',
+        component: () => import('../views/inventory/stock-check/index.vue'),
+        meta: { title: 'stockCheck.title', requiresAuth: true }
+      },
+      {
+        path: 'stock-check/form',
+        name: 'StockCheckAdd',
+        component: () => import('../views/inventory/stock-check/form.vue'),
+        meta: { title: 'stockCheck.addTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check/form/:id',
+        name: 'StockCheckEdit',
+        component: () => import('../views/inventory/stock-check/form.vue'),
+        meta: { title: 'stockCheck.editTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check/detail/:id',
+        name: 'StockCheckDetail',
+        component: () => import('../views/inventory/stock-check/detail.vue'),
+        meta: { title: 'stockCheck.detailTitle', activeMenu: '/inventory/stock-check', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'stock-check-review',
+        name: 'StockCheckReviewList',
+        component: () => import('../views/inventory/stock-check-review/index.vue'),
+        meta: { title: 'stockCheckReview.title', requiresAuth: true }
+      },
+      {
+        path: 'stock-check-review/review/:id',
+        name: 'StockCheckReview',
+        component: () => import('../views/inventory/stock-check-review/review.vue'),
+        meta: { title: 'stockCheckReview.reviewTitle', activeMenu: '/inventory/stock-check-review', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'transfer',
+        name: 'InventoryTransfer',
+        component: () => import('../views/inventory/transfer/index.vue'),
+        meta: { title: 'inventory.transfer.title', requiresAuth: true }
       },
       {
         path: 'warehouse-manage/add',
@@ -2015,6 +2071,18 @@ const routes = [
         name: 'WarehousePermission',
         component: () => import('../views/inventory/warehouse-permission/index.vue'),
         meta: { title: 'inventory.permission.title', requiresAuth: true }
+      },
+      {
+        path: 'transfer/edit/:id',
+        name: 'InventoryTransferEdit',
+        component: () => import('../views/inventory/transfer/form.vue'),
+        meta: { title: 'inventory.transfer.edit', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'transfer/detail/:id',
+        name: 'InventoryTransferDetail',
+        component: () => import('../views/inventory/transfer/detail.vue'),
+        meta: { title: 'inventory.transfer.detail', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

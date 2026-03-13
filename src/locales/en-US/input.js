@@ -28,7 +28,7 @@ export default {
 
   // 菜单导航
   menu: {
-    demandInquiry:'Demand Inquiry',
+    demandInquiry: 'Demand Inquiry',
     dashboard: 'Data Overview',
     registrationManagement: 'Registration Management',
     registration: 'Union/Cooperative Registration Application',
@@ -72,6 +72,121 @@ export default {
     feedbackAdd: 'Feedback Add',
     feedbackEdit: 'Feedback Edit',
     feedbackDetail: 'Feedback Detail',
+      // 盘点录入
+      stockCheck: {
+        title: 'Stock Check Entry',
+        addTitle: 'New Stock Check Order',
+        editTitle: 'Edit Stock Check Order',
+        detailTitle: 'Stock Check Order Details',
+        fields: {
+          checkId: 'Check Order Number',
+          checkDate: 'Check Date',
+          warehouseName: 'Check Warehouse',
+          checkerName: 'Checker',
+          checkStatus: 'Check Status',
+          checkRemark: 'Overall Description',
+          totalItems: 'Total Items',
+          diffItems: 'Difference Items',
+          productName: 'Product Name',
+          categoryMajor: 'Major Category',
+          categoryMinor: 'Minor Category',
+          batchNo: 'Batch Number',
+          unit: 'Unit',
+          expiryDate: 'Expiry Date',
+          systemQty: 'System Quantity',
+          actualQty: 'Actual Quantity',
+          diffType: 'Difference Type',
+          diffQty: 'Difference Quantity',
+          itemRemark: 'Item Remark',
+          reviewOpinion: 'Audit Opinion',
+          reviewerName: 'Auditor',
+          reviewDate: 'Audit Date',
+        },
+        list: {
+          checkId: 'Order No.',
+          checkDate: 'Check Date',
+          warehouseName: 'Warehouse',
+          checkerName: 'Checker',
+          totalItems: 'Total',
+          diffItems: 'Diff',
+          checkStatus: 'Status',
+        },
+        sections: {
+          basicInfo: 'Basic Information',
+          reviewInfo: 'Audit Information',
+          reviewAction: 'Audit Actions',
+          checkDetail: 'Stock Check Details',
+        },
+        placeholders: {
+          required: 'Required',
+          optional: 'Optional',
+          reviewOpinion: 'Please enter audit opinion',
+        },
+        summary: {
+          totalItems: 'Total Checked Items',
+          diffItems: 'Difference Items',
+          surplusItems: 'Surplus Items',
+          lossItems: 'Loss Items',
+          filledItems: 'Filled',
+        },
+        status: {
+          DRAFT: 'Draft',
+          PENDING: 'Pending Audit',
+          APPROVED: 'Approved',
+          REJECTED: 'Rejected',
+          ADJUSTED: 'Adjusted',
+          CANCELLED: 'Cancelled',
+        },
+        diffType: {
+          SURPLUS: 'Surplus',
+          LOSS: 'Loss',
+          NONE: 'No Difference',
+        },
+        actions: {
+          create: 'New Stock Check Order',
+          edit: 'Edit',
+          delete: 'Delete',
+          submit: 'Submit',
+          cancel: 'Cancel',
+          view: 'View',
+          approve: 'Approve',
+          reject: 'Reject',
+          review: 'Audit',
+          saveDraft: 'Save Draft',
+          submitReview: 'Submit',
+          backToList: 'Back',
+          onlyDiff: 'Only Show Difference Items',
+          showAll: 'Show All',
+        },
+        validation: {
+          checkDateRequired: 'Please select check date',
+          warehouseRequired: 'Please select warehouse',
+          actualQtyRequired: 'Please enter actual quantity for all items',
+          actualQtyMin: 'Actual quantity cannot be negative',
+          itemRemarkRequired: 'Items with differences must have a remark',
+          reviewOpinionRequired: 'Please enter audit opinion',
+        },
+        messages: {
+          createSuccess: 'Stock Check Order created successfully',
+          submitSuccess: 'Submitted successfully, waiting for audit',
+          approveSuccess: 'Approved successfully, inventory adjusted automatically',
+          rejectSuccess: 'Rejected successfully, order returned to checker',
+          deleteSuccess: 'Deleted successfully',
+          approveConfirm: 'After approval, inventory will be adjusted automatically. Continue?',
+          approveTitle: 'Confirm Audit Approval',
+          deleteConfirm: 'Are you sure to delete this stock check order?',
+          cancelConfirm: 'Are you sure to cancel this stock check order?',
+          submitConfirm: 'Order cannot be modified after submission, confirm submission?',
+          selectWarehouseToLoad: 'Please select warehouse to load inventory details',
+          noInventoryItems: 'No inventory items found for this warehouse',
+          noItemsForCheck: 'No items available for stock check in this warehouse',
+        }
+      },
+      stockCheckReview: {
+        title: 'Stock Check Audit',
+        reviewTitle: 'Audit Stock Check Order',
+      },
+
     // 仓库管理 - 操作后缀
     warehouseList: 'Warehouse List',
     warehouseAdd: 'Add Warehouse',
@@ -145,7 +260,7 @@ export default {
     // 表单字段 - 基本信息
     form: {
       specificationModel: 'Specification Model',
-      inputBizId:'Input ID',
+      inputBizId: 'Input ID',
       unit: 'Unit',
       referencePrice: 'Reference Price (Br)',
       isImport: 'Imported',
@@ -1296,8 +1411,10 @@ export default {
       }
     },
 
+
     // 库存查询
     stock: {
+      stockCheckLabel: 'Stock Checking',
       title: 'Inventory Query',
       subtitle: 'Real-time inventory information, warnings and summary statistics',
       list: 'Inventory List',

@@ -1,4 +1,4 @@
-export default {
+﻿export default {
     confirm: '确认',
     remark: '备注',
     cancel: '取消',
@@ -6,6 +6,7 @@ export default {
     delete: '删除',
     edit: '编辑',
     view: '查看',
+    void: '删除',
     search: '搜索',
     keyword: '关键词',
     dragFile: '将文件拖到此处，或',
@@ -13,6 +14,8 @@ export default {
     uploadSizeLimit: '上传文件大小不能超过 {size}',
     reset: '重置',
     submit: '提交',
+    confirmSubmit: '确认提交',
+    auditSuccess:'审计成功',
     back: '返回',
     loading: '加载中...',
     more: '查看更多',
@@ -73,6 +76,8 @@ export default {
     createTime: '创建时间',
     updateBy: '更新人',
     updateTime: '更新时间',
+    dateRange: '按日期搜索',
+    confirmDelete: '您确定要删除这些数据吗？',
     // 兼容组件直接使用的别名
     createdBy: '创建人',
     createdTime: '创建时间',
@@ -88,15 +93,14 @@ export default {
     noData: '暂无数据',
     filter: '筛选',
     loadMore: '加载更多',
-    status: '状态',
     // 作物类型(通用)
     cropTypes: {
-      wheat: '小麦',
-      maize: '玉米',
-      sorghum: '高粱',
-      teff: '苔麸',
-      barley: '大麦',
-      pulses: '豆类',
+        wheat: '小麦',
+        maize: '玉米',
+        sorghum: '高粱',
+        teff: '苔麸',
+        barley: '大麦',
+        pulses: '豆类',
     },
     batchDelete: '批量删除',
     yes: '是',
@@ -109,18 +113,18 @@ export default {
     systemInfo: '系统信息',
     // 错误提示
     error: {
-      title: '错误提示',
-      serverError: '服务器错误',
-      requestFailed: '请求失败',
-      unauthorized: '登录已过期，请重新登录',
-      notFound: '请求的资源不存在',
-      timeout: '请求超时，请检查网络连接',
-      networkError: '网络错误，请检查您的网络连接',
-      operationFailed: '操作失败',
-      noPermission: '无访问权限',
-      noPermissionDesc: '您没有权限访问该页面，请联系管理员。',
-      pageNotFound: '页面未找到',
-      pageNotFoundDesc: '您访问的页面不存在或已被删除。'
+        title: '错误提示',
+        serverError: '服务器错误',
+        requestFailed: '请求失败',
+        unauthorized: '登录已过期，请重新登录',
+        notFound: '请求的资源不存在',
+        timeout: '请求超时，请检查网络连接',
+        networkError: '网络错误，请检查您的网络连接',
+        operationFailed: '操作失败',
+        noPermission: '无访问权限',
+        noPermissionDesc: '您没有权限访问该页面，请联系管理员。',
+        pageNotFound: '页面未找到',
+        pageNotFoundDesc: '您访问的页面不存在或已被删除。'
     },
     required: '该项必填',
     saveSuccess: '保存成功',
@@ -136,10 +140,9 @@ export default {
     // 标签页标签
     aggregationResults: '汇聚结果',
     farmerDemands: '农民需求',
-    noPermissionDesc: '您没有权限访问此页面或执行此操作',
 
     // 公告相关
     notice: '公告',
     noticeDetail: '公告详情',
     noticeList: '公告列表',
-  }
+}

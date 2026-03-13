@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
-        :title="$t('inventory.outbound.detail')"
+        :title="$t('inventory.outbound.details')"
         :show-back="true"
         @back="handleBack"
         class="page-header-green"
@@ -12,9 +12,9 @@
         <InfoCard :title="$t('common.basicInfo')" icon="ri-file-info-line">
           <el-descriptions :column="3" border>
             <el-descriptions-item :label="$t('inventory.outbound.no')">{{ form.outboundNo }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.outbound.type')">{{ getLabel(typeOptions, form.type) }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.outbound.types')">{{ getLabel(typeOptions, form.type) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.warehouse')">{{ form.warehouseName }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.outbound.receiverType')">{{ getLabel(receiverTypeOptions, form.receiverType) }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.outbound.receiverTypes')">{{ getLabel(receiverTypeOptions, form.receiverType) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.receiver')">{{ form.receiver }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.bizNo')">{{ form.bizNo }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.operator')">{{ form.operator }}</el-descriptions-item>
@@ -24,31 +24,39 @@
                 {{ getLabel(statusOptions, form.status) }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('common.remark')" :span="2">{{ form.remark }}</el-descriptions-item>
-
-            <template v-if="form.status === 'APPROVED' || form.status === 'REJECTED'">
-              <el-descriptions-item :label="$t('inventory.outbound.auditBy')">{{ form.auditBy }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('inventory.outbound.auditTime')">{{ formatDateTime(form.auditTime) }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('inventory.outbound.auditComment')" :span="3">{{ form.auditComment }}</el-descriptions-item>
-            </template>
+            <el-descriptions-item :label="$t('common.remark')" :span="2">{{ form.remark || '-' }}</el-descriptions-item>
           </el-descriptions>
         </InfoCard>
 
         <InfoCard :title="$t('inventory.outbound.detailList')" icon="ri-list-check">
           <el-table :data="form.detailList" stripe border header-cell-class-name="table-header-green">
-            <el-table-column prop="productName" :label="$t('inventory.outbound.detail.product')" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="mainCategory" :label="$t('inventory.outbound.detail.mainCategory')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="subCategory" :label="$t('inventory.outbound.detail.subCategory')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="batchNo" :label="$t('inventory.outbound.detail.batchNo')" min-width="120" />
-            <el-table-column prop="applyQty" :label="$t('inventory.outbound.detail.applyQty')" min-width="100" align="right" />
-            <el-table-column prop="realQty" :label="$t('inventory.outbound.detail.realQty')" min-width="100" align="right" />
+            <el-table-column prop="supplier" :label="$t('inventory.outbound.detail.supplier')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="qty" :label="$t('inventory.outbound.detail.qty')" min-width="100" align="right" />
             <el-table-column prop="unit" :label="$t('inventory.outbound.detail.unit')" min-width="80" />
+            <el-table-column prop="expireDate" :label="$t('inventory.outbound.detail.expireDate')" min-width="120">
+              <template #default="{ row }">
+                {{ formatDate(row.expireDate) }}
+              </template>
+            </el-table-column>
           </el-table>
+        </InfoCard>
+
+        <InfoCard :title="$t('inventory.outbound.auditInfo')" icon="ri-chat-check-line" v-if="form.status === 'APPROVED' || form.status === 'REJECTED'">
+          <el-descriptions :column="3" border>
+            <el-descriptions-item :label="$t('inventory.outbound.auditBy')">{{ form.auditBy || '-' }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.outbound.auditTime')">{{ formatDateTime(form.auditTime) }}</el-descriptions-item>
+            <el-descriptions-item :label="$t('inventory.outbound.auditComment')">{{ form.auditComment || '-' }}</el-descriptions-item>
+          </el-descriptions>
         </InfoCard>
 
         <div class="audit-section" v-if="isAuditMode">
           <InfoCard :title="$t('inventory.outbound.auditComment')" icon="ri-chat-check-line">
             <el-form>
               <el-form-item>
-                <el-input v-model="auditForm.comment" type="textarea" :rows="3" :placeholder="$t('inventory.outbound.auditComment')" />
+                <el-input v-model="auditForm.comment" type="textarea" :rows="3" :placeholder="$t('inventory.outbound.auditCommentPlaceholder')" />
               </el-form-item>
               <div class="form-actions">
                 <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
@@ -138,6 +146,11 @@ const formatDateTime = (dateStr) => {
   return dateStr.replace('T', ' ')
 }
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+  return dateStr.substring(0, 10)
+}
+
 const handleBack = () => {
   router.back()
 }
@@ -156,11 +169,9 @@ const loadData = () => {
 
 const handleAudit = (status) => {
   submitting.value = true
-  auditOutbound({
-    id: form.id,
-    status: status,
-    auditComment: auditForm.comment,
-    auditBy: 'CurrentUser'
+  auditOutbound(form.id, {
+    auditStatus: status,
+    auditComment: auditForm.comment
   }).then(() => {
     ElMessage.success(t('common.auditSuccess'))
     handleBack()
