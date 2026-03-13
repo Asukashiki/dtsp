@@ -22,6 +22,23 @@
       ]
     },
     {
+      "index": "stock-check-management",
+      "icon": "ri-survey-line",
+      "titleKey": "inventory.stock.stockCheckLabel",
+      "children": [
+        {
+          "index": "/inventory/stock-check",
+          "icon": "ri-file-list-3-line",
+          "titleKey": "inventory.stockCheck.title"
+        },
+        {
+          "index": "/inventory/stock-check-review",
+          "icon": "ri-shield-check-line",
+          "titleKey": "inventory.stockCheckReview.title"
+        }
+      ]
+    },
+    {
       "index": "warehouse-management",
       "icon": "ri-home-gear-line",
       "titleKey": "input.menu.warehouseManage",

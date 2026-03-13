@@ -2088,7 +2088,7 @@ const routes = [
         path: 'transfer/detail/:id',
         name: 'InventoryTransferDetail',
         component: () => import('../views/inventory/transfer/detail.vue'),
-        meta: { title: 'inventory.transfer.details', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.transfer.detail', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       }
     ]
   },
