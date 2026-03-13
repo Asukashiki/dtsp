@@ -2007,12 +2007,6 @@ const routes = [
         meta: { title: 'stockCheckReview.reviewTitle', activeMenu: '/inventory/stock-check-review', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'transfer',
-        name: 'InventoryTransfer',
-        component: () => import('../views/inventory/transfer/index.vue'),
-        meta: { title: 'inventory.transfer.title', requiresAuth: true }
-      },
-      {
         path: 'warehouse-manage/add',
         name: 'WarehouseManageAdd',
         component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
@@ -2071,6 +2065,18 @@ const routes = [
         name: 'WarehousePermission',
         component: () => import('../views/inventory/warehouse-permission/index.vue'),
         meta: { title: 'inventory.permission.title', requiresAuth: true }
+      },
+      {
+        path: 'transfer',
+        name: 'InventoryTransfer',
+        component: () => import('../views/inventory/transfer/index.vue'),
+        meta: { title: 'inventory.transfer.title', requiresAuth: true }
+      },
+      {
+        path: 'transfer/add',
+        name: 'InventoryTransferAdd',
+        component: () => import('../views/inventory/transfer/form.vue'),
+        meta: { title: 'inventory.transfer.add', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'transfer/edit/:id',
