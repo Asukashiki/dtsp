@@ -37,6 +37,38 @@
           "titleKey": "inventory.stockCheckReview.title"
         }
       ]
+    },
+    {
+      "index": "warehouse-management",
+      "icon": "ri-home-gear-line",
+      "titleKey": "input.menu.warehouseManage",
+      "children": [
+        {
+          "index": "/inventory/warehouse-manage",
+          "icon": "ri-home-line",
+          "titleKey": "input.menu.warehouseManage"
+        },
+        {
+          "index": "/inventory/warning-config",
+          "icon": "ri-alarm-warning-line",
+          "titleKey": "inventory.warningConfig.title"
+        },
+        {
+          "index": "/inventory/warehouse-permission",
+          "icon": "ri-shield-keyhole-line",
+          "titleKey": "inventory.permission.title"
+        }
+      ]
+    },
+    {
+      "index": "/inventory/product-manage",
+      "icon": "ri-price-tag-3-line",
+      "titleKey": "input.menu.productManage"
+    },
+    {
+      "index": "/inventory/stock-query",
+      "icon": "ri-stack-line",
+      "titleKey": "input.menu.stockQuery"
     }
   ]
 }

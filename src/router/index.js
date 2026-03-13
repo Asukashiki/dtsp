@@ -1291,54 +1291,6 @@ const routes = [
         meta: { title: 'input.menu.warehouse', requiresAuth: true }
       },
       {
-        path: 'inventory/warehouse-manage',
-        name: 'WarehouseManageList',
-        component: () => import('../views/input/inventory/warehouse-manage/index.vue'),
-        meta: { title: 'input.menu.warehouseManage', requiresAuth: true }
-      },
-      {
-        path: 'inventory/warehouse-manage/add',
-        name: 'WarehouseManageAdd',
-        component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
-        meta: { title: 'input.menu.warehouseManageAdd', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'inventory/warehouse-manage/edit/:id',
-        name: 'WarehouseManageEdit',
-        component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
-        meta: { title: 'input.menu.warehouseManageEdit', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'inventory/warehouse-manage/detail/:id',
-        name: 'WarehouseManageDetail',
-        component: () => import('../views/input/inventory/warehouse-manage/detail.vue'),
-        meta: { title: 'input.menu.warehouseManageDetail', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'inventory/product-manage',
-        name: 'ProductManageList',
-        component: () => import('../views/input/inventory/product-manage/index.vue'),
-        meta: { title: 'input.menu.productManage', requiresAuth: true }
-      },
-      {
-        path: 'inventory/product-manage/add',
-        name: 'ProductManageAdd',
-        component: () => import('../views/input/inventory/product-manage/form.vue'),
-        meta: { title: 'input.menu.productManageAdd', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'inventory/product-manage/edit/:id',
-        name: 'ProductManageEdit',
-        component: () => import('../views/input/inventory/product-manage/form.vue'),
-        meta: { title: 'input.menu.productManageEdit', hideInMenu: true, requiresAuth: true }
-      },
-      {
-        path: 'inventory/product-manage/detail/:id',
-        name: 'ProductManageDetail',
-        component: () => import('../views/input/inventory/product-manage/detail.vue'),
-        meta: { title: 'input.menu.productManageDetail', hideInMenu: true, requiresAuth: true }
-      },
-      {
         path: 'inventory/warehouse/add',
         name: 'WarehouseAdd',
         component: () => import('../views/input/inventory/warehouse/form.vue'),
@@ -2054,6 +2006,66 @@ const routes = [
         component: () => import('../views/inventory/transfer/index.vue'),
         meta: { title: 'inventory.transfer.title', requiresAuth: true }
       },
+        {
+            path: 'warehouse-manage',
+            name: 'WarehouseManageList',
+            component: () => import('../views/input/inventory/warehouse-manage/index.vue'),
+            meta: { title: 'input.menu.warehouseManage', requiresAuth: true }
+        },
+        {
+            path: 'warehouse-manage/add',
+            name: 'WarehouseManageAdd',
+            component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
+            meta: { title: 'input.menu.warehouseManageAdd', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'warehouse-manage/edit/:id',
+            name: 'WarehouseManageEdit',
+            component: () => import('../views/input/inventory/warehouse-manage/form.vue'),
+            meta: { title: 'input.menu.warehouseManageEdit', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'warehouse-manage/detail/:id',
+            name: 'WarehouseManageDetail',
+            component: () => import('../views/input/inventory/warehouse-manage/detail.vue'),
+            meta: { title: 'input.menu.warehouseManageDetail', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'product-manage',
+            name: 'ProductManageList',
+            component: () => import('../views/input/inventory/product-manage/index.vue'),
+            meta: { title: 'input.menu.productManage', requiresAuth: true }
+        },
+        {
+            path: 'product-manage/add',
+            name: 'ProductManageAdd',
+            component: () => import('../views/input/inventory/product-manage/form.vue'),
+            meta: { title: 'input.menu.productManageAdd', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'product-manage/edit/:id',
+            name: 'ProductManageEdit',
+            component: () => import('../views/input/inventory/product-manage/form.vue'),
+            meta: { title: 'input.menu.productManageEdit', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'product-manage/detail/:id',
+            name: 'ProductManageDetail',
+            component: () => import('../views/input/inventory/product-manage/detail.vue'),
+            meta: { title: 'input.menu.productManageDetail', hideInMenu: true, requiresAuth: true }
+        },
+        {
+            path: 'stock-query',
+            name: 'StockQueryList',
+            component: () => import('../views/inventory/stock-query/index.vue'),
+            meta: { title: 'input.menu.stockQuery', requiresAuth: true }
+        },
+        {
+            path: 'stock-query/detail/:id',
+            name: 'StockQueryDetail',
+            component: () => import('../views/inventory/stock-query/detail.vue'),
+            meta: { title: 'input.menu.stockQueryDetail', activeMenu: '/inventory/stock-query', hideInMenu: true, requiresAuth: true }
+        },
       {
         path: 'transfer/add',
         name: 'InventoryTransferAdd',
@@ -2071,7 +2083,13 @@ const routes = [
         name: 'InventoryTransferDetail',
         component: () => import('../views/inventory/transfer/detail.vue'),
         meta: { title: 'inventory.transfer.details', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
-      }
+      },
+        {
+        path: 'warehouse-permission',
+        name: 'WarehousePermission',
+        component: () => import('../views/inventory/warehouse-permission/index.vue'),
+        meta: { title: 'inventory.permission.title', requiresAuth: true }
+        }
     ]
   },
   // 登录页面（不需要认证）

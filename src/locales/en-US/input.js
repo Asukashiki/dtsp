@@ -66,6 +66,7 @@ export default {
     stockOut: 'Stock Out Management',
     inboundOutboundManagement: 'Inbound/Outbound Management',
     stockQuery: 'Inventory Query',
+    stockQueryDetail: 'Inventory Query Details',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
     feedback: 'Information Feedback',
     feedbackAdd: 'Feedback Add',
@@ -213,7 +214,7 @@ export default {
     stockOutAudit: 'Stock Out Order Audit',
     // 库存查询 - 操作后缀
     stockQueryList: 'Inventory List',
-    stockQueryDetail: 'Inventory Details',
+    stockQueryDetail: 'Inventory Query Details',
     // 大屏管理 - 操作后缀
     dashboardView: 'Dashboard View',
     // 信息反馈 - 操作后缀
@@ -779,6 +780,11 @@ export default {
         enabled: 'Enabled',
         disabled: 'Disabled'
       },
+      operatingStatusOptions: {
+        active: 'Enabled',
+        inactive: 'Disabled',
+        maintenance: 'Under Maintenance'
+      },
       actions: {
         view: 'View',
         edit: 'Edit',
@@ -809,7 +815,17 @@ export default {
       deleteSuccess: 'Deleted successfully',
       addSuccess: 'Added successfully',
       editSuccess: 'Edited successfully',
+      generateCodeFailed: 'Failed to generate warehouse code',
       systemInfo: 'System Information',
+      warning: {
+        title: 'Warning Config',
+        maxStock: 'Max Stock',
+        maxStockRequired: 'Please enter max stock',
+        saveSuccess: 'Warning config saved'
+      },
+      actions: {
+        warningConfig: 'Warning Config'
+      },
       form: {
         warehouseCode: 'Warehouse Code',
         warehouseName: 'Warehouse Name',
@@ -822,7 +838,7 @@ export default {
         location: 'Geographic Location',
         capacity: 'Storage Capacity',
         address: 'Address',
-        status: 'Status',
+        status: 'Operating Status',
         remark: 'Remark',
         createPeople: 'Creator',
         createTime: 'Creation Time',
@@ -830,17 +846,17 @@ export default {
         updateTime: 'Update Time'
       },
       placeholder: {
-        warehouseCode: 'Enter warehouse code',
+        warehouseCode: 'Auto-generated after selecting warehouse type',
         warehouseName: 'Enter warehouse name',
         type: 'Select warehouse type',
         storeType: 'Select storage type',
-        orgName: 'Enter owning organization',
+        orgName: 'Select owning organization',
         adminLevel: 'Select administrative level',
-        parentId: 'Select parent warehouse (optional)',
+        parentId: 'Select parent warehouse',
         location: 'Enter geographic location',
         capacity: 'Enter storage capacity',
         address: 'Enter address',
-        status: 'Select status',
+        status: 'Select operating status',
         remark: 'Enter remarks (optional)'
       },
       rules: {
@@ -848,11 +864,12 @@ export default {
         warehouseNameRequired: 'Please enter warehouse name',
         typeRequired: 'Please select warehouse type',
         storeTypeRequired: 'Please select storage type',
-        orgNameRequired: 'Please enter owning organization',
+        orgNameRequired: 'Please select owning organization',
         adminLevelRequired: 'Please select administrative level',
+        parentIdRequired: 'Please select parent warehouse',
         locationRequired: 'Please enter geographic location',
         capacityRequired: 'Please enter storage capacity',
-        statusRequired: 'Please select status'
+        statusRequired: 'Please select operating status'
       },
       columns: {
         warehouseCode: 'Warehouse Code',
@@ -865,7 +882,8 @@ export default {
         location: 'Geographic Location',
         address: 'Address',
         capacity: 'Storage Capacity',
-        status: 'Status',
+        maxStock: 'Max Stock',
+        operatingStatus: 'Operating Status',
         updateTime: 'Update Time',
         actions: 'Actions'
       },
@@ -886,7 +904,7 @@ export default {
         cooperative: 'Cooperative',
         ose: 'Oromia Seed Enterprise'
       },
-      operationStatusOptions: {
+      operatingStatusOptions: {
         active: 'Active',
         inactive: 'Inactive',
         maintenance: 'Under Maintenance'
@@ -971,6 +989,55 @@ export default {
         agriculturalProduct: 'Agricultural Product',
         pesticide: 'Pesticide',
         other: 'Other'
+      }
+    },
+    stockQuery: {
+      title: 'Inventory Query',
+      subtitle: 'View stock summary and batch details by warehouse',
+      list: 'Warehouse List',
+      detailTitle: 'Inventory Query Details',
+      sections: {
+        warehouseInfo: 'Warehouse Info',
+        stockList: 'Stock Summary',
+        batchList: 'Batch Details'
+      },
+      filters: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        status: 'Status'
+      },
+      placeholders: {
+        warehouseCode: 'Enter warehouse code',
+        warehouseName: 'Enter warehouse name',
+        status: 'Select status'
+      },
+      columns: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        orgName: 'Organization',
+        location: 'Location',
+        stockQty: 'Stock',
+        status: 'Status',
+        updateTime: 'Update Time',
+        actions: 'Actions',
+        productCode: 'Product Code',
+        productName: 'Product Name',
+        mainCategory: 'Main Category',
+        subCategory: 'Sub Category',
+        availableQty: 'Available Qty',
+        lockedQty: 'Locked Qty',
+        qualityGrade: 'Quality Grade',
+        stockStatus: 'Stock Status',
+        batchNo: 'Batch No',
+        productionDate: 'Production Date',
+        expireDate: 'Expire Date',
+        qty: 'Quantity'
+      },
+      actions: {
+        viewBatch: 'View Batches'
+      },
+      units: {
+        kg: 'KG'
       }
     },
 
