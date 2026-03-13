@@ -1,6 +1,7 @@
 export default {
   systemName: 'Inventory Management System',
   inboundOutboundManagement: 'Inbound/Outbound Management',
+  warehouseConfig: 'Warehouse Configuration',
 
   inbound: {
     title: 'Inbound Management',
@@ -160,6 +161,78 @@ export default {
       dateRange: 'Apply Date Range',
       outWarehouse: 'Out Warehouse',
       inWarehouse: 'In Warehouse'
+    }
+  },
+
+
+  permission: {
+    title: 'Warehouse Permission Assignment',
+    subtitle: 'Manage owners and department permissions',
+    listTitle: 'Warehouse Permission List',
+    loadFailed: 'Failed to load permission data',
+    saveSuccess: 'Permission saved',
+    deleteSuccess: 'Permission deleted',
+    deleteConfirm: 'Are you sure to delete this permission record?',
+    ownerSection: {
+      title: 'Warehouse Owner Settings',
+      add: 'Add Owner',
+      edit: 'Edit Owner'
+    },
+    permissionSection: {
+      title: 'Department Permission Settings',
+      add: 'Add Permission',
+      edit: 'Edit Permission'
+    },
+    search: {
+      warehouse: 'Warehouse',
+      owner: 'Owner',
+      dept: 'Department',
+      status: 'Status'
+    },
+    placeholder: {
+      warehouse: 'Select warehouse',
+      owner: 'Select owner',
+      dept: 'Select department'
+    },
+    columns: {
+      warehouse: 'Warehouse',
+      owner: 'Owner',
+      ownerOrg: 'Owner Department',
+      ownerRole: 'Role',
+      isPrimary: 'Primary Owner',
+      dept: 'Department',
+      permissions: 'Permissions',
+      status: 'Status',
+      warehouseCode: 'Warehouse Code',
+      updateTime: 'Update Time',
+      actions: 'Actions'
+    },
+    form: {
+      warehouse: 'Warehouse',
+      owner: 'Owner',
+      ownerRole: 'Owner Role',
+      isPrimary: 'Primary Owner',
+      dept: 'Department',
+      status: 'Status',
+      permissions: 'Permissions',
+      remark: 'Remark'
+    },
+    ownerRole: {
+      primary: 'Primary Owner',
+      secondary: 'Secondary Owner'
+    },
+    status: {
+      enabled: 'Enabled',
+      disabled: 'Disabled'
+    },
+    actions: {
+      owner: 'Owner',
+      permission: 'Permission',
+      view: 'View',
+      inbound: 'Inbound',
+      outbound: 'Outbound',
+      transfer: 'Transfer',
+      adjust: 'Adjust'
     }
   }
 }

@@ -164,5 +164,77 @@
             outWarehouse: '调出仓库',
             inWarehouse: '调入仓库'
         }
+    },
+
+
+  permission: {
+    title: '仓库权限分配',
+    subtitle: '管理仓库所有权与部门使用权限',
+    listTitle: '仓库权限列表',
+    loadFailed: '权限数据加载失败',
+    saveSuccess: '权限保存成功',
+    deleteSuccess: '权限删除成功',
+    deleteConfirm: '确定删除该权限记录吗？',
+    ownerSection: {
+      title: '仓库所有权配置',
+      add: '新增所有权',
+      edit: '编辑所有权'
+    },
+    permissionSection: {
+      title: '部门使用权配置',
+      add: '新增使用权',
+      edit: '编辑使用权'
+    },
+    search: {
+      warehouse: '仓库',
+      owner: '负责人',
+      dept: '部门',
+      status: '状态'
+    },
+    placeholder: {
+      warehouse: '请选择仓库',
+      owner: '请选择负责人',
+      dept: '请选择部门'
+    },
+    columns: {
+      warehouse: '仓库',
+      owner: '负责人',
+      ownerOrg: '所属部门',
+      ownerRole: '角色',
+      isPrimary: '主要负责人',
+      dept: '部门',
+      permissions: '权限范围',
+      status: '状态',
+      warehouseCode: '仓库编码',
+      updateTime: '更新时间',
+      actions: '操作'
+    },
+    form: {
+      warehouse: '仓库',
+      owner: '负责人',
+      ownerRole: '负责人角色',
+      isPrimary: '主要负责人',
+      dept: '部门',
+      status: '状态',
+      permissions: '权限范围',
+      remark: '备注'
+    },
+    ownerRole: {
+      primary: '主要负责人',
+      secondary: '协同负责人'
+    },
+    status: {
+      enabled: '启用',
+      disabled: '停用'
+    },
+    actions: {
+      owner: '所有权',
+      permission: '使用权',
+      view: '查看',
+      inbound: '入库',
+      outbound: '出库',
+      transfer: '调拨',
+      adjust: '调整'
     }
+  }
 }

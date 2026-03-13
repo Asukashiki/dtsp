@@ -213,15 +213,15 @@ const handlePageChange = () => {
 }
 
 const handleAdd = () => {
-  router.push('/input/inventory/product-manage/add')
+  router.push('/inventory/product-manage/add')
 }
 
 const handleView = row => {
-  router.push(`/input/inventory/product-manage/detail/${row.id}`)
+  router.push(`/inventory/product-manage/detail/${row.id}`)
 }
 
 const handleEdit = row => {
-  router.push(`/input/inventory/product-manage/edit/${row.id}`)
+  router.push(`/inventory/product-manage/edit/${row.id}`)
 }
 
 const handleDelete = row => {

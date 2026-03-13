@@ -179,6 +179,111 @@ export const deleteWarehouse = (warehouseId) => {
   })
 }
 
+// ==================== Warehouse Warning Config API ====================
+
+export const updateWarehouseWarning = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-manage/warning',
+    method: 'put',
+    data: toSnakeCase(data)
+  })
+}
+
+// ==================== Warehouse Permission API ====================
+
+export const getWarehouseOwnerList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.ownerUserId) requestParams.ownerUserId = params.ownerUserId
+  if (params.ownerRole) requestParams.ownerRole = params.ownerRole
+  if (params.status) requestParams.status = params.status
+
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/owner/list',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    if (res.data && res.data.list) {
+      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}
+
+export const addWarehouseOwner = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/owner',
+    method: 'post',
+    data
+  })
+}
+
+export const updateWarehouseOwner = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/owner',
+    method: 'put',
+    data
+  })
+}
+
+export const deleteWarehouseOwner = (ids) => {
+  const idPath = Array.isArray(ids) ? ids.join(',') : ids
+  return agricultureRequest({
+    url: `/inventory/warehouse-permission/owner/${idPath}`,
+    method: 'delete'
+  })
+}
+
+export const getWarehousePermissionList = (params = {}) => {
+  const requestParams = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10
+  }
+
+  if (params.warehouseId) requestParams.warehouseId = params.warehouseId
+  if (params.deptId) requestParams.deptId = params.deptId
+  if (params.status) requestParams.status = params.status
+
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/permission/list',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    if (res.data && res.data.list) {
+      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}
+
+export const addWarehousePermission = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/permission',
+    method: 'post',
+    data
+  })
+}
+
+export const updateWarehousePermission = (data) => {
+  return agricultureRequest({
+    url: '/inventory/warehouse-permission/permission',
+    method: 'put',
+    data
+  })
+}
+
+export const deleteWarehousePermission = (ids) => {
+  const idPath = Array.isArray(ids) ? ids.join(',') : ids
+  return agricultureRequest({
+    url: `/inventory/warehouse-permission/permission/${idPath}`,
+    method: 'delete'
+  })
+}
+
 // ==================== 入库管理 API ====================
 
 /**

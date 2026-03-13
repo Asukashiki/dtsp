@@ -70,3 +70,15 @@ export const deleteProductManage = (id) => {
     method: 'delete'
   })
 }
+
+export const listProductMainCategories = () => {
+  return agricultureRequest({
+    url: '/inventory/product-manage/main-categories',
+    method: 'get'
+  }).then(res => {
+    if (res.data && Array.isArray(res.data)) {
+      res.data = res.data.map(item => toSnakeCase(item))
+    }
+    return res
+  })
+}

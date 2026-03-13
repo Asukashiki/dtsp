@@ -33,9 +33,11 @@
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.adminLevel')">{{ getLabel(adminLevelOptions, detailData.admin_level) }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.parentWarehouseName')">{{ detailData.parent_warehouse_name || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.status')">
-                  <el-tag :type="detailData.status === '1' ? 'success' : 'info'">{{ detailData.status === '1' ? $t('input.inventory.warehouseManage.status.enabled') : $t('input.inventory.warehouseManage.status.disabled') }}</el-tag>
+                  <el-tag :type="getOperatingStatusType(detailData.status)">{{ getOperatingStatusLabel(detailData.status) }}</el-tag>
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.capacity')">{{ detailData.capacity ?? '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.capacity')">
+                  {{ detailData.capacity === null || detailData.capacity === undefined || detailData.capacity === '' ? '-' : detailData.capacity + ' KG' }}
+                </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.location')">{{ detailData.location || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.address')" :span="2">{{ detailData.address || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.remark')" :span="2">{{ detailData.remark || '-' }}</el-descriptions-item>
@@ -98,6 +100,12 @@ const adminLevelOptions = [
   { value: 'VILLAGE', label: 'input.inventory.warehouseManage.adminLevelOptions.village' }
 ]
 
+const operatingStatusOptions = [
+  { value: '0', label: 'input.inventory.warehouseManage.operatingStatusOptions.active' },
+  { value: '1', label: 'input.inventory.warehouseManage.operatingStatusOptions.inactive' },
+  { value: '2', label: 'input.inventory.warehouseManage.operatingStatusOptions.maintenance' }
+]
+
 
 const getLabel = (options, value) => {
   const match = options.find(item => item.value === value)
@@ -108,6 +116,20 @@ const getWarehouseTypeTag = value => {
   if (value === 'LEASE') return 'warning'
   if (value === 'TEMP') return 'info'
   return 'success'
+}
+
+const getOperatingStatusType = value => {
+  switch (value) {
+    case '0': return 'success'
+    case '1': return 'danger'
+    case '2': return 'warning'
+    default: return 'info'
+  }
+}
+
+const getOperatingStatusLabel = value => {
+  const match = operatingStatusOptions.find(item => item.value === value)
+  return match ? t(match.label) : value || '-'
 }
 
 const formatDateTime = value => {
