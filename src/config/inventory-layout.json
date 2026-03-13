@@ -47,6 +47,11 @@
       "index": "/inventory/product-manage",
       "icon": "ri-price-tag-3-line",
       "titleKey": "input.menu.productManage"
+    },
+    {
+      "index": "/inventory/stock-query",
+      "icon": "ri-stack-line",
+      "titleKey": "input.menu.stockQuery"
     }
   ]
 }

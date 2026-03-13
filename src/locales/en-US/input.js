@@ -66,6 +66,7 @@ export default {
     stockOut: 'Stock Out Management',
     inboundOutboundManagement: 'Inbound/Outbound Management',
     stockQuery: 'Inventory Query',
+    stockQueryDetail: 'Inventory Query Details',
     bigScreen: 'Dashboard Management', // 原dashboard避免重复，调整为bigScreen
     feedback: 'Information Feedback',
     feedbackAdd: 'Feedback Add',
@@ -98,7 +99,7 @@ export default {
     stockOutAudit: 'Stock Out Order Audit',
     // 库存查询 - 操作后缀
     stockQueryList: 'Inventory List',
-    stockQueryDetail: 'Inventory Details',
+    stockQueryDetail: 'Inventory Query Details',
     // 大屏管理 - 操作后缀
     dashboardView: 'Dashboard View',
     // 信息反馈 - 操作后缀
@@ -873,6 +874,55 @@ export default {
         agriculturalProduct: 'Agricultural Product',
         pesticide: 'Pesticide',
         other: 'Other'
+      }
+    },
+    stockQuery: {
+      title: 'Inventory Query',
+      subtitle: 'View stock summary and batch details by warehouse',
+      list: 'Warehouse List',
+      detailTitle: 'Inventory Query Details',
+      sections: {
+        warehouseInfo: 'Warehouse Info',
+        stockList: 'Stock Summary',
+        batchList: 'Batch Details'
+      },
+      filters: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        status: 'Status'
+      },
+      placeholders: {
+        warehouseCode: 'Enter warehouse code',
+        warehouseName: 'Enter warehouse name',
+        status: 'Select status'
+      },
+      columns: {
+        warehouseCode: 'Warehouse Code',
+        warehouseName: 'Warehouse Name',
+        orgName: 'Organization',
+        location: 'Location',
+        stockQty: 'Stock',
+        status: 'Status',
+        updateTime: 'Update Time',
+        actions: 'Actions',
+        productCode: 'Product Code',
+        productName: 'Product Name',
+        mainCategory: 'Main Category',
+        subCategory: 'Sub Category',
+        availableQty: 'Available Qty',
+        lockedQty: 'Locked Qty',
+        qualityGrade: 'Quality Grade',
+        stockStatus: 'Stock Status',
+        batchNo: 'Batch No',
+        productionDate: 'Production Date',
+        expireDate: 'Expire Date',
+        qty: 'Quantity'
+      },
+      actions: {
+        viewBatch: 'View Batches'
+      },
+      units: {
+        kg: 'KG'
       }
     },
 

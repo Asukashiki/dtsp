@@ -1999,6 +1999,18 @@ const routes = [
         meta: { title: 'input.menu.productManageDetail', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'stock-query',
+        name: 'StockQueryList',
+        component: () => import('../views/inventory/stock-query/index.vue'),
+        meta: { title: 'input.menu.stockQuery', requiresAuth: true }
+      },
+      {
+        path: 'stock-query/detail/:id',
+        name: 'StockQueryDetail',
+        component: () => import('../views/inventory/stock-query/detail.vue'),
+        meta: { title: 'input.menu.stockQueryDetail', activeMenu: '/inventory/stock-query', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'warehouse-permission',
         name: 'WarehousePermission',
         component: () => import('../views/inventory/warehouse-permission/index.vue'),

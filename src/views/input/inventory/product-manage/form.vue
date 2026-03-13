@@ -26,8 +26,29 @@
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productCode')" prop="productCode"><el-input v-model="formData.productCode" :placeholder="$t('input.inventory.productManage.placeholder.productCode')" maxlength="64" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productName')" prop="productName"><el-input v-model="formData.productName" :placeholder="$t('input.inventory.productManage.placeholder.productName')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.categoryName')" prop="categoryName"><el-input v-model="formData.categoryName" :placeholder="$t('input.inventory.productManage.placeholder.categoryName')" maxlength="50" clearable /></el-form-item></el-col>
-                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.mainCategory')" prop="mainCategory"><el-select v-model="formData.mainCategory" :placeholder="$t('input.inventory.productManage.placeholder.mainCategory')" style="width: 100%"><el-option v-for="item in mainCategoryOptions" :key="item.value" :label="$t(item.label)" :value="item.value" /></el-select></el-form-item></el-col>
-                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.subCategory')"><el-input v-model="formData.subCategory" :placeholder="$t('input.inventory.productManage.placeholder.subCategory')" maxlength="50" clearable /></el-form-item></el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.productManage.form.mainCategory')" prop="mainCategory">
+                    <el-select
+                      v-model="formData.mainCategoryId"
+                      :placeholder="$t('input.inventory.productManage.placeholder.mainCategory')"
+                      style="width: 100%"
+                      filterable
+                      allow-create
+                      default-first-option
+                      @change="handleMainCategoryChange">
+                      <el-option
+                        v-for="item in mainCategoryOptions"
+                        :key="item.id"
+                        :label="item.main_category"
+                        :value="item.id" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.productManage.form.subCategory')" prop="subCategory">
+                    <el-input v-model="formData.subCategory" :placeholder="$t('input.inventory.productManage.placeholder.subCategory')" maxlength="50" clearable :disabled="!subCategoryEditable" />
+                  </el-form-item>
+                </el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.brand')"><el-input v-model="formData.brand" :placeholder="$t('input.inventory.productManage.placeholder.brand')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.model')"><el-input v-model="formData.model" :placeholder="$t('input.inventory.productManage.placeholder.model')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.unit')" prop="unit"><el-input v-model="formData.unit" :placeholder="$t('input.inventory.productManage.placeholder.unit')" maxlength="20" clearable /></el-form-item></el-col>
@@ -54,7 +75,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addProductManage, getProductManage, updateProductManage } from '@/api/productManage'
+import { addProductManage, getProductManage, listProductMainCategories, updateProductManage } from '@/api/productManage'
 
 const router = useRouter()
 const route = useRoute()
@@ -67,13 +88,7 @@ const isEdit = computed(() => route.path.includes('/edit/'))
 const productId = computed(() => route.params.id)
 const pageTitle = computed(() => isEdit.value ? t('input.inventory.productManage.edit') : t('input.inventory.productManage.add'))
 
-const mainCategoryOptions = [
-  { value: 'FERTILIZER', label: 'input.inventory.productManage.mainCategoryOptions.fertilizer' },
-  { value: 'SEED', label: 'input.inventory.productManage.mainCategoryOptions.seed' },
-  { value: 'AGRICULTURAL_PRODUCT', label: 'input.inventory.productManage.mainCategoryOptions.agriculturalProduct' },
-  { value: 'PESTICIDE', label: 'input.inventory.productManage.mainCategoryOptions.pesticide' },
-  { value: 'OTHER', label: 'input.inventory.productManage.mainCategoryOptions.other' }
-]
+const mainCategoryOptions = ref([])
 
 const formData = reactive({
   id: undefined,
@@ -81,7 +96,9 @@ const formData = reactive({
   productName: '',
   categoryId: undefined,
   categoryName: '',
-  mainCategory: 'SEED',
+  mainCategoryId: '',
+  mainCategory: '',
+  parentId: null,
   subCategory: '',
   brand: '',
   model: '',
@@ -102,6 +119,11 @@ const rules = computed(() => ({
   status: [{ required: true, message: t('input.inventory.productManage.rules.statusRequired'), trigger: 'change' }]
 }))
 
+const subCategoryEditable = computed(() => {
+  if (!formData.mainCategoryId) return false
+  return typeof formData.mainCategoryId === 'number'
+})
+
 const goBack = () => {
   router.back()
 }
@@ -111,13 +133,17 @@ const loadDetail = async () => {
   try {
     const res = await getProductManage(productId.value)
     if (res.code === 200 && res.data) {
+      const parentIdValue = res.data.parent_id ?? null
+      const mainCategoryIdValue = parentIdValue ? Number(parentIdValue) : res.data.main_category || ''
       Object.assign(formData, {
         id: res.data.id,
         productCode: res.data.product_code || '',
         productName: res.data.product_name || '',
         categoryId: res.data.category_id || undefined,
         categoryName: res.data.category_name || '',
-        mainCategory: res.data.main_category || 'SEED',
+        mainCategoryId: mainCategoryIdValue,
+        mainCategory: res.data.main_category || '',
+        parentId: parentIdValue,
         subCategory: res.data.sub_category || '',
         brand: res.data.brand || '',
         model: res.data.model || '',
@@ -139,14 +165,22 @@ const handleSubmit = async () => {
     await formRef.value?.validate()
     submitLoading.value = true
 
+    const mainCategoryId = formData.mainCategoryId
+    const selectedCategory = mainCategoryOptions.value.find(item => item.id === mainCategoryId)
+    const isSelected = !!selectedCategory
+    const mainCategoryName = isSelected ? selectedCategory.main_category : String(mainCategoryId || '').trim()
+    const parentIdValue = isSelected ? selectedCategory.id : null
+    const subCategoryValue = isSelected ? formData.subCategory.trim() : ''
+
     const payload = {
       ...(isEdit.value ? { id: Number(productId.value) } : {}),
       productCode: formData.productCode.trim(),
       productName: formData.productName.trim(),
       categoryId: formData.categoryId || null,
       categoryName: formData.categoryName.trim(),
-      mainCategory: formData.mainCategory,
-      subCategory: formData.subCategory.trim(),
+      mainCategory: mainCategoryName,
+      subCategory: subCategoryValue,
+      parentId: parentIdValue,
       brand: formData.brand.trim(),
       model: formData.model.trim(),
       unit: formData.unit.trim(),
@@ -170,7 +204,33 @@ const handleSubmit = async () => {
   }
 }
 
+const handleMainCategoryChange = (value) => {
+  const selectedCategory = mainCategoryOptions.value.find(item => item.id === value)
+  if (selectedCategory) {
+    formData.mainCategory = selectedCategory.main_category
+    formData.parentId = selectedCategory.id
+  } else {
+    formData.mainCategory = String(value || '').trim()
+    formData.parentId = null
+  }
+  if (!subCategoryEditable.value) {
+    formData.subCategory = ''
+  }
+}
+
+const loadMainCategories = async () => {
+  try {
+    const res = await listProductMainCategories()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      mainCategoryOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load main categories:', error)
+  }
+}
+
 onMounted(() => {
+  loadMainCategories()
   loadDetail()
 })
 </script>

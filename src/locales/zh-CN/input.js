@@ -59,7 +59,8 @@ export default {
       stockIn: '入库管理',
       stockOut: '出库管理',
       inboundOutboundManagement: '出入库管理',
-      stockQuery: '库存查询',
+    stockQuery: '库存查询',
+    stockQueryDetail: '库存查询详情',
       dashboard: '大屏管理',
       feedback: '信息反馈',
       // 仓库管理 - 操作后缀
@@ -88,8 +89,8 @@ export default {
       stockOutDetail: '出库单详情',
       stockOutAudit: '出库单审核',
       // 库存查询 - 操作后缀
-      stockQueryList: '库存列表',
-      stockQueryDetail: '库存详情',
+    stockQueryList: '库存列表',
+    stockQueryDetail: '库存查询详情',
       // 大屏管理 - 操作后缀
       dashboardView: '大屏查看',
       // 信息反馈 - 操作后缀
@@ -861,6 +862,55 @@ export default {
         agriculturalProduct: '农产品',
         pesticide: '农药',
         other: '其他'
+      }
+    },
+    stockQuery: {
+      title: '库存查询',
+      subtitle: '按仓库查看库存总表与批次明细',
+      list: '仓库列表',
+      detailTitle: '库存查询详情',
+      sections: {
+        warehouseInfo: '仓库信息',
+        stockList: '库存总表',
+        batchList: '批次明细'
+      },
+      filters: {
+        warehouseCode: '仓库编号',
+        warehouseName: '仓库名称',
+        status: '状态'
+      },
+      placeholders: {
+        warehouseCode: '请输入仓库编号',
+        warehouseName: '请输入仓库名称',
+        status: '请选择状态'
+      },
+      columns: {
+        warehouseCode: '仓库编号',
+        warehouseName: '仓库名称',
+        orgName: '所属机构',
+        location: '地理位置',
+        stockQty: '库存',
+        status: '状态',
+        updateTime: '更新时间',
+        actions: '操作',
+        productCode: '商品编码',
+        productName: '商品名称',
+        mainCategory: '商品大类',
+        subCategory: '商品小类',
+        availableQty: '可用库存',
+        lockedQty: '锁定库存',
+        qualityGrade: '质量等级',
+        stockStatus: '库存状态',
+        batchNo: '批次号',
+        productionDate: '生产日期',
+        expireDate: '过期日期',
+        qty: '数量'
+      },
+      actions: {
+        viewBatch: '查看批次'
+      },
+      units: {
+        kg: 'KG'
       }
     },
 
