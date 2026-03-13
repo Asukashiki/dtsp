@@ -1054,6 +1054,11 @@ export const getTransferDetail = (id) => {
   return agricultureRequest({
     url: `/inventory/transfer/${id}`,
     method: 'get'
+  }).then(res => {
+    if (res.data) {
+      res.data = toCamelCase(res.data)
+    }
+    return res
   })
 }
 

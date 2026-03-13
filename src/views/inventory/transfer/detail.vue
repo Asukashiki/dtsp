@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
-        :title="$t('inventory.transfer.detail')"
+        :title="$t('inventory.transfer.details')"
         :show-back="true"
         @back="handleBack" />
 

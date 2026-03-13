@@ -110,7 +110,7 @@ export default {
     subtitle: 'Manage stock transfer orders',
     list: 'Transfer List',
     add: 'Add Transfer',
-    detail: 'Transfer Detail',
+    details: 'Transfer Detail',
     no: 'Transfer No',
     types: 'Transfer Type',
     applyDate: 'Apply Date',

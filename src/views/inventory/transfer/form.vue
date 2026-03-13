@@ -70,36 +70,38 @@
 
         <InfoCard :title="$t('inventory.transfer.detailList')" icon="ri-list-check">
           <div class="items-list">
-            <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
-              <div class="item-fields">
-                <el-form-item :label="$t('inventory.transfer.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
-                  <el-select v-model="item.mainCategory" :placeholder="$t('inventory.transfer.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
-                    <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
-                  <el-select v-model="item.subCategory" :placeholder="$t('inventory.transfer.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategory">
-                    <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
-                  <el-input v-model="item.batchNo" :placeholder="$t('inventory.transfer.detail.batchNo')" clearable />
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.supplier')" :prop="`detailList.${index}.supplier`">
-                  <el-input v-model="item.supplier" :placeholder="$t('inventory.transfer.detail.supplier')" clearable />
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
-                  <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.transfer.detail.qty')" style="width: 100%" />
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
-                  <el-select v-model="item.unit" :placeholder="$t('inventory.transfer.detail.unit')" style="width: 100%">
-                    <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('inventory.transfer.detail.expireDate')" :prop="`detailList.${index}.expireDate`">
-                  <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.transfer.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" />
-                </el-form-item>
-              </div>
+              <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
+                <div class="item-fields">
+                  <el-form-item :label="$t('inventory.transfer.detail.batchNo')" :prop="`detailList.${index}.batchNo`" :rules="detailRules.batchNo">
+                    <el-select v-model="item.batchNo" :placeholder="$t('inventory.transfer.detail.batchNo')" style="width: 100%" filterable :disabled="!form.outWarehouseCode" @change="(val) => handleBatchChange(val, item)">
+                      <el-option v-for="batch in batchOptions" :key="batch.value" :label="batch.label" :value="batch.value" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
+                    <el-select v-model="item.mainCategory" :placeholder="$t('inventory.transfer.detail.mainCategory')" style="width: 100%" disabled>
+                      <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
+                    <el-select v-model="item.subCategory" :placeholder="$t('inventory.transfer.detail.subCategory')" style="width: 100%" disabled>
+                      <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.supplier')" :prop="`detailList.${index}.supplier`">
+                    <el-input v-model="item.supplier" :placeholder="$t('inventory.transfer.detail.supplier')" clearable />
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
+                    <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.transfer.detail.qty')" style="width: 100%" />
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
+                    <el-select v-model="item.unit" :placeholder="$t('inventory.transfer.detail.unit')" style="width: 100%" disabled>
+                      <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.expireDate')" :prop="`detailList.${index}.expireDate`">
+                    <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.transfer.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" disabled />
+                  </el-form-item>
+                </div>
               <div class="item-actions">
                 <el-button type="danger" link @click="handleDeleteDetail(index)" :disabled="form.detailList.length === 1">
                   <i class="ri-delete-bin-line"></i>
@@ -129,7 +131,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createTransfer, updateTransfer, getTransferDetail, getWarehouseOptions } from '@/api/inventory'
+import { createTransfer, updateTransfer, getTransferDetail, getWarehouseOptions, getBatchesByWarehouse } from '@/api/inventory'
 import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { useUserStore } from '@/store/user'
@@ -147,6 +149,7 @@ const warehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 const unitOptions = ref([])
+const batchOptions = ref([])
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -193,6 +196,7 @@ const rules = {
 }
 
 const detailRules = {
+  batchNo: [{ required: true, message: 'This field is required', trigger: 'change' }],
   mainCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
   subCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
   qty: [{ required: true, message: 'This field is required', trigger: 'blur' }],
@@ -202,10 +206,6 @@ const detailRules = {
 const getSubCategoryOptions = (mainCategory) => {
   if (!mainCategory) return []
   return subCategoryOptions.value.filter(item => item.parentValue === mainCategory)
-}
-
-const handleMainCategoryChange = (val, row) => {
-  row.subCategory = ''
 }
 
 const handleBack = () => {
@@ -234,12 +234,62 @@ const handleOutWarehouseChange = (val) => {
   if (warehouse) {
     form.outWarehouseName = warehouse.warehouseName
   }
+
+  form.detailList.forEach(item => {
+    item.batchNo = ''
+    item.mainCategory = ''
+    item.subCategory = ''
+    item.expireDate = ''
+    item.unit = ''
+    item.qty = null
+    item.productId = null
+  })
+
+  loadBatchesByWarehouse(val)
 }
 
 const handleInWarehouseChange = (val) => {
   const warehouse = warehouseOptions.value.find(item => item.warehouseCode === val)
   if (warehouse) {
     form.inWarehouseName = warehouse.warehouseName
+  }
+}
+
+const loadBatchesByWarehouse = async (warehouseCode) => {
+  if (!warehouseCode) {
+    batchOptions.value = []
+    return
+  }
+  try {
+    const res = await getBatchesByWarehouse(warehouseCode)
+    batchOptions.value = (res.data || []).map(item => ({
+      label: item.batchNo,
+      value: item.batchNo,
+      mainCategory: item.mainCategory,
+      subCategory: item.subCategory,
+      expireDate: item.expireDate,
+      supplier: item.supplier,
+      unit: item.unit,
+      qty: item.qty,
+      productId: item.productId
+    }))
+  } catch (e) {
+    console.error('Failed to load batches', e)
+    batchOptions.value = []
+  }
+}
+
+const handleBatchChange = (batchNo, item) => {
+  if (!batchNo) return
+  const batchInfo = batchOptions.value.find(b => b.value === batchNo)
+  if (batchInfo) {
+    item.mainCategory = batchInfo.mainCategory
+    item.subCategory = batchInfo.subCategory
+    item.expireDate = batchInfo.expireDate
+    item.supplier = batchInfo.supplier || ''
+    item.unit = batchInfo.unit || ''
+    item.qty = batchInfo.qty != null ? batchInfo.qty : item.qty
+    item.productId = batchInfo.productId || null
   }
 }
 
@@ -293,6 +343,9 @@ const loadTransferData = async (id) => {
       form.inWarehouseCode = data.inWarehouseCode
       form.inWarehouseName = data.inWarehouseName
       form.remark = data.remark
+      if (data.outWarehouseCode) {
+        await loadBatchesByWarehouse(data.outWarehouseCode)
+      }
       if (data.detailList && data.detailList.length > 0) {
         form.detailList = data.detailList.map(item => ({
           id: item.id,
@@ -320,7 +373,25 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.transfer.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item =>
+      const normalizedDetails = form.detailList.map(item => {
+        if (item.batchNo) {
+          const batchInfo = batchOptions.value.find(b => b.value === item.batchNo)
+          if (batchInfo) {
+            return {
+              ...item,
+              mainCategory: item.mainCategory || batchInfo.mainCategory,
+              subCategory: item.subCategory || batchInfo.subCategory,
+              unit: item.unit || batchInfo.unit,
+              expireDate: item.expireDate || batchInfo.expireDate,
+              supplier: item.supplier || batchInfo.supplier,
+              productId: item.productId || batchInfo.productId,
+              qty: item.qty != null ? item.qty : batchInfo.qty
+            }
+          }
+        }
+        return item
+      })
+      const hasEmptyDetail = normalizedDetails.some(item =>
           !item.mainCategory ||
           !item.subCategory ||
           !item.unit ||
@@ -333,7 +404,8 @@ const handleSubmit = () => {
         return
       }
       submitting.value = true
-      const apiCall = isEdit.value ? updateTransfer(form) : createTransfer(form)
+      const payload = { ...form, detailList: normalizedDetails }
+      const apiCall = isEdit.value ? updateTransfer(payload) : createTransfer(payload)
       apiCall.then(() => {
         ElMessage.success(t('common.submitSuccess'))
         handleBack()
