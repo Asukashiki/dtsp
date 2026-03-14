@@ -197,7 +197,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
@@ -389,12 +389,22 @@ const fetchStock = async (index) => {
     detail.currentStock = 0
     return
   }
-  
+
   try {
-    const organCode = userStore.userInfo?.user?.organCode
-    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
-    if (res.code === 200 && res.data) {
-      detail.currentStock = res.data.availableStock || 0
+    const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+    if (!deptId) {
+      console.warn('deptId is not available in userInfo')
+      detail.currentStock = 0
+      return
+    }
+
+    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
+    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+
+    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    if (res.code === 200 && Array.isArray(res.data)) {
+      const matched = res.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      detail.currentStock = matched?.availableQty ?? 0
     } else {
       detail.currentStock = 0
     }
@@ -437,10 +447,19 @@ const validateQuantity = async (index) => {
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
   
   try {
-    const organCode = userStore.userInfo?.user?.organCode
-    const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
-    if (stockRes.code === 200 && stockRes.data) {
-      const available = stockRes.data.availableStock || 0
+    const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+    if (!deptId) {
+      console.warn('deptId is not available for stock validation')
+      return
+    }
+
+    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
+    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+
+    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
+      const matched = stockRes.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const available = matched?.availableQty ?? 0
       if (totalFormQuantity > available) {
         const excessQty = totalFormQuantity - available
         const adjustedQty = Math.max(0, (detail.quantity || 0) - excessQty)

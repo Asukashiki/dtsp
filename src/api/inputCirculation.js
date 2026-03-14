@@ -129,6 +129,17 @@ export const getAvailableStock = (inputType, inputCategory, organCode) => {
   })
 }
 
+export const getDeptCategoryStock = (deptId, mainCategory, subCategory) => {
+  const params = { dept_id: deptId }
+  if (mainCategory) params.main_category = mainCategory
+  if (subCategory) params.sub_category = subCategory
+  return agricultureRequest({
+    url: '/inventory/warehouse-manage/list-by-dept',
+    method: 'get',
+    params
+  })
+}
+
 // ==================== Union接收确认 ====================
 
 /**

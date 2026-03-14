@@ -188,7 +188,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getOseReleaseDetail, addOseRelease, editOseRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import {getAllInputList} from "@/api/input.js";
 import {getUnionDetailByUnionId} from "@/api/union.js";
 import {getOrgansRegionByCode, listSubRegionByCode} from "@/api/application.js";
@@ -391,18 +391,22 @@ const fetchStock = async (index) => {
     detail.currentStock = 0
     return
   }
-  
+
   try {
-    // organCode 从 userInfo 中获取，优先使用 organCode，其次使用 deptId
-    const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
-    if (!organCode) {
-      console.warn('organCode is not available in userInfo')
+    const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+    if (!deptId) {
+      console.warn('deptId is not available in userInfo')
       detail.currentStock = 0
       return
     }
-    const res = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
-    if (res.code === 200 && res.data) {
-      detail.currentStock = res.data.availableStock || 0
+
+    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
+    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+
+    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    if (res.code === 200 && Array.isArray(res.data)) {
+      const matched = res.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      detail.currentStock = matched?.availableQty ?? 0
     } else {
       detail.currentStock = 0
     }
@@ -447,14 +451,19 @@ const validateQuantity = async (index) => {
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
   
   try {
-    const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
-    if (!organCode) {
-      console.warn('organCode is not available for stock validation')
+    const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+    if (!deptId) {
+      console.warn('deptId is not available for stock validation')
       return
     }
-    const stockRes = await getAvailableStock(detail.inputType, detail.inputCategory, organCode)
-    if (stockRes.code === 200 && stockRes.data) {
-      const available = stockRes.data.availableStock || 0
+
+    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
+    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+
+    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
+      const matched = stockRes.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const available = matched?.availableQty ?? 0
       if (totalFormQuantity > available) {
         // 超出可用库存，调整当前行数量
         const excessQty = totalFormQuantity - available
