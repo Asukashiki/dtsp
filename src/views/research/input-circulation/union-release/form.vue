@@ -214,7 +214,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
-import { getInventoryWarehouseList } from '@/api/inventory'
+import { getInventoryWarehouseList, getInventoryProductCategoryTree } from '@/api/inventory'
 import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
@@ -263,9 +263,7 @@ const pageTitle = computed(() => {
 
 // 只显示化肥和农药类型 (IN02, IN03)
 // 显示所有投入品类型
-const inputTypeOptions = computed(() => {
-  return options.value.input_type || []
-})
+const inputTypeOptions = computed(() => categoryTree.value || [])
 
 const formData = reactive({
   id: '',
@@ -290,6 +288,7 @@ const coorList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const warehouseOptions = ref([])
+const categoryTree = ref([])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -337,6 +336,22 @@ const loadWarehouses = async () => {
   } catch (error) {
     console.error('Failed to load warehouse list:', error)
     warehouseOptions.value = []
+  }
+}
+
+const loadCategoryTree = async () => {
+  try {
+    const res = await getInventoryProductCategoryTree()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      categoryTree.value = res.data.map(item => ({
+        ...item,
+        children: Array.isArray(item.children) && item.children.length > 0
+          ? item.children
+          : []
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load product category tree:', error)
   }
 }
 
@@ -444,8 +459,9 @@ const fetchStock = async (index) => {
 
 // 根据投入品类型过滤投入品类别
 const getFilteredCategories = (inputType) => {
-  if (!inputType || !options.value.input_category) return []
-  return options.value.input_category.filter(item => item.value.startsWith(inputType))
+  if (!inputType) return []
+  const match = categoryTree.value.find(item => item.value === inputType)
+  return match?.children || []
 }
 
 // 获取需求数量
@@ -673,6 +689,7 @@ const handleAction = (action) => {
 
 onMounted(() => {
   getUserInfo()
+  loadCategoryTree()
   loadWarehouses()
   if (isEdit.value) {
     fetchDetail()

@@ -117,7 +117,7 @@
                                :placeholder="$t('common.pleaseSelect')"
                                @change="handleInputTypeChange(scope.$index)"
                                style="width: 100%">
-                      <el-option v-for="item in options.input_type" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in inputTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -205,7 +205,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
-import { getInventoryWarehouseList } from '@/api/inventory'
+import { getInventoryWarehouseList, getInventoryProductCategoryTree } from '@/api/inventory'
 import { getAllInputList } from '@/api/input.js'
 import { getUnionDetailByUnionId } from '@/api/union.js'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application.js'
@@ -280,6 +280,8 @@ const demandList = ref([])
 const demandLoading = ref(false)
 const selectedDemands = ref([])
 const warehouseOptions = ref([])
+const categoryTree = ref([])
+const inputTypeOptions = computed(() => categoryTree.value || [])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -328,6 +330,23 @@ const loadWarehouses = async () => {
     warehouseOptions.value = []
   }
 }
+
+const loadCategoryTree = async () => {
+  try {
+    const res = await getInventoryProductCategoryTree()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      categoryTree.value = res.data.map(item => ({
+        ...item,
+        children: Array.isArray(item.children) && item.children.length > 0
+          ? item.children
+          : []
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load product category tree:', error)
+  }
+}
+
 
 const regionCode = ref('')
 
@@ -446,10 +465,9 @@ const fetchStock = async (index) => {
 
 // 根据投入品类型过滤投入品类别
 const getFilteredCategories = (inputType) => {
-  if (!inputType || !options.value.input_category) return []
-  // 根据 inputCategory 的前缀匹配 inputType
-  // 例如 IN01 对应 IN0101, IN0102, IN0103
-  return options.value.input_category.filter(item => item.value.startsWith(inputType))
+  if (!inputType) return []
+  const match = categoryTree.value.find(item => item.value === inputType)
+  return match?.children || []
 }
 
 // 获取需求数量
@@ -458,6 +476,7 @@ const getDemandQuantity = (inputType, inputCategory) => {
   const demand = demandList.value.find(d => d.inputType === inputType && d.inputCategory === inputCategory)
   return demand ? demand.totalQuantity : 0
 }
+
 
 // 校验数量 - 同时检查需求量和库存
 const validateQuantity = async (index) => {
@@ -696,6 +715,7 @@ const handleAction = (action) => {
 onMounted(async () => {
   await getUserInfo()
   await getInputList()
+  await loadCategoryTree()
   await loadWarehouses()
   if (isEdit.value) {
     await fetchDetail()
