@@ -82,7 +82,7 @@
                   {{ row.updateTime || '-' }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('inventory.permission.columns.actions')" width="260" fixed="right">
+              <el-table-column :label="$t('inventory.permission.columns.actions')" width="300" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button class="action-btn action-btn-edit" size="small" @click="openOwnerDialog(row)">
