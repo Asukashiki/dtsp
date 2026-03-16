@@ -134,7 +134,12 @@ const fetchDetail = async () => {
   try {
     const response = await getOseReleaseDetail(route.params.id)
     if (response.code === 200) {
-      detailData.value = response.data || { main: {}, details: [] }
+      const data = response.data || {}
+      const rawDetails = data.details || data.detailList || []
+      detailData.value = {
+        ...data,
+        details: normalizeDetails(rawDetails)
+      }
       console.log('OSE Release Detail main:', detailData.value.main)
       // 加载需求列表 - 尝试多个字段
       const regionCode = detailData.value.main?.zoneId || detailData.value.main?.zone_id
@@ -165,6 +170,22 @@ const loadDemandList = async (regionCode) => {
   } finally {
     demandLoading.value = false
   }
+}
+
+const normalizeDetails = (list) => {
+  if (!Array.isArray(list)) return []
+  return list.map(item => ({
+    ...item,
+    inputType: item.inputType ?? item.input_type,
+    inputCategory: item.inputCategory ?? item.input_category,
+    unitPrice: item.unitPrice ?? item.unit_price,
+    currentStock: item.currentStock ?? item.current_stock,
+    maxQuantity: item.maxQuantity ?? item.max_quantity,
+    outWarehouseCode: item.outWarehouseCode ?? item.out_warehouse_code,
+    outWarehouseName: item.outWarehouseName ?? item.out_warehouse_name,
+    inWarehouseCode: item.inWarehouseCode ?? item.in_warehouse_code,
+    inWarehouseName: item.inWarehouseName ?? item.in_warehouse_name
+  }))
 }
 
 const handleBack = () => router.back()
