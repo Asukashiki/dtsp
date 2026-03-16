@@ -654,6 +654,7 @@ const handleAction = (action) => {
 
 onMounted(async () => {
   await fetchFarmerList()
+  await loadWarehouses()
   await loadCategoryTree()
   if (!isEdit.value) {
     const userInfo = userStore.userInfo
