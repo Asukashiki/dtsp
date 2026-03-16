@@ -37,6 +37,24 @@ export const getWarehouseList = (params = {}) => {
 }
 
 /**
+ * Get inventory warehouse list (inventory-warehouse)
+ * @param {Object} params - query params
+ * @param {number} params.pageNum - page number
+ * @param {number} params.pageSize - page size
+ */
+export const getInventoryWarehouseList = (params = {}) => {
+  const requestParams = {
+    pageNum: params.pageNum || 1,
+    pageSize: params.pageSize || 10000
+  }
+  return agricultureRequest({
+    url: '/inventory/inventory-warehouse/list',
+    method: 'get',
+    params: requestParams
+  })
+}
+
+/**
  * 查询仓库选项列表（供下拉选择使用）
  */
 export const getWarehouseOptions = (params = {}) => {

@@ -12,7 +12,7 @@
             <el-descriptions-item :label="$t('inventory.transfer.no')">
               {{ detail.transferNo }}
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.transfer.type')">
+            <el-descriptions-item :label="$t('inventory.transfer.types')">
               <el-tag :type="getTypeTag(detail.transferType)" size="small">
                 {{ getTypeText(detail.transferType) }}
               </el-tag>

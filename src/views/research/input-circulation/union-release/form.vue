@@ -148,12 +148,12 @@
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
                   <template #default="scope">
-                    <el-input-number 
-                      v-model="scope.row.quantity" 
-                      :min="0" 
+                    <el-input-number
+                      v-model="scope.row.quantity"
+                      :min="0"
                       :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                       :precision="2"
-                      @change="validateQuantity(scope.$index)" 
+                      @change="validateQuantity(scope.$index)"
                       style="width: 100%" />
                   </template>
                 </el-table-column>
@@ -167,6 +167,22 @@
                 <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
                   <template #default="scope">
                     <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.outWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
@@ -197,6 +213,8 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getInventoryWarehouseList } from '@/api/inventory'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
@@ -272,6 +290,7 @@ const worList = ref([])
 const coorList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
+const warehouseOptions = ref([])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -312,6 +331,16 @@ const getSubRegionByCode = async (code) => {
   }
 }
 
+const loadWarehouses = async () => {
+  try {
+    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
+    warehouseOptions.value = res.rows || []
+  } catch (error) {
+    console.error('Failed to load warehouse list:', error)
+    warehouseOptions.value = []
+  }
+}
+
 // Zone变化处理
 const handleZoneChange = async (value) => {
   // 清空目标相关字段
@@ -329,7 +358,7 @@ const handleZoneChange = async (value) => {
 const loadDemandList = async (code) => {
   demandLoading.value = true
   try {
-    const response = await getTownAggregationDetail({ 
+    const response = await getTownAggregationDetail({
       sourceCode: code,
       year: formData.releaseYear || new Date().getFullYear().toString()
     })
@@ -431,7 +460,7 @@ const getDemandQuantity = (inputType, inputCategory) => {
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
   if (!detail.inputType) return
-  
+
   // 校验需求量
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (detail.quantity > maxQty) {
@@ -439,13 +468,13 @@ const validateQuantity = async (index) => {
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
     return
   }
-  
+
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
-    .filter(d => d.inputType === detail.inputType && 
+    .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
-  
+
   try {
     const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
     if (!deptId) {
@@ -505,7 +534,11 @@ const addDetail = () => {
     unit: defaultUnit,
     unitPrice: 0,
     maxQuantity: 0,
-    currentStock: 0
+    currentStock: 0,
+    outWarehouseCode: '',
+    outWarehouseName: '',
+    inWarehouseCode: '',
+    inWarehouseName: ''
   })
 }
 
@@ -513,18 +546,28 @@ const removeDetail = (index) => {
   formData.details.splice(index, 1)
 }
 
+const handleDetailOutWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.outWarehouseName = warehouse ? warehouse.warehouseName : ''
+}
+
+const handleDetailInWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
+}
+
 const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
-    
+
     // 验证分发数量不能为0
     const zeroQuantityDetail = formData.details.find(d => !d.quantity || d.quantity <= 0)
     if (zeroQuantityDetail) {
       ElMessage.warning(t('inputCirculation.quantityCannotBeZero'))
       return
     }
-    
+
     loading.value = true
     try {
       // 库存校验
@@ -536,7 +579,7 @@ const handleSubmit = async () => {
         }
         quantityByType[key].quantity += (detail.quantity || 0)
       }
-      
+
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
         const stockRes = await getAvailableStock(item.inputType, item.inputCategory, userStore.userInfo.user.organCode)
@@ -631,6 +674,7 @@ const handleAction = (action) => {
 
 onMounted(() => {
   getUserInfo()
+  loadWarehouses()
   if (isEdit.value) {
     fetchDetail()
   }

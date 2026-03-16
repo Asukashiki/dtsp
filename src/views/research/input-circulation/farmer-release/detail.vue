@@ -106,6 +106,8 @@
                 </template>
               </el-table-column>
               <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" min-width="100" />
+              <el-table-column prop="outWarehouseName" :label="$t('inputCirculation.outWarehouse')" min-width="140" />
+              <el-table-column prop="inWarehouseName" :label="$t('inputCirculation.inWarehouse')" min-width="140" />
               <el-table-column prop="totalPrice" :label="$t('inputCirculation.totalPrice')" min-width="120" />
             </el-table>
           </div>
@@ -175,4 +177,3 @@ onMounted(() => fetchDetail())
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 </style>
-

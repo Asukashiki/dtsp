@@ -144,12 +144,12 @@
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
                   <template #default="scope">
-                    <el-input-number 
-                      v-model="scope.row.quantity" 
-                      :min="0" 
+                    <el-input-number
+                      v-model="scope.row.quantity"
+                      :min="0"
                       :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                       :precision="2"
-                      @change="validateQuantity(scope.$index)" 
+                      @change="validateQuantity(scope.$index)"
                       style="width: 100%" />
                   </template>
                 </el-table-column>
@@ -157,6 +157,22 @@
                   <template #default="scope">
                     <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
                       <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.outWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -188,6 +204,8 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getInventoryWarehouseList } from '@/api/inventory'
 import { getOseReleaseDetail, addOseRelease, editOseRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import {getAllInputList} from "@/api/input.js";
 import {getUnionDetailByUnionId} from "@/api/union.js";
@@ -262,6 +280,7 @@ const inputList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const selectedDemands = ref([])
+const warehouseOptions = ref([])
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -298,6 +317,16 @@ const getAllZoneList = async () => {
     ElMessage.error(t('inputCirculation.queryZoneListFailed'))
   } finally {
     loading.value = false
+  }
+}
+
+const loadWarehouses = async () => {
+  try {
+    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
+    warehouseOptions.value = res.rows || []
+  } catch (error) {
+    console.error('Failed to load warehouse list:', error)
+    warehouseOptions.value = []
   }
 }
 
@@ -435,7 +464,7 @@ const getDemandQuantity = (inputType, inputCategory) => {
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
   if (!detail.inputType) return
-  
+
   // 校验需求量
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (detail.quantity > maxQty) {
@@ -443,13 +472,13 @@ const validateQuantity = async (index) => {
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
     return
   }
-  
+
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
-    .filter(d => d.inputType === detail.inputType && 
+    .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
-  
+
   try {
     const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
     if (!deptId) {
@@ -499,7 +528,7 @@ const getUnionInfo = async (value) => {
 const loadDemandList = async (unionCode) => {
   demandLoading.value = true
   try {
-    const response = await getTownAggregationDetail({ 
+    const response = await getTownAggregationDetail({
       sourceCode: unionCode,
       year: formData.releaseYear || new Date().getFullYear().toString()
     })
@@ -551,7 +580,11 @@ const addDetail = () => {
     unit: '',
     unitPrice: 0,
     maxQuantity: 0,
-    currentStock: 0
+    currentStock: 0,
+    outWarehouseCode: '',
+    outWarehouseName: '',
+    inWarehouseCode: '',
+    inWarehouseName: ''
   })
 }
 
@@ -559,12 +592,22 @@ const removeDetail = (index) => {
   formData.details.splice(index, 1)
 }
 
+const handleDetailOutWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.outWarehouseName = warehouse ? warehouse.warehouseName : ''
+}
+
+const handleDetailInWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
+}
+
 const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (!valid) return
     loading.value = true
-    
+
     try {
       // 库存校验
       const quantityByType = {}
@@ -575,7 +618,7 @@ const handleSubmit = async () => {
         }
         quantityByType[key].quantity += (detail.quantity || 0)
       }
-      
+
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
         const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
@@ -594,7 +637,7 @@ const handleSubmit = async () => {
           }
         }
       }
-      
+
       const submitData = { ...formData }
       if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
         submitData.targetId = formData.targetId[formData.targetId.length - 1]
@@ -654,6 +697,7 @@ const handleAction = (action) => {
 onMounted(async () => {
   await getUserInfo()
   await getInputList()
+  await loadWarehouses()
   if (isEdit.value) {
     await fetchDetail()
   } else {

@@ -1962,7 +1962,7 @@ const routes = [
         path: 'outbound/detail/:id',
         name: 'InventoryOutboundDetail',
         component: () => import('../views/inventory/outbound/detail.vue'),
-        meta: { title: 'inventory.outbound.detail', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.outbound.details', activeMenu: '/inventory/outbound', hideInMenu: true, requiresAuth: true }
       },
       {
         path: 'warehouse-manage',
@@ -2088,7 +2088,7 @@ const routes = [
         path: 'transfer/detail/:id',
         name: 'InventoryTransferDetail',
         component: () => import('../views/inventory/transfer/detail.vue'),
-        meta: { title: 'inventory.transfer.detail', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
+        meta: { title: 'inventory.transfer.details', activeMenu: '/inventory/transfer', hideInMenu: true, requiresAuth: true }
       }
     ]
   },

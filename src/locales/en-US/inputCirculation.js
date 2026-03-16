@@ -9,6 +9,8 @@ export default {
   inputType: 'Input Type',
   totalQuota: 'Total Quota',
   unit: 'Unit',
+  outWarehouse: 'Outbound Warehouse',
+  inWarehouse: 'Inbound Warehouse',
   farmerId: 'Farmer ID',
   farmerPhone: 'Farmer Phone',
   farmerName: 'Farmer Name',

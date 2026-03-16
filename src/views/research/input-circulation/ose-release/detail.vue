@@ -100,6 +100,8 @@
                 </template>
               </el-table-column>
               <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" />
+              <el-table-column prop="outWarehouseName" :label="$t('inputCirculation.outWarehouse')" min-width="140" />
+              <el-table-column prop="inWarehouseName" :label="$t('inputCirculation.inWarehouse')" min-width="140" />
             </el-table>
           </div>
         </div>

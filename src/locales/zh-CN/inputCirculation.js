@@ -9,6 +9,8 @@ export default {
   inputType: '投入品类别',
   totalQuota: '投入品总量',
   unit: '计量单位',
+  outWarehouse: '出库仓库',
+  inWarehouse: '入库仓库',
   farmerId: '农民ID',
   farmerName: '农民姓名',
   receiveStatus: '领用状态',

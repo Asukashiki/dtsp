@@ -157,6 +157,22 @@
                       @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('inputCirculation.outWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    </el-select>
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="140">
                   <template #default="scope">
                     <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
@@ -190,6 +206,8 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getInventoryWarehouseList } from '@/api/inventory'
 import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getFarmerList } from '@/api/newFarm'
 import { useUserStore } from '@/store/user'
@@ -239,6 +257,7 @@ const farmerList = ref([])
 // 需求列表
 const demandList = ref([])
 const demandLoading = ref(false)
+const warehouseOptions = ref([])
 
 // 显示所有投入品类型
 const inputTypeOptions = computed(() => {
@@ -273,6 +292,16 @@ const fetchFarmerList = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch farmer list:', error)
+  }
+}
+
+const loadWarehouses = async () => {
+  try {
+    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
+    warehouseOptions.value = res.rows || []
+  } catch (error) {
+    console.error('Failed to load warehouse list:', error)
+    warehouseOptions.value = []
   }
 }
 
@@ -469,12 +498,26 @@ const addDetail = () => {
     totalPrice: 0,
     maxQuantity: null,
     currentStock: 0,
-    releaseTime: new Date().toISOString()
+    releaseTime: new Date().toISOString(),
+    outWarehouseCode: '',
+    outWarehouseName: '',
+    inWarehouseCode: '',
+    inWarehouseName: ''
   })
 }
 
 const removeDetail = (index) => {
   formData.details.splice(index, 1)
+}
+
+const handleDetailOutWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.outWarehouseName = warehouse ? warehouse.warehouseName : ''
+}
+
+const handleDetailInWarehouseChange = (row, code) => {
+  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
 }
 
 const formatDateTime = (dateStr) => {
@@ -536,7 +579,11 @@ const handleSubmit = async () => {
           unit: detail.unit,
           unitPrice: detail.unitPrice,
           totalPrice: detail.totalPrice,
-          releaseTime: formatDateTime(detail.releaseTime)
+          releaseTime: formatDateTime(detail.releaseTime),
+          outWarehouseCode: detail.outWarehouseCode,
+          outWarehouseName: detail.outWarehouseName,
+          inWarehouseCode: detail.inWarehouseCode,
+          inWarehouseName: detail.inWarehouseName
         }))
       }
 
@@ -593,6 +640,7 @@ const handleAction = (action) => {
 
 onMounted(async () => {
   await fetchFarmerList()
+  await loadWarehouses()
 
   if (!isEdit.value) {
     const userInfo = userStore.userInfo
