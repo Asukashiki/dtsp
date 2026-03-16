@@ -204,9 +204,8 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
-import { getOseReleaseDetail, addOseRelease, editOseRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import {getAllInputList} from "@/api/input.js";
 import {getUnionDetailByUnionId} from "@/api/union.js";
 import {getOrgansRegionByCode, listSubRegionByCode} from "@/api/application.js";
