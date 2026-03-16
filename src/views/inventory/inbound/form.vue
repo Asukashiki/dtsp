@@ -265,6 +265,9 @@ const loadDictionaries = async () => {
 const syncDetailProductRefs = () => {
   if (!form.detailList || form.detailList.length === 0) return
   const map = productMap.value
+  const normalize = (val) => (val || '').toString().trim().toLowerCase()
+  const findMainByName = (name) => mainCategoryOptions.value.find(opt => normalize(opt.label) === normalize(name))
+  const findSubByName = (name) => subCategoryOptions.value.find(opt => normalize(opt.label) === normalize(name))
   form.detailList = form.detailList.map(item => {
     const next = { ...item }
     if (next.productId && map.has(next.productId)) {
@@ -287,9 +290,28 @@ const syncDetailProductRefs = () => {
         next.mainCategoryId = subProduct.parentId
         next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
       }
+    } else if (!next.subCategoryId && next.subCategory) {
+      const subOpt = findSubByName(next.subCategory)
+      if (subOpt) {
+        next.subCategoryId = subOpt.value
+        next.productId = subOpt.value
+        next.unit = next.unit || subOpt.unit || ''
+        if (subOpt.parentId && map.has(subOpt.parentId)) {
+          const mainProduct = map.get(subOpt.parentId)
+          next.mainCategoryId = subOpt.parentId
+          next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+        }
+      }
     } else if (next.mainCategoryId && map.has(next.mainCategoryId)) {
       const mainProduct = map.get(next.mainCategoryId)
       next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+    } else if (!next.mainCategoryId && next.mainCategory) {
+      const mainOpt = findMainByName(next.mainCategory)
+      if (mainOpt && map.has(mainOpt.value)) {
+        const mainProduct = map.get(mainOpt.value)
+        next.mainCategoryId = mainOpt.value
+        next.mainCategory = mainProduct.mainCategory || mainProduct.productName || next.mainCategory
+      }
     }
     return next
   })
