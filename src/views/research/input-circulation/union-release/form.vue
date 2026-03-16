@@ -356,12 +356,15 @@ const loadCategoryTree = async () => {
 }
 
 // Zone变化处理
-const handleZoneChange = async (value) => {
-  // 清空目标相关字段
-  formData.targetId = ''
-  formData.targetAddress = ''
-  formData.targetContact = ''
-  formData.targetPhone = ''
+const handleZoneChange = async (value, options = {}) => {
+  const { preserveTarget = false } = options
+  if (!preserveTarget) {
+    // 清空目标相关字段
+    formData.targetId = ''
+    formData.targetAddress = ''
+    formData.targetContact = ''
+    formData.targetPhone = ''
+  }
   await getAllCoopList(value)
   await loadDemandList(value)
 }
@@ -524,7 +527,7 @@ const fetchDetail = async () => {
       Object.assign(formData, response.data.main)
       formData.details = response.data.details || []
       if (formData.zoneId) {
-        await handleZoneChange(formData.zoneId)
+        await handleZoneChange(formData.zoneId, { preserveTarget: true })
       }
     }
   } catch (error) {

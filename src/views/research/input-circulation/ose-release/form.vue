@@ -719,6 +719,11 @@ onMounted(async () => {
   await loadWarehouses()
   if (isEdit.value) {
     await fetchDetail()
+    await getAllZoneList()
+    if (formData.zoneId) {
+      await getAllUnionList(formData.zoneId)
+      await loadDemandList(formData.zoneId)
+    }
   } else {
     await getAllZoneList()
   }
