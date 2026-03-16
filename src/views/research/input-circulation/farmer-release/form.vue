@@ -81,12 +81,12 @@
               <el-table :data="demandList" border v-loading="demandLoading">
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
                   <template #default="{ row }">
-                    {{ getLabelByValue('input_type', row.inputType) }}
+                    {{ getInputTypeLabel(row.inputType) }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
                   <template #default="{ row }">
-                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                    {{ getInputCategoryLabel(row.inputType, row.inputCategory) }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
@@ -113,19 +113,19 @@
                 <el-table-column type="index" width="50" />
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
                   <template #default="scope">
-                    <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
-                      @change="handleInputTypeChange(scope.$index)" style="width: 100%">
+                      <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
+                        @change="handleInputTypeChange(scope.$index)" style="width: 100%">
                       <el-option v-for="item in inputTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-                    </el-select>
+                      </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
                   <template #default="scope">
-                    <el-select v-model="scope.row.inputCategory" :placeholder="$t('common.pleaseSelect')"
-                      @change="handleInputCategoryChange(scope.$index)" style="width: 100%">
+                      <el-select v-model="scope.row.inputCategory" :placeholder="$t('common.pleaseSelect')"
+                        @change="handleInputCategoryChange(scope.$index)" style="width: 100%">
                       <el-option v-for="item in getFilteredCategories(scope.row.inputType)" :key="item.value"
                         :label="item.label" :value="item.value" />
-                    </el-select>
+                      </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
@@ -206,15 +206,15 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getAvailableStock } from '@/api/inputCirculation'
+import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
-import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getFarmerList } from '@/api/newFarm'
 import { useUserStore } from '@/store/user'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
+import { getInventoryProductCategoryTree } from '@/api/inventory'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
+const { options } = useDict(['agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -259,10 +259,8 @@ const demandList = ref([])
 const demandLoading = ref(false)
 const warehouseOptions = ref([])
 
-// 显示所有投入品类型
-const inputTypeOptions = computed(() => {
-  return options.value.input_type || []
-})
+const categoryTree = ref([])
+const inputTypeOptions = computed(() => categoryTree.value || [])
 
 const formData = reactive({
   id: '',
@@ -344,10 +342,9 @@ const handleFarmerChange = (farmerId) => {
 
 // 根据类型获取过滤后的类别
 const getFilteredCategories = (inputType) => {
-  if (!inputType || !options.value.input_category) return []
-  // 根据 inputCategory 的前缀匹配 inputType
-  // 例如 IN01 对应 IN0101, IN0102, IN0103
-  return options.value.input_category.filter(item => item.value.startsWith(inputType))
+  if (!inputType) return []
+  const match = categoryTree.value.find(item => item.value === inputType)
+  return match?.children || []
 }
 
 // 投入品类型变化
@@ -401,6 +398,17 @@ const fetchStock = async (index) => {
 const getDemandQuantity = (inputType, inputCategory) => {
   const item = demandList.value.find(d => d.inputType === inputType && d.inputCategory === inputCategory)
   return item ? item.totalQuantity : '-'
+}
+
+const getInputTypeLabel = (value) => {
+  const match = categoryTree.value.find(item => item.value === value)
+  return match ? match.label : value || '-'
+}
+
+const getInputCategoryLabel = (typeValue, categoryValue) => {
+  const parent = categoryTree.value.find(item => item.value === typeValue)
+  const match = parent?.children?.find(child => child.value === categoryValue)
+  return match ? match.label : categoryValue || '-'
 }
 
 // 验证数量 - 同时检查需求量和库存
@@ -557,7 +565,13 @@ const handleSubmit = async () => {
       // 检查每种类型的可用库存
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
-        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, userStore.userInfo.user.organCode)
+        const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
+        if (!organCode) {
+          ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
+          loading.value = false
+          return
+        }
+        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, organCode)
         if (stockRes.code === 200 && stockRes.data) {
           const available = stockRes.data.availableStock || 0
           if (item.quantity > available) {
@@ -640,8 +654,7 @@ const handleAction = (action) => {
 
 onMounted(async () => {
   await fetchFarmerList()
-  await loadWarehouses()
-
+  await loadCategoryTree()
   if (!isEdit.value) {
     const userInfo = userStore.userInfo
     formData.releaseBy = userInfo.userName || userInfo.nickName || userInfo.name ||
@@ -654,6 +667,22 @@ onMounted(async () => {
     await fetchDetail()
   }
 })
+
+const loadCategoryTree = async () => {
+  try {
+    const res = await getInventoryProductCategoryTree()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      categoryTree.value = res.data.map(item => ({
+        ...item,
+        children: Array.isArray(item.children) && item.children.length > 0
+          ? item.children
+          : []
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load product category tree:', error)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

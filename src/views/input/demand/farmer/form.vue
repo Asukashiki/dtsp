@@ -267,6 +267,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addFarmerDemand, updateFarmerDemand, getFarmerDemandDetail } from '@/api/farmerDemand'
 import { getFarmerList, getFarmerDetail } from '@/api/newFarm'
+import { getInventoryProductCategoryTree } from '@/api/inventory'
 import { useDict, clearDictCache } from '@/hooks/useDict'
 import { InfoCard } from '@/components/common'
 
@@ -314,32 +315,8 @@ const {
   cache: true
 })
 
-// 构建级联选项（适配字典）
-const cascaderOptions = computed(() => {
-  const typeList = dictOptions.value.input_type || []
-  const categoryList = dictOptions.value.input_category || []
-
-  // 过滤掉不需要的类型（如IN03）
-  const filteredTypeList = typeList.filter(item => !['IN03'].includes(item.value))
-
-  return filteredTypeList.map(type => {
-    // 匹配当前类型下的子分类（值以类型值开头）
-    const children = categoryList.filter(category => {
-      const typeValue = (type.value || '').trim().toUpperCase()
-      const categoryValue = (category.value || '').trim().toUpperCase()
-      return categoryValue.startsWith(typeValue)
-    }).map(category => ({
-      value: category.value,
-      label: category.label || category.value
-    }))
-
-    return {
-      value: type.value,
-      label: type.label || type.value,
-      children: children.length > 0 ? children : [{ value: '', label: t('common.noData') }]
-    }
-  })
-})
+// 构建级联选项（商品分类树）
+const cascaderOptions = ref([])
 
 // 表单数据
 const formData = reactive({
@@ -420,20 +397,21 @@ const getSeasonName = (seasonValue) => {
   return season ? season.label : seasonValue
 }
 
-// 获取投入品类型名称（从字典中查找，大类）
+// 获取投入品类型名称（从级联选项中查找，大类）
 const getInputTypeName = (typeValue) => {
   if (!typeValue) return ''
-  const inputType = options.input_type || dictOptions.value.input_type || []
-  const type = inputType.find(item => item.value === typeValue)
-  return type ? type.label : typeValue
+  const match = cascaderOptions.value.find(item => item.value === typeValue)
+  return match ? match.label : typeValue
 }
 
-// 获取投入品小类名称（从字典中查找）
+// 获取投入品小类名称（从级联选项中查找）
 const getInputCategoryName = (categoryValue) => {
   if (!categoryValue) return ''
-  const inputCategory = options.input_category || dictOptions.value.input_category || []
-  const category = inputCategory.find(item => item.value === categoryValue)
-  return category ? category.label : categoryValue
+  for (const parent of cascaderOptions.value) {
+    const match = (parent.children || []).find(child => child.value === categoryValue)
+    if (match) return match.label
+  }
+  return categoryValue
 }
 
 // 表单验证规则
@@ -472,7 +450,7 @@ const rules = reactive({
   }]
 })
 
-// 级联选择器change事件（适配字典值）
+// 级联选择器change事件（适配商品分类树）
 const handleCascaderChange = (val, index) => {
   if (val && val.length === 2 && val[1]) {
     formData.inputItems[index].inputType = val[0]
@@ -577,27 +555,15 @@ const loadData = async () => {
         formData.year = currentYear.toString()
       }
 
-      // 适配编辑态的级联选择器值
-      // 注意：后端返回的 inputCategory 是大类(IN01)，inputType 是小类(IN0101)
-      // 前端级联选择器需要 cascadeValue = [大类, 小类]
-      // 前端 inputType 存大类，inputCategory 存小类
-      if (formData.inputItems && formData.inputItems.length > 0) {
-        formData.inputItems.forEach(item => {
-          // 后端返回：inputCategory=大类, inputType=小类
-          // 前端期望：inputType=大类, inputCategory=小类
-          const backendCategory = item.inputCategory  // 大类 IN01
-          const backendType = item.inputType  // 小类 IN0101
-          
-          // 修正字段映射
-          item.inputType = backendCategory  // 前端大类
-          item.inputCategory = backendType  // 前端小类
-          
-          // 设置级联选择器值 [大类, 小类]
-          item.cascadeValue = backendCategory && backendType
-              ? [backendCategory, backendType]
-              : []
-        })
-      } else {
+  if (formData.inputItems && formData.inputItems.length > 0) {
+    formData.inputItems.forEach(item => {
+      const mainCategory = item.inputType
+      const subCategory = item.inputCategory
+      item.cascadeValue = mainCategory && subCategory
+        ? [mainCategory, subCategory]
+        : []
+    })
+  } else {
         formData.inputItems = []
       }
 
@@ -737,6 +703,22 @@ const handleCancel = () => {
 }
 
 // 初始化
+const loadCategoryTree = async () => {
+  try {
+    const res = await getInventoryProductCategoryTree()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      cascaderOptions.value = res.data.map(item => ({
+        ...item,
+        children: Array.isArray(item.children) && item.children.length > 0
+          ? item.children
+          : [{ value: '', label: t('common.noData') }]
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load category tree:', error)
+  }
+}
+
 onMounted(async () => {
   // 监听窗口大小变化，适配标签宽度
   window.addEventListener('resize', () => {
@@ -759,6 +741,7 @@ onMounted(async () => {
 
   // 加载字典和数据
   await refreshDict()
+  await loadCategoryTree()
   loadData()
 
   // 初始化农民列表

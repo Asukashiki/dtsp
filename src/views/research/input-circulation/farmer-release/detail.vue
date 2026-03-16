@@ -63,16 +63,16 @@
           </div>
           <div class="card-body">
             <el-table :data="demandList" border v-loading="demandLoading">
-              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
-                <template #default="{ row }">
-                  {{ getLabelByValue('input_type', row.inputType) }}
-                </template>
-              </el-table-column>
-              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
-                <template #default="{ row }">
-                  {{ getLabelByValue('input_category', row.inputCategory) }}
-                </template>
-              </el-table-column>
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+                  <template #default="{ row }">
+                    {{ getInputTypeLabel(row.inputType) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+                  <template #default="{ row }">
+                    {{ getInputCategoryLabel(row.inputType, row.inputCategory) }}
+                  </template>
+                </el-table-column>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
             </el-table>
           </div>
@@ -91,12 +91,12 @@
               <el-table-column type="index" width="50" />
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_type', row.inputType) }}
+                  {{ getInputTypeLabel(row.inputType) }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_category', row.inputCategory) }}
+                  {{ getInputCategoryLabel(row.inputType, row.inputCategory) }}
                 </template>
               </el-table-column>
               <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" min-width="100" />
@@ -125,8 +125,9 @@ import { ElMessage } from 'element-plus'
 import { getFarmerReleaseDetail } from '@/api/inputCirculation'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
+import { getInventoryProductCategoryTree } from '@/api/inventory'
 
-const { getLabelByValue } = useDict(['input_type', 'input_category', 'agri_unit'])
+const { getLabelByValue } = useDict(['agri_unit'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -135,6 +136,7 @@ const loading = ref(false)
 const detailData = ref({ main: {}, details: [] })
 const demandList = ref([])
 const demandLoading = ref(false)
+const categoryTree = ref([])
 
 const fetchDetail = async () => {
   loading.value = true
@@ -170,8 +172,38 @@ const loadDemandList = async (farmerId) => {
   }
 }
 
+const loadCategoryTree = async () => {
+  try {
+    const res = await getInventoryProductCategoryTree()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      categoryTree.value = res.data.map(item => ({
+        ...item,
+        children: Array.isArray(item.children) && item.children.length > 0
+          ? item.children
+          : []
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load product category tree:', error)
+  }
+}
+
+const getInputTypeLabel = (value) => {
+  const match = categoryTree.value.find(item => item.value === value)
+  return match ? match.label : value || '-'
+}
+
+const getInputCategoryLabel = (typeValue, categoryValue) => {
+  const parent = categoryTree.value.find(item => item.value === typeValue)
+  const match = parent?.children?.find(child => child.value === categoryValue)
+  return match ? match.label : categoryValue || '-'
+}
+
 const handleBack = () => router.back()
-onMounted(() => fetchDetail())
+onMounted(async () => {
+  await loadCategoryTree()
+  await fetchDetail()
+})
 </script>
 
 <style lang="scss" scoped>

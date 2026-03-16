@@ -973,6 +973,13 @@ export const getInventoryProductList = (params = {}) => {
   })
 }
 
+export const getInventoryProductCategoryTree = () => {
+  return agricultureRequest({
+    url: '/inventory/product-manage/category-tree',
+    method: 'get'
+  })
+}
+
 // ==================== 出库管理 API (新) ====================
 
 /**
