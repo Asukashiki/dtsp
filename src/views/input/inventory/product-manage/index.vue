@@ -21,7 +21,7 @@
 
             <SearchItem :label="$t('input.inventory.productManage.form.mainCategory')">
               <el-select v-model="filters.mainCategory" :placeholder="$t('input.inventory.productManage.placeholder.mainCategory')" clearable class="search-input">
-                <el-option v-for="item in mainCategoryOptions" :key="item.value" :label="$t(item.label)" :value="item.value" />
+                <el-option v-for="item in mainCategoryOptions" :key="item.id" :label="item.main_category" :value="item.main_category" />
               </el-select>
             </SearchItem>
 
@@ -43,11 +43,11 @@
 
           <div class="table-wrapper pc-only">
             <el-table v-loading="loading" :data="tableData" stripe>
-              <el-table-column prop="product_code" :label="$t('input.inventory.productManage.columns.productCode')" min-width="150" fixed="left" show-overflow-tooltip />
+              <el-table-column prop="product_code" :label="$t('input.inventory.productManage.columns.productCode')" min-width="150"  show-overflow-tooltip />
               <el-table-column prop="product_name" :label="$t('input.inventory.productManage.columns.productName')" min-width="180" show-overflow-tooltip />
-              <el-table-column :label="$t('input.inventory.productManage.columns.mainCategory')" min-width="130" align="center">
+              <el-table-column :label="$t('input.inventory.productManage.columns.mainCategory')" min-width="150" align="center"  >
                 <template #default="{ row }">
-                  <el-tag :type="getMainCategoryTag(row.main_category)" size="small">{{ getMainCategoryLabel(row.main_category) }}</el-tag>
+                  <el-tag :type="getMainCategoryTag(row.main_category)" size="small" >{{ getMainCategoryLabel(row.main_category) }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="category_name" :label="$t('input.inventory.productManage.columns.categoryName')" min-width="140" show-overflow-tooltip />
@@ -129,7 +129,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { deleteProductManage, listProductManage } from '@/api/productManage'
+import { deleteProductManage, listProductManage, listProductMainCategories } from '@/api/productManage'
 import { InfoCard, PageHeader, SearchForm, SearchItem } from '@/components/common'
 
 const router = useRouter()
@@ -141,25 +141,17 @@ const tableData = ref([])
 const filters = reactive({ productCode: '', productName: '', mainCategory: '', status: '' })
 const pagination = reactive({ pageNum: 1, pageSize: 10, total: 0 })
 
-const mainCategoryOptions = [
-  { value: 'FERTILIZER', label: 'input.inventory.productManage.mainCategoryOptions.fertilizer' },
-  { value: 'SEED', label: 'input.inventory.productManage.mainCategoryOptions.seed' },
-  { value: 'AGRICULTURAL_PRODUCT', label: 'input.inventory.productManage.mainCategoryOptions.agriculturalProduct' },
-  { value: 'PESTICIDE', label: 'input.inventory.productManage.mainCategoryOptions.pesticide' },
-  { value: 'OTHER', label: 'input.inventory.productManage.mainCategoryOptions.other' }
-]
+const mainCategoryOptions = ref([])
 
 const statusOptions = [
   { value: '0', label: 'input.inventory.productManage.status.enabled' },
   { value: '1', label: 'input.inventory.productManage.status.disabled' }
 ]
 
-const findLabel = (options, value) => {
-  const match = options.find(item => item.value === value)
-  return match ? t(match.label) : value || '-'
+const getMainCategoryLabel = value => {
+  const match = mainCategoryOptions.value.find(item => item.main_category === value)
+  return match ? match.main_category : value || '-'
 }
-
-const getMainCategoryLabel = value => findLabel(mainCategoryOptions, value)
 const getMainCategoryTag = value => {
   if (value === 'SEED') return 'success'
   if (value === 'FERTILIZER') return 'warning'
@@ -186,6 +178,17 @@ const loadData = async () => {
     ElMessage.error(t('common.failed'))
   } finally {
     loading.value = false
+  }
+}
+
+const loadMainCategories = async () => {
+  try {
+    const res = await listProductMainCategories()
+    if (res.code === 200 && Array.isArray(res.data)) {
+      mainCategoryOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load main categories:', error)
   }
 }
 
@@ -247,6 +250,7 @@ const handleDelete = row => {
 }
 
 onMounted(() => {
+  loadMainCategories()
   loadData()
 })
 </script>
