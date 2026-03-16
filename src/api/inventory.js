@@ -55,6 +55,30 @@ export const getInventoryWarehouseList = (params = {}) => {
 }
 
 /**
+ * Create inbound order for external system (open API)
+ * @param {Object} data - inbound order data
+ */
+export const createOpenInbound = (data) => {
+  return agricultureRequest({
+    url: '/inventory/open/inbound',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * Create outbound order for external system (open API)
+ * @param {Object} data - outbound order data
+ */
+export const createOpenOutbound = (data) => {
+  return agricultureRequest({
+    url: '/inventory/open/outbound',
+    method: 'post',
+    data
+  })
+}
+
+/**
  * 查询仓库选项列表（供下拉选择使用）
  */
 export const getWarehouseOptions = (params = {}) => {

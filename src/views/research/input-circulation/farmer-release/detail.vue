@@ -143,7 +143,12 @@ const fetchDetail = async () => {
   try {
     const response = await getFarmerReleaseDetail(route.params.id)
     if (response.code === 200) {
-      detailData.value = response.data || { main: {}, details: [] }
+      const data = response.data || {}
+      const rawDetails = data.details || data.detailList || []
+      detailData.value = {
+        ...data,
+        details: normalizeDetails(rawDetails)
+      }
       // 加载该农民的需求列表
       const farmerId = detailData.value.main?.farmerId
       if (farmerId) {
@@ -197,6 +202,22 @@ const getInputCategoryLabel = (typeValue, categoryValue) => {
   const parent = categoryTree.value.find(item => item.value === typeValue)
   const match = parent?.children?.find(child => child.value === categoryValue)
   return match ? match.label : categoryValue || '-'
+}
+
+const normalizeDetails = (list) => {
+  if (!Array.isArray(list)) return []
+  return list.map(item => ({
+    ...item,
+    inputType: item.inputType ?? item.input_type,
+    inputCategory: item.inputCategory ?? item.input_category,
+    unitPrice: item.unitPrice ?? item.unit_price,
+    currentStock: item.currentStock ?? item.current_stock,
+    maxQuantity: item.maxQuantity ?? item.max_quantity,
+    outWarehouseCode: item.outWarehouseCode ?? item.out_warehouse_code,
+    outWarehouseName: item.outWarehouseName ?? item.out_warehouse_name,
+    inWarehouseCode: item.inWarehouseCode ?? item.in_warehouse_code,
+    inWarehouseName: item.inWarehouseName ?? item.in_warehouse_name
+  }))
 }
 
 const handleBack = () => router.back()
