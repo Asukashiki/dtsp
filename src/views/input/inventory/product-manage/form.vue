@@ -25,7 +25,6 @@
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productCode')" prop="productCode"><el-input v-model="formData.productCode" :placeholder="$t('input.inventory.productManage.placeholder.productCode')" maxlength="64" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productName')" prop="productName"><el-input v-model="formData.productName" :placeholder="$t('input.inventory.productManage.placeholder.productName')" maxlength="100" clearable /></el-form-item></el-col>
-                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.categoryName')" prop="categoryName"><el-input v-model="formData.categoryName" :placeholder="$t('input.inventory.productManage.placeholder.categoryName')" maxlength="50" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.productManage.form.mainCategory')" prop="mainCategory">
                     <el-select
@@ -112,7 +111,6 @@ const formData = reactive({
 const rules = computed(() => ({
   productCode: [{ required: true, message: t('input.inventory.productManage.rules.productCodeRequired'), trigger: 'blur' }],
   productName: [{ required: true, message: t('input.inventory.productManage.rules.productNameRequired'), trigger: 'blur' }],
-  categoryName: [{ required: true, message: t('input.inventory.productManage.rules.categoryNameRequired'), trigger: 'blur' }],
   mainCategory: [{ required: true, message: t('input.inventory.productManage.rules.mainCategoryRequired'), trigger: 'change' }],
   unit: [{ required: true, message: t('input.inventory.productManage.rules.unitRequired'), trigger: 'blur' }],
   price: [{ required: true, message: t('input.inventory.productManage.rules.priceRequired'), trigger: 'change' }],
@@ -177,7 +175,7 @@ const handleSubmit = async () => {
       productCode: formData.productCode.trim(),
       productName: formData.productName.trim(),
       categoryId: formData.categoryId || null,
-      categoryName: formData.categoryName.trim(),
+       categoryName: '',
       mainCategory: mainCategoryName,
       subCategory: subCategoryValue,
       parentId: parentIdValue,
