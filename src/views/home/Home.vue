@@ -230,6 +230,15 @@ const systemModules = computed(() => ({
     gradient: 'linear-gradient(135deg, #FA8C16 0%, #FFC069 100%)',
     path: '/inventory'
   },
+  userManagement: {
+    name: t('home.modules.userManagement.name'),
+    desc: t('home.modules.userManagement.desc'),
+    icon: 'ri-user-settings-line',
+    gradient: 'linear-gradient(135deg, #0086F5 0%, #5AA9FF 100%)',
+    path: `http://196.189.236.220:30005/data-service-uc/?token=${localStorage.getItem('token') || ''}`,
+    external: true,
+    newTab: true
+  },
   // farm: {
   //   name: t('home.modules.farm.name'),
   //   desc: t('home.modules.farm.desc'),
@@ -297,13 +306,16 @@ const handleMoreAnnouncements = () => {
 
 const handleSystemClick = (module) => {
   console.log('点击系统模块:', module)
-  if (module.path) {
-    if (module.external) {
-      window.location.href = module.path
+  if (!module.path) return
+  if (module.external) {
+    if (module.newTab) {
+      window.open(module.path, '_blank')
     } else {
-      router.push(module.path)
+      window.location.href = module.path
     }
+    return
   }
+  router.push(module.path)
 }
 
 const handleGuideClick = (guide) => {

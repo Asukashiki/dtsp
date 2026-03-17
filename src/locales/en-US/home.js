@@ -64,6 +64,10 @@ export default {
     marketing: {
       name: 'Marketing Information System',
       desc: 'Marketing Information System for agricultural price collection, analysis and dissemination',
+    },
+    userManagement: {
+      name: 'Unified User Mangement System',
+      desc: 'Unified User Mangement System',
     }
   },
 
