@@ -1,4 +1,4 @@
-﻿<template>
+﻿﻿<template>
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
@@ -72,17 +72,17 @@
           <div class="items-list">
               <div v-for="(item, index) in form.detailList" :key="index" class="item-row">
                 <div class="item-fields">
-                  <el-form-item :label="$t('inventory.transfer.detail.batchNo')" :prop="`detailList.${index}.batchNo`" :rules="detailRules.batchNo">
+                  <el-form-item :label="$t('inventory.transfer.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
                     <el-select v-model="item.batchNo" :placeholder="$t('inventory.transfer.detail.batchNo')" style="width: 100%" filterable :disabled="!form.outWarehouseCode" @change="(val) => handleBatchChange(val, item)">
                       <el-option v-for="batch in batchOptions" :key="batch.value" :label="batch.label" :value="batch.value" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item :label="$t('inventory.transfer.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`" :rules="detailRules.mainCategory">
+                  <el-form-item :label="$t('inventory.transfer.detail.mainCategory')" :prop="`detailList.${index}.mainCategory`">
                     <el-select v-model="item.mainCategory" :placeholder="$t('inventory.transfer.detail.mainCategory')" style="width: 100%" disabled>
                       <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item :label="$t('inventory.transfer.detail.subCategory')" :prop="`detailList.${index}.subCategory`" :rules="detailRules.subCategory">
+                  <el-form-item :label="$t('inventory.transfer.detail.subCategory')" :prop="`detailList.${index}.subCategory`">
                     <el-select v-model="item.subCategory" :placeholder="$t('inventory.transfer.detail.subCategory')" style="width: 100%" disabled>
                       <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
@@ -196,11 +196,8 @@ const rules = {
 }
 
 const detailRules = {
-  batchNo: [{ required: true, message: 'This field is required', trigger: 'change' }],
-  mainCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
-  subCategory: [{ required: true, message: 'This field is required', trigger: 'change' }],
-  qty: [{ required: true, message: 'This field is required', trigger: 'blur' }],
-  unit: [{ required: true, message: 'This field is required', trigger: 'blur' }]
+  qty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+  unit: [{ required: true, message: t('common.required'), trigger: 'blur' }]
 }
 
 const getSubCategoryOptions = (mainCategory) => {
@@ -283,12 +280,15 @@ const handleBatchChange = (batchNo, item) => {
   if (!batchNo) return
   const batchInfo = batchOptions.value.find(b => b.value === batchNo)
   if (batchInfo) {
-    item.mainCategory = batchInfo.mainCategory
-    item.subCategory = batchInfo.subCategory
+    const mainOpt = mainCategoryOptions.value.find(opt => opt.value === batchInfo.mainCategory || opt.label === batchInfo.mainCategory)
+    const subOpt = subCategoryOptions.value.find(opt => opt.value === batchInfo.subCategory || opt.label === batchInfo.subCategory)
+    item.mainCategory = mainOpt ? mainOpt.value : (batchInfo.mainCategory || '')
+    item.subCategory = subOpt ? subOpt.value : (batchInfo.subCategory || '')
+    const unitOpt = unitOptions.value.find(opt => opt.value === batchInfo.unit || opt.label === batchInfo.unit)
     item.expireDate = batchInfo.expireDate
     item.supplier = batchInfo.supplier || ''
-    item.unit = batchInfo.unit || ''
-    item.qty = batchInfo.qty != null ? batchInfo.qty : item.qty
+    item.unit = unitOpt ? unitOpt.value : (batchInfo.unit || '')
+    item.qty = batchInfo.qty != null && batchInfo.qty > 0 ? batchInfo.qty : null
     item.productId = batchInfo.productId || null
   }
 }
