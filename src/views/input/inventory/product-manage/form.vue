@@ -23,29 +23,39 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productCode')" prop="productCode"><el-input v-model="formData.productCode" :placeholder="$t('input.inventory.productManage.placeholder.productCode')" maxlength="64" clearable /></el-form-item></el-col>
+                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productCode')" prop="productCode"><el-input v-model="formData.productCode" maxlength="64" clearable disabled /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.productName')" prop="productName"><el-input v-model="formData.productName" :placeholder="$t('input.inventory.productManage.placeholder.productName')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.inventory.productManage.form.mainCategory')" prop="mainCategory">
+                  <el-form-item :label="$t('input.inventory.productManage.form.mainCategory')" prop="mainCategoryId">
                     <el-select
                       v-model="formData.mainCategoryId"
                       :placeholder="$t('input.inventory.productManage.placeholder.mainCategory')"
                       style="width: 100%"
                       filterable
-                      allow-create
-                      default-first-option
                       @change="handleMainCategoryChange">
                       <el-option
                         v-for="item in mainCategoryOptions"
-                        :key="item.id"
-                        :label="item.main_category"
-                        :value="item.id" />
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.inventory.productManage.form.subCategory')" prop="subCategory">
-                    <el-input v-model="formData.subCategory" :placeholder="$t('input.inventory.productManage.placeholder.subCategory')" maxlength="50" clearable :disabled="!subCategoryEditable" />
+                  <el-form-item :label="$t('input.inventory.productManage.form.subCategory')" prop="subCategoryId">
+                    <el-select
+                      v-model="formData.subCategoryId"
+                      :placeholder="$t('input.inventory.productManage.placeholder.subCategory')"
+                      style="width: 100%"
+                      filterable
+                      :disabled="!formData.mainCategoryId"
+                      @change="handleSubCategoryChange">
+                      <el-option
+                        v-for="item in filteredSubCategoryOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.brand')"><el-input v-model="formData.brand" :placeholder="$t('input.inventory.productManage.placeholder.brand')" maxlength="100" clearable /></el-form-item></el-col>
@@ -74,7 +84,8 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addProductManage, getProductManage, listProductMainCategories, updateProductManage } from '@/api/productManage'
+import { addProductManage, getProductManage, updateProductManage } from '@/api/productManage'
+import { getDicts } from '@/api/system/dict'
 
 const router = useRouter()
 const route = useRoute()
@@ -88,6 +99,7 @@ const productId = computed(() => route.params.id)
 const pageTitle = computed(() => isEdit.value ? t('input.inventory.productManage.edit') : t('input.inventory.productManage.add'))
 
 const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
 
 const formData = reactive({
   id: undefined,
@@ -98,6 +110,7 @@ const formData = reactive({
   mainCategoryId: '',
   mainCategory: '',
   parentId: null,
+  subCategoryId: '',
   subCategory: '',
   brand: '',
   model: '',
@@ -111,15 +124,17 @@ const formData = reactive({
 const rules = computed(() => ({
   productCode: [{ required: true, message: t('input.inventory.productManage.rules.productCodeRequired'), trigger: 'blur' }],
   productName: [{ required: true, message: t('input.inventory.productManage.rules.productNameRequired'), trigger: 'blur' }],
-  mainCategory: [{ required: true, message: t('input.inventory.productManage.rules.mainCategoryRequired'), trigger: 'change' }],
+  mainCategoryId: [{ required: true, message: t('input.inventory.productManage.rules.mainCategoryRequired'), trigger: 'change' }],
+  subCategoryId: [{ required: true, message: t('input.inventory.productManage.rules.subCategoryRequired'), trigger: 'change' }],
   unit: [{ required: true, message: t('input.inventory.productManage.rules.unitRequired'), trigger: 'blur' }],
   price: [{ required: true, message: t('input.inventory.productManage.rules.priceRequired'), trigger: 'change' }],
   status: [{ required: true, message: t('input.inventory.productManage.rules.statusRequired'), trigger: 'change' }]
 }))
 
-const subCategoryEditable = computed(() => {
-  if (!formData.mainCategoryId) return false
-  return typeof formData.mainCategoryId === 'number'
+const filteredSubCategoryOptions = computed(() => {
+  if (!formData.mainCategoryId) return []
+  const mainValue = String(formData.mainCategoryId)
+  return subCategoryOptions.value.filter(item => String(item.parentValue) === mainValue)
 })
 
 const goBack = () => {
@@ -132,7 +147,8 @@ const loadDetail = async () => {
     const res = await getProductManage(productId.value)
     if (res.code === 200 && res.data) {
       const parentIdValue = res.data.parent_id ?? null
-      const mainCategoryIdValue = parentIdValue ? Number(parentIdValue) : res.data.main_category || ''
+      const mainCategoryIdValue = resolveDictValue(mainCategoryOptions.value, res.data.main_category)
+      const subCategoryIdValue = resolveDictValue(subCategoryOptions.value, res.data.sub_category)
       Object.assign(formData, {
         id: res.data.id,
         productCode: res.data.product_code || '',
@@ -142,6 +158,7 @@ const loadDetail = async () => {
         mainCategoryId: mainCategoryIdValue,
         mainCategory: res.data.main_category || '',
         parentId: parentIdValue,
+        subCategoryId: subCategoryIdValue,
         subCategory: res.data.sub_category || '',
         brand: res.data.brand || '',
         model: res.data.model || '',
@@ -164,18 +181,19 @@ const handleSubmit = async () => {
     submitLoading.value = true
 
     const mainCategoryId = formData.mainCategoryId
-    const selectedCategory = mainCategoryOptions.value.find(item => item.id === mainCategoryId)
-    const isSelected = !!selectedCategory
-    const mainCategoryName = isSelected ? selectedCategory.main_category : String(mainCategoryId || '').trim()
-    const parentIdValue = isSelected ? selectedCategory.id : null
-    const subCategoryValue = isSelected ? formData.subCategory.trim() : ''
+    const selectedMain = mainCategoryOptions.value.find(item => String(item.value) === String(mainCategoryId))
+    const mainCategoryName = selectedMain ? selectedMain.label : ''
+    const selectedSub = subCategoryOptions.value.find(item => String(item.value) === String(formData.subCategoryId))
+    const subCategoryValue = selectedSub ? selectedSub.label : ''
+
+    const parentIdValue = toLongValue(mainCategoryId) ?? 0
 
     const payload = {
       ...(isEdit.value ? { id: Number(productId.value) } : {}),
-      productCode: formData.productCode.trim(),
+      productCode: isEdit.value ? formData.productCode.trim() : formData.productCode.trim(),
       productName: formData.productName.trim(),
       categoryId: formData.categoryId || null,
-       categoryName: '',
+      categoryName: '',
       mainCategory: mainCategoryName,
       subCategory: subCategoryValue,
       parentId: parentIdValue,
@@ -203,33 +221,96 @@ const handleSubmit = async () => {
 }
 
 const handleMainCategoryChange = (value) => {
-  const selectedCategory = mainCategoryOptions.value.find(item => item.id === value)
-  if (selectedCategory) {
-    formData.mainCategory = selectedCategory.main_category
-    formData.parentId = selectedCategory.id
-  } else {
-    formData.mainCategory = String(value || '').trim()
-    formData.parentId = null
-  }
-  if (!subCategoryEditable.value) {
-    formData.subCategory = ''
-  }
+  const selectedCategory = mainCategoryOptions.value.find(item => String(item.value) === String(value))
+  formData.mainCategory = selectedCategory ? selectedCategory.label : ''
+  formData.parentId = null
+  formData.subCategoryId = ''
+  formData.subCategory = ''
+  updateProductCode()
 }
 
-const loadMainCategories = async () => {
+const handleSubCategoryChange = (value) => {
+  const selectedCategory = subCategoryOptions.value.find(item => String(item.value) === String(value))
+  formData.subCategory = selectedCategory ? selectedCategory.label : ''
+  updateProductCode()
+}
+
+const getAbbreviation = (options, value) => {
+  if (!value) return ''
+  const match = options.find(item => String(item.value) === String(value))
+  if (match && match.value) return String(match.value).trim()
+  if (match && match.label) return String(match.label).trim()
+  return String(value).trim()
+}
+
+const toLongValue = (value) => {
+  if (value === null || value === undefined) return null
+  const trimmed = String(value).trim()
+  if (!trimmed) return null
+  const num = Number(trimmed)
+  if (Number.isNaN(num)) return null
+  return num
+}
+
+const formatDateStamp = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}${month}${day}`
+}
+
+const generateRandomCode = (length = 4) => {
+  const max = Math.pow(10, length) - 1
+  const num = Math.floor(Math.random() * (max + 1))
+  return String(num).padStart(length, '0')
+}
+
+const updateProductCode = () => {
+  if (isEdit.value) return
+  if (!formData.mainCategoryId || !formData.subCategoryId) {
+    formData.productCode = ''
+    return
+  }
+  const mainAbbr = getAbbreviation(mainCategoryOptions.value, formData.mainCategoryId)
+  const subAbbr = getAbbreviation(subCategoryOptions.value, formData.subCategoryId)
+  if (!mainAbbr || !subAbbr) {
+    formData.productCode = ''
+    return
+  }
+  const datePart = formatDateStamp()
+  const randomPart = generateRandomCode(4)
+  formData.productCode = `${mainAbbr}_${subAbbr}_${datePart}_${randomPart}`
+}
+
+const resolveDictValue = (options, value) => {
+  if (!value) return ''
+  const match = options.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.value : ''
+}
+
+const loadCategories = async () => {
   try {
-    const res = await listProductMainCategories()
-    if (res.code === 200 && Array.isArray(res.data)) {
-      mainCategoryOptions.value = res.data
-    }
+    const mainRes = await getDicts('inventory_main_category')
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: item.dictLabel,
+      value: item.dictValue
+    }))
+
+    const subRes = await getDicts('inventory_sub_category')
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: item.dictLabel,
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
   } catch (error) {
     console.error('Failed to load main categories:', error)
   }
 }
 
 onMounted(() => {
-  loadMainCategories()
-  loadDetail()
+  loadCategories().then(() => {
+    loadDetail()
+  })
 })
 </script>
 

@@ -996,7 +996,7 @@ export default {
         productName: '请输入商品名称',
         categoryName: '请输入分类名称',
         mainCategory: '请选择商品大类',
-        subCategory: '请输入商品小类',
+        subCategory: '请选择商品小类',
         brand: '请输入商品品牌',
         model: '请输入规格型号',
         unit: '请输入单位',
@@ -1010,6 +1010,7 @@ export default {
         productNameRequired: '请输入商品名称',
         categoryNameRequired: '请输入分类名称',
         mainCategoryRequired: '请选择商品大类',
+        subCategoryRequired: '请选择商品小类',
         unitRequired: '请输入单位',
         priceRequired: '请输入参考价格',
         statusRequired: '请选择状态'

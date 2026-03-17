@@ -946,7 +946,7 @@ export default {
         productName: 'Enter product name',
         categoryName: 'Enter category name',
         mainCategory: 'Select main category',
-        subCategory: 'Enter sub category',
+        subCategory: 'Select sub category',
         brand: 'Enter brand',
         model: 'Enter model',
         unit: 'Enter unit',
@@ -960,6 +960,7 @@ export default {
         productNameRequired: 'Please enter product name',
         categoryNameRequired: 'Please enter category name',
         mainCategoryRequired: 'Please select main category',
+        subCategoryRequired: 'Please select sub category',
         unitRequired: 'Please enter unit',
         priceRequired: 'Please enter reference price',
         statusRequired: 'Please select status'

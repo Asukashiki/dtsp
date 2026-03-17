@@ -50,7 +50,6 @@
                   <el-tag :type="getMainCategoryTag(row.main_category)" size="small" >{{ getMainCategoryLabel(row.main_category) }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="category_name" :label="$t('input.inventory.productManage.columns.categoryName')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="sub_category" :label="$t('input.inventory.productManage.columns.subCategory')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="brand" :label="$t('input.inventory.productManage.columns.brand')" min-width="130" show-overflow-tooltip />
               <el-table-column prop="model" :label="$t('input.inventory.productManage.columns.model')" min-width="150" show-overflow-tooltip />
