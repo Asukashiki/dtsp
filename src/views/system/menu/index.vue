@@ -94,11 +94,21 @@
         </el-row>
         <el-row v-if="form.menuType !== 'F'" :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('system.menus.path')" prop="path">
-              <el-input v-model="form.path" :placeholder="$t('common.pleaseInput')" />
+            <el-form-item :label="$t('system.menus.isFrame')">
+              <el-radio-group v-model="form.isFrame" @change="handleFrameChange">
+                <el-radio-button value="1">{{ $t('system.menus.innerLink') }}</el-radio-button>
+                <el-radio-button value="0">{{ $t('system.menus.externalLink') }}</el-radio-button>
+              </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType === 'C'">
+        </el-row>
+        <el-row v-if="form.menuType !== 'F'" :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="$t('system.menus.path')" prop="path">
+              <el-input v-model="form.path" :placeholder="form.isFrame === '0' ? $t('system.menus.pathPlaceholderExternal') : $t('common.pleaseInput')" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="form.menuType === 'C' && form.isFrame !== '0'">
             <el-form-item :label="$t('system.menus.component')" prop="component">
               <el-input v-model="form.component" :placeholder="$t('common.pleaseInput')" />
             </el-form-item>
@@ -154,6 +164,7 @@ const form = ref({
   menuNameI18n: { zh_CN: '', en_US: '' },
   icon: '',
   orderNum: 0,
+  isFrame: '1',
   path: '',
   component: '',
   perms: '',
@@ -242,12 +253,20 @@ const handleAdd = (parentItem) => {
     menuNameI18n: { zh_CN: '', en_US: '' },
     icon: '',
     orderNum: 0,
+    isFrame: '1',
     path: '',
     component: '',
     perms: '',
     visible: '0'
   }
   dialogVisible.value = true
+}
+
+// 切换外链时清空组件路径
+const handleFrameChange = (val) => {
+  if (val === '0') {
+    form.value.component = ''
+  }
 }
 
 // Edit
@@ -261,7 +280,7 @@ const handleEdit = async (item) => {
     } catch {
       menuNameI18n = { zh_CN: data.menuName || '', en_US: '' }
     }
-    form.value = { ...data, menuNameI18n, parentId: data.parentId || '0' }
+    form.value = { ...data, menuNameI18n, parentId: data.parentId || '0', isFrame: data.isFrame || '1' }
     dialogVisible.value = true
   } catch (error) {
     console.error('Failed to fetch menu:', error)
