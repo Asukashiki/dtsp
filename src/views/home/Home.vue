@@ -215,14 +215,6 @@ const systemModules = computed(() => ({
     path: `http://196.189.236.220:8088/?token=${localStorage.getItem('token') || ''}`,
     external: true
   },
-  data: {
-    name: t('home.modules.data.name'),
-    desc: t('home.modules.data.desc'),
-    icon: 'ri-bar-chart-box-line',
-    gradient: 'linear-gradient(135deg, #909399 0%, #B0B4B8 100%)', // 置灰
-    path: '/data',
-    disabled: true // 禁用
-  },
   inventory: {
     name: t('home.modules.inventory.name'),
     desc: t('home.modules.inventory.desc'),

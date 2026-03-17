@@ -28,10 +28,8 @@
               :name="item.key">
               <el-table v-loading="batchLoading" :data="batchList" stripe>
                 <el-table-column prop="batch_no" :label="$t('input.inventory.stockQuery.columns.batchNo')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="production_date" :label="$t('input.inventory.stockQuery.columns.productionDate')" min-width="160" />
-                <el-table-column prop="expire_date" :label="$t('input.inventory.stockQuery.columns.expireDate')" min-width="160" />
+                <el-table-column prop="expire_date" :label="$t('input.inventory.stockQuery.columns.expireDate')" min-width="160" :formatter="formatDateTime" />
                 <el-table-column prop="qty" :label="$t('input.inventory.stockQuery.columns.qty')" min-width="120" align="right" />
-                <el-table-column prop="quality_grade" :label="$t('input.inventory.stockQuery.columns.qualityGrade')" min-width="120" />
                 <el-table-column prop="stock_status" :label="$t('input.inventory.stockQuery.columns.stockStatus')" min-width="120" />
               </el-table>
             </el-tab-pane>
@@ -136,6 +134,24 @@ const getStatusLabel = (value) => {
   if (value === '1') return t('input.inventory.warehouse.status.disabled')
   if (value === '2') return t('input.inventory.warehouse.operatingStatusOptions.maintenance')
   return value || '-'
+}
+
+const formatDateTime = (_row, _column, value) => {
+  if (!value) return '-'
+  if (typeof value === 'string' && value.trim()) {
+    const trimmed = value.trim()
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed
+    const parsed = new Date(trimmed)
+    if (!Number.isNaN(parsed.getTime())) {
+      const pad = (num) => String(num).padStart(2, '0')
+      return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())} ${pad(parsed.getHours())}:${pad(parsed.getMinutes())}:${pad(parsed.getSeconds())}`
+    }
+    return trimmed
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return String(value)
+  const pad = (num) => String(num).padStart(2, '0')
+  return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())} ${pad(parsed.getHours())}:${pad(parsed.getMinutes())}:${pad(parsed.getSeconds())}`
 }
 
 const loadWarehouse = async () => {

@@ -194,7 +194,7 @@ const handleSubmit = async () => {
     if (res.code === 200) {
       ElMessage.success(isEdit.value ? t('input.inventory.productManage.editSuccess') : t('input.inventory.productManage.addSuccess'))
       setTimeout(() => {
-        router.push('/input/inventory/product-manage')
+        router.push('/inventory/product-manage')
       }, 300)
     }
   } catch (error) {

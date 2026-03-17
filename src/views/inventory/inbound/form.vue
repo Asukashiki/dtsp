@@ -69,7 +69,7 @@
                       <el-option v-for="dict in getSubCategoryOptions(item.mainCategoryId)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item :label="$t('inventory.inbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`">
+                  <el-form-item :label="$t('inventory.inbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`" :rules="detailRules.batchNo">
                     <el-input v-model="item.batchNo" :placeholder="$t('inventory.inbound.detail.batchNo')" clearable />
                   </el-form-item>
                   <el-form-item :label="$t('inventory.inbound.detail.supplier')" :prop="`detailList.${index}.supplier`">
@@ -83,7 +83,7 @@
                       <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item :label="$t('inventory.inbound.detail.expireDate')" :prop="`detailList.${index}.expireDate`">
+                  <el-form-item :label="$t('inventory.inbound.detail.expireDate')" :prop="`detailList.${index}.expireDate`" :rules="detailRules.expireDate">
                     <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.inbound.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" />
                   </el-form-item>
                 </div>
@@ -182,8 +182,10 @@ const rules = {
 const detailRules = {
   mainCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
   subCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  batchNo: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   qty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-  unit: [{ required: true, message: t('common.required'), trigger: 'blur' }]
+  unit: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+  expireDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
 const getSubCategoryOptions = (mainCategoryId) => {
@@ -397,7 +399,7 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item => !item.mainCategoryId || !item.subCategoryId || !item.unit || item.qty === null || item.qty === undefined)
+      const hasEmptyDetail = form.detailList.some(item => !item.mainCategoryId || !item.subCategoryId || !item.batchNo || !item.expireDate || !item.unit || item.qty === null || item.qty === undefined)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
