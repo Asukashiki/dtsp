@@ -60,7 +60,11 @@ export default {
     typeMenu: 'Menu',
     typeBtn: 'Button',
     visible: 'Visible',
-    hidden: 'Hidden'
+    hidden: 'Hidden',
+    isFrame: 'External Link',
+    innerLink: 'Internal Route',
+    externalLink: 'External URL',
+    pathPlaceholderExternal: 'Enter external URL, e.g. http://example.com'
   },
   dept: {
     title: 'Department Management',

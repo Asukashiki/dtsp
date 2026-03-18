@@ -263,6 +263,10 @@ export const useUserStore = defineStore('user', {
       let paths = []
       for (const menu of menus) {
         let fullPath = menu.path || ''
+        // 跳过外链地址
+        if (/^https?:\/\//.test(fullPath)) {
+          continue
+        }
         // 新格式：path 可能是 /system（绝对路径）或 system/menu（相对路径）
         // 相对路径只需要加前导斜杠，不需要拼接父路径
         if (!fullPath.startsWith('/')) {

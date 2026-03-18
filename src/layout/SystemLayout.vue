@@ -67,7 +67,7 @@
             :default-active="activeMenu"
             :collapse="isCollapsed"
             :unique-opened="true"
-            router
+            @select="handleMenuSelect"
           >
             <template v-for="item in menuList">
               <el-sub-menu v-if="item.children" :index="item.index" :key="item.index">
@@ -191,18 +191,24 @@ const resolveMenuTitle = (menuName) => {
   return parseI18nValue(menuName, locale.value, menuName || '')
 }
 
+// 判断是否为外链地址
+const isExternalLink = (path) => {
+  return /^https?:\/\//.test(path)
+}
+
 // 将新格式菜单转换为组件需要的格式
 // 新格式中子菜单的 path 已经是完整相对路径（如 system/menu），只需加前导斜杠
 const transformMenu = (menu, parentPath = '') => {
   if (!menu || menu.hidden === true) return null
-  
-  // 构建完整路径：path 可能是 /system（绝对路径）或 system/menu（相对路径）
-  // 相对路径只需要加前导斜杠，不需要拼接父路径
+
+  // 构建完整路径：path 可能是 /system（绝对路径）或 system/menu（相对路径）或外链 http(s)://
   let fullPath = menu.path || ''
-  if (!fullPath.startsWith('/')) {
-    fullPath = `/${fullPath}`
+  if (!isExternalLink(fullPath)) {
+    if (!fullPath.startsWith('/')) {
+      fullPath = `/${fullPath}`
+    }
+    fullPath = fullPath.replace(/\/\//g, '/')
   }
-  fullPath = fullPath.replace(/\/\//g, '/')
   
   // 解析标题（从 meta.title）
   const title = menu.meta?.title ? resolveMenuTitle(menu.meta.title) : (menu.name || '')
@@ -291,9 +297,18 @@ const toggleMobileMenu = () => {
   mobileMenuVisible.value = !mobileMenuVisible.value
 }
 
+// 菜单选择（PC端和移动端共用）
+const handleMenuSelect = (index) => {
+  if (isExternalLink(index)) {
+    window.open(index, '_blank')
+  } else {
+    router.push(index)
+  }
+}
+
 // 移动端菜单选择
 const handleMobileMenuSelect = (index) => {
-  router.push(index)
+  handleMenuSelect(index)
   mobileMenuVisible.value = false
 }
 

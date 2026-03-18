@@ -60,7 +60,11 @@ export default {
     typeMenu: '菜单',
     typeBtn: '按钮',
     visible: '显示',
-    hidden: '隐藏'
+    hidden: '隐藏',
+    isFrame: '是否外链',
+    innerLink: '内部路由',
+    externalLink: '外部链接',
+    pathPlaceholderExternal: '请输入外链地址，如 http://example.com'
   },
   dept: {
     title: '部门管理',
