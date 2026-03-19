@@ -1074,7 +1074,7 @@ const routes = [
     path: '/input',
     name: 'InputSystem',
     component: () => import('../layout/SystemLayout.vue'),
-    redirect: '/input/catalog',
+    redirect: '/input/registration',
     meta: { requiresAuth: true, layoutConfig: inputLayoutConfig },
     children: [
       // 注册管理
