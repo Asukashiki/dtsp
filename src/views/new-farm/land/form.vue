@@ -307,7 +307,7 @@ const kebeleOptions = ref([])
 const zoneLoading = ref(false)
 const woredaLoading = ref(false)
 const kebeleLoading = ref(false)
-const ORomiaRegionCode = '102000000' // 奥罗米亚州编码（和农民表单一致）
+const ORomiaRegionCode = '000000000000' // 奥罗米亚州编码（和农民表单一致）
 
 // 表单数据
 const formData = reactive({

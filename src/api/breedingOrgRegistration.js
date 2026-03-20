@@ -150,7 +150,7 @@ export function getRegionTree() {
     return module.default({
       url: '/rbac/organ/allTree',
       method: 'get',
-      params: { rootId: '102000000' }
+      params: { rootId: '000000000000' }
     }).then(res => {
       if (res.data) {
         res.data = transformOrgTree(res.data)

@@ -293,7 +293,7 @@ const kebeleOptions = ref([])
 const zoneLoading = ref(false)
 const woredaLoading = ref(false)
 const kebeleLoading = ref(false)
-const ORomiaRegionCode = '102000000'
+const ORomiaRegionCode = '000000000000'
 
 // DA匹配错误提示逻辑
 const daMatchError = computed(() => {
