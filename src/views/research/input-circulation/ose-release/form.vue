@@ -310,7 +310,7 @@ const getUserInfo = async () => {
 const getAllZoneList = async () => {
   loading.value = true
   try {
-    const response = await listSubRegionByCode({regionCode: 102000000})
+    const response = await listSubRegionByCode({regionCode: '000000000000'})
     if (response.code === 200) {
       zoneList.value = response.data
     }
