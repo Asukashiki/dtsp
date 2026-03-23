@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="page-container">
     <div class="page-wrapper">
       <PageHeader
@@ -16,17 +16,9 @@
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.outbound.types')" prop="type">
-                  <el-select v-model="form.type" :placeholder="$t('inventory.outbound.types')" style="width: 100%">
-                    <el-option :label="$t('inventory.outbound.type.general')" value="GENERAL" />
-                    <el-option :label="$t('inventory.outbound.type.transfer')" value="TRANSFER" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
                 <el-form-item :label="$t('inventory.outbound.warehouse')" prop="warehouseCode">
                   <el-select v-model="form.warehouseCode" :placeholder="$t('inventory.outbound.warehouse')" style="width: 100%" filterable @change="handleWarehouseChange">
-                    <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                    <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="`${item.warehouseCode} ${item.warehouseName}`" :value="item.warehouseCode" />
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -35,6 +27,7 @@
                   <el-select v-model="form.receiverType" :placeholder="$t('inventory.outbound.receiverTypes')" style="width: 100%">
                     <el-option :label="$t('inventory.outbound.receiverType.farmer')" value="FARMER" />
                     <el-option :label="$t('inventory.outbound.receiverType.coop')" value="COOP" />
+                    <el-option :label="$t('inventory.outbound.receiverType.unit')" value="UNIT" />
                     <el-option :label="$t('inventory.outbound.receiverType.other')" value="OTHER" />
                   </el-select>
                 </el-form-item>
@@ -42,21 +35,6 @@
               <el-col :xs="24" :sm="12" :md="8">
                 <el-form-item :label="$t('inventory.outbound.receiver')" prop="receiver">
                   <el-input v-model="form.receiver" :placeholder="$t('inventory.outbound.receiver')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.outbound.bizNo')" prop="bizNo">
-                  <el-input v-model="form.bizNo" :placeholder="$t('inventory.outbound.bizNo')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.outbound.operator')" prop="operator">
-                  <el-input v-model="form.operator" :placeholder="$t('inventory.outbound.operator')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.outbound.orderDate')" prop="orderDate">
-                  <el-date-picker v-model="form.orderDate" type="datetime" :placeholder="$t('inventory.outbound.orderDate')" style="width: 100%" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -92,7 +70,10 @@
                     <el-input v-model="item.supplier" :placeholder="$t('inventory.outbound.detail.supplier')" clearable />
                   </el-form-item>
                   <el-form-item :label="$t('inventory.outbound.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
-                    <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.outbound.detail.qty')" style="width: 100%" />
+                    <el-input-number v-model="item.qty" :min="0" :max="item.availableQty || undefined" :precision="2" :placeholder="$t('inventory.outbound.detail.qty')" style="width: 100%" />
+                    <div v-if="item.availableQty !== null" class="qty-hint">
+                      当前库存为：{{ item.availableQty }} {{ item.unit }}
+                    </div>
                   </el-form-item>
                   <el-form-item :label="$t('inventory.outbound.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
                     <el-select v-model="item.unit" :placeholder="$t('inventory.outbound.detail.unit')" style="width: 100%" disabled>
@@ -183,6 +164,7 @@ const form = reactive({
       subCategory: '',
       supplier: '',
       qty: null,
+      availableQty: null,
       unit: '',
       expireDate: ''
     }
@@ -190,9 +172,7 @@ const form = reactive({
 })
 
 const rules = {
-  type: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  warehouseCode: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  orderDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
+  warehouseCode: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
 const detailRules = {
@@ -222,6 +202,7 @@ const handleAddDetail = () => {
     subCategory: '',
     supplier: '',
     qty: null,
+    availableQty: null,
     unit: '',
     expireDate: ''
   })
@@ -244,6 +225,7 @@ const handleWarehouseChange = async (val) => {
     item.expireDate = ''
     item.unit = ''
     item.qty = null
+    item.availableQty = null
     item.productId = ''
   })
 
@@ -280,7 +262,7 @@ const handleBatchChange = async (batchNo, item) => {
     return
   }
 
-  // 浠庢壒娆￠€夐」涓煡鎵惧搴旂殑鎵规淇℃伅
+  // 从批次选项中查找对应的批次信息
   const batchInfo = batchOptions.value.find(b => b.value === batchNo)
   if (batchInfo) {
     item.mainCategory = batchInfo.mainCategory
@@ -288,8 +270,9 @@ const handleBatchChange = async (batchNo, item) => {
     item.expireDate = batchInfo.expireDate
     item.supplier = batchInfo.supplier || ''
     item.unit = batchInfo.unit || ''
-    item.qty = batchInfo.qty != null ? batchInfo.qty : item.qty
+    item.availableQty = batchInfo.qty // 设置可用库存数量，不自动填充到qty
     item.productId = batchInfo.productId || ''
+    item.qty = null // 清空数量，让用户手动输入
   }
 }
 
@@ -386,16 +369,16 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
       }
+      
       const hasEmptyDetail = form.detailList.some(item => !item.batchNo || !item.unit || item.qty === null || item.qty === undefined)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
       }
+      
       submitting.value = true
-      const submitData = {
-        ...form,
-        orderDate: form.orderDate ? formatDateTime(form.orderDate) : ''
-      }
+      const { orderDate, operator, bizNo, type, ...formWithoutHiddenFields } = form
+      const submitData = { ...formWithoutHiddenFields }
       const apiCall = isEdit.value ? updateOutbound(form.id, submitData) : addOutbound(submitData)
       apiCall.then(() => {
         ElMessage.success(t('common.submitSuccess'))
@@ -417,7 +400,6 @@ onMounted(async () => {
     await loadOutboundData(route.params.id)
   } else {
     form.outboundNo = generateOutboundNo()
-    form.operator = userStore.userInfo?.nickName || userStore.userInfo?.userName || ''
   }
 })
 </script>
@@ -462,6 +444,13 @@ onMounted(async () => {
 
 .add-item-btn {
   width: 100%;
+}
+
+.qty-hint {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 4px;
+  line-height: 1.2;
 }
 
 :deep(.el-input.is-disabled .el-input__inner) {

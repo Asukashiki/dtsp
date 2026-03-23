@@ -86,6 +86,7 @@
         receiverType: {
             farmer: '农户',
             coop: '合作社',
+            unit: '联盟',
             other: '其他'
         },
         status: {

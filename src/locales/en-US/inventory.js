@@ -85,6 +85,7 @@ export default {
     receiverType: {
       farmer: 'Farmer',
       coop: 'Cooperative',
+      unit: 'Unit',
       other: 'Other'
     },
     status: {

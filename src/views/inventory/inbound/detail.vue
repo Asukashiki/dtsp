@@ -12,9 +12,7 @@
         <InfoCard :title="$t('common.basicInfo')" icon="ri-file-info-line">
           <el-descriptions :column="3" border>
             <el-descriptions-item :label="$t('inventory.inbound.no')">{{ form.inboundNo }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.inbound.types')">{{ getLabel(typeOptions, form.type) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.warehouse')">{{ form.warehouseName }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.inbound.bizNo')">{{ form.bizNo }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.operator')">{{ form.operator }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.inbound.orderDate')">{{ formatDateTime(form.orderDate) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('common.status')">
