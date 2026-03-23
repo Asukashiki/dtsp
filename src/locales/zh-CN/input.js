@@ -888,6 +888,7 @@ export default {
         location: '地理位置',
         capacity: '存储容量',
         address: '详细地址',
+        authenticationMaterial: '认证资料',
         status: '运营状态',
         remark: '备注',
         createPeople: '创建人',
@@ -906,6 +907,7 @@ export default {
         location: '请输入地理位置',
         capacity: '请输入存储容量',
         address: '请输入详细地址',
+        authenticationMaterial: '上传认证资料',
         status: '请选择运营状态',
         remark: '请输入备注信息（选填）'
       },

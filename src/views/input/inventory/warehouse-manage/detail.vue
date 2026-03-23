@@ -32,14 +32,21 @@
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.orgName')">{{ detailData.org_name || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.adminLevel')">{{ getLabel(adminLevelOptions, detailData.admin_level) }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.parentWarehouseName')">{{ detailData.parent_warehouse_name || '-' }}</el-descriptions-item>
-                <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.status')">
-                  <el-tag :type="getOperatingStatusType(detailData.status)">{{ getOperatingStatusLabel(detailData.status) }}</el-tag>
-                </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.capacity')">
                   {{ detailData.capacity === null || detailData.capacity === undefined || detailData.capacity === '' ? '-' : detailData.capacity + ' KG' }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.location')">{{ detailData.location || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.address')" :span="2">{{ detailData.address || '-' }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.authenticationMaterial')" :span="2">
+                  <span
+                    v-if="detailData.authentication_material"
+                    class="file-link"
+                    @click="handlePreviewFile(detailData.authentication_material)"
+                  >
+                    {{ detailData.authentication_material_name || $t('input.inventory.warehouseManage.form.authenticationMaterial') }}
+                  </span>
+                  <span v-else>-</span>
+                </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.remark')" :span="2">{{ detailData.remark || '-' }}</el-descriptions-item>
               </el-descriptions>
             </div>
@@ -73,6 +80,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getWarehouseManage } from '@/api/warehouseManage'
+import { getFilePreviewUrl } from '@/api/file'
 
 const router = useRouter()
 const route = useRoute()
@@ -100,13 +108,6 @@ const adminLevelOptions = [
   { value: 'VILLAGE', label: 'input.inventory.warehouseManage.adminLevelOptions.village' }
 ]
 
-const operatingStatusOptions = [
-  { value: '0', label: 'input.inventory.warehouseManage.operatingStatusOptions.active' },
-  { value: '1', label: 'input.inventory.warehouseManage.operatingStatusOptions.inactive' },
-  { value: '2', label: 'input.inventory.warehouseManage.operatingStatusOptions.maintenance' }
-]
-
-
 const getLabel = (options, value) => {
   const match = options.find(item => item.value === value)
   return match ? t(match.label) : value || '-'
@@ -118,20 +119,6 @@ const getWarehouseTypeTag = value => {
   return 'success'
 }
 
-const getOperatingStatusType = value => {
-  switch (value) {
-    case '0': return 'success'
-    case '1': return 'danger'
-    case '2': return 'warning'
-    default: return 'info'
-  }
-}
-
-const getOperatingStatusLabel = value => {
-  const match = operatingStatusOptions.find(item => item.value === value)
-  return match ? t(match.label) : value || '-'
-}
-
 const formatDateTime = value => {
   if (!value) return '-'
   return `${value}`.replace('T', ' ').split('.')[0]
@@ -139,6 +126,23 @@ const formatDateTime = value => {
 
 const goBack = () => {
   router.back()
+}
+
+const handlePreviewFile = async (fileId) => {
+  if (!fileId) return
+
+  try {
+    const res = await getFilePreviewUrl(fileId)
+    const previewUrl = res.code === 200 ? (res.data || res.msg) : ''
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview authentication material:', error)
+    ElMessage.error(t('common.failed'))
+  }
 }
 
 const loadData = async () => {
@@ -163,4 +167,13 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.file-link {
+  color: var(--el-color-primary);
+  cursor: pointer;
+}
+
+.file-link:hover {
+  text-decoration: underline;
+}
 </style>

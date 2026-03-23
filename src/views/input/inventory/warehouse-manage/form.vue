@@ -4,7 +4,7 @@
       <PageHeader icon="ri-home-gear-line" :title="pageTitle" shadow show-back @back="goBack" />
 
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="submitLoading || optionLoading || dictLoading">
+        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="submitLoading || optionLoading || dictLoading || regionTreeLoading || deptTreeLoading">
           <div class="info-card">
             <div class="card-header">
               <div class="card-title">
@@ -76,37 +76,38 @@
                   </el-form-item>
                 </el-col>
 
-                <!-- 所属机构 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.inventory.warehouseManage.form.orgName')" prop="orgName">
-                    <el-select 
-                      v-model="formData.orgName" 
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.orgName')" 
-                      style="width: 100%"
-                    >
-                      <el-option 
-                        v-for="item in orgTypeOptions" 
-                        :key="item.value" 
-                        :label="item.label" 
-                        :value="item.value" 
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
                 <!-- 行政层级 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.warehouseManage.form.adminLevel')" prop="adminLevel">
-                    <el-select 
-                      v-model="formData.adminLevel" 
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.adminLevel')" 
+                    <el-cascader
+                      v-model="adminLevelPath"
+                      :options="regionTreeOptions"
+                      :placeholder="$t('input.inventory.warehouseManage.placeholder.adminLevel')"
+                      :props="adminLevelCascaderProps"
+                      filterable
+                      clearable
                       style="width: 100%"
+                      @change="handleAdminLevelChange"
+                    />
+                  </el-form-item>
+                </el-col>
+
+                <!-- 所属机构 -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouseManage.form.orgName')" prop="orgName">
+                    <el-select
+                      v-model="selectedOrgId"
+                      :placeholder="$t('input.inventory.warehouseManage.placeholder.orgName')"
+                      style="width: 100%"
+                      clearable
+                      :disabled="filteredOrgOptions.length === 0"
+                      @change="handleOrgChange"
                     >
-                      <el-option 
-                        v-for="item in adminLevelOptions" 
-                        :key="item.value" 
-                        :label="item.label" 
-                        :value="item.value" 
+                      <el-option
+                        v-for="item in filteredOrgOptions"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.id"
                       />
                     </el-select>
                   </el-form-item>
@@ -122,12 +123,13 @@
                     <el-select 
                       v-model="formData.parentId" 
                       :placeholder="$t('input.inventory.warehouseManage.placeholder.parentId')" 
+                      :disabled="!selectedOrgId"
                       clearable 
                       filterable 
                       style="width: 100%"
                     >
                       <el-option 
-                        v-for="item in parentWarehouseOptions" 
+                        v-for="item in filteredParentWarehouseOptions" 
                         :key="item.id" 
                         :label="`${item.warehouse_name} (${item.warehouse_code})`" 
                         :value="item.id" 
@@ -136,31 +138,25 @@
                   </el-form-item>
                 </el-col>
 
-                <!-- 运营状态 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('input.inventory.warehouseManage.form.status')" prop="status">
-                    <el-radio-group v-model="formData.status">
-                      <el-radio 
-                        v-for="item in operatingStatusOptions" 
-                        :key="item.value" 
-                        :label="item.value"
-                      >
-                        {{ item.label }}
-                      </el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                </el-col>
-
                 <!-- 存储容量 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.warehouseManage.form.capacity')" prop="capacity">
-                    <el-input
-                      v-model="capacityDisplay"
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.capacity')"
-                      type="number"
-                      @input="handleCapacityInput">
-                      <template #append>KG</template>
-                    </el-input>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                      <el-input
+                        v-model="capacityDisplay"
+                        :placeholder="$t('input.inventory.warehouseManage.placeholder.capacity')"
+                        type="number"
+                        @input="handleCapacityInput"
+                      />
+                      <el-select v-model="capacityUnit" style="width: 120px" @change="handleCapacityUnitChange">
+                        <el-option
+                          v-for="item in capacityUnitOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </div>
                   </el-form-item>
                 </el-col>
 
@@ -185,6 +181,26 @@
                       maxlength="255" 
                       clearable 
                     />
+                  </el-form-item>
+                </el-col>
+
+                <!-- 认证资料 -->
+                <el-col :xs="24" :sm="24">
+                  <el-form-item :label="$t('input.inventory.warehouseManage.form.authenticationMaterial')" prop="authenticationMaterial">
+                    <el-upload
+                      class="doc-upload"
+                      :http-request="handleUploadAuthenticationMaterial"
+                      :file-list="authenticationMaterialFileList"
+                      :on-remove="handleRemoveAuthenticationMaterial"
+                      :on-preview="handlePreviewAuthenticationMaterial"
+                      :limit="1"
+                      accept=".pdf"
+                    >
+                      <el-button type="primary" link>
+                        <i class="ri-upload-2-line"></i>
+                        {{ $t('input.inventory.warehouseManage.placeholder.authenticationMaterial') }}
+                      </el-button>
+                    </el-upload>
                   </el-form-item>
                 </el-col>
 
@@ -221,20 +237,31 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addWarehouseManage, getWarehouseManage, listWarehouseManage, updateWarehouseManage, generateWarehouseCode } from '@/api/warehouseManage'
+import { uploadFile } from '@/api/seed'
+import { getFilePreviewUrl } from '@/api/file'
+import { getRegionTree, buildRegionPath } from '@/api/orgRegistration'
+import { deptTreeSelect } from '@/api/system/user'
 import { useDict } from '@/hooks/useDict'
 import { PageHeader } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-// 使用字典 - 仅仓库类型使用字典
-const { options: dictOptions, loading: dictLoading } = useDict(['warehouse_type'])
+// 使用字典 - 仓库类型和商品大类
+const { options: dictOptions, loading: dictLoading } = useDict(['warehouse_type', 'inventory_main_category'])
 
 const formRef = ref(null)
 const submitLoading = ref(false)
 const optionLoading = ref(false)
+const regionTreeLoading = ref(false)
+const deptTreeLoading = ref(false)
 const parentWarehouseOptions = ref([])
+const regionTreeOptions = ref([])
+const adminLevelPath = ref(null)
+const deptMap = ref({})
+const selectedOrgId = ref('')
+const authenticationMaterialFileList = ref([])
 
 const isEdit = computed(() => route.path.includes('/edit/'))
 const warehouseId = computed(() => route.params.id)
@@ -255,35 +282,99 @@ const warehouseTypeOptions = computed(() => (dictOptions.value.warehouse_type ||
   value: normalizeWarehouseTypeValue(item)
 })))
 
-// 存储类型选项
-const storeTypeOptions = [
-  { value: 'fertilizer', label: t('input.inventory.warehouseManage.storageTypeOptions.fertilizer') },
-  { value: 'pesticide', label: t('input.inventory.warehouseManage.storageTypeOptions.pesticide') },
-  { value: 'seed', label: t('input.inventory.warehouseManage.storageTypeOptions.seed') },
-  { value: 'agricultural_product', label: t('input.inventory.warehouseManage.storageTypeOptions.agriculturalProduct') }
+const storeTypeOptions = computed(() => (dictOptions.value.inventory_main_category || []).map(item => ({
+  label: item.label,
+  value: item.value
+})))
+
+const capacityUnitOptions = [
+  { label: '吨', value: 'ton' },
+  { label: '公担', value: 'quintal' }
 ]
 
-// 所属机构选项
-const orgTypeOptions = [
-  { value: 'OAB', label: t('input.inventory.warehouseManage.ownerEntityOptions.oab') },
-  { value: 'UNION', label: t('input.inventory.warehouseManage.ownerEntityOptions.union') },
-  { value: 'COOP', label: t('input.inventory.warehouseManage.ownerEntityOptions.cooperative') },
-  { value: 'OSE', label: t('input.inventory.warehouseManage.ownerEntityOptions.ose') }
-]
+const capacityUnitFactorMap = {
+  ton: 1000,
+  quintal: 100
+}
 
-// 行政层级选项
-const adminLevelOptions = [
-  { value: 'province', label: t('input.inventory.warehouseManage.adminLevelOptions.province') },
-  { value: 'city', label: t('input.inventory.warehouseManage.adminLevelOptions.city') },
-  { value: 'county', label: t('input.inventory.warehouseManage.adminLevelOptions.county') }
-]
+const resolveI18nLabel = (label) => {
+  try {
+    if (!label) return ''
+    if (typeof label === 'string' && label.startsWith('{')) {
+      const names = JSON.parse(label)
+      const lang = locale.value === 'zh-CN' ? 'zh_CN' : 'en_US'
+      return names[lang] || names.zh_CN || label
+    }
+    return label
+  } catch (error) {
+    return label
+  }
+}
 
-// 运营状态选项
-const operatingStatusOptions = [
-  { value: '0', label: t('input.inventory.warehouseManage.operatingStatusOptions.active') },
-  { value: '1', label: t('input.inventory.warehouseManage.operatingStatusOptions.inactive') },
-  { value: '2', label: t('input.inventory.warehouseManage.operatingStatusOptions.maintenance') }
-]
+const processDeptTree = (nodes) => {
+  if (!Array.isArray(nodes)) return []
+  return nodes.map(node => ({
+    ...node,
+    label: resolveI18nLabel(node.label),
+    children: processDeptTree(node.children || [])
+  }))
+}
+
+const flattenDeptTree = (nodes) => {
+  const map = {}
+  const walk = (items) => {
+    items.forEach(item => {
+      map[item.id] = item
+      if (item.children?.length) {
+        walk(item.children)
+      }
+    })
+  }
+  walk(nodes)
+  return map
+}
+
+const findRegionNode = (tree, targetValue) => {
+  for (const node of tree) {
+    if (node.value === targetValue || node.orgCode === targetValue || node.regionCode === targetValue) {
+      return node
+    }
+    if (node.children?.length) {
+      const found = findRegionNode(node.children, targetValue)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+const filteredOrgOptions = computed(() => {
+  if (!formData.adminLevel) return []
+  const regionNode = findRegionNode(regionTreeOptions.value, formData.adminLevel)
+  const regionOrgCode = regionNode?.orgCode
+  if (!regionOrgCode) return []
+
+  const deptNode = deptMap.value[regionOrgCode]
+  return deptNode?.children || []
+})
+
+const filteredParentWarehouseOptions = computed(() => {
+  if (!selectedOrgId.value) {
+    return parentWarehouseOptions.value
+  }
+
+  const selectedOrg = deptMap.value[selectedOrgId.value]
+  const parentOrgId = selectedOrg?.parentId
+  if (!parentOrgId) {
+    return parentWarehouseOptions.value
+  }
+
+  return parentWarehouseOptions.value.filter(item => item.org_id === parentOrgId)
+})
+
+const adminLevelCascaderProps = {
+  checkStrictly: true,
+  emitPath: false
+}
 
 // 是否为联盟或合作社仓库
 const isUnionOrCoopWarehouse = computed(() => {
@@ -292,17 +383,34 @@ const isUnionOrCoopWarehouse = computed(() => {
 
 // 存储容量显示值
 const capacityDisplay = ref('')
+const capacityUnit = ref('ton')
 
 // 处理存储容量输入
 const handleCapacityInput = (value) => {
   const numValue = parseFloat(value)
   if (!isNaN(numValue)) {
-    formData.capacity = Math.round(numValue * 100) / 100
-    capacityDisplay.value = formData.capacity.toString()
+    const factor = capacityUnitFactorMap[capacityUnit.value] || 1000
+    formData.capacity = Math.round(numValue * factor * 100) / 100
+    capacityDisplay.value = value
   } else {
     formData.capacity = null
     capacityDisplay.value = ''
   }
+}
+
+const syncCapacityDisplay = () => {
+  if (formData.capacity === null || formData.capacity === undefined || formData.capacity === '') {
+    capacityDisplay.value = ''
+    return
+  }
+
+  const factor = capacityUnitFactorMap[capacityUnit.value] || 1000
+  const displayValue = Number(formData.capacity) / factor
+  capacityDisplay.value = Number.isInteger(displayValue) ? String(displayValue) : String(displayValue)
+}
+
+const handleCapacityUnitChange = () => {
+  syncCapacityDisplay()
 }
 
 const formData = reactive({
@@ -311,12 +419,15 @@ const formData = reactive({
   warehouseName: '',
   type: '',
   storeType: [],
+  orgId: '',
   orgName: '',
   adminLevel: '',
   parentId: undefined,
   location: '',
   capacity: null,
   address: '',
+  authenticationMaterial: '',
+  authenticationMaterialName: '',
   status: '0',
   remark: ''
 })
@@ -328,12 +439,79 @@ const rules = computed(() => ({
   storeType: [{ required: true, message: t('input.inventory.warehouseManage.rules.storeTypeRequired'), trigger: 'change' }],
   orgName: [{ required: true, message: t('input.inventory.warehouseManage.rules.orgNameRequired'), trigger: 'change' }],
   adminLevel: [{ required: true, message: t('input.inventory.warehouseManage.rules.adminLevelRequired'), trigger: 'change' }],
-  parentId: [],  // 动态规则
-  status: [{ required: true, message: t('input.inventory.warehouseManage.rules.statusRequired'), trigger: 'change' }]
+  parentId: []  // 动态规则
 }))
 
 const goBack = () => {
   router.back()
+}
+
+const loadRegionTree = async () => {
+  regionTreeLoading.value = true
+  try {
+    const res = await getRegionTree()
+    if (res.code === 200 && res.data) {
+      regionTreeOptions.value = res.data
+    }
+  } catch (error) {
+    console.error('Failed to load region tree:', error)
+  } finally {
+    regionTreeLoading.value = false
+  }
+}
+
+const loadDeptTree = async () => {
+  deptTreeLoading.value = true
+  try {
+    const res = await deptTreeSelect()
+    const data = processDeptTree(res.data || [])
+    deptMap.value = flattenDeptTree(data)
+  } catch (error) {
+    console.error('Failed to load dept tree:', error)
+  } finally {
+    deptTreeLoading.value = false
+  }
+}
+
+const handleAdminLevelChange = (value) => {
+  if (!value) {
+    formData.adminLevel = ''
+    formData.orgId = ''
+    formData.orgName = ''
+    selectedOrgId.value = ''
+    formData.parentId = undefined
+    return
+  }
+
+  const { regionCode } = buildRegionPath(regionTreeOptions.value, value)
+  formData.adminLevel = regionCode || value
+  formData.orgId = ''
+  formData.orgName = ''
+  selectedOrgId.value = ''
+  formData.parentId = undefined
+}
+
+const syncSelectedOrgByName = () => {
+  if (formData.orgId && deptMap.value[formData.orgId]) {
+    selectedOrgId.value = formData.orgId
+    return
+  }
+
+  if (!formData.orgName) {
+    selectedOrgId.value = ''
+    return
+  }
+
+  const matched = filteredOrgOptions.value.find(item => item.label === formData.orgName)
+  selectedOrgId.value = matched?.id || ''
+  formData.orgId = matched?.id || ''
+}
+
+const handleOrgChange = (value) => {
+  const selected = filteredOrgOptions.value.find(item => item.id === value)
+  formData.orgId = selected?.id || ''
+  formData.orgName = selected?.label || ''
+  formData.parentId = undefined
 }
 
 // 仓库类型变更时生成编码
@@ -379,6 +557,7 @@ const loadDetail = async () => {
         warehouseName: res.data.warehouse_name || '',
         type: res.data.type || '',
         storeType: res.data.store_type ? res.data.store_type.split(',') : [],
+        orgId: res.data.org_id || '',
         orgName: res.data.org_name || '',
         adminLevel: res.data.admin_level || '',
         parentId: res.data.parent_id || undefined,
@@ -387,17 +566,104 @@ const loadDetail = async () => {
           ? null
           : Number(res.data.capacity),
         address: res.data.address || '',
+        authenticationMaterial: res.data.authentication_material || '',
+        authenticationMaterialName: res.data.authentication_material_name || '',
         status: res.data.status || '0',
         remark: res.data.remark || ''
       })
+
+      if (formData.authenticationMaterial) {
+        const fileName = formData.authenticationMaterialName || `${t('input.inventory.warehouseManage.form.authenticationMaterial')}.pdf`
+        authenticationMaterialFileList.value = [{
+          name: fileName,
+          url: formData.authenticationMaterial,
+          dataId: formData.authenticationMaterial,
+          fileId: formData.authenticationMaterial,
+          uid: Date.now() + '-authenticationMaterial'
+        }]
+      }
+
       if (formData.capacity === null || formData.capacity === undefined || formData.capacity === '') {
         capacityDisplay.value = ''
       } else {
-        capacityDisplay.value = formData.capacity.toString()
+        if (Number(formData.capacity) % capacityUnitFactorMap.ton === 0) {
+          capacityUnit.value = 'ton'
+        } else if (Number(formData.capacity) % capacityUnitFactorMap.quintal === 0) {
+          capacityUnit.value = 'quintal'
+        }
+        syncCapacityDisplay()
       }
+
+      if (formData.adminLevel) {
+        adminLevelPath.value = formData.adminLevel
+      }
+
+      syncSelectedOrgByName()
     }
   } catch (error) {
     console.error('Failed to load warehouse detail:', error)
+    ElMessage.error(t('common.failed'))
+  }
+}
+
+const handleUploadAuthenticationMaterial = async (options) => {
+  const { file } = options
+  const uploadFormData = new FormData()
+  uploadFormData.append('file', file)
+
+  try {
+    const res = await uploadFile(uploadFormData)
+    if (res.code === 200 && res.data) {
+      const fileData = res.data
+      const dataId = fileData.id || fileData.dataId
+
+      authenticationMaterialFileList.value = [{
+        name: file.name,
+        uid: file.uid,
+        dataId,
+        fileId: dataId,
+        url: dataId
+      }]
+      formData.authenticationMaterial = dataId
+      formData.authenticationMaterialName = file.name
+
+      ElMessage.success(t('common.uploadSuccess'))
+    } else {
+      ElMessage.error(res.msg || t('common.uploadFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to upload authentication material:', error)
+    ElMessage.error(t('common.uploadFailed'))
+  }
+}
+
+const handleRemoveAuthenticationMaterial = () => {
+  authenticationMaterialFileList.value = []
+  formData.authenticationMaterial = ''
+  formData.authenticationMaterialName = ''
+}
+
+const handlePreviewAuthenticationMaterial = async (file) => {
+  if (!file.url && !file.dataId && !file.fileId) return
+
+  try {
+    let previewUrl = ''
+    const pathToPreview = file.dataId || file.fileId || file.url
+
+    if (file.url && file.url.startsWith('http')) {
+      previewUrl = file.url
+    } else if (pathToPreview) {
+      const res = await getFilePreviewUrl(pathToPreview)
+      previewUrl = res.code === 200 ? res.msg : ''
+    }
+
+    if (previewUrl) {
+      window.open(previewUrl, '_blank')
+    } else {
+      ElMessage.error(t('common.previewFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to preview authentication material:', error)
     ElMessage.error(t('common.failed'))
   }
 }
@@ -413,12 +679,19 @@ const handleSubmit = async () => {
       warehouseName: formData.warehouseName.trim(),
       type: formData.type,
       storeType: Array.isArray(formData.storeType) ? formData.storeType.join(',') : formData.storeType,
+      orgId: formData.orgId,
       orgName: formData.orgName,
       adminLevel: formData.adminLevel,
       parentId: formData.parentId || null,
       location: formData.location.trim(),
       capacity: formData.capacity,
       address: formData.address.trim(),
+      authenticationMaterial: authenticationMaterialFileList.value.length > 0
+        ? (authenticationMaterialFileList.value[0].dataId || authenticationMaterialFileList.value[0].fileId || '')
+        : '',
+      authenticationMaterialName: authenticationMaterialFileList.value.length > 0
+        ? authenticationMaterialFileList.value[0].name
+        : '',
       status: formData.status,
       remark: formData.remark.trim()
     }
@@ -441,6 +714,8 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
+  await loadRegionTree()
+  await loadDeptTree()
   await loadParentOptions()
   await loadDetail()
 })
@@ -448,5 +723,17 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+.doc-upload {
+  width: 100%;
+}
+
+:deep(.doc-upload .el-upload) {
+  width: 100%;
+}
+
+:deep(.doc-upload .el-upload-list) {
+  margin-top: 8px;
+}
 
 </style>
