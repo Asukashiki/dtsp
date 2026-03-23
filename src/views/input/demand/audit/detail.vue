@@ -91,6 +91,11 @@
                     {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
                   </template>
                 </el-table-column>
+                <el-table-column prop="variety" :label="$t('farmerDemand.form.variety')" min-width="140">
+                  <template #default="{ row }">
+                    {{ row.variety || '-' }}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="season" :label="$t('farmerDemand.form.season')" width="120">
                   <template #default="{ row }">
                     {{ getLabelByValue('agri_season', row.season) }}
@@ -132,6 +137,10 @@
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.inputType') }}:</span>
                     <span class="value">{{ getInputTypeLabel(item.inputType) }}</span>
+                  </div>
+                  <div class="item-row">
+                    <span class="label">{{ $t('farmerDemand.form.variety') }}:</span>
+                    <span class="value">{{ item.variety || '-' }}</span>
                   </div>
                   <div class="item-row">
                     <span class="label">{{ $t('farmerDemand.form.season') }}:</span>

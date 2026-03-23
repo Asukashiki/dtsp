@@ -77,12 +77,17 @@
                 <el-table-column type="selection" width="55" />
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" prop="inputType" min-width="150">
                   <template #default="{ row }">
-                    {{ getLabelByValue('input_type', row.inputType) }}
+                    {{ getMainCategoryLabel(row.inputType) }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" prop="inputCategory" min-width="150">
                   <template #default="{ row }">
-                    {{ getLabelByValue('input_category', row.inputCategory) }}
+                    {{ getSubCategoryLabel(row.inputCategory) }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.variety')" prop="variety" min-width="150">
+                  <template #default="{ row }">
+                    {{ row.variety || '-' }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
@@ -130,6 +135,11 @@
                                style="width: 100%">
                       <el-option v-for="item in getFilteredCategories(scope.row.inputType)" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.variety')" min-width="160">
+                  <template #default="scope">
+                    <span>{{ scope.row.variety || '-' }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
@@ -205,19 +215,21 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
-import { getInventoryWarehouseList, getInventoryProductCategoryTree } from '@/api/inventory'
+import { getInventoryWarehouseList } from '@/api/inventory'
 import { getAllInputList } from '@/api/input.js'
 import { getUnionDetailByUnionId } from '@/api/union.js'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application.js'
 import { getCurrentUserInfo } from '@/api/user.js'
 import { getTownAggregationDetail } from '@/api/villageAggregation.js'
 import { getRegistrationList } from '@/api/orgRegistration'
+import { getDicts } from '@/api/system/dict'
 import { useDict } from '@/hooks/useDict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 import { useUserStore } from '@/store/user'
 
 const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -280,8 +292,9 @@ const demandList = ref([])
 const demandLoading = ref(false)
 const selectedDemands = ref([])
 const warehouseOptions = ref([])
-const categoryTree = ref([])
-const inputTypeOptions = computed(() => categoryTree.value || [])
+const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
+const inputTypeOptions = computed(() => mainCategoryOptions.value)
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -331,19 +344,25 @@ const loadWarehouses = async () => {
   }
 }
 
-const loadCategoryTree = async () => {
+const loadCategoryOptions = async () => {
   try {
-    const res = await getInventoryProductCategoryTree()
-    if (res.code === 200 && Array.isArray(res.data)) {
-      categoryTree.value = res.data.map(item => ({
-        ...item,
-        children: Array.isArray(item.children) && item.children.length > 0
-          ? item.children
-          : []
-      }))
-    }
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
+
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
   } catch (error) {
-    console.error('Failed to load product category tree:', error)
+    console.error('Failed to load category options:', error)
   }
 }
 
@@ -417,12 +436,17 @@ const handleInputTypeChange = (index) => {
   const detail = formData.details[index]
   // 清空投入品类别
   detail.inputCategory = ''
+  detail.variety = ''
   detail.quantity = 0
 }
 
 // 投入品类别变化处理
 const handleInputCategoryChange = (index) => {
   const detail = formData.details[index]
+  const inputTypeLabel = getMainCategoryLabel(detail.inputType)
+  const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
+  const matchedDemand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
+  detail.variety = matchedDemand?.variety || ''
   // 获取需求数量作为默认值
   const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.quantity = 0
@@ -447,8 +471,8 @@ const fetchStock = async (index) => {
       return
     }
 
-    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
-    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+    const inputTypeLabel = getMainCategoryLabel(detail.inputType)
+    const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
     const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
     if (res.code === 200 && Array.isArray(res.data)) {
@@ -466,14 +490,27 @@ const fetchStock = async (index) => {
 // 根据投入品类型过滤投入品类别
 const getFilteredCategories = (inputType) => {
   if (!inputType) return []
-  const match = categoryTree.value.find(item => item.value === inputType)
-  return match?.children || []
+  return subCategoryOptions.value.filter(item => String(item.parentValue) === String(inputType))
+}
+
+const getMainCategoryLabel = (value) => {
+  if (!value) return ''
+  const match = mainCategoryOptions.value.find(item => String(item.value) === String(value))
+  return match?.label || value
+}
+
+const getSubCategoryLabel = (value) => {
+  if (!value) return ''
+  const match = subCategoryOptions.value.find(item => String(item.value) === String(value))
+  return match?.label || value
 }
 
 // 获取需求数量
 const getDemandQuantity = (inputType, inputCategory) => {
   if (!inputType || !inputCategory) return 0
-  const demand = demandList.value.find(d => d.inputType === inputType && d.inputCategory === inputCategory)
+  const inputTypeLabel = getMainCategoryLabel(inputType)
+  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
+  const demand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
   return demand ? demand.totalQuantity : 0
 }
 
@@ -504,8 +541,8 @@ const validateQuantity = async (index) => {
       return
     }
 
-    const inputTypeLabel = getLabelByValue('input_type', detail.inputType)
-    const inputCategoryLabel = getLabelByValue('input_category', detail.inputCategory)
+    const inputTypeLabel = getMainCategoryLabel(detail.inputType)
+    const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
     const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
     if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
@@ -591,6 +628,7 @@ const addDetail = () => {
   formData.details.push({
     inputType: '',
     inputCategory: '',
+    variety: '',
     quantity: 0,
     unit: '',
     unitPrice: 0,
@@ -715,7 +753,7 @@ const handleAction = (action) => {
 onMounted(async () => {
   await getUserInfo()
   await getInputList()
-  await loadCategoryTree()
+  await loadCategoryOptions()
   await loadWarehouses()
   if (isEdit.value) {
     await fetchDetail()

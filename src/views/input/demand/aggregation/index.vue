@@ -251,6 +251,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="variety"
+          :label="$t('farmerDemand.form.variety')"
+          min-width="150"
+        >
+          <template #default="{ row }">
+            {{ row.variety || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="totalQuantity"
           :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"

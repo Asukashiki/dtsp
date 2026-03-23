@@ -245,6 +245,12 @@
                   :formatter="(row) => getDictLabel('input_category', row.inputCategory)"
               />
               <el-table-column
+                  prop="variety"
+                  :label="$t('farmerDemand.form.variety')"
+                  min-width="isMobile ? 120 : 140"
+                  :formatter="(row) => row.variety || '-'"
+              />
+              <el-table-column
                   prop="totalQuantity"
                   :label="$t('demandInquiry.totalQuantity')"
                   min-width="isMobile ? 80 : 100"

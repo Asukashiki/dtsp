@@ -1528,7 +1528,62 @@ export default {
   // 数据大屏
   dashboard: {
     title: '农业投入品管理大屏',
-    subtitle: '需求、分配与分发流通实时监控',
+    subtitle: '投入品监管与质量把控实时监测',
+    focus: {
+      label: '工作重点',
+      value: '农业投入品监管与质量把控'
+    },
+    metrics: {
+      fertilizerCoverage: '化肥分发覆盖率',
+      seedCoverage: '合格种子供应覆盖率',
+      chemicalSupply: '农用化学品供应总量',
+      qualityPassRate: '符合质量标准的投入品占比',
+      spotCheckTimes: '农业投入品抽检次数',
+      illegalInputs: '查获违规农业投入品数量',
+      regulationActions: '农业投入品市场监管行动次数',
+      farmerAccessRate: '获得所需投入品的农户占比',
+      deliveryEfficiency: '投入品配送效率'
+    },
+    units: {
+      percent: '%',
+      tons: '吨',
+      times: '次',
+      items: '件',
+      days: '天'
+    },
+    supplyDemand: {
+      title: '投入品供需匹配情况',
+      subtitle: '供应量与需求量对比',
+      supply: '供应量',
+      demand: '需求量'
+    },
+    distribution: {
+      title: '化肥配送分布地图',
+      subtitle: '重点区域配送覆盖'
+    },
+    quality: {
+      title: '投入品质量合格率',
+      subtitle: '抽检与合格情况'
+    },
+    regions: {
+      central: '核心区',
+      east: '东部',
+      west: '西部',
+      north: '北部',
+      south: '南部',
+      southeast: '东南部'
+    },
+    inputTypes: {
+      fertilizer: '化肥',
+      seed: '种子',
+      chemical: '农用化学品'
+    },
+    qualityTrend: {
+      thisMonth: '本月',
+      lastMonth: '上月',
+      lastQuarter: '近三个月均值'
+    },
+    footerNote: '数据大屏实时联动监管、抽检与配送状态',
     lastUpdate: '最后更新',
     autoRefresh: '自动刷新',
     refreshInterval: '刷新间隔',

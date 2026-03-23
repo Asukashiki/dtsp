@@ -151,29 +151,83 @@
                       {{ $t('farmerDemand.form.removeItem') }}
                     </el-button>
                   </div>
-                  <!-- 投入品大类：级联选择器 -->
+                  <!-- 投入品大类/小类：字典联动选择 -->
                   <el-row :gutter="20" style="margin-bottom: 16px;">
-                    <el-col :xs="24">
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.inputType')"
+                          :prop="`inputItems.${index}.inputType`"
+                          :rules="rules.inputType"
+                      >
+                        <div v-loading="categoryLoading">
+                          <el-select
+                              v-model="item.inputType"
+                              :placeholder="$t('farmerDemand.placeholder.inputType')"
+                              style="width: 100%"
+                              clearable
+                              @change="(val) => handleMainCategoryChange(val, index)"
+                          >
+                            <el-option
+                                v-for="category in mainCategoryOptions"
+                                :key="category.value"
+                                :label="category.label"
+                                :value="category.value"
+                            ></el-option>
+                          </el-select>
+                        </div>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="12">
                       <el-form-item
                           :label="$t('farmerDemand.form.inputCategory')"
-                          :prop="`inputItems.${index}.cascadeValue`"
-                          :rules="rules.cascadeValue"
+                          :prop="`inputItems.${index}.inputCategory`"
+                          :rules="rules.inputCategory"
                       >
-                        <div v-loading="dictLoading">
-                          <el-cascader
-                              v-model="item.cascadeValue"
-                              :options="cascaderOptions"
+                        <div v-loading="categoryLoading">
+                          <el-select
+                              v-model="item.inputCategory"
                               :placeholder="$t('farmerDemand.placeholder.inputCategory')"
                               style="width: 100%"
-                              :props="{
-                              expandTrigger: 'click',
-                              label: 'label',
-                              value: 'value',
-                              checkStrictly: false,
-                              emitPath: true
-                            }"
-                              @change="(val) => handleCascaderChange(val, index)"
-                          ></el-cascader>
+                              clearable
+                              :disabled="!item.inputType"
+                              @change="(val) => handleSubCategoryChange(val, index)"
+                          >
+                            <el-option
+                                v-for="category in getSubCategoryOptions(item.inputType)"
+                                :key="category.value"
+                                :label="category.label"
+                                :value="category.value"
+                            ></el-option>
+                          </el-select>
+                        </div>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+
+                  <el-row :gutter="20" style="margin-bottom: 16px;">
+                    <el-col :xs="24" :sm="12">
+                      <el-form-item
+                          :label="$t('farmerDemand.form.variety')"
+                          :prop="`inputItems.${index}.variety`"
+                          :rules="rules.variety"
+                      >
+                        <div v-loading="item.varietyLoading">
+                          <el-select
+                              v-model="item.varietyId"
+                              :placeholder="$t('farmerDemand.placeholder.variety')"
+                              style="width: 100%"
+                              clearable
+                              filterable
+                              :disabled="!item.inputType || !item.inputCategory"
+                              @change="(val) => handleVarietyChange(val, index)"
+                          >
+                            <el-option
+                                v-for="variety in item.varietyOptions || []"
+                                :key="variety.value"
+                                :label="variety.label"
+                                :value="variety.value"
+                            ></el-option>
+                          </el-select>
                         </div>
                       </el-form-item>
                     </el-col>
@@ -267,13 +321,15 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addFarmerDemand, updateFarmerDemand, getFarmerDemandDetail } from '@/api/farmerDemand'
 import { getFarmerList, getFarmerDetail } from '@/api/newFarm'
-import { getInventoryProductCategoryTree } from '@/api/inventory'
+import { getDicts } from '@/api/system/dict'
+import { listProductManage } from '@/api/productManage'
 import { useDict, clearDictCache } from '@/hooks/useDict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 import { InfoCard } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 响应式标签宽度（适配移动端）
 const labelWidth = computed(() => {
@@ -295,10 +351,6 @@ const userId = ref('')
 // 当前年份
 const currentYear = new Date().getFullYear()
 
-// 清除字典缓存
-clearDictCache('input_type')
-clearDictCache('input_category')
-
 // 初始化字典
 const {
   options: dictOptions,
@@ -306,8 +358,6 @@ const {
   loading: dictLoading,
   refresh: refreshDict
 } = useDict([
-  'input_type',
-  'input_category',
   'agri_unit',
   'agri_season'
 ], {
@@ -315,8 +365,16 @@ const {
   cache: true
 })
 
-// 构建级联选项（商品分类树）
-const cascaderOptions = ref([])
+const categoryLoading = ref(false)
+const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
+
+const createVarietyState = () => ({
+  varietyId: '',
+  variety: '',
+  varietyOptions: [],
+  varietyLoading: false
+})
 
 // 表单数据
 const formData = reactive({
@@ -400,18 +458,21 @@ const getSeasonName = (seasonValue) => {
 // 获取投入品类型名称（从级联选项中查找，大类）
 const getInputTypeName = (typeValue) => {
   if (!typeValue) return ''
-  const match = cascaderOptions.value.find(item => item.value === typeValue)
+  const match = mainCategoryOptions.value.find(item => String(item.value) === String(typeValue))
   return match ? match.label : typeValue
 }
 
-// 获取投入品小类名称（从级联选项中查找）
+// 获取投入品小类名称
 const getInputCategoryName = (categoryValue) => {
   if (!categoryValue) return ''
-  for (const parent of cascaderOptions.value) {
-    const match = (parent.children || []).find(child => child.value === categoryValue)
-    if (match) return match.label
-  }
+  const match = subCategoryOptions.value.find(item => String(item.value) === String(categoryValue))
+  if (match) return match.label
   return categoryValue
+}
+
+const getSubCategoryOptions = (mainCategoryValue) => {
+  if (!mainCategoryValue) return []
+  return subCategoryOptions.value.filter(item => String(item.parentValue) === String(mainCategoryValue))
 }
 
 // 表单验证规则
@@ -423,9 +484,19 @@ const rules = reactive({
   farmerIdNumber: [
     { max: 50, message: t('farmerDemand.rules.farmerIdNumberLength'), trigger: 'blur' }
   ],
-  cascadeValue: [{
+  inputType: [{
+    required: true,
+    message: t('farmerDemand.rules.inputTypeRequired'),
+    trigger: 'change'
+  }],
+  inputCategory: [{
     required: true,
     message: t('farmerDemand.rules.inputCategoryRequired'),
+    trigger: 'change'
+  }],
+  variety: [{
+    required: true,
+    message: t('farmerDemand.rules.varietyRequired'),
     trigger: 'change'
   }],
   season: [{
@@ -450,15 +521,82 @@ const rules = reactive({
   }]
 })
 
-// 级联选择器change事件（适配商品分类树）
-const handleCascaderChange = (val, index) => {
-  if (val && val.length === 2 && val[1]) {
-    formData.inputItems[index].inputType = val[0]
-    formData.inputItems[index].inputCategory = val[1]
-  } else {
-    formData.inputItems[index].inputType = ''
-    formData.inputItems[index].inputCategory = ''
+const handleMainCategoryChange = (value, index) => {
+  const currentItem = formData.inputItems[index]
+  if (!currentItem) return
+  currentItem.inputType = value || ''
+  currentItem.inputCategory = ''
+  currentItem.varietyId = ''
+  currentItem.variety = ''
+  currentItem.varietyOptions = []
+  currentItem.varietyLoading = false
+}
+
+const handleSubCategoryChange = async (value, index, preserveSelection = false) => {
+  const currentItem = formData.inputItems[index]
+  if (!currentItem) return
+
+  const existingVarietyId = currentItem.varietyId
+  const existingVarietyName = currentItem.variety
+
+  currentItem.inputCategory = value || ''
+  currentItem.varietyId = preserveSelection ? (existingVarietyId || '') : ''
+  currentItem.variety = preserveSelection ? (existingVarietyName || '') : ''
+  currentItem.varietyOptions = []
+
+  if (!currentItem.inputType || !currentItem.inputCategory) {
+    currentItem.varietyLoading = false
+    return
   }
+
+  currentItem.varietyLoading = true
+  try {
+    const mainCategoryLabel = getInputTypeName(currentItem.inputType)
+    const subCategoryLabel = getInputCategoryName(currentItem.inputCategory)
+
+    const res = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: mainCategoryLabel,
+      subCategory: subCategoryLabel,
+      status: '0'
+    })
+
+    const list = res.data?.list || []
+    currentItem.varietyOptions = list
+      .map(product => ({
+        id: product.id || product.product_id || '',
+        label: product.product_name || product.product_code || '-',
+        value: product.id || product.product_id || '',
+        productName: product.product_name || product.product_code || ''
+      }))
+      .filter(option => option.value)
+
+    if (currentItem.varietyId) {
+      const matchedById = currentItem.varietyOptions.find(option => String(option.value) === String(currentItem.varietyId))
+      if (matchedById) {
+        currentItem.variety = matchedById.productName
+      }
+    } else if (currentItem.variety) {
+      const matchedOption = currentItem.varietyOptions.find(option => option.productName === currentItem.variety)
+      if (matchedOption) {
+        currentItem.varietyId = matchedOption.value
+      }
+    }
+  } catch (error) {
+    currentItem.varietyOptions = []
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    currentItem.varietyLoading = false
+  }
+}
+
+const handleVarietyChange = (value, index) => {
+  const currentItem = formData.inputItems[index]
+  if (!currentItem) return
+  currentItem.varietyId = value || ''
+  const matchedOption = (currentItem.varietyOptions || []).find(option => String(option.value) === String(value))
+  currentItem.variety = matchedOption?.productName || ''
 }
 
 // 农民搜索方法
@@ -529,9 +667,9 @@ const handleAddItem = () => {
   const defaultUnit = unitOptions.length > 0 ? unitOptions[0].value : ''
   
   formData.inputItems.push({
-    cascadeValue: [],
     inputType: '',
     inputCategory: '',
+    ...createVarietyState(),
     season: '',
     cropLand: null,
     unit: defaultUnit,
@@ -555,15 +693,19 @@ const loadData = async () => {
         formData.year = currentYear.toString()
       }
 
-  if (formData.inputItems && formData.inputItems.length > 0) {
-    formData.inputItems.forEach(item => {
-      const mainCategory = item.inputType
-      const subCategory = item.inputCategory
-      item.cascadeValue = mainCategory && subCategory
-        ? [mainCategory, subCategory]
-        : []
-    })
-  } else {
+      if (formData.inputItems && formData.inputItems.length > 0) {
+        formData.inputItems = formData.inputItems.map(item => ({
+          ...createVarietyState(),
+          ...item
+        }))
+
+        await Promise.all(formData.inputItems.map((item, index) => {
+          if (item.inputType && item.inputCategory) {
+            return handleSubCategoryChange(item.inputCategory, index, true)
+          }
+          return Promise.resolve()
+        }))
+      } else {
         formData.inputItems = []
       }
 
@@ -655,8 +797,10 @@ const handleSubmit = async () => {
     const submitData = {
       ...formData,
       inputItems: formData.inputItems.map(item => ({
-        inputType: item.inputType,
-        inputCategory: item.inputCategory,
+        inputType: getInputTypeName(item.inputType),
+        inputCategory: getInputCategoryName(item.inputCategory),
+        productId: item.varietyId,
+        variety: item.variety,
         season: item.season,
         cropLand: item.cropLand,
         unit: item.unit,
@@ -702,20 +846,29 @@ const handleCancel = () => {
   router.back()
 }
 
-// 初始化
-const loadCategoryTree = async () => {
+// 初始化分类字典
+const loadCategoryOptions = async () => {
   try {
-    const res = await getInventoryProductCategoryTree()
-    if (res.code === 200 && Array.isArray(res.data)) {
-      cascaderOptions.value = res.data.map(item => ({
-        ...item,
-        children: Array.isArray(item.children) && item.children.length > 0
-          ? item.children
-          : [{ value: '', label: t('common.noData') }]
-      }))
-    }
+    categoryLoading.value = true
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
+
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
   } catch (error) {
-    console.error('Failed to load category tree:', error)
+    console.error('Failed to load category options:', error)
+  } finally {
+    categoryLoading.value = false
   }
 }
 
@@ -741,7 +894,7 @@ onMounted(async () => {
 
   // 加载字典和数据
   await refreshDict()
-  await loadCategoryTree()
+  await loadCategoryOptions()
   loadData()
 
   // 初始化农民列表
@@ -753,7 +906,7 @@ onMounted(async () => {
 @use '@/assets/styles/page-common.scss';
 
 // 自定义样式
-:deep(.el-cascader .el-input__inner) {
+:deep(.el-select .el-input__inner) {
   padding: 0 15px;
 }
 

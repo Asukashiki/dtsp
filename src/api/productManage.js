@@ -25,6 +25,7 @@ export const listProductManage = (params = {}) => {
   if (params.productName) requestParams.productName = params.productName
   if (params.categoryName) requestParams.categoryName = params.categoryName
   if (params.mainCategory) requestParams.mainCategory = params.mainCategory
+  if (params.subCategory) requestParams.subCategory = params.subCategory
   if (params.brand) requestParams.brand = params.brand
   if (params.status) requestParams.status = params.status
   if (params.keyword) requestParams.keyword = params.keyword

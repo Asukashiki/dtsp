@@ -68,12 +68,17 @@
             <el-table :data="demandList" border v-loading="demandLoading">
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_type', row.inputType) }}
+                  {{ getMainCategoryLabel(row.inputType) }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_category', row.inputCategory) }}
+                  {{ getSubCategoryLabel(row.inputCategory) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('farmerDemand.form.variety')" prop="variety" min-width="150">
+                <template #default="{ row }">
+                  {{ row.variety || '-' }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
@@ -93,12 +98,17 @@
             <el-table :data="detailData" border>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_type', row.inputType) }}
+                  {{ getMainCategoryLabel(row.inputType) }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
                 <template #default="{ row }">
-                  {{ getLabelByValue('input_category', row.inputCategory) }}
+                  {{ getSubCategoryLabel(row.inputCategory) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('farmerDemand.form.variety')" prop="variety" min-width="150">
+                <template #default="{ row }">
+                  {{ row.variety || '-' }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('inputCirculation.quantity')" prop="quantity" min-width="120" />
@@ -123,11 +133,13 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getUnionReceiveDetail, getOseReleaseDetailByReleaseId } from '@/api/inputCirculation'
 import { getTownAggregationDetail } from '@/api/villageAggregation'
+import { getDicts } from '@/api/system/dict'
 import { useDict } from '@/hooks/useDict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
-const { getLabelByValue } = useDict(['input_type', 'input_category', 'agri_unit'])
+const { getLabelByValue } = useDict(['agri_unit'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
@@ -135,6 +147,42 @@ const mainData = ref({})
 const detailData = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
+const mainCategoryOptions = ref([])
+const subCategoryOptions = ref([])
+
+const getMainCategoryLabel = (value) => {
+  if (!value) return '-'
+  const match = mainCategoryOptions.value.find(item => String(item.value) === String(value) || item.label === value)
+  return match?.label || value
+}
+
+const getSubCategoryLabel = (value) => {
+  if (!value) return '-'
+  const match = subCategoryOptions.value.find(item => String(item.value) === String(value) || item.label === value)
+  return match?.label || value
+}
+
+const loadCategoryOptions = async () => {
+  try {
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    mainCategoryOptions.value = (mainRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
+
+    subCategoryOptions.value = (subRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue,
+      parentValue: item.remark
+    }))
+  } catch (error) {
+    console.error('Failed to load category options:', error)
+  }
+}
 
 const fetchDetail = async () => {
   loading.value = true
@@ -181,7 +229,10 @@ const loadDemandListByReleaseId = async (releaseId) => {
 }
 
 const handleBack = () => router.back()
-onMounted(() => fetchDetail())
+onMounted(async () => {
+  await loadCategoryOptions()
+  await fetchDetail()
+})
 </script>
 
 <style lang="scss" scoped>

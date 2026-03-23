@@ -108,7 +108,7 @@
                   </el-table-column>
                   <el-table-column :label="$t('farmerDemand.form.variety')" min-width="180">
                     <template #default="{ row }">
-                      {{ getInputTypeLabel(row.inputType) || row.inputType || '-' }}
+                      {{ row.variety || '-' }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="unit" :label="$t('farmerDemand.form.unit')" width="180">
