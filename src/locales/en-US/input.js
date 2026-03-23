@@ -838,6 +838,7 @@ export default {
         location: 'Geographic Location',
         capacity: 'Storage Capacity',
         address: 'Address',
+        authenticationMaterial: 'Authentication Material',
         status: 'Operating Status',
         remark: 'Remark',
         createPeople: 'Creator',
@@ -856,6 +857,7 @@ export default {
         location: 'Enter geographic location',
         capacity: 'Enter storage capacity',
         address: 'Enter address',
+        authenticationMaterial: 'Upload authentication material',
         status: 'Select operating status',
         remark: 'Enter remarks (optional)'
       },

@@ -16,7 +16,6 @@
             <el-descriptions-item :label="$t('inventory.outbound.warehouse')">{{ form.warehouseName }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.receiverTypes')">{{ getLabel(receiverTypeOptions, form.receiverType) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.receiver')">{{ form.receiver }}</el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.outbound.bizNo')">{{ form.bizNo }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.operator')">{{ form.operator }}</el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.outbound.orderDate')">{{ formatDateTime(form.orderDate) }}</el-descriptions-item>
             <el-descriptions-item :label="$t('common.status')">

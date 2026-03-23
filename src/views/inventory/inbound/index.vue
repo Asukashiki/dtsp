@@ -77,12 +77,12 @@
                 width="150"
                 show-overflow-tooltip
               />
-              <el-table-column
+<!--              <el-table-column
                 prop="bizNo"
                 :label="$t('inventory.inbound.bizNo')"
                 width="150"
                 show-overflow-tooltip
-              />
+              />-->
               <el-table-column
                 prop="operator"
                 :label="$t('inventory.inbound.operator')"
@@ -110,40 +110,13 @@
               </el-table-column>
               <el-table-column :label="$t('common.actions')" width="250" fixed="right">
                 <template #default="{ row }">
-                  <el-button
-                    type="primary"
-                    size="small"
-                    @click="handleView(row)"
-                    class="btn-green"
-                  >{{ $t('common.view') }}</el-button>
-
-                  <el-button
-                    v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'"
-                    type="primary"
-                    size="small"
-                    @click="handleEdit(row)"
-                  >{{ $t('common.edit') }}</el-button>
-
-                  <el-button
-                    v-if="row.status === 'DRAFT'"
-                    type="success"
-                    size="small"
-                    @click="handleSubmit(row)"
-                  >{{ $t('common.submit') }}</el-button>
-
-                  <el-button
-                    v-if="row.status === 'SUBMITTED'"
-                    type="warning"
-                    size="small"
-                    @click="handleAudit(row)"
-                  >{{ $t('inventory.inbound.approve') }}</el-button>
-
-                  <el-button
-                    v-if="row.status === 'DRAFT'"
-                    type="danger"
-                    size="small"
-                    @click="handleDelete(row)"
-                  >{{ $t('common.delete') }}</el-button>
+                  <div class="action-buttons">
+                    <el-button class="action-btn action-btn-view" size="small" @click="handleView(row)"><i class="ri-eye-line"></i><span class="btn-text">{{ $t('common.view') }}</span></el-button>
+                    <el-button v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'" class="action-btn action-btn-edit" type="primary" size="small" @click="handleEdit(row)"><i class="ri-edit-line"></i><span class="btn-text">{{ $t('common.edit') }}</span></el-button>
+                    <el-button v-if="row.status === 'DRAFT'" class="action-btn action-btn-submit" type="success" size="small" @click="handleSubmit(row)"><i class="ri-checkbox-circle-line"></i><span class="btn-text">{{ $t('common.submit') }}</span></el-button>
+                    <el-button v-if="row.status === 'SUBMITTED'" class="action-btn action-btn-audit" type="primary" size="small" @click="handleAudit(row)"><i class="ri-check-line"></i><span class="btn-text">{{ $t('inventory.inbound.approve') }}</span></el-button>
+                    <el-button v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'" class="action-btn action-btn-delete" type="danger" size="small" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i><span class="btn-text">{{ $t('common.delete') }}</span></el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -194,10 +167,11 @@
                 </div>
               </div>
               <div class="mobile-card-footer">
-                <el-button size="small" @click.stop="handleView(item)">{{ $t('common.view') }}</el-button>
-                <el-button v-if="item.status === 'DRAFT' || item.status === 'SUBMITTED'" type="primary" size="small" @click.stop="handleEdit(item)">{{ $t('common.edit') }}</el-button>
-                <el-button v-if="item.status === 'DRAFT'" type="success" size="small" @click.stop="handleSubmit(item)">{{ $t('common.submit') }}</el-button>
-                <el-button v-if="item.status === 'SUBMITTED'" type="warning" size="small" @click.stop="handleAudit(item)">{{ $t('inventory.inbound.approve') }}</el-button>
+                <el-button class="action-btn action-btn-view" size="small" @click.stop="handleView(item)"><i class="ri-eye-line"></i><span class="btn-text">{{ $t('common.view') }}</span></el-button>
+                <el-button v-if="item.status === 'DRAFT' || item.status === 'SUBMITTED'" class="action-btn action-btn-edit" type="primary" size="small" @click.stop="handleEdit(item)"><i class="ri-edit-line"></i><span class="btn-text">{{ $t('common.edit') }}</span></el-button>
+                <el-button v-if="item.status === 'DRAFT'" class="action-btn action-btn-submit" type="success" size="small" @click.stop="handleSubmit(item)"><i class="ri-checkbox-circle-line"></i><span class="btn-text">{{ $t('common.submit') }}</span></el-button>
+                <el-button v-if="item.status === 'SUBMITTED'" class="action-btn action-btn-audit" type="primary" size="small" @click.stop="handleAudit(item)"><i class="ri-check-line"></i><span class="btn-text">{{ $t('inventory.inbound.approve') }}</span></el-button>
+                <el-button v-if="item.status === 'DRAFT' || item.status === 'SUBMITTED'" class="action-btn action-btn-delete" type="danger" size="small" @click.stop="handleDelete(item)"><i class="ri-delete-bin-line"></i><span class="btn-text">{{ $t('common.delete') }}</span></el-button>
               </div>
             </div>
 
@@ -404,6 +378,102 @@ onMounted(() => {
 
   .title, .subtitle, .ri-icon {
     color: white !important;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+
+  i {
+    font-size: 14px;
+  }
+
+  .btn-text {
+    display: inline;
+  }
+}
+
+.action-btn-view {
+  background-color: #f4f4f5;
+  border-color: #e4e4e7;
+  color: #606266;
+
+  &:hover {
+    background-color: #e9e9eb;
+    border-color: #d1d1d6;
+    color: #383838;
+  }
+}
+
+.action-btn-edit {
+  background-color: #409eff;
+  border-color: #409eff;
+  color: white;
+
+  &:hover {
+    background-color: #66b1ff;
+    border-color: #66b1ff;
+  }
+}
+
+.action-btn-submit {
+  background-color: #67c23a;
+  border-color: #67c23a;
+  color: white;
+
+  &:hover {
+    background-color: #85ce61;
+    border-color: #85ce61;
+  }
+}
+
+.action-btn-audit {
+  background-color: #409eff;
+  border-color: #409eff;
+  color: white;
+
+  &:hover {
+    background-color: #66b1ff;
+    border-color: #66b1ff;
+  }
+}
+
+.action-btn-delete {
+  background-color: #f56c6c;
+  border-color: #f56c6c;
+  color: white;
+
+  &:hover {
+    background-color: #f78989;
+    border-color: #f78989;
+  }
+}
+
+.mobile-card-footer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #dcdfe6;
+    border-radius: 2px;
   }
 }
 
