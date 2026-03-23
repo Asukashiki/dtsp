@@ -161,15 +161,16 @@
                   <template #default="scope">
                     <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
                       @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="`${item.warehouseCode} ${item.warehouseName}`" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
                   <template #default="scope">
                     <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      :disabled="isWarehouseReadonly"
                       @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="`${item.warehouseCode} ${item.warehouseName}`" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -258,6 +259,7 @@ const farmerList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const warehouseOptions = ref([])
+const isWarehouseReadonly = ref(false)
 
 const categoryTree = ref([])
 const inputTypeOptions = computed(() => categoryTree.value || [])
@@ -495,6 +497,17 @@ const fetchDetail = async () => {
 }
 
 const addDetail = () => {
+  // 获取默认入库仓库（按创建时间最新排序的仓库）
+  let defaultInWarehouse = null
+  if (warehouseOptions.value.length > 0) {
+    const sortedWarehouses = [...warehouseOptions.value].sort((a, b) => {
+      const timeA = a.createTime || a.create_time || 0
+      const timeB = b.createTime || b.create_time || 0
+      return new Date(timeB) - new Date(timeA)
+    })
+    defaultInWarehouse = sortedWarehouses[0]
+  }
+  
   formData.details.push({
     inputType: '',
     inputCategory: '',
@@ -509,8 +522,8 @@ const addDetail = () => {
     releaseTime: new Date().toISOString(),
     outWarehouseCode: '',
     outWarehouseName: '',
-    inWarehouseCode: '',
-    inWarehouseName: ''
+    inWarehouseCode: defaultInWarehouse ? defaultInWarehouse.warehouseCode : '',
+    inWarehouseName: defaultInWarehouse ? defaultInWarehouse.warehouseName : ''
   })
 }
 
@@ -656,6 +669,7 @@ onMounted(async () => {
   await fetchFarmerList()
   await loadWarehouses()
   await loadCategoryTree()
+  isWarehouseReadonly.value = true
   if (!isEdit.value) {
     const userInfo = userStore.userInfo
     formData.releaseBy = userInfo.userName || userInfo.nickName || userInfo.name ||

@@ -180,8 +180,9 @@
                 <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
                   <template #default="scope">
                     <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
+                      :disabled="isWarehouseReadonly"
                       @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="`${item.warehouseCode} ${item.warehouseName}`" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -288,6 +289,7 @@ const coorList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const warehouseOptions = ref([])
+const isWarehouseReadonly = ref(false)
 const categoryTree = ref([])
 
 const rules = {
@@ -545,6 +547,18 @@ const addDetail = () => {
   }
   // 默认选择第一个单位
   const defaultUnit = options.value.agri_unit?.[0]?.value || ''
+  
+  // 获取默认入库仓库（按创建时间最新排序的仓库）
+  let defaultInWarehouse = null
+  if (warehouseOptions.value.length > 0) {
+    const sortedWarehouses = [...warehouseOptions.value].sort((a, b) => {
+      const timeA = a.createTime || a.create_time || 0
+      const timeB = b.createTime || b.create_time || 0
+      return new Date(timeB) - new Date(timeA)
+    })
+    defaultInWarehouse = sortedWarehouses[0]
+  }
+  
   formData.details.push({
     inputType: '',
     inputCategory: '',
@@ -555,8 +569,8 @@ const addDetail = () => {
     currentStock: 0,
     outWarehouseCode: '',
     outWarehouseName: '',
-    inWarehouseCode: '',
-    inWarehouseName: ''
+    inWarehouseCode: defaultInWarehouse ? defaultInWarehouse.warehouseCode : '',
+    inWarehouseName: defaultInWarehouse ? defaultInWarehouse.warehouseName : ''
   })
 }
 
@@ -691,6 +705,7 @@ const handleAction = (action) => {
 }
 
 onMounted(() => {
+  isWarehouseReadonly.value = true
   getUserInfo()
   loadCategoryTree()
   loadWarehouses()

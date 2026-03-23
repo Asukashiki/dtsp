@@ -15,45 +15,51 @@
                   <el-input v-model="form.inboundNo" :placeholder="$t('inventory.inbound.no')" disabled />
                 </el-form-item>
               </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.inbound.types')" prop="type">
-                  <el-select v-model="form.type" :placeholder="$t('inventory.inbound.types')" style="width: 100%">
-                    <el-option :label="$t('inventory.inbound.type.general')" value="GENERAL" />
-                    <el-option :label="$t('inventory.inbound.type.transfer')" value="TRANSFER" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
+
+              <!-- 入库类型：前端隐藏，后端自动设置为GENERAL -->
+              <!-- <el-form-item :label="$t('inventory.inbound.types')" prop="type"> -->
+              <!-- 后端自动设置为GENERAL -->
+
               <el-col :xs="24" :sm="12" :md="8">
                 <el-form-item :label="$t('inventory.inbound.warehouse')" prop="warehouseCode">
-                  <el-select v-model="form.warehouseCode" :placeholder="$t('inventory.inbound.warehouse')" style="width: 100%" filterable @change="handleWarehouseChange">
+                  <el-select 
+                    v-model="form.warehouseCode" 
+                    :placeholder="$t('inventory.inbound.warehouse')" 
+                    style="width: 100%" 
+                    filterable 
+                    :disabled="isWarehouseReadonly"
+                    @change="handleWarehouseChange">
                     <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                   </el-select>
+
                 </el-form-item>
               </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.inbound.bizNo')" prop="bizNo">
-                  <el-input v-model="form.bizNo" :placeholder="$t('inventory.inbound.bizNo')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.inbound.operator')" prop="operator">
-                  <el-input v-model="form.operator" :placeholder="$t('inventory.inbound.operator')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="8">
-                <el-form-item :label="$t('inventory.inbound.orderDate')" prop="orderDate">
-                  <el-date-picker v-model="form.orderDate" type="datetime" :placeholder="$t('inventory.inbound.orderDate')" style="width: 100%" />
-                </el-form-item>
-              </el-col>
+
+              <!-- 关联业务单号：前端隐藏，后端自动保存 -->
+              <!-- <el-form-item :label="$t('inventory.inbound.bizNo')" prop="bizNo"> -->
+              <!-- 后端自动处理 -->
+
+              <!-- 操作人：前端隐藏，后端自动设置为当前用户 -->
+              <!-- <el-form-item :label="$t('inventory.inbound.operator')" prop="operator"> -->
+              <!-- 后端自动设置为当前用户 -->
+
+              <!-- 入库时间：前端隐藏，后端自动设置为当前时间 -->
+              <!-- <el-form-item :label="$t('inventory.inbound.orderDate')" prop="orderDate"> -->
+              <!-- 后端自动设置为当前时间 -->
+
             </el-row>
+
             <el-row>
               <el-col :span="24">
                 <el-form-item :label="$t('common.remark')" prop="remark">
                   <el-input v-model="form.remark" type="textarea" :rows="3" :placeholder="$t('common.remark')" />
                 </el-form-item>
+
               </el-col>
             </el-row>
+
           </InfoCard>
+
 
           <InfoCard :title="$t('inventory.inbound.detailList')" icon="ri-list-check">
             <div class="items-list">
@@ -63,30 +69,42 @@
                     <el-select v-model="item.mainCategoryId" :placeholder="$t('inventory.inbound.detail.mainCategory')" style="width: 100%" @change="(val) => handleMainCategoryChange(val, item)">
                       <el-option v-for="dict in mainCategoryOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
+
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.subCategory')" :prop="`detailList.${index}.subCategoryId`" :rules="detailRules.subCategoryId">
                     <el-select v-model="item.subCategoryId" :placeholder="$t('inventory.inbound.detail.subCategory')" style="width: 100%" :disabled="!item.mainCategoryId" @change="(val) => handleSubCategoryChange(val, item)">
                       <el-option v-for="dict in getSubCategoryOptions(item.mainCategoryId)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
+
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`" :rules="detailRules.batchNo">
-                    <el-input v-model="item.batchNo" :placeholder="$t('inventory.inbound.detail.batchNo')" clearable />
+                    <!-- 批次号自动生成，置灰不让手填 -->
+                    <el-input v-model="item.batchNo" :placeholder="$t('inventory.inbound.detail.batchNo')" disabled />
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.supplier')" :prop="`detailList.${index}.supplier`">
                     <el-input v-model="item.supplier" :placeholder="$t('inventory.inbound.detail.supplier')" clearable />
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.qty')" :prop="`detailList.${index}.qty`" :rules="detailRules.qty">
                     <el-input-number v-model="item.qty" :min="0" :precision="2" :placeholder="$t('inventory.inbound.detail.qty')" style="width: 100%" />
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.unit')" :prop="`detailList.${index}.unit`" :rules="detailRules.unit">
                     <el-select v-model="item.unit" :placeholder="$t('inventory.inbound.detail.unit')" style="width: 100%">
                       <el-option v-for="dict in unitOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
+
                   </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.expireDate')" :prop="`detailList.${index}.expireDate`" :rules="detailRules.expireDate">
                     <el-date-picker v-model="item.expireDate" type="date" :placeholder="$t('inventory.inbound.detail.expireDate')" style="width: 100%" value-format="YYYY-MM-DD" />
                   </el-form-item>
+
                 </div>
+
                 <div class="item-actions">
                   <el-button type="danger" link @click="handleDeleteDetail(index)" :disabled="form.detailList.length === 1">
                     <i class="ri-delete-bin-line"></i>
@@ -96,12 +114,14 @@
               </div>
             </div>
 
+
             <el-button type="primary" plain @click="handleAddDetail" class="add-item-btn">
               <i class="ri-add-line"></i>
               {{ $t('inventory.inbound.addDetail') }}
             </el-button>
           </InfoCard>
         </el-form>
+
 
         <div class="form-actions">
           <el-button @click="handleBack">{{ $t('common.cancel') }}</el-button>
@@ -116,6 +136,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
 import { ElMessage } from 'element-plus'
 import { addInbound, getInboundDetail, updateInbound, getWarehouseOptions, getInventoryProductList } from '@/api/inventory'
 import { getDicts } from '@/api/system/dict'
@@ -135,9 +156,11 @@ const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 const productMap = ref(new Map())
 const unitOptions = ref([])
+const isWarehouseReadonly = ref(false)
 
 const isEdit = computed(() => !!route.params.id)
 
+// 生成入库单号
 const generateInboundNo = () => {
   const now = new Date()
   const year = now.getFullYear()
@@ -147,15 +170,25 @@ const generateInboundNo = () => {
   return `IN${year}${month}${day}${random}`
 }
 
+const generateBatchNo = () => {
+  const timestamp = Date.now()
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let randomStr = ''
+  for (let i = 0; i < 5; i++) {
+    randomStr += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return `BATCH-${timestamp}-${randomStr}`
+}
+
 const form = reactive({
   id: null,
   inboundNo: '',
-  type: '',
+  type: 'GENERAL', // 后端自动设置为GENERAL
   warehouseCode: '',
   warehouseName: '',
-  bizNo: '',
-  operator: '',
-  orderDate: new Date(),
+  bizNo: '', // 关联业务单号，后端自动处理
+  operator: '', // 操作人，后端自动设置为当前用户
+  orderDate: new Date(), // 入库时间，后端自动设置为当前时间
   remark: '',
   detailList: [
     {
@@ -164,7 +197,7 @@ const form = reactive({
       mainCategoryId: '',
       subCategory: '',
       subCategoryId: '',
-      batchNo: '',
+      batchNo: '', // 批次号由后端自动生成
       supplier: '',
       qty: null,
       unit: '',
@@ -174,9 +207,8 @@ const form = reactive({
 })
 
 const rules = {
-  type: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  warehouseCode: [{ required: true, message: t('common.required'), trigger: 'change' }],
-  orderDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
+  warehouseCode: [{ required: true, message: t('common.required'), trigger: 'change' }]
+  // type, bizNo, operator, orderDate 已隐藏，不再需要验证
 }
 
 const detailRules = {
@@ -198,6 +230,8 @@ const handleMainCategoryChange = (val, row) => {
   row.subCategory = ''
   row.productId = ''
   row.unit = ''
+  // 选择主类别时自动生成批次号
+  row.batchNo = generateBatchNo()
   const mainProduct = productMap.value.get(val)
   row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || '') : ''
 }
@@ -212,6 +246,10 @@ const handleSubCategoryChange = (val, row) => {
     row.mainCategoryId = subProduct.parentId || row.mainCategoryId
     row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || row.mainCategory) : row.mainCategory
   }
+  // 选择子类别时自动生成批次号
+  if (!row.batchNo) {
+    row.batchNo = generateBatchNo()
+  }
 }
 
 const handleBack = () => {
@@ -225,7 +263,7 @@ const handleAddDetail = () => {
     mainCategoryId: '',
     subCategory: '',
     subCategoryId: '',
-    batchNo: '',
+    batchNo: generateBatchNo(), // 新增明细时自动生成批次号
     supplier: '',
     qty: null,
     unit: '',
@@ -244,12 +282,31 @@ const handleWarehouseChange = (val) => {
   }
 }
 
-const loadWarehouses = () => {
-  getWarehouseOptions({ status: '0' }).then(res => {
+const loadWarehouses = async () => {
+  try {
+    const res = await getWarehouseOptions({ status: '0' })
     warehouseOptions.value = res.data || []
-  }).catch(() => {
+    
+    // 新增模式：自动选择用户有权限的最新仓库
+    if (!isEdit.value && warehouseOptions.value.length > 0) {
+      // 按创建时间降序排序，取最新创建的仓库
+      const sortedWarehouses = [...warehouseOptions.value].sort((a, b) => {
+        const timeA = a.createTime || a.create_time || 0
+        const timeB = b.createTime || b.create_time || 0
+        return new Date(timeB) - new Date(timeA)
+      })
+      
+      const latestWarehouse = sortedWarehouses[0]
+      if (latestWarehouse) {
+        form.warehouseCode = latestWarehouse.warehouseCode
+        form.warehouseName = latestWarehouse.warehouseName
+        isWarehouseReadonly.value = true
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load warehouses', error)
     warehouseOptions.value = []
-  })
+  }
 }
 
 const loadDictionaries = async () => {
@@ -350,7 +407,7 @@ const loadInboundData = async (id) => {
       const data = res.data
       form.id = data.id
       form.inboundNo = data.inboundNo
-      form.type = data.type
+      form.type = data.type || 'GENERAL'
       form.warehouseCode = data.warehouseCode
       form.warehouseName = data.warehouseName
       form.bizNo = data.bizNo
@@ -365,7 +422,7 @@ const loadInboundData = async (id) => {
           mainCategoryId: '',
           subCategory: item.subCategory,
           subCategoryId: '',
-          batchNo: item.batchNo,
+          batchNo: item.batchNo, // 编辑时保留原有的批次号
           supplier: item.supplier,
           qty: item.qty,
           unit: item.unit,
@@ -416,10 +473,14 @@ const handleSubmit = () => {
           unit: item.unit || subProduct?.unit || ''
         }
       })
+      const { orderDate, ...formWithoutOrderDate } = form
       const submitData = {
-        ...form,
-        detailList: mappedDetailList,
-        orderDate: form.orderDate ? formatDateTime(form.orderDate) : ''
+        ...formWithoutOrderDate,
+        detailList: mappedDetailList
+        // type: 'GENERAL' - 后端自动设置
+        // bizNo: 后端自动处理
+        // operator: 后端自动设置为当前用户
+        // orderDate: 后端自动设置为当前时间
       }
       const apiCall = isEdit.value ? updateInbound(form.id, submitData) : addInbound(submitData)
       apiCall.then(() => {
@@ -435,15 +496,25 @@ const handleSubmit = () => {
 }
 
 onMounted(async () => {
+  // 重置仓库只读状态
+  isWarehouseReadonly.value = false
+  
   await loadWarehouses()
   await loadProducts()
   await loadDictionaries()
 
   if (isEdit.value) {
     await loadInboundData(route.params.id)
+    // 编辑模式下，仓库不可编辑
+    isWarehouseReadonly.value = true
   } else {
     form.inboundNo = generateInboundNo()
-    form.operator = userStore.userInfo?.nickName || userStore.userInfo?.userName || ''
+    // 新增时为每个明细自动生成批次号
+    form.detailList.forEach(item => {
+      if (!item.batchNo) {
+        item.batchNo = generateBatchNo()
+      }
+    })
   }
 })
 </script>
