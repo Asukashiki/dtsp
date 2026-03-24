@@ -42,6 +42,7 @@ export default {
       product: 'Product',
       mainCategory: 'Main Category',
       subCategory: 'Sub Category',
+      productName: 'Product Name',
       batchNo: 'Batch No',
       supplier: 'Supplier',
       qty: 'Quantity',
@@ -99,6 +100,7 @@ export default {
       product: 'Product',
       mainCategory: 'Main Category',
       subCategory: 'Sub Category',
+      productName: 'Product Name',
       batchNo: 'Batch No',
       qty: 'Quantity',
       unit: 'Unit',
@@ -148,6 +150,7 @@ export default {
     detail: {
       mainCategory: 'Main Category',
       subCategory: 'Sub Category',
+      productName: 'Product Name',
       product: 'Product',
       batchNo: 'Batch No',
       supplier: 'Supplier',

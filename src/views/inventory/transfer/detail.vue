@@ -26,13 +26,10 @@
               {{ formatDateTime(detail.applyDate) }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.transfer.expectedDate')">
-              {{ detail.expectedDate || '-' }}
+              {{ formatDate(detail.expectedDate) || '-' }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.transfer.applicant')">
               {{ detail.applicant }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('inventory.transfer.department')">
-              {{ detail.department || '-' }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('inventory.transfer.outWarehouse')">
               {{ detail.outWarehouseName }}
@@ -46,6 +43,8 @@
             <el-descriptions-item :label="$t('inventory.transfer.inTime')">
               {{ formatDateTime(detail.inTime) }}
             </el-descriptions-item>
+          </el-descriptions>
+          <el-descriptions :column="1" border style="margin-top: 12px;">
             <el-descriptions-item :label="$t('common.remark')">
               {{ detail.remark || '-' }}
             </el-descriptions-item>
@@ -57,6 +56,7 @@
             <el-table-column type="index" width="50" />
             <el-table-column prop="mainCategory" :label="$t('inventory.transfer.detail.mainCategory')" min-width="120" />
             <el-table-column prop="subCategory" :label="$t('inventory.transfer.detail.subCategory')" min-width="120" />
+            <el-table-column prop="productName" :label="$t('inventory.transfer.detail.productName')" min-width="120" />
             <el-table-column prop="batchNo" :label="$t('inventory.transfer.detail.batchNo')" min-width="120" />
             <el-table-column prop="supplier" :label="$t('inventory.transfer.detail.supplier')" min-width="120" />
             <el-table-column prop="qty" :label="$t('inventory.transfer.detail.qty')" min-width="100" />
@@ -162,18 +162,39 @@ const isAuditMode = computed(() => route.query.mode === 'audit')
 
 const formatDateTime = (dateTimeStr) => {
   if (!dateTimeStr) return '-'
-  if (dateTimeStr.includes('T')) {
-    return dateTimeStr.replace('T', ' ')
+  if (typeof dateTimeStr === 'string' && dateTimeStr.includes('T')) {
+    return dateTimeStr.replace('T', ' ').split('.')[0]
   }
-  return dateTimeStr
+  if (dateTimeStr instanceof Date) {
+    const year = dateTimeStr.getFullYear()
+    const month = String(dateTimeStr.getMonth() + 1).padStart(2, '0')
+    const day = String(dateTimeStr.getDate()).padStart(2, '0')
+    const hours = String(dateTimeStr.getHours()).padStart(2, '0')
+    const minutes = String(dateTimeStr.getMinutes()).padStart(2, '0')
+    const seconds = String(dateTimeStr.getSeconds()).padStart(2, '0')
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  }
+  if (typeof dateTimeStr === 'string') {
+    return dateTimeStr.split('.')[0]
+  }
+  return String(dateTimeStr)
 }
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  if (dateStr.includes('T')) {
+  if (typeof dateStr === 'string' && dateStr.includes('T')) {
     return dateStr.split('T')[0]
   }
-  return dateStr
+  if (dateStr instanceof Date) {
+    const year = dateStr.getFullYear()
+    const month = String(dateStr.getMonth() + 1).padStart(2, '0')
+    const day = String(dateStr.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+  if (typeof dateStr === 'string') {
+    return dateStr.split('T')[0]
+  }
+  return String(dateStr)
 }
 
 const handleBack = () => {

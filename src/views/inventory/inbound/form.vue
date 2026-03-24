@@ -79,6 +79,13 @@
 
                   </el-form-item>
 
+                  <el-form-item :label="$t('inventory.inbound.detail.productName')" :prop="`detailList.${index}.productId`" :rules="detailRules.productName">
+                    <el-select v-model="item.productId" :placeholder="$t('inventory.inbound.detail.productName')" style="width: 100%" :disabled="!item.subCategoryId" @change="(val) => handleProductNameChange(val, item)">
+                      <el-option v-for="dict in getProductNameOptions(item.mainCategoryId, item.subCategoryId)" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    </el-select>
+
+                  </el-form-item>
+
                   <el-form-item :label="$t('inventory.inbound.detail.batchNo')" :prop="`detailList.${index}.batchNo`" :rules="detailRules.batchNo">
                     <!-- 批次号自动生成，置灰不让手填 -->
                     <el-input v-model="item.batchNo" :placeholder="$t('inventory.inbound.detail.batchNo')" disabled />
@@ -154,6 +161,7 @@ const submitting = ref(false)
 const warehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const productNameOptionsMap = ref(new Map())
 const productMap = ref(new Map())
 const unitOptions = ref([])
 const isWarehouseReadonly = ref(false)
@@ -193,6 +201,7 @@ const form = reactive({
   detailList: [
     {
       productId: '',
+      productName: '',
       mainCategory: '',
       mainCategoryId: '',
       subCategory: '',
@@ -214,6 +223,7 @@ const rules = {
 const detailRules = {
   mainCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
   subCategoryId: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  productName: [{ required: true, message: t('common.required'), trigger: 'change' }],
   batchNo: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   qty: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   unit: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -222,31 +232,40 @@ const detailRules = {
 
 const getSubCategoryOptions = (mainCategoryId) => {
   if (!mainCategoryId) return []
-  return subCategoryOptions.value.filter(item => item.parentId === mainCategoryId)
+  return subCategoryOptions.value.filter(item => item.mainCategory === mainCategoryId)
+}
+
+const getProductNameOptions = (mainCategoryId, subCategoryId) => {
+  if (!mainCategoryId || !subCategoryId) return []
+  const key = mainCategoryId + '|' + subCategoryId
+  return productNameOptionsMap.value.get(key) || []
 }
 
 const handleMainCategoryChange = (val, row) => {
   row.subCategoryId = ''
   row.subCategory = ''
   row.productId = ''
+  row.productName = ''
   row.unit = ''
-  // 选择主类别时自动生成批次号
   row.batchNo = generateBatchNo()
-  const mainProduct = productMap.value.get(val)
-  row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || '') : ''
+  row.mainCategory = val
 }
 
 const handleSubCategoryChange = (val, row) => {
-  const subProduct = productMap.value.get(val)
-  if (subProduct) {
-    row.productId = subProduct.id
-    row.unit = subProduct.unit || row.unit
-    row.subCategory = subProduct.subCategory || subProduct.productName || row.subCategory
-    const mainProduct = productMap.value.get(subProduct.parentId)
-    row.mainCategoryId = subProduct.parentId || row.mainCategoryId
-    row.mainCategory = mainProduct ? (mainProduct.mainCategory || mainProduct.productName || row.mainCategory) : row.mainCategory
+  row.productId = ''
+  row.productName = ''
+  row.subCategory = val
+  if (!row.batchNo) {
+    row.batchNo = generateBatchNo()
   }
-  // 选择子类别时自动生成批次号
+}
+
+const handleProductNameChange = (val, row) => {
+  const product = productMap.value.get(val)
+  if (product) {
+    row.productName = product.productName || ''
+    row.unit = product.unit || row.unit
+  }
   if (!row.batchNo) {
     row.batchNo = generateBatchNo()
   }
@@ -259,6 +278,7 @@ const handleBack = () => {
 const handleAddDetail = () => {
   form.detailList.push({
     productId: '',
+    productName: '',
     mainCategory: '',
     mainCategoryId: '',
     subCategory: '',
@@ -381,21 +401,39 @@ const loadProducts = async () => {
     const res = await getInventoryProductList({ pageNum: 1, pageSize: 10000, status: '0' })
     const list = res.rows || res.data?.list || res.data || []
     const map = new Map()
+    const mainCategorySet = new Set()
+    const subCategoryMap = new Map()
+    const productNameMap = new Map()
     list.forEach(item => {
-      if (item && item.id) map.set(item.id, item)
+      if (!item || !item.id) return
+      map.set(item.id, item)
+      const mainCategory = (item.mainCategory || '').trim()
+      const subCategory = (item.subCategory || '').trim()
+      const productName = (item.productName || '').trim()
+      if (mainCategory) {
+        mainCategorySet.add(mainCategory)
+      }
+      if (mainCategory && subCategory) {
+        const key = mainCategory + '|' + subCategory
+        if (!subCategoryMap.has(key)) {
+          subCategoryMap.set(key, { label: subCategory, value: subCategory, mainCategory, subCategory })
+        }
+        if (!productNameMap.has(key)) {
+          productNameMap.set(key, [])
+        }
+        productNameMap.get(key).push({ label: productName, value: item.id })
+      }
     })
     productMap.value = map
-    mainCategoryOptions.value = list
-      .filter(item => item && (!item.parentId || item.parentId === 0))
-      .map(item => ({ label: item.mainCategory || item.productName, value: item.id }))
-    subCategoryOptions.value = list
-      .filter(item => item && item.parentId && item.parentId !== 0)
-      .map(item => ({ label: item.subCategory || item.productName, value: item.id, parentId: item.parentId, unit: item.unit }))
+    mainCategoryOptions.value = Array.from(mainCategorySet).map(label => ({ label, value: label }))
+    subCategoryOptions.value = Array.from(subCategoryMap.values())
+    productNameOptionsMap.value = productNameMap
     syncDetailProductRefs()
   } catch (e) {
     console.error('Failed to load products', e)
     mainCategoryOptions.value = []
     subCategoryOptions.value = []
+    productNameOptionsMap.value = new Map()
     productMap.value = new Map()
   }
 }
@@ -456,21 +494,21 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
       }
-      const hasEmptyDetail = form.detailList.some(item => !item.mainCategoryId || !item.subCategoryId || !item.batchNo || !item.expireDate || !item.unit || item.qty === null || item.qty === undefined)
+      const hasEmptyDetail = form.detailList.some(item => !item.mainCategoryId || !item.subCategoryId || !item.productId || !item.batchNo || !item.expireDate || !item.unit || item.qty === null || item.qty === undefined)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.inbound.detailRequired'))
         return
       }
       submitting.value = true
       const mappedDetailList = form.detailList.map(item => {
-        const mainProduct = productMap.value.get(item.mainCategoryId)
-        const subProduct = productMap.value.get(item.subCategoryId)
+        const product = productMap.value.get(item.productId)
         return {
           ...item,
-          productId: subProduct?.id || item.productId,
-          mainCategory: mainProduct?.mainCategory || mainProduct?.productName || item.mainCategory || '',
-          subCategory: subProduct?.subCategory || subProduct?.productName || item.subCategory || '',
-          unit: item.unit || subProduct?.unit || ''
+          productId: item.productId,
+          productName: item.productName,
+          mainCategory: item.mainCategory,
+          subCategory: item.subCategory,
+          unit: item.unit || product?.unit || ''
         }
       })
       const { orderDate, ...formWithoutOrderDate } = form

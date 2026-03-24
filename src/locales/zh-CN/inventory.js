@@ -1,4 +1,4 @@
-﻿export default {
+export default {
     systemName: '出入库管理系统',
     inboundOutboundManagement: '出入库管理',
 
@@ -42,6 +42,7 @@
             product: '商品',
             mainCategory: '商品大类',
             subCategory: '商品小类',
+            productName: '品种',
             batchNo: '批次号',
             supplier: '供应商',
             qty: '数量',
@@ -100,6 +101,7 @@
             product: '商品',
             mainCategory: '商品大类',
             subCategory: '商品小类',
+            productName: '品种',
             batchNo: '批次号',
             qty: '数量',
             unit: '单位',
@@ -150,6 +152,7 @@
         detail: {
             mainCategory: '商品大类',
             subCategory: '商品小类',
+            productName: '品种',
             product: '商品',
             batchNo: '批次号',
             supplier: '供应商',
