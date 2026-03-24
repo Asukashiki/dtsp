@@ -30,6 +30,7 @@
           <el-table :data="form.detailList" stripe border header-cell-class-name="table-header-green">
             <el-table-column prop="mainCategory" :label="$t('inventory.inbound.detail.mainCategory')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="subCategory" :label="$t('inventory.inbound.detail.subCategory')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="productName" :label="$t('inventory.inbound.detail.productName')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="batchNo" :label="$t('inventory.inbound.detail.batchNo')" min-width="120" />
             <el-table-column prop="supplier" :label="$t('inventory.inbound.detail.supplier')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="qty" :label="$t('inventory.inbound.detail.qty')" min-width="100" align="right" />

@@ -66,6 +66,9 @@
                       <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
+                  <el-form-item :label="$t('inventory.outbound.detail.productName')">
+                    <el-input v-model="item.productName" :placeholder="$t('inventory.outbound.detail.productName')" disabled />
+                  </el-form-item>
                   <el-form-item :label="$t('inventory.outbound.detail.supplier')" :prop="`detailList.${index}.supplier`">
                     <el-input v-model="item.supplier" :placeholder="$t('inventory.outbound.detail.supplier')" clearable />
                   </el-form-item>
@@ -162,6 +165,7 @@ const form = reactive({
       batchNo: '',
       mainCategory: '',
       subCategory: '',
+      productName: '',
       supplier: '',
       qty: null,
       availableQty: null,
@@ -200,6 +204,7 @@ const handleAddDetail = () => {
     batchNo: '',
     mainCategory: '',
     subCategory: '',
+    productName: '',
     supplier: '',
     qty: null,
     availableQty: null,
@@ -222,6 +227,7 @@ const handleWarehouseChange = async (val) => {
     item.batchNo = ''
     item.mainCategory = ''
     item.subCategory = ''
+    item.productName = ''
     item.expireDate = ''
     item.unit = ''
     item.qty = null
@@ -249,7 +255,8 @@ const loadBatchesByWarehouse = async (warehouseCode) => {
       supplier: item.supplier,
       unit: item.unit,
       qty: item.qty,
-      productId: item.productId
+      productId: item.productId,
+      productName: item.productName
     }))
   } catch (e) {
     console.error('Failed to load batches', e)
@@ -267,6 +274,7 @@ const handleBatchChange = async (batchNo, item) => {
   if (batchInfo) {
     item.mainCategory = batchInfo.mainCategory
     item.subCategory = batchInfo.subCategory
+    item.productName = batchInfo.productName || ''
     item.expireDate = batchInfo.expireDate
     item.supplier = batchInfo.supplier || ''
     item.unit = batchInfo.unit || ''
@@ -337,6 +345,7 @@ const loadOutboundData = async (id) => {
           batchNo: item.batchNo,
           mainCategory: item.mainCategory,
           subCategory: item.subCategory,
+          productName: item.productName,
           supplier: item.supplier,
           qty: item.qty,
           unit: item.unit,

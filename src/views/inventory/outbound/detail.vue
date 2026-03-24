@@ -23,7 +23,9 @@
                 {{ getLabel(statusOptions, form.status) }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('common.remark')" :span="2">{{ form.remark || '-' }}</el-descriptions-item>
+          </el-descriptions>
+          <el-descriptions :column="1" border style="margin-top: 12px;">
+            <el-descriptions-item :label="$t('common.remark')">{{ form.remark || '-' }}</el-descriptions-item>
           </el-descriptions>
         </InfoCard>
 
@@ -31,6 +33,7 @@
           <el-table :data="form.detailList" stripe border header-cell-class-name="table-header-green">
             <el-table-column prop="mainCategory" :label="$t('inventory.outbound.detail.mainCategory')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="subCategory" :label="$t('inventory.outbound.detail.subCategory')" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="productName" :label="$t('inventory.outbound.detail.productName')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="batchNo" :label="$t('inventory.outbound.detail.batchNo')" min-width="120" />
             <el-table-column prop="supplier" :label="$t('inventory.outbound.detail.supplier')" min-width="120" show-overflow-tooltip />
             <el-table-column prop="qty" :label="$t('inventory.outbound.detail.qty')" min-width="100" align="right" />

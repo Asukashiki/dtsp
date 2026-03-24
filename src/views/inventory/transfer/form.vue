@@ -64,6 +64,9 @@
                       <el-option v-for="dict in getSubCategoryOptions(item.mainCategory)" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                   </el-form-item>
+                  <el-form-item :label="$t('inventory.transfer.detail.productName')">
+                    <el-input v-model="item.productName" :placeholder="$t('inventory.transfer.detail.productName')" disabled />
+                  </el-form-item>
                   <el-form-item :label="$t('inventory.transfer.detail.supplier')">
                     <el-input v-model="item.supplier" :placeholder="$t('inventory.transfer.detail.supplier')" clearable />
                   </el-form-item>
@@ -168,6 +171,7 @@ const form = reactive({
       productId: null,
       mainCategory: '',
       subCategory: '',
+      productName: '',
       batchNo: '',
       supplier: '',
       qty: null,
@@ -209,6 +213,7 @@ const handleAddDetail = () => {
     productId: null,
     mainCategory: '',
     subCategory: '',
+    productName: '',
     batchNo: '',
     supplier: '',
     qty: null,
@@ -232,6 +237,7 @@ const handleOutWarehouseChange = (val) => {
     item.batchNo = ''
     item.mainCategory = ''
     item.subCategory = ''
+    item.productName = ''
     item.expireDate = ''
     item.unit = ''
     item.qty = null
@@ -265,7 +271,8 @@ const loadBatchesByWarehouse = async (warehouseCode) => {
       supplier: item.supplier,
       unit: item.unit,
       qty: item.qty,
-      productId: item.productId
+      productId: item.productId,
+      productName: item.productName
     }))
   } catch (e) {
     console.error('Failed to load batches', e)
@@ -277,17 +284,16 @@ const handleBatchChange = (batchNo, item) => {
   if (!batchNo) return
   const batchInfo = batchOptions.value.find(b => b.value === batchNo)
   if (batchInfo) {
-    const mainOpt = mainCategoryOptions.value.find(opt => opt.value === batchInfo.mainCategory || opt.label === batchInfo.mainCategory)
-    const subOpt = subCategoryOptions.value.find(opt => opt.value === batchInfo.subCategory || opt.label === batchInfo.subCategory)
-    item.mainCategory = mainOpt ? mainOpt.value : (batchInfo.mainCategory || '')
-    item.subCategory = subOpt ? subOpt.value : (batchInfo.subCategory || '')
+    item.mainCategory = batchInfo.mainCategory || ''
+    item.subCategory = batchInfo.subCategory || ''
+    item.productName = batchInfo.productName || ''
     const unitOpt = unitOptions.value.find(opt => opt.value === batchInfo.unit || opt.label === batchInfo.unit)
     item.expireDate = batchInfo.expireDate
     item.supplier = batchInfo.supplier || ''
     item.unit = unitOpt ? unitOpt.value : (batchInfo.unit || '')
-    item.availableQty = batchInfo.qty // 设置可用库存数量，不自动填充到qty
+    item.availableQty = batchInfo.qty
     item.productId = batchInfo.productId || null
-    item.qty = null // 清空数量，让用户手动输入
+    item.qty = null
   }
 }
 
@@ -371,6 +377,7 @@ const loadTransferData = async (id) => {
           productId: item.productId,
           mainCategory: item.mainCategory,
           subCategory: item.subCategory,
+          productName: item.productName,
           batchNo: item.batchNo,
           supplier: item.supplier,
           qty: item.qty,
@@ -400,6 +407,7 @@ const handleSubmit = () => {
               ...item,
               mainCategory: item.mainCategory || batchInfo.mainCategory,
               subCategory: item.subCategory || batchInfo.subCategory,
+              productName: item.productName || batchInfo.productName,
               unit: item.unit || batchInfo.unit,
               expireDate: item.expireDate || batchInfo.expireDate,
               supplier: item.supplier || batchInfo.supplier,
@@ -444,6 +452,12 @@ onMounted(async () => {
   
   await loadWarehouses()
   await loadDictionaries()
+
+  // 获取当前用户部门
+  const deptName = getUserOrgName()
+  if (deptName) {
+    form.department = deptName
+  }
 
   if (isEdit.value) {
     await loadTransferData(route.params.id)
