@@ -214,7 +214,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getOseReleaseDetail, addOseRelease, editOseRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
+import { getOseReleaseDetail, addOseRelease, editOseRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
 import { getAllInputList } from '@/api/input.js'
 import { getUnionDetailByUnionId } from '@/api/union.js'
@@ -665,35 +665,6 @@ const handleSubmit = async () => {
     loading.value = true
 
     try {
-      // 库存校验
-      const quantityByType = {}
-      for (const detail of formData.details) {
-        const key = `${detail.inputType}_${detail.inputCategory || ''}`
-        if (!quantityByType[key]) {
-          quantityByType[key] = { inputType: detail.inputType, inputCategory: detail.inputCategory, quantity: 0 }
-        }
-        quantityByType[key].quantity += (detail.quantity || 0)
-      }
-
-      for (const key of Object.keys(quantityByType)) {
-        const item = quantityByType[key]
-        const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
-        if (!organCode) {
-          ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
-          loading.value = false
-          return
-        }
-        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, organCode)
-        if (stockRes.code === 200 && stockRes.data) {
-          const available = stockRes.data.availableStock || 0
-          if (item.quantity > available) {
-            ElMessage.error(t('inputCirculation.stockInsufficient', { available: available, requested: item.quantity }))
-            loading.value = false
-            return
-          }
-        }
-      }
-
       const submitData = { ...formData }
       if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
         submitData.targetId = formData.targetId[formData.targetId.length - 1]
