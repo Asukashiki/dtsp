@@ -74,7 +74,7 @@ export const lockBatch = (data) => {
  */
 export const getApprovedDemandPage = (data) => {
   return request({
-    url: '/seed/demand/audit/page',
+    url: '/seed/demand/audit/approved/page',
     method: 'post',
     data
   })
