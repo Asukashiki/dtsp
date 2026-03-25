@@ -347,10 +347,10 @@ export default {
       },
     },
 
-    // OSE接收确认
+    // 育种家种子接收确认
     receiveConfirm: {
-      title: 'OSE接收确认',
-      subtitle: 'OSE确认接收育种家种子',
+      title: '育种家种子接收确认',
+      subtitle: '确认接收育种机构提供的育种家种子',
       list: '接收确认列表',
       confirm: '确认接收',
       detail: '接收确认详情',

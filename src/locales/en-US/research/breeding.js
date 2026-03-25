@@ -506,10 +506,10 @@ export default {
       },
     },
 
-    // OSE Receive Confirmation
+    // Breeder Seed Receipt Confirmation
     receiveConfirm: {
-      title: 'OSE Receive Confirmation',
-      subtitle: 'OSE confirms receipt of breeder seed',
+      title: 'Breeder Seed Receipt Confirmation',
+      subtitle: 'Confirm receipt of breeder seeds from breeding institutions',
       list: 'Receive Confirmation List',
       confirm: 'Confirm Receipt',
       detail: 'Receive Confirmation Details',

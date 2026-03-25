@@ -111,12 +111,12 @@ export default {
   environmentNewDataDetail: 'Environment Monitoring Data Detail',
   environmentNewDataApprove: 'Environment Monitoring Data Approval',
 
-  oseReceiveConfirm: 'OSE Confirm Receipt of Breeder Seeds',
-  oseReceiveConfirmSubtitle: 'OSE confirms receipt of breeder seeds from breeders',
+  oseReceiveConfirm: 'Breeder Seed Receipt Confirmation',
+  oseReceiveConfirmSubtitle: 'Confirm receipt of breeder seeds from breeding institutions',
   oseReceiveConfirmAdd: 'Add Receipt Confirmation',
   oseReceiveConfirmEdit: 'Edit Receipt Confirmation',
   oseReceiveConfirmDetail: 'Receipt Confirmation Detail',
-  oseReceiveConfirmConfirm: 'OSE Confirm Receipt',
+  oseReceiveConfirmConfirm: 'Confirm Receipt',
 
   oseBatchCollection: 'Seed Multiplication Batch Data',
   oseBatchCollectionSubtitle: 'OSE records seed multiplication batch information',

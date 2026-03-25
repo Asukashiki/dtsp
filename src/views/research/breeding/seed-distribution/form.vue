@@ -88,6 +88,7 @@
                       clearable
                       style="width: 100%"
                       @change="handleSeedLevelChange">
+                      <el-option label="Breeder" value="Breeder" />
                       <el-option label="Pre-Basic" value="Pre-Basic" />
                       <el-option label="Basic" value="Basic" />
                     </el-select>
@@ -250,6 +251,7 @@ import { getBreedSeedProduceDetail } from '@/api/breedSeed'
 import { getBreedingBatchList } from '@/api/breedingData'
 import { getPrebasicSeedProduceResultList } from '@/api/prebasicSeed'
 import { getBasicSeedProduceResultList } from '@/api/basicSeed'
+import { getBreedSeedProduceResultList } from '@/api/breedSeed'
 import { useResponsive } from '@/hooks/useResponsive'
 
 const { t } = useI18n()
@@ -352,7 +354,10 @@ const loadProductionBatchList = async () => {
   try {
     let res;
     // 根据 fromSeedLevel 的值调用不同的 API
-    if (formData.fromSeedLevel === 'Pre-Basic') {
+    if (formData.fromSeedLevel === 'Breeder') {
+      // 当 fromSeedLevel 为 Breeder 时，调用育种家种子生产结果列表
+      res = await getBreedSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
+    } else if (formData.fromSeedLevel === 'Pre-Basic') {
       // 当 fromSeedLevel 为 Pre-Basic 时，调用原原种生产结果列表
       res = await getPrebasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
     } else if (formData.fromSeedLevel === 'Basic') {
@@ -398,18 +403,32 @@ const handleSeedLevelChange = async (value) => {
   formData.toSeedLevel = ''
   
   // 根据源种子等级设置目标种子等级可选值
-  if (value === 'Basic') {
-    toSeedLevelOptions.value = [{ label: 'C1', value: 'C1' }]
-    // 自动设置目标种子等级为 C1
-    formData.toSeedLevel = 'C1'
+  if (value === 'Breeder') {
+    toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
+    formData.toSeedLevel = 'Pre-Basic'
   } else if (value === 'Pre-Basic') {
     toSeedLevelOptions.value = [{ label: 'Basic', value: 'Basic' }]
-    // 自动设置目标种子等级为 Basic
     formData.toSeedLevel = 'Basic'
+  } else if (value === 'Basic') {
+    toSeedLevelOptions.value = [{ label: 'C1', value: 'C1' }]
+    formData.toSeedLevel = 'C1'
   } else {
     toSeedLevelOptions.value = []
   }
   
+  // 切换种子等级时清空已选的分发明细
+  formData.detailList = [{
+    produceBatchId: '',
+    produceBatchName: '',
+    breedBatchId: '',
+    breedBatchName: '',
+    parentalSeedSource: '',
+    varietyName: '',
+    cropType: '',
+    distributeQuantity: null,
+    maxQuantity: null
+  }]
+
   // 根据 fromSeedLevel 的值重新加载生产批次列表
   await loadProductionBatchList()
 }
