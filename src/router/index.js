@@ -904,6 +904,32 @@ const routes = [
         meta: { title: 'research.menu.labTestingDetail', hideInMenu: true, requiresAuth: true }
       },
 
+      // ==================== 组织管理 ====================
+      {
+        path: 'organization',
+        name: 'OrganizationList',
+        component: () => import('../views/research/organization/index.vue'),
+        meta: { title: 'research.organization.title', requiresAuth: true }
+      },
+      {
+        path: 'organization/add',
+        name: 'OrganizationAdd',
+        component: () => import('../views/research/organization/form.vue'),
+        meta: { title: 'research.organization.add', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'organization/edit/:id',
+        name: 'OrganizationEdit',
+        component: () => import('../views/research/organization/form.vue'),
+        meta: { title: 'research.organization.edit', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'organization/detail/:id',
+        name: 'OrganizationDetail',
+        component: () => import('../views/research/organization/detail.vue'),
+        meta: { title: 'research.organization.detail', hideInMenu: true, requiresAuth: true }
+      },
+
       // 种子认证审核
       {
         path: 'seed/breeding-audit',

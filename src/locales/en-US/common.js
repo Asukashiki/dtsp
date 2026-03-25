@@ -91,6 +91,8 @@ export default {
   total: 'Total',
   to: 'to',
   noData: 'No Data',
+  normal: 'Normal',
+  disabled: 'Disabled',
   filter: 'Filter',
   loadMore: 'Load More',
   status: 'Status',

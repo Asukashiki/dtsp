@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## During execution:
 
-- Do not generate documentation files (.md) for the code, test cases for the code, or execute any commands to run processes.
+- Do not generate documentation files (.md) for the code, or test cases for the code.
 - For maximum efficiency, when you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 - If you create any temporary new files, scripts, or auxiliary files for iteration, clean up by deleting these files upon task completion.
 

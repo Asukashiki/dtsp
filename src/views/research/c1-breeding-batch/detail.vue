@@ -111,6 +111,76 @@
               </div>
             </div>
           </div>
+
+          <!-- 田间检测记录 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>{{ $t('research.detection.fieldDetection.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table :data="fieldDetectionList" stripe v-loading="fieldDetectionLoading" :empty-text="$t('research.detection.noData')">
+                <el-table-column type="index" label="#" width="60" />
+                <el-table-column prop="trackingId" :label="$t('research.c1BreedingBatch.tracking.trackingId')" min-width="180" show-overflow-tooltip />
+                <el-table-column prop="seedClass" :label="$t('research.detection.seedClass')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="row.seedClass === 'Basic' ? 'success' : 'warning'" size="small">{{ row.seedClass }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="lotId" :label="$t('research.c1BreedingBatch.tracking.lotId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="stage" :label="$t('research.c1BreedingBatch.tracking.stage')" min-width="120" align="center" />
+                <el-table-column prop="inspectionValue" :label="$t('research.c1BreedingBatch.tracking.inspectionValue')" min-width="100" align="center" />
+                <el-table-column prop="location" :label="$t('research.c1BreedingBatch.tracking.location')" min-width="150" show-overflow-tooltip />
+                <el-table-column prop="trackingResult" :label="$t('research.c1BreedingBatch.tracking.result')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="getTrackingResultTagType(row.trackingResult)" size="small">
+                      {{ getTrackingResultText(row.trackingResult) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.tracking.startDate')" min-width="120" align="center" />
+              </el-table>
+            </div>
+          </div>
+
+          <!-- 实验室检测记录 -->
+          <div class="info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-flask-line"></i>
+                <span>{{ $t('research.detection.labTesting.title') }}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <el-table :data="labTestingList" stripe v-loading="labTestingLoading" :empty-text="$t('research.detection.noData')">
+                <el-table-column type="index" label="#" width="60" />
+                <el-table-column prop="testId" :label="$t('research.c1BreedingBatch.test.testId')" min-width="180" show-overflow-tooltip />
+                <el-table-column prop="seedClass" :label="$t('research.detection.seedClass')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="row.seedClass === 'Basic' ? 'success' : 'warning'" size="small">{{ row.seedClass }}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="lotId" :label="$t('research.c1BreedingBatch.test.lotId')" min-width="140" show-overflow-tooltip />
+                <el-table-column prop="testType" :label="$t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
+                <el-table-column prop="testValue" :label="$t('research.c1BreedingBatch.test.testValue')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    {{ row.testValue }}{{ row.unit || '' }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="passStatus" :label="$t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
+                      {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="testDate" :label="$t('research.c1BreedingBatch.test.testDate')" min-width="120" align="center" />
+                <el-table-column prop="tester" :label="$t('research.c1BreedingBatch.test.tester')" min-width="120" show-overflow-tooltip />
+              </el-table>
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -123,6 +193,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById } from '@/api/c1BreedingBatch'
+import { getTrackingList, getTestList } from '@/api/detection'
 import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
@@ -133,6 +204,14 @@ const { t } = useI18n()
 const { getLabelByValue } = useDict(['crop_type'])
 
 const batchInfo = ref(null)
+
+// 田间检测
+const fieldDetectionList = ref([])
+const fieldDetectionLoading = ref(false)
+
+// 实验室检测
+const labTestingList = ref([])
+const labTestingLoading = ref(false)
 
 // 是否只读模式（从审核页面进入）
 const isReadonly = computed(() => route.query.readonly === 'true')
@@ -155,6 +234,11 @@ const loadBatchDetail = async () => {
     const response = await getC1BreedingBatchById(route.params.id)
     if (response.code === 200 && response.data) {
       batchInfo.value = response.data
+      // 加载关联的检测数据
+      if (batchInfo.value.batchId) {
+        loadFieldDetection(batchInfo.value.batchId)
+        loadLabTesting(batchInfo.value.batchId)
+      }
     } else {
       ElMessage.error(t('research.c1BreedingBatch.messages.loadError'))
     }
@@ -178,6 +262,49 @@ const getStatusTagType = (status) => {
   }
   return map[status] || 'info'
 }
+
+// 加载田间检测记录
+const loadFieldDetection = async (batchId) => {
+  fieldDetectionLoading.value = true
+  try {
+    const res = await getTrackingList({ batchId, pageNum: 1, pageSize: 9999 })
+    if (res.code === 200) {
+      fieldDetectionList.value = res.data?.records || []
+    }
+  } catch (error) {
+    console.error('Load field detection error:', error)
+  } finally {
+    fieldDetectionLoading.value = false
+  }
+}
+
+// 加载实验室检测记录
+const loadLabTesting = async (batchId) => {
+  labTestingLoading.value = true
+  try {
+    const res = await getTestList({ batchId, pageNum: 1, pageSize: 9999 })
+    if (res.code === 200) {
+      labTestingList.value = res.data?.records || []
+    }
+  } catch (error) {
+    console.error('Load lab testing error:', error)
+  } finally {
+    labTestingLoading.value = false
+  }
+}
+
+// 田间检测结果标签
+const getTrackingResultText = (result) => ({
+  '01': t('research.c1BreedingBatch.tracking.resultNormal'),
+  '02': t('research.c1BreedingBatch.tracking.resultAbnormal'),
+  '03': t('research.c1BreedingBatch.tracking.resultObserving')
+}[result] || result)
+
+const getTrackingResultTagType = (result) => ({
+  '01': 'success',
+  '02': 'danger',
+  '03': 'warning'
+}[result] || 'info')
 
 // 编辑
 const handleEdit = () => {

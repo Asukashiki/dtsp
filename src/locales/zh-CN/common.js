@@ -91,6 +91,8 @@
     total: '共计',
     to: '至',
     noData: '暂无数据',
+    normal: '正常',
+    disabled: '停用',
     filter: '筛选',
     loadMore: '加载更多',
     // 作物类型(通用)
