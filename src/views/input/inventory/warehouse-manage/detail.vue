@@ -26,7 +26,7 @@
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.warehouseCode')">{{ detailData.warehouse_code || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.warehouseName')">{{ detailData.warehouse_name || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.type')">
-                  <el-tag :type="getWarehouseTypeTag(detailData.type)">{{ getLabel(warehouseTypeOptions, detailData.type) }}</el-tag>
+                  <el-tag :type="getWarehouseTypeTag(detailData.type)">{{ getWarehouseTypeLabel(detailData.type) }}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.storeType')">{{ getLabel(storeTypeOptions, detailData.store_type) }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('input.inventory.warehouseManage.form.orgName')">{{ detailData.org_name || '-' }}</el-descriptions-item>
@@ -75,25 +75,23 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getWarehouseManage } from '@/api/warehouseManage'
 import { getFilePreviewUrl } from '@/api/file'
+import { useDict } from '@/hooks/useDict'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const { options: dictOptions } = useDict(['warehouse_type'])
 
 const loading = ref(false)
 const detailData = ref(null)
 
-const warehouseTypeOptions = [
-  { value: 'SELF', label: 'input.inventory.warehouseManage.typeOptions.self' },
-  { value: 'LEASE', label: 'input.inventory.warehouseManage.typeOptions.lease' },
-  { value: 'TEMP', label: 'input.inventory.warehouseManage.typeOptions.temp' }
-]
+const warehouseTypeOptions = computed(() => dictOptions.value.warehouse_type || [])
 
 const storeTypeOptions = [
   { value: 'PHYSICAL', label: 'input.inventory.warehouseManage.storeTypeOptions.physical' },
@@ -113,10 +111,14 @@ const getLabel = (options, value) => {
   return match ? t(match.label) : value || '-'
 }
 
+const getWarehouseTypeLabel = (value) => {
+  const match = warehouseTypeOptions.value.find(item => item.value === value)
+  return match ? match.label : value || '-'
+}
+
 const getWarehouseTypeTag = value => {
-  if (value === 'LEASE') return 'warning'
-  if (value === 'TEMP') return 'info'
-  return 'success'
+  const match = warehouseTypeOptions.value.find(item => item.value === value)
+  return match?.raw?.listClass || 'info'
 }
 
 const formatDateTime = value => {

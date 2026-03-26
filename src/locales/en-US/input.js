@@ -826,6 +826,15 @@ export default {
       actions: {
         warningConfig: 'Warning Config'
       },
+      map: {
+        tip: 'Click the map to select a location. Ethiopia is shown by default.',
+        loadFailed: 'Failed to load Google Map',
+        missingKey: 'Google Maps API key is not configured',
+        dialogTitle: 'Select Geographic Location',
+        selectLocation: 'Select Location',
+        selectedLocation: 'Selected Location',
+        selectedTip: 'Coordinate format: longitude,latitude'
+      },
       form: {
         warehouseCode: 'Warehouse Code',
         warehouseName: 'Warehouse Name',
@@ -854,7 +863,7 @@ export default {
         orgName: 'Select owning organization',
         adminLevel: 'Select administrative level',
         parentId: 'Select parent warehouse',
-        location: 'Enter geographic location',
+        location: 'Select geographic location on the map',
         capacity: 'Enter storage capacity',
         address: 'Enter address',
         authenticationMaterial: 'Upload authentication material',
@@ -869,7 +878,7 @@ export default {
         orgNameRequired: 'Please select owning organization',
         adminLevelRequired: 'Please select administrative level',
         parentIdRequired: 'Please select parent warehouse',
-        locationRequired: 'Please enter geographic location',
+        locationRequired: 'Please select geographic location on the map',
         capacityRequired: 'Please enter storage capacity',
         statusRequired: 'Please select operating status'
       },

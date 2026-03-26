@@ -292,20 +292,8 @@ const pagination = reactive({
   total: 0
 })
 
-const warehouseTypeValueMap = {
-  CENTRAL: 'ZY',
-  ALLIANCE: 'LM',
-  COOPERATIVE: 'HZS',
-  ENTERPRISE: 'QY'
-}
-
-const normalizeWarehouseTypeValue = (item) => item.actualValue || warehouseTypeValueMap[item.value] || item.value
-
 // 仓库类型选项从字典获取
-const warehouseTypeOptions = computed(() => (dictOptions.value.warehouse_type || []).map(item => ({
-  ...item,
-  value: normalizeWarehouseTypeValue(item)
-})))
+const warehouseTypeOptions = computed(() => dictOptions.value.warehouse_type || [])
 
 const storeTypeOptions = [
   { value: 'fertilizer', label: t('input.inventory.warehouseManage.storageTypeOptions.fertilizer') },
@@ -352,6 +340,11 @@ const getWarehouseTypeLabel = (value) => {
   return match ? match.label : value || '-'
 }
 
+const getWarehouseTypeTag = (value) => {
+  const match = warehouseTypeOptions.value.find(item => item.value === value)
+  return match?.raw?.listClass || 'info'
+}
+
 // 获取存储类型标签
 const getStoreTypeLabel = (value) => {
   const match = storeTypeOptions.find(item => item.value === value)
@@ -365,17 +358,6 @@ const getStoreTypeArray = (value) => {
 }
 
 const getAdminLevelLabel = value => findLabel(adminLevelOptions, value)
-
-// 获取仓库类型标签颜色
-const getWarehouseTypeTag = value => {
-  switch (value) {
-    case 'ZY': return 'success'   // 中央仓库 - 绿色
-    case 'LM': return 'primary'   // 联盟仓库 - 蓝色
-    case 'HZS': return 'warning'  // 合作社仓库 - 黄色
-    case 'QY': return 'info'      // 企业仓库 - 灰色
-    default: return 'info'
-  }
-}
 
 // 获取运营状态标签颜色
 const getOperatingStatusType = (value) => {

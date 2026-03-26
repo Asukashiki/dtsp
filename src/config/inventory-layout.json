@@ -52,11 +52,6 @@
           "index": "/inventory/warning-config",
           "icon": "ri-alarm-warning-line",
           "titleKey": "inventory.warningConfig.title"
-        },
-        {
-          "index": "/inventory/warehouse-permission",
-          "icon": "ri-shield-keyhole-line",
-          "titleKey": "inventory.permission.title"
         }
       ]
     },

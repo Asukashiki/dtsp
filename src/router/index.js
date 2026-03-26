@@ -2113,12 +2113,6 @@ const routes = [
         meta: { title: 'input.menu.stockQueryDetail', activeMenu: '/inventory/stock-query', hideInMenu: true, requiresAuth: true }
       },
       {
-        path: 'warehouse-permission',
-        name: 'WarehousePermission',
-        component: () => import('../views/inventory/warehouse-permission/index.vue'),
-        meta: { title: 'inventory.permission.title', requiresAuth: true }
-      },
-      {
         path: 'transfer',
         name: 'InventoryTransfer',
         component: () => import('../views/inventory/transfer/index.vue'),

@@ -92,6 +92,18 @@
                   </el-form-item>
                 </el-col>
 
+                <!-- 地址 -->
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.warehouseManage.form.address')">
+                    <el-input 
+                      v-model="formData.address" 
+                      :placeholder="$t('input.inventory.warehouseManage.placeholder.address')" 
+                      maxlength="255" 
+                      clearable 
+                    />
+                  </el-form-item>
+                </el-col>
+
                 <!-- 所属机构 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.warehouseManage.form.orgName')" prop="orgName">
@@ -163,29 +175,24 @@
                 <!-- 地理位置 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.warehouseManage.form.location')" prop="location">
-                    <el-input 
-                      v-model="formData.location" 
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.location')" 
-                      maxlength="200" 
-                      clearable 
-                    />
-                  </el-form-item>
-                </el-col>
-
-                <!-- 地址 -->
-                <el-col :xs="24" :sm="24">
-                  <el-form-item :label="$t('input.inventory.warehouseManage.form.address')">
-                    <el-input 
-                      v-model="formData.address" 
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.address')" 
-                      maxlength="255" 
-                      clearable 
-                    />
+                    <div class="location-field-group">
+                      <el-input 
+                        v-model="formData.location" 
+                        :placeholder="$t('input.inventory.warehouseManage.placeholder.location')" 
+                        maxlength="200" 
+                        readonly
+                      />
+                      <el-button type="primary" @click="openLocationDialog">
+                        <i class="ri-map-pin-add-line"></i>
+                        {{ $t('input.inventory.warehouseManage.map.selectLocation') }}
+                      </el-button>
+                    </div>
+                    <div class="location-inline-tip">{{ $t('input.inventory.warehouseManage.map.selectedTip') }}</div>
                   </el-form-item>
                 </el-col>
 
                 <!-- 认证资料 -->
-                <el-col :xs="24" :sm="24">
+                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('input.inventory.warehouseManage.form.authenticationMaterial')" prop="authenticationMaterial">
                     <el-upload
                       class="doc-upload"
@@ -226,13 +233,47 @@
             <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.save') }}</el-button>
           </div>
         </el-form>
+
+        <el-dialog
+          v-model="locationDialogVisible"
+          :title="$t('input.inventory.warehouseManage.map.dialogTitle')"
+          width="860px"
+          destroy-on-close
+          append-to-body
+          class="location-dialog"
+          @opened="handleLocationDialogOpened"
+        >
+          <div class="location-dialog-body">
+            <div ref="mapContainerRef" class="location-map"></div>
+            <div class="location-map-tip">
+              <i class="ri-map-pin-line"></i>
+              <span>{{ $t('input.inventory.warehouseManage.map.tip') }}</span>
+            </div>
+
+            <div class="location-result">
+              <div class="location-result-label">{{ $t('input.inventory.warehouseManage.map.selectedLocation') }}</div>
+              <el-input
+                v-model="tempLocationValue"
+                readonly
+                :placeholder="$t('input.inventory.warehouseManage.placeholder.location')"
+              />
+            </div>
+          </div>
+
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="locationDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+              <el-button type="primary" @click="confirmLocationSelection">{{ $t('common.confirm') }}</el-button>
+            </div>
+          </template>
+        </el-dialog>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -262,25 +303,24 @@ const adminLevelPath = ref(null)
 const deptMap = ref({})
 const selectedOrgId = ref('')
 const authenticationMaterialFileList = ref([])
+const mapContainerRef = ref(null)
+const mapInstance = ref(null)
+const mapMarker = ref(null)
+const locationDialogVisible = ref(false)
+const tempLocationValue = ref('')
+const tempLocationPosition = ref(null)
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_APP_GOOGLE_MAPS_API_KEY
+const GOOGLE_MAPS_SCRIPT_ID = 'google-maps-script'
+const ETHIOPIA_CENTER = { lat: 9.145, lng: 40.489673 }
+const ETHIOPIA_ZOOM = 6
 
 const isEdit = computed(() => route.path.includes('/edit/'))
 const warehouseId = computed(() => route.params.id)
 const pageTitle = computed(() => isEdit.value ? t('input.inventory.warehouseManage.edit') : t('input.inventory.warehouseManage.add'))
 
-const warehouseTypeValueMap = {
-  CENTRAL: 'ZY',
-  ALLIANCE: 'LM',
-  COOPERATIVE: 'HZS',
-  ENTERPRISE: 'QY'
-}
-
-const normalizeWarehouseTypeValue = (item) => item.actualValue || warehouseTypeValueMap[item.value] || item.value
-
 // 仓库类型选项从字典获取
-const warehouseTypeOptions = computed(() => (dictOptions.value.warehouse_type || []).map(item => ({
-  ...item,
-  value: normalizeWarehouseTypeValue(item)
-})))
+const warehouseTypeOptions = computed(() => dictOptions.value.warehouse_type || [])
 
 const storeTypeOptions = computed(() => (dictOptions.value.inventory_main_category || []).map(item => ({
   label: item.label,
@@ -432,6 +472,130 @@ const formData = reactive({
   remark: ''
 })
 
+const formatLocationValue = (lng, lat) => `${Number(lng).toFixed(6)},${Number(lat).toFixed(6)}`
+
+const parseLocationValue = (value) => {
+  if (!value || typeof value !== 'string') return null
+  const [lngStr, latStr] = value.split(',').map(item => item?.trim())
+  const lng = Number(lngStr)
+  const lat = Number(latStr)
+  if (Number.isNaN(lng) || Number.isNaN(lat)) return null
+  return { lng, lat }
+}
+
+const updateMapMarker = (position, shouldPan = true) => {
+  if (!mapInstance.value || !window.google?.maps) return
+
+  if (!mapMarker.value) {
+    mapMarker.value = new window.google.maps.Marker({
+      map: mapInstance.value,
+      position
+    })
+  } else {
+    mapMarker.value.setPosition(position)
+  }
+
+  if (shouldPan) {
+    mapInstance.value.panTo(position)
+  }
+}
+
+const syncLocationFromMap = (latLng) => {
+  const lat = typeof latLng.lat === 'function' ? latLng.lat() : latLng.lat
+  const lng = typeof latLng.lng === 'function' ? latLng.lng() : latLng.lng
+  tempLocationValue.value = formatLocationValue(lng, lat)
+  tempLocationPosition.value = { lat, lng }
+  updateMapMarker({ lat, lng })
+}
+
+const initGoogleMap = async () => {
+  await nextTick()
+  if (!mapContainerRef.value || !window.google?.maps) return
+
+  const savedLocation = tempLocationPosition.value || parseLocationValue(tempLocationValue.value) || parseLocationValue(formData.location)
+  const center = savedLocation ? { lat: savedLocation.lat, lng: savedLocation.lng } : ETHIOPIA_CENTER
+  const zoom = savedLocation ? 12 : ETHIOPIA_ZOOM
+
+  mapInstance.value = new window.google.maps.Map(mapContainerRef.value, {
+    center,
+    zoom,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false
+  })
+
+  mapInstance.value.addListener('click', (event) => {
+    syncLocationFromMap(event.latLng)
+  })
+
+  if (savedLocation) {
+    updateMapMarker({ lat: savedLocation.lat, lng: savedLocation.lng }, false)
+  }
+}
+
+const loadGoogleMapsScript = () => new Promise((resolve, reject) => {
+  if (!GOOGLE_MAPS_API_KEY) {
+    reject(new Error('Google Maps API key is not configured'))
+    return
+  }
+
+  if (window.google?.maps) {
+    resolve(window.google.maps)
+    return
+  }
+
+  const existingScript = document.getElementById(GOOGLE_MAPS_SCRIPT_ID)
+  if (existingScript) {
+    existingScript.addEventListener('load', () => resolve(window.google?.maps), { once: true })
+    existingScript.addEventListener('error', reject, { once: true })
+    return
+  }
+
+  const script = document.createElement('script')
+  script.id = GOOGLE_MAPS_SCRIPT_ID
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`
+  script.async = true
+  script.defer = true
+  script.onload = () => resolve(window.google?.maps)
+  script.onerror = reject
+  document.head.appendChild(script)
+})
+
+const setupLocationMap = async () => {
+  try {
+    await loadGoogleMapsScript()
+    await initGoogleMap()
+  } catch (error) {
+    console.error('Failed to initialize Google Map:', error)
+    const messageKey = error?.message === 'Google Maps API key is not configured'
+      ? 'input.inventory.warehouseManage.map.missingKey'
+      : 'input.inventory.warehouseManage.map.loadFailed'
+    ElMessage.error(t(messageKey))
+  }
+}
+
+const openLocationDialog = () => {
+  const savedLocation = parseLocationValue(formData.location)
+  tempLocationValue.value = formData.location || ''
+  tempLocationPosition.value = savedLocation
+  locationDialogVisible.value = true
+}
+
+const handleLocationDialogOpened = async () => {
+  mapMarker.value = null
+  mapInstance.value = null
+  await setupLocationMap()
+}
+
+const confirmLocationSelection = () => {
+  if (!tempLocationValue.value) {
+    ElMessage.warning(t('input.inventory.warehouseManage.rules.locationRequired'))
+    return
+  }
+  formData.location = tempLocationValue.value
+  locationDialogVisible.value = false
+}
+
 const rules = computed(() => ({
   warehouseCode: [{ required: true, message: t('input.inventory.warehouseManage.rules.warehouseCodeRequired'), trigger: 'blur' }],
   warehouseName: [{ required: true, message: t('input.inventory.warehouseManage.rules.warehouseNameRequired'), trigger: 'blur' }],
@@ -439,6 +603,7 @@ const rules = computed(() => ({
   storeType: [{ required: true, message: t('input.inventory.warehouseManage.rules.storeTypeRequired'), trigger: 'change' }],
   orgName: [{ required: true, message: t('input.inventory.warehouseManage.rules.orgNameRequired'), trigger: 'change' }],
   adminLevel: [{ required: true, message: t('input.inventory.warehouseManage.rules.adminLevelRequired'), trigger: 'change' }],
+  location: [{ required: true, message: t('input.inventory.warehouseManage.rules.locationRequired'), trigger: 'change' }],
   parentId: []  // 动态规则
 }))
 
@@ -726,6 +891,69 @@ onMounted(async () => {
 
 .doc-upload {
   width: 100%;
+}
+
+.location-field-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.location-field-group .el-input {
+  flex: 1;
+}
+
+.location-inline-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.location-dialog-body {
+  padding-top: 4px;
+}
+
+.location-map {
+  width: 100%;
+  height: 420px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f3f7f2 0%, #eef5eb 100%);
+}
+
+.location-map-tip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+}
+
+.location-result {
+  margin-top: 16px;
+}
+
+.location-result-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+:deep(.location-dialog .el-dialog) {
+  max-width: calc(100vw - 32px);
+}
+
+@media screen and (max-width: 768px) {
+  .location-field-group {
+    flex-direction: column;
+  }
+
+  .location-map {
+    height: 320px;
+  }
 }
 
 :deep(.doc-upload .el-upload) {

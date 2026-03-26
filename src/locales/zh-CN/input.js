@@ -876,6 +876,15 @@ export default {
       actions: {
         warningConfig: '预警配置'
       },
+      map: {
+        tip: '请在地图上点击选择位置，默认展示埃塞俄比亚范围',
+        loadFailed: 'Google 地图加载失败',
+        missingKey: '未配置 Google 地图 API Key',
+        dialogTitle: '选择地理位置',
+        selectLocation: '选择位置',
+        selectedLocation: '选中的地理位置',
+        selectedTip: '坐标格式固定为：经度,纬度'
+      },
       form: {
         warehouseCode: '仓库编码',
         warehouseName: '仓库名称',
@@ -904,7 +913,7 @@ export default {
         orgName: '请选择所属机构',
         adminLevel: '请选择行政层级',
         parentId: '请选择上级仓库',
-        location: '请输入地理位置',
+        location: '请在地图上选择地理位置',
         capacity: '请输入存储容量',
         address: '请输入详细地址',
         authenticationMaterial: '上传认证资料',
@@ -919,7 +928,7 @@ export default {
         orgNameRequired: '请选择所属机构',
         adminLevelRequired: '请选择行政层级',
         parentIdRequired: '请选择上级仓库',
-        locationRequired: '请输入地理位置',
+        locationRequired: '请在地图上选择地理位置',
         capacityRequired: '请输入存储容量',
         statusRequired: '请选择运营状态'
       },
