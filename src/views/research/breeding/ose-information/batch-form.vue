@@ -279,10 +279,7 @@ const handleDistributionIdChange = (value) => {
     const seenBatches = new Set()
 
     detailList.forEach(detail => {
-      // 只处理 Pre-Basic 等级的种子
-      if (detail.seedType !== 'Pre-Basic') {
-        return
-      }
+
 
       // Use breedSeedProduceBatchId as the unique key and display value
       const batchId = detail.breedSeedProduceBatchId
