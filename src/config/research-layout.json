@@ -226,6 +226,12 @@
           "icon": "ri-award-line",
           "titleKey": "research.menu.c1BatchCertificate",
           "roles": ["agri-admin", "OIA"]
+        },
+        {
+          "index": "/research/multiplier-report",
+          "icon": "ri-file-chart-line",
+          "titleKey": "research.menu.multiplierReport",
+          "roles": ["agri-admin", "OSE", "Union", "Cooperative"]
         }
       ]
     },

@@ -163,6 +163,11 @@ export default {
   c1BatchCertificateSubtitle: '为C1批次颁发种子证书',
   c1BatchCertificateDetail: 'C1繁殖批次证书详情',
 
+  multiplierReport: '繁殖者向奥罗米亚农业局报告',
+  multiplierReportAdd: '新增繁殖者报告',
+  multiplierReportEdit: '编辑繁殖者报告',
+  multiplierReportDetail: '繁殖者报告详情',
+
   fieldDetectionAdd: '新增田间检测',
   fieldDetectionDetail: '田间检测详情',
 

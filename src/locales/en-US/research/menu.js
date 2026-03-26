@@ -165,6 +165,11 @@ export default {
   c1BatchCertificateSubtitle: 'Issue seed certificates for C1 batches',
   c1BatchCertificateDetail: 'Seed Certificate Issuance Detail',
 
+  multiplierReport: 'Multiplier Reporting to Oromia BoA',
+  multiplierReportAdd: 'Add Multiplier Report',
+  multiplierReportEdit: 'Edit Multiplier Report',
+  multiplierReportDetail: 'Multiplier Report Detail',
+
   fieldDetectionAdd: 'Add Field Detection',
   fieldDetectionDetail: 'Field Detection Detail',
 

@@ -42,18 +42,33 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breeding.seed.distribution.form.oseId')" prop="oseId">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.orgCategory')" prop="orgCategory">
                     <el-select
-                      v-model="formData.oseId"
-                      :placeholder="$t('research.breeding.seed.distribution.placeholder.oseId')"
+                      v-model="formData.orgCategory"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.orgCategory')"
                       filterable
                       clearable
-                      style="width: 100%">
+                      style="width: 100%"
+                      @change="handleOrgCategoryChange">
+                      <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.distribution.form.orgName')" prop="oseId">
+                    <el-select
+                      v-model="formData.oseId"
+                      :placeholder="$t('research.breeding.seed.distribution.placeholder.orgName')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :disabled="!formData.orgCategory"
+                      @change="handleOrgChange">
                       <el-option
-                        v-for="ose in oseList"
-                        :key="ose.oseId"
-                        :label="`${ose.oseName} (${ose.oseCode})`"
-                        :value="ose.oseId" />
+                        v-for="org in orgList"
+                        :key="org.id"
+                        :label="`${org.orgName} (${org.orgCode})`"
+                        :value="org.id" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -244,14 +259,12 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedDistribute } from '@/api/breedSeed'
-import { getOseList } from '@/api/breedSeed'
-import { getBreedSeedProduceList } from '@/api/breedSeed'
+import { getBreedSeedProduceResultList } from '@/api/breedSeed'
 import { useUserStore } from '@/store/user'
-import { getBreedSeedProduceDetail } from '@/api/breedSeed'
-import { getBreedingBatchList } from '@/api/breedingData'
 import { getPrebasicSeedProduceResultList } from '@/api/prebasicSeed'
 import { getBasicSeedProduceResultList } from '@/api/basicSeed'
-import { getBreedSeedProduceResultList } from '@/api/breedSeed'
+import { getOrganizationList } from '@/api/organization'
+import { useDict } from '@/hooks/useDict'
 import { useResponsive } from '@/hooks/useResponsive'
 
 const { t } = useI18n()
@@ -259,9 +272,12 @@ const emit = defineEmits(['cancel', 'success'])
 const userStore = useUserStore()
 const { isMobile } = useResponsive()
 
+const { options: dictOptions } = useDict(['org_category'])
+const categoryOptions = computed(() => dictOptions.value.org_category || [])
+
 const formRef = ref(null)
 const submitting = ref(false)
-const oseList = ref([])
+const orgList = ref([])
 const productionBatchList = ref([])
 // 种子等级联动规则
 const toSeedLevelOptions = ref([])
@@ -273,6 +289,7 @@ const currentOrgName = userInfo.userName || ''
 
 const formData = reactive({
   distributeName: '',
+  orgCategory: '',
   oseId: '',
   time: '',
   people: currentUserName,
@@ -299,8 +316,11 @@ const rules = computed(() => ({
   distributeName: [
     { required: true, message: t('research.breeding.seed.distribution.rules.distributeName'), trigger: 'blur' }
   ],
+  orgCategory: [
+    { required: true, message: t('research.breeding.seed.distribution.rules.orgCategory'), trigger: 'change' }
+  ],
   oseId: [
-    { required: true, message: t('research.breeding.seed.distribution.rules.oseId'), trigger: 'change' }
+    { required: true, message: t('research.breeding.seed.distribution.rules.orgName'), trigger: 'change' }
   ],
   time: [
     { required: true, message: t('research.breeding.seed.distribution.rules.time'), trigger: 'change' }
@@ -337,15 +357,18 @@ const rules = computed(() => ({
   ]
 }))
 
-// 加载OSE列表
-const loadOseList = async () => {
+// 组织类型变更 - 加载对应组织列表
+const handleOrgCategoryChange = async (value) => {
+  formData.oseId = ''
+  orgList.value = []
+  if (!value) return
   try {
-    const res = await getOseList({ pageNum: 1, pageSize: 1000 })
+    const res = await getOrganizationList({ orgCategory: value, status: '0', pageNum: 1, pageSize: 1000 })
     if (res.code === 200) {
-      oseList.value = (res.rows || []).filter(item => item.oseStatus === 'ENABLED')
+      orgList.value = res.rows || res.data?.records || []
     }
   } catch (error) {
-    console.error('Failed to load OSE list:', error)
+    console.error('Failed to load organization list:', error)
   }
 }
 
@@ -510,8 +533,15 @@ const handleSubmit = async () => {
   }
 }
 
+// 组织选择变更 - 自动填充组织名
+const handleOrgChange = (orgId) => {
+  const selected = orgList.value.find(org => org.id === orgId)
+  if (selected) {
+    formData.oseName = selected.orgName
+  }
+}
+
 onMounted(() => {
-  loadOseList()
 })
 </script>
 

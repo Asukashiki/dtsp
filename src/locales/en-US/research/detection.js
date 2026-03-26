@@ -17,6 +17,10 @@ export default {
     detail: 'Lab Testing Details'
   },
 
+  // Form fields
+  inspectionType: 'Inspection Type',
+  testItem: 'Test Item',
+
   // Common
   selectBatch: 'Select Batch',
   selectBatchHint: 'Please select a batch first to view and manage detection records',

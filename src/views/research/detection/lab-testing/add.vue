@@ -65,18 +65,23 @@
                 <el-input v-model="formData.lotId" disabled />
               </el-form-item>
 
-              <el-form-item :label="$t('research.c1BreedingBatch.test.testType')" prop="testType">
+              <el-form-item :label="$t('research.detection.inspectionType')" prop="testType">
                 <el-select v-model="formData.testType" :placeholder="$t('common.pleaseSelect')" class="full-width"
-                  @change="handleTestTypeChange">
-                  <el-option label="Germination" value="GERMINATION" />
-                  <el-option label="Purity" value="PURITY" />
-                  <el-option label="Moisture" value="MOISTURE" />
-                  <el-option label="Vigor" value="VIGOR" />
+                  @change="handleInspectionTypeChange">
+                  <el-option v-for="type in inspectionTypes" :key="type" :label="type" :value="type" />
+                </el-select>
+              </el-form-item>
+
+              <el-form-item :label="$t('research.detection.testItem')" prop="testItem">
+                <el-select v-model="formData.testItem" :placeholder="$t('common.pleaseSelect')" class="full-width"
+                  :disabled="!formData.testType" @change="handleTestItemChange">
+                  <el-option v-for="rule in testItemOptions" :key="rule.dictCode"
+                    :label="`${rule.scoreCodes} (${rule.unit})`" :value="rule.dictCode" />
                 </el-select>
               </el-form-item>
 
               <el-form-item :label="$t('research.c1BreedingBatch.test.testValue')" prop="testValue">
-                <el-input v-model="formData.testValue" :placeholder="$t('common.pleaseEnter')" @blur="checkRuleOnBlur">
+                <el-input v-model="formData.testValue" :placeholder="valueHint" @blur="checkRuleOnBlur">
                   <template #append>{{ currentUnit }}</template>
                 </el-input>
               </el-form-item>
@@ -129,7 +134,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getTestById, addTest, updateTest, checkRule } from '@/api/detection'
+import { getTestById, addTest, updateTest, checkRule, getInspectionTypes, getRulesByType } from '@/api/detection'
 import { useUserStore } from '@/store/user'
 import BatchSelector from '../shared/components/BatchSelector.vue'
 
@@ -144,18 +149,16 @@ const editingId = ref(null)
 const submitLoading = ref(false)
 const formRef = ref(null)
 
-// TestType对应的单位
-const testTypeUnitMap = {
-  'GERMINATION': '%',
-  'PURITY': '%',
-  'MOISTURE': '%',
-  'VIGOR': ''
-}
+// 动态数据
+const inspectionTypes = ref([])
+const testItemOptions = ref([])
+const selectedRule = ref(null)
 
 const formData = ref({
   seedClass: '',
   lotId: '',
   testType: '',
+  testItem: '',
   testValue: '',
   unit: '',
   passStatus: '',
@@ -168,16 +171,57 @@ const formData = ref({
 
 const rules = {
   testType: [{ required: true, message: t('common.required'), trigger: 'change' }],
+  testItem: [{ required: true, message: t('common.required'), trigger: 'change' }],
   testValue: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   passStatus: [{ required: true, message: t('common.required'), trigger: 'change' }],
   testDate: [{ required: true, message: t('common.required'), trigger: 'change' }]
 }
 
-// 根据TestType获取对应的单位
-const currentUnit = computed(() => {
-  const testType = formData.value.testType
-  return testTypeUnitMap[testType] || ''
+const currentUnit = computed(() => selectedRule.value?.unit || formData.value.unit || '')
+
+const valueHint = computed(() => {
+  const r = selectedRule.value
+  if (!r) return t('common.pleaseEnter')
+  if (r.conditionType === 'value_range') return `${r.minValue} - ${r.maxValue} ${r.unit}`
+  if (r.operator === '>=' || r.operator === '>') return `≥ ${r.minValue} ${r.unit}`
+  if (r.operator === '<=' || r.operator === '<') return `≤ ${r.maxValue} ${r.unit}`
+  return t('common.pleaseEnter')
 })
+
+// 加载检测类型列表
+const loadInspectionTypes = async () => {
+  try {
+    const res = await getInspectionTypes()
+    if (res.code === 200) inspectionTypes.value = res.data || []
+  } catch (e) {
+    console.error('Load inspection types error:', e)
+  }
+}
+
+// 检测类型变更 → 加载检测项
+const handleInspectionTypeChange = async (type) => {
+  formData.value.testItem = ''
+  selectedRule.value = null
+  formData.value.testValue = ''
+  formData.value.passStatus = ''
+  testItemOptions.value = []
+  if (!type) return
+  try {
+    const res = await getRulesByType(type)
+    if (res.code === 200) testItemOptions.value = res.data || []
+  } catch (e) {
+    console.error('Load rules error:', e)
+  }
+}
+
+// 检测项变更 → 设置 unit 和 selectedRule
+const handleTestItemChange = (dictCode) => {
+  const rule = testItemOptions.value.find(r => r.dictCode === dictCode)
+  selectedRule.value = rule || null
+  formData.value.unit = rule?.unit || ''
+  formData.value.testValue = ''
+  formData.value.passStatus = ''
+}
 
 // 处理批次选择变化
 const handleBatchChange = (batch) => {
@@ -189,23 +233,18 @@ const handleBatchChange = (batch) => {
   }
 }
 
-// 当testType变化时，更新单位
-const handleTestTypeChange = (val) => {
-  formData.value.unit = testTypeUnitMap[val] || ''
-}
-
 // 失焦时检查规则
 const checkRuleOnBlur = async () => {
   const newValue = formData.value.testValue
-  if (!formData.value.testType || !newValue) return
+  if (!formData.value.testItem || !newValue) return
 
   try {
-    const response = await checkRule(formData.value.testType, parseFloat(newValue))
+    const response = await checkRule(formData.value.testItem, parseFloat(newValue))
     if (response.code === 200) {
       formData.value.passStatus = response.data ? 'TRUE' : 'FALSE'
     }
   } catch (error) {
-    console.error('检查规则失败:', error)
+    console.error('Rule check failed:', error)
   }
 }
 
@@ -225,6 +264,7 @@ const handleSubmit = async () => {
           ...formData.value,
           batchId: selectedBatch.value?.id || formData.value.batchId,
           seedClass: selectedBatch.value?.seedClass || formData.value.seedClass,
+          testType: formData.value.testItem || formData.value.testType,
           unit: currentUnit.value
         }
         if (isEdit.value) data.id = editingId.value
@@ -253,6 +293,8 @@ const loadEditData = async (id) => {
 }
 
 onMounted(() => {
+  loadInspectionTypes()
+
   const { id, batchId, seedClass } = route.query
 
   // 从用户信息自动填充测试人

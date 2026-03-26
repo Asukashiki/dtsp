@@ -962,6 +962,32 @@ const routes = [
         meta: { title: 'research.menu.c1BatchCertificate', requiresAuth: true }
       },
 
+      // ==================== Multiplier Report ====================
+      {
+        path: 'multiplier-report',
+        name: 'MultiplierReportList',
+        component: () => import('../views/research/multiplier-report/index.vue'),
+        meta: { title: 'research.menu.multiplierReport', requiresAuth: true }
+      },
+      {
+        path: 'multiplier-report/add',
+        name: 'MultiplierReportAdd',
+        component: () => import('../views/research/multiplier-report/form.vue'),
+        meta: { title: 'research.menu.multiplierReportAdd', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'multiplier-report/edit/:id',
+        name: 'MultiplierReportEdit',
+        component: () => import('../views/research/multiplier-report/form.vue'),
+        meta: { title: 'research.menu.multiplierReportEdit', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'multiplier-report/detail/:id',
+        name: 'MultiplierReportDetail',
+        component: () => import('../views/research/multiplier-report/detail.vue'),
+        meta: { title: 'research.menu.multiplierReportDetail', hideInMenu: true, requiresAuth: true }
+      },
+
       // 繁殖机构注册
       {
         path: 'institution/registration',

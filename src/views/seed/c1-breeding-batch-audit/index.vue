@@ -372,30 +372,24 @@ const validateBatchData = async (batchId) => {
       pageSize: 1000
     })
 
-    // 校验跟踪记录
-    if (!trackingRes.data || trackingRes.data.total === 0) {
-      ElMessage.error(t('seed.c1BatchAudit.error.noTrackingRecord'))
-      return false
+    // 校验跟踪记录（可选：无记录也允许通过）
+    if (trackingRes.data && trackingRes.data.total > 0) {
+      // 校验每条记录的 trackingResult 是否为 '01'（正常）
+      const hasInvalidTracking = trackingRes.data.records.some(item => item.trackingResult === '02')
+      if (hasInvalidTracking) {
+        ElMessage.error(t('seed.c1BatchAudit.error.invalidTrackingResult'))
+        return false
+      }
     }
 
-    // 校验每条记录的 trackingResult 是否为 '01'
-    const hasInvalidTracking = trackingRes.data.records.some(item => item.trackingResult !== '01')
-    if (hasInvalidTracking) {
-      ElMessage.error(t('seed.c1BatchAudit.error.invalidTrackingResult'))
-      return false
-    }
-
-    // 校验检测记录
-    if (!testRes.data || testRes.data.total === 0) {
-      ElMessage.error(t('seed.c1BatchAudit.error.noTestRecord'))
-      return false
-    }
-
-    // 校验每条记录的 testResult 是否为 '01'
-    const hasInvalidTest = testRes.data.records.some(item => item.testResult !== '01')
-    if (hasInvalidTest) {
-      ElMessage.error(t('seed.c1BatchAudit.error.invalidTestResult'))
-      return false
+    // 校验检测记录（可选：无记录也允许通过）
+    if (testRes.data && testRes.data.total > 0) {
+      // 校验 passStatus 是否为 TRUE（合格）
+      const hasInvalidTest = testRes.data.records.some(item => item.passStatus !== 'TRUE')
+      if (hasInvalidTest) {
+        ElMessage.error(t('seed.c1BatchAudit.error.invalidTestResult'))
+        return false
+      }
     }
 
     return true

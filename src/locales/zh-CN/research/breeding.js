@@ -149,8 +149,12 @@ export default {
         distributionInfo: '分发信息',
         detailList: '分发明细',
         distributeId: '分发ID',
-        oseId: 'OSE名称',
-        oseName: 'OSE名称',
+        orgCategory: '组织类型',
+        orgName: '组织名称',
+        orgCategory: '组织类型',
+        orgName: '组织名称',
+        oseId: '组织名称',
+        oseName: '组织名称',
         time: '分发时间',
         people: '分发操作人',
         organ: '种子机构名称',
@@ -175,6 +179,8 @@ export default {
 
       // 表单占位符
       placeholder: {
+        orgCategory: '请选择组织类型',
+        orgName: '请选择组织',
         oseId: '请选择OSE名称',
         time: '请选择分发时间',
         people: '请输入分发操作人姓名',
@@ -193,6 +199,8 @@ export default {
       // 表单验证
       rules: {
         distributeName: '请输入分发名称',
+        orgCategory: '请选择组织类型',
+        orgName: '请选择组织',
         oseId: '请选择OSE名称',
         time: '请选择分发时间',
         people: '请输入分发操作人姓名',
@@ -229,7 +237,7 @@ export default {
       // 列表列
       columns: {
         distributeId: '分发ID',
-        oseName: 'OSE名称',
+        oseName: '组织名称',
         time: '分发时间',
         people: '分发操作人',
         organ: '种子机构',
@@ -373,8 +381,8 @@ export default {
         systemInfo: '系统信息',
         receiveConfirmId: '接收确认ID',
         distributeId: '分发ID',
-        oseId: 'OSE ID',
-        oseName: 'OSE名称',
+        oseId: '组织ID',
+        oseName: '组织名称',
         confirmTime: '确认时间',
         confirmPeople: '操作人姓名',
         receiveStatus: '接收状态',
@@ -409,7 +417,7 @@ export default {
       columns: {
         receiveConfirmId: '接收确认ID',
         distributeId: '分发ID',
-        oseName: 'OSE名称',
+        oseName: '组织名称',
         breedSeedProduceBatchId: '种子ID',
         seedType: '种子类型',
         varietyName: '品种名称',

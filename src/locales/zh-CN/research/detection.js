@@ -17,6 +17,10 @@ export default {
     detail: '实验室检测详情'
   },
 
+  // 表单字段
+  inspectionType: '检测类型',
+  testItem: '检测项',
+
   // 通用
   selectBatch: '选择批次',
   selectBatchHint: '请先选择一个批次以查看和管理检测记录',

@@ -326,6 +326,8 @@ export default {
         distributionInfo: 'Distribution Information',
         detailList: 'Distribution Details',
         distributeId: 'Distribution ID',
+        orgCategory: 'Organization Type',
+        orgName: 'Organization Name',
         oseId: 'OSE Name',
         oseName: 'OSE Name',
         time: 'Distribution Time',
@@ -350,6 +352,8 @@ export default {
       },
 
       placeholder: {
+        orgCategory: 'Please select organization type',
+        orgName: 'Please select organization',
         oseId: 'Please select OSE Name',
         time: 'Please select distribution time',
         people: 'Please enter distribution operator name',
@@ -367,6 +371,8 @@ export default {
 
       rules: {
         distributeName: 'Please enter distribution name',
+        orgCategory: 'Please select organization type',
+        orgName: 'Please select organization',
         oseId: 'Please select OSE Name',
         time: 'Please select distribution time',
         people: 'Please enter distribution operator name',
@@ -402,7 +408,7 @@ export default {
 
       columns: {
         distributeId: 'Distribution ID',
-        oseName: 'OSE Name',
+        oseName: 'Organization Name',
         time: 'Distribution Time',
         people: 'Distribution Operator',
         organ: 'Seed Organization',
@@ -530,8 +536,8 @@ export default {
         systemInfo: 'System Information',
         receiveConfirmId: 'Receive Confirmation ID',
         distributeId: 'Distribution ID',
-        oseId: 'OSE ID',
-        oseName: 'OSE Name',
+        oseId: 'Organization ID',
+        oseName: 'Organization Name',
         confirmTime: 'Confirmation Time',
         confirmPeople: 'Operator Name',
         receiveStatus: 'Receive Status',
@@ -564,7 +570,7 @@ export default {
       columns: {
         receiveConfirmId: 'Receive Confirmation ID',
         distributeId: 'Distribution ID',
-        oseName: 'OSE Name',
+        oseName: 'Organization Name',
         seedId: 'Seed ID',
         breedSeedProduceBatchId: 'Production Batch ID',
         varietyName: 'Variety Name',

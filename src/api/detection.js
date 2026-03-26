@@ -142,6 +142,27 @@ export const deleteTest = (ids) => {
 // ==================== 规则检查 ====================
 
 /**
+ * 获取所有检测类型
+ */
+export const getInspectionTypes = () => {
+  return agricultureRequest({
+    url: '/seed/rulesInfo/inspectionTypes',
+    method: 'get'
+  })
+}
+
+/**
+ * 根据检测类型获取规则列表
+ */
+export const getRulesByType = (inspectionType) => {
+  return agricultureRequest({
+    url: '/seed/rulesInfo/listByType',
+    method: 'get',
+    params: { inspectionType }
+  })
+}
+
+/**
  * 检查检测值是否符合规则
  * @param {String} dictCode - 字典代码
  * @param {Number} value - 检测值
