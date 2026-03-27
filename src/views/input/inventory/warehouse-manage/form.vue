@@ -418,7 +418,7 @@ const adminLevelCascaderProps = {
 
 // 是否为联盟或合作社仓库
 const isUnionOrCoopWarehouse = computed(() => {
-  return formData.type === 'LM' || formData.type === 'HZS' || formData.type === 'QY'
+  return formData.type === 'ALLIANCE' || formData.type === 'COOP' || formData.type === 'ENTERPRISE'
 })
 
 // 存储容量显示值

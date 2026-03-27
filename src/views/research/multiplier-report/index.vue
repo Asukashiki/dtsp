@@ -27,6 +27,9 @@
 
         <InfoCard :title="$t('research.multiplierReport.list')" icon="ri-file-list-3-line">
           <template #actions>
+            <el-button type="success" :loading="exporting" @click="handleExport">
+              <i class="ri-download-line"></i> {{ $t('common.export') }}
+            </el-button>
             <el-button type="primary" @click="handleAdd">
               <i class="ri-add-line"></i> {{ $t('common.add') }}
             </el-button>
@@ -60,7 +63,7 @@
                   {{ row.producedSeedQuantity }} qt
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="220" fixed="right" align="center">
+              <el-table-column :label="$t('common.actions')" width="280" fixed="right" align="center">
                 <template #default="{ row }">
                   <el-button size="small" type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i> {{ $t('common.view') }}
@@ -92,7 +95,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getMultiplierReportList, deleteMultiplierReport } from '@/api/multiplierReport'
+import { getMultiplierReportList, deleteMultiplierReport, exportMultiplierReport } from '@/api/multiplierReport'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import { useDict } from '@/hooks/useDict'
 
@@ -101,6 +104,7 @@ const { t } = useI18n()
 const { options: dictOptions, getLabelByValue } = useDict(['crop_type'])
 
 const loading = ref(false)
+const exporting = ref(false)
 const tableData = ref([])
 const filterForm = ref({ keyword: '', cropType: '', seedClassReceived: '' })
 const pagination = ref({ pageNum: 1, pageSize: 10, total: 0 })
@@ -138,6 +142,25 @@ const handleDelete = async (row) => {
     }
   } catch (e) {
     if (e !== 'cancel') console.error(e)
+  }
+}
+
+const handleExport = async () => {
+  exporting.value = true
+  try {
+    const res = await exportMultiplierReport(filterForm.value)
+    const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = 'Multiplier_Report_Data.xlsx'
+    link.click()
+    URL.revokeObjectURL(link.href)
+    ElMessage.success(t('common.exportSuccess'))
+  } catch (e) {
+    console.error(e)
+    ElMessage.error(t('common.exportFailed'))
+  } finally {
+    exporting.value = false
   }
 }
 

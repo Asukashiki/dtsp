@@ -37,3 +37,12 @@ export const deleteMultiplierReport = (id) => {
     method: 'delete'
   })
 }
+
+export const exportMultiplierReport = (params = {}) => {
+  return agricultureRequest({
+    url: '/seed/multiplier-report/export',
+    method: 'post',
+    params,
+    responseType: 'blob'
+  })
+}
