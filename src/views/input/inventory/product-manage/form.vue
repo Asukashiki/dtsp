@@ -60,7 +60,22 @@
                 </el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.brand')"><el-input v-model="formData.brand" :placeholder="$t('input.inventory.productManage.placeholder.brand')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.model')"><el-input v-model="formData.model" :placeholder="$t('input.inventory.productManage.placeholder.model')" maxlength="100" clearable /></el-form-item></el-col>
-                <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.unit')" prop="unit"><el-input v-model="formData.unit" :placeholder="$t('input.inventory.productManage.placeholder.unit')" maxlength="20" clearable /></el-form-item></el-col>
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('input.inventory.productManage.form.unit')" prop="unit">
+                    <el-select
+                      v-model="formData.unit"
+                      :placeholder="$t('input.inventory.productManage.placeholder.unit')"
+                      style="width: 100%"
+                      clearable
+                      filterable>
+                      <el-option
+                        v-for="item in unitOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.price')" prop="price"><el-input-number v-model="formData.price" :min="0" :precision="2" style="width: 100%" /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.licenseNo')"><el-input v-model="formData.licenseNo" :placeholder="$t('input.inventory.productManage.placeholder.licenseNo')" maxlength="100" clearable /></el-form-item></el-col>
                 <el-col :xs="24" :sm="12"><el-form-item :label="$t('input.inventory.productManage.form.status')" prop="status"><el-radio-group v-model="formData.status"><el-radio label="0">{{ $t('input.inventory.productManage.status.enabled') }}</el-radio><el-radio label="1">{{ $t('input.inventory.productManage.status.disabled') }}</el-radio></el-radio-group></el-form-item></el-col>
@@ -86,10 +101,11 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addProductManage, getProductManage, updateProductManage } from '@/api/productManage'
 import { getDicts } from '@/api/system/dict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const formRef = ref(null)
 const submitLoading = ref(false)
@@ -100,6 +116,7 @@ const pageTitle = computed(() => isEdit.value ? t('input.inventory.productManage
 
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const unitOptions = ref([])
 
 const formData = reactive({
   id: undefined,
@@ -126,7 +143,7 @@ const rules = computed(() => ({
   productName: [{ required: true, message: t('input.inventory.productManage.rules.productNameRequired'), trigger: 'blur' }],
   mainCategoryId: [{ required: true, message: t('input.inventory.productManage.rules.mainCategoryRequired'), trigger: 'change' }],
   subCategoryId: [{ required: true, message: t('input.inventory.productManage.rules.subCategoryRequired'), trigger: 'change' }],
-  unit: [{ required: true, message: t('input.inventory.productManage.rules.unitRequired'), trigger: 'blur' }],
+  unit: [{ required: true, message: t('input.inventory.productManage.rules.unitRequired'), trigger: 'change' }],
   price: [{ required: true, message: t('input.inventory.productManage.rules.priceRequired'), trigger: 'change' }],
   status: [{ required: true, message: t('input.inventory.productManage.rules.statusRequired'), trigger: 'change' }]
 }))
@@ -162,7 +179,7 @@ const loadDetail = async () => {
         subCategory: res.data.sub_category || '',
         brand: res.data.brand || '',
         model: res.data.model || '',
-        unit: res.data.unit || '',
+        unit: resolveDictValue(unitOptions.value, res.data.unit),
         price: Number(res.data.price || 0),
         licenseNo: res.data.license_no || '',
         status: res.data.status || '0',
@@ -185,6 +202,8 @@ const handleSubmit = async () => {
     const mainCategoryName = selectedMain ? selectedMain.label : ''
     const selectedSub = subCategoryOptions.value.find(item => String(item.value) === String(formData.subCategoryId))
     const subCategoryValue = selectedSub ? selectedSub.label : ''
+    const selectedUnit = unitOptions.value.find(item => String(item.value) === String(formData.unit))
+    const unitValue = selectedUnit ? selectedUnit.value : ''
 
     const parentIdValue = toLongValue(mainCategoryId) ?? 0
 
@@ -199,7 +218,7 @@ const handleSubmit = async () => {
       parentId: parentIdValue,
       brand: formData.brand.trim(),
       model: formData.model.trim(),
-      unit: formData.unit.trim(),
+      unit: unitValue,
       price: formData.price,
       licenseNo: formData.licenseNo.trim(),
       status: formData.status,
@@ -292,15 +311,21 @@ const loadCategories = async () => {
   try {
     const mainRes = await getDicts('inventory_main_category')
     mainCategoryOptions.value = (mainRes.data || []).map(item => ({
-      label: item.dictLabel,
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
       value: item.dictValue
     }))
 
     const subRes = await getDicts('inventory_sub_category')
     subCategoryOptions.value = (subRes.data || []).map(item => ({
-      label: item.dictLabel,
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
       value: item.dictValue,
       parentValue: item.remark
+    }))
+
+    const unitRes = await getDicts('inventory_unit_new')
+    unitOptions.value = (unitRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
     }))
   } catch (error) {
     console.error('Failed to load main categories:', error)

@@ -341,7 +341,7 @@ const loadDictionaries = async () => {
       parentValue: item.remark
     }))
 
-    const unitRes = await getDicts('inventory_unit')
+    const unitRes = await getDicts('inventory_unit_new')
     unitOptions.value = (unitRes.data || []).map(item => ({
       label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
       value: item.dictValue
