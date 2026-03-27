@@ -26,7 +26,11 @@
         </div>
 
         <InfoCard :title="$t('research.multiplierReport.list')" icon="ri-file-list-3-line">
-          <template #actions></template>
+          <template #actions>
+            <el-button type="primary" @click="handleAdd">
+              <i class="ri-add-line"></i> {{ $t('common.add') }}
+            </el-button>
+          </template>
 
           <div class="table-wrapper pc-only">
             <el-table :data="tableData" stripe v-loading="loading">
@@ -56,10 +60,16 @@
                   {{ row.producedSeedQuantity }} qt
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="100" fixed="right" align="center">
+              <el-table-column :label="$t('common.actions')" width="220" fixed="right" align="center">
                 <template #default="{ row }">
                   <el-button size="small" type="primary" @click="handleView(row)">
                     <i class="ri-eye-line"></i> {{ $t('common.view') }}
+                  </el-button>
+                  <el-button size="small" type="warning" @click="handleEdit(row)">
+                    <i class="ri-edit-line"></i> {{ $t('common.edit') }}
+                  </el-button>
+                  <el-button size="small" type="danger" @click="handleDelete(row)">
+                    <i class="ri-delete-bin-line"></i> {{ $t('common.delete') }}
                   </el-button>
                 </template>
               </el-table-column>
@@ -81,8 +91,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { getMultiplierReportList } from '@/api/multiplierReport'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getMultiplierReportList, deleteMultiplierReport } from '@/api/multiplierReport'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import { useDict } from '@/hooks/useDict'
 
@@ -115,7 +125,21 @@ const loadList = async () => {
 
 const handleSearch = () => { pagination.value.pageNum = 1; loadList() }
 const handleReset = () => { filterForm.value = { keyword: '', cropType: '', seedClassReceived: '' }; handleSearch() }
+const handleAdd = () => router.push('/research/multiplier-report/add')
 const handleView = (row) => router.push(`/research/multiplier-report/detail/${row.id}`)
+const handleEdit = (row) => router.push(`/research/multiplier-report/edit/${row.id}`)
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.warning'), { type: 'warning' })
+    const res = await deleteMultiplierReport(row.id)
+    if (res.code === 200) {
+      ElMessage.success(t('research.multiplierReport.deleteSuccess'))
+      loadList()
+    }
+  } catch (e) {
+    if (e !== 'cancel') console.error(e)
+  }
+}
 
 onMounted(() => loadList())
 </script>
