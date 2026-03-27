@@ -90,6 +90,11 @@
                     {{ row.variety || '-' }}
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" prop="season" min-width="140">
+                  <template #default="{ row }">
+                    {{ formatSeason(row.season) }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
               </el-table>
             </div>
@@ -153,12 +158,17 @@
                         :key="item.value"
                         :label="item.label"
                         :value="item.value" />
-                    </el-select>
+                      </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" min-width="140">
+                  <template #default="scope">
+                    <span>{{ formatSeason(getDetailSeason(scope.row)) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
                   <template #default="scope">
-                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
+                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
@@ -171,7 +181,7 @@
                     <el-input-number
                       v-model="scope.row.quantity"
                       :min="0"
-                      :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
+                      :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season)"
                       :precision="2"
                       @change="validateQuantity(scope.$index)"
                       style="width: 100%" />
@@ -317,9 +327,55 @@ const createVarietyState = () => ({
   varietyLoading: false
 })
 
+const SEASON_LABEL_MAP = {
+  '1': 'Summer',
+  '2': 'Spring',
+  '3': 'Irrigation'
+}
+
+const formatSeason = (season) => {
+  const normalizedSeason = String(season || '').trim()
+  return SEASON_LABEL_MAP[normalizedSeason] || '-'
+}
+
+const getNormalizedSeasonCode = (season) => String(season || '').trim()
+const getNormalizedDemandValue = (value) => String(value || '').trim()
+
+const matchesDemandValue = (demandValue, targetValue, targetLabel) => {
+  const normalizedDemand = getNormalizedDemandValue(demandValue)
+  const normalizedTarget = getNormalizedDemandValue(targetValue)
+  const normalizedLabel = getNormalizedDemandValue(targetLabel)
+  return normalizedDemand === normalizedTarget || normalizedDemand === normalizedLabel
+}
+
+const findMatchedDemand = (inputType, inputCategory, season = '') => {
+  if (!inputType || !inputCategory) return null
+
+  const inputTypeLabel = getMainCategoryLabel(inputType)
+  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
+  const normalizedSeason = getNormalizedSeasonCode(season)
+
+  return demandList.value.find(d => {
+    const demandSeason = getNormalizedSeasonCode(d.season || d.seasonCode || d.season_code)
+    return matchesDemandValue(d.inputType, inputType, inputTypeLabel) &&
+      matchesDemandValue(d.inputCategory, inputCategory, inputCategoryLabel) &&
+      (!normalizedSeason || demandSeason === normalizedSeason)
+  }) || null
+}
+
+const getDetailSeason = (detail) => {
+  if (!detail) return ''
+  if (detail.season || detail.seasonCode || detail.season_code) {
+    return detail.season || detail.seasonCode || detail.season_code
+  }
+  const matchedDemand = findMatchedDemand(detail.inputType, detail.inputCategory)
+  return matchedDemand?.season || matchedDemand?.seasonCode || matchedDemand?.season_code || ''
+}
+
 const normalizeDetailRow = (detail = {}) => ({
   ...createVarietyState(),
   ...detail,
+  season: detail.season || detail.seasonCode || detail.season_code || '',
   variety: detail.variety || '',
   varietyId: detail.varietyId || detail.variety_id || detail.productId || detail.product_id || ''
 })
@@ -464,6 +520,7 @@ const handleInputTypeChange = (index) => {
   const detail = formData.details[index]
   // 清空投入品类别
   detail.inputCategory = ''
+  detail.season = ''
   detail.variety = ''
   detail.varietyId = ''
   detail.varietyOptions = []
@@ -536,11 +593,15 @@ const handleInputCategoryChange = async (index, preserveSelection = false) => {
   const detail = formData.details[index]
   if (!detail) return
 
+  const matchedDemand = findMatchedDemand(detail.inputType, detail.inputCategory, detail.season)
+
+  detail.season = matchedDemand?.season || matchedDemand?.seasonCode || matchedDemand?.season_code || ''
+
   detail.variety = preserveSelection ? (detail.variety || '') : ''
   detail.varietyId = preserveSelection ? (detail.varietyId || '') : ''
   detail.varietyOptions = []
   // 获取需求数量作为默认值
-  const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season)
   if (!preserveSelection) {
     detail.quantity = 0
   }
@@ -658,11 +719,9 @@ const getSubCategoryLabel = (value) => {
 }
 
 // 获取需求数量
-const getDemandQuantity = (inputType, inputCategory) => {
+const getDemandQuantity = (inputType, inputCategory, season = '') => {
   if (!inputType || !inputCategory) return 0
-  const inputTypeLabel = getMainCategoryLabel(inputType)
-  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
-  const demand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
+  const demand = findMatchedDemand(inputType, inputCategory, season)
   return demand ? demand.totalQuantity : 0
 }
 
@@ -673,7 +732,7 @@ const validateQuantity = async (index) => {
   if (!detail.inputType) return
 
   // 校验需求量
-  const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season)
   if (detail.quantity > maxQty) {
     detail.quantity = maxQty
     ElMessage.warning(t('inputCirculation.quantityExceedsDemand'))
@@ -684,6 +743,7 @@ const validateQuantity = async (index) => {
   const totalFormQuantity = formData.details
     .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)) &&
+                (getNormalizedSeasonCode(d.season) === getNormalizedSeasonCode(detail.season)) &&
                 (d.variety === detail.variety || (!d.variety && !detail.variety)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
 
@@ -781,6 +841,7 @@ const fetchDetail = async () => {
 const createEmptyDetail = () => ({
   inputType: '',
   inputCategory: '',
+  season: '',
   variety: '',
   ...createVarietyState(),
   quantity: 0,
@@ -828,11 +889,12 @@ const handleSubmit = async () => {
 
       const quantityByType = {}
       for (const detail of formData.details) {
-        const key = `${detail.inputType}_${detail.inputCategory || ''}_${detail.variety || ''}`
+        const key = `${detail.inputType}_${detail.inputCategory || ''}_${detail.season || ''}_${detail.variety || ''}`
         if (!quantityByType[key]) {
           quantityByType[key] = {
             inputType: detail.inputType,
             inputCategory: detail.inputCategory,
+            season: detail.season || '',
             variety: detail.variety || '',
             quantity: 0
           }
@@ -859,7 +921,7 @@ const handleSubmit = async () => {
       }
 
       const submitData = { ...formData }
-      submitData.details = formData.details.map(({ varietyOptions, varietyLoading, varietyId, ...detail }) => ({ ...detail }))
+      submitData.details = formData.details.map(({ varietyOptions, varietyLoading, varietyId, season, ...detail }) => ({ ...detail }))
       if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
         submitData.targetId = formData.targetId[formData.targetId.length - 1]
       }
