@@ -125,30 +125,6 @@
                   </el-form-item>
                 </el-col>
 
-                <!-- 上级仓库 - 条件显示 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item 
-                    :label="$t('input.inventory.warehouseManage.form.parentId')"
-                    prop="parentId"
-                    :rules="isUnionOrCoopWarehouse ? [{ required: true, message: $t('input.inventory.warehouseManage.rules.parentIdRequired'), trigger: 'change' }] : []"
-                  >
-                    <el-select 
-                      v-model="formData.parentId" 
-                      :placeholder="$t('input.inventory.warehouseManage.placeholder.parentId')" 
-                      :disabled="!selectedOrgId"
-                      clearable 
-                      filterable 
-                      style="width: 100%"
-                    >
-                      <el-option 
-                        v-for="item in filteredParentWarehouseOptions" 
-                        :key="item.id" 
-                        :label="`${item.warehouse_name} (${item.warehouse_code})`" 
-                        :value="item.id" 
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
 
                 <!-- 存储容量 -->
                 <el-col :xs="24" :sm="12">
@@ -327,10 +303,10 @@ const storeTypeOptions = computed(() => (dictOptions.value.inventory_main_catego
   value: item.value
 })))
 
-const capacityUnitOptions = [
-  { label: '吨', value: 'ton' },
-  { label: '公担', value: 'quintal' }
-]
+const capacityUnitOptions = computed(() => [
+  { label: t('input.inventory.warehouseManage.unit.ton'), value: 'ton' },
+  { label: t('input.inventory.warehouseManage.unit.quintal'), value: 'quintal' }
+])
 
 const capacityUnitFactorMap = {
   ton: 1000,

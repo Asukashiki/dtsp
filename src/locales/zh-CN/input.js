@@ -948,6 +948,10 @@ export default {
         updateTime: '更新时间',
         actions: '操作'
       },
+      unit: {
+        ton: '吨',
+        quintal: '公担'
+      },
       adminLevelOptions: {
         province: '省',
         city: '市',

@@ -898,6 +898,10 @@ export default {
         updateTime: 'Update Time',
         actions: 'Actions'
       },
+      unit: {
+        ton: 'Ton',
+        quintal: 'Quintal'
+      },
       adminLevelOptions: {
         province: 'Province',
         city: 'City',
