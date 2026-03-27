@@ -129,10 +129,14 @@ export const getAvailableStock = (inputType, inputCategory, organCode) => {
   })
 }
 
-export const getDeptCategoryStock = (deptId, mainCategory, subCategory) => {
+export const getDeptCategoryStock = (deptId, mainCategory, subCategory, productName) => {
   const params = { dept_id: deptId }
   if (mainCategory) params.main_category = mainCategory
   if (subCategory) params.sub_category = subCategory
+  if (productName) {
+    params.productName = productName
+    params.product_name = productName
+  }
   return agricultureRequest({
     url: '/inventory/warehouse-manage/list-by-dept',
     method: 'get',

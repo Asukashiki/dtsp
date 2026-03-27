@@ -139,7 +139,21 @@
                 </el-table-column>
                 <el-table-column :label="$t('farmerDemand.form.variety')" min-width="160">
                   <template #default="scope">
-                    <span>{{ scope.row.variety || '-' }}</span>
+                    <el-select
+                      v-model="scope.row.varietyId"
+                      :placeholder="$t('common.pleaseSelect')"
+                      :loading="scope.row.varietyLoading"
+                      :disabled="!scope.row.inputType || !scope.row.inputCategory"
+                      clearable
+                      filterable
+                      style="width: 100%"
+                      @change="(value) => handleVarietyChange(scope.$index, value)">
+                      <el-option
+                        v-for="item in scope.row.varietyOptions || []"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
@@ -217,6 +231,7 @@ import { ElMessage } from 'element-plus'
 import { getOseReleaseDetail, addOseRelease, editOseRelease, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
 import { getAllInputList } from '@/api/input.js'
+import { listProductManage } from '@/api/productManage'
 import { getUnionDetailByUnionId } from '@/api/union.js'
 import { getOrgansRegionByCode, listSubRegionByCode } from '@/api/application.js'
 import { getCurrentUserInfo } from '@/api/user.js'
@@ -295,6 +310,19 @@ const warehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 const inputTypeOptions = computed(() => mainCategoryOptions.value)
+
+const createVarietyState = () => ({
+  varietyId: '',
+  varietyOptions: [],
+  varietyLoading: false
+})
+
+const normalizeDetailRow = (detail = {}) => ({
+  ...createVarietyState(),
+  ...detail,
+  variety: detail.variety || '',
+  varietyId: detail.varietyId || detail.variety_id || detail.productId || detail.product_id || ''
+})
 
 const rules = {
   releaseName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -437,28 +465,152 @@ const handleInputTypeChange = (index) => {
   // 清空投入品类别
   detail.inputCategory = ''
   detail.variety = ''
+  detail.varietyId = ''
+  detail.varietyOptions = []
+  detail.varietyLoading = false
   detail.quantity = 0
+  detail.maxQuantity = 0
+  detail.currentStock = 0
+}
+
+const loadVarietyOptions = async (detail, preserveSelection = false) => {
+  if (!detail) return
+
+  const existingVarietyId = detail.varietyId
+  const existingVariety = detail.variety
+
+  detail.varietyId = preserveSelection ? (existingVarietyId || '') : ''
+  detail.variety = preserveSelection ? (existingVariety || '') : ''
+  detail.varietyOptions = []
+
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.varietyLoading = false
+    return
+  }
+
+  detail.varietyLoading = true
+  try {
+    const response = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: getMainCategoryLabel(detail.inputType),
+      subCategory: getSubCategoryLabel(detail.inputCategory),
+      status: '0'
+    })
+
+    const list = response.data?.list || []
+    detail.varietyOptions = list
+      .map(product => {
+        const optionValue = product.id || product.product_id || product.product_code || ''
+        const productName = product.product_name || product.productName || product.product_code || ''
+        return {
+          label: productName || '-',
+          value: optionValue,
+          productName
+        }
+      })
+      .filter(option => option.value)
+
+    if (detail.varietyId) {
+      const matchedById = detail.varietyOptions.find(option => String(option.value) === String(detail.varietyId))
+      if (matchedById) {
+        detail.variety = matchedById.productName
+      }
+    } else if (detail.variety) {
+      const matchedByName = detail.varietyOptions.find(option => option.productName === detail.variety)
+      if (matchedByName) {
+        detail.varietyId = matchedByName.value
+        detail.variety = matchedByName.productName
+      }
+    }
+  } catch (error) {
+    detail.varietyOptions = []
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    detail.varietyLoading = false
+  }
 }
 
 // 投入品类别变化处理
-const handleInputCategoryChange = (index) => {
+const handleInputCategoryChange = async (index, preserveSelection = false) => {
   const detail = formData.details[index]
-  const inputTypeLabel = getMainCategoryLabel(detail.inputType)
-  const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
-  const matchedDemand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
-  detail.variety = matchedDemand?.variety || ''
+  if (!detail) return
+
+  detail.variety = preserveSelection ? (detail.variety || '') : ''
+  detail.varietyId = preserveSelection ? (detail.varietyId || '') : ''
+  detail.varietyOptions = []
   // 获取需求数量作为默认值
   const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
-  detail.quantity = 0
+  if (!preserveSelection) {
+    detail.quantity = 0
+  }
   detail.maxQuantity = demandQty
-  // 获取库存
+
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.currentStock = 0
+    detail.varietyLoading = false
+    return
+  }
+
+  await loadVarietyOptions(detail, preserveSelection)
+  if (!isStockLookupReady(detail)) {
+    detail.currentStock = 0
+    return
+  }
+  await fetchStock(index)
+}
+
+const handleVarietyChange = (index, value) => {
+  const detail = formData.details[index]
+  if (!detail) return
+
+  detail.varietyId = value || ''
+  const matchedOption = (detail.varietyOptions || []).find(option => String(option.value) === String(value))
+  detail.variety = matchedOption?.productName || ''
+  if (!isStockLookupReady(detail)) {
+    detail.currentStock = 0
+    return
+  }
   fetchStock(index)
+}
+
+const initializeDetailRows = async () => {
+  await Promise.all(formData.details.map((detail, index) => {
+    if (detail.inputType && detail.inputCategory) {
+      return handleInputCategoryChange(index, true)
+    }
+    return Promise.resolve()
+  }))
+}
+
+const isStockLookupReady = (detail) => Boolean(
+  detail?.inputType && detail?.inputCategory && String(detail?.variety || '').trim()
+)
+
+const normalizeStockItem = (item) => {
+  if (!item) return null
+  return {
+    mainCategory: item.mainCategory ?? item.main_category ?? '',
+    subCategory: item.subCategory ?? item.sub_category ?? '',
+    productName: item.productName ?? item.product_name ?? '',
+    availableQty: item.availableQty ?? item.available_qty ?? item.availableQuantity ?? 0
+  }
+}
+
+const findMatchedStockItem = (items, inputTypeLabel, inputCategoryLabel, variety) => {
+  const normalizedVariety = (variety || '').trim()
+  return (items || [])
+    .map(normalizeStockItem)
+    .find(item => item &&
+      item.mainCategory === inputTypeLabel &&
+      item.subCategory === inputCategoryLabel &&
+      (!normalizedVariety || !item.productName.trim() || item.productName.trim() === normalizedVariety))
 }
 
 // 获取库存
 const fetchStock = async (index) => {
   const detail = formData.details[index]
-  if (!detail.inputType || !detail.inputCategory) {
+  if (!isStockLookupReady(detail)) {
     detail.currentStock = 0
     return
   }
@@ -474,9 +626,9 @@ const fetchStock = async (index) => {
     const inputTypeLabel = getMainCategoryLabel(detail.inputType)
     const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
-    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, detail.variety)
     if (res.code === 200 && Array.isArray(res.data)) {
-      const matched = res.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const matched = findMatchedStockItem(res.data, inputTypeLabel, inputCategoryLabel, detail.variety)
       detail.currentStock = matched?.availableQty ?? 0
     } else {
       detail.currentStock = 0
@@ -531,7 +683,8 @@ const validateQuantity = async (index) => {
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
     .filter(d => d.inputType === detail.inputType &&
-                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
+                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)) &&
+                (d.variety === detail.variety || (!d.variety && !detail.variety)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
 
   try {
@@ -544,9 +697,9 @@ const validateQuantity = async (index) => {
     const inputTypeLabel = getMainCategoryLabel(detail.inputType)
     const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
-    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, detail.variety)
     if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
-      const matched = stockRes.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const matched = findMatchedStockItem(stockRes.data, inputTypeLabel, inputCategoryLabel, detail.variety)
       const available = matched?.availableQty ?? 0
       if (totalFormQuantity > available) {
         // 超出可用库存，调整当前行数量
@@ -615,7 +768,8 @@ const fetchDetail = async () => {
     const response = await getOseReleaseDetail(route.params.id)
     if (response.code === 200 && response.data) {
       Object.assign(formData, response.data.main)
-      formData.details = response.data.details || []
+      formData.details = (response.data.details || []).map(detail => normalizeDetailRow(detail))
+      await initializeDetailRows()
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
@@ -624,24 +778,24 @@ const fetchDetail = async () => {
   }
 }
 
+const createEmptyDetail = () => ({
+  inputType: '',
+  inputCategory: '',
+  variety: '',
+  ...createVarietyState(),
+  quantity: 0,
+  unit: '',
+  unitPrice: 0,
+  maxQuantity: 0,
+  currentStock: 0,
+  outWarehouseCode: '',
+  outWarehouseName: '',
+  inWarehouseCode: '',
+  inWarehouseName: ''
+})
+
 const addDetail = () => {
-  formData.details.push({
-    inputType: '',
-    inputCategory: '',
-    variety: '',
-    quantity: 0,
-    unit: '',
-    unitPrice: 0,
-    quantity: 0,
-    unit: '',
-    unitPrice: 0,
-    maxQuantity: 0,
-    currentStock: 0,
-    outWarehouseCode: '',
-    outWarehouseName: '',
-    inWarehouseCode: '',
-    inWarehouseName: ''
-  })
+  formData.details.push(createEmptyDetail())
 }
 
 const removeDetail = (index) => {
@@ -665,7 +819,47 @@ const handleSubmit = async () => {
     loading.value = true
 
     try {
+      const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+      if (!deptId) {
+        ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
+        loading.value = false
+        return
+      }
+
+      const quantityByType = {}
+      for (const detail of formData.details) {
+        const key = `${detail.inputType}_${detail.inputCategory || ''}_${detail.variety || ''}`
+        if (!quantityByType[key]) {
+          quantityByType[key] = {
+            inputType: detail.inputType,
+            inputCategory: detail.inputCategory,
+            variety: detail.variety || '',
+            quantity: 0
+          }
+        }
+        quantityByType[key].quantity += (detail.quantity || 0)
+      }
+
+      for (const key of Object.keys(quantityByType)) {
+        const item = quantityByType[key]
+        if (!isStockLookupReady(item)) continue
+
+        const inputTypeLabel = getMainCategoryLabel(item.inputType)
+        const inputCategoryLabel = getSubCategoryLabel(item.inputCategory)
+        const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, item.variety)
+        if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
+          const matched = findMatchedStockItem(stockRes.data, inputTypeLabel, inputCategoryLabel, item.variety)
+          const available = matched?.availableQty ?? 0
+          if (item.quantity > available) {
+            ElMessage.error(t('inputCirculation.stockInsufficient', { available, requested: item.quantity }))
+            loading.value = false
+            return
+          }
+        }
+      }
+
       const submitData = { ...formData }
+      submitData.details = formData.details.map(({ varietyOptions, varietyLoading, varietyId, ...detail }) => ({ ...detail }))
       if (Array.isArray(formData.targetId) && formData.targetId.length > 0) {
         submitData.targetId = formData.targetId[formData.targetId.length - 1]
       }

@@ -375,13 +375,51 @@ const handleInputCategoryChange = (index) => {
   detail.variety = matchedDemand?.variety || ''
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   detail.maxQuantity = maxQty || 999999
+  if (!isStockLookupReady(detail)) {
+    detail.currentStock = 0
+    return
+  }
   fetchStock(index)
+}
+
+const normalizeStockItem = (item) => {
+  if (!item) return null
+  return {
+    mainCategory: item.mainCategory ?? item.main_category ?? '',
+    subCategory: item.subCategory ?? item.sub_category ?? '',
+    productName: item.productName ?? item.product_name ?? '',
+    availableQty: item.availableQty ?? item.available_qty ?? item.availableQuantity ?? 0
+  }
+}
+
+const findMatchedStockItem = (items, inputTypeLabel, inputCategoryLabel, variety) => {
+  const normalizedVariety = (variety || '').trim()
+  return (items || [])
+    .map(normalizeStockItem)
+    .find(item => item &&
+      item.mainCategory === inputTypeLabel &&
+      item.subCategory === inputCategoryLabel &&
+      (!normalizedVariety || !item.productName.trim() || item.productName.trim() === normalizedVariety))
+}
+
+const isStockLookupReady = (detail) => Boolean(
+  detail?.inputType && detail?.inputCategory && String(detail?.variety || '').trim()
+)
+
+const initializeDetailStocks = async () => {
+  await Promise.all(formData.details.map((detail, index) => {
+    detail.currentStock = detail.currentStock ?? detail.current_stock ?? 0
+    if (isStockLookupReady(detail)) {
+      return fetchStock(index)
+    }
+    return Promise.resolve()
+  }))
 }
 
 // 获取库存
 const fetchStock = async (index) => {
   const detail = formData.details[index]
-  if (!detail.inputType || !detail.inputCategory) {
+  if (!isStockLookupReady(detail)) {
     detail.currentStock = 0
     return
   }
@@ -397,9 +435,9 @@ const fetchStock = async (index) => {
     const inputTypeLabel = getMainCategoryLabel(detail.inputType)
     const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
-    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, detail.variety)
     if (res.code === 200 && Array.isArray(res.data)) {
-      const matched = res.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const matched = findMatchedStockItem(res.data, inputTypeLabel, inputCategoryLabel, detail.variety)
       detail.currentStock = matched?.availableQty ?? 0
     } else {
       detail.currentStock = 0
@@ -443,7 +481,8 @@ const validateQuantity = async (index) => {
   // 校验库存 - 计算表单中同类型的总数量
   const totalFormQuantity = formData.details
     .filter(d => d.inputType === detail.inputType &&
-                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)))
+                (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)) &&
+                (d.variety === detail.variety || (!d.variety && !detail.variety)))
     .reduce((sum, d) => sum + (d.quantity || 0), 0)
 
   try {
@@ -456,9 +495,9 @@ const validateQuantity = async (index) => {
     const inputTypeLabel = getMainCategoryLabel(detail.inputType)
     const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
 
-    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel)
+    const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, detail.variety)
     if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
-      const matched = stockRes.data.find(item => item.mainCategory === inputTypeLabel && item.subCategory === inputCategoryLabel)
+      const matched = findMatchedStockItem(stockRes.data, inputTypeLabel, inputCategoryLabel, detail.variety)
       const available = matched?.availableQty ?? 0
       if (totalFormQuantity > available) {
         const excessQty = totalFormQuantity - available
@@ -491,7 +530,10 @@ const fetchDetail = async () => {
       if (formData.releaseYear) {
         formData.releaseYear = String(formData.releaseYear)
       }
-      formData.details = response.data.details || []
+      formData.details = (response.data.details || []).map(detail => ({
+        ...detail,
+        currentStock: detail.currentStock ?? detail.current_stock ?? 0
+      }))
 
       // 从农民列表填充手机号和地址
       if (formData.farmerId) {
@@ -501,8 +543,9 @@ const fetchDetail = async () => {
           formData.farmerAddress = farmer.address || formData.farmerAddress || ''
         }
         // 加载需求列表
-        loadDemandList(formData.farmerId)
+        await loadDemandList(formData.farmerId)
       }
+      await initializeDetailStocks()
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
@@ -570,30 +613,39 @@ const handleSubmit = async () => {
     // 库存校验
     loading.value = true
     try {
-      // 按inputType汇总数量
+      const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+      if (!deptId) {
+        ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
+        loading.value = false
+        return
+      }
+
       const quantityByType = {}
       for (const detail of formData.details) {
-        const key = `${detail.inputType}_${detail.inputCategory || ''}`
+        const key = `${detail.inputType}_${detail.inputCategory || ''}_${detail.variety || ''}`
         if (!quantityByType[key]) {
-          quantityByType[key] = { inputType: detail.inputType, inputCategory: detail.inputCategory, quantity: 0 }
+          quantityByType[key] = {
+            inputType: detail.inputType,
+            inputCategory: detail.inputCategory,
+            variety: detail.variety || '',
+            quantity: 0
+          }
         }
         quantityByType[key].quantity += (detail.quantity || 0)
       }
 
-      // 检查每种类型的可用库存
       for (const key of Object.keys(quantityByType)) {
         const item = quantityByType[key]
-        const organCode = userStore.userInfo?.organCode || userStore.userInfo?.user?.organCode || userStore.userInfo?.deptId
-        if (!organCode) {
-          ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
-          loading.value = false
-          return
-        }
-        const stockRes = await getAvailableStock(item.inputType, item.inputCategory, organCode)
-        if (stockRes.code === 200 && stockRes.data) {
-          const available = stockRes.data.availableStock || 0
+        if (!isStockLookupReady(item)) continue
+
+        const inputTypeLabel = getMainCategoryLabel(item.inputType)
+        const inputCategoryLabel = getSubCategoryLabel(item.inputCategory)
+        const stockRes = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, item.variety)
+        if (stockRes.code === 200 && Array.isArray(stockRes.data)) {
+          const matched = findMatchedStockItem(stockRes.data, inputTypeLabel, inputCategoryLabel, item.variety)
+          const available = matched?.availableQty ?? 0
           if (item.quantity > available) {
-            ElMessage.error(t('inputCirculation.stockInsufficient', { available: available, requested: item.quantity }))
+            ElMessage.error(t('inputCirculation.stockInsufficient', { available, requested: item.quantity }))
             loading.value = false
             return
           }
