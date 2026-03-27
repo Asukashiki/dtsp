@@ -8,7 +8,11 @@
             <h1 class="page-title">{{ $t('research.multiplierReport.detail') }}</h1>
           </div>
         </div>
-        <div class="header-right"></div>
+        <div class="header-right">
+          <el-button type="primary" @click="handleEdit" v-if="detailData">
+            <i class="ri-edit-line"></i> {{ $t('common.edit') }}
+          </el-button>
+        </div>
       </div>
 
       <div class="content-wrapper" v-loading="loading">
@@ -95,6 +99,7 @@ onMounted(async () => {
 })
 
 const goBack = () => router.back()
+const handleEdit = () => router.push(`/research/multiplier-report/edit/${route.params.id}`)
 </script>
 
 <style lang="scss" scoped>
