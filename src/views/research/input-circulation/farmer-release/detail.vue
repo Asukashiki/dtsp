@@ -204,7 +204,8 @@ const updateDemandQuantity = () => {
     })
     return {
       ...detail,
-      demandQuantity: matchedDemand?.totalQuantity || detail.demandQuantity || 0
+      demandQuantity: matchedDemand?.totalQuantity || detail.demandQuantity || 0,
+      season: detail.season || matchedDemand?.season || matchedDemand?.seasonCode || matchedDemand?.season_code || ''
     }
   })
 }
