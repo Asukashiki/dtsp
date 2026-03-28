@@ -94,6 +94,11 @@
                     {{ row.variety || '-' }}
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" prop="season" min-width="140">
+                  <template #default="{ row }">
+                    {{ formatSeason(row.season) }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
               </el-table>
             </div>
@@ -115,7 +120,7 @@
             </div>
             <div class="card-body">
               <el-table :data="formData.details" border>
-                <el-table-column type="index" width="50" />
+                <el-table-column type="index" width="80" />
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
                   <template #default="scope">
                       <el-select v-model="scope.row.inputType" :placeholder="$t('common.pleaseSelect')"
@@ -135,12 +140,36 @@
                 </el-table-column>
                 <el-table-column :label="$t('farmerDemand.form.variety')" min-width="160">
                   <template #default="scope">
-                    <span>{{ scope.row.variety || '-' }}</span>
+                    <el-select
+                      v-model="scope.row.varietyId"
+                      :placeholder="$t('common.pleaseSelect')"
+                      :loading="scope.row.varietyLoading"
+                      :disabled="!scope.row.inputType || !scope.row.inputCategory"
+                      clearable
+                      filterable
+                      style="width: 100%"
+                      @change="(value) => handleVarietyChange(scope.$index, value)">
+                      <el-option
+                        v-for="item in scope.row.varietyOptions || []"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" min-width="160">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.season"
+                               :placeholder="$t('common.pleaseSelect')"
+                               style="width: 100%"
+                               @change="handleSeasonChange(scope.$index)">
+                      <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
                   <template #default="scope">
-                    {{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}
+                    {{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season) }}
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
@@ -148,10 +177,10 @@
                     <span>{{ scope.row.currentStock }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('inputCirculation.quantity')" min-width="160">
+                <el-table-column :label="$t('inputCirculation.quantity')" min-width="180">
                   <template #default="scope">
-                    <el-input-number v-model="scope.row.quantity" :min="0" :max="scope.row.maxQuantity || 999999"
-                      :precision="2" @change="validateQuantity(scope.$index)" style="width: 100%" />
+                    <el-input-number v-model="scope.row.quantity" :min="0"
+                      :precision="2" style="width: 100%" />
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
@@ -161,7 +190,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="140">
+                <el-table-column :label="$t('inputCirculation.unitPrice')" min-width="150">
                   <template #default="scope">
                     <el-input-number v-model="scope.row.unitPrice" :min="0" :precision="2"
                       @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
@@ -188,7 +217,7 @@
                     <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('common.actions')" width="80" fixed="right">
+                <el-table-column :label="$t('common.actions')" width="100" fixed="right">
                   <template #default="scope">
                     <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
                   </template>
@@ -218,6 +247,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFarmerReleaseDetail, addFarmerRelease, editFarmerRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
+import { listProductManage } from '@/api/productManage'
 import { getFarmerList } from '@/api/newFarm'
 import { useUserStore } from '@/store/user'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
@@ -358,23 +388,122 @@ const getFilteredCategories = (inputType) => {
   return subCategoryOptions.value.filter(item => String(item.parentValue) === String(inputType))
 }
 
+const createVarietyState = () => ({
+  varietyId: '',
+  varietyOptions: [],
+  varietyLoading: false
+})
+
 // 投入品类型变化
 const handleInputTypeChange = (index) => {
   const detail = formData.details[index]
   detail.inputCategory = ''
-  detail.variety = ''
+  Object.assign(detail, createVarietyState())
+  detail.season = ''
   detail.maxQuantity = null
+  detail.currentStock = 0
+}
+
+const getNormalizedDemandValue = (value) => String(value || '').trim()
+
+const matchesDemandValue = (demandValue, targetValue, targetLabel) => {
+  const normalizedDemand = getNormalizedDemandValue(demandValue)
+  const normalizedTarget = getNormalizedDemandValue(targetValue)
+  const normalizedLabel = getNormalizedDemandValue(targetLabel)
+  return normalizedDemand === normalizedTarget || normalizedDemand === normalizedLabel
+}
+
+const findMatchedDemand = (inputType, inputCategory, variety = '', season = '') => {
+  if (!inputType || !inputCategory) return null
+
+  const inputTypeLabel = getMainCategoryLabel(inputType)
+  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
+  const normalizedVariety = (variety || '').trim()
+
+  return demandList.value.find(d => {
+    const demandVariety = (d.variety || '').trim()
+    return matchesDemandValue(d.inputType, inputType, inputTypeLabel) &&
+      matchesDemandValue(d.inputCategory, inputCategory, inputCategoryLabel) &&
+      (!normalizedVariety || !demandVariety || demandVariety === normalizedVariety)
+  }) || null
 }
 
 // 投入品类别变化
 const handleInputCategoryChange = (index) => {
   const detail = formData.details[index]
-  const inputTypeLabel = getMainCategoryLabel(detail.inputType)
-  const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
-  const matchedDemand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
-  detail.variety = matchedDemand?.variety || ''
-  const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  const matchedDemand = findMatchedDemand(detail.inputType, detail.inputCategory)
+  Object.assign(detail, createVarietyState())
+  detail.season = matchedDemand?.season || matchedDemand?.seasonCode || matchedDemand?.season_code || ''
+  const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season)
   detail.maxQuantity = maxQty || 999999
+  loadVarietyOptions(detail)
+}
+
+const loadVarietyOptions = async (detail, preserveSelection = false) => {
+  if (!detail) return
+
+  const existingVarietyId = detail.varietyId
+  const existingVariety = detail.variety
+
+  detail.varietyId = preserveSelection ? (existingVarietyId || '') : ''
+  detail.variety = preserveSelection ? (existingVariety || '') : ''
+  detail.varietyOptions = []
+
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.varietyLoading = false
+    return
+  }
+
+  detail.varietyLoading = true
+  try {
+    const response = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: getMainCategoryLabel(detail.inputType),
+      subCategory: getSubCategoryLabel(detail.inputCategory),
+      status: '0'
+    })
+
+    const list = response.data?.list || []
+    detail.varietyOptions = list
+      .map(product => {
+        const optionValue = product.id || product.product_id || product.product_code || ''
+        const productName = product.product_name || product.productName || product.product_code || ''
+        return {
+          label: productName || '-',
+          value: optionValue,
+          productName
+        }
+      })
+      .filter(option => option.value)
+
+    if (detail.varietyId) {
+      const matchedById = detail.varietyOptions.find(option => String(option.value) === String(detail.varietyId))
+      if (matchedById) {
+        detail.variety = matchedById.productName
+      }
+    } else if (detail.variety) {
+      const matchedByName = detail.varietyOptions.find(option => option.productName === detail.variety)
+      if (matchedByName) {
+        detail.varietyId = matchedByName.value
+        detail.variety = matchedByName.productName
+      }
+    }
+  } catch (error) {
+    detail.varietyOptions = []
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    detail.varietyLoading = false
+  }
+}
+
+const handleVarietyChange = (index, value) => {
+  const detail = formData.details[index]
+  if (!detail) return
+
+  detail.varietyId = value || ''
+  const matchedOption = (detail.varietyOptions || []).find(option => String(option.value) === String(value))
+  detail.variety = matchedOption?.productName || ''
   if (!isStockLookupReady(detail)) {
     detail.currentStock = 0
     return
@@ -446,14 +575,6 @@ const fetchStock = async (index) => {
     console.error('Failed to fetch stock:', error)
     detail.currentStock = 0
   }
-}
-
-// 获取需求数量
-const getDemandQuantity = (inputType, inputCategory) => {
-  const inputTypeLabel = getMainCategoryLabel(inputType)
-  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
-  const item = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
-  return item ? item.totalQuantity : '-'
 }
 
 const getMainCategoryLabel = (value) => {
@@ -531,7 +652,11 @@ const fetchDetail = async () => {
         formData.releaseYear = String(formData.releaseYear)
       }
       formData.details = (response.data.details || []).map(detail => ({
+        ...createVarietyState(),
         ...detail,
+        season: detail.season || detail.seasonCode || detail.season_code || '',
+        variety: detail.variety || '',
+        varietyId: detail.varietyId || detail.variety_id || '',
         currentStock: detail.currentStock ?? detail.current_stock ?? 0
       }))
 
@@ -545,7 +670,7 @@ const fetchDetail = async () => {
         // 加载需求列表
         await loadDemandList(formData.farmerId)
       }
-      await initializeDetailStocks()
+      await initializeDetailRows()
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
@@ -554,15 +679,24 @@ const fetchDetail = async () => {
   }
 }
 
+const initializeDetailRows = async () => {
+  await Promise.all(formData.details.map((detail, index) => {
+    if (detail.inputType && detail.inputCategory) {
+      return handleInputCategoryChange(index)
+    }
+    return Promise.resolve()
+  }))
+}
+
 const addDetail = () => {
   formData.details.push({
+    ...createVarietyState(),
     inputType: '',
     inputCategory: '',
     variety: '',
+    season: '',
     quantity: 0,
     unit: '',
-    unitPrice: 0,
-    totalPrice: 0,
     unitPrice: 0,
     totalPrice: 0,
     maxQuantity: null,
@@ -656,18 +790,8 @@ const handleSubmit = async () => {
         ...formData,
         releaseYear: formData.releaseYear ? parseInt(formData.releaseYear, 10) : null,
         releaseDate: formData.releaseDate,
-        details: formData.details.map(detail => ({
-          inputType: detail.inputType,
-          inputCategory: detail.inputCategory,
-          quantity: detail.quantity,
-          unit: detail.unit,
-          unitPrice: detail.unitPrice,
-          totalPrice: detail.totalPrice,
-          releaseTime: formatDateTime(detail.releaseTime),
-          outWarehouseCode: detail.outWarehouseCode,
-          outWarehouseName: detail.outWarehouseName,
-          inWarehouseCode: detail.inWarehouseCode,
-          inWarehouseName: detail.inWarehouseName
+        details: formData.details.map(({ varietyOptions, varietyLoading, ...detail }) => ({
+          ...detail
         }))
       }
 
@@ -685,6 +809,48 @@ const handleSubmit = async () => {
       loading.value = false
     }
   })
+}
+
+const SEASON_LABEL_MAP = {
+  '1': 'Summer',
+  '2': 'Spring',
+  '3': 'Irrigation'
+}
+
+const seasonOptions = [
+  { label: 'Summer', value: '1' },
+  { label: 'Spring', value: '2' },
+  { label: 'Irrigation', value: '3' }
+]
+
+const formatSeason = (season) => {
+  const normalizedSeason = String(season || '').trim()
+  return SEASON_LABEL_MAP[normalizedSeason] || '-'
+}
+
+// 获取需求数量
+const getDemandQuantity = (inputType, inputCategory, season = '') => {
+  const inputTypeLabel = getMainCategoryLabel(inputType)
+  const inputCategoryLabel = getSubCategoryLabel(inputCategory)
+  const normalizedSeason = season ? String(season).trim() : ''
+  const item = demandList.value.find(d => {
+    const matchType = matchesDemandValue(d.inputType, inputType, inputTypeLabel)
+    const matchCategory = matchesDemandValue(d.inputCategory, inputCategory, inputCategoryLabel)
+    const demandSeason = d.season ? String(d.season).trim() : ''
+    const matchSeason = !normalizedSeason || !demandSeason || demandSeason === normalizedSeason
+    return matchType && matchCategory && matchSeason
+  })
+  return item ? item.totalQuantity : 0
+}
+
+const handleSeasonChange = (index) => {
+  const detail = formData.details[index]
+  if (!detail) return
+  detail.quantity = 0
+  detail.maxQuantity = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season) || 999999
+  if (isStockLookupReady(detail)) {
+    fetchStock(index)
+  }
 }
 
 const handleBack = () => {

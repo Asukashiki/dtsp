@@ -78,6 +78,11 @@
                     {{ row.variety || '-' }}
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" prop="season" min-width="140">
+                  <template #default="{ row }">
+                    {{ formatSeason(row.season) }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
             </el-table>
           </div>
@@ -93,28 +98,39 @@
           </div>
           <div class="card-body">
             <el-table :data="detailData.details" border>
-              <el-table-column type="index" width="50" />
-              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="150">
+              <el-table-column type="index" width="80" />
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputType')" min-width="180">
                 <template #default="{ row }">
                   {{ getMainCategoryLabel(row.inputType) }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="150">
+              <el-table-column :label="$t('districtAggregation.detailDialog.columns.inputCategory')" min-width="180">
                 <template #default="{ row }">
                   {{ getSubCategoryLabel(row.inputCategory) }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('farmerDemand.form.variety')" prop="variety" min-width="150" />
-              <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" min-width="100" />
-              <el-table-column :label="$t('inputCirculation.unit')" min-width="100">
+              <el-table-column :label="$t('farmerDemand.form.variety')" prop="variety" min-width="160">
+                <template #default="{ row }">
+                  {{ row.variety || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="season" :label="$t('farmerDemand.form.season')" min-width="160">
+                <template #default="{ row }">
+                  {{ formatSeason(row.season) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="demandQuantity" :label="$t('inputCirculation.demandQuantity')" min-width="140" />
+              <el-table-column prop="currentStock" :label="$t('inputCirculation.currentStock')" min-width="140" />
+              <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" min-width="180" />
+              <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
                 <template #default="{ row }">
                   {{ getLabelByValue('agri_unit', row.unit) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" min-width="100" />
-              <el-table-column prop="outWarehouseName" :label="$t('inputCirculation.outWarehouse')" min-width="140" />
-              <el-table-column prop="inWarehouseName" :label="$t('inputCirculation.inWarehouse')" min-width="140" />
-              <el-table-column prop="totalPrice" :label="$t('inputCirculation.totalPrice')" min-width="120" />
+              <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" min-width="150" />
+              <el-table-column prop="outWarehouseCode" :label="$t('inputCirculation.outWarehouse')" min-width="180" />
+              <el-table-column prop="inWarehouseCode" :label="$t('inputCirculation.inWarehouse')" min-width="180" />
+              <el-table-column prop="totalPrice" :label="$t('inputCirculation.totalPrice')" min-width="140" />
             </el-table>
           </div>
         </div>
@@ -128,13 +144,16 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getFarmerReleaseDetail } from '@/api/inputCirculation'
+import { getFarmerReleaseDetail, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { getDicts } from '@/api/system/dict'
 import { useDict } from '@/hooks/useDict'
 import { parseI18nValue } from '@/utils/i18nHelper'
+import { useUserStore } from '@/store/user'
 
 const { getLabelByValue } = useDict(['agri_unit'])
+
+const userStore = useUserStore()
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -162,12 +181,77 @@ const fetchDetail = async () => {
       if (farmerId) {
         await loadDemandList(farmerId)
       }
+      // 从需求列表获取 demandQuantity
+      updateDemandQuantity()
+      // 获取当前库存
+      await fetchCurrentStock()
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
   } finally {
     loading.value = false
   }
+}
+
+const updateDemandQuantity = () => {
+  detailData.value.details = detailData.value.details.map(detail => {
+    const inputTypeLabel = getMainCategoryLabel(detail.inputType)
+    const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
+    const matchedDemand = demandList.value.find(d => {
+      const matchType = getMainCategoryLabel(d.inputType) === inputTypeLabel
+      const matchCategory = getSubCategoryLabel(d.inputCategory) === inputCategoryLabel
+      return matchType && matchCategory
+    })
+    return {
+      ...detail,
+      demandQuantity: matchedDemand?.totalQuantity || detail.demandQuantity || 0
+    }
+  })
+}
+
+const normalizeStockItem = (item) => {
+  if (!item) return null
+  return {
+    mainCategory: item.mainCategory ?? item.main_category ?? '',
+    subCategory: item.subCategory ?? item.sub_category ?? '',
+    productName: item.productName ?? item.product_name ?? '',
+    availableQty: item.availableQty ?? item.available_qty ?? item.availableQuantity ?? 0
+  }
+}
+
+const findMatchedStockItem = (items, inputTypeLabel, inputCategoryLabel, variety) => {
+  const normalizedVariety = (variety || '').trim()
+  return (items || [])
+    .map(normalizeStockItem)
+    .find(item => item &&
+      item.mainCategory === inputTypeLabel &&
+      item.subCategory === inputCategoryLabel &&
+      (!normalizedVariety || !item.productName.trim() || item.productName.trim() === normalizedVariety))
+}
+
+const fetchCurrentStock = async () => {
+  const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
+  if (!deptId) return
+
+  const detailsWithStock = await Promise.all(detailData.value.details.map(async (detail) => {
+    if (!detail.inputType || !detail.inputCategory || !detail.variety) {
+      return { ...detail, currentStock: 0 }
+    }
+    try {
+      const inputTypeLabel = getMainCategoryLabel(detail.inputType)
+      const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
+      const res = await getDeptCategoryStock(deptId, inputTypeLabel, inputCategoryLabel, detail.variety)
+      if (res.code === 200 && Array.isArray(res.data)) {
+        const matched = findMatchedStockItem(res.data, inputTypeLabel, inputCategoryLabel, detail.variety)
+        return { ...detail, currentStock: matched?.availableQty ?? 0 }
+      }
+    } catch (error) {
+      console.error('Failed to fetch stock:', error)
+    }
+    return { ...detail, currentStock: 0 }
+  }))
+
+  detailData.value.details = detailsWithStock
 }
 
 const loadDemandList = async (farmerId) => {
@@ -219,12 +303,26 @@ const getSubCategoryLabel = (value) => {
   return match ? match.label : value || '-'
 }
 
+const SEASON_LABEL_MAP = {
+  '1': 'Summer',
+  '2': 'Spring',
+  '3': 'Irrigation'
+}
+
+const formatSeason = (season) => {
+  const normalizedSeason = String(season || '').trim()
+  return SEASON_LABEL_MAP[normalizedSeason] || '-'
+}
+
 const normalizeDetails = (list) => {
   if (!Array.isArray(list)) return []
   return list.map(item => ({
     ...item,
     inputType: item.inputType ?? item.input_type,
     inputCategory: item.inputCategory ?? item.input_category,
+    season: item.season || item.seasonCode || item.season_code || '',
+    variety: item.variety || '',
+    demandQuantity: item.demandQuantity ?? item.demand_quantity,
     unitPrice: item.unitPrice ?? item.unit_price,
     currentStock: item.currentStock ?? item.current_stock,
     maxQuantity: item.maxQuantity ?? item.max_quantity,

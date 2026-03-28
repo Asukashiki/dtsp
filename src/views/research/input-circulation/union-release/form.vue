@@ -94,6 +94,11 @@
                     {{ row.variety || '-' }}
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" prop="season" min-width="140">
+                  <template #default="{ row }">
+                    {{ formatSeason(row.season) }}
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('districtAggregation.detailDialog.columns.totalQuantity')" prop="totalQuantity" min-width="120" />
               </el-table>
             </div>
@@ -143,12 +148,36 @@
                 </el-table-column>
                 <el-table-column :label="$t('farmerDemand.form.variety')" min-width="160">
                   <template #default="scope">
-                    <span>{{ scope.row.variety || '-' }}</span>
+                    <el-select
+                      v-model="scope.row.varietyId"
+                      :placeholder="$t('common.pleaseSelect')"
+                      :loading="scope.row.varietyLoading"
+                      :disabled="!scope.row.inputType || !scope.row.inputCategory"
+                      clearable
+                      filterable
+                      style="width: 100%"
+                      @change="(value) => handleVarietyChange(scope.$index, value)">
+                      <el-option
+                        v-for="item in scope.row.varietyOptions || []"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('farmerDemand.form.season')" min-width="160">
+                  <template #default="scope">
+                    <el-select v-model="scope.row.season"
+                               :placeholder="$t('common.pleaseSelect')"
+                               style="width: 100%"
+                               @change="handleSeasonChange(scope.$index)">
+                      <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
                   <template #default="scope">
-                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory) }}</span>
+                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
@@ -161,9 +190,7 @@
                     <el-input-number
                       v-model="scope.row.quantity"
                       :min="0"
-                      :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory)"
                       :precision="2"
-                      @change="validateQuantity(scope.$index)"
                       style="width: 100%" />
                   </template>
                 </el-table-column>
@@ -225,6 +252,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getUnionReleaseDetail, addUnionRelease, editUnionRelease, getAvailableStock, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getInventoryWarehouseList } from '@/api/inventory'
+import { listProductManage } from '@/api/productManage'
 import { getRegistrationList } from '@/api/orgRegistration'
 import { getUnionDetailByUnionId } from '@/api/union'
 import { getCurrentUserInfo } from '@/api/user'
@@ -384,6 +412,29 @@ const getSubCategoryLabel = (value) => {
   return match?.label || value
 }
 
+const SEASON_LABEL_MAP = {
+  '1': 'Summer',
+  '2': 'Spring',
+  '3': 'Irrigation'
+}
+
+const seasonOptions = [
+  { label: 'Summer', value: '1' },
+  { label: 'Spring', value: '2' },
+  { label: 'Irrigation', value: '3' }
+]
+
+const formatSeason = (season) => {
+  const normalizedSeason = String(season || '').trim()
+  return SEASON_LABEL_MAP[normalizedSeason] || '-'
+}
+
+const createVarietyState = () => ({
+  varietyId: '',
+  varietyOptions: [],
+  varietyLoading: false
+})
+
 // Zone变化处理
 const handleZoneChange = async (value, options = {}) => {
   const { preserveTarget = false } = options
@@ -445,8 +496,10 @@ const getCoorInfo = async (value) => {
 const handleInputTypeChange = (index) => {
   const detail = formData.details[index]
   detail.inputCategory = ''
-  detail.variety = ''
+  Object.assign(detail, createVarietyState())
+  detail.season = ''
   detail.quantity = 0
+  detail.currentStock = 0
 }
 
 // 投入品类别变化处理
@@ -455,10 +508,79 @@ const handleInputCategoryChange = (index) => {
   const inputTypeLabel = getMainCategoryLabel(detail.inputType)
   const inputCategoryLabel = getSubCategoryLabel(detail.inputCategory)
   const matchedDemand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
-  detail.variety = matchedDemand?.variety || ''
-  const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory)
+  Object.assign(detail, createVarietyState())
+  detail.season = matchedDemand?.season || matchedDemand?.seasonCode || matchedDemand?.season_code || ''
+  const demandQty = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season)
   detail.quantity = 0
   detail.maxQuantity = demandQty
+  loadVarietyOptions(detail)
+}
+
+const loadVarietyOptions = async (detail, preserveSelection = false) => {
+  if (!detail) return
+
+  const existingVarietyId = detail.varietyId
+  const existingVariety = detail.variety
+
+  detail.varietyId = preserveSelection ? (existingVarietyId || '') : ''
+  detail.variety = preserveSelection ? (existingVariety || '') : ''
+  detail.varietyOptions = []
+
+  if (!detail.inputType || !detail.inputCategory) {
+    detail.varietyLoading = false
+    return
+  }
+
+  detail.varietyLoading = true
+  try {
+    const response = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: getMainCategoryLabel(detail.inputType),
+      subCategory: getSubCategoryLabel(detail.inputCategory),
+      status: '0'
+    })
+
+    const list = response.data?.list || []
+    detail.varietyOptions = list
+      .map(product => {
+        const optionValue = product.id || product.product_id || product.product_code || ''
+        const productName = product.product_name || product.productName || product.product_code || ''
+        return {
+          label: productName || '-',
+          value: optionValue,
+          productName
+        }
+      })
+      .filter(option => option.value)
+
+    if (detail.varietyId) {
+      const matchedById = detail.varietyOptions.find(option => String(option.value) === String(detail.varietyId))
+      if (matchedById) {
+        detail.variety = matchedById.productName
+      }
+    } else if (detail.variety) {
+      const matchedByName = detail.varietyOptions.find(option => option.productName === detail.variety)
+      if (matchedByName) {
+        detail.varietyId = matchedByName.value
+        detail.variety = matchedByName.productName
+      }
+    }
+  } catch (error) {
+    detail.varietyOptions = []
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    detail.varietyLoading = false
+  }
+}
+
+const handleVarietyChange = (index, value) => {
+  const detail = formData.details[index]
+  if (!detail) return
+
+  detail.varietyId = value || ''
+  const matchedOption = (detail.varietyOptions || []).find(option => String(option.value) === String(value))
+  detail.variety = matchedOption?.productName || ''
   if (!isStockLookupReady(detail)) {
     detail.currentStock = 0
     return
@@ -539,12 +661,27 @@ const getFilteredCategories = (inputType) => {
 }
 
 // 获取需求数量
-const getDemandQuantity = (inputType, inputCategory) => {
+const getDemandQuantity = (inputType, inputCategory, season = '') => {
   if (!inputType || !inputCategory) return 0
   const inputTypeLabel = getMainCategoryLabel(inputType)
   const inputCategoryLabel = getSubCategoryLabel(inputCategory)
-  const demand = demandList.value.find(d => d.inputType === inputTypeLabel && d.inputCategory === inputCategoryLabel)
+  const demand = demandList.value.find(d => {
+    const matchType = d.inputType === inputTypeLabel
+    const matchCategory = d.inputCategory === inputCategoryLabel
+    const matchSeason = !season || !d.season || d.season === season
+    return matchType && matchCategory && matchSeason
+  })
   return demand ? demand.totalQuantity : 0
+}
+
+const handleSeasonChange = (index) => {
+  const detail = formData.details[index]
+  if (!detail) return
+  detail.quantity = 0
+  detail.maxQuantity = getDemandQuantity(detail.inputType, detail.inputCategory, detail.season)
+  if (isStockLookupReady(detail)) {
+    fetchStock(index)
+  }
 }
 
 // 校验数量 - 同时检查需求量和库存
@@ -600,19 +737,32 @@ const fetchDetail = async () => {
     if (response.code === 200 && response.data) {
       Object.assign(formData, response.data.main)
       formData.details = (response.data.details || []).map(detail => ({
+        ...createVarietyState(),
         ...detail,
+        season: detail.season || detail.seasonCode || detail.season_code || '',
+        variety: detail.variety || '',
+        varietyId: detail.varietyId || detail.variety_id || '',
         currentStock: detail.currentStock ?? detail.current_stock ?? 0
       }))
       if (formData.zoneId) {
         await handleZoneChange(formData.zoneId, { preserveTarget: true })
       }
-      await initializeDetailStocks()
+      await initializeDetailRows()
     }
   } catch (error) {
     ElMessage.error(t('common.queryFailed'))
   } finally {
     loading.value = false
   }
+}
+
+const initializeDetailRows = async () => {
+  await Promise.all(formData.details.map((detail, index) => {
+    if (detail.inputType && detail.inputCategory) {
+      return handleInputCategoryChange(index)
+    }
+    return Promise.resolve()
+  }))
 }
 
 const addDetail = () => {
@@ -624,9 +774,11 @@ const addDetail = () => {
   // 默认选择第一个单位
   const defaultUnit = options.value.agri_unit?.[0]?.value || ''
   formData.details.push({
+    ...createVarietyState(),
     inputType: '',
     inputCategory: '',
     variety: '',
+    season: '',
     quantity: 0,
     unit: defaultUnit,
     unitPrice: 0,
@@ -707,7 +859,9 @@ const handleSubmit = async () => {
       }
 
       const apiFunc = isEdit.value ? editUnionRelease : addUnionRelease
-      const response = await apiFunc(formData)
+      const submitData = { ...formData }
+      submitData.details = formData.details.map(({ varietyOptions, varietyLoading, ...detail }) => ({ ...detail }))
+      const response = await apiFunc(submitData)
       if (response.code === 200) {
         ElMessage.success(t('common.saveSuccess'))
         router.back()
