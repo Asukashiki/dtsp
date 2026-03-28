@@ -161,14 +161,19 @@
                       </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('farmerDemand.form.season')" min-width="140">
+                <el-table-column :label="$t('farmerDemand.form.season')" min-width="160">
                   <template #default="scope">
-                    <span>{{ formatSeason(getDetailSeason(scope.row)) }}</span>
+                    <el-select v-model="scope.row.season"
+                               :placeholder="$t('common.pleaseSelect')"
+                               style="width: 100%"
+                               @change="handleSeasonChange(scope.$index)">
+                      <el-option v-for="item in seasonOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.demandQuantity')" min-width="140">
                   <template #default="scope">
-                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season) }}</span>
+                    <span>{{ getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.variety, scope.row.season) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('inputCirculation.currentStock')" min-width="140">
@@ -181,9 +186,7 @@
                     <el-input-number
                       v-model="scope.row.quantity"
                       :min="0"
-                      :max="getDemandQuantity(scope.row.inputType, scope.row.inputCategory, scope.row.season)"
                       :precision="2"
-                      @change="validateQuantity(scope.$index)"
                       style="width: 100%" />
                   </template>
                 </el-table-column>
@@ -333,6 +336,12 @@ const SEASON_LABEL_MAP = {
   '3': 'Irrigation'
 }
 
+const seasonOptions = [
+  { label: 'Irrigation', value: '3' },
+  { label: 'Spring', value: '2' },
+  { label: 'Summer', value: '1' }
+]
+
 const formatSeason = (season) => {
   const normalizedSeason = String(season || '').trim()
   return SEASON_LABEL_MAP[normalizedSeason] || '-'
@@ -348,18 +357,21 @@ const matchesDemandValue = (demandValue, targetValue, targetLabel) => {
   return normalizedDemand === normalizedTarget || normalizedDemand === normalizedLabel
 }
 
-const findMatchedDemand = (inputType, inputCategory, season = '') => {
+const findMatchedDemand = (inputType, inputCategory, variety = '', season = '') => {
   if (!inputType || !inputCategory) return null
 
   const inputTypeLabel = getMainCategoryLabel(inputType)
   const inputCategoryLabel = getSubCategoryLabel(inputCategory)
   const normalizedSeason = getNormalizedSeasonCode(season)
+  const normalizedVariety = (variety || '').trim()
 
   return demandList.value.find(d => {
     const demandSeason = getNormalizedSeasonCode(d.season || d.seasonCode || d.season_code)
+    const demandVariety = (d.variety || '').trim()
     return matchesDemandValue(d.inputType, inputType, inputTypeLabel) &&
       matchesDemandValue(d.inputCategory, inputCategory, inputCategoryLabel) &&
-      (!normalizedSeason || demandSeason === normalizedSeason)
+      (!normalizedSeason || demandSeason === normalizedSeason) &&
+      (!normalizedVariety || !demandVariety || demandVariety === normalizedVariety)
   }) || null
 }
 
@@ -719,9 +731,9 @@ const getSubCategoryLabel = (value) => {
 }
 
 // 获取需求数量
-const getDemandQuantity = (inputType, inputCategory, season = '') => {
+const getDemandQuantity = (inputType, inputCategory, variety = '', season = '') => {
   if (!inputType || !inputCategory) return 0
-  const demand = findMatchedDemand(inputType, inputCategory, season)
+  const demand = findMatchedDemand(inputType, inputCategory, variety, season)
   return demand ? demand.totalQuantity : 0
 }
 
@@ -845,7 +857,7 @@ const createEmptyDetail = () => ({
   variety: '',
   ...createVarietyState(),
   quantity: 0,
-  unit: '',
+  unit: options.value.agri_unit?.[0]?.value || '',
   unitPrice: 0,
   maxQuantity: 0,
   currentStock: 0,
