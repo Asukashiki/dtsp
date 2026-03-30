@@ -1,7 +1,7 @@
-<template>
+﻿<template>
   <div class="page-container">
     <div class="page-wrapper">
-      <!-- 页面头部（带返回按钮） -->
+      <!-- 椤甸潰澶撮儴锛堝甫杩斿洖鎸夐挳锛?-->
       <div class="page-header">
         <div class="header-left">
           <el-button class="back-btn" @click="handleBack">
@@ -13,10 +13,10 @@
         </div>
       </div>
 
-      <!-- 表单区域 -->
+      <!-- 琛ㄥ崟鍖哄煙 -->
       <div class="content-wrapper">
         <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" v-loading="loading">
-          <!-- 基本信息卡片 -->
+          <!-- 鍩烘湰淇℃伅鍗＄墖 -->
           <div class="info-card">
             <div class="card-header">
               <div class="card-title">
@@ -69,7 +69,7 @@
             </div>
           </div>
 
-          <!-- 需求选择卡片 -->
+          <!-- 闇€姹傞€夋嫨鍗＄墖 -->
           <div class="info-card">
             <div class="card-header">
               <div class="card-title">
@@ -104,7 +104,7 @@
             </div>
           </div>
 
-          <!-- 分发明细卡片 -->
+          <!-- 鍒嗗彂鏄庣粏鍗＄墖 -->
           <div class="info-card">
             <div class="card-header">
               <div class="card-title">
@@ -210,7 +210,7 @@
                   <template #default="scope">
                     <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
                       @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                      <el-option v-for="item in inWarehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -231,7 +231,7 @@
             </div>
           </div>
 
-          <!-- 操作按钮区域（固定在底部） -->
+          <!-- 鎿嶄綔鎸夐挳鍖哄煙锛堝浐瀹氬湪搴曢儴锛?-->
           <div class="form-actions">
             <el-button v-for="button in getActionButtons()" :key="button.action"
               :type="button.type" @click="handleAction(button.action)"
@@ -274,24 +274,24 @@ const loading = ref(false)
 const formRef = ref(null)
 const isEdit = computed(() => !!route.params.id)
 
-// 根据路由路径和参数判断页面模式
+// 鏍规嵁璺敱璺緞鍜屽弬鏁板垽鏂〉闈㈡ā寮?
 const pageMode = computed(() => {
-  // 优先使用 query 参数
+  // 浼樺厛浣跨敤 query 鍙傛暟
   if (route.query.mode) {
     return route.query.mode
   }
-  // 根据路由路径判断
+  // 鏍规嵁璺敱璺緞鍒ゆ柇
   if (route.path.includes('/audit/')) {
     return 'audit'
   }
   if (route.path.includes('/detail/')) {
     return 'view'
   }
-  // 默认逻辑
+  // 榛樿閫昏緫
   return isEdit.value ? 'edit' : 'add'
 })
 
-// 页面标题
+// 椤甸潰鏍囬
 const pageTitle = computed(() => {
   switch (pageMode.value) {
     case 'edit':
@@ -326,6 +326,7 @@ const coorList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const warehouseOptions = ref([])
+const inWarehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 
@@ -368,13 +369,137 @@ const getSubRegionByCode = async (code) => {
   }
 }
 
+const normalizeId = (value) => {
+  if (value === undefined || value === null) return ''
+  return String(value).trim()
+}
+
+const normalizeName = (value) => normalizeId(value).toLowerCase()
+
+const getCurrentUserOrgId = () => {
+  const userInfo = userStore.userInfo || {}
+  const user = userInfo.user || {}
+  return normalizeId(
+    userInfo.org_id ??
+    userInfo.orgId ??
+    user.org_id ??
+    user.orgId ??
+    userInfo.deptId ??
+    user.deptId ??
+    userInfo.dept?.deptId ??
+    user.dept?.deptId
+  )
+}
+
+const getWarehouseOrgId = (warehouse) => {
+  return normalizeId(
+    warehouse?.org_id ??
+    warehouse?.orgId ??
+    warehouse?.deptId ??
+    warehouse?.organCode ??
+    warehouse?.orgCode
+  )
+}
+
+const getWarehouseOrgName = (warehouse) => {
+  return normalizeName(
+    warehouse?.orgName ??
+    warehouse?.org_name ??
+    warehouse?.organName ??
+    warehouse?.organ_name
+  )
+}
+
+const clearInWarehouseSelection = () => {
+  inWarehouseOptions.value = []
+  formData.details.forEach(detail => {
+    detail.inWarehouseCode = ''
+    detail.inWarehouseName = ''
+  })
+}
+
 const loadWarehouses = async () => {
   try {
-    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
-    warehouseOptions.value = res.rows || []
+    const currentUserOrgId = getCurrentUserOrgId()
+    if (!currentUserOrgId) {
+      warehouseOptions.value = []
+      formData.details.forEach(detail => {
+        detail.outWarehouseCode = ''
+        detail.outWarehouseName = ''
+      })
+      return
+    }
+
+    const res = await getInventoryWarehouseList({
+      pageNum: 1,
+      pageSize: 10000,
+      orgId: currentUserOrgId,
+      org_id: currentUserOrgId
+    })
+    const warehouseList = res.rows || []
+    const hasWarehouseOrgId = warehouseList.some(item => !!getWarehouseOrgId(item))
+    warehouseOptions.value = hasWarehouseOrgId
+      ? warehouseList.filter(item => getWarehouseOrgId(item) === currentUserOrgId)
+      : warehouseList
+
+    formData.details.forEach(detail => {
+      const exists = warehouseOptions.value.some(item => item.warehouseCode === detail.outWarehouseCode)
+      if (!exists) {
+        detail.outWarehouseCode = ''
+        detail.outWarehouseName = ''
+      }
+    })
   } catch (error) {
     console.error('Failed to load warehouse list:', error)
     warehouseOptions.value = []
+  }
+}
+
+const loadInWarehousesByCooperative = async (cooperativeId = formData.targetId) => {
+  const cooperativeValue = normalizeId(cooperativeId)
+  if (!cooperativeValue) {
+    clearInWarehouseSelection()
+    return
+  }
+
+  const matchedCooperative = coorList.value.find(item =>
+    String(item.code) === String(cooperativeId) || String(item.name) === String(cooperativeId)
+  )
+  const cooperativeOrgId = normalizeId(matchedCooperative?.code)
+  const cooperativeNameRaw = normalizeId(matchedCooperative?.name ?? cooperativeValue)
+  if (!cooperativeOrgId && !cooperativeNameRaw) {
+    clearInWarehouseSelection()
+    return
+  }
+  const cooperativeName = normalizeName(cooperativeNameRaw)
+
+  try {
+    const res = await getInventoryWarehouseList({
+      pageNum: 1,
+      pageSize: 10000,
+      status: '0',
+      orgId: cooperativeOrgId || undefined,
+      org_id: cooperativeOrgId || undefined,
+      orgName: cooperativeNameRaw || undefined,
+      org_name: cooperativeNameRaw || undefined
+    })
+
+    const warehouseList = res.rows || []
+    const hasWarehouseOrgName = cooperativeName && warehouseList.some(item => !!getWarehouseOrgName(item))
+    inWarehouseOptions.value = hasWarehouseOrgName
+      ? warehouseList.filter(item => getWarehouseOrgName(item) === cooperativeName)
+      : warehouseList
+
+    formData.details.forEach(detail => {
+      const exists = inWarehouseOptions.value.some(item => item.warehouseCode === detail.inWarehouseCode)
+      if (!exists) {
+        detail.inWarehouseCode = ''
+        detail.inWarehouseName = ''
+      }
+    })
+  } catch (error) {
+    console.error('Failed to load inbound warehouse list by cooperative:', error)
+    clearInWarehouseSelection()
   }
 }
 
@@ -435,23 +560,24 @@ const createVarietyState = () => ({
   varietyLoading: false
 })
 
-// Zone变化处理
+// Zone鍙樺寲澶勭悊
 const handleZoneChange = async (value, options = {}) => {
   const { preserveTarget = false } = options
   if (!preserveTarget) {
-    // 清空目标相关字段
     formData.targetId = ''
     formData.targetAddress = ''
     formData.targetContact = ''
     formData.targetPhone = ''
+    clearInWarehouseSelection()
   }
   await getAllCoopList(value)
+  if (preserveTarget && formData.targetId) {
+    await loadInWarehousesByCooperative(formData.targetId)
+  }
   await loadDemandList(value)
 }
 
 // This method is now consolidated into getAllCoopList below
-
-// 加载需求列表
 const loadDemandList = async (code) => {
   demandLoading.value = true
   try {
@@ -469,7 +595,7 @@ const loadDemandList = async (code) => {
   }
 }
 
-// 处理年度变化 - 重新加载需求列表
+// 澶勭悊骞村害鍙樺寲 - 閲嶆柊鍔犺浇闇€姹傚垪琛?
 const handleYearChange = () => {
   if (formData.zoneId) {
     loadDemandList(formData.zoneId)
@@ -477,7 +603,10 @@ const handleYearChange = () => {
 }
 
 const getCoorInfo = async (value) => {
-  if (!value || value.length === 0) return
+  if (!value || value.length === 0) {
+    clearInWarehouseSelection()
+    return
+  }
   loading.value = true
   try {
     const response = await getUnionDetailByUnionId(value)
@@ -485,6 +614,7 @@ const getCoorInfo = async (value) => {
       formData.targetAddress = response.data.baseInfo?.fullAddress || response.data.fullAddress
       formData.targetContact = response.data.baseInfo?.contactName || response.data.operator
     }
+    await loadInWarehousesByCooperative(value)
   } catch (error) {
     ElMessage.error(t('union.getUnionInfoFailed'))
   } finally {
@@ -492,7 +622,7 @@ const getCoorInfo = async (value) => {
   }
 }
 
-// 投入品类型变化处理
+// 鎶曞叆鍝佺被鍨嬪彉鍖栧鐞?
 const handleInputTypeChange = (index) => {
   const detail = formData.details[index]
   detail.inputCategory = ''
@@ -502,7 +632,7 @@ const handleInputTypeChange = (index) => {
   detail.currentStock = 0
 }
 
-// 投入品类别变化处理
+// 鎶曞叆鍝佺被鍒彉鍖栧鐞?
 const handleInputCategoryChange = (index) => {
   const detail = formData.details[index]
   const inputTypeLabel = getMainCategoryLabel(detail.inputType)
@@ -622,7 +752,7 @@ const initializeDetailStocks = async () => {
   }))
 }
 
-// 获取库存
+// 鑾峰彇搴撳瓨
 const fetchStock = async (index) => {
   const detail = formData.details[index]
   if (!isStockLookupReady(detail)) {
@@ -654,13 +784,13 @@ const fetchStock = async (index) => {
   }
 }
 
-// 根据投入品类型过滤投入品类别
+// 鏍规嵁鎶曞叆鍝佺被鍨嬭繃婊ゆ姇鍏ュ搧绫诲埆
 const getFilteredCategories = (inputType) => {
   if (!inputType) return []
   return subCategoryOptions.value.filter(item => String(item.parentValue) === String(inputType))
 }
 
-// 获取需求数量
+// 鑾峰彇闇€姹傛暟閲?
 const getDemandQuantity = (inputType, inputCategory, season = '') => {
   if (!inputType || !inputCategory) return 0
   const inputTypeLabel = getMainCategoryLabel(inputType)
@@ -684,12 +814,12 @@ const handleSeasonChange = (index) => {
   }
 }
 
-// 校验数量 - 同时检查需求量和库存
+// 鏍￠獙鏁伴噺 - 鍚屾椂妫€鏌ラ渶姹傞噺鍜屽簱瀛?
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
   if (!detail.inputType) return
 
-  // 校验需求量
+  // 鏍￠獙闇€姹傞噺
   const maxQty = getDemandQuantity(detail.inputType, detail.inputCategory)
   if (detail.quantity > maxQty) {
     detail.quantity = maxQty
@@ -697,7 +827,7 @@ const validateQuantity = async (index) => {
     return
   }
 
-  // 校验库存 - 计算表单中同类型的总数量
+  // 鏍￠獙搴撳瓨 - 璁＄畻琛ㄥ崟涓悓绫诲瀷鐨勬€绘暟閲?
   const totalFormQuantity = formData.details
     .filter(d => d.inputType === detail.inputType &&
                 (d.inputCategory === detail.inputCategory || (!d.inputCategory && !detail.inputCategory)) &&
@@ -766,12 +896,12 @@ const initializeDetailRows = async () => {
 }
 
 const addDetail = () => {
-  // 检查是否有需求数据
+  // 妫€鏌ユ槸鍚︽湁闇€姹傛暟鎹?
   if (!demandList.value || demandList.value.length === 0) {
     ElMessage.warning(t('inputCirculation.noDemandCannotAdd'))
     return
   }
-  // 默认选择第一个单位
+  // 榛樿閫夋嫨绗竴涓崟浣?
   const defaultUnit = options.value.agri_unit?.[0]?.value || ''
   formData.details.push({
     ...createVarietyState(),
@@ -801,7 +931,7 @@ const handleDetailOutWarehouseChange = (row, code) => {
 }
 
 const handleDetailInWarehouseChange = (row, code) => {
-  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  const warehouse = inWarehouseOptions.value.find(item => item.warehouseCode === code)
   row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
 }
 
@@ -810,7 +940,7 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (!valid) return
 
-    // 验证分发数量不能为0
+    // 楠岃瘉鍒嗗彂鏁伴噺涓嶈兘涓?
     const zeroQuantityDetail = formData.details.find(d => !d.quantity || d.quantity <= 0)
     if (zeroQuantityDetail) {
       ElMessage.warning(t('inputCirculation.quantityCannotBeZero'))
@@ -821,7 +951,7 @@ const handleSubmit = async () => {
     try {
       const deptId = userStore.userInfo?.deptId || userStore.userInfo?.user?.deptId
       if (!deptId) {
-        ElMessage.error(t('inputCirculation.organCodeMissing') || '无法获取机构编码')
+        ElMessage.error(t('inputCirculation.organCodeMissing') || '鏃犳硶鑾峰彇鏈烘瀯缂栫爜')
         loading.value = false
         return
       }
@@ -908,11 +1038,11 @@ const handleBack = () => {
   router.back()
 }
 
-// 根据页面模式返回不同的按钮
+// 鏍规嵁椤甸潰妯″紡杩斿洖涓嶅悓鐨勬寜閽?
 const getActionButtons = () => {
   const mode = pageMode.value
 
-  // 新建/编辑模式
+  // 鏂板缓/缂栬緫妯″紡
   if (mode === 'add' || mode === 'edit') {
     return [
       { type: '', label: 'cancel', action: 'cancel' },
@@ -920,14 +1050,14 @@ const getActionButtons = () => {
     ]
   }
 
-  // 默认按钮
+  // 榛樿鎸夐挳
   return [
     { type: '', label: 'cancel', action: 'cancel' },
     { type: 'primary', label: 'save', action: 'save' }
   ]
 }
 
-// 统一的动作处理方法
+// 缁熶竴鐨勫姩浣滃鐞嗘柟娉?
 const handleAction = (action) => {
   switch (action) {
     case 'cancel':
@@ -952,3 +1082,4 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 </style>
+

@@ -22,11 +22,11 @@
 
               <el-col :xs="24" :sm="12" :md="8">
                 <el-form-item :label="$t('inventory.inbound.warehouse')" prop="warehouseCode">
-                  <el-select 
-                    v-model="form.warehouseCode" 
-                    :placeholder="$t('inventory.inbound.warehouse')" 
-                    style="width: 100%" 
-                    filterable 
+                  <el-select
+                    v-model="form.warehouseCode"
+                    :placeholder="$t('inventory.inbound.warehouse')"
+                    style="width: 100%"
+                    filterable
                     :disabled="isWarehouseReadonly"
                     @change="handleWarehouseChange">
                     <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
@@ -145,7 +145,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { ElMessage } from 'element-plus'
-import { addInbound, getInboundDetail, updateInbound, getWarehouseOptions, getInventoryProductList } from '@/api/inventory'
+import { addInbound, getInboundDetail, updateInbound, getWarehouseOptionsByOrg, getInventoryProductList } from '@/api/inventory'
 import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { useUserStore } from '@/store/user'
@@ -302,11 +302,56 @@ const handleWarehouseChange = (val) => {
   }
 }
 
+const normalizeId = (value) => {
+  if (value === undefined || value === null) return ''
+  return String(value).trim()
+}
+
+const getCurrentUserOrgId = () => {
+  const userInfo = userStore.userInfo || {}
+  const user = userInfo.user || {}
+  return normalizeId(
+    userInfo.org_id ??
+    userInfo.orgId ??
+    user.org_id ??
+    user.orgId ??
+    userInfo.deptId ??
+    user.deptId ??
+    userInfo.dept?.deptId ??
+    user.dept?.deptId
+  )
+}
+
+const getWarehouseOrgId = (warehouse) => {
+  return normalizeId(
+    warehouse?.org_id ??
+    warehouse?.orgId ??
+    warehouse?.deptId ??
+    warehouse?.organCode ??
+    warehouse?.orgCode
+  )
+}
+
 const loadWarehouses = async () => {
   try {
-    const res = await getWarehouseOptions({ status: '0' })
-    warehouseOptions.value = res.data || []
-    
+    const currentUserOrgId = getCurrentUserOrgId()
+    if (!currentUserOrgId) {
+      warehouseOptions.value = []
+      form.warehouseCode = ''
+      form.warehouseName = ''
+      return
+    }
+    const res = await getWarehouseOptionsByOrg({
+      status: '0',
+      orgId: currentUserOrgId,
+      org_id: currentUserOrgId
+    })
+    const warehouseList = res.data || []
+    const hasWarehouseOrgId = warehouseList.some(item => !!getWarehouseOrgId(item))
+    warehouseOptions.value = hasWarehouseOrgId
+      ? warehouseList.filter(item => getWarehouseOrgId(item) === currentUserOrgId)
+      : warehouseList
+
     // 新增模式：自动选择用户有权限的最新仓库
     if (!isEdit.value && warehouseOptions.value.length > 0) {
       // 按创建时间降序排序，取最新创建的仓库
@@ -315,7 +360,7 @@ const loadWarehouses = async () => {
         const timeB = b.createTime || b.create_time || 0
         return new Date(timeB) - new Date(timeA)
       })
-      
+
       const latestWarehouse = sortedWarehouses[0]
       if (latestWarehouse) {
         form.warehouseCode = latestWarehouse.warehouseCode
@@ -536,7 +581,7 @@ const handleSubmit = () => {
 onMounted(async () => {
   // 重置仓库只读状态
   isWarehouseReadonly.value = false
-  
+
   await loadWarehouses()
   await loadProducts()
   await loadDictionaries()
@@ -616,3 +661,4 @@ onMounted(async () => {
   }
 }
 </style>
+

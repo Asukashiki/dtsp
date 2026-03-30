@@ -196,22 +196,6 @@
                       @change="calculateTotalPrice(scope.$index)" style="width: 100%" />
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('inputCirculation.outWarehouse')" min-width="180">
-                  <template #default="scope">
-                    <el-select v-model="scope.row.outWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
-                      @change="(val) => handleDetailOutWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
-                    </el-select>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('inputCirculation.inWarehouse')" min-width="180">
-                  <template #default="scope">
-                    <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
-                      @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
-                    </el-select>
-                  </template>
-                </el-table-column>
                 <el-table-column :label="$t('inputCirculation.totalPrice')" min-width="140">
                   <template #default="scope">
                     <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
@@ -298,8 +282,6 @@ const farmerList = ref([])
 // 需求列表
 const demandList = ref([])
 const demandLoading = ref(false)
-const warehouseOptions = ref([])
-
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 const inputTypeOptions = computed(() => mainCategoryOptions.value)
@@ -332,16 +314,6 @@ const fetchFarmerList = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch farmer list:', error)
-  }
-}
-
-const loadWarehouses = async () => {
-  try {
-    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
-    warehouseOptions.value = res.rows || []
-  } catch (error) {
-    console.error('Failed to load warehouse list:', error)
-    warehouseOptions.value = []
   }
 }
 
@@ -713,16 +685,6 @@ const removeDetail = (index) => {
   formData.details.splice(index, 1)
 }
 
-const handleDetailOutWarehouseChange = (row, code) => {
-  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
-  row.outWarehouseName = warehouse ? warehouse.warehouseName : ''
-}
-
-const handleDetailInWarehouseChange = (row, code) => {
-  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
-  row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
-}
-
 const formatDateTime = (dateStr) => {
   if (!dateStr) return null
   if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateStr)) {
@@ -912,7 +874,6 @@ const loadCategoryOptions = async () => {
 
 onMounted(async () => {
   await fetchFarmerList()
-  await loadWarehouses()
   await loadCategoryOptions()
   if (!isEdit.value) {
     const userInfo = userStore.userInfo

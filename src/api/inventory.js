@@ -47,6 +47,22 @@ export const getInventoryWarehouseList = (params = {}) => {
     pageNum: params.pageNum || 1,
     pageSize: params.pageSize || 10000
   }
+  if (params.status !== undefined && params.status !== null && params.status !== '') {
+    requestParams.status = params.status
+  }
+  if (params.orgId !== undefined && params.orgId !== null && params.orgId !== '') {
+    requestParams.orgId = params.orgId
+  }
+  if (params.org_id !== undefined && params.org_id !== null && params.org_id !== '') {
+    requestParams.org_id = params.org_id
+  }
+  if (params.orgName !== undefined && params.orgName !== null && params.orgName !== '') {
+    requestParams.orgName = params.orgName
+  }
+  if (params.org_name !== undefined && params.org_name !== null && params.org_name !== '') {
+    requestParams.org_name = params.org_name
+  }
+
   return agricultureRequest({
     url: '/inventory/inventory-warehouse/list',
     method: 'get',
@@ -84,9 +100,37 @@ export const createOpenOutbound = (data) => {
 export const getWarehouseOptions = (params = {}) => {
   const requestParams = {}
   if (params.status) requestParams.status = params.status
+  if (params.orgId !== undefined && params.orgId !== null && params.orgId !== '') {
+    requestParams.orgId = params.orgId
+  }
+  if (params.org_id !== undefined && params.org_id !== null && params.org_id !== '') {
+    requestParams.org_id = params.org_id
+  }
 
   return agricultureRequest({
     url: '/inventory/warehouse-manage/options',
+    method: 'get',
+    params: requestParams
+  }).then(res => {
+    return res
+  })
+}
+
+/**
+ * 查询仓库选项（按当前登录用户组织ID强制过滤）
+ */
+export const getWarehouseOptionsByOrg = (params = {}) => {
+  const requestParams = {}
+  if (params.status) requestParams.status = params.status
+  if (params.orgId !== undefined && params.orgId !== null && params.orgId !== '') {
+    requestParams.orgId = params.orgId
+  }
+  if (params.org_id !== undefined && params.org_id !== null && params.org_id !== '') {
+    requestParams.org_id = params.org_id
+  }
+
+  return agricultureRequest({
+    url: '/inventory/warehouse-manage/options-by-org',
     method: 'get',
     params: requestParams
   }).then(res => {

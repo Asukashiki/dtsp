@@ -40,7 +40,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('inputCirculation.unionId')" prop="targetId">
-                    <el-select v-model="formData.targetId" :placeholder="$t('common.pleaseSelect')" @change="getUnionInfo" style="width: 100%">
+                    <el-select v-model="selectedUnionOrgName" :placeholder="$t('common.pleaseSelect')" @change="getUnionInfo" style="width: 100%">
                       <el-option v-for="item in unionList" :key="item.code" :label="item.name" :value="item.code" />
                     </el-select>
                   </el-form-item>
@@ -209,7 +209,7 @@
                   <template #default="scope">
                     <el-select v-model="scope.row.inWarehouseCode" :placeholder="$t('common.pleaseSelect')" style="width: 100%"
                       @change="(val) => handleDetailInWarehouseChange(scope.row, val)">
-                      <el-option v-for="item in warehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
+                      <el-option v-for="item in inWarehouseOptions" :key="item.warehouseCode" :label="item.warehouseName" :value="item.warehouseCode" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -315,11 +315,13 @@ const formData = reactive({
 
 const zoneList = ref([])
 const unionList = ref([])
+const selectedUnionOrgName = ref('')
 const inputList = ref([])
 const demandList = ref([])
 const demandLoading = ref(false)
 const selectedDemands = ref([])
 const warehouseOptions = ref([])
+const inWarehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
 const inputTypeOptions = computed(() => mainCategoryOptions.value)
@@ -430,13 +432,106 @@ const getAllZoneList = async () => {
   }
 }
 
+const normalizeId = (value) => {
+  if (value === undefined || value === null) return ''
+  return String(value).trim()
+}
+
+const getCurrentUserOrgId = () => {
+  const userInfo = userStore.userInfo || {}
+  const user = userInfo.user || {}
+  return normalizeId(
+    userInfo.org_id ??
+    userInfo.orgId ??
+    user.org_id ??
+    user.orgId ??
+    userInfo.deptId ??
+    user.deptId ??
+    userInfo.dept?.deptId ??
+    user.dept?.deptId
+  )
+}
+
+const getWarehouseOrgId = (warehouse) => {
+  return normalizeId(
+    warehouse?.org_id ??
+    warehouse?.orgId ??
+    warehouse?.deptId ??
+    warehouse?.organCode ??
+    warehouse?.orgCode
+  )
+}
+
 const loadWarehouses = async () => {
   try {
-    const res = await getInventoryWarehouseList({ pageNum: 1, pageSize: 10000 })
-    warehouseOptions.value = res.rows || []
+    const currentUserOrgId = getCurrentUserOrgId()
+    if (!currentUserOrgId) {
+      warehouseOptions.value = []
+      formData.details.forEach(detail => {
+        detail.outWarehouseCode = ''
+        detail.outWarehouseName = ''
+      })
+      return
+    }
+
+    const res = await getInventoryWarehouseList({
+      pageNum: 1,
+      pageSize: 10000,
+      orgId: currentUserOrgId,
+      org_id: currentUserOrgId
+    })
+
+    const warehouseList = res.rows || []
+    const hasWarehouseOrgId = warehouseList.some(item => !!getWarehouseOrgId(item))
+    warehouseOptions.value = hasWarehouseOrgId
+      ? warehouseList.filter(item => getWarehouseOrgId(item) === currentUserOrgId)
+      : warehouseList
+
+    formData.details.forEach(detail => {
+      const exists = warehouseOptions.value.some(item => item.warehouseCode === detail.outWarehouseCode)
+      if (!exists) {
+        detail.outWarehouseCode = ''
+        detail.outWarehouseName = ''
+      }
+    })
   } catch (error) {
     console.error('Failed to load warehouse list:', error)
     warehouseOptions.value = []
+  }
+}
+
+const clearInWarehouseSelection = () => {
+  inWarehouseOptions.value = []
+  formData.details.forEach(detail => {
+    detail.inWarehouseCode = ''
+    detail.inWarehouseName = ''
+  })
+}
+
+const loadInWarehousesByUnion = async (unionOrgName) => {
+  if (!unionOrgName) {
+    clearInWarehouseSelection()
+    return
+  }
+  try {
+    const res = await getInventoryWarehouseList({
+      pageNum: 1,
+      pageSize: 10000,
+      status: '0',
+      orgName: unionOrgName,
+      org_name: unionOrgName
+    })
+    inWarehouseOptions.value = res.rows || []
+    formData.details.forEach(detail => {
+      const exists = inWarehouseOptions.value.some(item => item.warehouseCode === detail.inWarehouseCode)
+      if (!exists) {
+        detail.inWarehouseCode = ''
+        detail.inWarehouseName = ''
+      }
+    })
+  } catch (error) {
+    console.error('Failed to load inbound warehouse list by union:', error)
+    clearInWarehouseSelection()
   }
 }
 
@@ -465,9 +560,16 @@ const loadCategoryOptions = async () => {
 
 const regionCode = ref('')
 
-const getAllUnionList = async (value) => {
+const getAllUnionList = async (value, resetSelection = true) => {
   loading.value = true
   regionCode.value = value
+  if (resetSelection) {
+    selectedUnionOrgName.value = ''
+    formData.targetId = ''
+    formData.targetAddress = ''
+    formData.targetContact = ''
+    clearInWarehouseSelection()
+  }
   try {
     const response = await getRegistrationList({
       regionCode: value,
@@ -480,9 +582,18 @@ const getAllUnionList = async (value) => {
     if (response.code === 200) {
       const list = response.data.records || response.data.rows || response.data.list || []
       unionList.value = list.map(item => ({
-        code: item.id,
+        id: item.id,
+        orgName: item.orgName,
+        code: item.orgName,
         name: item.orgName
       }))
+      if (!resetSelection && formData.targetId) {
+        const matched = unionList.value.find(item => String(item.id) === String(formData.targetId) || String(item.orgName) === String(formData.targetId))
+        if (matched) {
+          selectedUnionOrgName.value = matched.orgName
+          formData.targetId = matched.id
+        }
+      }
     }
   } catch (error) {
     ElMessage.error(t('inputCirculation.queryUnionListFailed'))
@@ -787,14 +898,27 @@ const validateQuantity = async (index) => {
 }
 
 const getUnionInfo = async (value) => {
-  if (!value || value.length === 0) return
+  if (!value || value.length === 0) {
+    selectedUnionOrgName.value = ''
+    formData.targetId = ''
+    formData.targetAddress = ''
+    formData.targetContact = ''
+    clearInWarehouseSelection()
+    return
+  }
   loading.value = true
   try {
-    const response = await getUnionDetailByUnionId(value)
+    const selectedUnion = unionList.value.find(item => String(item.orgName) === String(value) || String(item.code) === String(value))
+    const unionId = selectedUnion?.id || value
+    formData.targetId = selectedUnion?.id || ''
+    selectedUnionOrgName.value = selectedUnion?.orgName || value
+
+    const response = await getUnionDetailByUnionId(unionId)
     if (response.code === 200 && response.data) {
       formData.targetAddress = response.data.fullAddress
       formData.targetContact = response.data.operator
     }
+    await loadInWarehousesByUnion(selectedUnion?.orgName || value)
     // 加载需求列表
     await loadDemandList(regionCode.value)
   } catch (error) {
@@ -804,7 +928,6 @@ const getUnionInfo = async (value) => {
   }
 }
 
-// 加载需求列表
 const loadDemandList = async (unionCode) => {
   demandLoading.value = true
   try {
@@ -881,7 +1004,7 @@ const handleDetailOutWarehouseChange = (row, code) => {
 }
 
 const handleDetailInWarehouseChange = (row, code) => {
-  const warehouse = warehouseOptions.value.find(item => item.warehouseCode === code)
+  const warehouse = inWarehouseOptions.value.find(item => item.warehouseCode === code)
   row.inWarehouseName = warehouse ? warehouse.warehouseName : ''
 }
 
@@ -998,8 +1121,11 @@ onMounted(async () => {
     await fetchDetail()
     await getAllZoneList()
     if (formData.zoneId) {
-      await getAllUnionList(formData.zoneId)
+      await getAllUnionList(formData.zoneId, false)
       await loadDemandList(formData.zoneId)
+    }
+    if (selectedUnionOrgName.value) {
+      await loadInWarehousesByUnion(selectedUnionOrgName.value)
     }
   } else {
     await getAllZoneList()
@@ -1010,3 +1136,4 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 </style>
+

@@ -117,7 +117,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { addOutbound, getOutboundDetail, updateOutbound, getWarehouseOptions, getBatchesByWarehouse, getBatchDetail } from '@/api/inventory'
+import { addOutbound, getOutboundDetail, updateOutbound, getWarehouseOptionsByOrg, getBatchesByWarehouse, getBatchDetail } from '@/api/inventory'
 import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { useUserStore } from '@/store/user'
@@ -284,12 +284,61 @@ const handleBatchChange = async (batchNo, item) => {
   }
 }
 
-const loadWarehouses = () => {
-  getWarehouseOptions({ status: '0' }).then(res => {
-    warehouseOptions.value = res.data || []
-  }).catch(() => {
+const normalizeId = (value) => {
+  if (value === undefined || value === null) return ''
+  return String(value).trim()
+}
+
+const getCurrentUserOrgId = () => {
+  const userInfo = userStore.userInfo || {}
+  const user = userInfo.user || {}
+  return normalizeId(
+    userInfo.org_id ??
+    userInfo.orgId ??
+    user.org_id ??
+    user.orgId ??
+    userInfo.deptId ??
+    user.deptId ??
+    userInfo.dept?.deptId ??
+    user.dept?.deptId
+  )
+}
+
+const getWarehouseOrgId = (warehouse) => {
+  return normalizeId(
+    warehouse?.org_id ??
+    warehouse?.orgId ??
+    warehouse?.deptId ??
+    warehouse?.organCode ??
+    warehouse?.orgCode
+  )
+}
+
+const loadWarehouses = async () => {
+  try {
+    const currentUserOrgId = getCurrentUserOrgId()
+    if (!currentUserOrgId) {
+      warehouseOptions.value = []
+      form.warehouseCode = ''
+      form.warehouseName = ''
+      batchOptions.value = []
+      return
+    }
+
+    const res = await getWarehouseOptionsByOrg({
+      status: '0',
+      orgId: currentUserOrgId,
+      org_id: currentUserOrgId
+    })
+    const warehouseList = res.data || []
+    const hasWarehouseOrgId = warehouseList.some(item => !!getWarehouseOrgId(item))
+    warehouseOptions.value = hasWarehouseOrgId
+      ? warehouseList.filter(item => getWarehouseOrgId(item) === currentUserOrgId)
+      : warehouseList
+  } catch (error) {
+    console.error('Failed to load warehouse list', error)
     warehouseOptions.value = []
-  })
+  }
 }
 
 const loadDictionaries = async () => {
@@ -378,13 +427,13 @@ const handleSubmit = () => {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
       }
-      
+
       const hasEmptyDetail = form.detailList.some(item => !item.batchNo || !item.unit || item.qty === null || item.qty === undefined)
       if (hasEmptyDetail) {
         ElMessage.warning(t('inventory.outbound.detailRequired'))
         return
       }
-      
+
       submitting.value = true
       const { orderDate, operator, bizNo, type, ...formWithoutHiddenFields } = form
       const submitData = { ...formWithoutHiddenFields }
