@@ -44,7 +44,7 @@
                 {{ detail.varietyName || '-' }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('prebasicSeedProduction.columns.cropType')">
-                {{ getLabelByValue('crop_type', detail.cropType) || '-' }}
+                {{ getCropTypeDisplay(detail.cropType) }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('prebasicSeedProduction.columns.time')">
                 {{ detail.time || '-' }}
@@ -143,6 +143,7 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const loading = ref(true)
 const detail = ref({})

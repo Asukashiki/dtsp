@@ -61,7 +61,7 @@
               <el-table-column prop="cropType" :label="$t('research.c1Propagation.columns.cropType')" min-width="160"
                 align="center">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column prop="varietyName" :label="$t('research.c1Propagation.columns.varietyName')"
@@ -121,7 +121,7 @@
               <el-tag :type="getStatusType(item.applyStatus)" size="small">
                 {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
               </el-tag>
-              <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+              <el-tag type="info" size="small">{{ getCropTypeDisplay(item.cropType) }}</el-tag>
               <el-tag v-if="item.sourceType" :type="item.sourceType === 'OSE_RECEIVE' ? 'success' : 'primary'"
                 size="small">
                 {{ item.sourceType === 'OSE_RECEIVE' ? $t('research.c1Propagation.sourceOseReceive') :
@@ -191,6 +191,7 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // 数据状态
 const loading = ref(false)

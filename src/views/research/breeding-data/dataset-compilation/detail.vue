@@ -47,7 +47,7 @@
                   {{ detailData.recordCount || 0 }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('research.datasetCompilation.form.cropType')">
-                  {{ getLabelByValue('crop_type', detailData.cropType) || detailData.cropType || '-' }}
+                  {{ getCropTypeDisplay(detailData.cropType) }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('research.datasetCompilation.form.varietyName')">
                   {{ detailData.varietyName || '-' }}
@@ -593,6 +593,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const { getLabelByValue } = useDict(['agronomic_trait_name', 'growth_cycle', 'flow_status', 'crop_type', 'env_parameter_code'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const loading = ref(false)
 const detailData = ref(null)

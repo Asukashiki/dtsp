@@ -31,7 +31,7 @@
                   <el-tag size="small">{{ detailData.seedClassReceived || '-' }}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('research.multiplierReport.farmId')">{{ detailData.farmId || '-' }}</el-descriptions-item>
-                <el-descriptions-item :label="$t('research.multiplierReport.cropType')">{{ getLabelByValue('crop_type', detailData.cropType) }}</el-descriptions-item>
+                <el-descriptions-item :label="$t('research.multiplierReport.cropType')">{{ getLabelByValue('crop_type', detailData.cropType) || detailData.cropType || '-' }}</el-descriptions-item>
                 <el-descriptions-item :label="$t('research.multiplierReport.varietyName')">{{ detailData.varietyName || '-' }}</el-descriptions-item>
               </el-descriptions>
             </div>

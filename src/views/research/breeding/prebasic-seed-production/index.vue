@@ -76,7 +76,7 @@
                 min-width="120"
                 align="center">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -186,7 +186,7 @@
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('prebasicSeedProduction.columns.cropType') }}:</span>
-                  <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+                  <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('prebasicSeedProduction.columns.time') }}:</span>
@@ -245,6 +245,7 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type', 'flow_status'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // 数据状态
 const loading = ref(false)

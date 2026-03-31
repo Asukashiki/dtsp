@@ -71,7 +71,7 @@
               <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
               <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center">
                 <template #default="{ row }">
-                  <span>{{ getLabelByValue('crop_type', row.cropType) }}</span>
+                  <span>{{ getCropTypeDisplay(row.cropType) }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="breedingLevelName" :label="$t('research.breeding.breedingBatch.form.breedingLevel')" width="160" align="center" />
@@ -137,7 +137,7 @@
                 </div>
                 <div class="card-row">
                   <span class="label">{{ $t('research.breeding.batch.columns.cropType') }}:</span>
-                  <span class="value">{{ item.cropTypeName }}</span>
+                    <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                 </div>
                 <div class="card-row">
                   <span class="label">Breeding methods:</span>
@@ -183,6 +183,8 @@ import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const { getLabelByValue } = useDict(['crop_type']);
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -244,7 +246,7 @@ const handleSearch = async () => {
       // 添加显示名称
       tableData.value = records.map(item => ({
         ...item,
-        cropTypeName: getLabelByValue('crop_type', item.cropType) || item.cropType,
+        cropTypeName: getCropTypeDisplay(item.cropType),
         breedingMethodName: breedingMethodMap.value[item.breedingMethod] || item.breedingMethod,
         breedingLevelName: breedingLevelMap.value[item.breedingLevel] || item.breedingLevel,
         statusName: statusMap.value[item.batchStatus] || item.batchStatus

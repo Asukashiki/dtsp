@@ -64,31 +64,24 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getBreedingBatchInfo, submitForAudit, approveBatch, rejectBatch, archiveBatch, cancelBatch } from '@/api/breedingData'
-import { useDict } from '@/hooks/useDict'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import WorkflowInfo from '@/components/workflow/WorkflowInfo.vue'
+import { loadSeedCropTypeOptions, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const loading = ref(false)
 const detailData = ref({})
+const cropTypeOptions = ref([])
 
 // 审批历史记录
 const approvalHistory = ref([])
 
-// 使用 useDict hook 获取字典数据
-const { getLabelByValue } = useDict(['crop_type', 'flow_status'])
-
 // 计算属性：显示作物种类名称
 const displayCropType = computed(() => {
-  return getLabelByValue('crop_type', detailData.value.cropType) || detailData.value.cropType
+  return getCropTypeDisplay(cropTypeOptions.value, detailData.value.cropType)
 })
-
-// 状态标签映射函数
-const getWorkflowStatusLabel = (workflowStatus) => {
-  return getLabelByValue('flow_status', workflowStatus) || workflowStatus
-}
 
 const getInfo = async () => {
   loading.value = true
@@ -219,7 +212,10 @@ const handleCancelBatch = async () => {
   await getInfo()
 }
 
-onMounted(() => getInfo())
+onMounted(async () => {
+  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
+  getInfo()
+})
 </script>
 
 <style lang="scss" scoped>

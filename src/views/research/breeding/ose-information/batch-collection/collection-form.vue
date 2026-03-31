@@ -15,7 +15,14 @@
 
       <!-- 表单区域 -->
       <div class="content-wrapper">
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" v-loading="submitting">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="rules"
+          label-width="240px"
+          class="collection-form"
+          v-loading="submitting"
+        >
 
           <!-- 批次信息卡片 -->
           <div class="info-card">
@@ -31,6 +38,7 @@
                   <el-form-item
                     :label="$t('batchCollection.form.breedingBatchId')"
                     prop="breedingBatchId"
+                    label-width="320px"
                   >
                     <el-select
                       v-model="formData.breedingBatchId"
@@ -68,8 +76,12 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('batchCollection.form.breedingLevel')" prop="breedingLevel">
+                <el-col :xs="24" :sm="24">
+                  <el-form-item
+                    :label="$t('batchCollection.form.breedingLevel')"
+                    prop="breedingLevel"
+                    label-width="320px"
+                  >
                     <el-input v-model="formData.breedingLevel" disabled />
                   </el-form-item>
                 </el-col>
@@ -96,8 +108,12 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('batchCollection.form.toMultiplyQuantity')" prop="toMultiplyQuantity">
+                <el-col :xs="24" :sm="24">
+                  <el-form-item
+                    :label="$t('batchCollection.form.toMultiplyQuantity')"
+                    prop="toMultiplyQuantity"
+                    label-width="320px"
+                  >
                     <el-input-number
                       v-model="formData.toMultiplyQuantity"
                       :min="0"
@@ -159,14 +175,13 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { addOseBatchCollection, getBreedingBatchPageList } from '@/api/breeding'
 import { useUserStore } from '@/store'
-import { useDict } from '@/hooks/useDict'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 
-// 使用 useDict 获取作物类型字典
-const { getLabelByValue } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 const operatorName = computed(() => {
   const info = userStore.userInfo
@@ -176,7 +191,7 @@ const operatorName = computed(() => {
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
+  return getCropTypeDisplay(cropTypeOptions.value, formData.cropType)
 })
 
 const formRef = ref(null)
@@ -242,7 +257,7 @@ const handleBatchChange = (batchId) => {
 
   if (selectedBatch) {
     formData.varietyName = selectedBatch.varietyName || ''
-    formData.cropType = selectedBatch.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedBatch.cropType || '')
     formData.breedingLevel = selectedBatch.breedingLevel || ''
     formData.parentalSeedSource = selectedBatch.parentSeedSource || ''
     // 保存实际的 batchId (如 BB20251231000001) 而不是数据库id
@@ -268,7 +283,7 @@ const handleSubmit = async () => {
     const submitData = {
       breedingBatchId: formData.actualBatchId, // 使用实际的批次ID
       varietyName: formData.varietyName,
-      cropType: formData.cropType,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
       breedingLevel: formData.breedingLevel,
       parentalSeedSource: formData.parentalSeedSource,
       toMultiplyQuantity: formData.toMultiplyQuantity,
@@ -295,21 +310,121 @@ const handleCancel = () => {
 }
 
 onMounted(() => {
-  loadBreedingBatchList()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadBreedingBatchList()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadBreedingBatchList()
+  })
 })
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/page-common.scss';
 
+.content-wrapper {
+  padding-top: 24px;
+}
+
+.collection-form {
+  .card-body {
+    padding: 24px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+
+  :deep(.el-form-item__label-wrap) {
+    margin-right: 16px;
+  }
+
+  :deep(.el-form-item__label) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 40px;
+    height: auto;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-align: right;
+    color: #303133;
+    font-weight: 600;
+  }
+
+  :deep(.el-form-item__content) {
+    flex: 1;
+    min-width: 0;
+    line-height: 1;
+  }
+
+  :deep(.el-input),
+  :deep(.el-select),
+  :deep(.el-date-editor),
+  :deep(.el-input-number) {
+    width: 100%;
+  }
+
+  :deep(.el-input-number .el-input__wrapper),
+  :deep(.el-select .el-select__wrapper),
+  :deep(.el-input__wrapper),
+  :deep(.el-textarea__inner) {
+    border-radius: 10px;
+  }
+
+  :deep(.el-input.is-disabled .el-input__wrapper),
+  :deep(.el-textarea.is-disabled .el-textarea__inner) {
+    background-color: #f7f9fc;
+    color: #606266;
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: center;
   gap: 16px;
-  padding: 24px 0;
+  padding: 24px 28px;
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid #f0f2f5;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .full-width {
   width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .content-wrapper {
+    padding: 16px;
+    padding-top: 20px;
+  }
+
+  .collection-form {
+    .card-body {
+      padding: 16px;
+    }
+
+    :deep(.el-form-item) {
+      margin-bottom: 16px;
+    }
+
+    :deep(.el-form-item__label-wrap) {
+      margin-right: 12px;
+      width: 200px !important;
+    }
+
+    :deep(.el-form-item__label) {
+      min-height: 36px;
+      font-size: 13px;
+    }
+  }
+
+  .form-actions {
+    padding: 20px 16px;
+  }
 }
 </style>

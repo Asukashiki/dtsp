@@ -70,7 +70,7 @@
               <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
@@ -126,7 +126,7 @@
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+                <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
@@ -219,6 +219,7 @@ const { options, getLabelByValue, loading: dictLoading } = useDict([
   'crop_type',
   'flow_status'
 ])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const queryParams = reactive({
   pageNum: 1,

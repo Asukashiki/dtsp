@@ -45,7 +45,7 @@
                   {{ batchInfo.varietyName }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="$t('research.c1BreedingBatch.form.cropType')">
-                  <el-tag size="small">{{ getLabelByValue('crop_type', batchInfo.cropType) }}</el-tag>
+                  <el-tag size="small">{{ getCropTypeDisplay(batchInfo.cropType) }}</el-tag>
                 </el-descriptions-item>
               </el-descriptions>
             </div>
@@ -202,6 +202,8 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const batchInfo = ref(null)
 

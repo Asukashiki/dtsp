@@ -95,9 +95,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getRegistrationDetail, auditRegistration } from '@/api/breedingOrgRegistration'
-import { useDict } from '@/hooks/useDict'
 import { getFilePreviewUrl } from '@/api/file'
 import { PageHeader, InfoCard } from '@/components/common'
+import { loadSeedCropTypeOptions, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
@@ -107,22 +107,17 @@ const formRef = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
 const registrationData = ref({})
+const cropTypeOptions = ref([])
 
 // 证照预览
 const businessLicensePreviewUrl = ref('')
 const taxCertPreviewUrl = ref('')
 
-// 字典逻辑
-const { getLabelByValue } = useDict(['crop_type'], {
-  immediate: true,
-  cache: true
-})
-
 const getCropTypesLabel = (cropTypes) => {
   if (!cropTypes) return '-'
   return cropTypes.split(',')
     .filter(Boolean)
-    .map(type => getLabelByValue('crop_type', type) || type)
+    .map(type => getCropTypeDisplay(cropTypeOptions.value, type.trim()))
     .join(', ')
 }
 
@@ -206,6 +201,12 @@ const handleCancel = () => {
 }
 
 onMounted(() => {
+  loadSeedCropTypeOptions('en-US').then((options) => {
+    cropTypeOptions.value = options
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    cropTypeOptions.value = []
+  })
   loadData()
 })
 </script>

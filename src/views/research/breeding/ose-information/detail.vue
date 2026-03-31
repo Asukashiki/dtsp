@@ -257,7 +257,7 @@ const loadBatchDetail = async () => {
 
 // 获取作物类型名称
 const getCropTypeName = (type) => {
-  return getLabelByValue('crop_type', type) || type
+  return getLabelByValue('crop_type', type) || type || '-'
 }
 
 // 获取繁殖级别名称

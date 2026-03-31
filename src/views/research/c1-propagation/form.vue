@@ -83,7 +83,7 @@
                   <el-form-item :label="$t('research.c1Propagation.form.cropType')" prop="cropType">
                     <el-select v-model="formData.cropType"
                       :placeholder="$t('research.c1Propagation.placeholder.cropType')" disabled style="width: 100%">
-                      <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label"
+                      <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label"
                         :value="item.value" />
                     </el-select>
                   </el-form-item>
@@ -177,15 +177,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1PropagationById, addC1Propagation, updateC1Propagation } from '@/api/c1Propagation'
 import { getUserOrgName, getUserOrgId } from '@/utils/auth'
-import { useDict } from '@/hooks/useDict'
 import BasicSeedSelector from './BasicSeedSelector.vue'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-// 使用 useDict hook 获取字典数据
-const { options } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 // 判断是否为编辑模式
 const isEdit = computed(() => !!route.params.id)
@@ -273,7 +272,7 @@ const handleSeedSelected = (seed) => {
     // 更新表单数据
     formData.propagationBatchId = batchId
     formData.sourceType = sourceType
-    formData.cropType = seed.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, seed.cropType || '')
     formData.varietyName = seed.varietyName || ''
     formData.varietyCode = seed.varietyCode || ''
 
@@ -306,7 +305,9 @@ const getInfo = async () => {
     if (res.code === 200 && res.data) {
       Object.keys(formData).forEach(key => {
         if (res.data[key] !== undefined) {
-          formData[key] = res.data[key]
+          formData[key] = key === 'cropType'
+            ? resolveCropTypeValue(cropTypeOptions.value, res.data[key])
+            : res.data[key]
         }
       })
 
@@ -335,7 +336,10 @@ const handleSubmit = async () => {
     await formRef.value.validate()
     submitting.value = true
 
-    const submitData = { ...formData }
+    const submitData = {
+      ...formData,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType)
+    }
 
     // 确保 batchId 和 sourceType 正确分离
     if (submitData.propagationBatchId && submitData.propagationBatchId.includes('|')) {
@@ -380,7 +384,13 @@ const goBack = () => {
 
 // 初始化
 onMounted(() => {
-  getInfo()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    getInfo()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    getInfo()
+  })
 })
 </script>
 
@@ -394,4 +404,3 @@ onMounted(() => {
   padding: 24px 0;
 }
 </style>
-

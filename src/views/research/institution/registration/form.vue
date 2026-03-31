@@ -53,12 +53,12 @@
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('research.variety.cropType')" prop="cropTypes">
-                  <el-select v-model="cropTypesArray" :placeholder="$t('research.variety.cropType')" style="width: 100%"
-                    multiple v-loading="dictLoading">
-                    <el-option v-for="item in options.crop_type" :key="item.value" :label="item.label"
-                      :value="item.value" />
-                  </el-select>
-                </el-form-item>
+                    <el-select v-model="cropTypesArray" :placeholder="$t('research.variety.cropType')" style="width: 100%"
+                      multiple v-loading="cropTypeLoading">
+                      <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                    </el-select>
+                  </el-form-item>
               </el-col>
             </el-row>
           </InfoCard>
@@ -199,9 +199,9 @@ import {
   getRegionTree,
   buildRegionPath
 } from '@/api/breedingOrgRegistration'
-import { useDict } from '@/hooks/useDict'
 import { uploadFile, getFilePreviewUrl } from '@/api/file'
 import { PageHeader, InfoCard } from '@/components/common'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
@@ -219,16 +219,12 @@ const pageTitle = computed(() => {
 const formRef = ref(null)
 const submitting = ref(false)
 const usernameCheckResult = ref(null)
+const cropTypeOptions = ref([])
+const cropTypeLoading = ref(false)
 
 // 行政区划树
 const regionTreeOptions = ref([])
 const regionTreeLoading = ref(false)
-
-// 初始化字典
-const { options, loading: dictLoading } = useDict(['crop_type'], {
-  immediate: true,
-  cache: true
-})
 
 // 种子/作物类型数组（用于多选）
 const cropTypesArray = ref([])
@@ -239,8 +235,31 @@ const taxCertFileList = ref([])
 
 // 监听 cropTypesArray 变化，同步到 formData.cropTypes
 watch(cropTypesArray, (val) => {
-  formData.cropTypes = val.join(',')
+  formData.cropTypes = val
+    .map(item => resolveCropTypeLabel(cropTypeOptions.value, item))
+    .filter(Boolean)
+    .join(',')
 })
+
+const normalizeCropTypes = (cropTypes) => {
+  if (!cropTypes) return []
+  return String(cropTypes)
+    .split(',')
+    .map(item => resolveCropTypeValue(cropTypeOptions.value, item.trim()))
+    .filter(Boolean)
+}
+
+const loadCropTypeOptions = async () => {
+  cropTypeLoading.value = true
+  try {
+    cropTypeOptions.value = await loadSeedCropTypeOptions('en-US')
+  } catch (error) {
+    console.error('Failed to load crop type options:', error)
+    cropTypeOptions.value = []
+  } finally {
+    cropTypeLoading.value = false
+  }
+}
 
 // 表单数据
 const formData = reactive({
@@ -468,7 +487,7 @@ const loadData = async () => {
       Object.assign(formData, baseInfo)
 
       if (baseInfo.cropTypes) {
-        cropTypesArray.value = baseInfo.cropTypes.split(',').filter(Boolean)
+        cropTypesArray.value = normalizeCropTypes(baseInfo.cropTypes)
       }
 
       if (baseInfo.businessLicenseUrl) {
@@ -545,7 +564,8 @@ const handleCancel = () => {
 }
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
+  await loadCropTypeOptions()
   loadRegionTree()
   if (isEdit.value) {
     loadData()

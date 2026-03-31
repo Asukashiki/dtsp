@@ -135,7 +135,7 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.datasetCompilation.form.cropType')" prop="cropType">
                     <el-input
-                      :value="getLabelByValue('crop_type', formData.cropType) || formData.cropType"
+                      :value="getCropTypeDisplay(cropTypeOptions.value, formData.cropType)"
                       :placeholder="$t('research.datasetCompilation.placeholder.cropType')"
                       disabled
                       readonly
@@ -732,12 +732,14 @@ import { getLabTestList, getLabTestAuditList } from '@/api/labTest'
 import { getYieldDataList } from '@/api/yieldData'
 import { getEnvironmentNewDataPage } from '@/api/environment-new-data'
 import { useUserStore } from '@/store'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 const { getLabelByValue } = useDict(['growth_cycle', 'crop_type', 'env_parameter_code']) // 新增字典解析
+const cropTypeOptions = ref([])
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -853,7 +855,7 @@ const handleTrialChange = async (trialId) => {
     if (res && res.data) {
       formData.batchId = res.data.batchId || ''
       if (res.data.cropType) {
-        formData.cropType = res.data.cropType
+        formData.cropType = resolveCropTypeValue(cropTypeOptions.value, res.data.cropType)
       }
       if (res.data.varietyName) {
         formData.varietyName = res.data.varietyName
@@ -889,7 +891,7 @@ const loadBatchInfo = async (batchId) => {
     console.log('批次信息API响应:', res)
     if (res && res.data) {
       if (res.data.cropType && !formData.cropType) {
-        formData.cropType = res.data.cropType
+        formData.cropType = resolveCropTypeValue(cropTypeOptions.value, res.data.cropType)
         console.log('作物类型已填充:', res.data.cropType)
       }
       if (res.data.varietyName && !formData.varietyName) {
@@ -1096,7 +1098,10 @@ const loadDetail = async () => {
   try {
     const res = await getDatasetById(route.params.id)
     if (res.code === 200 && res.data) {
-      Object.assign(formData, res.data)
+      Object.assign(formData, {
+        ...res.data,
+        cropType: resolveCropTypeValue(cropTypeOptions.value, res.data.cropType)
+      })
       // 解析存储的模块备注
       if (res.data.moduleRowRemarks && typeof res.data.moduleRowRemarks === 'string') {
         formData.moduleRemarks = JSON.parse(res.data.moduleRowRemarks)
@@ -1162,7 +1167,7 @@ const handleSubmit = () => {
         recordCount: statistics.value.totalCount, // 使用实时统计的总记录数
         status: formData.status,
         datasetStatus: formData.datasetStatus,
-        cropType: formData.cropType,
+        cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
         varietyName: formData.varietyName,
         remark: formData.remark,
         // 备注转JSON字符串存储（适配后端字符串字段）
@@ -1194,6 +1199,7 @@ const goBack = () => {
 }
 
 onMounted(async () => {
+  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
   loadTrialOptions()
   if (!isEdit.value) {
     await initCurrentUser()

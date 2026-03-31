@@ -153,14 +153,12 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addPrebasicSeedProduceResult, getPrebasicSeedProduceList } from '@/api/prebasicSeed'
 import { useUserStore } from '@/store'
-import { useDict } from '@/hooks/useDict'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const emit = defineEmits(['cancel', 'success'])
 const userStore = useUserStore()
-
-// 使用 useDict 获取作物类型字典
-const { getLabelByValue } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 const operatorName = computed(() => {
   const info = userStore.userInfo
@@ -170,7 +168,7 @@ const operatorName = computed(() => {
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
+  return formData.cropType ? getCropTypeDisplay(cropTypeOptions.value, formData.cropType) : ''
 })
 
 // 获取当前时间（格式：YYYY-MM-DD HH:mm:ss）
@@ -256,7 +254,7 @@ const handleBatchChange = (batchId) => {
     formData.toSeedLevel = batch.toSeedLevel
     formData.breedBatchId = batch.breedBatchId || ''
     formData.varietyId = batch.varietyId || ''
-    formData.cropType = batch.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, batch.cropType || '')
   }
 }
 
@@ -275,7 +273,7 @@ const handleSubmit = async () => {
       toSeedLevel: formData.toSeedLevel,
       breedBatchId: formData.breedBatchId,
       varietyId: formData.varietyId,
-      cropType: formData.cropType,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
       outputQuantity: formData.outputQuantity,
       collectionDate: formData.collectionDate,
       operator: operatorName.value
@@ -299,7 +297,13 @@ const handleCancel = () => {
 }
 
 onMounted(() => {
-  loadBatchList()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadBatchList()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadBatchList()
+  })
 })
 </script>
 

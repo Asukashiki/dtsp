@@ -41,7 +41,7 @@
                 {{ data.varietyName }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('research.breeding.seed.production.form.cropType')">
-                {{ getLabelByValue('crop_type', data.cropType) }}
+                {{ getCropTypeDisplay(data.cropType) }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('research.breeding.seed.production.form.time')">
                 {{ data.time }}
@@ -109,6 +109,7 @@ const emit = defineEmits(['back'])
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const handleBack = () => {
   emit('back')

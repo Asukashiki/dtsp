@@ -30,7 +30,7 @@
             <span class="variety-name">
               {{ seed.varietyName }}
               <span v-if="seed.cropType" style="margin-left: 4px; color: #909399;">
-                ({{ getLabelByValue('crop_type', seed.cropType) || seed.cropType }})
+                ({{ getCropTypeText(seed.cropType) }})
               </span>
             </span>
             <span class="available-quantity">
@@ -62,7 +62,7 @@
           {{ selectedSeedInfo.varietyName }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('research.c1Propagation.cropType')">
-          {{ getLabelByValue('crop_type', selectedSeedInfo.cropType) || selectedSeedInfo.cropType }}
+          {{ getCropTypeText(selectedSeedInfo.cropType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('research.c1Propagation.totalQuantity')">
           {{ selectedSeedInfo.totalQuantity }} kg
@@ -88,12 +88,9 @@ import { ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getAvailableBasicSeeds } from '@/api/c1Propagation'
-import { useDict } from '@/hooks/useDict'
+import { loadSeedCropTypeOptions, getCropTypeDisplay, resolveCropTypeLabel } from '@/utils/researchCropType'
 
-const { t } = useI18n()
-
-// 使用字典
-const { getLabelByValue } = useDict(['crop_type'])
+const { t, locale } = useI18n()
 
 const props = defineProps({
   modelValue: {
@@ -120,6 +117,9 @@ const loading = ref(false)
 const seedList = ref([])
 const selectedSeed = ref('')
 const selectedSeedInfo = ref(null)
+const cropTypeOptions = ref([])
+
+const getCropTypeText = (value) => getCropTypeDisplay(cropTypeOptions.value, value)
 
 // 加载可用种子列表
 const loadSeedList = async () => {
@@ -134,7 +134,7 @@ const loadSeedList = async () => {
       params.varietyName = props.varietyName
     }
     if (props.cropType) {
-      params.cropType = props.cropType
+      params.cropType = resolveCropTypeLabel(cropTypeOptions.value, props.cropType)
     }
 
     const res = await getAvailableBasicSeeds(params)
@@ -209,6 +209,11 @@ watch(() => [props.varietyName, props.cropType], () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+  })
   loadSeedList()
 })
 

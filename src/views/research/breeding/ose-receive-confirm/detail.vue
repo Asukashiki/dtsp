@@ -76,7 +76,7 @@
                   min-width="140"
                 >
                   <template #default="{ row }">
-                    {{ getLabelByValue('crop_type', row.cropType) }}
+                    {{ getCropTypeDisplay(row.cropType) }}
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -159,6 +159,7 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const loading = ref(false)
 const detailData = ref({})

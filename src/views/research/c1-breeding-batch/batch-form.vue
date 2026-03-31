@@ -50,7 +50,7 @@
                   <el-form-item :label="$t('research.c1BreedingBatch.form.cropType')" prop="cropType">
                     <el-select v-model="formData.cropType" :placeholder="$t('research.c1BreedingBatch.placeholder.cropType')" style="width: 100%" disabled>
                       <el-option
-                        v-for="item in options.crop_type"
+                        v-for="item in cropTypeOptions"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"
@@ -176,15 +176,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getC1BreedingBatchById, addC1BreedingBatch, updateC1BreedingBatch, getApprovedPropagations } from '@/api/c1BreedingBatch'
 import { useUserStore } from '@/store/user'
-import { useDict } from '@/hooks/useDict'
 import { getUserOrgName, getUserOrgId } from '@/utils/auth'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-// 使用 useDict hook 获取字典数据
-const { options } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -228,6 +227,7 @@ onMounted(async () => {
   formData.value.orgId = getUserOrgId()
   formData.value.orgName = getUserOrgName()
   
+  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
   await loadPropagations()
   if (isEdit.value) {
     await loadDetail()
@@ -250,7 +250,7 @@ const loadPropagations = async () => {
 const handlePropagationChange = (authId) => {
   const selected = propagationList.value.find(item => item.authId === authId)
   if (selected) {
-    formData.value.cropType = selected.cropType || formData.value.cropType
+    formData.value.cropType = resolveCropTypeValue(cropTypeOptions.value, selected.cropType || formData.value.cropType)
     formData.value.varietyName = selected.varietyName || formData.value.varietyName
     formData.value.varietyCode = selected.varietyCode || formData.value.varietyCode
     formData.value.orgName = selected.applicantOrgName || formData.value.orgName
@@ -266,7 +266,8 @@ const loadDetail = async () => {
     if (response.code === 200 && response.data) {
       formData.value = {
         ...formData.value,
-        ...response.data
+        ...response.data,
+        cropType: resolveCropTypeValue(cropTypeOptions.value, response.data.cropType)
       }
     } else {
       ElMessage.error(t('research.c1BreedingBatch.messages.loadError'))
@@ -285,7 +286,11 @@ const handleSubmit = async () => {
     if (valid) {
       loading.value = true
       try {
-        const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
+        const data = {
+          ...(isEdit.value ? { id: route.params.id } : {}),
+          ...formData.value,
+          cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.value.cropType)
+        }
         const response = isEdit.value ? await updateC1BreedingBatch(data) : await addC1BreedingBatch(data)
 
         if (response.code === 200) {

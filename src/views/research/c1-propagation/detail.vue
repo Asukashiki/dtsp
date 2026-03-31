@@ -61,7 +61,7 @@
                 </el-tag>
               </el-descriptions-item>
               <el-descriptions-item :label="$t('research.c1Propagation.form.cropType')">
-                {{ getLabelByValue('crop_type', detailData.cropType) }}
+                {{ getCropTypeDisplay(detailData.cropType) }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('research.c1Propagation.form.varietyName')">
                 {{ detailData.varietyName }}
@@ -160,6 +160,8 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // 数据状态
 const loading = ref(false)

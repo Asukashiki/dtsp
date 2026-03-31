@@ -70,7 +70,7 @@
                 min-width="120"
               >
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) || row.cropType }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -152,7 +152,7 @@
                 </div> -->
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('research.breedingLicense.columns.cropType') }}:</span>
-                  <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType }}</span>
+                  <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('research.breedingLicense.columns.varietyName') }}:</span>
@@ -216,6 +216,7 @@ const { t } = useI18n()
 
 // 字典数据
 const { options, getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const loading = ref(false)
 const licenseList = ref([])

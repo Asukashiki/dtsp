@@ -62,7 +62,7 @@
               <el-table-column prop="cropType" :label="$t('research.c1BreedingBatch.columns.cropType')" min-width="100"
                 align="center">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.columns.startDate')"
@@ -111,7 +111,7 @@
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.c1BreedingBatch.columns.cropType') }}</span>
-                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+                <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.c1BreedingBatch.columns.startDate') }}</span>
@@ -163,6 +163,8 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // 数据
 const loading = ref(false)

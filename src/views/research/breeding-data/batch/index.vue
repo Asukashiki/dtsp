@@ -81,7 +81,7 @@
               <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="cropType" :label="$t('research.breedingData.batch.columns.cropType')" min-width="100">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column prop="varietyName" :label="$t('research.breedingData.batch.columns.varietyName')" min-width="120" show-overflow-tooltip />
@@ -144,7 +144,7 @@
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.breedingData.batch.columns.cropType') }}:</span>
-                <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+                <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('research.breedingData.batch.columns.varietyName') }}:</span>
@@ -212,16 +212,19 @@ import {
   archiveBatch,
   cancelBatch
 } from '@/api/breedingData'
+import { loadSeedCropTypeOptions, resolveCropTypeLabel, getCropTypeDisplay as getResearchCropTypeDisplay } from '@/utils/researchCropType'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
+const cropTypeOptions = ref([])
 
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict([
   'crop_type',
   'flow_status'
 ])
+const getCropTypeDisplay = (value) => getResearchCropTypeDisplay(cropTypeOptions.value, value)
 
 const loading = ref(false)
 const dataList = ref([])
@@ -244,7 +247,11 @@ const queryParams = reactive({
 const getList = async () => {
   loading.value = true
   try {
-    const res = await getBreedingBatchList(queryParams)
+    const params = {
+      ...queryParams,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, queryParams.cropType)
+    }
+    const res = await getBreedingBatchList(params)
     // 过滤掉 S10 状态的数据
     const filteredRows = (res.rows || []).filter(row => row.workflowStatus !== 'S10')
     dataList.value = filteredRows
@@ -488,7 +495,8 @@ const handleAudit = (row) => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
   getList()
 })
 </script>

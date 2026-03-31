@@ -33,6 +33,8 @@ const routeWhitelist = [
   '/research/breeding/ose-receive-confirm',
   '/research/breeding/batch/edit',
   '/research/institution/approval/audit',
+  '/research/c1-propagation-audit/detail',
+  '/research/c1-propagation-audit/audit',
   '/research/variety',
   '/input/registration/audit',
   '/input/demand/audit',

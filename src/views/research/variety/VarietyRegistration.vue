@@ -65,7 +65,11 @@
                   <el-table-column prop="registrationNo" :label="$t('research.variety.registration.columns.registrationNo')" min-width="150" />
                   <el-table-column prop="varietyName" :label="$t('research.variety.registration.columns.varietyName')" min-width="150" />
                   <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" min-width="150" />
-                  <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" min-width="120" />
+                  <el-table-column prop="cropType" :label="$t('research.variety.registration.columns.cropType')" min-width="120">
+                    <template #default="{ row }">
+                      {{ getCropTypeDisplay(row.cropType) }}
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="enterpriseName" :label="$t('research.enterprise.form.enterpriseName')" min-width="180" />
                   <el-table-column prop="createTime" :label="$t('research.variety.registration.columns.submitDate')" min-width="120">
                     <template #default="{ row }">
@@ -133,7 +137,7 @@
                     </div>
                     <div class="card-row">
                       <span class="label">{{ $t('research.variety.registration.columns.cropType') }}:</span>
-                      <span class="value">{{ item.cropType }}</span>
+                        <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                     </div>
                     <div class="card-row">
                       <span class="label">{{ $t('research.variety.registration.columns.submitDate') }}:</span>
@@ -249,9 +253,11 @@
                           size="large"
                           class="full-width"
                         >
-                          <el-option label="Wheat" value="Wheat" />
-                          <el-option label="Maize" value="Maize" />
-                          <el-option label="Barley" value="Barley" />
+                          <el-option
+                            v-for="option in cropTypeOptions"
+                            :key="option.value"
+                            :label="option.label"
+                            :value="option.value" />
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -603,9 +609,12 @@ import {
   uploadFiles,
   getEnterpriseCertifyDetail
 } from '@/api/enterprise'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay as getResearchCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
+const cropTypeOptions = ref([])
+const getCropTypeDisplay = (value) => getResearchCropTypeDisplay(cropTypeOptions.value, value)
 
 // 页面状态
 const showForm = ref(false)
@@ -766,7 +775,7 @@ const loadDetailData = async (registrationId) => {
       Object.assign(formData, {
         varietyName: data.varietyName || '',
         varietyCode: data.varietyCode || '',
-        cropType: data.cropType || '',
+        cropType: resolveCropTypeValue(cropTypeOptions.value, data.cropType || ''),
         species: data.species || '',
         genus: data.genus || '',
         family: data.family || '',
@@ -924,7 +933,7 @@ const handleSubmit = async () => {
         recordDate: new Date().toISOString().split('T')[0],
         varietyName: formData.varietyName,
         varietyCode: formData.varietyCode,
-        cropType: formData.cropType,
+        cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
         species: formData.species,
         genus: formData.genus,
         family: formData.family,
@@ -1038,8 +1047,15 @@ const loadEnterpriseInfo = async () => {
 }
 
 onMounted(() => {
-  loadEnterpriseInfo()
-  loadData()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadEnterpriseInfo()
+    loadData()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadEnterpriseInfo()
+    loadData()
+  })
 })
 </script>
 

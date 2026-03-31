@@ -160,7 +160,7 @@ const { getLabelByValue } = useDict(['crop_type'])
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return data.value.cropType ? getLabelByValue('crop_type', data.value.cropType) : ''
+  return data.value.cropType ? (getLabelByValue('crop_type', data.value.cropType) || data.value.cropType) : ''
 })
 
 // 加载详情数据
