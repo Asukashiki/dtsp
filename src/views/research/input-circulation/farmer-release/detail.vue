@@ -124,7 +124,7 @@
               <el-table-column prop="quantity" :label="$t('inputCirculation.quantity')" min-width="180" />
               <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
                 <template #default="{ row }">
-                  {{ getLabelByValue('agri_unit', row.unit) }}
+                  {{ getUnitLabel(row.unit) }}
                 </template>
               </el-table-column>
               <el-table-column prop="unitPrice" :label="$t('inputCirculation.unitPrice')" min-width="150" />
@@ -147,11 +147,8 @@ import { ElMessage } from 'element-plus'
 import { getFarmerReleaseDetail, getDeptCategoryStock } from '@/api/inputCirculation'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { getDicts } from '@/api/system/dict'
-import { useDict } from '@/hooks/useDict'
 import { parseI18nValue } from '@/utils/i18nHelper'
 import { useUserStore } from '@/store/user'
-
-const { getLabelByValue } = useDict(['agri_unit'])
 
 const userStore = useUserStore()
 
@@ -164,6 +161,7 @@ const demandList = ref([])
 const demandLoading = ref(false)
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const unitOptions = ref([])
 
 const fetchDetail = async () => {
   loading.value = true
@@ -272,9 +270,10 @@ const loadDemandList = async (farmerId) => {
 
 const loadCategoryOptions = async () => {
   try {
-    const [mainRes, subRes] = await Promise.all([
+    const [mainRes, subRes, unitRes] = await Promise.all([
       getDicts('inventory_main_category'),
-      getDicts('inventory_sub_category')
+      getDicts('inventory_sub_category'),
+      getDicts('inventory_unit_new')
     ])
 
     mainCategoryOptions.value = (mainRes.data || []).map(item => ({
@@ -286,6 +285,11 @@ const loadCategoryOptions = async () => {
       label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
       value: item.dictValue,
       parentValue: item.remark
+    }))
+
+    unitOptions.value = (unitRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
     }))
   } catch (error) {
     console.error('Failed to load category options:', error)
@@ -302,6 +306,12 @@ const getSubCategoryLabel = (value) => {
   if (!value) return '-'
   const match = subCategoryOptions.value.find(item => String(item.value) === String(value) || item.label === value)
   return match ? match.label : value || '-'
+}
+
+const getUnitLabel = (value) => {
+  if (!value) return '-'
+  const match = unitOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match?.label || value
 }
 
 const SEASON_LABEL_MAP = {

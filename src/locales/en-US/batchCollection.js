@@ -11,9 +11,9 @@ export default {
   },
   columns: {
     batchId: 'Batch ID',
-    breedingBatchId: 'Breeding Batch ID',
+    breedingBatchId: 'Change this to Multiplication Batch',
     varietyName: 'Variety Name',
-    toMultiplyQuantity: 'Quantity to Multiply',
+    toMultiplyQuantity: 'change this to multiplied quantity',
     collectionDate: 'Collection Date',
     operator: 'Operator',
     actions: 'Actions'
@@ -21,12 +21,12 @@ export default {
   form: {
     batchInfo: 'Batch Information',
     collectionInfo: 'Collection Information',
-    breedingBatchId: 'Breeding Batch',
+    breedingBatchId: 'Change this to Multiplication Batch',
     parentalSeedSource: 'Parental Seed Source',
     varietyName: 'Variety Name',
     cropType: 'Crop Type',
-    breedingLevel: 'Breeding Level',
-    toMultiplyQuantity: 'Quantity to Multiply (kg)',
+    breedingLevel: 'change to multiplication Level',
+    toMultiplyQuantity: 'change this to multiplied quantity',
     collectionDate: 'Collection Date',
     operator: 'Operator'
   },

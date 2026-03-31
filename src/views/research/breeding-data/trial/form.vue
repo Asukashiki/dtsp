@@ -217,11 +217,11 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTrialBasicInfo, addTrialBasic, editTrialBasic, getBatchOptions, getLocationMasterOptions } from '@/api/breedingData'
 import { submitTrial } from '@/api/research/trialBasicAudit'
-import { useDict } from '@/hooks/useDict'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -230,8 +230,7 @@ const submitLoading = ref(false)
 const batchOptions = ref([])
 const locationOptions = ref([])
 
-// 使用 useDict hook 获取字典数据
-const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 const isEdit = computed(() => !!route.params.trialId)
 
@@ -262,8 +261,7 @@ const canSubmit = computed(() => {
 
 // 作物类型显示值（字典回显）
 const cropTypeDisplay = computed(() => {
-  if (!formData.cropType) return ''
-  return getLabelByValue('crop_type', formData.cropType) || formData.cropType
+  return formData.cropType ? getCropTypeDisplay(cropTypeOptions.value, formData.cropType) : ''
 })
 
 const rules = {
@@ -321,7 +319,7 @@ const getStatusType = (status) => {
 const handleBatchChange = (batchId) => {
   const selectedBatch = batchOptions.value.find(item => item.batchId === batchId)
   if (selectedBatch) {
-    formData.cropType = selectedBatch.cropType || ''
+      formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedBatch.cropType || '')
     formData.varietyCode = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
   }
@@ -344,7 +342,10 @@ const getInfo = async () => {
   loading.value = true
   try {
     const res = await getTrialBasicInfo(route.params.trialId)
-    Object.assign(formData, res.data)
+    Object.assign(formData, {
+      ...res.data,
+      cropType: resolveCropTypeValue(cropTypeOptions.value, res.data.cropType)
+    })
     if (formData.year) {
       formData.year = String(formData.year)
     }
@@ -362,7 +363,10 @@ const handleSave = async () => {
 
   saveLoading.value = true
   try {
-    const submitData = { ...formData }
+    const submitData = {
+      ...formData,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType)
+    }
     if (submitData.year) {
       submitData.year = parseInt(submitData.year)
     }
@@ -399,7 +403,10 @@ const handleSubmitAudit = async () => {
     submitLoading.value = true
     try {
       console.log(formData,'formData')
-      const submitData = { ...formData }
+      const submitData = {
+        ...formData,
+        cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType)
+      }
       if (submitData.year) {
         submitData.year = parseInt(submitData.year)
       }
@@ -451,9 +458,17 @@ watch(() => formData.year, () => {
 })
 
 onMounted(() => {
-  loadBatchOptions()
-  loadLocationOptions()
-  getInfo()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadBatchOptions()
+    loadLocationOptions()
+    getInfo()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadBatchOptions()
+    loadLocationOptions()
+    getInfo()
+  })
 })
 </script>
 

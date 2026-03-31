@@ -87,7 +87,7 @@
                 align="center"
               >
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -164,7 +164,7 @@
                 <el-tag :type="getStatusType(item.applyStatus)" size="small">
                   {{ $t(`research.c1Propagation.status.${item.applyStatus}`) }}
                 </el-tag>
-                <el-tag type="info" size="small">{{ getLabelByValue('crop_type', item.cropType) }}</el-tag>
+                <el-tag type="info" size="small">{{ getCropTypeDisplay(item.cropType) }}</el-tag>
                 <el-tag v-if="item.authId" type="success" size="small">{{ item.authId }}</el-tag>
               </div>
               <h3 class="card-title">{{ item.applicantOrgName }}</h3>
@@ -219,6 +219,8 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // 数据状态
 const loading = ref(false)

@@ -374,16 +374,19 @@ const handleOrgCategoryChange = async (value) => {
 
 // 加载生产批次列表
 const loadProductionBatchList = async () => {
+  const requestedSeedLevel = formData.fromSeedLevel
+  productionBatchList.value = []
+
   try {
     let res;
     // 根据 fromSeedLevel 的值调用不同的 API
-    if (formData.fromSeedLevel === 'Breeder') {
+    if (requestedSeedLevel === 'Breeder') {
       // 当 fromSeedLevel 为 Breeder 时，调用育种家种子生产结果列表
       res = await getBreedSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
-    } else if (formData.fromSeedLevel === 'Pre-Basic') {
+    } else if (requestedSeedLevel === 'Pre-Basic') {
       // 当 fromSeedLevel 为 Pre-Basic 时，调用原原种生产结果列表
       res = await getPrebasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
-    } else if (formData.fromSeedLevel === 'Basic') {
+    } else if (requestedSeedLevel === 'Basic') {
       // 当 fromSeedLevel 为 Basic 时，调用原种生产结果列表
       res = await getBasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
     } else {
@@ -391,11 +394,18 @@ const loadProductionBatchList = async () => {
       productionBatchList.value = []
       return
     }
-    
+
+    if (requestedSeedLevel !== formData.fromSeedLevel) {
+      return
+    }
+
     if (res.code === 200) {
       productionBatchList.value = res.rows || []
     }
   } catch (error) {
+    if (requestedSeedLevel === formData.fromSeedLevel) {
+      productionBatchList.value = []
+    }
     console.error('Failed to load production batch list:', error)
   }
 }

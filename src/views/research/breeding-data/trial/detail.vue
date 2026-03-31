@@ -20,7 +20,7 @@
               <el-descriptions-item :label="$t('research.breedingData.trial.form.trialId')">{{ detailData.trialId }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.trialName')">{{ detailData.trialName }}</el-descriptions-item>
               <el-descriptions-item label="Batch Id">{{ detailData.batchId }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.trial.form.cropType')">{{ detailData.cropType }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.breedingData.trial.form.cropType')">{{ getCropTypeDisplay(detailData.cropType) }}</el-descriptions-item>
               <el-descriptions-item label="Variety Code">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.varietyName')">{{ detailData.varietyName }}</el-descriptions-item>
               <el-descriptions-item :label="$t('research.breedingData.trial.form.locationId')">{{ detailData.locationId }}</el-descriptions-item>
@@ -47,11 +47,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getTrialBasicInfo } from '@/api/breedingData'
+import { useDict } from '@/hooks/useDict'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
+const { getLabelByValue } = useDict(['crop_type'])
+
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const getInfo = async () => {
   loading.value = true

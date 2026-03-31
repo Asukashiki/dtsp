@@ -208,10 +208,12 @@ import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getLandList } from '@/api/newFarm'
 import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const emit = defineEmits(['cancel', 'success'])
+const cropTypeOptions = ref([])
 
 // 表单状态
 const formRef = ref(null)
@@ -392,7 +394,7 @@ const handleBatchChange = (batchId) => {
     formData.breedBatchName = selectedBatch.batchName || ''
     formData.varietyId = selectedBatch.varietyCode || ''
     formData.varietyName = selectedBatch.varietyName || ''
-    formData.cropType = selectedBatch.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedBatch.cropType || '')
     
     // 加载实验数据
     loadTrialData(selectedBatch.batchId)
@@ -550,9 +552,17 @@ const handleCancel = () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadBatchOptions()
-  loadVarietyList()
-  loadLandList()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadBatchOptions()
+    loadVarietyList()
+    loadLandList()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadBatchOptions()
+    loadVarietyList()
+    loadLandList()
+  })
 })
 </script>
 

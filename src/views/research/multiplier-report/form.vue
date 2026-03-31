@@ -97,14 +97,30 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.multiplierReport.cropType')" prop="cropType">
-                    <el-select v-model="formData.cropType" :placeholder="$t('common.pleaseSelect')" filterable style="width:100%">
+                    <el-select
+                      v-model="formData.cropType"
+                      :placeholder="$t('common.pleaseSelect')"
+                      filterable
+                      clearable
+                      style="width:100%"
+                      :loading="cropTypeLoading"
+                      @change="handleCropTypeChange">
                       <el-option v-for="item in cropTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.multiplierReport.varietyName')" prop="varietyName">
-                    <el-input v-model="formData.varietyName" :placeholder="$t('common.pleaseInput')" />
+                    <el-select
+                      v-model="formData.varietyName"
+                      :placeholder="$t('common.pleaseSelect')"
+                      filterable
+                      clearable
+                      style="width:100%"
+                      :loading="varietyLoading"
+                      :disabled="!formData.cropType">
+                      <el-option v-for="item in varietyOptions" :key="item.id" :label="item.label" :value="item.value" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -193,18 +209,22 @@ import { getApprovedC1BatchList, getC1BreedingBatchById } from '@/api/c1Breeding
 import { getBreedSeedDistributeList } from '@/api/breedSeed'
 import { getOrganizationList } from '@/api/organization'
 import { getBreedingCertificationList } from '@/api/seed'
-import { useDict } from '@/hooks/useDict'
+import { listProductManage } from '@/api/productManage'
+import { getDicts } from '@/api/system/dict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
-const { options: dictOptions } = useDict(['crop_type'])
+const { t, locale } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
 const isEdit = computed(() => !!route.params.id)
-const cropTypeOptions = computed(() => dictOptions.value.crop_type || [])
+const cropTypeOptions = ref([])
+const cropTypeLoading = ref(false)
+const varietyOptions = ref([])
+const varietyLoading = ref(false)
 
 // 选择数据源
 const selectedBatchId = ref(null)
@@ -216,6 +236,8 @@ const distributionList = ref([])
 const distLoading = ref(false)
 const certificationList = ref([])
 const certLoading = ref(false)
+
+const seedMainCategoryValue = ref('SEED')
 
 const formData = ref({
   reportDate: '', multiplierId: '', distributionId: '', certificateId: '',
@@ -230,10 +252,113 @@ const rules = computed(() => ({
   multiplierId: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
   seedClassReceived: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
   cropType: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
-  varietyName: [{ required: true, message: t('common.pleaseInput'), trigger: 'blur' }],
+  varietyName: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
   areaPlantedHa: [{ required: true, message: t('common.pleaseInput'), trigger: 'blur' }],
   plantingDate: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }]
 }))
+
+const normalizeOptionLabel = (item) => parseI18nValue(item.dictLabel, locale.value, item.dictLabel)
+
+const resolveCropTypeValue = (value) => {
+  if (!value) return ''
+  const match = cropTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.value : value
+}
+
+const resolveCropTypeLabel = (value) => {
+  if (!value) return ''
+  const match = cropTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.label : value
+}
+
+const loadCropTypeOptions = async () => {
+  cropTypeLoading.value = true
+  try {
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    const mainOptions = (mainRes.data || []).map(item => ({
+      label: normalizeOptionLabel(item),
+      value: item.dictValue
+    }))
+    const seedMainCategory = mainOptions.find(item => String(item.value).toUpperCase() === 'SEED')
+      || mainOptions.find(item => ['seed', '种子'].includes(String(item.label).trim().toLowerCase()))
+
+    seedMainCategoryValue.value = seedMainCategory?.value || 'SEED'
+
+    cropTypeOptions.value = (subRes.data || [])
+      .filter(item => String(item.remark) === String(seedMainCategoryValue.value))
+      .map(item => ({
+        label: normalizeOptionLabel(item),
+        value: item.dictValue
+      }))
+  } catch (error) {
+    console.error(error)
+    cropTypeOptions.value = []
+  } finally {
+    cropTypeLoading.value = false
+  }
+}
+
+const loadVarietyOptions = async (cropType, preserveValue = false) => {
+  const normalizedCropType = resolveCropTypeValue(cropType)
+
+  if (!normalizedCropType) {
+    varietyOptions.value = []
+    if (!preserveValue) {
+      formData.value.varietyName = ''
+    }
+    return
+  }
+
+  varietyLoading.value = true
+  try {
+    const selectedCropTypeLabel = resolveCropTypeLabel(normalizedCropType)
+    const res = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: seedMainCategoryValue.value,
+      subCategory: selectedCropTypeLabel,
+      status: '0'
+    })
+
+    const productList = res.data?.list || []
+    const seen = new Set()
+    varietyOptions.value = productList
+      .map(item => {
+        const productName = item.product_name || item.productName || ''
+        return {
+          id: item.id || item.product_code || productName,
+          label: productName,
+          value: productName
+        }
+      })
+      .filter(item => {
+        if (!item.value || seen.has(item.value)) return false
+        seen.add(item.value)
+        return true
+      })
+
+    if (preserveValue) {
+      const matched = varietyOptions.value.find(item => item.value === formData.value.varietyName)
+      if (!matched) {
+        formData.value.varietyName = ''
+      }
+    } else {
+      formData.value.varietyName = ''
+    }
+  } catch (error) {
+    console.error(error)
+    varietyOptions.value = []
+    if (!preserveValue) {
+      formData.value.varietyName = ''
+    }
+  } finally {
+    varietyLoading.value = false
+  }
+}
 
 // 通用提取列表数据（兼容多种返回格式）
 const extractList = (res) => {
@@ -289,7 +414,7 @@ const loadCertifications = async () => {
 
 // 从批次数据填充表单
 const fillFromBatch = (batch) => {
-  formData.value.cropType = batch.cropType || ''
+  formData.value.cropType = resolveCropTypeValue(batch.cropType || '')
   formData.value.varietyName = batch.varietyName || ''
   formData.value.areaPlantedHa = batch.plantingArea || null
   formData.value.plantingDate = batch.startDate || ''
@@ -299,6 +424,11 @@ const fillFromBatch = (batch) => {
   formData.value.certificateId = batch.batchId || ''
   formData.value.multiplierId = batch.orgId || ''
   formData.value.farmId = batch.orgId || ''
+}
+
+const handleCropTypeChange = async (value) => {
+  formData.value.cropType = resolveCropTypeValue(value)
+  await loadVarietyOptions(formData.value.cropType)
 }
 
 // 选择批次后自动填充
@@ -334,6 +464,8 @@ const loadDetail = async () => {
       Object.keys(formData.value).forEach(key => {
         if (res.data[key] !== undefined) formData.value[key] = res.data[key]
       })
+      formData.value.cropType = resolveCropTypeValue(formData.value.cropType)
+      await loadVarietyOptions(formData.value.cropType, true)
     }
   } catch (e) {
     ElMessage.error(t('research.multiplierReport.loadError'))
@@ -346,11 +478,16 @@ const handleSubmit = async () => {
   await formRef.value?.validate()
   submitting.value = true
   try {
+    const payload = {
+      ...formData.value,
+      cropType: resolveCropTypeLabel(formData.value.cropType)
+    }
+
     if (isEdit.value) {
-      await updateMultiplierReport({ ...formData.value, id: route.params.id })
+      await updateMultiplierReport({ ...payload, id: route.params.id })
       ElMessage.success(t('research.multiplierReport.updateSuccess'))
     } else {
-      await addMultiplierReport(formData.value)
+      await addMultiplierReport(payload)
       ElMessage.success(t('research.multiplierReport.addSuccess'))
     }
     goBack()
@@ -363,7 +500,8 @@ const handleSubmit = async () => {
 
 const goBack = () => router.back()
 
-onMounted(() => {
+onMounted(async () => {
+  await loadCropTypeOptions()
   loadOrganizations()
   loadDistributions()
   loadCertifications()

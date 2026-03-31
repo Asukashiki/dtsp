@@ -97,7 +97,7 @@
                   min-width="120"
                 >
                   <template #default="{ row }">
-                    {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+                    {{ getCropTypeDisplay(row.cropType) }}
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -192,7 +192,7 @@
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('research.datasetCompilation.columns.cropType') }}:</span>
-                  <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType || '-' }}</span>
+                  <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                 </div>
                 <div class="mobile-card-row">
                   <span class="label">{{ $t('research.datasetCompilation.columns.varietyName') }}:</span>
@@ -257,6 +257,7 @@ import ActionButtons from '@/components/workflow/ActionButtons.vue'
 const router = useRouter()
 const { t } = useI18n()
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const loading = ref(false)
 const tableData = ref([])

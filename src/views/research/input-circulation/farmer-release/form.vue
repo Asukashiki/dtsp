@@ -186,7 +186,7 @@
                 <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
                   <template #default="scope">
                     <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
-                      <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -236,10 +236,7 @@ import { getFarmerList } from '@/api/newFarm'
 import { useUserStore } from '@/store/user'
 import { getFarmerDemandByFarmerId } from '@/api/farmerDemand'
 import { getDicts } from '@/api/system/dict'
-import { useDict } from '@/hooks/useDict'
 import { parseI18nValue } from '@/utils/i18nHelper'
-
-const { options } = useDict(['agri_unit'])
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -284,6 +281,7 @@ const demandList = ref([])
 const demandLoading = ref(false)
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const unitOptions = ref([])
 const inputTypeOptions = computed(() => mainCategoryOptions.value)
 
 const formData = reactive({
@@ -559,6 +557,12 @@ const getSubCategoryLabel = (value) => {
   return match ? match.label : value || '-'
 }
 
+const resolveDictValue = (options, value) => {
+  if (!value) return ''
+  const match = options.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.value : value
+}
+
 // 验证数量 - 同时检查需求量和库存
 const validateQuantity = async (index) => {
   const detail = formData.details[index]
@@ -629,6 +633,7 @@ const fetchDetail = async () => {
         season: detail.season || detail.seasonCode || detail.season_code || '',
         variety: detail.variety || '',
         varietyId: detail.varietyId || detail.variety_id || '',
+        unit: resolveDictValue(unitOptions.value, detail.unit),
         currentStock: detail.currentStock ?? detail.current_stock ?? 0
       }))
 
@@ -668,7 +673,7 @@ const addDetail = () => {
     variety: '',
     season: '',
     quantity: 0,
-    unit: '',
+    unit: unitOptions.value[0]?.value || '',
     unitPrice: 0,
     totalPrice: 0,
     maxQuantity: null,
@@ -852,9 +857,10 @@ const handleAction = (action) => {
 
 const loadCategoryOptions = async () => {
   try {
-    const [mainRes, subRes] = await Promise.all([
+    const [mainRes, subRes, unitRes] = await Promise.all([
       getDicts('inventory_main_category'),
-      getDicts('inventory_sub_category')
+      getDicts('inventory_sub_category'),
+      getDicts('inventory_unit_new')
     ])
 
     mainCategoryOptions.value = (mainRes.data || []).map(item => ({
@@ -866,6 +872,11 @@ const loadCategoryOptions = async () => {
       label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
       value: item.dictValue,
       parentValue: item.remark
+    }))
+
+    unitOptions.value = (unitRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
     }))
   } catch (error) {
     console.error('Failed to load category options:', error)

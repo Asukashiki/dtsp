@@ -48,7 +48,7 @@
           <el-table-column prop="varietyName" :label="$t('research.variety.publish.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" min-width="120">
             <template #default="{ row }">
-              {{ getLabelByValue('crop_type', row.cropType) || row.cropType }}
+              {{ getCropTypeDisplay(row.cropType) }}
             </template>
           </el-table-column>
           <el-table-column prop="publishTime" :label="$t('research.variety.publish.columns.approvalDate')" min-width="120" />
@@ -115,7 +115,7 @@
           <div class="card-body">
             <div class="card-row">
               <span class="label">{{ $t('research.variety.publish.columns.cropType') }}:</span>
-              <span class="value">{{ getLabelByValue('crop_type', item.cropType) || item.cropType }}</span>
+              <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.variety.publish.columns.publishDept') }}:</span>
@@ -184,7 +184,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.registration.form.cropType') }}</span>
-              <span class="value">{{ getLabelByValue('crop_type', currentVariety.cropType) || currentVariety.cropType || '-' }}</span>
+              <span class="value">{{ getCropTypeDisplay(currentVariety.cropType) }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.publish.columns.approvalDate') }}</span>

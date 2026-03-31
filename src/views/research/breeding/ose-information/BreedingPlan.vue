@@ -81,7 +81,7 @@
                   <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" min-width="100" />
                   <el-table-column prop="cropType" :label="$t('research.breeding.plan.columns.cropType')" min-width="100">
                     <template #default="{ row }">
-                      {{ getLabelByValue('crop_type', row.cropType) }}
+                      {{ getCropTypeDisplay(row.cropType) }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="varietyName" :label="$t('research.breeding.plan.columns.varietyName')" min-width="150" />
@@ -147,7 +147,7 @@
                     </div>
                     <div class="mobile-card-row">
                       <span class="label">{{ $t('research.breeding.plan.columns.cropType') }}:</span>
-                      <span class="value">{{ getLabelByValue('crop_type', item.cropType) }}</span>
+                      <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
                     </div>
                     <div class="mobile-card-row">
                       <span class="label">{{ $t('research.breeding.plan.columns.varietyName') }}:</span>
@@ -220,12 +220,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import BreedingPlanForm from '../components/BreedingPlanForm.vue'
 import { getBreedingPlanList, removeBreedingPlan } from '@/api/enterprise'
 import { mockCropTypes, mockPlanStatus } from '@/mock/breedingData'
-import { useDict } from '@/hooks/useDict'
+import { loadSeedCropTypeOptions, resolveCropTypeLabel, getCropTypeDisplay as getResearchCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
-
-// 使用 useDict hook 获取字典数据
-const { getLabelByValue } = useDict(['crop_type'])
+const { t, locale } = useI18n()
+const cropTypeOptions = ref([])
+const getCropTypeDisplay = (value) => getResearchCropTypeDisplay(cropTypeOptions.value, value)
 
 // 数据状态
 const loading = ref(false)
@@ -267,7 +266,7 @@ const filteredList = computed(() => {
       item.planName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       item.batchId.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchYear = !filterYear.value || String(item.breedingYear) === filterYear.value
-    const matchCrop = !filterCrop.value || item.cropType === filterCrop.value
+    const matchCrop = !filterCrop.value || resolveCropTypeLabel(cropTypeOptions.value, item.cropType) === resolveCropTypeLabel(cropTypeOptions.value, filterCrop.value)
     const matchStatus = !filterStatus.value || item.status === filterStatus.value
 
     return matchSearch && matchYear && matchCrop && matchStatus
@@ -319,7 +318,7 @@ const loadData = async () => {
 
     // 添加筛选条件
     if (filterYear.value) params.breedingYear = filterYear.value
-    if (filterCrop.value) params.cropType = filterCrop.value
+    if (filterCrop.value) params.cropType = resolveCropTypeLabel(cropTypeOptions.value, filterCrop.value)
 
     const res = await getBreedingPlanList(params)
 
@@ -409,7 +408,13 @@ const handleSuccess = () => {
 
 // 初始化
 onMounted(() => {
-  loadData()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadData()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadData()
+  })
 })
 </script>
 

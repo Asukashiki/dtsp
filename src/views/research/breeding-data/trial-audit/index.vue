@@ -70,7 +70,7 @@
                 min-width="120"
               >
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) || row.cropType || '-' }}
+                  {{ getCropTypeDisplay(row.cropType) }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -222,6 +222,7 @@ const tabConfig = [
 const { options, getLabelByValue, loading: dictLoading } = useDict([
   'crop_type'
 ])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 const queryParams = reactive({
   auditStatus: 'S1',
   trialName: '',

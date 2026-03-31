@@ -78,7 +78,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.c1Propagation.form.cropType')">
-                    <el-input :value="getLabelByValue('crop_type', data.cropType)" disabled />
+                    <el-input :value="getCropTypeDisplay(data.cropType)" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -188,7 +188,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { auditC1Propagation, getC1PropagationAuditById } from '@/api/c1Propagation'
-import { getUserInfom, getUserOrgName, getUserOrgId  } from '@/utils/auth'
+import { getUserInfo, getUserOrgName } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
 
 
@@ -198,6 +198,7 @@ const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 const emit = defineEmits(['cancel', 'success'])
 
@@ -229,7 +230,7 @@ const rules = computed(() => ({
 // 默认值：从当前登录用户信息中获取审核机构
 onMounted(() => {
   const currentUser = getUserInfo()
-  if (currentUser && currentUser) {
+  if (currentUser) {
     formData.auditOrg = getUserOrgName()
   }
   loadData()

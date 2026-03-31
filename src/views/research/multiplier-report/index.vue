@@ -49,7 +49,7 @@
               </el-table-column>
               <el-table-column prop="cropType" :label="$t('research.multiplierReport.cropType')" width="120" align="center">
                 <template #default="{ row }">
-                  {{ getLabelByValue('crop_type', row.cropType) }}
+                  {{ row.cropType || '-' }}
                 </template>
               </el-table-column>
               <el-table-column prop="varietyName" :label="$t('research.multiplierReport.varietyName')" min-width="160" show-overflow-tooltip />
@@ -91,25 +91,56 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getMultiplierReportList, deleteMultiplierReport, exportMultiplierReport } from '@/api/multiplierReport'
+import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
-import { useDict } from '@/hooks/useDict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
-const { t } = useI18n()
-const { options: dictOptions, getLabelByValue } = useDict(['crop_type'])
+const { t, locale } = useI18n()
 
 const loading = ref(false)
 const exporting = ref(false)
 const tableData = ref([])
 const filterForm = ref({ keyword: '', cropType: '', seedClassReceived: '' })
 const pagination = ref({ pageNum: 1, pageSize: 10, total: 0 })
+const cropTypeOptions = ref([])
 
-const cropTypeOptions = computed(() => dictOptions.value.crop_type || [])
+const normalizeOptionLabel = (item) => parseI18nValue(item.dictLabel, locale.value, item.dictLabel)
+
+const loadCropTypeOptions = async () => {
+  try {
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    const mainOptions = (mainRes.data || []).map(item => ({
+      label: normalizeOptionLabel(item),
+      value: item.dictValue
+    }))
+    const seedMainCategory = mainOptions.find(item => String(item.value).toUpperCase() === 'SEED')
+      || mainOptions.find(item => ['seed', '种子'].includes(String(item.label).trim().toLowerCase()))
+    const seedMainCategoryValue = seedMainCategory?.value || 'SEED'
+
+    cropTypeOptions.value = (subRes.data || [])
+      .filter(item => String(item.remark) === String(seedMainCategoryValue))
+      .map(item => {
+        const label = normalizeOptionLabel(item)
+        return {
+          label,
+          value: label
+        }
+      })
+  } catch (error) {
+    console.error('Failed to load crop type options:', error)
+    cropTypeOptions.value = []
+  }
+}
 
 const loadList = async () => {
   loading.value = true
@@ -164,7 +195,10 @@ const handleExport = async () => {
   }
 }
 
-onMounted(() => loadList())
+onMounted(() => {
+  loadCropTypeOptions()
+  loadList()
+})
 </script>
 
 <style lang="scss" scoped>

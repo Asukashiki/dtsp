@@ -170,27 +170,29 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { getBreedSeedProduceList, getOseReceiveConfirmList } from '@/api/breedSeed'
-import { useDict } from '@/hooks/useDict'
 import { getUserOrgName, getUserOrgId } from '@/utils/auth'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
+const { locale } = useI18n()
 
 const formRef = ref(null)
 const loading = ref(false)
 const breedSeedProduceList = ref([])
 const confirmedDistributionList = ref([])
 const parentalSeedSourceOptions = ref([])
-const { getLabelByValue } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 const isEdit = computed(() => !!route.params.id)
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return formData.value.cropType ? getLabelByValue('crop_type', formData.value.cropType) : ''
+  return getCropTypeDisplay(cropTypeOptions.value, formData.value.cropType)
 })
 
 const formData = ref({
@@ -288,7 +290,7 @@ const handleDistributionIdChange = (value) => {
         uniqueOptions.push({
           parentalSeedSource: batchId, // Use batch ID as parental seed source
           varietyName: detail.varietyName,
-          cropType: detail.cropType,
+          cropType: resolveCropTypeValue(cropTypeOptions.value, detail.cropType),
           seedType: detail.seedType,
           produceBatchId: batchId,
           produceBatchName: detail.produceBatchName || batchId
@@ -302,7 +304,7 @@ const handleDistributionIdChange = (value) => {
     // 如果只有一个选项，自动选择
     if (uniqueOptions.length === 1) {
       formData.value.parentalSeedSource = uniqueOptions[0].parentalSeedSource
-      formData.value.cropType = uniqueOptions[0].cropType || ''
+      formData.value.cropType = resolveCropTypeValue(cropTypeOptions.value, uniqueOptions[0].cropType || '')
       formData.value.varietyName = uniqueOptions[0].varietyName || ''
       formData.value.breedingLevel = uniqueOptions[0].seedType || ''
     }
@@ -331,7 +333,7 @@ const handleParentalSeedSourceChange = (value) => {
 
   if (selectedItem) {
     // 自动填充cropType、varietyName和breedingLevel
-    formData.value.cropType = selectedItem.cropType || ''
+      formData.value.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedItem.cropType || '')
     formData.value.varietyName = selectedItem.varietyName || ''
     formData.value.breedingLevel = selectedItem.seedType || ''
     console.log('Updated formData:', {
@@ -349,6 +351,7 @@ onMounted(async () => {
   // 默认填充机构信息
   formData.value.orgName = getUserOrgName()
   formData.value.orgId = getUserOrgId()
+  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
 
   // 并行加载数据
   await Promise.all([loadBreedSeedProduceList(), loadConfirmedDistributionList()])
@@ -365,7 +368,8 @@ const loadDetail = async () => {
     if (response.code === 200 && response.data) {
       formData.value = {
         ...formData.value,
-        ...response.data
+        ...response.data,
+        cropType: resolveCropTypeValue(cropTypeOptions.value, response.data.cropType)
       }
       // 如果是编辑模式，需要根据 distributionId 加载 parentalSeedSourceOptions
       if (formData.value.distributionId) {
@@ -391,7 +395,11 @@ const handleSubmit = async () => {
     if (valid) {
       loading.value = true
       try {
-        const data = isEdit.value ? { id: route.params.id, ...formData.value } : formData.value
+        const data = {
+          ...(isEdit.value ? { id: route.params.id } : {}),
+          ...formData.value,
+          cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.value.cropType)
+        }
         // 兼容后端字段名 parentSeedSource
         const aData = { ...data, objective: formData.value.objective || '1', parentSeedSource: formData.value.parentalSeedSource }
         const response = isEdit.value ? await updateBreedingBatchPage(aData) : await addBreedingBatchPage(aData)

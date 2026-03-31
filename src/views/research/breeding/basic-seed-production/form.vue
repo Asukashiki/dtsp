@@ -159,15 +159,13 @@ import { ElMessage } from 'element-plus'
 import { addBasicSeedProduce } from '@/api/basicSeed'
 import { getPrebasicSeedProduceList } from '@/api/prebasicSeed'
 import { getLandList } from '@/api/newFarm'
-import { useDict } from '@/hooks/useDict'
 import { getUserInfo } from '@/utils/auth'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const emit = defineEmits(['cancel', 'success'])
-
-// 使用 useDict 获取作物类型字典
-const { getLabelByValue } = useDict(['crop_type'])
+const cropTypeOptions = ref([])
 
 // 表单状态
 const formRef = ref(null)
@@ -217,7 +215,7 @@ const remainingQuantity = ref(null)
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
+  return formData.cropType ? getCropTypeDisplay(cropTypeOptions.value, formData.cropType) : ''
 })
 
 // 表单验证规则
@@ -306,7 +304,7 @@ const handleBatchChange = async (batchId) => {
     formData.trialName = selectedBatch.trialName || ''
     formData.varietyId = selectedBatch.varietyId || ''
     formData.varietyName = selectedBatch.varietyName || ''
-    formData.cropType = selectedBatch.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedBatch.cropType || '')
     
     // 获取剩余数量（从 PreBasic 的生产结果中获取）
     try {
@@ -379,7 +377,7 @@ const handleSubmit = async () => {
       prebasicSeedBatchId: formData.prebasicSeedBatchId,
       prebasicSeedBatchName: formData.prebasicSeedBatchName,
       varietyName: formData.varietyName,
-      cropType: formData.cropType,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
       time: timeValue,
       landId: formData.landId,
       landName: formData.landName,
@@ -436,8 +434,15 @@ const handleCancel = () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadPrebasicSeedBatchOptions()
-  loadLandList()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadPrebasicSeedBatchOptions()
+    loadLandList()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadPrebasicSeedBatchOptions()
+    loadLandList()
+  })
 })
 </script>
 

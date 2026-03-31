@@ -44,7 +44,11 @@
         <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="registrationNo" :label="$t('research.variety.audit.columns.applicationNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.audit.columns.varietyName')" min-width="150" />
-          <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" min-width="120" />
+          <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" min-width="120">
+            <template #default="{ row }">
+              {{ getCropTypeDisplay(row.cropType) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="enterpriseName" :label="$t('research.variety.audit.columns.submittingUnit')" min-width="180" />
           <el-table-column prop="recordDate" :label="$t('research.variety.audit.columns.submitDate')" min-width="160" />
           <el-table-column prop="recordStatus" :label="$t('research.variety.audit.columns.auditStatus')" min-width="160">
@@ -111,7 +115,7 @@
           <div class="card-body">
             <div class="card-row">
               <span class="label">{{ $t('research.variety.audit.columns.cropType') }}:</span>
-              <span class="value">{{ item.cropType }}</span>
+              <span class="value">{{ getCropTypeDisplay(item.cropType) }}</span>
             </div>
             <div class="card-row">
               <span class="label">{{ $t('research.enterprise.form.enterpriseName') }}:</span>
@@ -173,7 +177,7 @@
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.variety.registration.form.cropType') }}</span>
-              <span class="value">{{ currentVariety.cropType || '-' }}</span>
+              <span class="value">{{ getCropTypeDisplay(currentVariety.cropType) }}</span>
             </div>
             <div class="info-item">
               <span class="label">{{ $t('research.enterprise.form.enterpriseName') }}</span>
@@ -414,10 +418,13 @@ import {
   getVarietyRegistrationDetail,
   handleVarietyAudit
 } from '@/api/enterprise'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, getCropTypeDisplay as getResearchCropTypeDisplay } from '@/utils/researchCropType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 const formRef = ref(null)
+const cropTypeOptions = ref([])
+const getCropTypeDisplay = (value) => getResearchCropTypeDisplay(cropTypeOptions.value, value)
 
 // 视图切换
 const showDetail = ref(false)
@@ -535,7 +542,7 @@ const loadDetailData = async (registrationId) => {
         enterpriseId: data.enterpriseId || '',
         varietyName: data.varietyName || '',
         varietyCode: data.varietyCode || '',
-        cropType: data.cropType || '',
+        cropType: resolveCropTypeValue(cropTypeOptions.value, data.cropType || ''),
         submittingUnit: data.enterpriseName || '',
         submitDate: data.recordDate || '',
         recordStatus: data.recordStatus, // 使用 recordStatus: 0-审核中/1-待发布/2-审核未通过
@@ -692,7 +699,13 @@ watch([searchQuery, filterStatus], () => {
 })
 
 onMounted(() => {
-  loadData()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadData()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadData()
+  })
 })
 
 </script>

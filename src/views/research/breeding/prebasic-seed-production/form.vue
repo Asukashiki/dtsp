@@ -160,14 +160,12 @@ import { ElMessage } from 'element-plus'
 import { addPrebasicSeedProduce } from '@/api/prebasicSeed'
 import { getBreedSeedProduceList, getBreedSeedProduceRemainingQuantity } from '@/api/breedSeed'
 import { getLandList } from '@/api/newFarm'
-import { useDict } from '@/hooks/useDict'
 import { getUserInfo } from '@/utils/auth'
+import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const router = useRouter()
-const { t } = useI18n()
-
-// 使用 useDict 获取作物类型字典
-const { getLabelByValue } = useDict(['crop_type'])
+const { t, locale } = useI18n()
+const cropTypeOptions = ref([])
 
 // 表单状态
 const formRef = ref(null)
@@ -217,7 +215,7 @@ const remainingQuantity = ref(null)
 
 // 计算属性：作物类型显示 label
 const cropTypeLabel = computed(() => {
-  return formData.cropType ? getLabelByValue('crop_type', formData.cropType) : ''
+  return formData.cropType ? getCropTypeDisplay(cropTypeOptions.value, formData.cropType) : ''
 })
 
 // 表单验证规则
@@ -301,7 +299,7 @@ const handleBatchChange = async (batchId) => {
     formData.trialName = selectedBatch.trialName || ''
     formData.varietyId = selectedBatch.varietyId || ''
     formData.varietyName = selectedBatch.varietyName || ''
-    formData.cropType = selectedBatch.cropType || ''
+    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedBatch.cropType || '')
     
     // 获取剩余数量
     try {
@@ -360,7 +358,7 @@ const handleSubmit = async () => {
       breederSeedBatchId: formData.breederSeedBatchId,
       breederSeedBatchName: formData.breederSeedBatchName,
       varietyName: formData.varietyName,
-      cropType: formData.cropType,
+      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType),
       time: timeValue,
       landId: formData.landId,
       landName: formData.landName,
@@ -403,8 +401,15 @@ const handleCancel = () => {
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadBreederSeedBatchOptions()
-  loadLandList()
+  loadSeedCropTypeOptions(locale.value).then((options) => {
+    cropTypeOptions.value = options
+    loadBreederSeedBatchOptions()
+    loadLandList()
+  }).catch((error) => {
+    console.error('Failed to load crop type options:', error)
+    loadBreederSeedBatchOptions()
+    loadLandList()
+  })
 })
 </script>
 

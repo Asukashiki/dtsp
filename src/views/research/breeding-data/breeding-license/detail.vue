@@ -28,7 +28,7 @@
           {{ licenseDetail.datasetCode || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="$t('research.breedingLicense.form.cropType')">
-          {{ getLabelByValue('crop_type', licenseDetail.cropType) || licenseDetail.cropType }}
+          {{ getCropTypeDisplay(licenseDetail.cropType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="$t('research.breedingLicense.form.varietyName')">
           {{ licenseDetail.varietyName }}
@@ -141,6 +141,7 @@ const { t } = useI18n()
 
 // 字典数据
 const { getLabelByValue } = useDict(['crop_type', 'license_status', 'approval_org'])
+const getCropTypeDisplay = (value) => getLabelByValue('crop_type', value) || value || '-'
 
 // Back Handler
 const handleBack = () => {
