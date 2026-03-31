@@ -193,7 +193,7 @@
                 <el-table-column :label="$t('inputCirculation.unit')" min-width="140">
                   <template #default="scope">
                     <el-select v-model="scope.row.unit" :placeholder="$t('common.pleaseSelect')" style="width: 100%">
-                      <el-option v-for="item in options.agri_unit" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in unitOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -251,11 +251,8 @@ import { getCurrentUserInfo } from '@/api/user.js'
 import { getTownAggregationDetail } from '@/api/villageAggregation.js'
 import { getRegistrationList } from '@/api/orgRegistration'
 import { getDicts } from '@/api/system/dict'
-import { useDict } from '@/hooks/useDict'
 import { parseI18nValue } from '@/utils/i18nHelper'
 import { useUserStore } from '@/store/user'
-
-const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_unit'])
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -324,6 +321,7 @@ const warehouseOptions = ref([])
 const inWarehouseOptions = ref([])
 const mainCategoryOptions = ref([])
 const subCategoryOptions = ref([])
+const unitOptions = ref([])
 const inputTypeOptions = computed(() => mainCategoryOptions.value)
 
 const createVarietyState = () => ({
@@ -391,7 +389,8 @@ const normalizeDetailRow = (detail = {}) => ({
   ...detail,
   season: detail.season || detail.seasonCode || detail.season_code || '',
   variety: detail.variety || '',
-  varietyId: detail.varietyId || detail.variety_id || detail.productId || detail.product_id || ''
+  varietyId: detail.varietyId || detail.variety_id || detail.productId || detail.product_id || '',
+  unit: resolveDictValue(unitOptions.value, detail.unit)
 })
 
 const rules = {
@@ -537,9 +536,10 @@ const loadInWarehousesByUnion = async (unionOrgName) => {
 
 const loadCategoryOptions = async () => {
   try {
-    const [mainRes, subRes] = await Promise.all([
+    const [mainRes, subRes, unitRes] = await Promise.all([
       getDicts('inventory_main_category'),
-      getDicts('inventory_sub_category')
+      getDicts('inventory_sub_category'),
+      getDicts('inventory_unit_new')
     ])
 
     mainCategoryOptions.value = (mainRes.data || []).map(item => ({
@@ -552,9 +552,20 @@ const loadCategoryOptions = async () => {
       value: item.dictValue,
       parentValue: item.remark
     }))
+
+    unitOptions.value = (unitRes.data || []).map(item => ({
+      label: parseI18nValue(item.dictLabel, locale.value, item.dictLabel),
+      value: item.dictValue
+    }))
   } catch (error) {
     console.error('Failed to load category options:', error)
   }
+}
+
+const resolveDictValue = (options, value) => {
+  if (!value) return ''
+  const match = options.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.value : value
 }
 
 
@@ -980,7 +991,7 @@ const createEmptyDetail = () => ({
   variety: '',
   ...createVarietyState(),
   quantity: 0,
-  unit: options.value.agri_unit?.[0]?.value || '',
+  unit: unitOptions.value[0]?.value || '',
   unitPrice: 0,
   maxQuantity: 0,
   currentStock: 0,
