@@ -49,23 +49,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="unsubmitQuantity"
-                    :label="$t('Unsubmit Quantity')"
-                    min-width="140"
-                />
-                <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="auditQuantity"
-                    :label="$t('Audit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
                   prop="status"
                   :label="$t('townAggregation.columns.status')"
                   min-width="100"
@@ -229,23 +212,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="unsubmitQuantity"
-                    :label="$t('Unsubmit Quantity')"
-                    min-width="140"
-                />
-                <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="auditQuantity"
-                    :label="$t('Audit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
                   prop="status"
                   :label="$t('townAggregation.columns.status')"
                   min-width="100"
@@ -374,6 +340,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="season"
+          :label="$t('farmerDemand.form.season')"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="variety"
           :label="$t('farmerDemand.form.variety')"
           min-width="150"
@@ -486,6 +461,15 @@
             >
               <template #default="{ row }">
                 {{ getLabelByValue('input_type', row.inputType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="season"
+              :label="$t('farmerDemand.form.season')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
               </template>
             </el-table-column>
             <el-table-column
@@ -644,6 +628,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createVillageDemandSummaryMain,
   getVillageDemandSummaryMainList,
+  getVillageDemandSummaryMainListSub,
   aggregateTownInputDemand,
   getTownAggregationDetail,
   updateVillageDemandSummaryMain,
@@ -654,7 +639,7 @@ import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_season'])
 const router = useRouter()
 const { t } = useI18n()
 
@@ -958,10 +943,10 @@ const loadDrillDownData = async () => {
       orderByColumn: 'year',
       isAsc: 'desc'
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
-      drillDownData.value = res.data?.records || []
+      drillDownData.value = res.data?.list || []
       drillDownPagination.total = res.data?.total || 0
     }
   } catch (error) {
@@ -1008,7 +993,7 @@ const handleDrillDownDetail = async (row) => {
     }
   } catch (error) {
     console.error('Failed to load aggregation data:', error)
-    ElMessage.error(t('townAggregation.detailDialog.loadFailed排名'))
+      ElMessage.error(t('townAggregation.detailDialog.loadFailed'))
   } finally {
     drillDownAggregationLoading.value = false
   }

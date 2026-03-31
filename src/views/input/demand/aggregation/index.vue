@@ -16,6 +16,22 @@
           :is-list="true"
         >
           <div class="card-body">
+            <div class="filter-bar">
+              <el-select
+                v-model="exportFilters.season"
+                :placeholder="$t('farmerDemand.form.season')"
+                clearable
+                style="width: 220px"
+              >
+                <el-option
+                  v-for="item in options.agri_season || []"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table
@@ -251,6 +267,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="season"
+          :label="$t('farmerDemand.form.season')"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="variety"
           :label="$t('farmerDemand.form.variety')"
           min-width="150"
@@ -291,7 +316,7 @@ import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_season'])
 
 const router = useRouter()
 const { t } = useI18n()
@@ -299,6 +324,10 @@ const { t } = useI18n()
 const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref([])
+
+const exportFilters = reactive({
+  season: ''
+})
 
 // 分页
 const pagination = reactive({
@@ -380,6 +409,13 @@ const getCustomButtons = (row) => {
     icon: 'ri-list-check' 
   })
 
+  buttons.push({
+    type: 'success',
+    action: 'export',
+    label: 'common.export',
+    icon: 'ri-download-line'
+  })
+
   return buttons
 }
 
@@ -388,6 +424,113 @@ const handleTableAction = (row, action) => {
   if (action === 'approve') handleApprove(row)
   else if (action === 'submit') handleSubmit(row)
   else if (action === 'detail') handleDetail(row)
+  else if (action === 'export') handleExport(row)
+}
+
+const escapeCsvCell = (value) => {
+  if (value === null || value === undefined) return ''
+  const stringValue = String(value)
+  if (/[",\n]/.test(stringValue)) {
+    return `"${stringValue.replace(/"/g, '""')}"`
+  }
+  return stringValue
+}
+
+const downloadCsv = (content, filename) => {
+  const blob = new Blob([`\uFEFF${content}`], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
+const normalizeSeasonValue = (value) => String(value ?? '').trim().toLowerCase()
+
+const getSeasonFilterCandidates = (selectedSeason) => {
+  const selected = options.value.agri_season?.find((item) => String(item.value) === String(selectedSeason))
+  return new Set(
+    [
+      selectedSeason,
+      selected?.actualValue,
+      selected?.label
+    ]
+      .filter(Boolean)
+      .map(normalizeSeasonValue)
+  )
+}
+
+const matchesSelectedSeason = (item, selectedSeason) => {
+  if (!selectedSeason) return true
+
+  const filterCandidates = getSeasonFilterCandidates(selectedSeason)
+  const recordSeason = item.season ?? item.seasonCode ?? item.season_code
+  const recordCandidates = new Set(
+    [
+      recordSeason,
+      getLabelByValue('agri_season', recordSeason)
+    ]
+      .filter(Boolean)
+      .map(normalizeSeasonValue)
+  )
+
+  return [...recordCandidates].some((candidate) => filterCandidates.has(candidate))
+}
+
+const handleExport = async (row) => {
+  try {
+    const res = await getVillageAggregationDetail({
+      sourceCode: row.sourceCode,
+      year: row.year
+    })
+
+    if (res.code !== 200) {
+      ElMessage.error(res.msg || t('villageAggregation.detailDialog.loadFailed'))
+      return
+    }
+
+    const selectedSeason = exportFilters.season
+    const records = (res.data || []).filter((item) => matchesSelectedSeason(item, selectedSeason))
+
+    if (records.length === 0) {
+      ElMessage.warning(t('villageAggregation.detailDialog.noData'))
+      return
+    }
+
+    const headers = [
+      t('villageAggregation.detailDialog.columns.inputCategory'),
+      t('villageAggregation.detailDialog.columns.inputType'),
+      t('farmerDemand.form.season'),
+      t('farmerDemand.form.variety'),
+      t('villageAggregation.detailDialog.columns.totalQuantity')
+    ]
+
+    const rows = records.map((item) => [
+      getLabelByValue('input_category', item.inputCategory) || item.inputCategory || '-',
+      getLabelByValue('input_type', item.inputType) || item.inputType || '-',
+      getLabelByValue('agri_season', item.season || item.seasonCode || item.season_code) || item.season || item.seasonCode || item.season_code || '-',
+      item.variety || '-',
+      item.totalQuantity ?? '-'
+    ])
+
+    const csvContent = [headers, ...rows]
+      .map((csvRow) => csvRow.map(escapeCsvCell).join(','))
+      .join('\n')
+
+    const safeSourceName = (row.sourceName || 'aggregation-results').replace(/[\\/:*?"<>|]/g, '_')
+    const seasonLabel = selectedSeason
+      ? (getLabelByValue('agri_season', selectedSeason) || selectedSeason)
+      : 'all-seasons'
+    const safeSeasonLabel = seasonLabel.replace(/[\\/:*?"<>|\s]/g, '_')
+    downloadCsv(csvContent, `${safeSourceName}-${row.year}-${safeSeasonLabel}-aggregation-results.csv`)
+    ElMessage.success(t('common.success'))
+  } catch (error) {
+    console.error('Failed to export aggregation results:', error)
+    ElMessage.error(t('villageAggregation.detailDialog.loadFailed'))
+  }
 }
 
 // 加载列表数据
@@ -581,4 +724,9 @@ onMounted(() => {
 @use '@/assets/styles/table-enhanced.scss';
 
 // 自定义样式可以根据需要添加，大部分已包含在通用样式中
+.filter-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
 </style>

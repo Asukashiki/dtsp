@@ -192,23 +192,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="unsubmitQuantity"
-                    :label="$t('Unsubmit Quantity')"
-                    min-width="140"
-                />
-                <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="auditQuantity"
-                    :label="$t('Audit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
                   prop="status"
                   :label="$t('stateAggregation.columns.status')"
                   min-width="100"
@@ -322,23 +305,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="unsubmitQuantity"
-                    :label="$t('Unsubmit Quantity')"
-                    min-width="140"
-                />
-                <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="auditQuantity"
-                    :label="$t('Audit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
                   prop="status"
                   :label="$t('stateAggregation.columns.status')"
                   min-width="100"
@@ -443,23 +409,6 @@
                 <el-table-column
                     prop="subQuantity"
                     :label="$t('townAggregation.columns.subQuantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="unsubmitQuantity"
-                    :label="$t('Unsubmit Quantity')"
-                    min-width="140"
-                />
-                <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="auditQuantity"
-                    :label="$t('Audit Quantity')"
                     min-width="140"
                 >
                 </el-table-column>
@@ -592,6 +541,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="season"
+          :label="$t('farmerDemand.form.season')"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="variety"
           :label="$t('farmerDemand.form.variety')"
           min-width="150"
@@ -678,6 +636,15 @@
           >
             <template #default="{ row }">
               {{ getLabelByValue('input_type', row.inputType) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="season"
+            :label="$t('farmerDemand.form.season')"
+            min-width="120"
+          >
+            <template #default="{ row }">
+              {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -772,6 +739,15 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="season"
+            :label="$t('farmerDemand.form.season')"
+            min-width="120"
+          >
+            <template #default="{ row }">
+              {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="variety"
             :label="$t('farmerDemand.form.variety')"
             min-width="150"
@@ -861,6 +837,15 @@
             >
               <template #default="{ row }">
                 {{ getLabelByValue('input_type', row.inputType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="season"
+              :label="$t('farmerDemand.form.season')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
               </template>
             </el-table-column>
             <el-table-column
@@ -1018,6 +1003,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import {
   getVillageDemandSummaryMainList,
+  getVillageDemandSummaryMainListSub,
   getTownAggregationDetail,
   distributeTask,
   getVillageAggregationDetail, getZoneAggregationDetail
@@ -1027,7 +1013,7 @@ import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard } from '@/components/common'
 import ActionButtons from '@/components/workflow/ActionButtons.vue'
 
-const { getLabelByValue, options } = useDict(['input_type', 'input_category'])
+const { getLabelByValue, options } = useDict(['input_type', 'input_category', 'agri_season'])
 const router = useRouter()
 const { t } = useI18n()
 
@@ -1248,10 +1234,10 @@ const loadDrillDownData = async () => {
       orderByColumn: 'year',
       isAsc: 'desc'
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
-      drillDownData.value = res.data?.records || []
+      drillDownData.value = res.data?.list || []
       drillDownPagination.total = res.data?.total || 0
     }
   } catch (error) {
@@ -1323,10 +1309,10 @@ const loadDrillDown2Data = async () => {
       orderByColumn: 'year',
       isAsc: 'desc'
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
-      drillDown2Data.value = res.data?.records || []
+      drillDown2Data.value = res.data?.list || []
       drillDown2Pagination.total = res.data?.total || 0
     }
   } catch (error) {
@@ -1396,10 +1382,10 @@ const loadDrillDown3Data = async () => {
       orderByColumn: 'year',
       isAsc: 'desc'
     }
-    const res = await getVillageDemandSummaryMainList(params)
+    const res = await getVillageDemandSummaryMainListSub(params)
 
     if (res.code === 200) {
-      drillDown3Data.value = res.data?.records || []
+      drillDown3Data.value = res.data?.list || []
       drillDown3Pagination.total = res.data?.total || 0
     }
   } catch (error) {
