@@ -18,6 +18,13 @@ export default {
   batchSubmitConfirm: '确认提交选中的 {count} 条需求到村级审核吗?',
   batchSubmitResult: '提交完成: 成功 {success} 条, 失败 {fail} 条',
   pleaseSelectData: '请选择要提交的数据',
+
+  // 需求录入类型标签
+  tabs: {
+    all: '全部',
+    wholeDemand: '整体需求',
+    byFarmers: '按农户',
+  },
   // 搜索和筛选
   searchPlaceholder: '搜索农民姓名、身份证号、村庄',
   filterByBatch: '按批次筛选',

@@ -1,7 +1,6 @@
 <template>
   <div class="page-container">
     <div class="page-wrapper">
-      <!-- 页面头部 -->
       <div class="page-header">
         <div class="header-left">
           <el-button class="back-btn" @click="handleCancel">
@@ -14,7 +13,6 @@
         </div>
       </div>
 
-      <!-- 内容区域 -->
       <div class="content-wrapper">
         <el-form
             ref="formRef"
@@ -22,16 +20,18 @@
             :rules="rules"
             :label-width="labelWidth"
         >
-          <!-- 农民信息 -->
           <InfoCard
             :title="$t('farmerDemand.form.farmerInfo')"
             icon="ri-user-line"
           >
             <div class="card-body">
-              <!-- 农民姓名 + 年份 一行两列 -->
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('farmerDemand.form.farmerName')" prop="farmerName">
+                  <el-form-item
+                    v-if="showFarmerIdentityFields"
+                    :label="$t('farmerDemand.form.farmerName')"
+                    prop="farmerName"
+                  >
                     <el-select
                         v-model="selectedFarmer"
                         :placeholder="$t('farmerDemand.placeholder.farmerName')"
@@ -53,7 +53,6 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 年份列：使用年份选择器 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('farmerDemand.form.year')" prop="year">
                     <el-date-picker
@@ -68,12 +67,12 @@
                 </el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="12" v-if="showFarmerIdentityFields">
                   <el-form-item :label="$t('farmerDemand.form.farmerIdNumber')" prop="farmerIdNumber">
                     <el-input v-model="formData.farmerIdNumber" :placeholder="$t('farmerDemand.placeholder.farmerIdNumber')" disabled></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
+                <el-col :xs="24" :sm="12" v-if="showFarmerIdentityFields">
                   <el-form-item :label="$t('farmerDemand.form.landArea')" prop="landArea">
                     <el-input-number v-model="formData.landArea" :min="0" :precision="2" style="width: 100%" disabled></el-input-number>
                   </el-form-item>
@@ -82,26 +81,72 @@
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('farmerDemand.form.zone')" prop="zoneName">
-                    <el-input v-model="formData.zoneName" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
+                    <el-input v-if="showFarmerIdentityFields" v-model="formData.zoneName" :placeholder="$t('farmerDemand.placeholder.zone')" disabled></el-input>
+                    <el-select
+                      v-else
+                      v-model="formData.zone"
+                      :placeholder="$t('farmerDemand.placeholder.zone')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleZoneChange"
+                      :loading="zoneLoading">
+                      <el-option
+                        v-for="item in zoneOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('farmerDemand.form.woreda')" prop="woredaName">
-                    <el-input v-model="formData.woredaName" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
+                    <el-input v-if="showFarmerIdentityFields" v-model="formData.woredaName" :placeholder="$t('farmerDemand.placeholder.woreda')" disabled></el-input>
+                    <el-select
+                      v-else
+                      v-model="formData.woreda"
+                      :placeholder="$t('farmerDemand.placeholder.woreda')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="handleWoredaChange"
+                      :loading="woredaLoading"
+                      :disabled="!formData.zone">
+                      <el-option
+                        v-for="item in woredaOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('farmerDemand.form.kebele')" prop="kebeleName">
-                    <el-input v-model="formData.kebeleName" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
+                    <el-input v-if="showFarmerIdentityFields" v-model="formData.kebeleName" :placeholder="$t('farmerDemand.placeholder.kebele')" disabled></el-input>
+                    <el-select
+                      v-else
+                      v-model="formData.kebele"
+                      :placeholder="$t('farmerDemand.placeholder.kebele')"
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      :loading="kebeleLoading"
+                      :disabled="!formData.woreda"
+                      @change="handleKebeleChange">
+                      <el-option
+                        v-for="item in kebeleOptions"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
           </InfoCard>
 
-          <!-- 投入品明细 -->
           <InfoCard
             :title="$t('farmerDemand.form.itemsInfo')"
             icon="ri-list-check"
@@ -112,16 +157,14 @@
                 {{ $t('farmerDemand.form.addItem') }}
               </el-button>
             </template>
-            
+
             <div class="card-body">
-              <!-- 显示季节耕地面积汇总和警告 -->
-              <div v-if="formData.inputItems.length > 0 && formData.landArea" class="crop-land-summary-wrapper">
+              <div v-if="showFarmerIdentityFields && formData.inputItems.length > 0 && formData.landArea" class="crop-land-summary-wrapper">
                 <div class="summary-header">
                   <span class="summary-label">{{ $t('farmerDemand.realtime.totalLandArea') }}:</span>
                   <span class="summary-value">{{ formData.landArea }} {{ $t('farmerDemand.realtime.hectares') }}</span>
                 </div>
 
-                <!-- 按混合规则显示耕地面积汇总：种子按大类，化肥按小类 -->
                 <div v-if="Object.keys(mixedSummaries).length > 0" class="season-summaries-list">
                   <div v-for="(data, key) in mixedSummaries" :key="key"
                        class="season-summary-item"
@@ -132,7 +175,6 @@
                   </div>
                 </div>
 
-                <!-- 超出警告（汇总显示） -->
                 <div v-if="isSeasonCropLandExceeded" class="error-message">
                   <i class="ri-error-warning-line"></i>
                   <span>{{ getSeasonName(isSeasonCropLandExceeded.season) }} - {{ isSeasonCropLandExceeded.displayName }}: {{ $t('farmerDemand.messages.cropLandExceedsLandArea', { totalCropLand: isSeasonCropLandExceeded.sum.toFixed(2), landArea: formData.landArea }) }}</span>
@@ -151,7 +193,6 @@
                       {{ $t('farmerDemand.form.removeItem') }}
                     </el-button>
                   </div>
-                  <!-- 投入品大类/小类：字典联动选择 -->
                   <el-row :gutter="20" style="margin-bottom: 16px;">
                     <el-col :xs="24" :sm="12">
                       <el-form-item
@@ -233,7 +274,6 @@
                     </el-col>
                   </el-row>
 
-                  <!-- 季节 + 耕地面积 -->
                   <el-row :gutter="20" style="margin-bottom: 16px;">
                     <el-col :xs="24" :sm="12">
                       <el-form-item
@@ -268,7 +308,6 @@
                     </el-col>
                   </el-row>
 
-                  <!-- 单位 + 数量 -->
                   <el-row :gutter="20">
                     <el-col :xs="24" :sm="12">
                       <el-form-item
@@ -301,7 +340,6 @@
             </div>
           </InfoCard>
 
-          <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="handleSubmit" :loading="submitting">
@@ -323,6 +361,7 @@ import { addFarmerDemand, updateFarmerDemand, getFarmerDemandDetail } from '@/ap
 import { getFarmerList, getFarmerDetail } from '@/api/newFarm'
 import { getDicts } from '@/api/system/dict'
 import { listProductManage } from '@/api/productManage'
+import { listSubRegionByCode } from '@/api/application'
 import { useDict, clearDictCache } from '@/hooks/useDict'
 import { parseI18nValue } from '@/utils/i18nHelper'
 import { InfoCard } from '@/components/common'
@@ -331,27 +370,35 @@ const router = useRouter()
 const route = useRoute()
 const { t, locale } = useI18n()
 
-// 响应式标签宽度（适配移动端）
 const labelWidth = computed(() => {
   const isMobile = window.innerWidth <= 768
   return isMobile ? '120px' : '180px'
 })
 
-// 表单相关
 const formRef = ref(null)
 const submitting = ref(false)
 const isEdit = computed(() => !!route.params.id)
+const DEMAND_ENTRY_TYPE_WHOLE = 'WHOLE_DEMAND'
+const DEMAND_ENTRY_TYPE_BY_FARMERS = 'BY_FARMERS'
+const isAddByFarmersRoute = computed(() => route.name === 'FarmerDemandAddByFarmers')
+const isByFarmersMode = ref(false)
+const showFarmerIdentityFields = computed(() => !isByFarmersMode.value)
 
-// 农民下拉框相关
 const farmerList = ref([])
 const farmerLoading = ref(false)
 const selectedFarmer = ref(null)
 const userId = ref('')
 
-// 当前年份
+const zoneOptions = ref([])
+const woredaOptions = ref([])
+const kebeleOptions = ref([])
+const zoneLoading = ref(false)
+const woredaLoading = ref(false)
+const kebeleLoading = ref(false)
+const ORomiaRegionCode = '000000000000'
+
 const currentYear = new Date().getFullYear()
 
-// 初始化字典
 const {
   options: dictOptions,
   options,
@@ -376,7 +423,6 @@ const createVarietyState = () => ({
   varietyLoading: false
 })
 
-// 表单数据
 const formData = reactive({
   farmerId: '',
   farmerName: '',
@@ -392,37 +438,44 @@ const formData = reactive({
   daUserId: '',
   daUserName: '',
   landArea: null,
+  demandEntryType: DEMAND_ENTRY_TYPE_WHOLE,
   year: currentYear.toString(),
   inputItems: []
 })
 
-// 混合分组汇总逻辑：
-// - 种子(IN01)：按季节+大类(inputType)汇总，同一季节所有种子加在一起判断
-// - 化肥(IN02)：按季节+小类(inputCategory)分别判断，每种化肥单独判断
+const applyDemandEntryMode = (entryType) => {
+  const normalizedType = entryType === DEMAND_ENTRY_TYPE_BY_FARMERS
+    ? DEMAND_ENTRY_TYPE_BY_FARMERS
+    : DEMAND_ENTRY_TYPE_WHOLE
+
+  formData.demandEntryType = normalizedType
+  isByFarmersMode.value = normalizedType === DEMAND_ENTRY_TYPE_BY_FARMERS
+}
+
 const mixedSummaries = computed(() => {
   const result = {}
   formData.inputItems.forEach(item => {
     if (item.season && item.inputType) {
       let key, displayName
-      
+
       if (item.inputType === 'IN01') {
-        // 种子：按季节+大类分组
+        // 绉嶅瓙锛氭寜瀛ｈ妭+澶х被鍒嗙粍
         key = `${item.season}_${item.inputType}`
         displayName = getInputTypeName(item.inputType)
       } else {
-        // 化肥及其他：按季节+小类分组
+        // 鍖栬偉鍙婂叾浠栵細鎸夊鑺?灏忕被鍒嗙粍
         if (!item.inputCategory) return
         key = `${item.season}_${item.inputCategory}`
         displayName = getInputCategoryName(item.inputCategory)
       }
-      
+
       if (!result[key]) {
-        result[key] = { 
-          season: item.season, 
+        result[key] = {
+          season: item.season,
           inputType: item.inputType,
           inputCategory: item.inputCategory,
           displayName: displayName,
-          sum: 0 
+          sum: 0
         }
       }
       result[key].sum += (item.cropLand || 0)
@@ -431,23 +484,21 @@ const mixedSummaries = computed(() => {
   return result
 })
 
-// 检查是否有任何分组的耕地面积超出土地面积
 const isSeasonCropLandExceeded = computed(() => {
   if (!formData.landArea) return null
 
   for (const [key, data] of Object.entries(mixedSummaries.value)) {
     if (data.sum > formData.landArea) {
-      return { 
-        season: data.season, 
+      return {
+        season: data.season,
         displayName: data.displayName,
-        sum: data.sum 
+        sum: data.sum
       }
     }
   }
   return null
 })
 
-// 获取季节名称（从字典中查找）
 const getSeasonName = (seasonValue) => {
   if (!seasonValue) return ''
   const agriSeason = options.agri_season || dictOptions.value.agri_season || []
@@ -455,14 +506,12 @@ const getSeasonName = (seasonValue) => {
   return season ? season.label : seasonValue
 }
 
-// 获取投入品类型名称（从级联选项中查找，大类）
 const getInputTypeName = (typeValue) => {
   if (!typeValue) return ''
   const match = mainCategoryOptions.value.find(item => String(item.value) === String(typeValue))
   return match ? match.label : typeValue
 }
 
-// 获取投入品小类名称
 const getInputCategoryName = (categoryValue) => {
   if (!categoryValue) return ''
   const match = subCategoryOptions.value.find(item => String(item.value) === String(categoryValue))
@@ -475,7 +524,6 @@ const getSubCategoryOptions = (mainCategoryValue) => {
   return subCategoryOptions.value.filter(item => String(item.parentValue) === String(mainCategoryValue))
 }
 
-// 表单验证规则
 const rules = reactive({
   farmerName: [
     { required: true, message: t('farmerDemand.rules.farmerNameRequired'), trigger: 'change' },
@@ -599,7 +647,6 @@ const handleVarietyChange = (value, index) => {
   currentItem.variety = matchedOption?.productName || ''
 }
 
-// 农民搜索方法
 const handleSearchFarmer = async (query) => {
   farmerLoading.value = true
   try {
@@ -623,7 +670,6 @@ const handleSearchFarmer = async (query) => {
   }
 }
 
-// 选中农民后填充字段
 const handleSelectFarmer = (farmer) => {
   if (!farmer) {
     formData.farmerId = ''
@@ -639,11 +685,9 @@ const handleSelectFarmer = (farmer) => {
     return
   }
 
-  // 检查土地面积
   const landArea = farmer.totalLandArea || farmer.landArea || 0
   if (!landArea || landArea <= 0) {
     ElMessage.warning(t('farmerDemand.messages.farmerNoLand'))
-    // 清空已选择的农民
     selectedFarmer.value = null
     return
   }
@@ -660,12 +704,10 @@ const handleSelectFarmer = (farmer) => {
   formData.landArea = landArea
 }
 
-// 添加投入品明细
 const handleAddItem = () => {
-  // 获取 Unit 字典的第一个选项作为默认值
   const unitOptions = options.agri_unit || dictOptions.value.agri_unit || []
   const defaultUnit = unitOptions.length > 0 ? unitOptions[0].value : ''
-  
+
   formData.inputItems.push({
     inputType: '',
     inputCategory: '',
@@ -677,20 +719,51 @@ const handleAddItem = () => {
   })
 }
 
-// 移除投入品明细
 const handleRemoveItem = (index) => {
   formData.inputItems.splice(index, 1)
 }
 
-// 加载编辑态数据
 const loadData = async () => {
   if (!isEdit.value) return
   try {
     const res = await getFarmerDemandDetail(route.params.id)
     if (res.code === 200 && res.data) {
       Object.assign(formData, res.data)
+      applyDemandEntryMode(formData.demandEntryType)
       if (!formData.year) {
         formData.year = currentYear.toString()
+      }
+
+      if (isByFarmersMode.value && formData.zone) {
+        await loadZoneOptions()
+        
+        if (formData.woreda) {
+          woredaLoading.value = true
+          try {
+            const woredaRes = await listSubRegionByCode({ regionCode: formData.zone })
+            if (woredaRes.code === 200) {
+              woredaOptions.value = woredaRes.data || []
+            }
+          } catch (error) {
+            ElMessage.error(t('common.loadFailed'))
+          } finally {
+            woredaLoading.value = false
+          }
+        }
+        
+        if (formData.kebele) {
+          kebeleLoading.value = true
+          try {
+            const kebeleRes = await listSubRegionByCode({ regionCode: formData.woreda })
+            if (kebeleRes.code === 200) {
+              kebeleOptions.value = kebeleRes.data || []
+            }
+          } catch (error) {
+            ElMessage.error(t('common.loadFailed'))
+          } finally {
+            kebeleLoading.value = false
+          }
+        }
       }
 
       if (formData.inputItems && formData.inputItems.length > 0) {
@@ -709,7 +782,6 @@ const loadData = async () => {
         formData.inputItems = []
       }
 
-      // 加载农民详情
       if (formData.farmerId) {
         farmerLoading.value = true
         try {
@@ -741,21 +813,26 @@ const loadData = async () => {
   }
 }
 
-// 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
 
   try {
-    // 检查农民是否已选择且有土地产权
-    if (!formData.farmerId) {
-      ElMessage.warning(t('farmerDemand.rules.farmerNameRequired'))
-      return
+    if (!isEdit.value) {
+      applyDemandEntryMode(
+        isAddByFarmersRoute.value ? DEMAND_ENTRY_TYPE_BY_FARMERS : DEMAND_ENTRY_TYPE_WHOLE
+      )
     }
 
-    // 再次验证土地面积（防止绕过选择检查）
-    if (!formData.landArea || formData.landArea <= 0) {
-      ElMessage.warning(t('farmerDemand.messages.farmerNoLand'))
-      return
+    if (showFarmerIdentityFields.value) {
+      if (!formData.farmerId) {
+        ElMessage.warning(t('farmerDemand.rules.farmerNameRequired'))
+        return
+      }
+
+      if (!formData.landArea || formData.landArea <= 0) {
+        ElMessage.warning(t('farmerDemand.messages.farmerNoLand'))
+        return
+      }
     }
 
     await formRef.value.validate()
@@ -765,27 +842,26 @@ const handleSubmit = async () => {
       return
     }
 
-    // 验证混合分组的耕地面积是否超过土地总面积
-    const exceeded = isSeasonCropLandExceeded.value
-    if (exceeded) {
-      const seasonName = getSeasonName(exceeded.season)
-      ElMessage.error(`${seasonName} - ${exceeded.displayName}: ${t('farmerDemand.messages.cropLandExceedsLandArea', {
-        totalCropLand: exceeded.sum.toFixed(2),
-        landArea: formData.landArea
-      })}`)
-      return
+    if (showFarmerIdentityFields.value) {
+      const exceeded = isSeasonCropLandExceeded.value
+      if (exceeded) {
+        const seasonName = getSeasonName(exceeded.season)
+        ElMessage.error(`${seasonName} - ${exceeded.displayName}: ${t('farmerDemand.messages.cropLandExceedsLandArea', {
+          totalCropLand: exceeded.sum.toFixed(2),
+          landArea: formData.landArea
+        })}`)
+        return
+      }
     }
 
-    // 获取用户信息
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       try {
         const userInfo = JSON.parse(userInfoStr)
-        // userInfo 直接就是 user 对象，不需要再 .user
         formData.daUserId = userInfo.userId || userInfo.id || ''
         formData.daUserName = userInfo.nickName || userInfo.userName || ''
       } catch (e) {
-        console.error('解析用户信息失败:', e)
+        console.error('瑙ｆ瀽鐢ㄦ埛淇℃伅澶辫触:', e)
         ElMessage.error(t('common.tips.parseUserInfoFailed'))
         return
       }
@@ -793,7 +869,6 @@ const handleSubmit = async () => {
       ElMessage.warning(t('common.tips.noUserInfo'))
       return
     }
-    // 处理提交数据
     const submitData = {
       ...formData,
       inputItems: formData.inputItems.map(item => ({
@@ -821,7 +896,6 @@ const handleSubmit = async () => {
       ElMessage.success(isEdit.value ? t('farmerDemand.editSuccess') : t('farmerDemand.addSuccess'))
       router.push({ name: 'FarmerDemand' })
     } else {
-      // 检测农民需求已存在的错误
       if (res.msg && res.msg.includes('Farmer demand already exists')) {
         ElMessage.warning(t('farmerDemand.messages.farmerDemandExists'))
       } else {
@@ -829,7 +903,6 @@ const handleSubmit = async () => {
       }
     }
   } catch (error) {
-    // 检测农民需求已存在的错误（来自异常）
     const errorMsg = error?.response?.data?.msg || error?.message || ''
     if (errorMsg.includes('Farmer demand already exists')) {
       ElMessage.warning(t('farmerDemand.messages.farmerDemandExists'))
@@ -841,12 +914,89 @@ const handleSubmit = async () => {
   }
 }
 
-// 取消操作
 const handleCancel = () => {
   router.back()
 }
 
-// 初始化分类字典
+const loadZoneOptions = async () => {
+  zoneLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: ORomiaRegionCode })
+    if (res.code === 200) {
+      zoneOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    zoneLoading.value = false
+  }
+}
+
+const handleZoneChange = async (zoneCode) => {
+  formData.woreda = ''
+  formData.kebele = ''
+  formData.woredaName = ''
+  formData.kebeleName = ''
+  woredaOptions.value = []
+  kebeleOptions.value = []
+
+  if (!zoneCode) return
+
+  const selectedZone = zoneOptions.value.find(item => item.code === zoneCode)
+  if (selectedZone) {
+    formData.zoneName = selectedZone.name
+  }
+
+  woredaLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: zoneCode })
+    if (res.code === 200) {
+      woredaOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    woredaLoading.value = false
+  }
+}
+
+const handleWoredaChange = async (woredaCode) => {
+  formData.kebele = ''
+  formData.kebeleName = ''
+  kebeleOptions.value = []
+
+  if (!woredaCode) return
+
+  const selectedWoreda = woredaOptions.value.find(item => item.code === woredaCode)
+  if (selectedWoreda) {
+    formData.woredaName = selectedWoreda.name
+  }
+
+  kebeleLoading.value = true
+  try {
+    const res = await listSubRegionByCode({ regionCode: woredaCode })
+    if (res.code === 200) {
+      kebeleOptions.value = res.data || []
+    }
+  } catch (error) {
+    ElMessage.error(t('common.loadFailed'))
+  } finally {
+    kebeleLoading.value = false
+  }
+}
+
+const handleKebeleChange = (kebeleCode) => {
+  if (!kebeleCode) {
+    formData.kebeleName = ''
+    return
+  }
+
+  const selectedKebele = kebeleOptions.value.find(item => item.code === kebeleCode)
+  if (selectedKebele) {
+    formData.kebeleName = selectedKebele.name
+  }
+}
+
 const loadCategoryOptions = async () => {
   try {
     categoryLoading.value = true
@@ -873,17 +1023,15 @@ const loadCategoryOptions = async () => {
 }
 
 onMounted(async () => {
-  // 监听窗口大小变化，适配标签宽度
   window.addEventListener('resize', () => {
     labelWidth.value
   })
 
-  // 获取用户ID
   try {
     const userInfoStr = localStorage.getItem('userInfo')
     if (userInfoStr) {
       const userInfo = JSON.parse(userInfoStr)
-      // 从 userInfo.userInfo.user.id 获取用户ID
+      // 浠?userInfo.userInfo.user.id 鑾峰彇鐢ㄦ埛ID
       userId.value = userInfo?.userInfo?.user?.id || userInfo?.user?.id || ''
     } else {
       ElMessage.warning(t('common.tips.noUserInfo'))
@@ -892,25 +1040,30 @@ onMounted(async () => {
     ElMessage.error(t('common.tips.parseUserInfoFailed'))
   }
 
-  // 加载字典和数据
+  applyDemandEntryMode(
+    isAddByFarmersRoute.value ? DEMAND_ENTRY_TYPE_BY_FARMERS : DEMAND_ENTRY_TYPE_WHOLE
+  )
+
   await refreshDict()
   await loadCategoryOptions()
+  
+  await loadZoneOptions()
+  
   loadData()
 
-  // 初始化农民列表
-  handleSearchFarmer('')
+  if (showFarmerIdentityFields.value || isEdit.value) {
+    handleSearchFarmer('')
+  }
 })
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 
-// 自定义样式
 :deep(.el-select .el-input__inner) {
   padding: 0 15px;
 }
 
-// 耕地面积汇总提示 - 新版
 .crop-land-summary-wrapper {
   margin-bottom: 24px;
   padding: 16px;
@@ -1033,7 +1186,6 @@ onMounted(async () => {
   color: var(--el-color-primary);
 }
 
-// 移动端适配
 @media screen and (max-width: 768px) {
   .crop-land-summary-wrapper {
     padding: 12px;
@@ -1041,3 +1193,4 @@ onMounted(async () => {
   }
 }
 </style>
+

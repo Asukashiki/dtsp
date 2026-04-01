@@ -115,6 +115,7 @@ export default {
   // Menu items
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
+  boaToZone: 'BOA to Zone',
   oseReleaseToUnion: 'Release Agri Input to Union',
   unionReceiveConfirm: 'Union Receive Confirmation',
   unionReleaseToCooperative: 'Union Distribution to Cooperative',

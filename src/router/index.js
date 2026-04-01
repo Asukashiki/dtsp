@@ -1182,6 +1182,12 @@ const routes = [
         meta: { title: 'input.menu.farmerDemandAdd', hideInMenu: true, requiresAuth: true }
       },
       {
+        path: 'demand/farmer/add-by-farmers',
+        name: 'FarmerDemandAddByFarmers',
+        component: () => import('../views/input/demand/farmer/form.vue'),
+        meta: { title: 'input.menu.farmerDemandAdd', hideInMenu: true, requiresAuth: true }
+      },
+      {
         path: 'demand/farmer/edit/:id',
         name: 'FarmerDemandEdit',
         component: () => import('../views/input/demand/farmer/form.vue'),
@@ -1625,6 +1631,30 @@ const routes = [
         name: 'FarmerAllocationDetail',
         component: () => import('../views/input/allocation/farmer/detail.vue'),
         meta: { title: 'input.menu.farmerAllocationDetail', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/boa-zone',
+        name: 'BoaZoneReleaseList',
+        component: () => import('../views/research/input-circulation/boa-zone/index.vue'),
+        meta: { title: 'research.menu.boaToZone', requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/boa-zone/add',
+        name: 'BoaZoneReleaseAdd',
+        component: () => import('../views/research/input-circulation/boa-zone/form.vue'),
+        meta: { title: 'research.menu.boaToZoneAdd', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/boa-zone/edit/:id',
+        name: 'BoaZoneReleaseEdit',
+        component: () => import('../views/research/input-circulation/boa-zone/form.vue'),
+        meta: { title: 'research.menu.boaToZoneEdit', hideInMenu: true, requiresAuth: true }
+      },
+      {
+        path: 'input-circulation/boa-zone/detail/:id',
+        name: 'BoaZoneReleaseDetail',
+        component: () => import('../views/research/input-circulation/boa-zone/detail.vue'),
+        meta: { title: 'research.menu.boaToZoneDetail', hideInMenu: true, requiresAuth: true }
       },
 
       // OSE分发种子到Union

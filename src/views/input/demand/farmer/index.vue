@@ -49,7 +49,17 @@
               <i class="ri-add-line"></i>
               {{ $t('common.add') }}
             </el-button>
+            <el-button type="primary" plain @click="handleAddByFarmers">
+              <i class="ri-user-add-line"></i>
+              Add By Farmers
+            </el-button>
           </template>
+
+          <StatusTabs
+            v-model="activeTab"
+            :tabs="tabConfig"
+            @tab-change="handleTabChange"
+          />
 
           <div class="card-body">
             <!-- PC端表格 -->
@@ -81,11 +91,13 @@
                   prop="farmerName"
                   :label="$t('farmerDemand.columns.farmerName')"
                   min-width="120"
+                  v-if="showFarmerIdentityFields"
                 />
                 <el-table-column
                   prop="farmerIdNumber"
                   :label="$t('farmerDemand.columns.farmerIdNumber')"
                   min-width="150"
+                  v-if="showFarmerIdentityFields"
                 />
                 <el-table-column
                   prop="kebeleName"
@@ -96,6 +108,7 @@
                   prop="landArea"
                   :label="$t('farmerDemand.columns.landArea')"
                   min-width="120"
+                  v-if="showFarmerIdentityFields"
                 >
                   <template #default="{ row }">
                     {{ row.landArea || '-' }}
@@ -158,7 +171,7 @@
                   ></el-checkbox>
                   <div class="mobile-card-title">
                     <i class="ri-user-line"></i>
-                    <span>{{ item.farmerName }}</span>
+                    <span>{{ showFarmerIdentityFields ? (item.farmerName || '-') : (item.batchNo || '-') }}</span>
                   </div>
                   <el-tag :type="getStatusType(item.status)" size="small">
                     {{ item.statusName || getStatusLabel(item.status) }}
@@ -170,7 +183,7 @@
                     <span class="label">{{ $t('farmerDemand.columns.batchNo') }}:</span>
                     <span class="value">{{ item.batchNo }}</span>
                   </div>
-                  <div class="mobile-card-row">
+                  <div class="mobile-card-row" v-if="showFarmerIdentityFields">
                     <span class="label">{{ $t('farmerDemand.columns.farmerIdNumber') }}:</span>
                     <span class="value">{{ item.farmerIdNumber }}</span>
                   </div>
@@ -178,7 +191,7 @@
                     <span class="label">{{ $t('farmerDemand.columns.kebele') }}:</span>
                     <span class="value">{{ item.kebeleName }}</span>
                   </div>
-                  <div class="mobile-card-row">
+                  <div class="mobile-card-row" v-if="showFarmerIdentityFields">
                     <span class="label">{{ $t('farmerDemand.columns.landArea') }}:</span>
                     <span class="value">{{ item.landArea || '-' }}</span>
                   </div>
@@ -230,6 +243,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getFarmerDemandPage, deleteFarmerDemand, submitForAudit } from '@/api/farmerDemand'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import StatusTabs from '@/components/workflow/StatusTabs.vue'
 import FarmerActionButtons from './components/FarmerActionButtons.vue'
 
 const router = useRouter()
@@ -238,6 +252,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
+const activeTab = ref('all')
 
 const searchForm = reactive({
   farmerName: '',
@@ -249,6 +264,26 @@ const pagination = reactive({
   pageSize: 10,
   total: 0
 })
+
+const tabConfig = [
+  {
+    name: 'all',
+    label: 'farmerDemand.tabs.all',
+    icon: 'ri-list-check'
+  },
+  {
+    name: 'wholeDemand',
+    label: 'farmerDemand.tabs.wholeDemand',
+    icon: 'ri-file-list-3-line'
+  },
+  {
+    name: 'byFarmers',
+    label: 'farmerDemand.tabs.byFarmers',
+    icon: 'ri-user-3-line'
+  }
+]
+
+const showFarmerIdentityFields = computed(() => activeTab.value !== 'byFarmers')
 
 // 状态选项（0: 草稿, 1: 已提交, 2: 已通过, 3: 驳回, 4: 已锁定）
 const statusOptions = computed(() => ({
@@ -304,6 +339,11 @@ const loadData = async () => {
       pageSize: pagination.pageSize,
       farmerName: searchForm.farmerName,
       phone: searchForm.phone,
+      demandEntryType: activeTab.value === 'wholeDemand'
+        ? 'WHOLE_DEMAND'
+        : activeTab.value === 'byFarmers'
+          ? 'BY_FARMERS'
+          : '',
       orderByColumn: 'createdTime',
       isAsc: 'desc'
     })
@@ -339,6 +379,16 @@ const handleReset = () => {
 // 新增
 const handleAdd = () => {
   router.push({ name: 'FarmerDemandAdd' })
+}
+
+const handleAddByFarmers = () => {
+  router.push({ name: 'FarmerDemandAddByFarmers' })
+}
+
+const handleTabChange = () => {
+  pagination.currentPage = 1
+  selectedRows.value = []
+  loadData()
 }
 
 // 查看

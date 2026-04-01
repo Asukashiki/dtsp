@@ -242,6 +242,10 @@ export default {
   // 投入品流通管理
   inputCirculation: '投入品流通管理',
   inputQuotaView: '投入品配额查看',
+  boaToZone: 'BOA to Zone',
+  boaToZoneAdd: '新增',
+  boaToZoneEdit: '编辑',
+  boaToZoneDetail: '详情',
   oseReleaseToUnion: 'OSE分发种子到Union',
   unionReceiveConfirm: 'Union确认接收',
   unionReleaseToWoreda: 'Union分发投入品到Woreda',

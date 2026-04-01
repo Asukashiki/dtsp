@@ -129,6 +129,7 @@ export default {
   // 菜单项
   inputCirculation: '投入品流通管理',
   inputQuotaView: '投入品配额查看',
+  boaToZone: 'BOA to Zone',
   oseReleaseToUnion: 'OSE分发种子到Union',
   unionReceiveConfirm: 'Union确认接收',
   unionReleaseToCooperative: 'Union分发投入品到Cooperative',

@@ -1,7 +1,7 @@
 export default {
   // DA Farmer Demand Entry
   title: 'DA Farmer Demand Entry',
-  subtitle: 'DA is responsible for entering farmers input demand data in the village',
+  subtitle: 'DA is responsible for entering farmer input demand data in the village',
   list: 'Farmer Demand List',
   detail: 'Demand Details',
   add: 'Add Demand',
@@ -11,13 +11,20 @@ export default {
   deleteSuccess: 'Deleted successfully',
   addSuccess: 'Added successfully',
   editSuccess: 'Updated successfully',
-  submit:'Submit',
-  submitSuccess:'Submit Success',
+  submit: 'Submit',
+  submitSuccess: 'Submitted successfully',
   submitConfirm: 'Confirm to submit this demand for village-level audit?',
   submitFailed: 'Submission failed',
   batchSubmitConfirm: 'Confirm to submit {count} selected demands for village-level audit?',
   batchSubmitResult: 'Submission completed: {success} succeeded, {fail} failed',
   pleaseSelectData: 'Please select data to submit',
+
+  // Demand Entry Type Tabs
+  tabs: {
+    all: 'All',
+    wholeDemand: 'Whole Demand',
+    byFarmers: 'By Farmers',
+  },
   // Search and Filter
   searchPlaceholder: 'Search farmer name, ID number, village',
   filterByBatch: 'Filter by Batch',

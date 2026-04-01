@@ -114,6 +114,59 @@ export const getReleaseStockStatus = (releaseIds) => {
   })
 }
 
+export const getBoaZoneReleaseList = (params) => {
+  return agricultureRequest({
+    url: '/invested/release/boa-zone/list',
+    method: 'get',
+    params
+  })
+}
+
+export const addBoaZoneRelease = (data) => {
+  return agricultureRequest({
+    url: '/invested/release/boa-zone/add',
+    method: 'post',
+    data
+  })
+}
+
+export const editBoaZoneRelease = (data) => {
+  return agricultureRequest({
+    url: '/invested/release/boa-zone/edit',
+    method: 'put',
+    data
+  })
+}
+
+export const getBoaZoneReleaseDetail = (id) => {
+  return agricultureRequest({
+    url: `/invested/release/boa-zone/detail/${id}`,
+    method: 'get'
+  })
+}
+
+export const getBoaZoneReleaseDetailByReleaseId = (releaseId) => {
+  return agricultureRequest({
+    url: `/invested/release/boa-zone/detailByReleaseId/${releaseId}`,
+    method: 'get'
+  })
+}
+
+export const deleteBoaZoneRelease = (ids) => {
+  return agricultureRequest({
+    url: `/invested/release/boa-zone/delete/${ids}`,
+    method: 'delete'
+  })
+}
+
+export const getBoaZoneReleaseStockStatus = (releaseIds) => {
+  return agricultureRequest({
+    url: '/invested/release/boa-zone/stockStatus',
+    method: 'get',
+    params: { releaseIds }
+  })
+}
+
 /**
  * 获取可用库存（仓库库存 - 未入库分发单数量）
  * Get available stock (warehouse stock - pending release quantity)

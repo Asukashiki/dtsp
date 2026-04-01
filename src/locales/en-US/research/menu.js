@@ -244,6 +244,10 @@ export default {
   // Input Circulation Management
   inputCirculation: 'Input Circulation Management',
   inputQuotaView: 'Input Quota View',
+  boaToZone: 'BOA to Zone',
+  boaToZoneAdd: 'Add',
+  boaToZoneEdit: 'Edit',
+  boaToZoneDetail: 'Detail',
   oseReleaseToUnion: 'Release Agri Input to Union',
   oseReleaseToUnionAdd: 'Add',
   oseReleaseToUnionEdit: 'Edit',
