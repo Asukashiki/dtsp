@@ -50,7 +50,8 @@
                   <el-form-item :label="$t('research.multiplierReport.multiplierId')" prop="multiplierId">
                     <el-select v-model="formData.multiplierId" filterable clearable
                       :placeholder="$t('common.pleaseSelect')" style="width:100%"
-                      :loading="orgLoading" @change="handleOrgChange">
+                      :loading="orgLoading" :disabled="multiplierIdDisabled"
+                      @change="handleOrgChange">
                       <el-option v-for="org in organizationList" :key="org.id"
                         :label="`${org.orgName} (${org.orgCode || ''})`" :value="String(org.id)" />
                     </el-select>
@@ -60,7 +61,7 @@
                   <el-form-item :label="$t('research.multiplierReport.distributionId')" prop="distributionId">
                     <el-select v-model="formData.distributionId" filterable clearable
                       :placeholder="$t('common.pleaseSelect')" style="width:100%"
-                      :loading="distLoading">
+                      :loading="distLoading" @change="handleDistributionChange">
                       <el-option v-for="dist in distributionList" :key="dist.distributeId"
                         :label="`${dist.distributeId} - ${dist.distributeName || ''}`" :value="dist.distributeId" />
                     </el-select>
@@ -206,16 +207,18 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getMultiplierReport, addMultiplierReport, updateMultiplierReport } from '@/api/multiplierReport'
 import { getApprovedC1BatchList, getC1BreedingBatchById } from '@/api/c1BreedingBatch'
-import { getBreedSeedDistributeList } from '@/api/breedSeed'
+import { getBreedSeedDistributeList, getBreedSeedDistributeDetail } from '@/api/breedSeed'
 import { getOrganizationList } from '@/api/organization'
 import { getBreedingCertificationList } from '@/api/seed'
 import { listProductManage } from '@/api/productManage'
 import { getDicts } from '@/api/system/dict'
 import { parseI18nValue } from '@/utils/i18nHelper'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const route = useRoute()
 const { t, locale } = useI18n()
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -238,6 +241,7 @@ const certificationList = ref([])
 const certLoading = ref(false)
 
 const seedMainCategoryValue = ref('SEED')
+const multiplierIdDisabled = ref(false)
 
 const formData = ref({
   reportDate: '', multiplierId: '', distributionId: '', certificateId: '',
@@ -388,8 +392,78 @@ const loadOrganizations = async () => {
   try {
     const res = await getOrganizationList({ pageNum: 1, pageSize: 999 })
     organizationList.value = extractList(res)
+    
+    // 根据当前用户的 orgId 自动选择 Multiplier ID
+    if (!isEdit.value) {
+      autoSelectMultiplierId()
+    }
   } catch (e) { console.error(e) }
   finally { orgLoading.value = false }
+}
+
+// 获取当前用户的 orgId
+const getCurrentUserOrgId = () => {
+  const userInfo = userStore.userInfo || {}
+  const user = userInfo.user || {}
+  
+  console.log('=== Multiplier ID 自动选择调试信息 ===')
+  console.log('userInfo 完整对象:', userInfo)
+  console.log('user 对象:', user)
+  console.log('userInfo.org_id:', userInfo.org_id)
+  console.log('userInfo.orgId:', userInfo.orgId)
+  console.log('user.org_id:', user.org_id)
+  console.log('user.orgId:', user.orgId)
+  console.log('userInfo.deptId:', userInfo.deptId)
+  console.log('user.deptId:', user.deptId)
+  console.log('userInfo.dept?.deptId:', userInfo.dept?.deptId)
+  console.log('user.dept?.deptId:', user.dept?.deptId)
+  
+  const rawValue = userInfo.org_id ??
+    userInfo.orgId ??
+    user.org_id ??
+    user.orgId ??
+    userInfo.deptId ??
+    user.deptId ??
+    userInfo.dept?.deptId ??
+    user.dept?.deptId
+  
+  const result = rawValue != null ? String(rawValue).trim() : ''
+  console.log('最终获取的 orgId 值:', result)
+  return result
+}
+
+// 根据用户的 orgId 自动选择 Multiplier ID
+const autoSelectMultiplierId = () => {
+  console.log('=== 开始自动选择 Multiplier ID ===')
+  const currentUserOrgId = getCurrentUserOrgId()
+  console.log('当前用户 orgId:', currentUserOrgId)
+  console.log('组织列表长度:', organizationList.value.length)
+  console.log('组织列表数据:', organizationList.value)
+  
+  if (!currentUserOrgId || organizationList.value.length === 0) {
+    console.log('无法自动选择: orgId 为空或组织列表为空')
+    return
+  }
+
+  // 尝试匹配组织列表中的记录
+  // 优先匹配 id，其次匹配 orgCode
+  const matchedOrg = organizationList.value.find(org => {
+    const idMatch = String(org.id) === currentUserOrgId
+    const codeMatch = String(org.orgCode) === currentUserOrgId
+    console.log(`检查组织: id=${org.id}, orgCode=${org.orgCode}, idMatch=${idMatch}, codeMatch=${codeMatch}`)
+    return idMatch || codeMatch
+  })
+
+  console.log('匹配结果:', matchedOrg)
+
+  if (matchedOrg) {
+    formData.value.multiplierId = String(matchedOrg.id)
+    formData.value.farmId = String(matchedOrg.id)
+    multiplierIdDisabled.value = true
+    console.log('自动选择成功, multiplierId:', formData.value.multiplierId)
+  } else {
+    console.log('未找到匹配的组织')
+  }
 }
 
 // 加载分发记录
@@ -453,6 +527,49 @@ const handleBatchChange = async (batchId) => {
 // 选择组织后联动 farmId
 const handleOrgChange = (orgId) => {
   formData.value.farmId = orgId || ''
+}
+
+// 选择分发记录后自动填充相关字段
+const handleDistributionChange = async (distributeId) => {
+  if (!distributeId) {
+    formData.value.seedClassReceived = ''
+    formData.value.cropType = ''
+    formData.value.varietyName = ''
+    return
+  }
+
+  let dist = distributionList.value.find(d => d.distributeId === distributeId)
+
+  // 如果列表数据中没有 detailList，尝试调用详情 API 获取完整数据
+  if (dist && !dist.detailList) {
+    try {
+      const res = await getBreedSeedDistributeDetail(distributeId)
+      if (res.code === 200 && res.data) {
+        dist = res.data
+      }
+    } catch (e) {
+      console.error('Failed to load distribution detail:', e)
+    }
+  }
+
+  if (!dist) return
+
+  // 填充 seedClassReceived（从 toSeedLevel 获取）
+  if (dist.toSeedLevel) {
+    formData.value.seedClassReceived = dist.toSeedLevel
+  }
+
+  // 从 detailList 第一条记录获取 varietyName 和 cropType
+  if (dist.detailList && dist.detailList.length > 0) {
+    const firstDetail = dist.detailList[0]
+    if (firstDetail.varietyName) {
+      formData.value.varietyName = firstDetail.varietyName
+    }
+    if (firstDetail.cropType) {
+      formData.value.cropType = resolveCropTypeValue(firstDetail.cropType)
+      await loadVarietyOptions(formData.value.cropType, true)
+    }
+  }
 }
 
 const loadDetail = async () => {

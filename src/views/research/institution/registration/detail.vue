@@ -18,9 +18,6 @@
             <el-descriptions-item :label="$t('orgRegistration.form.orgName')">
               {{ registrationData.orgName || '-' }}
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.unifiedCode')">
-              {{ registrationData.unifiedCode || '-' }}
-            </el-descriptions-item>
             <el-descriptions-item :label="$t('orgRegistration.form.licenseNumber')">
               {{ registrationData.licenseNumber || '-' }}
             </el-descriptions-item>
@@ -48,9 +45,6 @@
             <el-descriptions-item :label="$t('orgRegistration.form.gpsLat')">
               {{ registrationData.gpsLat || '-' }}
             </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.gpsLng')">
-              {{ registrationData.gpsLng || '-' }}
-            </el-descriptions-item>
             <el-descriptions-item :label="$t('orgRegistration.form.contactName')">
               {{ registrationData.contactName || '-' }}
             </el-descriptions-item>
@@ -59,9 +53,6 @@
             </el-descriptions-item>
             <el-descriptions-item :label="$t('orgRegistration.form.contactEmail')">
               {{ registrationData.contactEmail || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('orgRegistration.form.applyUsername')">
-              {{ registrationData.applyUsername || '-' }}
             </el-descriptions-item>
           </el-descriptions>
         </InfoCard>
