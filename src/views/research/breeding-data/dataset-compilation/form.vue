@@ -71,7 +71,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
+                <el-col v-if="false" :xs="24" :sm="12">
                   <el-form-item :label="$t('research.datasetCompilation.form.compiledBy')" prop="compiledBy">
                     <el-input
                       v-model="formData.compiledByName"
@@ -87,7 +87,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
+                <el-col v-if="false" :xs="24" :sm="12">
                   <el-form-item :label="$t('research.datasetCompilation.form.compiledAt')" prop="compiledAt">
                     <el-date-picker
                       v-model="formData.compiledAt"

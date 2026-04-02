@@ -90,13 +90,6 @@
                   {{ row.distributeId }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.seedId')" width="200">
-                <template #default="{ row }">
-                  <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
-                    {{ item.breedSeedProduceBatchId }}
-                  </div>
-                </template>
-              </el-table-column>
               <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.breedSeedProduceBatchId')" width="200">
                 <template #default="{ row }">
                   <div v-for="(item, index) in row.distributeDetail?.detailList" :key="index">
@@ -124,7 +117,7 @@
                   {{ row.distributeDetail?.totalDistributeQuantity || 0 }} kg
                 </template>
               </el-table-column>
-              <el-table-column prop="confirmTime" :label="$t('research.breeding.seed.receiveConfirm.columns.confirmTime')" width="180" />
+              <el-table-column prop="confirmTime" label="Confirmation Date" width="180" />
               <el-table-column prop="confirmPeople" :label="$t('research.breeding.seed.receiveConfirm.columns.confirmPeople')" width="240" />
               <el-table-column prop="receiveStatus" :label="$t('research.breeding.seed.receiveConfirm.columns.receiveStatus')" width="200">
                 <template #default="{ row }">
@@ -133,7 +126,6 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="createTime" :label="$t('research.breeding.seed.receiveConfirm.columns.createTime')" width="240" />
               <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.actions')" width="260" fixed="right" align="center">
                 <template #default="{ row }">
                   <div class="action-buttons">

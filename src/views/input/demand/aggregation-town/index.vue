@@ -17,6 +17,21 @@
         >
           <!-- 主列表视图 -->
           <template v-if="viewMode === 'main'">
+            <div class="filter-bar" style="display:flex; width:100%; justify-content:flex-end; align-items:center; margin-bottom:16px;">
+              <el-select
+                v-model="exportFilters.season"
+                :placeholder="$t('farmerDemand.form.season')"
+                clearable
+                style="width: 220px"
+              >
+                <el-option
+                  v-for="item in options.agri_season || []"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
               <el-table
@@ -717,6 +732,10 @@ const farmerSearchForm = reactive({
   status: ''
 })
 
+const exportFilters = reactive({
+  season: ''
+})
+
 // 加载某一行已审批数量（已通过村级记录数）
 const loadApprovedCountForRow = async (row) => {
   try {
@@ -1173,6 +1192,7 @@ const getMainTableButtons = (row) => {
   }
   
   buttons.push({ type: 'primary', action: 'view', rawLabel: t('Aggregation detail'), icon: 'ri-list-check' })
+  buttons.push({ type: 'success', action: 'export', rawLabel: t('common.export'), icon: 'ri-download-line' })
   
   return buttons
 }
@@ -1188,6 +1208,94 @@ const handleAction = (row, action) => {
     case 'view':
       handleDetail(row)
       break
+    case 'export':
+      handleExport(row)
+      break
+  }
+}
+
+const escapeCsvCell = (value) => {
+  if (value === null || value === undefined) return ''
+  const stringValue = String(value)
+  if (/[",\n]/.test(stringValue)) {
+    return `"${stringValue.replace(/"/g, '""')}"`
+  }
+  return stringValue
+}
+
+const downloadCsv = (content, filename) => {
+  const blob = new Blob([`\uFEFF${content}`], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
+const normalizeSeasonValue = (value) => String(value ?? '').trim().toLowerCase()
+
+const getSeasonFilterCandidates = (selectedSeason) => {
+  const selected = options.value.agri_season?.find((item) => String(item.value) === String(selectedSeason))
+  return new Set([
+    selectedSeason,
+    selected?.actualValue,
+    selected?.label
+  ].filter(Boolean).map(normalizeSeasonValue))
+}
+
+const matchesSelectedSeason = (item, selectedSeason) => {
+  if (!selectedSeason) return true
+  const filterCandidates = getSeasonFilterCandidates(selectedSeason)
+  const recordSeason = item.season ?? item.seasonCode ?? item.season_code
+  const recordCandidates = new Set([
+    recordSeason,
+    getLabelByValue('agri_season', recordSeason)
+  ].filter(Boolean).map(normalizeSeasonValue))
+  return [...recordCandidates].some((candidate) => filterCandidates.has(candidate))
+}
+
+const handleExport = async (row) => {
+  try {
+    const res = await getTownAggregationDetail({
+      sourceCode: row.sourceCode,
+      year: row.year
+    })
+
+    if (res.code !== 200) {
+      ElMessage.error(res.msg || t('townAggregation.detailDialog.loadFailed'))
+      return
+    }
+
+    const selectedSeason = exportFilters.season
+    const records = (res.data || []).filter((item) => matchesSelectedSeason(item, selectedSeason))
+    if (!records.length) {
+      ElMessage.warning(t('townAggregation.detailDialog.noData'))
+      return
+    }
+
+    const csvContent = [
+      ['Woreda Name', t('townAggregation.detailDialog.columns.inputCategory'), t('townAggregation.detailDialog.columns.inputType'), t('farmerDemand.form.season'), t('farmerDemand.form.variety'), t('townAggregation.detailDialog.columns.totalQuantity')],
+      ...records.map((item) => [
+        row.sourceName || '-',
+        getLabelByValue('input_category', item.inputCategory) || item.inputCategory || '-',
+        getLabelByValue('input_type', item.inputType) || item.inputType || '-',
+        getLabelByValue('agri_season', item.season || item.seasonCode || item.season_code) || item.season || item.seasonCode || item.season_code || '-',
+        item.variety || '-',
+        item.totalQuantity ?? '-'
+      ])
+    ].map((csvRow) => csvRow.map(escapeCsvCell).join(',')).join('\n')
+
+    const safeName = (row.sourceName || 'woreda-aggregation').replace(/[\\/:*?"<>|]/g, '_')
+    const seasonLabel = selectedSeason ? (getLabelByValue('agri_season', selectedSeason) || selectedSeason) : 'all-seasons'
+    const safeSeasonLabel = seasonLabel.replace(/[\\/:*?"<>|\s]/g, '_')
+    downloadCsv(csvContent, `${safeName}-${row.year}-${safeSeasonLabel}-aggregation-results.csv`)
+    ElMessage.success(t('common.success'))
+  } catch (error) {
+    console.error('Failed to export aggregation results:', error)
+    ElMessage.error(t('townAggregation.detailDialog.loadFailed'))
   }
 }
 
@@ -1230,3 +1338,10 @@ const handleFarmerDemandAction = (row, action) => {
   border-bottom: 1px solid #eba4a4; // Will be handled by page-common styles usually, but keeping specific alignment
 }
 </style>
+.filter-bar {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 16px;
+}

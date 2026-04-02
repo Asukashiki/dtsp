@@ -217,29 +217,6 @@
                     </template>
                   </el-form-item>
                 </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- 操作信息 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-user-line"></i>
-                <span>{{ $t('research.dataCollection.yieldData.form.operatorInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.dataCollection.yieldData.form.recorderName')" prop="recorderName">
-                    <el-input
-                      v-model="formData.recorderName"
-                      :placeholder="$t('research.dataCollection.yieldData.placeholder.recorderName')"
-                      clearable
-                    />
-                  </el-form-item>
-                </el-col>
                 <el-col :xs="24">
                   <el-form-item :label="$t('research.dataCollection.yieldData.form.remark')">
                     <el-input
@@ -423,9 +400,6 @@ const rules = computed(() => ({
   scoreValue: [
     { validator: validateScoreValue, trigger: ['blur', 'change'] }
   ],
-  recorderName: [
-    { required: true, message: t('research.dataCollection.yieldData.rules.recorderNameRequired'), trigger: 'blur' }
-  ],
   harvestDate: [
     { required: true, message: t('research.dataCollection.yieldData.rules.harvestDateRequired'), trigger: 'change' }
   ],
@@ -503,6 +477,7 @@ const handleSubmit = () => {
     try {
       // 获取用户信息并设置 createdBy
       const userInfo = userStore.userInfo
+      formData.recorderName = userInfo.userName || userInfo.nickName || defaultRecorderName || 'system'
       if (!isEdit.value) {
         // 新增时设置创建人,优先使用 userId,其次 username,最后使用 loginName
         formData.createdBy = userInfo.userId || userInfo.username || userInfo.loginName || 'system'

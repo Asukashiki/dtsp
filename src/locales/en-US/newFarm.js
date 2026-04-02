@@ -348,7 +348,7 @@ export default {
   // Land Management
   land: {
     title: 'Land Management',
-    subtitle: 'Manage land parcels, ownership and cultivation status',
+    subtitle: 'Manage farmland records, approval status, and GPS data',
     list: 'Land List',
     add: 'Add Land',
     edit: 'Edit Land',
@@ -359,6 +359,22 @@ export default {
 
     // Form
     form: {
+      id: 'ID',
+      status: 'Status',
+      farmerId: 'Farmer ID',
+      kebeleId: 'Kebele ID',
+      gpsLat: 'GPS Latitude',
+      gpsLong: 'GPS Longitude',
+      gpsPolygon: 'GPS Polygon',
+      areaTa: 'Area (ha)',
+      soilCode: 'Soil Code',
+      irrigationCode: 'Irrigation Code',
+      slopeClass: 'Slope Class',
+      landUseType: 'Land Use Type',
+      approvedBy: 'Approved By',
+      approvedTime: 'Approved Time',
+      rejectionReason: 'Rejection Reason',
+      approvedComment: 'Approved Comment',
       landId: 'Land ID',
       landName: 'Land Name',
       landNo: 'Land Number',
@@ -388,6 +404,15 @@ export default {
       createTime: 'Created At',
     },
     placeholder: {
+      farmerId: 'Please select farmer',
+      kebeleId: 'Please select kebele',
+      gpsPolygon: 'Please enter GPS polygon JSON',
+      soilCode: 'Please enter soil code',
+      irrigationCode: 'Please enter irrigation code',
+      slopeClass: 'Please select slope class',
+      landUseType: 'Please select land use type',
+      approvedComment: 'Please enter approved comment',
+      rejectionReason: 'Please enter rejection reason',
       landName: 'Please enter land name',
       landNo: 'Please enter land number',
       ownerType: 'Please select ownership type',
@@ -406,6 +431,8 @@ export default {
       remark: 'Remark (optional)',
     },
     rules: {
+      farmerIdRequired: 'Farmer ID is required',
+      areaTaRequired: 'Area is required',
       landNameRequired: 'Land name is required',
       landNameLength: 'Land name should not exceed 100 characters',
       ownerTypeRequired: 'Ownership type is required',
@@ -418,6 +445,15 @@ export default {
       zoneCodeRequired:'Zone is required'
     },
     columns: {
+      id: 'ID',
+      farmerId: 'Farmer ID',
+      kebeleId: 'Kebele ID',
+      soilCode: 'Soil Code',
+      irrigationCode: 'Irrigation Code',
+      landUseType: 'Land Use Type',
+      slopeClass: 'Slope Class',
+      areaTa: 'Area (ha)',
+      status: 'Status',
       landId: 'Land ID',
       landName: 'Name',
       landType: 'Type',
@@ -433,9 +469,22 @@ export default {
 
     // Status
     status: {
+      '0': 'Draft',
+      '1': 'Approved',
+      '2': 'Rejected',
       CULTIVATING: 'Cultivating',
       IDLE: 'Idle',
       FALLOW: 'Fallow',
+    },
+    slopeClass: {
+      Flat: 'Flat',
+      Gentle: 'Gentle',
+      Steep: 'Steep'
+    },
+    landUseType: {
+      Arable: 'Arable',
+      Pasture: 'Pasture',
+      Mixed: 'Mixed'
     },
     // Area units
     areaUnits: {
@@ -466,6 +515,7 @@ export default {
       locationInfo: 'Location Information',
       farmerInfo: 'Associated Farmer',
       estimatedUsage: 'Estimated Usage',
+      approvalInfo: 'Approval Information',
     },
     stats: {
       totalCount: 'Total Parcels',

@@ -501,6 +501,7 @@ const handleExport = async (row) => {
     }
 
     const headers = [
+      'Kebele Name',
       t('villageAggregation.detailDialog.columns.inputCategory'),
       t('villageAggregation.detailDialog.columns.inputType'),
       t('farmerDemand.form.season'),
@@ -509,6 +510,7 @@ const handleExport = async (row) => {
     ]
 
     const rows = records.map((item) => [
+      row.sourceName || '-',
       getLabelByValue('input_category', item.inputCategory) || item.inputCategory || '-',
       getLabelByValue('input_type', item.inputType) || item.inputType || '-',
       getLabelByValue('agri_season', item.season || item.seasonCode || item.season_code) || item.season || item.seasonCode || item.season_code || '-',
@@ -726,7 +728,9 @@ onMounted(() => {
 // 自定义样式可以根据需要添加，大部分已包含在通用样式中
 .filter-bar {
   display: flex;
+  width: 100%;
   justify-content: flex-end;
+  align-items: center;
   margin-bottom: 16px;
 }
 </style>

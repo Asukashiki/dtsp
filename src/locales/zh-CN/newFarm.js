@@ -340,7 +340,7 @@ export default {
   // 土地管理
   land: {
     title: '土地管理',
-    subtitle: '管理地块信息、权属和耕种状态',
+    subtitle: '管理农田信息、审批状态和GPS数据',
     list: '土地列表',
     add: '新增土地',
     edit: '编辑土地',
@@ -364,6 +364,22 @@ export default {
 
     // 表单
     form: {
+      id: 'ID',
+      status: '状态',
+      farmerId: '农户ID',
+      kebeleId: '所属村ID',
+      gpsLat: 'GPS纬度',
+      gpsLong: 'GPS经度',
+      gpsPolygon: 'GPS多边形',
+      areaTa: '面积(公顷)',
+      soilCode: '土壤类型代码',
+      irrigationCode: '灌溉类型代码',
+      slopeClass: '坡度等级',
+      landUseType: '土地用途',
+      approvedBy: '批准人',
+      approvedTime: '批准时间',
+      rejectionReason: '拒绝原因',
+      approvedComment: '审批意见',
       landId: '土地编码',
       landName: '地块名称',
       landNo: '地块编号',
@@ -390,6 +406,15 @@ export default {
       createTime: '创建时间',
     },
     placeholder: {
+      farmerId: '请选择农户',
+      kebeleId: '请选择所属村',
+      gpsPolygon: '请输入GPS多边形JSON',
+      soilCode: '请输入土壤类型代码',
+      irrigationCode: '请输入灌溉类型代码',
+      slopeClass: '请选择坡度等级',
+      landUseType: '请选择土地用途',
+      approvedComment: '请输入审批意见',
+      rejectionReason: '请输入拒绝原因',
       landName: '请输入地块名称',
       landNo: '请输入地块编号',
       ownerType: '请选择权属类型',
@@ -408,6 +433,8 @@ export default {
       remark: '备注信息（选填）',
     },
     rules: {
+      farmerIdRequired: '请选择农户',
+      areaTaRequired: '请输入面积',
       landNameRequired: '请输入地块名称',
       ownerTypeRequired: '请选择权属类型',
       landTypeRequired: '请选择地块类型',
@@ -418,6 +445,15 @@ export default {
       daIdRequired: '请选择负责DA',
     },
     columns: {
+      id: 'ID',
+      farmerId: '农户ID',
+      kebeleId: '所属村ID',
+      soilCode: '土壤类型代码',
+      irrigationCode: '灌溉类型代码',
+      landUseType: '土地用途',
+      slopeClass: '坡度等级',
+      areaTa: '面积(公顷)',
+      status: '状态',
       landId: '土地编码',
       landName: '地块名称',
       landType: '地块类型',
@@ -453,9 +489,22 @@ export default {
     },
     // 状态
     status: {
+      '0': '草稿',
+      '1': '已批准',
+      '2': '已拒绝',
       CULTIVATING: '耕种中',
       IDLE: '闲置',
       FALLOW: '休耕',
+    },
+    slopeClass: {
+      Flat: '平坦',
+      Gentle: '缓坡',
+      Steep: '陡坡'
+    },
+    landUseType: {
+      Arable: '耕地',
+      Pasture: '牧草地',
+      Mixed: '混合用途'
     },
     // 面积单位
     areaUnits: {
@@ -485,6 +534,7 @@ export default {
       locationInfo: '位置信息',
       farmerInfo: '关联农民',
       estimatedUsage: '估算用量',
+      approvalInfo: '审批信息',
     },
     stats: {
       totalCount: '地块总数',
