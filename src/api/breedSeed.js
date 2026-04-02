@@ -126,6 +126,17 @@ export const getBreedSeedDistributeList = (params) => {
 }
 
 /**
+ * 获取分发数据详情
+ * Get breeder seed distribution detail
+ */
+export const getBreedSeedDistributeDetail = (distributeId) => {
+  return agricultureRequest({
+    url: `/seed/breed/distribute/detail/${distributeId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 新增分发数据
  * Add breeder seed distribution
  */
