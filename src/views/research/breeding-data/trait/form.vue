@@ -59,24 +59,6 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- 观测员 -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('trait.observerId')" prop="observerId">
-                    <el-select v-model="formData.observerId" :placeholder="$t('trait.selectObserver')" filterable style="width: 100%">
-                      <el-option
-                        v-for="item in farmerOptions"
-                        :key="item.farmerId"
-                        :label="`${item.farmerName} (${item.farmerId})`"
-                        :value="item.farmerId"
-                      >
-                        <div style="display: flex; justify-content: space-between;">
-                          <span>{{ item.farmerName }}</span>
-                          <span style="color: #8492a6; font-size: 13px;">{{ item.farmerId }}</span>
-                        </div>
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
                 <!-- 照片上传 -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('trait.photoUrl')">
@@ -213,7 +195,6 @@ import { ElMessage } from 'element-plus'
 import { getTraitRecordInfo, addTraitRecord, editTraitRecord, getPlotOptions } from '@/api/breedingData'
 import { uploadFile } from '@/api/seed'
 import { getFilePreviewUrl } from '@/api/file'
-import { getFarmerOptions } from '@/api/newFarm'
 import { useDict } from '@/hooks/useDict'
 import { getUserInfo } from '@/utils/auth'
 
@@ -228,7 +209,6 @@ const formRef = ref(null)
 const loading = ref(false)
 const submitLoading = ref(false)
 const plotOptions = ref([])
-const farmerOptions = ref([])
 const photoFileList = ref([])
 const detailList = ref([])
 
@@ -277,28 +257,6 @@ const loadPlotOptions = async () => {
     plotOptions.value = res.data || []
   } catch (error) {
     console.error('Failed to load plot options:', error)
-  }
-}
-
-// 加载农民选项
-const loadFarmerOptions = async () => {
-  try {
-    const res = await getFarmerOptions()
-    farmerOptions.value = res.data || []
-    
-    // 将当前用户添加到选项列表（如果不存在）
-    const currentUser = getUserInfo()
-    if (currentUser?.userId && currentUser?.userName) {
-      const userExists = farmerOptions.value.some(item => item.farmerId === currentUser.userId)
-      if (!userExists) {
-        farmerOptions.value.unshift({
-          farmerId: currentUser.userId,
-          farmerName: currentUser.userName
-        })
-      }
-    }
-  } catch (error) {
-    console.error('Failed to load farmer options:', error)
   }
 }
 
@@ -498,6 +456,10 @@ const handleSubmit = async () => {
 
   submitLoading.value = true
   try {
+    if (!formData.observerId) {
+      formData.observerId = getUserInfo()?.userId || ''
+    }
+
     const submitData = {
       ...formData,
       detailList: detailList.value
@@ -522,7 +484,6 @@ const goBack = () => router.push('/research/breeding-data/trait')
 
 onMounted(() => {
   loadPlotOptions()
-  loadFarmerOptions()
   getInfo()
 })
 </script>

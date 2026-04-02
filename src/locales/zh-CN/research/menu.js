@@ -62,7 +62,7 @@ export default {
   labTesting: '实验室检测',
   labTestingSubtitle: '记录实验室检测数据',
 
-  breederSeedProduction: 'Breeder able seed生产数据采集',
+  breederSeedProduction: 'Breeder seed production data',
   breederSeedProductionAdd: '新增育种家种子生产',
   breederSeedProductionEdit: '编辑育种家种子生产',
   breederSeedProductionDetail: '育种家种子生产详情',
@@ -88,7 +88,7 @@ export default {
   basicSeedProductionResult: 'Basic繁殖批次数据采集',
   basicSeedProductionResultDetail: 'Basic繁殖批次数据采集详情',
 
-  breederSeedProductionResult: '生产数据采集详情',
+  breederSeedProductionResult: 'Breeder seed data collection',
   oseManagementAdd: '新增OSE',
   oseManagementEdit: '编辑OSE',
   oseManagementDetail: 'OSE详情',

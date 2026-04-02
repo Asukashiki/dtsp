@@ -129,34 +129,12 @@
               </el-col>
 
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
-                  <el-date-picker
-                    v-model="formData.time"
-                    type="datetime"
-                    :placeholder="$t('research.breeding.seed.production.placeholder.time')"
-                    format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-
-              <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
-                  <el-select
+                  <el-input
                     v-model="formData.landName"
                     :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
-                    filterable
                     clearable
-                    @change="handleLandChange"
-                  >
-                    <el-option
-                      v-for="land in landList"
-                      :key="land.landId"
-                      :label="land.landName"
-                      :value="land.landName"
-                    />
-                  </el-select>
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -173,6 +151,19 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
+                <el-col :xs="24" :sm="12">
+                  <el-form-item :label="$t('research.breeding.seed.production.form.time')" prop="time">
+                    <el-date-picker
+                      v-model="formData.time"
+                      type="datetime"
+                      :placeholder="$t('research.breeding.seed.production.placeholder.time')"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                </el-col>
+
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breeding.seed.production.form.inputSeedQuantity')" prop="inputSeedQuantity">
                     <el-input-number
@@ -206,7 +197,6 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
-import { getLandList } from '@/api/newFarm'
 import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
@@ -242,20 +232,18 @@ const formData = reactive({
   varietyName: '',
   cropType: '',
   time: getCurrentDateTime(),
-  landId: '',
   landName: '',
   inputSeedQuantity: null,
-  fromSeedLevel: '',
-  toSeedLevel: ''
+  fromSeedLevel: 'Breeder',
+  toSeedLevel: 'Pre-Basic'
 })
 
 // 种子等级联动规则
-const toSeedLevelOptions = ref([])
+const toSeedLevelOptions = ref([{ label: 'Pre-Basic', value: 'Pre-Basic' }])
 
 // 下拉选项
 const breedBatchList = ref([])
 const varietyList = ref([])
-const landList = ref([])
 const trialList = ref([])
 
 // 表单验证规则
@@ -324,26 +312,6 @@ const loadVarietyList = async () => {
     }
   } catch (error) {
     console.error('Failed to load variety list:', error)
-  }
-}
-
-// 加载地块列表
-const loadLandList = async () => {
-  try {
-    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
-    console.log('Land API response:', res)
-
-    if (res.code === 200 && res.rows) {
-      landList.value = res.rows.map(item => ({
-        landId: item.landId,
-        landName: item.landName
-      }))
-      console.log('Loaded lands:', landList.value.length, landList.value)
-    } else {
-      console.warn('No land data:', res)
-    }
-  } catch (error) {
-    console.error('Failed to load land list:', error)
   }
 }
 
@@ -419,38 +387,11 @@ const handleBatchChange = (batchId) => {
   }
 }
 
-// 地块选择变化时，根据地块名称查找并记录landId
-const handleLandChange = (landName) => {
-  console.log('handleLandChange called with:', landName)
-  console.log('Current landList:', landList.value)
-
-  if (!landName) {
-    formData.landId = ''
-    console.log('Cleared land fields')
-    return
-  }
-
-  const selected = landList.value.find(item => item.landName === landName)
-  console.log('Found land:', selected)
-
-  if (selected) {
-    formData.landId = selected.landId
-    console.log('Updated formData:', {
-      landId: formData.landId,
-      landName: formData.landName
-    })
-  } else {
-    console.warn('Land not found:', landName)
-    console.warn('Available lands:', landList.value.map(l => l.landName))
-    formData.landId = ''
-  }
-}
-
 // 种子等级联动规则
 const handleSeedLevelChange = (value) => {
   // 清空目标种子等级
   formData.toSeedLevel = ''
-  
+
   // 根据源种子等级设置目标种子等级可选值
   if (value === 'Breeder') {
     toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
@@ -502,9 +443,10 @@ const handleSubmit = async () => {
       console.error('varietyName is empty, breedBatchId:', formData.breedBatchId)
       return
     }
-    if (!formData.landId) {
-      ElMessage.warning('Please select a land first')
-      console.error('landId is empty, landName:', formData.landName)
+    formData.landName = formData.landName?.trim() || ''
+
+    if (!formData.landName) {
+      ElMessage.warning('Please enter a plot name first')
       return
     }
 
@@ -521,7 +463,6 @@ const handleSubmit = async () => {
       varietyName: formData.varietyName,
       cropType: formData.cropType,
       time: formData.time,
-      landId: formData.landId,
       landName: formData.landName,
       inputSeedQuantity: formData.inputSeedQuantity,
       fromSeedLevel: formData.fromSeedLevel,
@@ -556,12 +497,10 @@ onMounted(() => {
     cropTypeOptions.value = options
     loadBatchOptions()
     loadVarietyList()
-    loadLandList()
   }).catch((error) => {
     console.error('Failed to load crop type options:', error)
     loadBatchOptions()
     loadVarietyList()
-    loadLandList()
   })
 })
 </script>

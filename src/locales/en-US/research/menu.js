@@ -63,8 +63,8 @@ export default {
   labTesting: 'Lab Testing',
   labTestingSubtitle: 'Record laboratory testing data',
 
-  breederSeedProduction: 'Breeder Seed Production Data',
-  breederSeedProductionResult: 'Breeder Seed Production Result',
+  breederSeedProduction: 'Breeder seed production data',
+  breederSeedProductionResult: 'Breeder seed data collection',
   breederSeedProductionAdd: 'Add Breeder Seed Production',
   breederSeedProductionEdit: 'Edit Breeder Seed Production',
   breederSeedProductionDetail: 'Breeder Seed Production Detail',

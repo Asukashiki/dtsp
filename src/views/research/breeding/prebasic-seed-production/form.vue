@@ -73,32 +73,12 @@
                 </el-col>
 
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('prebasicSeedProduction.form.time')" prop="time">
-                    <el-date-picker
-                      v-model="formData.time"
-                      type="datetime"
-                      :placeholder="$t('prebasicSeedProduction.placeholder.time')"
-                      format="YYYY-MM-DD HH:mm:ss"
-                      value-format="YYYY-MM-DD HH:mm:ss"
-                      style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('prebasicSeedProduction.form.landName')" prop="landId">
-                    <el-select
-                      v-model="formData.landId"
+                  <el-form-item :label="$t('prebasicSeedProduction.form.landName')" prop="landName">
+                    <el-input
+                      v-model="formData.landName"
                       :placeholder="$t('prebasicSeedProduction.placeholder.landName')"
-                      filterable
                       clearable
-                      style="width: 100%"
-                      @change="handleLandChange">
-                      <el-option
-                        v-for="land in landList"
-                        :key="land.landId"
-                        :label="land.landName"
-                        :value="land.landId" />
-                    </el-select>
+                      style="width: 100%" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -116,8 +96,14 @@
             <div class="card-body">
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('prebasicSeedProduction.form.operatorName')" prop="operatorName">
-                    <el-input v-model="formData.operatorName" disabled />
+                  <el-form-item :label="$t('prebasicSeedProduction.form.time')" prop="time">
+                    <el-date-picker
+                      v-model="formData.time"
+                      type="datetime"
+                      :placeholder="$t('prebasicSeedProduction.placeholder.time')"
+                      format="YYYY-MM-DD HH:mm:ss"
+                      value-format="YYYY-MM-DD HH:mm:ss"
+                      style="width: 100%" />
                   </el-form-item>
                 </el-col>
 
@@ -159,7 +145,6 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addPrebasicSeedProduce } from '@/api/prebasicSeed'
 import { getBreedSeedProduceList, getBreedSeedProduceRemainingQuantity } from '@/api/breedSeed'
-import { getLandList } from '@/api/newFarm'
 import { getUserInfo } from '@/utils/auth'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
@@ -210,7 +195,6 @@ const formData = reactive({
 
 // 下拉选项
 const breederSeedBatchList = ref([])
-const landList = ref([])
 const remainingQuantity = ref(null)
 
 // 计算属性：作物类型显示 label
@@ -229,8 +213,8 @@ const rules = computed(() => ({
   time: [
     { required: true, message: t('prebasicSeedProduction.rules.timeRequired'), trigger: 'change' }
   ],
-  landId: [
-    { required: true, message: t('prebasicSeedProduction.rules.landIdRequired'), trigger: 'change' }
+  landName: [
+    { required: true, message: t('prebasicSeedProduction.rules.landIdRequired'), trigger: 'blur' }
   ],
   operatorName: [
     { required: true, message: t('prebasicSeedProduction.rules.operatorNameRequired'), trigger: 'blur' }
@@ -254,21 +238,6 @@ const loadBreederSeedBatchOptions = async () => {
     breederSeedBatchList.value = res.rows || []
   } catch (error) {
     console.error('Failed to load breeder seed batch options:', error)
-  }
-}
-
-// 加载地块列表
-const loadLandList = async () => {
-  try {
-    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
-    if (res.code === 200 && res.rows) {
-      landList.value = res.rows.map(item => ({
-        landId: item.landId,
-        landName: item.landName
-      }))
-    }
-  } catch (error) {
-    console.error('Failed to load land list:', error)
   }
 }
 
@@ -314,33 +283,21 @@ const handleBatchChange = async (batchId) => {
   }
 }
 
-// 地块选择变化时，记录地块名称
-const handleLandChange = (landId) => {
-  if (!landId) {
-    formData.landId = ''
-    formData.landName = ''
-    return
-  }
-
-  const selected = landList.value.find(item => item.landId === landId)
-  if (selected) {
-    formData.landId = selected.landId
-    formData.landName = selected.landName
-  }
-}
-
 // 提交表单
 const handleSubmit = async () => {
   try {
     await formRef.value.validate()
+
+    formData.landName = formData.landName?.trim() || ''
+    formData.landId = formData.landName
 
     // 验证必填的ID字段
     if (!formData.breederSeedBatchId) {
       ElMessage.warning('Please select a breeder seed batch')
       return
     }
-    if (!formData.landId) {
-      ElMessage.warning('Please select a land')
+    if (!formData.landName) {
+      ElMessage.warning('Please enter land name')
       return
     }
     if (!formData.operatorName) {
@@ -404,11 +361,9 @@ onMounted(() => {
   loadSeedCropTypeOptions(locale.value).then((options) => {
     cropTypeOptions.value = options
     loadBreederSeedBatchOptions()
-    loadLandList()
   }).catch((error) => {
     console.error('Failed to load crop type options:', error)
     loadBreederSeedBatchOptions()
-    loadLandList()
   })
 })
 </script>

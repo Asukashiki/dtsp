@@ -26,12 +26,6 @@
             </div>
             <div class="card-body">
               <el-row :gutter="20">
-                <!-- Farming Record ID (auto-generated, read-only) -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Farming Record ID">
-                    <el-input v-model="formData.farmingRecordId" disabled placeholder="{plot_id}-F{record_no}" />
-                  </el-form-item>
-                </el-col>
                 <!-- Plot ID -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Plot ID" prop="plotId">
@@ -80,20 +74,32 @@
                 <!-- Activity Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Activity Type" prop="activityType">
-                    <el-select v-model="formData.activityType" placeholder="Please select activity type" style="width: 100%" :disabled="isAuditMode">
-                      <el-option label="Fertilizer" value="fertilizer" />
-                      <el-option label="Irrigation" value="irrigation" />
-                      <el-option label="Pest Control" value="pest_control" />
-                      <el-option label="Weeding" value="weeding" />
-                      <el-option label="Tillage" value="tillage" />
-                      <el-option label="Harvest" value="harvest" />
+                    <el-select
+                      v-model="formData.activityType"
+                      placeholder="Please select activity type"
+                      style="width: 100%"
+                      :disabled="isAuditMode"
+                      filterable
+                      clearable
+                      :loading="activityTypeLoading"
+                      @change="handleActivityTypeChange">
+                      <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Input Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Input Name">
-                    <el-input v-model="formData.inputName" placeholder="Enter input name (e.g., fertilizer type, pesticide name)" :disabled="isAuditMode" />
+                    <el-select
+                      v-model="formData.inputName"
+                      placeholder="Please select input name"
+                      style="width: 100%"
+                      filterable
+                      clearable
+                      :loading="inputNameLoading"
+                      :disabled="isAuditMode || !formData.activityType">
+                      <el-option v-for="item in inputNameOptions" :key="item.id" :label="item.label" :value="item.value" />
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Quantity -->
@@ -113,30 +119,6 @@
                       <el-option label="bags" value="bags" />
                       <el-option label="pieces" value="pieces" />
                       <el-option label="cm" value="cm" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <!-- Operator ID (Farmer selection) -->
-                <el-col :xs="24" :sm="12">
-                  <el-form-item label="Operator ID" prop="operatorId">
-                    <el-select
-                      v-model="formData.operatorId"
-                      placeholder="Please select operator"
-                      filterable
-                      style="width: 100%"
-                      :disabled="isAuditMode"
-                    >
-                      <el-option
-                        v-for="item in farmerOptions"
-                        :key="item.farmerId"
-                        :label="`${item.farmerName} (${item.farmerId})`"
-                        :value="String(item.farmerId)"
-                      >
-                        <div style="display: flex; justify-content: space-between;">
-                          <span>{{ item.farmerName }}</span>
-                          <span style="color: #8492a6; font-size: 13px;">{{ item.farmerId }}</span>
-                        </div>
-                      </el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -283,10 +265,13 @@ import { getFarmerOptions } from '@/api/newFarm'
 import { getUserInfo } from '@/utils/auth'
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
+import { getDicts } from '@/api/system/dict'
+import { listProductManage } from '@/api/productManage'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 
 const formRef = ref(null)
@@ -295,6 +280,10 @@ const submitLoading = ref(false)
 const plotOptions = ref([])
 const farmerOptions = ref([])
 const { options: dictOptions, getLabelByValue } = useDict('flow_status')
+const activityTypeOptions = ref([])
+const activityTypeLoading = ref(false)
+const inputNameOptions = ref([])
+const inputNameLoading = ref(false)
 
 // Determine tag type based on status value
 const getStatusType = (status) => {
@@ -310,6 +299,8 @@ const getStatusType = (status) => {
 
 const isEdit = computed(() => !!route.params.farmingId)
 const isAuditMode = computed(() => route.path.includes('farming-form'))
+
+const seedMainCategoryValue = ref('SEED')
 
 
 
@@ -354,6 +345,109 @@ const rules = {
     }
   ]
 }
+
+const normalizeOptionLabel = (item) => parseI18nValue(item.dictLabel, locale.value, item.dictLabel)
+
+const resolveActivityTypeValue = (value) => {
+  if (!value) return ''
+  const match = activityTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.value : value
+}
+
+const resolveActivityTypeLabel = (value) => {
+  if (!value) return ''
+  const match = activityTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
+  return match ? match.label : value
+}
+
+const loadActivityTypeOptions = async () => {
+  activityTypeLoading.value = true
+  try {
+    const [mainRes, subRes] = await Promise.all([
+      getDicts('inventory_main_category'),
+      getDicts('inventory_sub_category')
+    ])
+
+    const mainOptions = (mainRes.data || []).map(item => ({
+      label: normalizeOptionLabel(item),
+      value: item.dictValue
+    }))
+    const seedMainCategory = mainOptions.find(item => String(item.value).toUpperCase() === 'SEED')
+      || mainOptions.find(item => ['seed', '种子'].includes(String(item.label).trim().toLowerCase()))
+
+    seedMainCategoryValue.value = seedMainCategory?.value || 'SEED'
+
+    activityTypeOptions.value = (subRes.data || [])
+      .filter(item => String(item.remark) === String(seedMainCategoryValue.value))
+      .map(item => ({
+        label: normalizeOptionLabel(item),
+        value: item.dictValue
+      }))
+  } catch (error) {
+    console.error(error)
+    activityTypeOptions.value = []
+  } finally {
+    activityTypeLoading.value = false
+  }
+}
+
+const loadInputNameOptions = async (activityType, preserveValue = false) => {
+  const normalizedActivityType = resolveActivityTypeValue(activityType)
+  if (!normalizedActivityType) {
+    inputNameOptions.value = []
+    if (!preserveValue) {
+      formData.inputName = ''
+    }
+    return
+  }
+
+  inputNameLoading.value = true
+  try {
+    const selectedActivityTypeLabel = resolveActivityTypeLabel(normalizedActivityType)
+    const res = await listProductManage({
+      pageNum: 1,
+      pageSize: 1000,
+      mainCategory: seedMainCategoryValue.value,
+      subCategory: selectedActivityTypeLabel,
+      status: '0'
+    })
+
+    const productList = res.data?.list || []
+    const seen = new Set()
+    inputNameOptions.value = productList
+      .map(item => {
+        const productName = item.product_name || item.productName || ''
+        return {
+          id: item.id || item.product_code || productName,
+          label: productName,
+          value: productName
+        }
+      })
+      .filter(item => {
+        if (!item.value || seen.has(item.value)) return false
+        seen.add(item.value)
+        return true
+      })
+
+    if (preserveValue) {
+      const matched = inputNameOptions.value.find(item => item.value === formData.inputName)
+      if (!matched) {
+        formData.inputName = ''
+      }
+    } else {
+      formData.inputName = ''
+    }
+  } catch (error) {
+    console.error(error)
+    inputNameOptions.value = []
+    if (!preserveValue) {
+      formData.inputName = ''
+    }
+  } finally {
+    inputNameLoading.value = false
+  }
+}
+
 
 // Format date object to 'YYYY-MM-DD HH:mm:ss'
 const formatDate = (date) => {
@@ -422,6 +516,11 @@ const handlePlotChange = (plotId) => {
   }
 }
 
+const handleActivityTypeChange = async (value) => {
+  formData.activityType = resolveActivityTypeValue(value)
+  await loadInputNameOptions(formData.activityType)
+}
+
 const getInfo = async () => {
   if (!isEdit.value) {
     // Ensure activityDate has default value in new creation mode
@@ -437,6 +536,8 @@ const getInfo = async () => {
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
     Object.assign(formData, res.data)
+    formData.activityType = resolveActivityTypeValue(formData.activityType)
+    await loadInputNameOptions(formData.activityType, true)
 
     // If it's audit mode, automatically fill in auditor and audit time
     if (isAuditMode.value) {
@@ -460,6 +561,7 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
+    submitData.activityType = resolveActivityTypeLabel(formData.activityType)
 
     // Automatically set operator ID to logged-in user
     if (!submitData.operatorId) {
@@ -553,6 +655,7 @@ const goBack = () => {
 }
 
 onMounted(() => {
+  loadActivityTypeOptions()
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()
@@ -581,6 +684,7 @@ onMounted(() => {
     })
   }
 })
+
 </script>
 
 <style lang="scss" scoped>
