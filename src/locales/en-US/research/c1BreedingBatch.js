@@ -133,6 +133,7 @@ export default {
     endDate: 'End Date',
     operator: 'Operator',
     description: 'Description',
+    trackingDesc: 'Tracking Description',
     resultNormal: 'Normal',
     resultAbnormal: 'Abnormal',
     resultObserving: 'Observing',

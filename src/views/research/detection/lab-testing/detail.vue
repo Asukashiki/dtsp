@@ -103,7 +103,7 @@ const getInfo = async () => {
 }
 
 const goBack = () => {
-  router.back()
+  router.push('/research/detection-management?tab=lab')
 }
 
 onMounted(() => {

@@ -250,7 +250,7 @@ const checkRuleOnBlur = async () => {
 
 // 返回列表页
 const handleBack = () => {
-  router.push('/research/lab-testing')
+  router.push('/research/detection-management?tab=lab')
 }
 
 // 提交表单

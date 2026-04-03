@@ -260,7 +260,7 @@ const checkRuleOnBlur = async () => {
 
 // 返回列表页
 const handleBack = () => {
-  router.push('/research/field-detection')
+  router.push('/research/detection-management?tab=field')
 }
 
 // 提交表单

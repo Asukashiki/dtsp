@@ -42,7 +42,8 @@ const routeWhitelist = [
   '/input/demand/audit-state',
   '/input/demand/audit-town',
   '/inventory/stock-check-review',
-  '/inventory/stock-check-review/review'
+  '/inventory/stock-check-review/review',
+  '/research/detection-audit'
 ]
 
 const routes = [
@@ -866,12 +867,31 @@ const routes = [
         meta: { title: 'research.menu.c1PropagationBatchDetail', hideInMenu: true, requiresAuth: true }
       },
 
+      {
+        path: 'detection-management',
+        name: 'DetectionManagement',
+        component: () => import('../views/research/detection/management.vue'),
+        meta: { title: 'research.menu.detectionManagement', requiresAuth: true }
+      },
+      {
+        path: 'detection-audit',
+        name: 'DetectionAudit',
+        component: () => import('../views/research/detection/audit.vue'),
+        meta: { title: 'research.menu.detectionAudit', requiresAuth: true }
+      },
+      {
+        path: 'detection-audit/form/:id',
+        name: 'DetectionAuditForm',
+        component: () => import('../views/research/detection/audit-form.vue'),
+        meta: { title: 'research.menu.detectionAudit', hideInMenu: true, requiresAuth: true }
+      },
+
       // 田间检测
       {
         path: 'field-detection',
         name: 'FieldDetection',
         component: () => import('../views/research/detection/field-detection/index.vue'),
-        meta: { title: 'research.menu.fieldDetection', requiresAuth: true }
+        meta: { title: 'research.menu.fieldDetection', requiresAuth: true, hideInMenu: true }
       },
       {
         path: 'field-detection/add',
@@ -891,7 +911,7 @@ const routes = [
         path: 'lab-testing',
         name: 'LabTesting',
         component: () => import('../views/research/detection/lab-testing/index.vue'),
-        meta: { title: 'research.menu.labTesting', requiresAuth: true }
+        meta: { title: 'research.menu.labTesting', requiresAuth: true, hideInMenu: true }
       },
       {
         path: 'lab-testing/add',

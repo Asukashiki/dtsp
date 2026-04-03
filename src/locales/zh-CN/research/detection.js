@@ -46,6 +46,18 @@ export default {
   reset: '重置',
   noData: '暂无检测记录',
   basicInfo: '基本信息',
+  auditStatus: '审核状态',
+  statusSubmitted: '待审核',
+  statusApproved: '已通过',
+  statusRejected: '已驳回',
+  statusDraft: '草稿',
+  auditDialogTitle: '检测审核',
+  auditResult: '审核结果',
+  auditApproved: '通过',
+  auditRejected: '驳回',
+  auditComment: '审核意见',
+  auditSuccessApproved: '审核通过',
+  auditSuccessRejected: '审核驳回成功',
 
   // 批次选择器
   batchSelector: {

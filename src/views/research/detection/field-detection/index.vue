@@ -83,6 +83,14 @@
                   </el-tag>
                 </template>
               </el-table-column>
+              <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="120"
+                align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getAuditStatusType(row.auditStatus)" size="small">
+                    {{ getAuditStatusText(row.auditStatus) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
               <el-table-column prop="startDate" :label="$t('research.c1BreedingBatch.tracking.startDate')"
                 min-width="120" align="center" />
               <el-table-column :label="$t('common.actions')" width="300" fixed="right" align="center">
@@ -95,6 +103,10 @@
                     <el-button size="small" type="primary" @click="handleEdit(row)">
                       <i class="ri-edit-line"></i>
                       <span class="btn-text">{{ $t('common.edit') }}</span>
+                    </el-button>
+                    <el-button v-if="canSubmit(row)" size="small" type="success" @click="handleSubmitAudit(row.id)">
+                      <i class="ri-send-plane-line"></i>
+                      <span class="btn-text">{{ $t('common.submit') }}</span>
                     </el-button>
                     <el-button size="small" type="danger" @click="handleDelete(row.id)">
                       <i class="ri-delete-bin-line"></i>
@@ -123,7 +135,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTrackingList, deleteTracking, getBatchesForDetection } from '@/api/detection'
+import { getTrackingList, deleteTracking, getBatchesForDetection, submitTracking } from '@/api/detection'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 
 const router = useRouter()
@@ -245,6 +257,14 @@ const handleDelete = (id) => {
   }).catch(() => { })
 }
 
+const handleSubmitAudit = async (id) => {
+  const response = await submitTracking(id)
+  if (response.code === 200) {
+    ElMessage.success(t('common.submitSuccess'))
+    loadList()
+  }
+}
+
 // 分页
 const handleSizeChange = () => {
   pagination.value.pageNum = 1
@@ -267,6 +287,22 @@ const getResultTagType = (result) => ({
   '02': 'danger',
   '03': 'warning'
 }[result] || 'info')
+
+const getAuditStatusText = (status) => ({
+  draft: t('research.detection.statusDraft'),
+  submitted: t('research.detection.statusSubmitted'),
+  approved: t('research.detection.statusApproved'),
+  rejected: t('research.detection.statusRejected')
+}[status] || status)
+
+const getAuditStatusType = (status) => ({
+  draft: 'info',
+  submitted: 'warning',
+  approved: 'success',
+  rejected: 'danger'
+}[status] || 'info')
+
+const canSubmit = (row) => ['draft', 'rejected', '', null, undefined].includes(row.auditStatus)
 
 onMounted(() => {
   loadBatches()
