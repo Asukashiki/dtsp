@@ -25,7 +25,6 @@
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item label="Farming Record ID">{{ detailData.farmingRecordId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Plot ID">{{ detailData.plotId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Trial ID">{{ detailData.trialId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Batch ID">{{ detailData.batchId || '-' }}</el-descriptions-item>
@@ -33,7 +32,6 @@
               <el-descriptions-item label="Activity Type">{{ detailData.activityType || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Input Name">{{ detailData.inputName || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Quantity">{{ detailData.quantity ? `${detailData.quantity} ${detailData.unit || ''}` : '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Operator ID">{{ detailData.operatorId || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Operation Description" :span="2">{{ detailData.operationDesc || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>

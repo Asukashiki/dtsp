@@ -25,16 +25,15 @@
           </div>
           <div class="card-body">
             <el-descriptions :column="2" border>
-              <el-descriptions-item label="Plot ID">{{ detailData.plotId }}</el-descriptions-item>
               <el-descriptions-item label="Trial ID">{{ detailData.trialId }}</el-descriptions-item>
+              <el-descriptions-item label="Plot ID">{{ detailData.plotId }}</el-descriptions-item>
               <el-descriptions-item label="Batch ID">{{ detailData.batchId }}</el-descriptions-item>
               <el-descriptions-item label="Replication No">{{ detailData.replicationNo }}</el-descriptions-item>
               <el-descriptions-item label="Row No">{{ detailData.rowNo }}</el-descriptions-item>
               <el-descriptions-item label="Column No">{{ detailData.columnNo }}</el-descriptions-item>
               <el-descriptions-item label="Variety Code">{{ detailData.varietyCode }}</el-descriptions-item>
               <el-descriptions-item label="Plot Area (m²)">{{ detailData.plotAreaM2 || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="GPS Latitude">{{ detailData.gpsLat || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="GPS Longitude">{{ detailData.gpsLong || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="GPS">{{ gpsDisplay }}</el-descriptions-item>
               <el-descriptions-item label="Irrigation Count">{{ irrigationCount }}</el-descriptions-item>
             </el-descriptions>
           </div>
@@ -82,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPlotInfo, getIrrigationCount } from '@/api/breedingData'
 import { useDict } from '@/hooks/useDict'
@@ -93,6 +92,15 @@ const loading = ref(false)
 const detailData = ref({})
 const irrigationCount = ref(0)
 const { options: dictOptions } = useDict('flow_status')
+
+const gpsDisplay = computed(() => {
+  const lat = detailData.value.gpsLat
+  const lng = detailData.value.gpsLong
+  if (lat == null || lng == null || lat === '' || lng === '') {
+    return '-'
+  }
+  return `${lat}, ${lng}`
+})
 
 const getInfo = async () => {
   loading.value = true

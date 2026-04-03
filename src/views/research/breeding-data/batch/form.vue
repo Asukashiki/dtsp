@@ -123,7 +123,7 @@
           </div>
 
           <!-- 元数据信息 -->
-          <div class="info-card">
+          <div v-if="showMetadataInfo" class="info-card">
             <div class="card-header">
               <div class="card-title">
                 <i class="ri-information-line"></i>
@@ -304,6 +304,8 @@ const pageMode = computed(() => {
 })
 
 const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
+
+const showMetadataInfo = computed(() => false)
 
 // 页面标题
 const pageTitle = computed(() => {

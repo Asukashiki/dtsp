@@ -56,6 +56,11 @@
               <el-table-column prop="trialId" :label="$t('trait.columns.trialId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="batchId" :label="$t('trait.columns.batchId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="observationDate" :label="$t('trait.columns.observationDate')" min-width="160" />
+              <el-table-column prop="observerName" :label="$t('trait.observerId')" min-width="140" show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ row.observerName || row.observerId || '-' }}
+                </template>
+              </el-table-column>
               <el-table-column prop="growthStage" :label="$t('trait.columns.growthStage')" min-width="120">
                 <template #default="{ row }">
                   {{ getLabelByValue('growth_cycle', row.growthStage) || row.growthStage }}
@@ -116,6 +121,10 @@
               <div class="mobile-card-row">
                 <span class="label">{{ $t('trait.observationDate') }}:</span>
                 <span class="value">{{ item.observationDate }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="label">{{ $t('trait.observerId') }}:</span>
+                <span class="value">{{ item.observerName || item.observerId || '-' }}</span>
               </div>
               <div class="mobile-card-row">
                 <span class="label">{{ $t('trait.growthStage') }}:</span>

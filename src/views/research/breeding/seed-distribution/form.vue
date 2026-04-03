@@ -22,7 +22,7 @@
           :label-width="isMobile ? 'auto' : '160px'"
           :label-position="isMobile ? 'top' : 'right'"
           v-loading="submitting">
-          
+
           <!-- 基本信息 -->
           <div class="info-card">
             <div class="card-header">
@@ -434,7 +434,7 @@ const handleRemoveDetail = (index) => {
 const handleSeedLevelChange = async (value) => {
   // 清空目标种子等级
   formData.toSeedLevel = ''
-  
+
   // 根据源种子等级设置目标种子等级可选值
   if (value === 'Breeder') {
     toSeedLevelOptions.value = [{ label: 'Pre-Basic', value: 'Pre-Basic' }]
@@ -448,7 +448,7 @@ const handleSeedLevelChange = async (value) => {
   } else {
     toSeedLevelOptions.value = []
   }
-  
+
   // 切换种子等级时清空已选的分发明细
   formData.detailList = [{
     produceBatchId: '',
@@ -482,7 +482,7 @@ const handleBatchChange = async (index) => {
   const selectedBatch = productionBatchList.value.find(
     item => item.produceBatchId === detail.produceBatchId
   )
-  
+
   if (selectedBatch) {
     // 使用已获取数据中的剩余量
     detail.maxQuantity = selectedBatch.remainingQuantity || 0

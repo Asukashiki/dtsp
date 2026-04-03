@@ -33,21 +33,6 @@
           </div>
         </div>
 
-        <!-- 元数据信息 -->
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title"><i class="ri-information-line"></i><span>{{ $t('research.breedingData.batch.form.metadataInfo') }}</span></div>
-          </div>
-          <div class="card-body">
-            <el-descriptions :column="2" border>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.createBy')">{{ detailData.createBy || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.createTime')">{{ detailData.createTime || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.updateBy')">{{ detailData.updateBy || '-' }}</el-descriptions-item>
-              <el-descriptions-item :label="$t('research.breedingData.batch.form.updateTime')">{{ detailData.updateTime || '-' }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-        </div>
-
         <!-- 工作流信息 -->
         <WorkflowInfo
           :workflow-status="detailData.workflowStatus"

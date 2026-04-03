@@ -22,13 +22,20 @@
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.orgName')" prop="orgName">
-                  <el-input v-model="formData.orgName" :placeholder="$t('orgRegistration.placeholder.orgName')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('orgRegistration.form.unifiedCode')" prop="unifiedCode">
-                  <el-input v-model="formData.unifiedCode"
-                    :placeholder="$t('orgRegistration.placeholder.unifiedCode')" />
+                  <el-select
+                    v-model="formData.orgName"
+                    :placeholder="$t('orgRegistration.placeholder.orgName')"
+                    filterable
+                    clearable
+                    style="width: 100%"
+                    :disabled="!formData.orgType"
+                    @change="handleOrgNameChange">
+                    <el-option
+                      v-for="org in orgNameOptions"
+                      :key="org.id"
+                      :label="org.orgName"
+                      :value="org.orgName" />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="12">
@@ -82,12 +89,18 @@
               </el-col>
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.gpsLat')" prop="gpsLat">
-                  <el-input v-model="formData.gpsLat" :placeholder="$t('orgRegistration.placeholder.gpsLat')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('orgRegistration.form.gpsLng')" prop="gpsLng">
-                  <el-input v-model="formData.gpsLng" :placeholder="$t('orgRegistration.placeholder.gpsLng')" />
+                  <div class="location-field-group">
+                    <el-input 
+                      v-model="locationDisplay" 
+                      :placeholder="$t('orgRegistration.placeholder.gpsLat')" 
+                      readonly 
+                    />
+                    <el-button type="primary" @click="openLocationDialog">
+                      <i class="ri-map-pin-add-line"></i>
+                      {{ $t('input.inventory.warehouseManage.map.selectLocation') }}
+                    </el-button>
+                  </div>
+                  <div class="location-inline-tip">{{ $t('input.inventory.warehouseManage.map.selectedTip') }}</div>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -146,34 +159,6 @@
             </el-row>
           </InfoCard>
 
-          <!-- 账号信息（仅新增时显示） -->
-          <InfoCard v-if="!isEdit" :title="$t('orgRegistration.form.accountInfo')" icon="ri-user-settings-line">
-            <el-row :gutter="24">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('orgRegistration.form.applyUsername')" prop="applyUsername">
-                  <el-input v-model="formData.applyUsername"
-                    :placeholder="$t('orgRegistration.placeholder.applyUsername')" @blur="checkUsername">
-                    <template #append v-if="usernameCheckResult !== null">
-                      <i :class="usernameCheckResult ? 'ri-check-line text-success' : 'ri-close-line text-danger'"></i>
-                    </template>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('orgRegistration.form.applyPassword')" prop="applyPassword">
-                  <el-input v-model="formData.applyPassword" type="password" show-password
-                    :placeholder="$t('orgRegistration.placeholder.applyPassword')" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('orgRegistration.form.confirmPassword')" prop="confirmPassword">
-                  <el-input v-model="formData.confirmPassword" type="password" show-password
-                    :placeholder="$t('orgRegistration.placeholder.confirmPassword')" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </InfoCard>
-
           <!-- 操作按钮 -->
           <div class="form-actions">
             <el-button @click="handleCancel">{{ $t('common.cancel') }}</el-button>
@@ -182,24 +167,57 @@
             </el-button>
           </div>
         </el-form>
+
+        <el-dialog
+          v-model="locationDialogVisible"
+          :title="$t('input.inventory.warehouseManage.map.dialogTitle')"
+          width="860px"
+          destroy-on-close
+          append-to-body
+          class="location-dialog"
+          @opened="handleLocationDialogOpened">
+          <div class="location-dialog-body">
+            <div ref="mapContainerRef" class="location-map"></div>
+            <div class="location-map-tip">
+              <i class="ri-map-pin-line"></i>
+              <span>{{ $t('input.inventory.warehouseManage.map.tip') }}</span>
+            </div>
+
+            <div class="location-result">
+              <div class="location-result-label">{{ $t('input.inventory.warehouseManage.map.selectedLocation') }}</div>
+              <el-input
+                v-model="tempLocationValue"
+                readonly
+                :placeholder="$t('orgRegistration.placeholder.gpsLat')"
+              />
+            </div>
+          </div>
+
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="locationDialogVisible = false">{{ $t('common.cancel') }}</el-button>
+              <el-button type="primary" @click="confirmLocationSelection">{{ $t('common.confirm') }}</el-button>
+            </div>
+          </template>
+        </el-dialog>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import {
   submitRegistration,
   getRegistrationDetail,
-  checkUsernameUnique,
   getRegionTree,
   buildRegionPath
 } from '@/api/breedingOrgRegistration'
 import { uploadFile, getFilePreviewUrl } from '@/api/file'
+import { getOrganizationList } from '@/api/organization'
 import { PageHeader, InfoCard } from '@/components/common'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
@@ -218,13 +236,30 @@ const pageTitle = computed(() => {
 // 表单相关
 const formRef = ref(null)
 const submitting = ref(false)
-const usernameCheckResult = ref(null)
 const cropTypeOptions = ref([])
 const cropTypeLoading = ref(false)
 
 // 行政区划树
 const regionTreeOptions = ref([])
 const regionTreeLoading = ref(false)
+
+// 组织名称下拉选择
+const orgNameOptions = ref([])
+const orgNameLoading = ref(false)
+
+// 地图相关
+const mapContainerRef = ref(null)
+const mapInstance = ref(null)
+const mapMarker = ref(null)
+const locationDialogVisible = ref(false)
+const tempLocationValue = ref('')
+const tempLocationPosition = ref(null)
+const locationDisplay = ref('')
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_APP_GOOGLE_MAPS_API_KEY
+const GOOGLE_MAPS_SCRIPT_ID = 'google-maps-script'
+const ETHIOPIA_CENTER = { lat: 9.145, lng: 40.489673 }
+const ETHIOPIA_ZOOM = 6
 
 // 种子/作物类型数组（用于多选）
 const cropTypesArray = ref([])
@@ -287,58 +322,15 @@ const formData = reactive({
   contactEmail: ''
 })
 
-// 密码强度验证
-const validatePasswordStrength = (rule, value, callback) => {
-  if (!value && isEdit.value) {
-    callback()
-    return
-  }
-  if (!value) {
-    callback(new Error(t('orgRegistration.rules.applyPasswordRequired')))
-    return
-  }
-  if (value.length < 8) {
-    callback(new Error(t('orgRegistration.rules.passwordMinLength')))
-    return
-  }
-  const hasUpperCase = /[A-Z]/.test(value)
-  const hasLowerCase = /[a-z]/.test(value)
-  const hasNumber = /[0-9]/.test(value)
-  if (!hasUpperCase || !hasLowerCase || !hasNumber) {
-    callback(new Error(t('orgRegistration.rules.passwordStrength')))
-    return
-  }
-  callback()
-}
-
-// 密码确认验证
-const validateConfirmPassword = (rule, value, callback) => {
-  if (!isEdit.value && formData.applyPassword && value !== formData.applyPassword) {
-    callback(new Error(t('orgRegistration.rules.passwordMismatch')))
-  } else {
-    callback()
-  }
-}
-
 // 表单验证规则
 const rules = reactive({
   orgType: [{ required: true, message: t('orgRegistration.rules.orgTypeRequired'), trigger: 'change' }],
-  orgName: [{ required: true, message: t('orgRegistration.rules.orgNameRequired'), trigger: 'blur' }],
+  orgName: [{ required: true, message: t('orgRegistration.rules.orgNameRequired'), trigger: 'change' }],
   licenseNumber: [{ required: true, message: t('orgRegistration.rules.licenseNumberRequired'), trigger: 'blur' }],
   licenseStart: [{ required: true, message: t('orgRegistration.rules.licenseStartRequired'), trigger: 'change' }],
   licenseEnd: [{ required: true, message: t('orgRegistration.rules.licenseEndRequired'), trigger: 'change' }],
   cropTypes: [{ required: true, message: t('research.variety.cropType'), trigger: 'change' }],
-  regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }],
-  applyUsername: [{ required: !isEdit.value, message: t('orgRegistration.rules.applyUsernameRequired'), trigger: 'blur' }],
-  applyPassword: [
-    { required: !isEdit.value, message: t('orgRegistration.rules.applyPasswordRequired'), trigger: 'blur' },
-    { min: 8, message: t('orgRegistration.rules.passwordMinLength'), trigger: 'blur' },
-    { validator: validatePasswordStrength, trigger: 'blur' }
-  ],
-  confirmPassword: [
-    { required: !isEdit.value, message: t('orgRegistration.rules.confirmPasswordRequired'), trigger: 'blur' },
-    { validator: validateConfirmPassword, trigger: 'blur' }
-  ]
+  regionCode: [{ required: true, message: t('orgRegistration.rules.regionCodeRequired'), trigger: 'change' }]
 })
 
 // 加载行政区划树
@@ -366,6 +358,178 @@ const handleRegionChange = (value) => {
     formData.regionCode = ''
     formData.regionName = ''
   }
+}
+
+// 组织类型映射
+const orgTypeMap = {
+  'UNION': '1',
+  'COOPERATIVE': '2',
+  'PRIVATE': '3'
+}
+
+// 加载组织名称列表
+const loadOrgNameOptions = async (orgType) => {
+  if (!orgType) {
+    orgNameOptions.value = []
+    return
+  }
+  orgNameLoading.value = true
+  try {
+    const mappedOrgType = orgTypeMap[orgType] || orgType
+    const res = await getOrganizationList({ orgCategory: mappedOrgType, status: '0', pageNum: 1, pageSize: 1000 })
+    if (res.code === 200) {
+      orgNameOptions.value = res.rows || res.data?.records || []
+    }
+  } catch (error) {
+    console.error('Failed to load organization list:', error)
+    orgNameOptions.value = []
+  } finally {
+    orgNameLoading.value = false
+  }
+}
+
+// 监听 orgType 变化，加载对应的组织列表
+watch(() => formData.orgType, (newVal) => {
+  formData.orgName = ''
+  loadOrgNameOptions(newVal)
+})
+
+// 组织名称选择变更
+const handleOrgNameChange = (value) => {
+  const selected = orgNameOptions.value.find(org => org.orgName === value)
+  if (selected) {
+    formData.orgName = selected.orgName
+  }
+}
+
+// 地图相关函数
+const formatLocationValue = (lat, lng) => `${Number(lat).toFixed(6)},${Number(lng).toFixed(6)}`
+
+const parseLocationValue = (value) => {
+  if (!value || typeof value !== 'string') return null
+  const [latStr, lngStr] = value.split(',').map(item => item?.trim())
+  const lat = Number(latStr)
+  const lng = Number(lngStr)
+  if (Number.isNaN(lat) || Number.isNaN(lng)) return null
+  return { lat, lng }
+}
+
+const updateMapMarker = (position, shouldPan = true) => {
+  if (!mapInstance.value || !window.google?.maps) return
+
+  if (!mapMarker.value) {
+    mapMarker.value = new window.google.maps.Marker({
+      map: mapInstance.value,
+      position
+    })
+  } else {
+    mapMarker.value.setPosition(position)
+  }
+
+  if (shouldPan) {
+    mapInstance.value.panTo(position)
+  }
+}
+
+const syncLocationFromMap = (latLng) => {
+  const lat = typeof latLng.lat === 'function' ? latLng.lat() : latLng.lat
+  const lng = typeof latLng.lng === 'function' ? latLng.lng() : latLng.lng
+  tempLocationValue.value = formatLocationValue(lat, lng)
+  tempLocationPosition.value = { lat, lng }
+  updateMapMarker({ lat, lng })
+}
+
+const initGoogleMap = async () => {
+  await nextTick()
+  if (!mapContainerRef.value || !window.google?.maps) return
+
+  const savedLocation = tempLocationPosition.value || parseLocationValue(tempLocationValue.value) || parseLocationValue(formData.gpsLat)
+  const center = savedLocation ? { lat: savedLocation.lat, lng: savedLocation.lng } : ETHIOPIA_CENTER
+  const zoom = savedLocation ? 12 : ETHIOPIA_ZOOM
+
+  mapInstance.value = new window.google.maps.Map(mapContainerRef.value, {
+    center,
+    zoom,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false
+  })
+
+  mapInstance.value.addListener('click', (event) => {
+    syncLocationFromMap(event.latLng)
+  })
+
+  if (savedLocation) {
+    updateMapMarker({ lat: savedLocation.lat, lng: savedLocation.lng }, false)
+  }
+}
+
+const loadGoogleMapsScript = () => new Promise((resolve, reject) => {
+  if (!GOOGLE_MAPS_API_KEY) {
+    reject(new Error('Google Maps API key is not configured'))
+    return
+  }
+
+  if (window.google?.maps) {
+    resolve(window.google.maps)
+    return
+  }
+
+  const existingScript = document.getElementById(GOOGLE_MAPS_SCRIPT_ID)
+  if (existingScript) {
+    existingScript.addEventListener('load', () => resolve(window.google?.maps), { once: true })
+    existingScript.addEventListener('error', reject, { once: true })
+    return
+  }
+
+  const script = document.createElement('script')
+  script.id = GOOGLE_MAPS_SCRIPT_ID
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`
+  script.async = true
+  script.defer = true
+  script.onload = () => resolve(window.google?.maps)
+  script.onerror = reject
+  document.head.appendChild(script)
+})
+
+const setupLocationMap = async () => {
+  try {
+    await loadGoogleMapsScript()
+    await initGoogleMap()
+  } catch (error) {
+    console.error('Failed to initialize Google Map:', error)
+    const messageKey = error?.message === 'Google Maps API key is not configured'
+      ? 'input.inventory.warehouseManage.map.missingKey'
+      : 'input.inventory.warehouseManage.map.loadFailed'
+    ElMessage.error(t(messageKey))
+  }
+}
+
+const openLocationDialog = () => {
+  const savedLocation = parseLocationValue(formData.gpsLat)
+  tempLocationValue.value = formData.gpsLat || ''
+  tempLocationPosition.value = savedLocation
+  locationDialogVisible.value = true
+}
+
+const handleLocationDialogOpened = async () => {
+  mapMarker.value = null
+  mapInstance.value = null
+  await setupLocationMap()
+}
+
+const confirmLocationSelection = () => {
+  if (!tempLocationValue.value) {
+    ElMessage.warning(t('input.inventory.warehouseManage.rules.locationRequired'))
+    return
+  }
+  const parsed = parseLocationValue(tempLocationValue.value)
+  if (parsed) {
+    formData.gpsLat = String(parsed.lat)
+    formData.gpsLng = String(parsed.lng)
+    locationDisplay.value = tempLocationValue.value
+  }
+  locationDialogVisible.value = false
 }
 
 // 上传前验证
@@ -456,25 +620,6 @@ const handleTaxCertSuccess = async (response) => {
   }
 }
 
-// 检查用户名唯一性
-const checkUsername = async () => {
-  if (!formData.applyUsername || isEdit.value) {
-    usernameCheckResult.value = null
-    return
-  }
-  try {
-    const res = await checkUsernameUnique(formData.applyUsername, formData.id)
-    if (res.code === 200) {
-      usernameCheckResult.value = res.data
-      if (!res.data) {
-        ElMessage.warning(t('orgRegistration.messages.usernameUnavailable'))
-      }
-    }
-  } catch (error) {
-    console.error('Check username failed:', error)
-  }
-}
-
 // 加载详情
 const loadData = async () => {
   const id = route.params.id
@@ -488,6 +633,10 @@ const loadData = async () => {
 
       if (baseInfo.cropTypes) {
         cropTypesArray.value = normalizeCropTypes(baseInfo.cropTypes)
+      }
+
+      if (baseInfo.gpsLat && baseInfo.gpsLng) {
+        locationDisplay.value = formatLocationValue(baseInfo.gpsLat, baseInfo.gpsLng)
       }
 
       if (baseInfo.businessLicenseUrl) {
@@ -517,6 +666,10 @@ const loadData = async () => {
           console.error('Failed to load tax cert preview:', error)
         }
       }
+
+      if (baseInfo.orgType) {
+        await loadOrgNameOptions(baseInfo.orgType)
+      }
     }
   } catch (error) {
     console.error('Load data failed:', error)
@@ -530,11 +683,6 @@ const handleSubmit = async () => {
 
   try {
     await formRef.value.validate()
-
-    if (usernameCheckResult.value === false) {
-      ElMessage.warning(t('orgRegistration.rules.usernameExists'))
-      return
-    }
 
     submitting.value = true
     const submitData = { ...formData }
@@ -576,11 +724,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 
-// .registration-form {
-//   // max-width: 1200px;
-//   margin: 0 auto;
-// }
-
 .form-actions {
   display: flex;
   justify-content: center;
@@ -593,5 +736,68 @@ onMounted(async () => {
   color: #909399;
   margin-top: 8px;
   line-height: 1.4;
+}
+
+.location-field-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.location-field-group .el-input {
+  flex: 1;
+}
+
+.location-inline-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.location-dialog-body {
+  padding-top: 4px;
+}
+
+.location-map {
+  width: 100%;
+  height: 420px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f3f7f2 0%, #eef5eb 100%);
+}
+
+.location-map-tip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+}
+
+.location-result {
+  margin-top: 16px;
+}
+
+.location-result-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+:deep(.location-dialog .el-dialog) {
+  max-width: calc(100vw - 32px);
+}
+
+@media screen and (max-width: 768px) {
+  .location-field-group {
+    flex-direction: column;
+  }
+
+  .location-map {
+    height: 320px;
+  }
 }
 </style>

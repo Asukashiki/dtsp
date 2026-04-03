@@ -78,12 +78,9 @@
               <el-descriptions-item :label="$t('prebasicSeedProduction.columns.toSeedLevel')">
                 {{ detail.toSeedLevel || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('prebasicSeedProduction.columns.operatorName')">
-                {{ detail.operatorName || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="$t('prebasicSeedProduction.columns.produceStatus')">
-                <el-tag 
-                  :type="detail.produceStatus === 'Finished' ? 'success' : detail.produceStatus === 'Ongoing' ? 'warning' : 'info'">
+               <el-descriptions-item :label="$t('prebasicSeedProduction.columns.produceStatus')">
+                 <el-tag 
+                   :type="detail.produceStatus === 'Finished' ? 'success' : detail.produceStatus === 'Ongoing' ? 'warning' : 'info'">
                   {{ detail.produceStatus || '-' }}
                 </el-tag>
               </el-descriptions-item>

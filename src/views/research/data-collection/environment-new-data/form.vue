@@ -119,12 +119,6 @@
                 />
               </el-form-item>
               </el-col>
-              <el-col :xs="24" :sm="12">
-                <!-- Observer Name (disabled, default to current user name) -->
-                <el-form-item :label="$t('research.environmentNewData.form.observerId')">
-                  <el-input v-model="observerName" disabled />
-                </el-form-item>
-              </el-col>
             </el-row>
           </div>
         </div>
