@@ -204,16 +204,16 @@
           "roles": ["agri-admin", "OSE", "Union", "Cooperative"]
         },
         {
-          "index": "/research/field-detection",
-          "icon": "ri-bar-chart-box-line",
-          "titleKey": "research.menu.fieldDetection",
+          "index": "/research/detection-management",
+          "icon": "ri-microscope-line",
+          "titleKey": "research.menu.detectionManagement",
           "roles": ["agri-admin", "OSE", "Union", "Cooperative", "RC", "OARI"]
         },
         {
-          "index": "/research/lab-testing",
-          "icon": "ri-flask-line",
-          "titleKey": "research.menu.labTesting",
-          "roles": ["agri-admin", "OSE", "Union", "Cooperative", "RC", "OARI"]
+          "index": "/research/detection-audit",
+          "icon": "ri-audit-line",
+          "titleKey": "research.menu.detectionAudit",
+          "roles": ["agri-admin", "OIA"]
         },
         {
           "index": "/research/c1-breeding-batch-audit",

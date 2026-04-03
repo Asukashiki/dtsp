@@ -62,6 +62,10 @@ export default {
   fieldDetectionSubtitle: 'Record field detection data',
   labTesting: 'Lab Testing',
   labTestingSubtitle: 'Record laboratory testing data',
+  detectionManagement: 'Detection Management',
+  detectionManagementSubtitle: 'Manage field detection and lab testing together',
+  detectionAudit: 'Detection Audit',
+  detectionAuditSubtitle: 'Review field detection and lab testing together',
 
   breederSeedProduction: 'Breeder seed production data',
   breederSeedProductionResult: 'Breeder seed data collection',

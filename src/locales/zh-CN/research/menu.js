@@ -61,6 +61,10 @@ export default {
   fieldDetectionSubtitle: '记录田间检测数据',
   labTesting: '实验室检测',
   labTestingSubtitle: '记录实验室检测数据',
+  detectionManagement: '检测管理',
+  detectionManagementSubtitle: '统一管理田间检测与实验室检测',
+  detectionAudit: '检测审核',
+  detectionAuditSubtitle: '统一审核田间检测与实验室检测',
 
   breederSeedProduction: 'Breeder seed production data',
   breederSeedProductionAdd: '新增育种家种子生产',

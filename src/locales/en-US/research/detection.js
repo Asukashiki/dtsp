@@ -1,37 +1,30 @@
 export default {
-  // Field Detection
   fieldDetection: {
     title: 'Field Detection',
-    subtitle: 'Manage field detection records for Breeder Seed and C1 Seed',
+    subtitle: 'Manage field detection records for breeder and C1 seeds',
     addTitle: 'Add Field Detection Record',
-    list: 'Field Detection List',
-    detail: 'Field Detection Details'
+    list: 'Field Detection Record List',
+    detail: 'Field Detection Detail'
   },
-
-  // Lab Testing
   labTesting: {
     title: 'Lab Testing',
-    subtitle: 'Manage laboratory testing records for Breeder Seed and C1 Seed',
+    subtitle: 'Manage lab testing records for breeder and C1 seeds',
     addTitle: 'Add Lab Testing Record',
-    list: 'Lab Testing List',
-    detail: 'Lab Testing Details'
+    list: 'Lab Testing Record List',
+    detail: 'Lab Testing Detail'
   },
-
-  // Form fields
   inspectionType: 'Inspection Type',
   testItem: 'Test Item',
-
-  // Common
   selectBatch: 'Select Batch',
-  selectBatchHint: 'Please select a batch first to view and manage detection records',
+  selectBatchHint: 'Select a batch before managing detection records',
   batchInfo: 'Batch Information',
   batchId: 'Batch ID',
   varietyName: 'Variety Name',
   cropType: 'Crop Type',
   seedClass: 'Seed Class',
   noBatchesAvailable: 'No batches available',
-  editInDetectionPage: 'Edit in Detection Page',
-  viewOnlyHint: 'This page is read-only. Click the button to edit records',
+  editInDetectionPage: 'Go to detection page to edit',
+  viewOnlyHint: 'This page is read-only. Use the action button to edit.',
   add: 'Add',
   allBatches: 'All Batches',
   allSeedClasses: 'All Classes',
@@ -44,16 +37,26 @@ export default {
   endDate: 'End Date',
   search: 'Search',
   reset: 'Reset',
-  noData: 'No detection records found',
+  noData: 'No detection records',
   basicInfo: 'Basic Information',
-
-  // Batch Selector
+  auditStatus: 'Audit Status',
+  statusSubmitted: 'Submitted',
+  statusApproved: 'Approved',
+  statusRejected: 'Rejected',
+  statusDraft: 'Draft',
+  auditDialogTitle: 'Detection Audit',
+  auditResult: 'Audit Result',
+  auditApproved: 'Approve',
+  auditRejected: 'Reject',
+  auditComment: 'Audit Comment',
+  auditSuccessApproved: 'Approved successfully',
+  auditSuccessRejected: 'Rejected successfully',
   batchSelector: {
     basicBatches: 'Breeder Seed Batches',
     c1Batches: 'C1 Seed Batches',
-    searchPlaceholder: 'Search batch ID or variety name...',
-    noBatches: 'No batch data available',
-    selectBatchFirst: 'Please select a batch first',
-    selectBatchHint: 'Please select a batch to add detection record'
+    searchPlaceholder: 'Search by batch ID or variety name...',
+    noBatches: 'No batch data',
+    selectBatchFirst: 'Select a batch first',
+    selectBatchHint: 'Choose a batch before adding a detection record'
   }
 }

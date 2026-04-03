@@ -143,6 +143,7 @@ export default {
     endDate: '结束日期',
     operator: '操作人',
     description: '跟踪描述',
+    trackingDesc: '跟踪描述',
     resultNormal: '正常',
     resultAbnormal: '异常',
     resultObserving: '观察中',

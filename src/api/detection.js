@@ -78,6 +78,29 @@ export const deleteTracking = (ids) => {
   })
 }
 
+export const submitTracking = (id) => {
+  return agricultureRequest({
+    url: `/seed/c1-breeding-tracking/submit/${id}`,
+    method: 'post'
+  })
+}
+
+export const approveTracking = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-tracking/approve',
+    method: 'post',
+    data
+  })
+}
+
+export const rejectTracking = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-tracking/reject',
+    method: 'post',
+    data
+  })
+}
+
 // ==================== 实验室检测 Test ====================
 
 /**
@@ -136,6 +159,29 @@ export const deleteTest = (ids) => {
     url: '/seed/c1-breeding-test/delete',
     method: 'post',
     data: ids
+  })
+}
+
+export const submitTest = (id) => {
+  return agricultureRequest({
+    url: `/seed/c1-breeding-test/submit/${id}`,
+    method: 'post'
+  })
+}
+
+export const approveTest = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-test/approve',
+    method: 'post',
+    data
+  })
+}
+
+export const rejectTest = (data) => {
+  return agricultureRequest({
+    url: '/seed/c1-breeding-test/reject',
+    method: 'post',
+    data
   })
 }
 
