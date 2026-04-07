@@ -46,9 +46,6 @@
               <el-descriptions-item :label="$t('basicSeedProduction.columns.cropType')">
                 {{ getCropTypeDisplay(data.cropType) }}
               </el-descriptions-item>
-              <el-descriptions-item :label="$t('basicSeedProduction.columns.time')">
-                {{ data.time }}
-              </el-descriptions-item>
               <el-descriptions-item :label="$t('basicSeedProduction.columns.landName')">
                 {{ data.landName }}
               </el-descriptions-item>
@@ -77,9 +74,6 @@
               </el-descriptions-item>
               <el-descriptions-item :label="$t('basicSeedProduction.columns.toSeedLevel')">
                 {{ data.toSeedLevel }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="$t('basicSeedProduction.columns.operatorName')">
-                {{ data.operatorName }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('basicSeedProduction.columns.produceStatus')">
                 <el-tag 
