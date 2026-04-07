@@ -51,7 +51,7 @@
             <el-descriptions :column="2" border>
               <el-descriptions-item label="Seed Quantity (g)">{{ detailData.seedQuantity || '-' }}</el-descriptions-item>
               <el-descriptions-item label="Sowing Method">{{ detailData.sowingMethod || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Sowing Time">{{ detailData.sowingTime || '-' }}</el-descriptions-item>
+              <el-descriptions-item label="Sowing Date">{{ detailData.sowingTime || '-' }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>

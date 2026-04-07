@@ -254,7 +254,7 @@ export default {
       kpiCode: 'KPI代码',
       seedQuantity: '播种量(kg)',
       sowingMethod: '播种方式',
-      sowingTime: '播种时间',
+      sowingTime: '播种日期',
     },
 
       placeholder: {
@@ -280,7 +280,7 @@ export default {
           kpiCode: '请输入KPI代码',
           seedQuantity: '请输入播种量',
           sowingMethod: '请输入播种方式',
-          sowingTime: '请选择播种时间',
+          sowingTime: '请选择播种日期',
           auditStatus: '请选择审核状态',
           auditOpinion: '请输入审核意见',
       },
@@ -308,7 +308,7 @@ export default {
     sowing: {
       seedQuantity: '播种量(kg)',
       sowingMethod: '播种方式',
-      sowingTime: '播种时间',
+      sowingTime: '播种日期',
     },
    addSowing: '新增播种信息',
 

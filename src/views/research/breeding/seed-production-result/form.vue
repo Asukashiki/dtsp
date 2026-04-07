@@ -117,7 +117,7 @@
                   </el-form-item>
                 </el-col>
                 
-                <el-col :xs="24" :sm="12">
+                <el-col v-if="false" :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breeding.seed.production.form.collectionDate')" prop="collectionDate">
                     <el-date-picker
                       v-model="formData.collectionDate"

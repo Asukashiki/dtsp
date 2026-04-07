@@ -214,7 +214,7 @@ const rules = computed(() => ({
     { required: true, message: t('prebasicSeedProduction.rules.timeRequired'), trigger: 'change' }
   ],
   landName: [
-    { required: true, message: t('prebasicSeedProduction.rules.landIdRequired'), trigger: 'blur' }
+    { required: true, message: t('prebasicSeedProduction.rules.landNameRequired'), trigger: 'blur' }
   ],
   operatorName: [
     { required: true, message: t('prebasicSeedProduction.rules.operatorNameRequired'), trigger: 'blur' }

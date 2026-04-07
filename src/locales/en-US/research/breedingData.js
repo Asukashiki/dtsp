@@ -271,7 +271,7 @@ export default {
       kpiCode: 'KPI Code',
       seedQuantity: 'Seed Quantity (g)',
       sowingMethod: 'Sowing Method',
-      sowingTime: 'Sowing Time',
+      sowingTime: 'Sowing Date',
     },
 
     placeholder: {
@@ -327,7 +327,7 @@ export default {
       sowing: {
           seedQuantity: 'Seed Quantity (g)',
           sowingMethod: 'Sowing Method',
-          sowingTime: 'Sowing Time',
+          sowingTime: 'Sowing Date',
       },
 
       addSowing: 'Add Sowing Information',

@@ -35,6 +35,7 @@
                       :placeholder="$t('research.breedingLicense.form.batchId')"
                       filterable
                       class="full-width"
+                      @change="handleBatchChange"
                     >
                       <el-option
                         v-for="item in batchList"
@@ -149,7 +150,7 @@
             </div>
             <div class="card-body">
               <el-row :gutter="24">
-                <el-col :xs="24" :sm="12">
+                <el-col v-if="false" :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingLicense.form.approvalOrg')" prop="approvalOrg">
                     <el-input
                       v-model="formData.approvalOrg"
@@ -184,17 +185,6 @@
                     </el-upload>
                   </el-form-item>
                 </el-col>
-
-                <el-col :xs="24" :sm="24">
-                  <el-form-item :label="$t('research.breedingLicense.form.remark')" prop="remark">
-                    <el-input
-                      v-model="formData.remark"
-                      type="textarea"
-                      :rows="3"
-                      :placeholder="$t('research.breedingLicense.form.remark')"
-                    />
-                  </el-form-item>
-                </el-col>
               </el-row>
             </div>
           </div>
@@ -225,11 +215,6 @@
                     <el-input-number v-model="formData.maturityDays" :precision="0" :step="1" class="full-width" />
                   </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingLicense.form.plantHeight')" prop="plantHeight">
-                    <el-input-number v-model="formData.plantHeight" :precision="1" :step="1" class="full-width" />
-                  </el-form-item>
-                </el-col>
 
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingLicense.form.diseaseResistance')" prop="diseaseResistance">
@@ -247,10 +232,15 @@
                     <el-input v-model="formData.grainQualityTraits" type="textarea" :rows="2" />
                   </el-form-item>
                 </el-col>
-                
+
                 <el-col :xs="24" :sm="24">
-                  <el-form-item :label="$t('research.breedingLicense.form.otherTraits')" prop="otherTraits">
-                    <el-input v-model="formData.otherTraits" type="textarea" :rows="2" />
+                  <el-form-item :label="$t('research.breedingLicense.form.remark')" prop="remark">
+                    <el-input
+                      v-model="formData.remark"
+                      type="textarea"
+                      :rows="3"
+                      :placeholder="$t('research.breedingLicense.form.remark')"
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -288,6 +278,7 @@ import {
 import { getBreedingBatchList } from '@/api/breedingData'
 import { uploadFile, getFilePreviewUrl } from '@/api/file'
 import { getDatasetList } from '@/api/dataset'
+import { getUserInfo } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -366,6 +357,18 @@ const fetchBatchList = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch batch list:', error)
+  }
+}
+
+// Handle Batch Selection Change - Auto fill Variety Name
+const handleBatchChange = (batchId) => {
+  if (!batchId) {
+    formData.varietyName = ''
+    return
+  }
+  const selectedBatch = batchList.value.find(item => item.dataId === batchId)
+  if (selectedBatch) {
+    formData.varietyName = selectedBatch.varietyName || ''
   }
 }
 
@@ -489,6 +492,12 @@ const handleSubmit = async () => {
     await formRef.value.validate()
 
     submitting.value = true
+
+    // Auto-fill approvalOrg with current user's deptId
+    const userInfo = getUserInfo()
+    if (userInfo && userInfo.deptId) {
+      formData.approvalOrg = userInfo.deptId
+    }
 
     // Prepare submit data
     const submitData = {
