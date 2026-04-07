@@ -304,30 +304,23 @@ export const getLandList = async (params = {}) => {
     params: {
       pageNum: params.pageNum || 1,
       pageSize: params.pageSize || 10,
-      id: params.id || '',
+      landName: params.landName || '',
       landId: params.landId || '',
       farmerId: params.farmerId || '',
-      kebeleId: params.kebeleId || '',
+      farmerName: params.farmerName || '',
+      farmerPhone: params.farmerPhone || '',
       kebeleCode: params.kebeleCode || '',
-      status: params.status || '',
-      soilCode: params.soilCode || '',
-      irrigationCode: params.irrigationCode || '',
+      landType: params.landType || '',
+      currentStatus: params.currentStatus || '',
+      daId: params.daId || '',
       searchValue: params.searchValue || ''
     }
   })
-
-  const normalizedRows = (res.rows || []).map((item) => ({
-    ...item,
-    id: item.id || item.landId,
-    landId: item.landId || item.id
-  }))
-
   return {
     ...res,
     data: {
       ...res,
-      records: normalizedRows,
-      rows: normalizedRows
+      records: res.rows
     }
   }
 }

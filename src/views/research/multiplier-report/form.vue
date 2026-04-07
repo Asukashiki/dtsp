@@ -48,13 +48,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.multiplierReport.multiplierId')" prop="multiplierId">
-                    <el-select v-model="formData.multiplierId" filterable clearable
-                      :placeholder="$t('common.pleaseSelect')" style="width:100%"
-                      :loading="orgLoading" :disabled="multiplierIdDisabled"
-                      @change="handleOrgChange">
-                      <el-option v-for="org in organizationList" :key="org.id"
-                        :label="`${org.orgName} (${org.orgCode || ''})`" :value="String(org.id)" />
-                    </el-select>
+                    <el-input v-model="formData.multiplierId" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -401,7 +395,7 @@ const loadOrganizations = async () => {
   finally { orgLoading.value = false }
 }
 
-// 获取当前用户的 orgId
+// 获取当前用户的 orgId 或 userId
 const getCurrentUserOrgId = () => {
   const userInfo = userStore.userInfo || {}
   const user = userInfo.user || {}
@@ -417,8 +411,16 @@ const getCurrentUserOrgId = () => {
   console.log('user.deptId:', user.deptId)
   console.log('userInfo.dept?.deptId:', userInfo.dept?.deptId)
   console.log('user.dept?.deptId:', user.dept?.deptId)
+  console.log('userInfo.userId:', userInfo.userId)
+  console.log('user.userId:', user.userId)
+  console.log('userInfo.id:', userInfo.id)
+  console.log('user.id:', user.id)
   
-  const rawValue = userInfo.org_id ??
+  const rawValue = userInfo.userId ??
+    user.userId ??
+    userInfo.id ??
+    user.id ??
+    userInfo.org_id ??
     userInfo.orgId ??
     user.org_id ??
     user.orgId ??
@@ -434,35 +436,15 @@ const getCurrentUserOrgId = () => {
 
 // 根据用户的 orgId 自动选择 Multiplier ID
 const autoSelectMultiplierId = () => {
-  console.log('=== 开始自动选择 Multiplier ID ===')
-  const currentUserOrgId = getCurrentUserOrgId()
-  console.log('当前用户 orgId:', currentUserOrgId)
-  console.log('组织列表长度:', organizationList.value.length)
-  console.log('组织列表数据:', organizationList.value)
+  console.log('=== 开始自动填充 Multiplier ID ===')
+  const currentUserId = getCurrentUserOrgId()
+  console.log('当前用户 ID:', currentUserId)
   
-  if (!currentUserOrgId || organizationList.value.length === 0) {
-    console.log('无法自动选择: orgId 为空或组织列表为空')
-    return
-  }
-
-  // 尝试匹配组织列表中的记录
-  // 优先匹配 id，其次匹配 orgCode
-  const matchedOrg = organizationList.value.find(org => {
-    const idMatch = String(org.id) === currentUserOrgId
-    const codeMatch = String(org.orgCode) === currentUserOrgId
-    console.log(`检查组织: id=${org.id}, orgCode=${org.orgCode}, idMatch=${idMatch}, codeMatch=${codeMatch}`)
-    return idMatch || codeMatch
-  })
-
-  console.log('匹配结果:', matchedOrg)
-
-  if (matchedOrg) {
-    formData.value.multiplierId = String(matchedOrg.id)
-    formData.value.farmId = String(matchedOrg.id)
-    multiplierIdDisabled.value = true
-    console.log('自动选择成功, multiplierId:', formData.value.multiplierId)
+  if (currentUserId) {
+    formData.value.multiplierId = String(currentUserId)
+    console.log('自动填充成功, multiplierId:', formData.value.multiplierId)
   } else {
-    console.log('未找到匹配的组织')
+    console.log('无法获取用户ID')
   }
 }
 

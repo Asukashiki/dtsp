@@ -46,68 +46,46 @@
               </el-input>
             </SearchItem>
 
-            <SearchItem :label="$t('newFarm.land.form.status')">
-              <el-radio-group v-model="searchFilters.status" @change="handleSearch">
+            <SearchItem :label="$t('newFarm.land.form.currentStatus')">
+              <el-radio-group v-model="searchFilters.currentStatus" @change="handleSearch">
                 <el-radio-button label="">{{ $t('newFarm.common.all') }}</el-radio-button>
-                <el-radio-button label="0">{{ $t('newFarm.land.status.0') }}</el-radio-button>
-                <el-radio-button label="1">{{ $t('newFarm.land.status.1') }}</el-radio-button>
-                <el-radio-button label="2">{{ $t('newFarm.land.status.2') }}</el-radio-button>
+                <el-radio-button label="CULTIVATING">{{ $t('newFarm.land.status.CULTIVATING') }}</el-radio-button>
+                <el-radio-button label="IDLE">{{ $t('newFarm.land.status.IDLE') }}</el-radio-button>
+                <el-radio-button label="FALLOW">{{ $t('newFarm.land.status.FALLOW') }}</el-radio-button>
               </el-radio-group>
             </SearchItem>
 
-            <SearchItem :label="$t('newFarm.land.form.irrigationCode')">
+            <SearchItem :label="$t('newFarm.land.form.landType')">
               <el-select
-                v-model="searchFilters.irrigationCode"
-                :placeholder="$t('newFarm.land.placeholder.irrigationCode')"
+                v-model="searchFilters.landType"
+                :placeholder="$t('newFarm.land.placeholder.landType')"
                 clearable
                 style="width: 100%"
                 @change="handleSearch">
-                <el-option value="IR01" label="IR01" />
-                <el-option value="IR02" label="IR02" />
-                <el-option value="IR03" label="IR03" />
+                <el-option value="PADDY" :label="$t('newFarm.land.landType.PADDY')" />
+                <el-option value="DRY" :label="$t('newFarm.land.landType.DRY')" />
+                <el-option value="ORCHARD" :label="$t('newFarm.land.landType.ORCHARD')" />
+                <el-option value="FOREST" :label="$t('newFarm.land.landType.FOREST')" />
+                <el-option value="OTHER" :label="$t('newFarm.land.landType.OTHER')" />
               </el-select>
             </SearchItem>
 
-            <SearchItem :label="$t('newFarm.land.form.farmerId')">
+            <SearchItem :label="$t('newFarm.land.form.farmerName')">
               <el-input
-                v-model="searchFilters.farmerId"
-                :placeholder="$t('newFarm.land.placeholder.farmerId')"
+                v-model="searchFilters.farmerName"
+                :placeholder="$t('newFarm.farmer.placeholder.farmerName')"
                 clearable
                 class="search-input"
                 @clear="handleSearch" />
             </SearchItem>
 
-            <SearchItem :label="$t('newFarm.land.form.kebeleId')">
+            <SearchItem :label="$t('newFarm.farmer.form.phone')">
               <el-input
-                v-model="searchFilters.kebeleId"
-                :placeholder="$t('newFarm.land.placeholder.kebeleId')"
+                v-model="searchFilters.phone"
+                :placeholder="$t('newFarm.farmer.placeholder.phone')"
                 clearable
                 class="search-input"
                 @clear="handleSearch" />
-            </SearchItem>
-
-            <SearchItem :label="$t('newFarm.land.form.soilCode')">
-              <el-input
-                v-model="searchFilters.soilCode"
-                :placeholder="$t('newFarm.land.placeholder.soilCode')"
-                clearable
-                class="search-input"
-                @clear="handleSearch"
-              />
-            </SearchItem>
-
-            <SearchItem :label="$t('newFarm.land.form.landUseType')">
-              <el-select
-                v-model="searchFilters.landUseType"
-                :placeholder="$t('newFarm.land.placeholder.landUseType')"
-                clearable
-                style="width: 100%"
-                @change="handleSearch"
-              >
-                <el-option value="Arable" :label="$t('newFarm.land.landUseType.Arable')" />
-                <el-option value="Pasture" :label="$t('newFarm.land.landUseType.Pasture')" />
-                <el-option value="Mixed" :label="$t('newFarm.land.landUseType.Mixed')" />
-              </el-select>
             </SearchItem>
 
           </SearchForm>
@@ -139,18 +117,30 @@
               style="width: 100%"
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" />
-              <el-table-column prop="landId" :label="$t('newFarm.land.columns.id')" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="farmerId" :label="$t('newFarm.land.columns.farmerId')" min-width="140" show-overflow-tooltip />
-              <el-table-column prop="kebeleId" :label="$t('newFarm.land.columns.kebeleId')" min-width="120" show-overflow-tooltip />
-              <el-table-column prop="areaTa" :label="$t('newFarm.land.columns.areaTa')" min-width="120" align="right">
+              <el-table-column prop="landId" :label="$t('newFarm.land.columns.landId')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="landName" :label="$t('newFarm.land.columns.landName')" min-width="150" show-overflow-tooltip />
+              <el-table-column prop="landType" :label="$t('newFarm.land.columns.landType')" min-width="100" align="center">
                 <template #default="{ row }">
-                  {{ formatArea(row.areaTa) }}
+                  <el-tag v-if="row.landType" size="small">
+                    {{ $t(`newFarm.land.landType.${row.landType}`) }}
+                  </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="status" :label="$t('newFarm.land.columns.status')" min-width="100" align="center">
+              <el-table-column prop="areaSize" :label="$t('newFarm.land.columns.areaSize')" min-width="120" align="right">
                 <template #default="{ row }">
-                  <el-tag :type="getLandStatusType(row.status)" size="small">
-                    {{ getLandStatusLabel(row.status) }}
+                  {{ formatArea(row.areaSize) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="farmerName" :label="$t('newFarm.land.columns.farmerName')" min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <span v-if="row.farmerName">{{ row.farmerName }}</span>
+                  <el-tag v-else type="info" size="small">{{ $t('newFarm.land.unbound') }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="currentStatus" :label="$t('newFarm.land.columns.currentStatus')" min-width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getLandStatusType(row.currentStatus)" size="small">
+                    {{ $t(`newFarm.land.status.${row.currentStatus}`) }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -186,33 +176,37 @@
             </div>
 
             <div v-else>
-              <div v-for="item in tableData" :key="item.id" class="mobile-card">
+              <div v-for="item in tableData" :key="item.landId" class="mobile-card">
                 <div class="mobile-card-header">
                   <div class="mobile-card-title">
                     <i class="ri-landscape-line"></i>
-                    <span>{{ item.id }}</span>
+                    <span>{{ item.landName }}</span>
                   </div>
-                  <el-tag :type="getLandStatusType(item.status)" size="small">
-                    {{ getLandStatusLabel(item.status) }}
+                  <el-tag :type="getLandStatusType(item.currentStatus)" size="small">
+                    {{ $t(`newFarm.land.status.${item.currentStatus}`) }}
                   </el-tag>
                 </div>
 
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('newFarm.land.columns.farmerId') }}:</span>
-                    <span class="value">{{ item.farmerId || '-' }}</span>
+                    <span class="label">{{ $t('newFarm.land.columns.landId') }}:</span>
+                    <span class="value">{{ item.landId }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('newFarm.land.columns.kebeleId') }}:</span>
-                    <span class="value">{{ item.kebeleId || '-' }}</span>
+                    <span class="label">{{ $t('newFarm.land.columns.landType') }}:</span>
+                    <span class="value">
+                      <el-tag v-if="item.landType" size="small">
+                        {{ $t(`newFarm.land.landType.${item.landType}`) }}
+                      </el-tag>
+                    </span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('newFarm.land.columns.irrigationCode') }}:</span>
-                    <span class="value">{{ item.irrigationCode || '-' }}</span>
+                    <span class="label">{{ $t('newFarm.land.columns.areaSize') }}:</span>
+                    <span class="value">{{ formatArea(item.areaSize) }}</span>
                   </div>
                   <div class="mobile-card-row">
-                    <span class="label">{{ $t('newFarm.land.columns.areaTa') }}:</span>
-                    <span class="value">{{ formatArea(item.areaTa) }}</span>
+                    <span class="label">{{ $t('newFarm.land.columns.farmerName') }}:</span>
+                    <span class="value">{{ item.farmerName || $t('newFarm.land.unbound') }}</span>
                   </div>
                 </div>
 
@@ -298,10 +292,6 @@ import {
 const router = useRouter()
 const { t } = useI18n()
 
-const getLandPrimaryKey = (row) => row?.id
-const getLandRouteKey = (row) => row?.landId || row?.id
-const getLandActionKey = (row) => row?.landId || row?.id
-
 const getRowActionButtons = (row) => {
   const buttons = [
     { type: 'success', action: 'view', label: 'view', icon: 'ri-eye-line' },
@@ -333,7 +323,14 @@ const getRowActionButtons = (row) => {
 // 搜索筛选条件
 const searchFilters = reactive({
   keyword: '',
-  farmerId: ''
+  landName: '',
+  farmerId: '',
+  farmerName: '',
+  phone: '',
+  kebeleCode: '',
+  landType: '',
+  currentStatus: '',
+  daId: ''
 })
 
 // 分页
@@ -368,11 +365,22 @@ const fetchData = async () => {
     const params = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      farmerId: searchFilters.farmerId
+      kebeleCode: searchFilters.kebeleCode,
+      landType: searchFilters.landType,
+      currentStatus: searchFilters.currentStatus,
+      daId: searchFilters.daId
     }
 
+    // 核心逻辑：
+    // 当顶部搜索框(keyword)有值时，传入 searchValue，触发后端的"多字段模糊匹配" (Name/ID/Phone)
+    // 此时忽略 landName/landId 等单个字段的严格筛选
     if (searchFilters.keyword) {
       params.searchValue = searchFilters.keyword
+    } else {
+      // 当顶部搜索框为空时，使用具体的字段筛选
+      if (searchFilters.landName) params.landName = searchFilters.landName
+      if (searchFilters.farmerName) params.farmerName = searchFilters.farmerName
+      if (searchFilters.phone) params.farmerPhone = searchFilters.phone
     }
 
     const res = await getLandList(params)
@@ -409,7 +417,14 @@ const handleSearch = () => {
 // 重置
 const handleReset = () => {
   searchFilters.keyword = ''
+  searchFilters.landName = ''
   searchFilters.farmerId = ''
+  searchFilters.farmerName = ''
+  searchFilters.phone = ''
+  searchFilters.kebeleCode = ''
+  searchFilters.landType = ''
+  searchFilters.currentStatus = ''
+  searchFilters.daId = ''
   handleSearch()
 }
 
@@ -427,7 +442,7 @@ const handleCurrentChange = (val) => {
 
 // 选择变化
 const handleSelectionChange = (rows) => {
-  selectedIds.value = rows.map(row => getLandPrimaryKey(row)).filter(Boolean)
+  selectedIds.value = rows.map(row => row.landId)
 }
 
 // 新增
@@ -437,16 +452,12 @@ const handleAdd = () => {
 
 // 查看详情
 const handleView = (row) => {
-  const landId = getLandRouteKey(row)
-  if (!landId) return
-  router.push(`/input/land/detail/${landId}`)
+  router.push(`/input/land/detail/${row.landId}`)
 }
 
 // 编辑
 const handleEdit = (row) => {
-  const landId = getLandRouteKey(row)
-  if (!landId) return
-  router.push(`/input/land/edit/${landId}`)
+  router.push(`/input/land/edit/${row.landId}`)
 }
 
 // 统一动作处理（仅做 UI 按钮事件转发，不修改业务逻辑）
@@ -483,13 +494,7 @@ const handleDelete = async (row) => {
       }
     )
 
-    const landId = getLandActionKey(row)
-    if (!landId) {
-      ElMessage.error(t('common.failed'))
-      return
-    }
-
-    const res = await deleteLand(landId)
+    const res = await deleteLand(row.landId)
     if (res.code === 200) {
       ElMessage.success(t('newFarm.common.deleteSuccess'))
       fetchData()
@@ -539,7 +544,7 @@ const handleBatchDelete = async () => {
 
 // 关联农民
 const handleBindFarmer = (row) => {
-  currentLandId.value = getLandActionKey(row)
+  currentLandId.value = row.landId
   bindForm.farmerId = ''
   bindFarmerVisible.value = true
   handleFarmerSearch('')
@@ -597,13 +602,7 @@ const handleUnbindFarmer = async (row) => {
       }
     )
 
-    const landId = getLandActionKey(row)
-    if (!landId) {
-      ElMessage.error(t('common.failed'))
-      return
-    }
-
-    const res = await unbindFarmerFromLand(landId)
+    const res = await unbindFarmerFromLand(row.landId)
     if (res.code === 200) {
       ElMessage.success(t('newFarm.land.messages.unbindSuccess'))
       fetchData()
@@ -620,27 +619,18 @@ const handleUnbindFarmer = async (row) => {
 
 // 格式化面积
 const formatArea = (area) => {
-  if (area === null || area === undefined || area === '') return '0.00 ha'
+  if (!area) return '0 ha'
   return `${parseFloat(area).toFixed(2)} ha`
 }
 
 // 获取土地状态类型
 const getLandStatusType = (status) => {
   const typeMap = {
-    '0': 'info',
-    '1': 'success',
-    '2': 'danger'
+    CULTIVATING: 'success',
+    IDLE: 'info',
+    FALLOW: 'warning'
   }
-  return typeMap[String(status)] || 'info'
-}
-
-const getLandStatusLabel = (status) => {
-  const labelMap = {
-    '0': t('newFarm.land.status.0'),
-    '1': t('newFarm.land.status.1'),
-    '2': t('newFarm.land.status.2')
-  }
-  return labelMap[String(status)] || '-'
+  return typeMap[status] || 'info'
 }
 
 // 初始化
@@ -716,4 +706,3 @@ onMounted(() => {
   color: #909399;
 }
 </style>
-  landUseType: '',

@@ -155,30 +155,6 @@
                       <el-input v-model="formData.createTime" disabled />
                     </el-form-item>
                   </el-col>
-                  <!-- 修改人 -->
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item :label="$t('research.breedingData.trial.form.modifiedName')">
-                      <el-input v-model="formData.modifiedName" disabled />
-                    </el-form-item>
-                  </el-col>
-                  <!-- 修改时间 -->
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item :label="$t('research.breedingData.trial.form.updateTime')">
-                      <el-input v-model="formData.updateTime" disabled />
-                    </el-form-item>
-                  </el-col>
-                  <!-- 审核人 -->
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item :label="$t('research.breedingData.trial.form.approvedName')">
-                      <el-input v-model="formData.approvedName" disabled />
-                    </el-form-item>
-                  </el-col>
-                  <!-- 审核时间 -->
-                  <el-col :xs="24" :sm="12">
-                    <el-form-item :label="$t('research.breedingData.trial.form.approvedTime')">
-                      <el-input v-model="formData.approvedTime" disabled />
-                    </el-form-item>
-                  </el-col>
                   <!-- 退回原因 (仅在退回状态时显示) -->
                   <el-col v-if="formData.trialStatus === 'S3'" :xs="24" :sm="24">
                     <el-form-item :label="$t('research.breedingData.trial.form.rejectReason')">
@@ -276,9 +252,8 @@ const rules = {
 
 const seasonOptions = [
   { label: 'Spring', value: 'spring' },
-  { label: 'Summer', value: 'summer' },
-  { label: 'Autumn', value: 'autumn' },
-  { label: 'Winter', value: 'winter' }
+  { label: 'Irrigation', value: 'irrigation' },
+  { label: 'Summer', value: 'summer' }
 ]
 
 const designTypeOptions = [

@@ -46,9 +46,6 @@
               <el-descriptions-item :label="t('research.trialBasicAudit.list.year')">
                 {{ trialInfo.year }}
               </el-descriptions-item>
-              <el-descriptions-item :label="t('research.trialBasicAudit.list.status')">
-                <StatusTag :status="auditData.workflowStatus || auditData.auditStatus" type="workflow" />
-              </el-descriptions-item>
             </el-descriptions>
           </div>
         </div>

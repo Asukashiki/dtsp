@@ -13,10 +13,12 @@
               <el-col :xs="24" :sm="12">
                 <el-form-item :label="$t('orgRegistration.form.orgType')" prop="orgType">
                   <el-select v-model="formData.orgType" :placeholder="$t('orgRegistration.placeholder.orgType')"
-                    style="width: 100%">
-                    <el-option value="UNION" :label="$t('orgRegistration.orgType.UNION')"></el-option>
-                    <el-option value="COOPERATIVE" :label="$t('orgRegistration.orgType.COOPERATIVE')"></el-option>
-                    <el-option value="PRIVATE" :label="$t('orgRegistration.orgType.PRIVATE')"></el-option>
+                    style="width: 100%" :loading="orgTypeLoading" @change="handleOrgTypeChange">
+                    <el-option
+                      v-for="item in orgTypeOptions"
+                      :key="item.dictValue"
+                      :label="getDictLabel(item)"
+                      :value="item.dictValue" />
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -218,12 +220,13 @@ import {
 } from '@/api/breedingOrgRegistration'
 import { uploadFile, getFilePreviewUrl } from '@/api/file'
 import { getOrganizationList } from '@/api/organization'
+import { getDicts } from '@/api/system/dict'
 import { PageHeader, InfoCard } from '@/components/common'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 页面模式
 const isEdit = computed(() => !!route.params.id)
@@ -246,6 +249,10 @@ const regionTreeLoading = ref(false)
 // 组织名称下拉选择
 const orgNameOptions = ref([])
 const orgNameLoading = ref(false)
+
+// 组织类型下拉选择
+const orgTypeOptions = ref([])
+const orgTypeLoading = ref(false)
 
 // 地图相关
 const mapContainerRef = ref(null)
@@ -360,11 +367,30 @@ const handleRegionChange = (value) => {
   }
 }
 
-// 组织类型映射
-const orgTypeMap = {
-  'UNION': '1',
-  'COOPERATIVE': '2',
-  'PRIVATE': '3'
+// 获取字典标签（支持多语言）
+const getDictLabel = (item) => {
+  if (item.dictLabelObject) {
+    const langMap = { 'zh-CN': 'zh_CN', 'en-US': 'en_US' }
+    const langKey = langMap[locale.value] || 'en_US'
+    return item.dictLabelObject[langKey] || item.dictLabel || item.dictValue
+  }
+  return item.dictLabel || item.dictValue
+}
+
+// 加载组织类型列表
+const loadOrgTypeOptions = async () => {
+  orgTypeLoading.value = true
+  try {
+    const res = await getDicts('org_category')
+    if (res.code === 200) {
+      orgTypeOptions.value = res.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load org type options:', error)
+    orgTypeOptions.value = []
+  } finally {
+    orgTypeLoading.value = false
+  }
 }
 
 // 加载组织名称列表
@@ -375,10 +401,9 @@ const loadOrgNameOptions = async (orgType) => {
   }
   orgNameLoading.value = true
   try {
-    const mappedOrgType = orgTypeMap[orgType] || orgType
-    const res = await getOrganizationList({ orgCategory: mappedOrgType, status: '0', pageNum: 1, pageSize: 1000 })
+    const res = await getOrganizationList({ orgCategory: orgType, status: '0', pageNum: 1, pageSize: 9999 })
     if (res.code === 200) {
-      orgNameOptions.value = res.rows || res.data?.records || []
+      orgNameOptions.value = res.rows || []
     }
   } catch (error) {
     console.error('Failed to load organization list:', error)
@@ -388,18 +413,45 @@ const loadOrgNameOptions = async (orgType) => {
   }
 }
 
-// 监听 orgType 变化，加载对应的组织列表
-watch(() => formData.orgType, (newVal) => {
+// 组织类型变更处理
+const handleOrgTypeChange = (value) => {
   formData.orgName = ''
-  loadOrgNameOptions(newVal)
-})
+  orgNameOptions.value = []
+  resetOrgFields()
+  loadOrgNameOptions(value)
+}
 
 // 组织名称选择变更
 const handleOrgNameChange = (value) => {
+  if (!value) {
+    resetOrgFields()
+    return
+  }
   const selected = orgNameOptions.value.find(org => org.orgName === value)
   if (selected) {
     formData.orgName = selected.orgName
+    formData.unifiedCode = selected.orgCode || ''
+    formData.fullAddress = selected.location || ''
+    formData.contactName = selected.contactPerson || ''
+    formData.contactMobile = selected.phoneNumber || ''
+    if (selected.region) {
+      const regionMatch = regionTreeOptions.value.find(r => r.label === selected.region || r.value === selected.region)
+      if (regionMatch) {
+        formData.regionCode = regionMatch.value
+        formData.regionName = selected.region
+      }
+    }
   }
+}
+
+// 重置组织相关字段
+const resetOrgFields = () => {
+  formData.unifiedCode = ''
+  formData.fullAddress = ''
+  formData.contactName = ''
+  formData.contactMobile = ''
+  formData.regionCode = ''
+  formData.regionName = ''
 }
 
 // 地图相关函数
@@ -715,6 +767,7 @@ const handleCancel = () => {
 onMounted(async () => {
   await loadCropTypeOptions()
   loadRegionTree()
+  loadOrgTypeOptions()
   if (isEdit.value) {
     loadData()
   }

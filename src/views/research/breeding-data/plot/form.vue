@@ -127,9 +127,9 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- Sowing Time -->
+                <!-- Sowing Date -->
                 <el-col :xs="24" :sm="12">
-                  <el-form-item label="Sowing Time">
+                  <el-form-item label="Sowing Date">
                     <el-date-picker v-model="formData.sowingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" placeholder="Select sowing time" />
                   </el-form-item>
                 </el-col>
@@ -155,26 +155,6 @@
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.plot.columns.createTime')">
                     <el-input v-model="formData.createTime" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.plot.columns.modifiedBy')">
-                    <el-input v-model="formData.modifiedName" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.plot.columns.updateTime')">
-                    <el-input v-model="formData.updateTime" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.plot.columns.auditedBy')">
-                    <el-input v-model="formData.auditedName" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.breedingData.plot.columns.auditTime')">
-                    <el-input v-model="formData.auditTime" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
