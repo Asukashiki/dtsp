@@ -75,17 +75,6 @@
 
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('basicSeedProduction.form.time')" prop="time">
-                    <el-date-picker
-                      v-model="formData.time"
-                      type="datetime"
-                      :placeholder="$t('basicSeedProduction.placeholder.time')"
-                      format="YYYY-MM-DD HH:mm:ss"
-                      value-format="YYYY-MM-DD HH:mm:ss"
-                      style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('basicSeedProduction.form.landName')" prop="landId">
                     <el-select
                       v-model="formData.landId"
@@ -100,25 +89,6 @@
                         :label="land.landName"
                         :value="land.landId" />
                     </el-select>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-
-          <!-- 生产信息卡片 -->
-          <div class="info-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="ri-plant-line"></i>
-                <span>{{ $t('basicSeedProduction.form.productionInfo') }}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <el-row :gutter="20">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('basicSeedProduction.form.operatorName')" prop="operatorName">
-                    <el-input v-model="formData.operatorName" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">

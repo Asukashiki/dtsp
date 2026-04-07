@@ -13,7 +13,7 @@ export default {
     batchId: 'Batch ID',
     breedingBatchId: 'Multiplication Batch',
     varietyName: 'Variety Name',
-    toMultiplyQuantity: 'multiplied quantity',
+    toMultiplyQuantity: 'Multiplied Quantity',
     collectionDate: 'Collection Date',
     operator: 'Operator',
     actions: 'Actions'
@@ -25,20 +25,20 @@ export default {
     parentalSeedSource: 'Parental Seed Source',
     varietyName: 'Variety Name',
     cropType: 'Crop Type',
-    breedingLevel: 'multiplication Level',
-    toMultiplyQuantity: 'multiplied quantity',
+    breedingLevel: 'Multiplication Level',
+    toMultiplyQuantity: 'Multiplied Quantity',
     collectionDate: 'Collection Date',
     operator: 'Operator'
   },
   placeholder: {
     breedingBatchId: 'Please select breeding batch',
-    toMultiplyQuantity: 'Please enter quantity to multiply',
+    toMultiplyQuantity: 'Please enter multiplied quantity',
     collectionDate: 'Please select collection date',
     remark: 'Please enter remarks'
   },
   rules: {
     breedingBatchIdRequired: 'Please select breeding batch',
-    toMultiplyQuantityRequired: 'Please enter quantity to multiply',
+    toMultiplyQuantityRequired: 'Please enter multiplied quantity',
     toMultiplyQuantityMin: 'Quantity must be greater than 0',
     collectionDateRequired: 'Please select collection date'
   }

@@ -19,7 +19,7 @@
           ref="formRef"
           :model="formData"
           :rules="rules"
-          label-width="240px"
+          label-width="180px"
           class="collection-form"
           v-loading="submitting"
         >
@@ -38,7 +38,7 @@
                   <el-form-item
                     :label="$t('batchCollection.form.breedingBatchId')"
                     prop="breedingBatchId"
-                    label-width="320px"
+                    label-width="220px"
                   >
                     <el-select
                       v-model="formData.breedingBatchId"
@@ -80,7 +80,7 @@
                   <el-form-item
                     :label="$t('batchCollection.form.breedingLevel')"
                     prop="breedingLevel"
-                    label-width="320px"
+                    label-width="220px"
                   >
                     <el-input v-model="formData.breedingLevel" disabled />
                   </el-form-item>
@@ -112,7 +112,7 @@
                   <el-form-item
                     :label="$t('batchCollection.form.toMultiplyQuantity')"
                     prop="toMultiplyQuantity"
-                    label-width="320px"
+                    label-width="220px"
                   >
                     <el-input-number
                       v-model="formData.toMultiplyQuantity"
@@ -414,7 +414,7 @@ onMounted(() => {
 
     :deep(.el-form-item__label-wrap) {
       margin-right: 12px;
-      width: 200px !important;
+      width: 160px !important;
     }
 
     :deep(.el-form-item__label) {
