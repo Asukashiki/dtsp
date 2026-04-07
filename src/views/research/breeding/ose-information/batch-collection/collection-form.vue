@@ -232,7 +232,7 @@ const loadBreedingBatchList = async () => {
     if (res.code === 200) {
       // 只保留 Pre-Basic 等级的繁殖批次（Basic 等级的种子已经扩繁完成）
       const allRecords = res.data?.records || []
-      breedingBatchList.value = allRecords.filter(batch => batch.breedingLevel === 'Pre-Basic')
+      breedingBatchList.value = allRecords
     }
   } catch (error) {
     console.error('Failed to load breeding batches:', error)

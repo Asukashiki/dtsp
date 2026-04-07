@@ -57,9 +57,9 @@
                     >
                       <el-option
                         v-for="item in datasetList"
-                        :key="item.dataId"
-                        :label="item.datasetName"
-                        :value="item.dataId"
+                        :key="item.id"
+                        :label="item.datasetCode + ' - ' + item.varietyName"
+                        :value="item.id"
                       />
                     </el-select>
                   </el-form-item>
@@ -378,7 +378,7 @@ const fetchDatasetList = async () => {
       datasetStatus: 'approved'
     })
     if (res.code === 200) {
-      datasetList.value = res.rows || res.data || []
+      datasetList.value = res.rows || res.data?.list || res.data || []
     }
   } catch (error) {
     console.error('Failed to fetch dataset list:', error)

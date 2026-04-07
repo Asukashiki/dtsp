@@ -292,6 +292,7 @@ const handleDistributionIdChange = (value) => {
           varietyName: detail.varietyName,
           cropType: resolveCropTypeValue(cropTypeOptions.value, detail.cropType),
           seedType: detail.seedType,
+          multiplicationLevel: detail.multiplicationLevel,
           produceBatchId: batchId,
           produceBatchName: detail.produceBatchName || batchId
         })
@@ -306,7 +307,7 @@ const handleDistributionIdChange = (value) => {
       formData.value.parentalSeedSource = uniqueOptions[0].parentalSeedSource
       formData.value.cropType = resolveCropTypeValue(cropTypeOptions.value, uniqueOptions[0].cropType || '')
       formData.value.varietyName = uniqueOptions[0].varietyName || ''
-      formData.value.breedingLevel = uniqueOptions[0].seedType || ''
+      formData.value.breedingLevel = uniqueOptions[0].multiplicationLevel || ''
     }
   }
 }
