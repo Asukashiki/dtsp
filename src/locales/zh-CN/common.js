@@ -1,4 +1,4 @@
-﻿export default {
+export default {
     confirm: '确认',
     remark: '备注',
     cancel: '取消',
@@ -17,6 +17,7 @@
     exportSuccess: '导出成功',
     exportFailed: '导出失败',
     submit: '提交',
+    submitTime: '提交时间',
     confirmSubmit: '确认提交',
     auditSuccess:'审计成功',
     back: '返回',

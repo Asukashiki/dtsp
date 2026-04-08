@@ -180,6 +180,18 @@ export default {
       yearNoPastSeasonLogic: 'Only current and future years are allowed; past years are disabled'
     },
 
+    submitForAuditSuccess: 'Submitted for review successfully',
+    submitForAuditError: 'Failed to submit for review',
+    submitFailed: 'Submit failed',
+    approveFailed: 'Approval failed',
+    approveError: 'Approval failed',
+    rejectFailed: 'Rejection failed',
+    rejectError: 'Rejection failed',
+    archiveFailed: 'Archiving failed',
+    archiveError: 'Archiving failed',
+    cancelFailed: 'Void failed',
+    cancelError: 'Void failed',
+
     // Tabs
     tabs: {
       myCreated: 'My Created',

@@ -116,7 +116,7 @@
                       <i class="ri-eye-line"></i>
                       <span class="btn-text">{{ $t('common.view') }}</span>
                     </el-button>
-                    <el-button size="small" type="primary" @click="handleEdit(row)">
+                    <el-button v-if="canEdit(row)" size="small" type="primary" @click="handleEdit(row)">
                       <i class="ri-edit-line"></i>
                       <span class="btn-text">{{ $t('common.edit') }}</span>
                     </el-button>
@@ -124,7 +124,7 @@
                       <i class="ri-send-plane-line"></i>
                       <span class="btn-text">{{ $t('common.submit') }}</span>
                     </el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(row.id)">
+                    <el-button v-if="canDelete(row)" size="small" type="danger" @click="handleDelete(row.id)">
                       <i class="ri-delete-bin-line"></i>
                       <span class="btn-text">{{ $t('common.delete') }}</span>
                     </el-button>
@@ -315,6 +315,9 @@ const getAuditStatusType = (status) => ({
   approved: 'success',
   rejected: 'danger'
 }[status] || 'info')
+
+const canEdit = (row) => row?.auditStatus !== 'approved'
+const canDelete = (row) => row?.auditStatus !== 'approved'
 
 const canSubmit = (row) => ['draft', 'rejected', '', null, undefined].includes(row.auditStatus)
 

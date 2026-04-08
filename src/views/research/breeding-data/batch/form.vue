@@ -43,20 +43,11 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.breedingData.batch.form.varietyName')" prop="varietyName">
-                    <el-select
+                    <el-input
                       v-model="formData.varietyName"
                       :placeholder="$t('research.breedingData.batch.placeholder.varietyName')"
-                      filterable
-                      clearable
                       style="width: 100%"
-                      :disabled="isReadOnly || !formData.cropType"
-                      :loading="varietyLoading">
-                      <el-option
-                        v-for="item in varietyOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value" />
-                    </el-select>
+                      :disabled="isReadOnly" />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -213,14 +204,11 @@ import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
 import { PageHeader } from '@/components/common'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
-import { listProductManage } from '@/api/productManage'
 
 const route = useRoute()
 const router = useRouter()
 const { t, locale } = useI18n()
 const cropTypeOptions = ref([])
-const varietyOptions = ref([])
-const varietyLoading = ref(false)
 
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict([
@@ -228,56 +216,6 @@ const { options, getLabelByValue, loading: dictLoading } = useDict([
   'flow_status'
 ])
 const cropTypeSelectOptions = computed(() => cropTypeOptions.value.length ? cropTypeOptions.value : (options.crop_type || []))
-
-const loadVarietyOptions = async (cropType, preserveValue = false) => {
-  const cropTypeLabel = resolveCropTypeLabel(cropTypeOptions.value, cropType)
-  if (!cropTypeLabel) {
-    varietyOptions.value = []
-    if (!preserveValue) formData.varietyName = ''
-    return
-  }
-
-  varietyLoading.value = true
-  try {
-    const res = await listProductManage({
-      pageNum: 1,
-      pageSize: 1000,
-      mainCategory: 'SEED',
-      subCategory: cropTypeLabel,
-      status: '0'
-    })
-
-    const seen = new Set()
-    varietyOptions.value = (res.data?.list || [])
-      .map(item => {
-        const productName = item.product_name || item.productName || ''
-        return {
-          label: productName,
-          value: productName
-        }
-      })
-      .filter(item => {
-        if (!item.value || seen.has(item.value)) return false
-        seen.add(item.value)
-        return true
-      })
-
-    if (preserveValue) {
-      const matched = varietyOptions.value.find(item => item.value === formData.varietyName)
-      if (!matched) {
-        formData.varietyName = ''
-      }
-    } else {
-      formData.varietyName = ''
-    }
-  } catch (error) {
-    console.error('Failed to load variety options:', error)
-    varietyOptions.value = []
-    if (!preserveValue) formData.varietyName = ''
-  } finally {
-    varietyLoading.value = false
-  }
-}
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -574,7 +512,6 @@ const getInfo = async () => {
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
     formData.cropType = resolveCropTypeValue(cropTypeOptions.value, res.data.cropType || '')
-    await loadVarietyOptions(formData.cropType, true)
     if (formData.year) {
       formData.year = String(formData.year)
     }
@@ -636,8 +573,7 @@ const handleSubmit = async () => {
   }
 }
 
-const handleCropTypeChange = async () => {
-  await loadVarietyOptions(formData.cropType)
+const handleCropTypeChange = () => {
   generateBatchId()
   generateVarietyCode()
 }

@@ -675,7 +675,7 @@ const loadAllDataLists = async (trialId) => {
         console.error('获取实验室测试数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S2' }).catch(err => {
         console.error('获取田间检查数据失败:', err)
         return ({ msg: "", code: 500, data: [] })
       })
@@ -690,10 +690,10 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || []).map(item => ({
-      ...item,
-      remark: item.remark || ''
-    }))
+    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || agronomicRes?.data?.list || []).map(item => ({
+        ...item,
+        remark: item.remark || ''
+      }))
     environmentDataList.value = (environmentDataRes?.rows || environmentDataRes?.data?.rows || []).map(item => ({
       ...item,
       remark: item.remark || ''
@@ -702,7 +702,7 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    yieldDataList.value = (yieldRes?.rows || yieldRes?.data || []).map(item => ({
+    yieldDataList.value = (yieldRes?.rows || yieldRes?.data?.rows || yieldRes?.data?.list || yieldRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))

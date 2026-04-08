@@ -21,88 +21,79 @@
             </div>
           </div>
           <div class="card-body">
-            <el-row :gutter="20">
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('research.detection.batchId')">
-                  <el-input :value="detail.batchId || '-'" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('research.detection.seedClass')">
-                  <el-input :value="detail.seedClass || '-'" disabled />
-                </el-form-item>
-              </el-col>
-
-              <template v-if="isFieldType">
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.tracking.trackingId')">
-                    <el-input :value="detail.trackingId || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.tracking.result')">
-                    <el-input :value="getFieldResultText(detail.trackingResult)" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.tracking.location')">
-                    <el-input :value="detail.location || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.tracking.startDate')">
-                    <el-input :value="detail.startDate || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24">
-                  <el-form-item :label="$t('research.c1BreedingBatch.tracking.trackingDesc')">
-                    <el-input :value="detail.trackingDesc || '-'" type="textarea" :rows="3" disabled />
-                  </el-form-item>
-                </el-col>
-              </template>
-
-              <template v-else>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.testId')">
-                    <el-input :value="detail.testId || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.testType')">
-                    <el-input :value="detail.testType || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.testValue')">
-                    <el-input :value="formatTestValue(detail)" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.passStatus')">
-                    <el-input :value="detail.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed')" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.testDate')">
-                    <el-input :value="detail.testDate || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.tester')">
-                    <el-input :value="detail.tester || '-'" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :xs="24">
-                  <el-form-item :label="$t('research.c1BreedingBatch.test.testDesc')">
-                    <el-input :value="detail.testDesc || '-'" type="textarea" :rows="3" disabled />
-                  </el-form-item>
-                </el-col>
-              </template>
-            </el-row>
+            <el-descriptions :column="2" border>
+              <el-descriptions-item :label="$t('research.detection.batchId')">{{ summary.batchId || '-' }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.detection.seedClass')">
+                <span v-if="summary.seedClasses.length === 0">-</span>
+                <span v-else>{{ summary.seedClasses.join(' / ') }}</span>
+              </el-descriptions-item>
+              <el-descriptions-item :label="$t('research.menu.fieldDetection')">{{ summary.fieldCount }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.menu.labTesting')">{{ summary.labCount }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('research.detection.statusSubmitted')">{{ summary.submittedCount }}</el-descriptions-item>
+              <el-descriptions-item :label="$t('common.submitTime')">{{ formatDateTime(summary.latestSubmitTime) }}</el-descriptions-item>
+            </el-descriptions>
           </div>
         </div>
 
-        <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
+        <div class="info-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-table-line"></i>
+              <span>{{ $t('common.detail') }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <el-tabs v-model="activeTab">
+              <el-tab-pane :label="`${$t('research.menu.fieldDetection')} (${fieldList.length})`" name="field">
+                <el-table :data="fieldList" stripe table-layout="fixed">
+                  <el-table-column prop="trackingId" :label="$t('research.c1BreedingBatch.tracking.trackingId')" min-width="170" show-overflow-tooltip />
+                  <el-table-column prop="stage" :label="$t('research.c1BreedingBatch.tracking.stage')" min-width="110" align="center" />
+                  <el-table-column prop="inspectionValue" :label="$t('research.c1BreedingBatch.tracking.inspectionValue')" min-width="110" align="center" />
+                  <el-table-column prop="trackingResult" :label="$t('research.c1BreedingBatch.tracking.result')" min-width="110" align="center">
+                    <template #default="{ row }">
+                      <el-tag :type="getFieldResultTagType(row.trackingResult)" size="small">{{ getFieldResultText(row.trackingResult) }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="110" align="center">
+                    <template #default="{ row }">
+                      <el-tag :type="getAuditStatusType(row.auditStatus)" size="small">{{ getAuditStatusText(row.auditStatus) }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="submitTime" :label="$t('common.submitTime')" min-width="160" align="center">
+                    <template #default="{ row }">{{ formatDateTime(row.submitTime) }}</template>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
+
+              <el-tab-pane :label="`${$t('research.menu.labTesting')} (${labList.length})`" name="lab">
+                <el-table :data="labList" stripe table-layout="fixed">
+                  <el-table-column prop="testId" :label="$t('research.c1BreedingBatch.test.testId')" min-width="170" show-overflow-tooltip />
+                  <el-table-column prop="testType" :label="$t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
+                  <el-table-column prop="testValue" :label="$t('research.c1BreedingBatch.test.testValue')" min-width="120" align="center">
+                    <template #default="{ row }">{{ formatTestValue(row) }}</template>
+                  </el-table-column>
+                  <el-table-column prop="passStatus" :label="$t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
+                    <template #default="{ row }">
+                      <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
+                        {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed') }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="110" align="center">
+                    <template #default="{ row }">
+                      <el-tag :type="getAuditStatusType(row.auditStatus)" size="small">{{ getAuditStatusText(row.auditStatus) }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="submitTime" :label="$t('common.submitTime')" min-width="160" align="center">
+                    <template #default="{ row }">{{ formatDateTime(row.submitTime) }}</template>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+
+        <el-form v-if="!isViewMode" ref="formRef" :model="formData" :rules="rules" label-width="120px">
           <div class="info-card">
             <div class="card-header">
               <div class="card-title">
@@ -144,7 +135,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { approveTest, approveTracking, getTestById, getTrackingById, rejectTest, rejectTracking } from '@/api/detection'
+import { approveTest, approveTracking, getTestList, getTrackingList, rejectTest, rejectTracking } from '@/api/detection'
 
 const route = useRoute()
 const router = useRouter()
@@ -153,16 +144,37 @@ const { t } = useI18n()
 const formRef = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
-const detail = ref({})
+const activeTab = ref('field')
+const fieldList = ref([])
+const labList = ref([])
 
 const formData = reactive({
   result: 'approved',
   comment: ''
 })
 
-const auditType = computed(() => route.query.type === 'lab' ? 'lab' : 'field')
-const isFieldType = computed(() => auditType.value === 'field')
-const pageTitle = computed(() => isFieldType.value ? t('research.menu.fieldDetection') + t('common.audit') : t('research.menu.labTesting') + t('common.audit'))
+const isViewMode = computed(() => route.query.mode === 'view')
+const pageTitle = computed(() => isViewMode.value ? `${t('research.menu.detectionAudit')}${t('common.view')}` : `${t('research.menu.detectionAudit')}${t('common.audit')}`)
+const batchId = computed(() => route.params.id)
+const summary = computed(() => {
+  const allRecords = [...fieldList.value, ...labList.value]
+  const seedClassSet = new Set(allRecords.map(item => item.seedClass).filter(Boolean))
+  const submitTimes = allRecords.map(item => item.submitTime).filter(Boolean)
+  const latestSubmitTime = submitTimes.length === 0
+    ? ''
+    : submitTimes.reduce((latest, current) => (
+      !latest || new Date(current).getTime() > new Date(latest).getTime() ? current : latest
+    ), '')
+  const submittedCount = allRecords.filter(item => item.auditStatus === 'submitted').length
+  return {
+    batchId: batchId.value,
+    seedClasses: Array.from(seedClassSet),
+    fieldCount: fieldList.value.length,
+    labCount: labList.value.length,
+    submittedCount,
+    latestSubmitTime
+  }
+})
 
 const rules = computed(() => ({
   result: [{ required: true, message: t('common.pleaseSelect'), trigger: 'change' }],
@@ -172,11 +184,11 @@ const rules = computed(() => ({
 const loadDetail = async () => {
   loading.value = true
   try {
-    const id = route.params.id
-    const res = isFieldType.value ? await getTrackingById(id) : await getTestById(id)
-    if (res.code === 200 && res.data) {
-      detail.value = res.data
-    } else {
+    const params = { pageNum: 1, pageSize: 1000, batchId: batchId.value }
+    const [fieldRes, labRes] = await Promise.all([getTrackingList(params), getTestList(params)])
+    fieldList.value = fieldRes.code === 200 ? (fieldRes.data?.records || []) : []
+    labList.value = labRes.code === 200 ? (labRes.data?.records || []) : []
+    if (fieldList.value.length === 0 && labList.value.length === 0) {
       ElMessage.error(t('common.loadFailed'))
       router.push('/research/detection-audit')
     }
@@ -192,15 +204,28 @@ const loadDetail = async () => {
 const handleSubmit = async () => {
   try {
     await formRef.value.validate()
-    submitting.value = true
-    const payload = { id: route.params.id, auditComment: formData.comment }
-    const res = isFieldType.value
-      ? (formData.result === 'approved' ? await approveTracking(payload) : await rejectTracking(payload))
-      : (formData.result === 'approved' ? await approveTest(payload) : await rejectTest(payload))
-    if (res.code === 200) {
-      ElMessage.success(formData.result === 'approved' ? t('research.detection.auditSuccessApproved') : t('research.detection.auditSuccessRejected'))
-      router.push('/research/detection-audit')
+    const submittedField = fieldList.value.filter(item => item.auditStatus === 'submitted')
+    const submittedLab = labList.value.filter(item => item.auditStatus === 'submitted')
+    if (submittedField.length === 0 && submittedLab.length === 0) {
+      ElMessage.warning(t('common.noData'))
+      return
     }
+
+    submitting.value = true
+    const fieldFn = formData.result === 'approved' ? approveTracking : rejectTracking
+    const labFn = formData.result === 'approved' ? approveTest : rejectTest
+    const requests = [
+      ...submittedField.map(item => fieldFn({ id: item.id, auditComment: formData.comment })),
+      ...submittedLab.map(item => labFn({ id: item.id, auditComment: formData.comment }))
+    ]
+    const results = await Promise.all(requests)
+    const failed = results.find(item => item.code !== 200)
+    if (failed) {
+      ElMessage.error(failed.msg || t('common.submitFailed'))
+      return
+    }
+    ElMessage.success(formData.result === 'approved' ? t('research.detection.auditSuccessApproved') : t('research.detection.auditSuccessRejected'))
+    router.push('/research/detection-audit')
   } catch (error) {
     if (error !== false) {
       console.error('Submit detection audit form error:', error)
@@ -224,6 +249,32 @@ const getFieldResultText = (result) => ({
 const formatTestValue = (row) => {
   if (!row) return '-'
   return `${row.testValue || '-'}${row.unit || ''}`
+}
+
+const getAuditStatusText = (status) => ({
+  draft: t('research.detection.statusDraft'),
+  submitted: t('research.detection.statusSubmitted'),
+  approved: t('research.detection.statusApproved'),
+  rejected: t('research.detection.statusRejected')
+}[status] || status)
+
+const getAuditStatusType = (status) => ({
+  draft: 'info',
+  submitted: 'warning',
+  approved: 'success',
+  rejected: 'danger'
+}[status] || 'info')
+
+const getFieldResultTagType = (result) => ({
+  '01': 'success',
+  '02': 'danger',
+  '03': 'warning'
+}[result] || 'info')
+
+const formatDateTime = (value) => {
+  if (!value) return '-'
+  if (typeof value !== 'string') return value
+  return value.includes('T') ? value.replace('T', ' ') : value
 }
 
 onMounted(() => {

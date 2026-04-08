@@ -6,43 +6,27 @@
 
       <div class="content-wrapper">
         <InfoCard :title="$t('research.menu.detectionAudit')" icon="ri-file-list-3-line">
-          <StatusTabs v-model="activeType" :tabs="typeTabs" @tab-change="handleTypeChange" />
           <StatusTabs v-model="activeStatus" :tabs="statusTabs" @tab-change="handleStatusChange" />
 
           <div class="table-wrapper pc-only">
             <el-table :data="tableData" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
-              <template v-if="activeType === 'field'">
-                <el-table-column prop="trackingId" :label="$t('research.c1BreedingBatch.tracking.trackingId')" min-width="180" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('research.detection.batchId')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="seedClass" :label="$t('research.detection.seedClass')" min-width="100" align="center">
-                  <template #default="{ row }">
-                    <el-tag :type="row.seedClass === 'Basic' ? 'success' : 'warning'" size="small">{{ row.seedClass }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="trackingResult" :label="$t('research.c1BreedingBatch.tracking.result')" min-width="120" align="center">
-                  <template #default="{ row }">
-                    <el-tag :type="getFieldResultTagType(row.trackingResult)" size="small">{{ getFieldResultText(row.trackingResult) }}</el-tag>
-                  </template>
-                </el-table-column>
-              </template>
-
-              <template v-else>
-                <el-table-column prop="testId" :label="$t('research.c1BreedingBatch.test.testId')" min-width="180" show-overflow-tooltip />
-                <el-table-column prop="batchId" :label="$t('research.detection.batchId')" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="seedClass" :label="$t('research.detection.seedClass')" min-width="100" align="center">
-                  <template #default="{ row }">
-                    <el-tag :type="row.seedClass === 'Basic' ? 'success' : 'warning'" size="small">{{ row.seedClass }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="testType" :label="$t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
-                <el-table-column prop="passStatus" :label="$t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
-                  <template #default="{ row }">
-                    <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
-                      {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed') }}
+              <el-table-column prop="batchId" :label="$t('research.detection.batchId')" min-width="180" show-overflow-tooltip />
+              <el-table-column :label="$t('research.detection.seedClass')" min-width="180" align="center">
+                <template #default="{ row }">
+                  <div class="seed-class-tags">
+                    <el-tag v-for="seedClass in row.seedClasses" :key="seedClass"
+                      :type="seedClass === 'Basic' ? 'success' : 'warning'" size="small">
+                      {{ seedClass }}
                     </el-tag>
-                  </template>
-                </el-table-column>
-              </template>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="fieldCount" :label="$t('research.menu.fieldDetection')" min-width="140" align="center" />
+              <el-table-column prop="labCount" :label="$t('research.menu.labTesting')" min-width="140" align="center" />
+              <el-table-column prop="totalCount" :label="$t('common.total')" min-width="100" align="center" />
+              <el-table-column prop="latestSubmitTime" :label="$t('common.submitTime')" min-width="180" align="center" show-overflow-tooltip>
+                <template #default="{ row }">{{ formatDateTime(row.latestSubmitTime) }}</template>
+              </el-table-column>
 
               <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="120" align="center">
                 <template #default="{ row }">
@@ -86,13 +70,7 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const tableData = ref([])
-const activeType = ref('field')
 const activeStatus = ref('submitted')
-
-const typeTabs = [
-  { name: 'field', label: 'research.menu.fieldDetection', icon: 'ri-bar-chart-box-line' },
-  { name: 'lab', label: 'research.menu.labTesting', icon: 'ri-flask-line' }
-]
 
 const statusTabs = [
   { name: 'submitted', label: 'research.detection.statusSubmitted', icon: 'ri-time-line' },
@@ -100,16 +78,75 @@ const statusTabs = [
   { name: 'rejected', label: 'research.detection.statusRejected', icon: 'ri-close-circle-line' }
 ]
 
+const toSeedClassArray = (record) => {
+  if (!record?.seedClass) {
+    return []
+  }
+  return [record.seedClass]
+}
+
+const mergeByBatchId = (trackingList, testList) => {
+  const mergedMap = new Map()
+
+  const ensureRow = (batchId) => {
+    if (!mergedMap.has(batchId)) {
+      mergedMap.set(batchId, {
+        batchId,
+        seedClasses: [],
+        fieldCount: 0,
+        labCount: 0,
+        totalCount: 0,
+        latestSubmitTime: '',
+        auditStatus: activeStatus.value
+      })
+    }
+    return mergedMap.get(batchId)
+  }
+
+  const pushSeedClass = (row, seedClass) => {
+    if (!seedClass) return
+    if (!row.seedClasses.includes(seedClass)) {
+      row.seedClasses.push(seedClass)
+    }
+  }
+
+  const updateSubmitTime = (row, submitTime) => {
+    if (!submitTime) return
+    if (!row.latestSubmitTime || new Date(submitTime).getTime() > new Date(row.latestSubmitTime).getTime()) {
+      row.latestSubmitTime = submitTime
+    }
+  }
+
+  trackingList.forEach((record) => {
+    if (!record?.batchId) return
+    const row = ensureRow(record.batchId)
+    row.fieldCount += 1
+    toSeedClassArray(record).forEach(seedClass => pushSeedClass(row, seedClass))
+    updateSubmitTime(row, record.submitTime)
+  })
+
+  testList.forEach((record) => {
+    if (!record?.batchId) return
+    const row = ensureRow(record.batchId)
+    row.labCount += 1
+    toSeedClassArray(record).forEach(seedClass => pushSeedClass(row, seedClass))
+    updateSubmitTime(row, record.submitTime)
+  })
+
+  return Array.from(mergedMap.values()).map(item => ({
+    ...item,
+    totalCount: item.fieldCount + item.labCount
+  }))
+}
+
 const loadData = async () => {
   loading.value = true
   try {
     const params = { pageNum: 1, pageSize: 1000, auditStatus: activeStatus.value }
-    const res = activeType.value === 'field' ? await getTrackingList(params) : await getTestList(params)
-    if (res.code === 200) {
-      tableData.value = res.data?.records || []
-    } else {
-      tableData.value = []
-    }
+    const [trackingRes, testRes] = await Promise.all([getTrackingList(params), getTestList(params)])
+    const trackingList = trackingRes.code === 200 ? (trackingRes.data?.records || []) : []
+    const testList = testRes.code === 200 ? (testRes.data?.records || []) : []
+    tableData.value = mergeByBatchId(trackingList, testList)
   } catch (error) {
     console.error('Load detection audit list error:', error)
     tableData.value = []
@@ -119,33 +156,17 @@ const loadData = async () => {
   }
 }
 
-const handleTypeChange = () => {
-  loadData()
-}
-
 const handleStatusChange = () => {
   loadData()
 }
 
 const handleView = (row) => {
-  router.push(activeType.value === 'field' ? `/research/field-detection/detail/${row.id}` : `/research/lab-testing/detail/${row.id}`)
+  router.push(`/research/detection-audit/form/${row.batchId}?mode=view`)
 }
 
 const handleAudit = (row) => {
-  router.push(`/research/detection-audit/form/${row.id}?type=${activeType.value}`)
+  router.push(`/research/detection-audit/form/${row.batchId}?mode=audit`)
 }
-
-const getFieldResultText = (result) => ({
-  '01': t('research.c1BreedingBatch.tracking.resultNormal'),
-  '02': t('research.c1BreedingBatch.tracking.resultAbnormal'),
-  '03': t('research.c1BreedingBatch.tracking.resultObserving')
-}[result] || result)
-
-const getFieldResultTagType = (result) => ({
-  '01': 'success',
-  '02': 'danger',
-  '03': 'warning'
-}[result] || 'info')
 
 const getAuditStatusText = (status) => ({
   draft: t('research.detection.statusDraft'),
@@ -160,6 +181,12 @@ const getAuditStatusType = (status) => ({
   approved: 'success',
   rejected: 'danger'
 }[status] || 'info')
+
+const formatDateTime = (value) => {
+  if (!value) return '-'
+  if (typeof value !== 'string') return value
+  return value.includes('T') ? value.replace('T', ' ') : value
+}
 
 onMounted(() => {
   loadData()
@@ -189,5 +216,11 @@ onMounted(() => {
 
 .btn-text {
   margin-left: 4px;
+}
+
+.seed-class-tags {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
 }
 </style>

@@ -176,6 +176,18 @@ export default {
       yearNoPastSeasonLogic: '仅允许选择当年及未来年份；过去年份不可选'
     },
 
+    submitForAuditSuccess: '提交审核成功',
+    submitForAuditError: '提交审核失败',
+    submitFailed: '提交失败',
+    approveFailed: '审核通过失败',
+    approveError: '审核通过失败',
+    rejectFailed: '退回失败',
+    rejectError: '退回失败',
+    archiveFailed: '归档失败',
+    archiveError: '归档失败',
+    cancelFailed: '作废失败',
+    cancelError: '作废失败',
+
     // 标签页
     tabs: {
       myCreated: '我的创建',

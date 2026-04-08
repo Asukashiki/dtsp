@@ -16,6 +16,7 @@ export default {
   exportSuccess: 'Export successful',
   exportFailed: 'Export failed',
   submit: 'Submit',
+  submitTime: 'Submit Time',
   confirmSubmit: 'Confirm Submit',
   auditSuccess:'Audit Success',
   back: 'Back',

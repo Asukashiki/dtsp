@@ -811,7 +811,7 @@ const loadAllDataLists = async (trialId) => {
         console.error(t('research.datasetAudit.log.loadLabFailed'), err)
         return ({ data: { list: [], total: 0 } })
       }),
-      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S2' }).catch(err => {
         console.error(t('research.datasetAudit.log.loadYieldFailed'), err)
         return ({ msg: t('research.datasetAudit.log.loadYieldError'), code: 500, data: [] })
       })
@@ -827,10 +827,10 @@ const loadAllDataLists = async (trialId) => {
       remark: item.remark || ''
     }))
     // 找到 agronomicTraitList.value 赋值的位置，替换为以下代码
-    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || []).map(item => ({
-      ...item,
-      remark: item.remark || ''
-    }))
+    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || agronomicRes?.data?.list || []).map(item => ({
+        ...item,
+        remark: item.remark || ''
+      }))
     // ========== 新增：提取性状明细列表 ==========
     environmentDataList.value = (environmentDataRes?.rows || environmentDataRes?.data?.rows || []).map(item => ({
       ...item,
@@ -840,7 +840,7 @@ const loadAllDataLists = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    yieldDataList.value = (yieldRes?.rows || yieldRes?.data?.rows || yieldRes?.data || []).map(item => ({
+    yieldDataList.value = (yieldRes?.rows || yieldRes?.data?.rows || yieldRes?.data?.list || yieldRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
@@ -989,7 +989,7 @@ const loadStatisticsData = async (trialId) => {
         pageSize: 9999,
         trialId: trialId,
         status: 1,
-        workflowStatus: 'S1'
+        workflowStatus: 'S2'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadYieldStatsFailed'), err)
         return { total: 0 }
@@ -1000,7 +1000,7 @@ const loadStatisticsData = async (trialId) => {
         pageNum: 1,
         pageSize: 9999,
         trialId: trialId,
-        auditStatus: 'S2'
+        auditStatus: 'approved'
       }).catch(err => {
         console.error(t('research.datasetAudit.log.loadPlotStatsFailed'), err)
         return { total: 0 }

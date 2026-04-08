@@ -833,6 +833,15 @@ const loadTrialOptions = async () => {
   }
 }
 
+const resolveSelectedTrial = (trialValue) => {
+  if (!trialValue) return null
+
+  const normalizedValue = String(trialValue).trim()
+  return trialOptions.value.find(item => item.trialId === normalizedValue)
+    || trialOptions.value.find(item => `${item.trialId} - ${item.trialName}` === normalizedValue)
+    || trialOptions.value.find(item => `${item.trialId}-${item.trialName}` === normalizedValue)
+}
+
 const handleTrialChange = async (trialId) => {
   if (!trialId) {
     formData.batchId = ''
@@ -848,9 +857,25 @@ const handleTrialChange = async (trialId) => {
     return
   }
 
+  const selectedTrial = resolveSelectedTrial(trialId)
+  const actualTrialId = selectedTrial?.trialId || trialId
+
+  // 兼容下拉展示值或历史脏数据中保存了 "trialId-trialName" 的情况
+  if (formData.trialId !== actualTrialId) {
+    formData.trialId = actualTrialId
+  }
+
+  if (selectedTrial) {
+    formData.batchId = selectedTrial.batchId || ''
+    formData.varietyName = selectedTrial.varietyName || ''
+    if (selectedTrial.cropType) {
+      formData.cropType = resolveCropTypeValue(cropTypeOptions.value, selectedTrial.cropType)
+    }
+  }
+
   try {
-    console.log('获取试验信息，trialId:', trialId)
-    const res = await getTrialBasicInfo(trialId)
+    console.log('获取试验信息，trialId:', actualTrialId)
+    const res = await getTrialBasicInfo(actualTrialId)
     console.log('试验信息API响应:', res)
     if (res && res.data) {
       formData.batchId = res.data.batchId || ''
@@ -866,7 +891,6 @@ const handleTrialChange = async (trialId) => {
       } else {
         console.warn('试验信息中没有批次ID')
       }
-      await loadStatisticsData(trialId)
       if (res.data.locationId) {
         console.log('试验地点:', res.data.locationId)
       }
@@ -877,6 +901,8 @@ const handleTrialChange = async (trialId) => {
         console.log('试验季节:', res.data.season)
       }
     }
+
+    await loadStatisticsData(actualTrialId)
   } catch (error) {
     console.error('Failed to get trial info:', error)
     ElMessage.warning(t('research.datasetCompilation.message.getTrialInfoFailed'))
@@ -907,44 +933,47 @@ const loadBatchInfo = async (batchId) => {
 }
 
 const loadStatisticsData = async (trialId) => {
-  if (!trialId) {
+  const selectedTrial = resolveSelectedTrial(trialId)
+  const actualTrialId = selectedTrial?.trialId || trialId
+
+  if (!actualTrialId) {
     console.warn('试验ID为空，无法加载统计数据')
     return
   }
 
   try {
-    console.log('开始统计数据，trialId:', trialId)
+    console.log('开始统计数据，trialId:', actualTrialId)
     // 批量请求所有数据接口
     const [
       plotRes, farmingRes, agronomicRes, environmentDataRes, labRes, yieldRes
     ] = await Promise.all([
       // 地块与播种信息: auditStatus=S2
-      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'S2' }).catch(err => {
+      getPlotInfoList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, auditStatus: 'S2' }).catch(err => {
         console.error('获取地块及播种信息失败:', err)
         return { rows: [], total: 0 }
       }),
       // 农事记录: workflowStatus=S2
-      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
+      getFarmingRecordList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取农事记录失败:', err)
         return { rows: [], total: 0 }
       }),
-      // 农艺性状: auditStatus=approved
-      getAgronomicTraitAuditList({ pageNum: 1, pageSize: 9999, trialId, auditStatus: 'approved' }).catch(err => {
+      // 农艺性状: 该接口实际使用 approved 状态值
+      getAgronomicTraitAuditList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, batchId: formData.batchId || selectedTrial?.batchId || '', auditStatus: 'approved' }).catch(err => {
         console.error('获取农艺性状数据失败:', err)
         return { rows: [], total: 0 }
       }),
       // 环境检测: workflowStatus=S2
-      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2' }).catch(err => {
+      getEnvironmentDataList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, workflowStatus: 'S2' }).catch(err => {
         console.error('获取环境监测数据失败:', err)
         return { rows: [], total: 0 }
       }),
       // 实验室测试: workflowStatus=S2, auditCanceled=0
-      getLabTestAuditList({ pageNum: 1, pageSize: 9999, trialId, workflowStatus: 'S2', auditCanceled: 0 }).catch(err => {
+      getLabTestAuditList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, workflowStatus: 'S2', auditCanceled: 0 }).catch(err => {
         console.error('获取实验室测试数据失败:', err)
         return { rows: [], total: 0 }
       }),
-      // 田间检查: status=1, workflowStatus=S1
-      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId, status: 1, workflowStatus: 'S1' }).catch(err => {
+      // 田间检查: 取审核通过数据，workflowStatus=S2
+      getFieldInspectionList({ pageNum: 1, pageSize: 9999, trialId: actualTrialId, status: 1, workflowStatus: 'S2' }).catch(err => {
         console.error('获取田间检查数据失败:', err)
         return { rows: [], total: 0 }
       })
@@ -959,10 +988,10 @@ const loadStatisticsData = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || []).map(item => ({
-      ...item,
-      remark: item.remark || ''
-    }))
+    agronomicTraitList.value = (agronomicRes?.rows || agronomicRes?.data?.rows || agronomicRes?.data?.list || []).map(item => ({
+        ...item,
+        remark: item.remark || ''
+      }))
     environmentDataList.value = (environmentDataRes?.rows || environmentDataRes?.data?.rows || []).map(item => ({
       ...item,
       remark: item.remark || ''
@@ -971,7 +1000,7 @@ const loadStatisticsData = async (trialId) => {
       ...item,
       remark: item.remark || ''
     }))
-    yieldDataList.value = (yieldRes?.rows || yieldRes?.data || []).map(item => ({
+    yieldDataList.value = (yieldRes?.rows || yieldRes?.data?.rows || yieldRes?.data?.list || yieldRes?.data || []).map(item => ({
       ...item,
       remark: item.remark || ''
     }))
