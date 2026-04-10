@@ -1,4 +1,10 @@
 import agricultureRequest from '../utils/agricultureRequest'
+import { getBreedSeedProduceResultList } from './breedSeed'
+import { getBreedSeedProduceDetail } from './breedSeed'
+import { getPrebasicSeedProduceResultList } from './prebasicSeed'
+import { getPrebasicSeedProduceDetail } from './prebasicSeed'
+import { getBasicSeedProduceResultList } from './basicSeed'
+import { getBasicSeedProduceDetail } from './basicSeed'
 
 /**
  * 通用种子检测API
@@ -7,14 +13,75 @@ import agricultureRequest from '../utils/agricultureRequest'
 
 // ==================== 批次选择 ====================
 
+const normalizeDetectionBatch = (item) => ({
+  batchId: item.batchId,
+  batchName: item.batchName || item.batchId || '',
+  varietyName: item.varietyName || '',
+  cropType: item.cropType || '',
+  seedClass: item.seedClass,
+  startDate: item.startDate || item.time || '',
+  endDate: item.endDate || ''
+})
+
+const normalizeProductionResultBatch = (item, seedClass) => ({
+  batchId: item.produceBatchId,
+  batchName: item.produceBatchName || item.produceBatchId || '',
+  varietyName: item.varietyName || '',
+  cropType: item.cropType || '',
+  seedClass,
+  startDate: item.collectionDate || item.createTime || '',
+  endDate: '',
+  source: 'production-result',
+  _rawData: item
+})
+
+const buildSuccessResponse = (data) => ({
+  code: 200,
+  data
+})
+
 /**
- * 获取用于检测的批次列表（Basic + C1）
+ * 获取用于检测的批次列表
+ * 包含原有检测批次，以及 Breeder / Pre-Basic / Basic 生产结果批次
  */
-export const getBatchesForDetection = () => {
-  return agricultureRequest({
-    url: '/seed/batch/list-for-detection',
-    method: 'get'
+export const getBatchesForDetection = async () => {
+  const [detectionRes, breederRes, prebasicRes, basicRes] = await Promise.allSettled([
+    agricultureRequest({
+      url: '/seed/batch/list-for-detection',
+      method: 'get'
+    }),
+    getBreedSeedProduceResultList({ pageNum: 1, pageSize: 1000 }),
+    getPrebasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 }),
+    getBasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
+  ])
+
+  const mergedMap = new Map()
+
+  if (detectionRes.status === 'fulfilled' && detectionRes.value?.code === 200) {
+    ;(detectionRes.value.data || []).forEach((item) => {
+      const normalized = normalizeDetectionBatch(item)
+      if (!normalized.batchId || !normalized.seedClass) return
+      mergedMap.set(`${normalized.seedClass}-${normalized.batchId}`, normalized)
+    })
+  }
+
+  const resultConfigs = [
+    { response: breederRes, seedClass: 'Breeder' },
+    { response: prebasicRes, seedClass: 'Pre-Basic' },
+    { response: basicRes, seedClass: 'Basic' }
+  ]
+
+  resultConfigs.forEach(({ response, seedClass }) => {
+    if (response.status !== 'fulfilled' || response.value?.code !== 200) return
+
+    ;(response.value.rows || []).forEach((item) => {
+      const normalized = normalizeProductionResultBatch(item, seedClass)
+      if (!normalized.batchId) return
+      mergedMap.set(`${seedClass}-${normalized.batchId}`, normalized)
+    })
   })
+
+  return buildSuccessResponse(Array.from(mergedMap.values()))
 }
 
 // ==================== 田间检测 Tracking ====================
@@ -183,6 +250,226 @@ export const rejectTest = (data) => {
     method: 'post',
     data
   })
+}
+
+const normalizeCertificateDateTime = (value) => {
+  if (!value) return ''
+  return typeof value === 'string' && value.includes('T') ? value.replace('T', ' ') : value
+}
+
+const buildCertificateSourceMap = async () => {
+  const [detectionRes, breederRes, prebasicRes, basicRes] = await Promise.allSettled([
+    agricultureRequest({
+      url: '/seed/batch/list-for-detection',
+      method: 'get'
+    }),
+    getBreedSeedProduceResultList({ pageNum: 1, pageSize: 1000 }),
+    getPrebasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 }),
+    getBasicSeedProduceResultList({ pageNum: 1, pageSize: 1000 })
+  ])
+
+  const sourceMap = new Map()
+
+  if (detectionRes.status === 'fulfilled' && detectionRes.value?.code === 200) {
+    ;(detectionRes.value.data || []).forEach((item) => {
+      if (!item?.batchId) return
+      sourceMap.set(item.batchId, {
+        batchId: item.batchId,
+        varietyName: item.varietyName || '',
+        cropType: item.cropType || '',
+        startDate: item.startDate || item.time || '',
+        endDate: item.endDate || ''
+      })
+    })
+  }
+
+  const fillFromResults = (response, key) => {
+    if (response.status !== 'fulfilled' || response.value?.code !== 200) return
+    ;(response.value.rows || []).forEach((item) => {
+      if (!item?.produceBatchId) return
+      sourceMap.set(item.produceBatchId, {
+        batchId: item.produceBatchId,
+        varietyName: item.varietyName || '',
+        cropType: item.cropType || '',
+        startDate: item.collectionDate || item.createTime || '',
+        endDate: '',
+        operator: item.operator || '',
+        source: key
+      })
+    })
+  }
+
+  fillFromResults(breederRes, 'Breeder')
+  fillFromResults(prebasicRes, 'Pre-Basic')
+  fillFromResults(basicRes, 'Basic')
+
+  return sourceMap
+}
+
+const fillCertificateDetailFromSource = async (row) => {
+  try {
+    const primarySeedClass = row.seedClasses[0]
+    if (primarySeedClass === 'Pre-Basic') {
+      const res = await getPrebasicSeedProduceDetail(row.batchId)
+      if (res.code === 200 && res.data) {
+        row.varietyName = row.varietyName || res.data.varietyName || ''
+        row.cropType = row.cropType || res.data.cropType || ''
+        row.startDate = row.startDate || res.data.time || res.data.createTime || ''
+        row.orgName = row.orgName || res.data.operatorName || ''
+      }
+    } else if (primarySeedClass === 'Basic') {
+      const res = await getBasicSeedProduceDetail(row.batchId)
+      if (res.code === 200 && res.data) {
+        row.varietyName = row.varietyName || res.data.varietyName || ''
+        row.cropType = row.cropType || res.data.cropType || ''
+        row.startDate = row.startDate || res.data.time || res.data.createTime || ''
+        row.orgName = row.orgName || res.data.operatorName || ''
+      }
+    } else if (primarySeedClass === 'Breeder') {
+      const res = await getBreedSeedProduceDetail(row.batchId)
+      if (res.code === 200 && res.data) {
+        row.varietyName = row.varietyName || res.data.varietyName || ''
+        row.cropType = row.cropType || res.data.cropType || ''
+        row.startDate = row.startDate || res.data.collectionDate || res.data.createTime || ''
+        row.orgName = row.orgName || res.data.operator || ''
+      }
+    }
+  } catch (error) {
+    console.error('Fill certificate detail from source error:', error)
+  }
+
+  return row
+}
+
+const mergeDetectionCertificates = (trackingList = [], testList = [], sourceMap = new Map()) => {
+  const mergedMap = new Map()
+
+  const ensureRow = (batchId) => {
+    if (!mergedMap.has(batchId)) {
+      mergedMap.set(batchId, {
+        id: batchId,
+        batchId,
+        varietyName: '',
+        cropType: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        auditor: '',
+        auditorOrgName: '',
+        auditTime: '',
+        auditComment: '',
+        auditStatus: 'approved',
+        batchStatus: '02',
+        printCount: 0,
+        lastPrintTime: '',
+        seedClasses: [],
+        fieldCount: 0,
+        testCount: 0,
+        orgName: '',
+        orgType: ''
+      })
+    }
+    return mergedMap.get(batchId)
+  }
+
+  const updateCommonFields = (row, record, type) => {
+    const source = sourceMap.get(record.batchId)
+    if (record.seedClass && !row.seedClasses.includes(record.seedClass)) {
+      row.seedClasses.push(record.seedClass)
+    }
+    if (!row.varietyName) row.varietyName = record.varietyName || source?.varietyName || ''
+    if (!row.cropType) row.cropType = record.cropType || source?.cropType || ''
+    if (!row.startDate) row.startDate = record.startDate || source?.startDate || ''
+    if (!row.endDate) row.endDate = record.endDate || source?.endDate || ''
+    if (!row.location && record.location) row.location = record.location
+    if (!row.auditor && record.updatedBy) row.auditor = record.updatedBy
+    if (!row.auditTime && record.updatedTime) row.auditTime = normalizeCertificateDateTime(record.updatedTime)
+    if (!row.auditComment && record.auditComment) row.auditComment = record.auditComment
+    if (!row.orgName) row.orgName = source?.orgName || source?.operator || record.operator || ''
+    if (!row.auditorOrgName && row.auditor) row.auditorOrgName = row.auditor
+    if (type === 'field') row.fieldCount += 1
+    if (type === 'test') row.testCount += 1
+  }
+
+  trackingList.forEach((record) => {
+    if (!record?.batchId) return
+    const row = ensureRow(record.batchId)
+    updateCommonFields(row, record, 'field')
+  })
+
+  testList.forEach((record) => {
+    if (!record?.batchId) return
+    const row = ensureRow(record.batchId)
+    updateCommonFields(row, record, 'test')
+  })
+
+  return Array.from(mergedMap.values()).sort((a, b) => {
+    const timeA = a.auditTime ? new Date(a.auditTime).getTime() : 0
+    const timeB = b.auditTime ? new Date(b.auditTime).getTime() : 0
+    return timeB - timeA
+  })
+}
+
+export const getApprovedDetectionCertificateList = async (params = {}) => {
+  const requestParams = {
+    pageNum: 1,
+    pageSize: 1000,
+    auditStatus: 'approved',
+    ...params
+  }
+
+  const [trackingRes, testRes] = await Promise.all([
+    getTrackingList(requestParams),
+    getTestList(requestParams)
+  ])
+
+  const trackingList = trackingRes.code === 200 ? (trackingRes.data?.records || []) : []
+  const testList = testRes.code === 200 ? (testRes.data?.records || []) : []
+
+  const sourceMap = await buildCertificateSourceMap()
+  const mergedList = await Promise.all(
+    mergeDetectionCertificates(trackingList, testList, sourceMap).map(item => fillCertificateDetailFromSource(item))
+  )
+  const keyword = params.keyword?.trim().toLowerCase()
+  const batchId = params.batchId?.trim()
+  const varietyName = params.varietyName?.trim().toLowerCase()
+  const cropType = params.cropType?.trim()
+  const startDateBegin = params.startDateBegin
+  const startDateEnd = params.startDateEnd
+
+  const filteredList = mergedList.filter((item) => {
+    const matchBatchId = !batchId || item.batchId === batchId
+    const matchKeyword = !keyword || item.batchId?.toLowerCase().includes(keyword)
+    const matchVariety = !varietyName || item.varietyName?.toLowerCase().includes(varietyName)
+    const matchCropType = !cropType || item.cropType === cropType
+    const matchStartBegin = !startDateBegin || (item.startDate && item.startDate >= startDateBegin)
+    const matchStartEnd = !startDateEnd || (item.startDate && item.startDate <= startDateEnd)
+    return matchBatchId && matchKeyword && matchVariety && matchCropType && matchStartBegin && matchStartEnd
+  })
+
+  const pageNum = Number(params.pageNum) || 1
+  const pageSize = Number(params.pageSize) || filteredList.length || 10
+  const startIndex = (pageNum - 1) * pageSize
+  const list = filteredList.slice(startIndex, startIndex + pageSize)
+
+  return {
+    code: 200,
+    data: {
+      total: filteredList.length,
+      pageNum,
+      pageSize,
+      list
+    }
+  }
+}
+
+export const getApprovedDetectionCertificateByBatchId = async (batchId) => {
+  const res = await getApprovedDetectionCertificateList({ batchId, pageNum: 1, pageSize: 1000 })
+  const record = (res.data?.list || []).find(item => item.batchId === batchId)
+  return {
+    code: 200,
+    data: record || null
+  }
 }
 
 // ==================== 规则检查 ====================

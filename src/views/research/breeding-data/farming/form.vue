@@ -69,31 +69,20 @@
                 <!-- Activity Type -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Activity Type" prop="activityType">
-                    <el-select
-                      v-model="formData.activityType"
-                      placeholder="Please select activity type"
-                      style="width: 100%"
-                      filterable
-                      clearable
-                      :loading="activityTypeLoading"
-                      @change="handleActivityTypeChange">
-                      <el-option v-for="item in activityTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-select v-model="formData.activityType" placeholder="Please select activity type" style="width: 100%">
+                      <el-option label="Fertilizer" value="fertilizer" />
+                      <el-option label="Irrigation" value="irrigation" />
+                      <el-option label="Pest Control" value="pest_control" />
+                      <el-option label="Weeding" value="weeding" />
+                      <el-option label="Tillage" value="tillage" />
+                      <el-option label="Harvest" value="harvest" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <!-- Input Name -->
                 <el-col :xs="24" :sm="12">
                   <el-form-item label="Input Name">
-                    <el-select
-                      v-model="formData.inputName"
-                      placeholder="Please select input name"
-                      style="width: 100%"
-                      filterable
-                      clearable
-                      :loading="inputNameLoading"
-                      :disabled="!formData.activityType">
-                      <el-option v-for="item in inputNameOptions" :key="item.id" :label="item.label" :value="item.value" />
-                    </el-select>
+                    <el-input v-model="formData.inputName" placeholder="Enter input name (e.g., fertilizer type, pesticide name)" />
                   </el-form-item>
                 </el-col>
                 <!-- Quantity -->
@@ -200,9 +189,6 @@ import { ElMessage } from 'element-plus'
 import { getFarmingRecordInfo, addFarmingRecord, editFarmingRecord, getPlotOptions } from '@/api/breedingData'
 import { getFarmerOptions } from '@/api/newFarm'
 import { getUserInfo } from '@/utils/auth'
-import { getDicts } from '@/api/system/dict'
-import { listProductManage } from '@/api/productManage'
-import { parseI18nValue } from '@/utils/i18nHelper'
 
 const route = useRoute()
 const router = useRouter()
@@ -213,14 +199,7 @@ const loading = ref(false)
 const submitLoading = ref(false)
 const plotOptions = ref([])
 const farmerOptions = ref([])
-const activityTypeOptions = ref([])
-const activityTypeLoading = ref(false)
-const inputNameOptions = ref([])
-const inputNameLoading = ref(false)
-
 const isEdit = computed(() => !!route.params.farmingId)
-
-const seedMainCategoryValue = ref('SEED')
 
 const formData = reactive({
   farmingRecordId: '',
@@ -241,108 +220,6 @@ const rules = {
   activityDate: [{ required: true, message: 'Please select Activity Date', trigger: 'change' }],
   activityType: [{ required: true, message: 'Please select Activity Type', trigger: 'change' }],
   operatorId: [{ required: true, message: 'Please select Operator', trigger: 'change' }]
-}
-
-const normalizeOptionLabel = (item) => parseI18nValue(item.dictLabel, locale.value, item.dictLabel)
-
-const resolveActivityTypeValue = (value) => {
-  if (!value) return ''
-  const match = activityTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
-  return match ? match.value : value
-}
-
-const resolveActivityTypeLabel = (value) => {
-  if (!value) return ''
-  const match = activityTypeOptions.value.find(item => String(item.value) === String(value) || String(item.label) === String(value))
-  return match ? match.label : value
-}
-
-const loadActivityTypeOptions = async () => {
-  activityTypeLoading.value = true
-  try {
-    const [mainRes, subRes] = await Promise.all([
-      getDicts('inventory_main_category'),
-      getDicts('inventory_sub_category')
-    ])
-
-    const mainOptions = (mainRes.data || []).map(item => ({
-      label: normalizeOptionLabel(item),
-      value: item.dictValue
-    }))
-    const seedMainCategory = mainOptions.find(item => String(item.value).toUpperCase() === 'SEED')
-      || mainOptions.find(item => ['seed', '种子'].includes(String(item.label).trim().toLowerCase()))
-
-    seedMainCategoryValue.value = seedMainCategory?.value || 'SEED'
-
-    activityTypeOptions.value = (subRes.data || [])
-      .filter(item => String(item.remark) === String(seedMainCategoryValue.value))
-      .map(item => ({
-        label: normalizeOptionLabel(item),
-        value: item.dictValue
-      }))
-  } catch (error) {
-    console.error(error)
-    activityTypeOptions.value = []
-  } finally {
-    activityTypeLoading.value = false
-  }
-}
-
-const loadInputNameOptions = async (activityType, preserveValue = false) => {
-  const normalizedActivityType = resolveActivityTypeValue(activityType)
-  if (!normalizedActivityType) {
-    inputNameOptions.value = []
-    if (!preserveValue) {
-      formData.inputName = ''
-    }
-    return
-  }
-
-  inputNameLoading.value = true
-  try {
-    const selectedActivityTypeLabel = resolveActivityTypeLabel(normalizedActivityType)
-    const res = await listProductManage({
-      pageNum: 1,
-      pageSize: 1000,
-      mainCategory: seedMainCategoryValue.value,
-      subCategory: selectedActivityTypeLabel,
-      status: '0'
-    })
-
-    const productList = res.data?.list || []
-    const seen = new Set()
-    inputNameOptions.value = productList
-      .map(item => {
-        const productName = item.product_name || item.productName || ''
-        return {
-          id: item.id || item.product_code || productName,
-          label: productName,
-          value: productName
-        }
-      })
-      .filter(item => {
-        if (!item.value || seen.has(item.value)) return false
-        seen.add(item.value)
-        return true
-      })
-
-    if (preserveValue) {
-      const matched = inputNameOptions.value.find(item => item.value === formData.inputName)
-      if (!matched) {
-        formData.inputName = ''
-      }
-    } else {
-      formData.inputName = ''
-    }
-  } catch (error) {
-    console.error(error)
-    inputNameOptions.value = []
-    if (!preserveValue) {
-      formData.inputName = ''
-    }
-  } finally {
-    inputNameLoading.value = false
-  }
 }
 
 
@@ -408,11 +285,6 @@ const handlePlotChange = (plotId) => {
   }
 }
 
-const handleActivityTypeChange = async (value) => {
-  formData.activityType = resolveActivityTypeValue(value)
-  await loadInputNameOptions(formData.activityType)
-}
-
 const getInfo = async () => {
   if (!isEdit.value) {
     // 新建模式下确保activityDate有默认值
@@ -428,8 +300,6 @@ const getInfo = async () => {
   try {
     const res = await getFarmingRecordInfo(route.params.farmingId)
     Object.assign(formData, res.data)
-    formData.activityType = resolveActivityTypeValue(formData.activityType)
-    await loadInputNameOptions(formData.activityType, true)
   } catch (error) {
     console.error('Failed to load farming record info:', error)
   } finally {
@@ -444,7 +314,6 @@ const handleSubmit = async () => {
   submitLoading.value = true
   try {
     const submitData = { ...formData }
-    submitData.activityType = resolveActivityTypeLabel(formData.activityType)
 
     // 自动设置操作员ID为登录用户
     if (!submitData.operatorId) {
@@ -476,7 +345,6 @@ const goBack = () => {
 }
 
 onMounted(() => {
-  loadActivityTypeOptions()
   loadPlotOptions()
   loadFarmerOptions()
   getInfo()

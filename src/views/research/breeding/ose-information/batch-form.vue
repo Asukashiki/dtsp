@@ -174,19 +174,21 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getBreedingBatchPageDetail, addBreedingBatchPage, updateBreedingBatchPage } from '@/api/breeding'
 import { getBreedSeedProduceList, getOseReceiveConfirmList } from '@/api/breedSeed'
+import { useDict } from '@/hooks/useDict'
 import { getUserOrgName, getUserOrgId } from '@/utils/auth'
-import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
+import { resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
 const router = useRouter()
 const route = useRoute()
 const { locale } = useI18n()
+const { options } = useDict(['crop_type'])
 
 const formRef = ref(null)
 const loading = ref(false)
 const breedSeedProduceList = ref([])
 const confirmedDistributionList = ref([])
 const parentalSeedSourceOptions = ref([])
-const cropTypeOptions = ref([])
+const cropTypeOptions = computed(() => options.value.crop_type || [])
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -352,8 +354,6 @@ onMounted(async () => {
   // 默认填充机构信息
   formData.value.orgName = getUserOrgName()
   formData.value.orgId = getUserOrgId()
-  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
-
   // 并行加载数据
   await Promise.all([loadBreedSeedProduceList(), loadConfirmedDistributionList()])
 

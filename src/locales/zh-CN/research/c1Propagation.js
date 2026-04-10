@@ -126,6 +126,7 @@ export default {
 
   // 机构类型
   orgType: {
+    ose: 'OSE',
     union: '联合社',
     cooperative: '合作社'
   },

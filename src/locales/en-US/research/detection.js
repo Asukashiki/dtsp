@@ -52,7 +52,9 @@ export default {
   auditSuccessApproved: 'Approved successfully',
   auditSuccessRejected: 'Rejected successfully',
   batchSelector: {
-    basicBatches: 'Breeder Seed Batches',
+    breederBatches: 'Breeder Seed Batches',
+    preBasicBatches: 'Pre-Basic Seed Batches',
+    basicBatches: 'Basic Seed Batches',
     c1Batches: 'C1 Seed Batches',
     searchPlaceholder: 'Search by batch ID or variety name...',
     noBatches: 'No batch data',

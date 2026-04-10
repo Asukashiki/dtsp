@@ -126,6 +126,7 @@ export default {
 
   // Organization types
   orgType: {
+    ose: 'OSE',
     union: 'Union',
     cooperative: 'Cooperative'
   },

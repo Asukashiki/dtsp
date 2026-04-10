@@ -203,19 +203,18 @@ import { getBreedingBatchInfo, addBreedingBatch, editBreedingBatch, submitForAud
 import { useDict } from '@/hooks/useDict'
 import { useUserStore } from '@/store'
 import { PageHeader } from '@/components/common'
-import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
+import { resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const route = useRoute()
 const router = useRouter()
-const { t, locale } = useI18n()
-const cropTypeOptions = ref([])
+const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict([
   'crop_type',
   'flow_status'
 ])
-const cropTypeSelectOptions = computed(() => cropTypeOptions.value.length ? cropTypeOptions.value : (options.crop_type || []))
+const cropTypeSelectOptions = computed(() => options.value.crop_type || [])
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -511,7 +510,7 @@ const getInfo = async () => {
   try {
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
-    formData.cropType = resolveCropTypeValue(cropTypeOptions.value, res.data.cropType || '')
+    formData.cropType = resolveCropTypeValue(cropTypeSelectOptions.value, res.data.cropType || '')
     if (formData.year) {
       formData.year = String(formData.year)
     }
@@ -552,7 +551,7 @@ const handleSubmit = async () => {
   try {
     const submitData = {
       ...formData,
-      cropType: resolveCropTypeLabel(cropTypeOptions.value, formData.cropType)
+      cropType: resolveCropTypeLabel(cropTypeSelectOptions.value, formData.cropType)
     }
     if (submitData.year) {
       submitData.year = parseInt(submitData.year)
@@ -622,7 +621,6 @@ const disablePastYears = (date) => {
 }
 
 onMounted(async () => {
-  cropTypeOptions.value = await loadSeedCropTypeOptions(locale.value).catch(() => [])
   getInfo()
 })
 </script>

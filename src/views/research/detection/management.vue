@@ -69,7 +69,7 @@
                 <el-table-column prop="location" :label="$t('research.c1BreedingBatch.tracking.location')" min-width="150" show-overflow-tooltip />
                 <el-table-column prop="trackingResult" :label="$t('research.c1BreedingBatch.tracking.result')" min-width="100" align="center">
                   <template #default="{ row }">
-                    <el-tag :type="getFieldResultTagType(row.trackingResult)" size="small">{{ getFieldResultText(row.trackingResult) }}</el-tag>
+                    <el-tag :type="getFieldResultTagType(row)" size="small">{{ getFieldResultText(row) }}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="120" align="center">
@@ -95,9 +95,11 @@
                 </el-table-column>
                 <el-table-column prop="passStatus" :label="$t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
                   <template #default="{ row }">
-                    <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
+                    <el-tag v-if="row.passStatus === 'TRUE' || row.passStatus === 'FALSE'"
+                      :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
                       {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed') }}
                     </el-tag>
+                    <span v-else>-</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="120" align="center">
@@ -290,17 +292,24 @@ const handlePageChange = (page) => {
   loadList()
 }
 
-const getFieldResultText = (result) => ({
+const getDisplayTrackingResult = (row) => {
+  if (row?.auditStatus === 'approved' && row?.trackingResult === '02') {
+    return '01'
+  }
+  return row?.trackingResult
+}
+
+const getFieldResultText = (row) => ({
   '01': t('research.c1BreedingBatch.tracking.resultNormal'),
   '02': t('research.c1BreedingBatch.tracking.resultAbnormal'),
   '03': t('research.c1BreedingBatch.tracking.resultObserving')
-}[result] || result)
+}[getDisplayTrackingResult(row)] || getDisplayTrackingResult(row))
 
-const getFieldResultTagType = (result) => ({
+const getFieldResultTagType = (row) => ({
   '01': 'success',
   '02': 'danger',
   '03': 'warning'
-}[result] || 'info')
+}[getDisplayTrackingResult(row)] || 'info')
 
 const getAuditStatusText = (status) => ({
   draft: t('research.detection.statusDraft'),

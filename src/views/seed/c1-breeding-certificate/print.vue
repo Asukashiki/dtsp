@@ -43,8 +43,8 @@
                 <span class="cert-value cert-number">{{ batchData.batchId }}</span>
               </div>
               <div class="cert-row">
-                <span class="cert-label">Batch Status:</span>
-                <span class="cert-value">{{ getStatusName(batchData.batchStatus) }}</span>
+                <span class="cert-label">Seed Class:</span>
+                <span class="cert-value">{{ batchData.seedClasses?.join(' / ') || '-' }}</span>
               </div>
             </div>
 
@@ -116,7 +116,7 @@
               </div>
               <div class="cert-row">
                 <span class="cert-label">Certifying Agency:</span>
-                <span class="cert-value">{{ batchData.auditorOrgName || '-' }}</span>
+                <span class="cert-value">{{ formatI18nText(batchData.auditorOrgName) }}</span>
               </div>
               <div class="cert-row">
                 <span class="cert-label">Audit Time:</span>
@@ -165,13 +165,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getC1BreedingBatchById, recordC1BatchPrint } from '@/api/c1BreedingBatch'
+import { getApprovedDetectionCertificateByBatchId } from '@/api/detection'
 import VueQr from 'vue-qr/src/packages/vue-qr.vue'
 import { useDict } from '@/hooks/useDict'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { getLabelByValue } = useDict(['crop_type'])
@@ -180,24 +181,20 @@ const loading = ref(false)
 const batchData = ref(null)
 const qrContent = ref('')
 
-// 状态映射
-const statusMap = computed(() => ({
-  '01': 'Ongoing',
-  '02': 'Completed',
-  '03': 'Terminated'
-}))
-
-const getStatusName = (status) => statusMap.value[status] || status
+const formatI18nText = (value) => parseI18nValue(value, locale.value, value || '-')
 
 // 加载批次数据
 const loadBatchData = async () => {
   loading.value = true
   try {
-    const res = await getC1BreedingBatchById(route.params.id)
+    const res = await getApprovedDetectionCertificateByBatchId(route.params.id)
     if (res.code === 200) {
       batchData.value = res.data
+      if (!batchData.value) {
+        throw new Error('Certificate data not found')
+      }
       // 生成二维码内容
-      qrContent.value = `${window.location.origin}/research/c1-breeding-batch/detail/${res.data.id}`
+      qrContent.value = `${window.location.origin}/#/research/detection-audit/form/${encodeURIComponent(res.data.batchId)}?mode=view`
     }
   } catch (error) {
     console.error('Failed to load batch data:', error)
@@ -211,14 +208,8 @@ const loadBatchData = async () => {
 // 打印
 const handlePrint = async () => {
   try {
-    // 记录打印日志
-    await recordC1BatchPrint(route.params.id)
-
     // 执行打印
     window.print()
-
-    // 重新加载数据以更新打印次数
-    loadBatchData()
   } catch (error) {
     console.error('Print failed:', error)
     ElMessage.error(t('common.failed'))

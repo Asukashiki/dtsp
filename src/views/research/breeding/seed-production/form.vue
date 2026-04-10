@@ -129,12 +129,22 @@
               </el-col>
 
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
-                  <el-input
-                    v-model="formData.landName"
+                <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landId">
+                  <el-select
+                    v-model="formData.landId"
                     :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
+                    filterable
                     clearable
-                  />
+                    style="width: 100%"
+                    @change="handleLandChange"
+                  >
+                    <el-option
+                      v-for="land in landList"
+                      :key="land.landId"
+                      :label="land.landName"
+                      :value="land.landId"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -198,6 +208,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
+import { getLandList } from '@/api/newFarm'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const { t, locale } = useI18n()
@@ -232,6 +243,7 @@ const formData = reactive({
   varietyName: '',
   cropType: '',
   time: getCurrentDateTime(),
+  landId: '',
   landName: '',
   inputSeedQuantity: null,
   fromSeedLevel: 'Breeder',
@@ -245,6 +257,7 @@ const toSeedLevelOptions = ref([{ label: 'Pre-Basic', value: 'Pre-Basic' }])
 const breedBatchList = ref([])
 const varietyList = ref([])
 const trialList = ref([])
+const landList = ref([])
 
 // 表单验证规则
 const rules = computed(() => ({
@@ -263,7 +276,7 @@ const rules = computed(() => ({
   time: [
     { required: true, message: t('research.breeding.seed.production.rules.timeRequired'), trigger: 'change' }
   ],
-  landName: [
+  landId: [
     { required: true, message: t('research.breeding.seed.production.rules.landNameRequired'), trigger: 'change' }
   ],
   inputSeedQuantity: [
@@ -333,6 +346,20 @@ const loadTrialData = async (batchId) => {
     console.log('Loaded trial data:', trialList.value.length, trialList.value)
   } catch (error) {
     console.error('Failed to load trial options:', error)
+  }
+}
+
+const loadLandOptions = async () => {
+  try {
+    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
+    if (res.code === 200 && res.rows) {
+      landList.value = res.rows.map(item => ({
+        landId: item.landId,
+        landName: item.landName
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load land options:', error)
   }
 }
 
@@ -432,6 +459,20 @@ const handleTrialChange = (trialId) => {
   }
 }
 
+const handleLandChange = (landId) => {
+  if (!landId) {
+    formData.landId = ''
+    formData.landName = ''
+    return
+  }
+
+  const selected = landList.value.find(item => item.landId === landId)
+  if (selected) {
+    formData.landId = selected.landId
+    formData.landName = selected.landName
+  }
+}
+
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -443,10 +484,8 @@ const handleSubmit = async () => {
       console.error('varietyName is empty, breedBatchId:', formData.breedBatchId)
       return
     }
-    formData.landName = formData.landName?.trim() || ''
-
-    if (!formData.landName) {
-      ElMessage.warning('Please enter a plot name first')
+    if (!formData.landId) {
+      ElMessage.warning('Please select a plot first')
       return
     }
 
@@ -463,6 +502,7 @@ const handleSubmit = async () => {
       varietyName: formData.varietyName,
       cropType: formData.cropType,
       time: formData.time,
+      landId: formData.landId,
       landName: formData.landName,
       inputSeedQuantity: formData.inputSeedQuantity,
       fromSeedLevel: formData.fromSeedLevel,
@@ -497,10 +537,12 @@ onMounted(() => {
     cropTypeOptions.value = options
     loadBatchOptions()
     loadVarietyList()
+    loadLandOptions()
   }).catch((error) => {
     console.error('Failed to load crop type options:', error)
     loadBatchOptions()
     loadVarietyList()
+    loadLandOptions()
   })
 })
 </script>

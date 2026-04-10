@@ -7,6 +7,36 @@
     class="batch-selector"
     @change="handleChange"
   >
+    <el-option-group v-if="breederBatches.length > 0" :label="$t('research.detection.batchSelector.breederBatches')">
+      <el-option
+        v-for="batch in breederBatches"
+        :key="batch.id"
+        :label="`${batch.name} - ${batch.varietyName || ''}`"
+        :value="batch.id"
+      >
+        <span class="batch-option">
+          <span class="batch-name">{{ batch.name }}</span>
+          <span class="batch-variety">{{ batch.varietyName }}</span>
+          <el-tag size="small" type="success">Breeder</el-tag>
+        </span>
+      </el-option>
+    </el-option-group>
+
+    <el-option-group v-if="preBasicBatches.length > 0" :label="$t('research.detection.batchSelector.preBasicBatches')">
+      <el-option
+        v-for="batch in preBasicBatches"
+        :key="batch.id"
+        :label="`${batch.name} - ${batch.varietyName || ''}`"
+        :value="batch.id"
+      >
+        <span class="batch-option">
+          <span class="batch-name">{{ batch.name }}</span>
+          <span class="batch-variety">{{ batch.varietyName }}</span>
+          <el-tag size="small" type="warning">Pre-Basic</el-tag>
+        </span>
+      </el-option>
+    </el-option-group>
+
     <el-option-group v-if="basicBatches.length > 0" :label="$t('research.detection.batchSelector.basicBatches')">
       <el-option
         v-for="batch in basicBatches"
@@ -17,7 +47,7 @@
         <span class="batch-option">
           <span class="batch-name">{{ batch.name }}</span>
           <span class="batch-variety">{{ batch.varietyName }}</span>
-          <el-tag size="small" type="success">Basic</el-tag>
+          <el-tag size="small" type="primary">Basic</el-tag>
         </span>
       </el-option>
     </el-option-group>
@@ -37,7 +67,7 @@
       </el-option>
     </el-option-group>
 
-    <template v-if="basicBatches.length === 0 && c1Batches.length === 0 && !loading">
+    <template v-if="breederBatches.length === 0 && preBasicBatches.length === 0 && basicBatches.length === 0 && c1Batches.length === 0 && !loading">
       <el-option disabled :value="null">{{ $t('research.detection.batchSelector.noBatches') }}</el-option>
     </template>
   </el-select>
@@ -53,6 +83,10 @@ const props = defineProps({
     type: Object,
     default: null
   },
+  seedClasses: {
+    type: Array,
+    default: () => []
+  },
   placeholder: {
     type: String,
     default: ''
@@ -66,16 +100,31 @@ const internalValue = ref(null)
 const allBatches = ref([])
 const loading = ref(false)
 
-// 分离Basic和C1批次
+const filteredBatches = computed(() => {
+  if (!props.seedClasses.length) {
+    return allBatches.value
+  }
+  return allBatches.value.filter(batch => props.seedClasses.includes(batch.seedClass))
+})
+
+// 按种子级别分组展示批次
+const breederBatches = computed(() =>
+  filteredBatches.value.filter(b => b.seedClass === 'Breeder')
+)
+
+const preBasicBatches = computed(() =>
+  filteredBatches.value.filter(b => b.seedClass === 'Pre-Basic')
+)
+
 const basicBatches = computed(() =>
-  allBatches.value.filter(b => b.seedClass === 'Basic')
+  filteredBatches.value.filter(b => b.seedClass === 'Basic')
 )
 
 const c1Batches = computed(() =>
-  allBatches.value.filter(b => b.seedClass === 'C1')
+  filteredBatches.value.filter(b => b.seedClass === 'C1')
 )
 
-// 标准化批次数据结构（后端已返回标准格式）
+// 标准化批次数据结构
 const normalizeBatch = (rawBatch) => {
   return {
     id: rawBatch.batchId,
@@ -93,7 +142,7 @@ const normalizeBatch = (rawBatch) => {
 const loadBatches = async () => {
   loading.value = true
   try {
-    // 调用统一的批次列表API（已包含Basic和C1）
+    // 调用统一的批次列表API（包含检测批次和生产结果批次）
     const res = await getBatchesForDetection()
 
     if (res.code === 200 && res.data) {
@@ -111,7 +160,7 @@ const loadBatches = async () => {
 
 // 处理选择变化
 const handleChange = (value) => {
-  const selectedBatch = allBatches.value.find(b => b.id === value)
+  const selectedBatch = filteredBatches.value.find(b => b.id === value)
   emit('update:modelValue', selectedBatch)
   emit('change', selectedBatch)
 }

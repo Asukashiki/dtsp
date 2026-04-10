@@ -24,7 +24,7 @@
             <span>{{ $t('research.detection.selectBatch') }}</span>
           </div>
           <p class="section-hint">{{ $t('research.detection.batchSelector.selectBatchHint') }}</p>
-          <BatchSelector v-model="selectedBatch" :placeholder="$t('research.detection.batchSelector.searchPlaceholder')"
+          <BatchSelector v-model="selectedBatch" :seed-classes="['Breeder', 'Pre-Basic', 'Basic', 'C1']" :placeholder="$t('research.detection.batchSelector.searchPlaceholder')"
             @change="handleBatchChange" />
         </div>
 

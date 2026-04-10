@@ -74,9 +74,11 @@
                   </el-table-column>
                   <el-table-column prop="passStatus" :label="$t('research.c1BreedingBatch.test.passStatus')" min-width="100" align="center">
                     <template #default="{ row }">
-                      <el-tag :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
+                      <el-tag v-if="row.passStatus === 'TRUE' || row.passStatus === 'FALSE'"
+                        :type="row.passStatus === 'TRUE' ? 'success' : 'danger'" size="small">
                         {{ row.passStatus === 'TRUE' ? $t('research.c1BreedingBatch.test.passed') : $t('research.c1BreedingBatch.test.failed') }}
                       </el-tag>
+                      <span v-else>-</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="auditStatus" :label="$t('research.detection.auditStatus')" min-width="110" align="center">
@@ -154,6 +156,7 @@ const formData = reactive({
 })
 
 const isViewMode = computed(() => route.query.mode === 'view')
+const fromPage = computed(() => route.query.from || '')
 const pageTitle = computed(() => isViewMode.value ? `${t('research.menu.detectionAudit')}${t('common.view')}` : `${t('research.menu.detectionAudit')}${t('common.audit')}`)
 const batchId = computed(() => route.params.id)
 const summary = computed(() => {
@@ -237,6 +240,10 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
+  if (fromPage.value === 'certificate') {
+    router.push('/research/c1-breeding-certificate')
+    return
+  }
   router.push('/research/detection-audit')
 }
 

@@ -47,6 +47,16 @@
                 show-overflow-tooltip />
               <el-table-column prop="varietyName" :label="$t('seed.c1Certificate.columns.varietyName')"
                 min-width="120" />
+              <el-table-column :label="$t('research.detection.seedClass')" min-width="140" align="center">
+                <template #default="{ row }">
+                  <div v-if="row.seedClasses?.length" class="seed-class-tags">
+                    <el-tag v-for="seedClass in row.seedClasses" :key="seedClass" size="small" effect="light">
+                      {{ seedClass }}
+                    </el-tag>
+                  </div>
+                  <span v-else>-</span>
+                </template>
+              </el-table-column>
               <el-table-column prop="cropType" :label="$t('seed.c1Certificate.columns.cropType')" width="120"
                 align="center">
                 <template #default="{ row }">
@@ -58,7 +68,11 @@
               <el-table-column prop="auditor" :label="$t('seed.c1Certificate.columns.auditor')" width="120"
                 align="center" />
               <el-table-column prop="auditorOrgName" :label="$t('seed.c1Certificate.columns.auditorOrg')"
-                min-width="150" show-overflow-tooltip />
+                min-width="150" show-overflow-tooltip>
+                <template #default="{ row }">
+                  {{ formatI18nText(row.auditorOrgName) }}
+                </template>
+              </el-table-column>
               <el-table-column prop="auditTime" :label="$t('seed.c1Certificate.columns.auditTime')" width="160"
                 align="center" />
               <el-table-column prop="printCount" :label="$t('seed.c1Certificate.columns.printCount')" width="100"
@@ -113,6 +127,15 @@ v-model:current-page="pagination.current" v-model:page-size="pagination.size"
                     <span class="value">{{ item.varietyName }}</span>
                   </div>
                   <div class="info-row">
+                    <span class="label">{{ $t('research.detection.seedClass') }}</span>
+                    <span v-if="item.seedClasses?.length" class="value seed-class-tags">
+                      <el-tag v-for="seedClass in item.seedClasses" :key="seedClass" size="small" effect="light">
+                        {{ seedClass }}
+                      </el-tag>
+                    </span>
+                    <span v-else class="value">-</span>
+                  </div>
+                  <div class="info-row">
                     <span class="label">{{ $t('seed.c1Certificate.columns.startDate') }}</span>
                     <span class="value">{{ item.startDate }}</span>
                   </div>
@@ -153,12 +176,13 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getApprovedC1BatchList, recordC1BatchPrint } from '@/api/c1BreedingBatch'
+import { getApprovedDetectionCertificateList } from '@/api/detection'
 import { useDict } from '@/hooks/useDict'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
+import { parseI18nValue } from '@/utils/i18nHelper'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 使用 useDict hook 获取字典数据
 const { options, getLabelByValue, loading: dictLoading } = useDict(['crop_type'])
@@ -194,6 +218,8 @@ const hasMore = computed(() => {
   return tableData.value.length < total.value
 })
 
+const formatI18nText = (value) => parseI18nValue(value, locale.value, value || '-')
+
 // 处理日期范围变化
 const handleDateChange = (value) => {
   if (value && value.length === 2) {
@@ -214,7 +240,7 @@ const loadData = async () => {
       pageNum: pagination.current,
       pageSize: pagination.size
     }
-    const res = await getApprovedC1BatchList(params)
+    const res = await getApprovedDetectionCertificateList(params)
     if (res.code === 200) {
       tableData.value = res.data?.list || []
       total.value = res.data?.total || 0
@@ -264,23 +290,18 @@ const loadMore = () => {
 
 // 查看详情
 const handleView = (row) => {
-  router.push(`/research/c1-breeding-batch/detail/${row.id}?readonly=true`)
+  router.push(`/research/detection-audit/form/${encodeURIComponent(row.batchId)}?mode=view&from=certificate`)
 }
 
 // 打印证书
 const handlePrint = async (row) => {
   try {
-    // 记录打印次数
-    await recordC1BatchPrint(row.id)
-    
     // 在新窗口打开打印页面
     const isDev = import.meta.env.DEV
-    const printUrlDev = `${window.location.origin}/#/print/seed/c1-breeding-certificate/${row.id}`
-    const printUrl = `${window.location.origin}${import.meta.env.VITE_APP_AGRICULTURE_BASE_URL}/#/print/seed/c1-breeding-certificate/${row.id}`
+    const encodedBatchId = encodeURIComponent(row.batchId)
+    const printUrlDev = `${window.location.origin}/#/print/seed/c1-breeding-certificate/${encodedBatchId}`
+    const printUrl = `${window.location.origin}${import.meta.env.VITE_APP_AGRICULTURE_BASE_URL}/#/print/seed/c1-breeding-certificate/${encodedBatchId}`
     window.open(isDev ? printUrlDev : printUrl, '_blank', 'width=900,height=800')
-    
-    // 刷新列表更新打印次数
-    loadData()
   } catch (error) {
     console.error('Print error:', error)
   }
@@ -322,6 +343,13 @@ onMounted(() => {
       white-space: nowrap;
     }
   }
+}
+
+.seed-class-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
 }
 
 .pagination-wrapper {

@@ -61,7 +61,9 @@ export default {
 
   // 批次选择器
   batchSelector: {
-    basicBatches: '育种家种子批次',
+    breederBatches: '育种家种子批次',
+    preBasicBatches: '原原种批次',
+    basicBatches: '原种批次',
     c1Batches: 'C1种子批次',
     searchPlaceholder: '搜索批次编号或品种名称...',
     noBatches: '暂无批次数据',
