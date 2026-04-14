@@ -36,8 +36,10 @@
                       @change="handleCropTypeChange" 
                       :disabled="isReadOnly"
                       v-loading="dictLoading"
+                      filterable
+                      clearable
                     >
-                      <el-option v-for="item in cropTypeSelectOptions" :key="item.value" :label="item.label" :value="item.value" />
+                      <el-option v-for="item in cropTypeOptionsData" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -210,11 +212,36 @@ const router = useRouter()
 const { t } = useI18n()
 
 // 使用 useDict hook 获取字典数据
-const { options, getLabelByValue, loading: dictLoading } = useDict([
+const { options, loading: dictLoading } = useDict([
   'crop_type',
+  'inventory_sub_category',
   'flow_status'
 ])
-const cropTypeSelectOptions = computed(() => options.value.crop_type || [])
+
+const cropTypeOptionsData = computed(() => {
+  const subCategories = options.value.inventory_sub_category || []
+  const cropTypes = options.value.crop_type || []
+  
+  // Combine potential sources
+  const allOptions = [...subCategories, ...cropTypes]
+  
+  const filtered = allOptions.filter(item => {
+    const remark = String(item.remark || '').toUpperCase()
+    const label = String(item.label || '').toUpperCase()
+    return remark === 'SEED' || remark === 'IN01' || remark.includes('SEED') || label.includes('SEED') || label.includes('种子')
+  })
+  
+  // Deduplicate by value
+  const seen = new Set()
+  return filtered.filter(item => {
+    if (seen.has(item.value)) return false
+    seen.add(item.value)
+    return true
+  }).map(item => ({
+    label: item.label,
+    value: item.value
+  }))
+})
 
 const formRef = ref(null)
 const loading = ref(false)
@@ -225,50 +252,30 @@ const isEdit = computed(() => !!route.params.dataId)
 
 // 根据路由路径和参数判断页面模式
 const pageMode = computed(() => {
-  // 优先使用 query 参数
-  if (route.query.mode) {
-    return route.query.mode
-  }
-  // 根据路由路径判断
-  if (route.path.includes('/audit/')) {
-    return 'audit'
-  }
-  if (route.path.includes('/detail/')) {
-    return 'view'
-  }
-  // 默认逻辑
+  if (route.query.mode) return route.query.mode
+  if (route.path.includes('/audit/')) return 'audit'
+  if (route.path.includes('/detail/')) return 'view'
   return isEdit.value ? 'edit' : 'add'
 })
 
 const isReadOnly = computed(() => pageMode.value === 'audit' || pageMode.value === 'view')
-
 const showMetadataInfo = computed(() => false)
 
 // 页面标题
 const pageTitle = computed(() => {
   switch (pageMode.value) {
-    case 'audit':
-      return t('research.breedingData.batch.audit.title')
-    case 'view':
-      return t('research.breedingData.batch.detail')
-    case 'edit':
-      return t('research.breedingData.batch.edit')
-    default:
-      return t('research.breedingData.batch.add')
+    case 'audit': return t('research.breedingData.batch.audit.title')
+    case 'view': return t('research.breedingData.batch.detail')
+    case 'edit': return t('research.breedingData.batch.edit')
+    default: return t('research.breedingData.batch.add')
   }
 })
 
-// 控制工作流信息部分的显示：仅在非草稿和非新建状态下显示
 const showWorkflowInfo = computed(() => {
-  // 新建模式下不显示
-  if (!isEdit.value && pageMode.value === 'add') {
-    return false
-  }
-  // 草稿状态(S0)和作废状态(S10)不显示
+  if (!isEdit.value && pageMode.value === 'add') return false
   return !['S0', 'S10'].includes(formData.workflowStatus)
 })
 
-// 审批历史记录
 const approvalHistory = ref([])
 
 const formData = reactive({
@@ -295,7 +302,6 @@ const formData = reactive({
 
 const rules = {
   cropType: [{ required: true, message: t('research.breedingData.batch.placeholder.cropType'), trigger: 'change' }],
-  varietyCode: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyCode'), trigger: 'blur' }],
   varietyName: [{ required: true, message: t('research.breedingData.batch.placeholder.varietyName'), trigger: 'blur' }],
   breedingMethod: [{ required: true, message: t('research.breedingData.batch.placeholder.breedingMethod'), trigger: 'change' }],
   batchName: [{ required: true, message: t('research.breedingData.batch.placeholder.batchName'), trigger: 'blur' }],
@@ -318,11 +324,9 @@ const rules = {
       trigger: 'change'
     }
   ],
-  workflowStatus: [{ required: true, message: t('research.breedingData.batch.placeholder.workflowStatus'), trigger: 'change' }],
   germplasmSource: [{ required: true, message: t('research.breedingData.batch.placeholder.germplasmSource'), trigger: 'change' }],
   parentalSeedSource: [{ required: true, message: t('research.breedingData.batch.placeholder.parentalSeedSource'), trigger: 'blur' }],
   objective: [{ required: true, message: t('research.breedingData.batch.placeholder.objective'), trigger: 'blur' }],
-  status: [{ required: true, message: t('research.breedingData.batch.placeholder.status'), trigger: 'change' }],
   approvalComment: [{ required: true, message: t('research.breedingData.batch.placeholder.approvalComment'), trigger: 'blur' }]
 }
 
@@ -336,10 +340,10 @@ const breedingMethodOptions = [
 
 const germplasmSourceOptions = [
   { label: 'Ethiopian', value: 'Ethiopian' },
-  { label: 'International Center for Agricultural Research in the Dry Areas (ICARDA)', value: 'ICARDA' },
-  { label: 'International Maize and Wheat Improvement Center (CIMMYT)', value: 'CIMMYT' },
-  { label: 'International Rice Research Institute (IRRI)', value: 'IRRI' },
-  { label: 'International Institute of Tropical Agriculture (IITA)', value: 'IITA' },
+  { label: 'ICARDA', value: 'ICARDA' },
+  { label: 'CIMMYT', value: 'CIMMYT' },
+  { label: 'IRRI', value: 'IRRI' },
+  { label: 'IITA', value: 'IITA' },
   { label: 'World Bank', value: 'World Bank' },
   { label: 'CGIAR', value: 'CGIAR' },
   { label: 'FAO', value: 'FAO' },
@@ -354,88 +358,28 @@ const statusOptions = [
 
 const getActionButtons = () => {
   const mode = pageMode.value
-
-  // 新建/编辑模式
-  if (mode === 'add' || mode === 'edit') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'primary', label: 'save', action: 'save' }
-    ]
-  }
-
-  // 审批模式
-  if (mode === 'audit') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'success', label: 'approve', action: 'approve' },
-      { type: 'danger', label: 'reject', action: 'reject' }
-    ]
-  }
-
-  // 查看模式
-  if (mode === 'view') {
-    return [
-      { type: '', label: 'cancel', action: 'cancel' },
-      { type: 'primary', label: 'archive', action: 'archive' },
-      { type: 'danger', label: 'void', action: 'cancelBatch' }
-    ]
-  }
-
-  // 默认按钮
-  return [
-    { type: '', label: 'cancel', action: 'cancel' },
-    { type: 'primary', label: 'save', action: 'save' }
-  ]
+  if (mode === 'add' || mode === 'edit') return [{ type: '', label: 'cancel', action: 'cancel' }, { type: 'primary', label: 'save', action: 'save' }]
+  if (mode === 'audit') return [{ type: '', label: 'cancel', action: 'cancel' }, { type: 'success', label: 'approve', action: 'approve' }, { type: 'danger', label: 'reject', action: 'reject' }]
+  if (mode === 'view') return [{ type: '', label: 'cancel', action: 'cancel' }, { type: 'primary', label: 'archive', action: 'archive' }, { type: 'danger', label: 'void', action: 'cancelBatch' }]
+  return [{ type: '', label: 'cancel', action: 'cancel' }, { type: 'primary', label: 'save', action: 'save' }]
 }
 
 const handleAction = (action) => {
   switch (action) {
-    case 'cancel':
-      goBack()
-      break
-    case 'save':
-      handleSubmit()
-      break
-    case 'submit':
-      handleSubmitForAudit()
-      break
-    case 'approve':
-      handleApprove()
-      break
-    case 'reject':
-      handleReject()
-      break
-    case 'archive':
-      handleArchive()
-      break
-    case 'cancelBatch':
-      handleCancelBatch()
-      break
-  }
-}
-
-const handleSubmitForAudit = async () => {
-  try {
-    await submitForAudit(formData.dataId)
-    ElMessage.success(t('research.breedingData.batch.submitForAuditSuccess'))
-    goBack()
-  } catch (error) {
-    ElMessage.error(t('research.breedingData.batch.submitForAuditError'))
+    case 'cancel': goBack(); break
+    case 'save': handleSubmit(); break
+    case 'approve': handleApprove(); break
+    case 'reject': handleReject(); break
+    case 'archive': handleArchive(); break
+    case 'cancelBatch': handleCancelBatch(); break
   }
 }
 
 const handleApprove = async () => {
   const valid = await formRef.value.validateField('approvalComment').catch(() => false)
   if (!valid) return
-
   try {
-    const breedingBatchDTO = {
-      ...formData,
-      approvalComment: formData.approvalComment ? {
-        comment: formData.approvalComment
-      } : null
-    }
-    
+    const breedingBatchDTO = { ...formData, approvalComment: formData.approvalComment ? { comment: formData.approvalComment } : null }
     await approveBatch(breedingBatchDTO)
     ElMessage.success(t('research.breedingData.batch.approveSuccess'))
     goBack()
@@ -447,15 +391,8 @@ const handleApprove = async () => {
 const handleReject = async () => {
   const valid = await formRef.value.validateField('approvalComment').catch(() => false)
   if (!valid) return
-
   try {
-    const breedingBatchDTO = {
-      ...formData,
-      approvalComment: formData.approvalComment ? {
-        comment: formData.approvalComment
-      } : null
-    }
-    
+    const breedingBatchDTO = { ...formData, approvalComment: formData.approvalComment ? { comment: formData.approvalComment } : null }
     await rejectBatch(breedingBatchDTO)
     ElMessage.success(t('research.breedingData.batch.rejectSuccess'))
     goBack()
@@ -488,33 +425,21 @@ const getInfo = async () => {
   if (!isEdit.value) {
     formData.status = 'Ongoing'
     formData.workflowStatus = 'S0'
-    
-    if (userStore.userInfo && userStore.userInfo.user) {
-      const user = userStore.userInfo.user
-      formData.createBy = user.name || ''
-    }
-    
+    if (userStore.userInfo && userStore.userInfo.user) formData.createBy = userStore.userInfo.user.name || ''
     const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    const hours = String(now.getHours()).padStart(2, '0')
-    const minutes = String(now.getMinutes()).padStart(2, '0')
-    const seconds = String(now.getSeconds()).padStart(2, '0')
-    formData.createTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-    
+    formData.createTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
     return
   }
-  
   loading.value = true
   try {
     const res = await getBreedingBatchInfo(route.params.dataId)
     Object.assign(formData, res.data)
-    formData.cropType = resolveCropTypeValue(cropTypeSelectOptions.value, res.data.cropType || '')
-    if (formData.year) {
-      formData.year = String(formData.year)
-    }
-    
+    // 根据原始逻辑尝试解析 cropType
+    const cropTypeRaw = res.data.cropType || ''
+    // 这里如果 cropTypeOptionsData 还没加载完，可能解析不出 value，先保留原始值
+    formData.cropType = cropTypeRaw
+
+    if (formData.year) formData.year = String(formData.year)
     if (res.data.approvalComments) {
       approvalHistory.value = res.data.approvalComments.map(comment => ({
         approver: comment.approverName,
@@ -522,20 +447,9 @@ const getInfo = async () => {
         comment: comment.comment
       }))
     }
-    
-    if (userStore.userInfo && userStore.userInfo.user) {
-      const user = userStore.userInfo.user
-      formData.updateBy = user.name || ''
-    }
-    
+    if (userStore.userInfo && userStore.userInfo.user) formData.updateBy = userStore.userInfo.user.name || ''
     const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    const hours = String(now.getHours()).padStart(2, '0')
-    const minutes = String(now.getMinutes()).padStart(2, '0')
-    const seconds = String(now.getSeconds()).padStart(2, '0')
-    formData.updateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    formData.updateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
   } catch (error) {
     console.error('Failed to fetch details:', error)
   } finally {
@@ -546,17 +460,11 @@ const getInfo = async () => {
 const handleSubmit = async () => {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
-
   submitLoading.value = true
   try {
-    const submitData = {
-      ...formData,
-      cropType: resolveCropTypeLabel(cropTypeSelectOptions.value, formData.cropType)
-    }
-    if (submitData.year) {
-      submitData.year = parseInt(submitData.year)
-    }
-
+    const cropTypeLabel = cropTypeOptionsData.value.find(o => o.value === formData.cropType)?.label || formData.cropType
+    const submitData = { ...formData, cropType: cropTypeLabel }
+    if (submitData.year) submitData.year = parseInt(submitData.year)
     if (isEdit.value) {
       await editBreedingBatch(submitData)
       ElMessage.success(t('research.breedingData.batch.editSuccess'))
@@ -579,35 +487,27 @@ const handleCropTypeChange = () => {
 
 const generateVarietyCode = () => {
   if (isEdit.value) return
-
   const { cropType, year } = formData
-
   if (!cropType || !year) {
     formData.varietyCode = ''
     return
   }
-
   const serial = String(Math.floor(Math.random() * 10000)).padStart(4, '0')
   formData.varietyCode = `V_${cropType}_${year}_${serial}`
 }
 
 const generateBatchId = () => {
   if (isEdit.value) return
-
   const { cropType, year } = formData
-
   if (!cropType || !year) {
     formData.batchId = ''
     return
   }
-
   const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
   formData.batchId = `B_${cropType}_${year}_${serial}`
 }
 
-const goBack = () => {
-  router.back()
-}
+const goBack = () => router.back()
 
 watch(() => formData.year, () => {
   generateBatchId()
@@ -616,11 +516,10 @@ watch(() => formData.year, () => {
 
 const disablePastYears = (date) => {
   if (!date) return false
-  const currentYear = new Date().getFullYear()
-  return date.getFullYear() < currentYear
+  return date.getFullYear() < new Date().getFullYear()
 }
 
-onMounted(async () => {
+onMounted(() => {
   getInfo()
 })
 </script>

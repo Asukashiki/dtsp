@@ -54,7 +54,7 @@ export default {
     produceBatchNameRequired: '批次名称不能为空',
     prebasicSeedBatchIdRequired: '来源原原种批次不能为空',
     timeRequired: '生产时间不能为空',
-    landIdRequired: '地块不能为空',
+    landNameRequired: '地块不能为空',
     operatorNameRequired: '操作人姓名不能为空',
     inputSeedQuantityRequired: '投入数量不能为空',
     inputSeedQuantityMin: '投入数量必须大于0'

@@ -129,22 +129,12 @@
               </el-col>
 
               <el-col :xs="24" :sm="12">
-                <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landId">
-                  <el-select
-                    v-model="formData.landId"
-                    :placeholder="$t('research.breeding.seed.production.placeholder.landName')"
-                    filterable
+                <el-form-item :label="$t('research.breeding.seed.production.form.landName')" prop="landName">
+                  <el-input
+                    v-model="formData.landName"
+                    placeholder="please input land"
                     clearable
-                    style="width: 100%"
-                    @change="handleLandChange"
-                  >
-                    <el-option
-                      v-for="land in landList"
-                      :key="land.landId"
-                      :label="land.landName"
-                      :value="land.landId"
-                    />
-                  </el-select>
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -208,7 +198,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBreedSeedProduce, getVarietyPublishList } from '@/api/breedSeed'
 import { getBreedingBatchList , getTrialBasicList} from '@/api/breedingData'
-import { getLandList } from '@/api/newFarm'
+
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel } from '@/utils/researchCropType'
 
 const { t, locale } = useI18n()
@@ -257,7 +247,6 @@ const toSeedLevelOptions = ref([{ label: 'Pre-Basic', value: 'Pre-Basic' }])
 const breedBatchList = ref([])
 const varietyList = ref([])
 const trialList = ref([])
-const landList = ref([])
 
 // 表单验证规则
 const rules = computed(() => ({
@@ -276,8 +265,8 @@ const rules = computed(() => ({
   time: [
     { required: true, message: t('research.breeding.seed.production.rules.timeRequired'), trigger: 'change' }
   ],
-  landId: [
-    { required: true, message: t('research.breeding.seed.production.rules.landNameRequired'), trigger: 'change' }
+  landName: [
+    { required: true, message: t('research.breeding.seed.production.rules.landNameRequired'), trigger: 'blur' }
   ],
   inputSeedQuantity: [
     { required: true, message: t('research.breeding.seed.production.rules.inputSeedQuantityRequired'), trigger: 'blur' },
@@ -346,20 +335,6 @@ const loadTrialData = async (batchId) => {
     console.log('Loaded trial data:', trialList.value.length, trialList.value)
   } catch (error) {
     console.error('Failed to load trial options:', error)
-  }
-}
-
-const loadLandOptions = async () => {
-  try {
-    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
-    if (res.code === 200 && res.rows) {
-      landList.value = res.rows.map(item => ({
-        landId: item.landId,
-        landName: item.landName
-      }))
-    }
-  } catch (error) {
-    console.error('Failed to load land options:', error)
   }
 }
 
@@ -459,20 +434,6 @@ const handleTrialChange = (trialId) => {
   }
 }
 
-const handleLandChange = (landId) => {
-  if (!landId) {
-    formData.landId = ''
-    formData.landName = ''
-    return
-  }
-
-  const selected = landList.value.find(item => item.landId === landId)
-  if (selected) {
-    formData.landId = selected.landId
-    formData.landName = selected.landName
-  }
-}
-
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -484,11 +445,6 @@ const handleSubmit = async () => {
       console.error('varietyName is empty, breedBatchId:', formData.breedBatchId)
       return
     }
-    if (!formData.landId) {
-      ElMessage.warning('Please select a plot first')
-      return
-    }
-
     submitting.value = true
 
     // 提交数据，包含从接口读取的完整字段
@@ -537,12 +493,10 @@ onMounted(() => {
     cropTypeOptions.value = options
     loadBatchOptions()
     loadVarietyList()
-    loadLandOptions()
   }).catch((error) => {
     console.error('Failed to load crop type options:', error)
     loadBatchOptions()
     loadVarietyList()
-    loadLandOptions()
   })
 })
 </script>

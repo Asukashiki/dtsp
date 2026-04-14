@@ -47,31 +47,7 @@
           </div>
         </div>
 
-        <!-- Audit Information -->
-        <div class="info-card">
-          <div class="card-header">
-            <div class="card-title">
-              <i class="ri-file-info-line"></i>
-              <span>Audit Information</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <el-descriptions :column="2" border>
-              <el-descriptions-item label="Workflow Status">
-                <el-tag :type="getStatusType(detailData.workflowStatus || detailData.auditStatus || 'S1')">
-                  {{ getLabelByValue('flow_status', detailData.workflowStatus || detailData.auditStatus || 'S1') }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="Auditor (audit_by)">{{ detailData.auditBy || detailData.auditor || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Audit Time (audit_time)">{{ formatDateTime(detailData.auditTime || detailData.auditedDatetime) }}</el-descriptions-item>
-              <el-descriptions-item label="Audit Remark (audit_remark)" :span="2">{{ detailData.auditRemark || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Creator">{{ detailData.creator || detailData.createBy || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Created Time">{{ formatDateTime(detailData.createTime) }}</el-descriptions-item>
-              <el-descriptions-item label="Modifier">{{ detailData.modifier || detailData.updateBy || '-' }}</el-descriptions-item>
-              <el-descriptions-item label="Modified Time">{{ formatDateTime(detailData.updateTime) }}</el-descriptions-item>
-            </el-descriptions>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>
@@ -81,25 +57,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getFarmingRecordInfo } from '@/api/breedingData'
-import { useDict } from '@/hooks/useDict'
+
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detailData = ref({})
-const { options: dictOptions, getLabelByValue } = useDict('flow_status')
 
-// Determine tag type based on status value
-const getStatusType = (status) => {
-  const typeMap = {
-    'S0': 'info',     // Draft
-    'S1': 'warning',  // Pending Approval
-    'S2': 'success',  // Approved
-    'S3': 'danger',   // Rejected
-    'S10': 'info'     // Invalid
-  }
-  return typeMap[status] || 'warning'
-}
+
+
 
 // Format date time to 'YYYY-MM-DD HH:mm:ss'
 const formatDateTime = (date) => {

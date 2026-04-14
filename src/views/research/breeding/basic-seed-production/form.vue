@@ -75,20 +75,11 @@
 
               <el-row :gutter="20">
                 <el-col :xs="24" :sm="12">
-                  <el-form-item :label="$t('basicSeedProduction.form.landName')" prop="landId">
-                    <el-select
-                      v-model="formData.landId"
-                      :placeholder="$t('basicSeedProduction.placeholder.landName')"
-                      filterable
-                      clearable
-                      style="width: 100%"
-                      @change="handleLandChange">
-                      <el-option
-                        v-for="land in landList"
-                        :key="land.landId"
-                        :label="land.landName"
-                        :value="land.landId" />
-                    </el-select>
+                  <el-form-item :label="$t('basicSeedProduction.form.landName')" prop="landName">
+                    <el-input
+                      v-model="formData.landName"
+                      placeholder="please input land"
+                      clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -128,7 +119,6 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { addBasicSeedProduce } from '@/api/basicSeed'
 import { getPrebasicSeedProduceList } from '@/api/prebasicSeed'
-import { getLandList } from '@/api/newFarm'
 import { getUserInfo } from '@/utils/auth'
 import { loadSeedCropTypeOptions, resolveCropTypeValue, resolveCropTypeLabel, getCropTypeDisplay } from '@/utils/researchCropType'
 
@@ -180,7 +170,6 @@ const formData = reactive({
 
 // 下拉选项
 const prebasicSeedBatchList = ref([])
-const landList = ref([])
 const remainingQuantity = ref(null)
 
 // 计算属性：作物类型显示 label
@@ -199,8 +188,8 @@ const rules = computed(() => ({
   time: [
     { required: true, message: t('basicSeedProduction.rules.timeRequired'), trigger: 'change' }
   ],
-  landId: [
-    { required: true, message: t('basicSeedProduction.rules.landIdRequired'), trigger: 'change' }
+  landName: [
+    { required: true, message: t('basicSeedProduction.rules.landNameRequired'), trigger: 'blur' }
   ],
   operatorName: [
     { required: true, message: t('basicSeedProduction.rules.operatorNameRequired'), trigger: 'blur' }
@@ -225,22 +214,6 @@ const loadPrebasicSeedBatchOptions = async () => {
     console.log('Loaded prebasic seed batches:', prebasicSeedBatchList.value.length)
   } catch (error) {
     console.error('Failed to load prebasic seed batch options:', error)
-  }
-}
-
-// 加载地块列表
-const loadLandList = async () => {
-  try {
-    const res = await getLandList({ pageNum: 1, pageSize: 1000 })
-    if (res.code === 200 && res.rows) {
-      landList.value = res.rows.map(item => ({
-        landId: item.landId,
-        landName: item.landName
-      }))
-      console.log('Loaded lands:', landList.value.length)
-    }
-  } catch (error) {
-    console.error('Failed to load land list:', error)
   }
 }
 
@@ -301,23 +274,6 @@ const handleBatchChange = async (batchId) => {
   }
 }
 
-// 地块选择变化时，记录地块名称
-const handleLandChange = (landId) => {
-  console.log('handleLandChange called with:', landId)
-
-  if (!landId) {
-    formData.landId = ''
-    formData.landName = ''
-    return
-  }
-
-  const selected = landList.value.find(item => item.landId === landId)
-  if (selected) {
-    formData.landId = selected.landId
-    formData.landName = selected.landName
-  }
-}
-
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -326,10 +282,6 @@ const handleSubmit = async () => {
     // 验证必填的ID字段
     if (!formData.prebasicSeedBatchId) {
       ElMessage.warning('Please select a pre-basic seed batch')
-      return
-    }
-    if (!formData.landId) {
-      ElMessage.warning('Please select a land')
       return
     }
     if (!formData.operatorName) {
@@ -407,11 +359,9 @@ onMounted(() => {
   loadSeedCropTypeOptions(locale.value).then((options) => {
     cropTypeOptions.value = options
     loadPrebasicSeedBatchOptions()
-    loadLandList()
   }).catch((error) => {
     console.error('Failed to load crop type options:', error)
     loadPrebasicSeedBatchOptions()
-    loadLandList()
   })
 })
 </script>

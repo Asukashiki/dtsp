@@ -54,7 +54,7 @@ export default {
     produceBatchNameRequired: 'Batch name is required',
     prebasicSeedBatchIdRequired: 'Source pre-basic batch is required',
     timeRequired: 'Production time is required',
-    landIdRequired: 'Land is required',
+    landNameRequired: 'Land is required',
     operatorNameRequired: 'Operator name is required',
     inputSeedQuantityRequired: 'Input quantity is required',
     inputSeedQuantityMin: 'Input quantity must be greater than 0'

@@ -76,7 +76,7 @@
                   <el-form-item :label="$t('prebasicSeedProduction.form.landName')" prop="landName">
                     <el-input
                       v-model="formData.landName"
-                      :placeholder="$t('prebasicSeedProduction.placeholder.landName')"
+                      placeholder="please input land"
                       clearable
                       style="width: 100%" />
                   </el-form-item>
