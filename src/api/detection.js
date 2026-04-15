@@ -257,6 +257,18 @@ const normalizeCertificateDateTime = (value) => {
   return typeof value === 'string' && value.includes('T') ? value.replace('T', ' ') : value
 }
 
+export const getCertificateIdMapByBatchIds = (batchIds = []) => agricultureRequest({
+  url: '/seed/batch/certificate-id-map',
+  method: 'post',
+  data: batchIds
+})
+
+export const getCertificateIdByBatchId = (batchId, params = {}) => agricultureRequest({
+  url: `/seed/batch/certificate-id/${encodeURIComponent(batchId)}`,
+  method: 'get',
+  params
+})
+
 const buildCertificateSourceMap = async () => {
   const [detectionRes, breederRes, prebasicRes, basicRes] = await Promise.allSettled([
     agricultureRequest({
@@ -347,7 +359,7 @@ const mergeDetectionCertificates = (trackingList = [], testList = [], sourceMap 
   const ensureRow = (batchId) => {
     if (!mergedMap.has(batchId)) {
       mergedMap.set(batchId, {
-        id: batchId,
+        id: '',
         batchId,
         varietyName: '',
         cropType: '',
@@ -374,6 +386,9 @@ const mergeDetectionCertificates = (trackingList = [], testList = [], sourceMap 
 
   const updateCommonFields = (row, record, type) => {
     const source = sourceMap.get(record.batchId)
+    if (!row.id && (record.id || record.dataId)) {
+      row.id = record.id || record.dataId
+    }
     if (record.seedClass && !row.seedClasses.includes(record.seedClass)) {
       row.seedClasses.push(record.seedClass)
     }
@@ -403,7 +418,10 @@ const mergeDetectionCertificates = (trackingList = [], testList = [], sourceMap 
     updateCommonFields(row, record, 'test')
   })
 
-  return Array.from(mergedMap.values()).sort((a, b) => {
+  return Array.from(mergedMap.values()).map((row) => ({
+    ...row,
+    id: row.id || row.batchId
+  })).sort((a, b) => {
     const timeA = a.auditTime ? new Date(a.auditTime).getTime() : 0
     const timeB = b.auditTime ? new Date(b.auditTime).getTime() : 0
     return timeB - timeA
@@ -430,6 +448,16 @@ export const getApprovedDetectionCertificateList = async (params = {}) => {
   const mergedList = await Promise.all(
     mergeDetectionCertificates(trackingList, testList, sourceMap).map(item => fillCertificateDetailFromSource(item))
   )
+  const batchIds = mergedList.map(item => item.batchId).filter(Boolean)
+  const certMapRes = await getCertificateIdMapByBatchIds(batchIds)
+  const certificateIdMap = certMapRes.code === 200 && certMapRes.data ? certMapRes.data : {}
+  const listWithCertificateId = mergedList.map((item) => {
+    const resolvedCertificateId = certificateIdMap[item.batchId] || ''
+    return {
+      ...item,
+      certificateId: resolvedCertificateId
+    }
+  })
   const keyword = params.keyword?.trim().toLowerCase()
   const batchId = params.batchId?.trim()
   const varietyName = params.varietyName?.trim().toLowerCase()
@@ -437,9 +465,11 @@ export const getApprovedDetectionCertificateList = async (params = {}) => {
   const startDateBegin = params.startDateBegin
   const startDateEnd = params.startDateEnd
 
-  const filteredList = mergedList.filter((item) => {
+  const filteredList = listWithCertificateId.filter((item) => {
     const matchBatchId = !batchId || item.batchId === batchId
-    const matchKeyword = !keyword || item.batchId?.toLowerCase().includes(keyword)
+    const matchKeyword = !keyword
+      || item.batchId?.toLowerCase().includes(keyword)
+      || item.certificateId?.toLowerCase().includes(keyword)
     const matchVariety = !varietyName || item.varietyName?.toLowerCase().includes(varietyName)
     const matchCropType = !cropType || item.cropType === cropType
     const matchStartBegin = !startDateBegin || (item.startDate && item.startDate >= startDateBegin)
@@ -464,11 +494,17 @@ export const getApprovedDetectionCertificateList = async (params = {}) => {
 }
 
 export const getApprovedDetectionCertificateByBatchId = async (batchId) => {
-  const res = await getApprovedDetectionCertificateList({ batchId, pageNum: 1, pageSize: 1000 })
-  const record = (res.data?.list || []).find(item => item.batchId === batchId)
+  const [res, certRes] = await Promise.all([
+    getApprovedDetectionCertificateList({ batchId, pageNum: 1, pageSize: 1000 }),
+    getCertificateIdByBatchId(batchId)
+  ])
+  const record = (res.data?.list || []).find(item => item.batchId === batchId) || null
+  if (record && certRes.code === 200) {
+    record.certificateId = certRes.data?.certificateId || record.certificateId || ''
+  }
   return {
     code: 200,
-    data: record || null
+    data: record
   }
 }
 

@@ -63,12 +63,10 @@
                 </el-col>
                 <el-col :xs="24" :sm="12">
                   <el-form-item :label="$t('research.multiplierReport.certificateId')">
-                    <el-select v-model="formData.certificateId" filterable clearable
-                      :placeholder="$t('common.pleaseSelect')" style="width:100%"
-                      :loading="certLoading" allow-create>
-                      <el-option v-for="cert in certificationList" :key="cert.dataId"
-                        :label="`${cert.authId || cert.dataId} - ${cert.varietyName || ''}`" :value="cert.authId || cert.dataId" />
-                    </el-select>
+                    <el-input
+                      v-model="formData.certificateId"
+                      :placeholder="$t('common.pleaseSelect')"
+                      readonly />
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12">
@@ -202,8 +200,8 @@ import { ElMessage } from 'element-plus'
 import { getMultiplierReport, addMultiplierReport, updateMultiplierReport } from '@/api/multiplierReport'
 import { getApprovedC1BatchList, getC1BreedingBatchById } from '@/api/c1BreedingBatch'
 import { getBreedSeedDistributeList, getBreedSeedDistributeDetail } from '@/api/breedSeed'
+import { getCertificateIdByBatchId } from '@/api/detection'
 import { getOrganizationList } from '@/api/organization'
-import { getBreedingCertificationList } from '@/api/seed'
 import { listProductManage } from '@/api/productManage'
 import { getDicts } from '@/api/system/dict'
 import { parseI18nValue } from '@/utils/i18nHelper'
@@ -231,8 +229,6 @@ const organizationList = ref([])
 const orgLoading = ref(false)
 const distributionList = ref([])
 const distLoading = ref(false)
-const certificationList = ref([])
-const certLoading = ref(false)
 
 const seedMainCategoryValue = ref('SEED')
 const multiplierIdDisabled = ref(false)
@@ -458,14 +454,24 @@ const loadDistributions = async () => {
   finally { distLoading.value = false }
 }
 
-// 加载证书列表
-const loadCertifications = async () => {
-  certLoading.value = true
+const fillCertificateIdByProduceBatchId = async (produceBatchId, seedClass = '', cropType = '') => {
+  if (!produceBatchId) {
+    formData.value.certificateId = ''
+    return
+  }
   try {
-    const res = await getBreedingCertificationList({ auditResult: 'approved' })
-    certificationList.value = extractList(res)
-  } catch (e) { console.error(e) }
-  finally { certLoading.value = false }
+    const res = await getCertificateIdByBatchId(produceBatchId, {
+      seedClass,
+      cropType
+    })
+    if (res.code === 200) {
+      formData.value.certificateId = res.data?.certificateId || ''
+      return
+    }
+  } catch (e) {
+    console.error('Failed to resolve certificate id by produceBatchId:', e)
+  }
+  formData.value.certificateId = ''
 }
 
 // 从批次数据填充表单
@@ -477,7 +483,7 @@ const fillFromBatch = (batch) => {
   formData.value.harvestDate = batch.endDate || ''
   formData.value.producedSeedQuantity = batch.expectedYield || batch.actualYield || null
   formData.value.seedClassReceived = batch.breedingLevel || 'C1'
-  formData.value.certificateId = batch.batchId || ''
+  formData.value.certificateId = ''
   formData.value.multiplierId = batch.orgId || ''
   formData.value.farmId = batch.orgId || ''
 }
@@ -514,6 +520,7 @@ const handleOrgChange = (orgId) => {
 // 选择分发记录后自动填充相关字段
 const handleDistributionChange = async (distributeId) => {
   if (!distributeId) {
+    formData.value.certificateId = ''
     formData.value.seedClassReceived = ''
     formData.value.cropType = ''
     formData.value.varietyName = ''
@@ -544,6 +551,7 @@ const handleDistributionChange = async (distributeId) => {
   // 从 detailList 第一条记录获取 varietyName 和 cropType
   if (dist.detailList && dist.detailList.length > 0) {
     const firstDetail = dist.detailList[0]
+    await fillCertificateIdByProduceBatchId(firstDetail.produceBatchId, dist.toSeedLevel || '', firstDetail.cropType || '')
     if (firstDetail.varietyName) {
       formData.value.varietyName = firstDetail.varietyName
     }
@@ -551,6 +559,8 @@ const handleDistributionChange = async (distributeId) => {
       formData.value.cropType = resolveCropTypeValue(firstDetail.cropType)
       await loadVarietyOptions(formData.value.cropType, true)
     }
+  } else {
+    formData.value.certificateId = ''
   }
 }
 
@@ -603,7 +613,6 @@ onMounted(async () => {
   await loadCropTypeOptions()
   loadOrganizations()
   loadDistributions()
-  loadCertifications()
   if (!isEdit.value) {
     loadApprovedBatches()
   }
