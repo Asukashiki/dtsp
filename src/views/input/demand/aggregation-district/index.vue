@@ -1080,11 +1080,13 @@ const handleSubmit = async (row) => {
     )
 
     submitting.value = true
-    // 区级汇聚提交: 传递sourceCode和summaryId
+    // 区级汇聚提交
     const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
+      targetCode: row.targetCode,
       summaryId: row.id,
-      year: row.year
+      year: row.year,
+      level: '1'
     })
 
     if (res.code === 200) {

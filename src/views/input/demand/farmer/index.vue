@@ -253,6 +253,8 @@ const loading = ref(false)
 const tableData = ref([])
 const selectedRows = ref([])
 const activeTab = ref('all')
+const currentYear = new Date().getFullYear().toString()
+const KEBELE_LEVEL = '4'
 
 const searchForm = reactive({
   farmerName: '',
@@ -406,6 +408,36 @@ const rowSelectable = (row) => {
   return row.status === '0' || row.status === '3'
 }
 
+const getSubmitSourceCode = (row) => row?.kebele || ''
+
+const getCurrentUser = () => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    return {
+      currentUserId: userInfo.userId || userInfo.id || userInfo?.userInfo?.user?.id || userInfo?.user?.id || '',
+      currentUserName: userInfo.nickName || userInfo.userName || userInfo?.userInfo?.user?.userName || userInfo?.user?.userName || ''
+    }
+  } catch (error) {
+    return {
+      currentUserId: '',
+      currentUserName: ''
+    }
+  }
+}
+
+const buildSubmitPayload = (rows) => {
+  const sourceCode = getSubmitSourceCode(rows[0])
+  const currentUser = getCurrentUser()
+
+  return {
+    ids: rows.map(row => row.id),
+    sourceCode,
+    level: KEBELE_LEVEL,
+    year: currentYear,
+    ...currentUser
+  }
+}
+
 // 表格选择变化
 const handleSelectionChange = (selection) => {
   selectedRows.value = selection
@@ -434,7 +466,13 @@ const handleSubmit = async (row) => {
         type: 'warning'
       }
     )
-    const res = await submitForAudit([row.id])
+    const sourceCode = getSubmitSourceCode(row)
+    if (!sourceCode) {
+      ElMessage.error(t('farmerDemand.rules.kebeleRequired'))
+      return
+    }
+
+    const res = await submitForAudit(buildSubmitPayload([row]))
     if (res.code === 200) {
       const result = res.data
       if (result.successCount > 0) {
@@ -472,11 +510,35 @@ const handleBatchSubmit = async () => {
       }
     )
 
-    const ids = selectedRows.value.map(row => row.id)
-    const res = await submitForAudit(ids)
+    const rowsWithoutKebele = selectedRows.value.filter(row => !getSubmitSourceCode(row))
+    if (rowsWithoutKebele.length > 0) {
+      ElMessage.error(t('farmerDemand.rules.kebeleRequired'))
+      return
+    }
 
-    if (res.code === 200) {
-      const result = res.data
+    const groupedRows = selectedRows.value.reduce((groups, row) => {
+      const sourceCode = getSubmitSourceCode(row)
+      if (!groups[sourceCode]) {
+        groups[sourceCode] = []
+      }
+      groups[sourceCode].push(row)
+      return groups
+    }, {})
+
+    const responses = await Promise.all(
+      Object.values(groupedRows).map(rows => submitForAudit(buildSubmitPayload(rows)))
+    )
+
+    const allSuccess = responses.every(res => res.code === 200)
+
+    if (allSuccess) {
+      const result = responses.reduce((total, res) => {
+        const data = res.data || {}
+        total.successCount += data.successCount || 0
+        total.failCount += data.failCount || 0
+        return total
+      }, { successCount: 0, failCount: 0 })
+
       if (result.successCount > 0) {
         ElMessage.success(
           t('farmerDemand.batchSubmitResult', {
@@ -490,7 +552,8 @@ const handleBatchSubmit = async () => {
         ElMessage.error(t('farmerDemand.submitFailed'))
       }
     } else {
-      ElMessage.error(res.msg || t('farmerDemand.submitFailed'))
+      const failedResponse = responses.find(res => res.code !== 200)
+      ElMessage.error(failedResponse?.msg || t('farmerDemand.submitFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {

@@ -61,6 +61,7 @@
                         format="YYYY"
                         value-format="YYYY"
                         :placeholder="$t('farmerDemand.placeholder.year')"
+                        :disabled="isCurrentYearDisabled"
                         style="width: 100%"
                     ></el-date-picker>
                   </el-form-item>
@@ -383,6 +384,7 @@ const DEMAND_ENTRY_TYPE_BY_FARMERS = 'BY_FARMERS'
 const isAddByFarmersRoute = computed(() => route.name === 'FarmerDemandAddByFarmers')
 const isByFarmersMode = ref(false)
 const showFarmerIdentityFields = computed(() => !isByFarmersMode.value)
+const isCurrentYearDisabled = computed(() => !isEdit.value)
 
 const farmerList = ref([])
 const farmerLoading = ref(false)
@@ -821,6 +823,7 @@ const handleSubmit = async () => {
       applyDemandEntryMode(
         isAddByFarmersRoute.value ? DEMAND_ENTRY_TYPE_BY_FARMERS : DEMAND_ENTRY_TYPE_WHOLE
       )
+      formData.year = currentYear.toString()
     }
 
     if (showFarmerIdentityFields.value) {
@@ -1193,4 +1196,3 @@ onMounted(async () => {
   }
 }
 </style>
-

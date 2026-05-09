@@ -8,10 +8,12 @@
         :subtitle="$t('stateAggregation.subtitle')"
       >
         <template #actions>
+          <!--
           <el-button type="success" @click="handlePublishAll">
             <i class="ri-send-plane-line"></i>
             {{ $t('stateAggregation.actions.publishAll') }}
           </el-button>
+          -->
         </template>
       </PageHeader>
 

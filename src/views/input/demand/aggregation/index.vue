@@ -631,7 +631,9 @@ const handleSubmit = async (row) => {
     submitting.value = true
     const res = await aggregateVillageInputDemand({
       sourceCode: row.sourceCode,
+      targetCode: row.targetCode,
       year: row.year,
+      level: '3',
       demandSummaryId: row.id
     })
 

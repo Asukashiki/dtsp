@@ -36,7 +36,7 @@ export const getVillageDemandSummaryMainListSub = (params) => {
 }
 /**
  * 农资需求村级汇聚统计提交
- * @param {Object} data - 汇聚参数 { sourceCode, sourceName, targetCode, targetName, year, demandSummaryId }
+ * @param {Object} data - 汇聚参数 { sourceCode, targetCode, year, level, demandSummaryId }
  * @returns {Promise}
  */
 export const aggregateVillageInputDemand = (data) => {
@@ -116,7 +116,7 @@ export const getZoneAggregationDetail = (data) => {
 
 /**
  * 镇级汇聚提交
- * @param {Object} data - 汇聚参数 { sourceCode, summaryId }
+ * @param {Object} data - 汇聚参数 { sourceCode, targetCode, summaryId, year, level }
  * @returns {Promise}
  */
 export const aggregateTownInputDemand = (data) => {

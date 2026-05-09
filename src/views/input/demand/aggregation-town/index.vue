@@ -855,11 +855,13 @@ const handleSubmit = async (row) => {
     )
 
     submitting.value = true
-    // 镇级汇聚提交: 传递sourceCode和summaryId
+    // 镇级汇聚提交
     const res = await aggregateTownInputDemand({
       sourceCode: row.sourceCode,
+      targetCode: row.targetCode,
       summaryId: row.id,
-      year: row.year
+      year: row.year,
+      level: '2'
     })
 
     if (res.code === 200) {
