@@ -6,21 +6,10 @@ export default {
   // Actions
   actions: {
     addYear: 'Add Year',
-    publishAll: 'Publish All',
+    approve: 'Audit',
+    submit: 'Submit',
     detail: 'Detail',
     view: 'View',
-  },
-
-  // Publish All Dialog
-  publishAllDialog: {
-    title: 'Publish All Tasks',
-    year: 'Select Year',
-    yearPlaceholder: 'Please select year',
-    confirm: 'Confirm',
-    cancel: 'Cancel',
-    success: 'Tasks published successfully',
-    failed: 'Failed to publish tasks',
-    yearRequired: 'Please select a year',
   },
 
   // Table Columns
@@ -56,6 +45,13 @@ export default {
     success: 'Year record created successfully',
     failed: 'Failed to create year record',
     yearRequired: 'Please select a year',
+  },
+
+  // Submit Dialog
+  submitDialog: {
+    confirmMessage: 'Are you sure to submit aggregation data?',
+    success: 'Aggregation data submitted successfully',
+    failed: 'Failed to submit aggregation data',
   },
 
   // Detail Dialog

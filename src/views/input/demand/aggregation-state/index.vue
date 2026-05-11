@@ -7,14 +7,6 @@
         :title="$t('stateAggregation.title')"
         :subtitle="$t('stateAggregation.subtitle')"
       >
-        <template #actions>
-          <!--
-          <el-button type="success" @click="handlePublishAll">
-            <i class="ri-send-plane-line"></i>
-            {{ $t('stateAggregation.actions.publishAll') }}
-          </el-button>
-          -->
-        </template>
       </PageHeader>
 
       <!-- 内容区域 -->
@@ -77,20 +69,25 @@
                   min-width="140"
                 />
                 <el-table-column
-                    prop="submitQuantity"
-                    :label="$t('Submit Quantity')"
-                    min-width="140"
+                  prop="submitQuantity"
+                  :label="$t('Submit Quantity')"
+                  min-width="140"
+                />
+                <el-table-column
+                  prop="createTime"
+                  :label="$t('stateAggregation.columns.createTime')"
+                  min-width="160"
                 />
                 <el-table-column
                   :label="$t('stateAggregation.columns.actions')"
                   fixed="right"
-                  width="150"
+                  width="340"
                 >
                   <template #default="{ row }">
                     <ActionButtons
                       :workflow-status="mapWorkflowStatus(row.status)"
                       mode="list"
-                      :show-audit="false"
+                      :show-audit="true"
                       :custom-buttons="getMainTableButtons(row)"
                       @action="(action) => handleAction(row, action)"
                     />
@@ -124,18 +121,22 @@
                 <div class="mobile-card-body">
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('RegionName') }}:</span>
-                    <span class="value">{{ item.targetName }}</span>
+                    <span class="value">{{ item.sourceName }}</span>
                   </div>
                   <div class="mobile-card-row">
                     <span class="label">{{ $t('stateAggregation.columns.subQuantity') }}:</span>
                     <span class="value">{{ item.subQuantity }}</span>
+                  </div>
+                  <div class="mobile-card-row">
+                    <span class="label">{{ $t('stateAggregation.columns.createTime') }}:</span>
+                    <span class="value">{{ item.createTime }}</span>
                   </div>
                 </div>
                 <div class="mobile-card-footer">
                    <ActionButtons
                       :workflow-status="mapWorkflowStatus(item.status)"
                       mode="list"
-                      :show-audit="false"
+                      :show-audit="true"
                       :custom-buttons="getMainTableButtons(item)"
                       @action="(action) => handleAction(item, action)"
                     />
@@ -207,26 +208,6 @@
                     :label="$t('townAggregation.columns.subQuantity')"
                     min-width="140"
                 >
-                </el-table-column>
-                <el-table-column
-                  prop="status"
-                  :label="$t('stateAggregation.columns.status')"
-                  min-width="100"
-                >
-                  <template #default="{ row }">
-                    <el-tag v-if="row.status === '0'" type="info">
-                      {{ $t('stateAggregation.status.draft') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '1'" type="warning">
-                      {{ $t('stateAggregation.status.submited') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '2'" type="success">
-                      {{ $t('stateAggregation.status.approved') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '3'" type="danger">
-                      {{ $t('stateAggregation.status.rejected') }}
-                    </el-tag>
-                  </template>
                 </el-table-column>
                 <el-table-column
                   prop="createTime"
@@ -322,26 +303,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                  prop="status"
-                  :label="$t('stateAggregation.columns.status')"
-                  min-width="100"
-                >
-                  <template #default="{ row }">
-                    <el-tag v-if="row.status === '0'" type="info">
-                      {{ $t('stateAggregation.status.draft') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '1'" type="warning">
-                      {{ $t('stateAggregation.status.pending') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '2'" type="success">
-                      {{ $t('stateAggregation.status.approved') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '3'" type="danger">
-                      {{ $t('stateAggregation.status.rejected') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column
                   prop="createTime"
                   :label="$t('stateAggregation.columns.createTime')"
                   min-width="160"
@@ -430,26 +391,6 @@
                 >
                 </el-table-column>
                 <el-table-column
-                  prop="status"
-                  :label="$t('stateAggregation.columns.status')"
-                  min-width="100"
-                >
-                  <template #default="{ row }">
-                    <el-tag v-if="row.status === '0'" type="info">
-                      {{ $t('stateAggregation.status.draft') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '1'" type="warning">
-                      {{ $t('stateAggregation.status.pending') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '2'" type="success">
-                      {{ $t('stateAggregation.status.approved') }}
-                    </el-tag>
-                    <el-tag v-else-if="row.status === '3'" type="danger">
-                      {{ $t('stateAggregation.status.rejected') }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column
                   prop="createTime"
                   :label="$t('stateAggregation.columns.createTime')"
                   min-width="160"
@@ -499,33 +440,6 @@
       </div>
     </div>
 
-    <!-- 发布全部对话框 -->
-    <el-dialog
-      v-model="publishAllDialogVisible"
-      :title="$t('stateAggregation.publishAllDialog.title')"
-      width="600px"
-    >
-      <el-form :model="publishAllForm" :rules="publishAllRules" ref="publishAllFormRef" label-width="120px">
-        <el-form-item :label="$t('stateAggregation.publishAllDialog.year')" prop="year">
-          <el-date-picker
-            v-model="publishAllForm.year"
-            type="year"
-            :placeholder="$t('stateAggregation.publishAllDialog.yearPlaceholder')"
-            style="width: 100%"
-            value-format="YYYY"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="publishAllDialogVisible = false">
-          {{ $t('stateAggregation.publishAllDialog.cancel') }}
-        </el-button>
-        <el-button type="primary" @click="confirmPublishAll" :loading="publishSubmitting">
-          {{ $t('stateAggregation.publishAllDialog.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
-
     <!-- 汇聚明细对话框 -->
     <el-dialog
       v-model="detailDialogVisible"
@@ -563,7 +477,7 @@
           min-width="120"
         >
           <template #default="{ row }">
-            {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+            {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -579,7 +493,11 @@
           prop="totalQuantity"
           :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
-        />
+        >
+          <template #default="{ row }">
+            {{ getEffectiveQuantity(row) }}
+          </template>
+        </el-table-column>
       </el-table>
       <el-empty
         v-if="detailData.length === 0 && !detailLoading"
@@ -608,20 +526,6 @@
         </el-descriptions-item>
         <el-descriptions-item :label="$t('Zone Code')">
           {{ drillDownRecordDetail.sourceCode }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="$t('stateAggregation.columns.status')">
-          <el-tag v-if="drillDownRecordDetail.status === '0'" type="info">
-            {{ $t('stateAggregation.status.draft') }}
-          </el-tag>
-          <el-tag v-else-if="drillDownRecordDetail.status === '1'" type="warning">
-            {{ $t('stateAggregation.status.pending') }}
-          </el-tag>
-          <el-tag v-else-if="drillDownRecordDetail.status === '2'" type="success">
-            {{ $t('stateAggregation.status.approved') }}
-          </el-tag>
-          <el-tag v-else-if="drillDownRecordDetail.status === '3'" type="danger">
-            {{ $t('stateAggregation.status.rejected') }}
-          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('stateAggregation.columns.createTime')">
           {{ drillDownRecordDetail.createTime }}
@@ -661,7 +565,7 @@
             min-width="120"
           >
             <template #default="{ row }">
-              {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+              {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -677,7 +581,11 @@
             prop="totalQuantity"
             :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
             min-width="120"
-          />
+          >
+            <template #default="{ row }">
+              {{ getEffectiveQuantity(row) }}
+            </template>
+          </el-table-column>
         </el-table>
         <el-empty
           v-if="drillDownAggregationData.length === 0 && !drillDownAggregationLoading"
@@ -708,20 +616,6 @@
         </el-descriptions-item>
         <el-descriptions-item :label="$t('Woreda Code')">
           {{ drillDown2RecordDetail.sourceCode }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="$t('stateAggregation.columns.status')">
-          <el-tag v-if="drillDown2RecordDetail.status === '0'" type="info">
-            {{ $t('stateAggregation.status.draft') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown2RecordDetail.status === '1'" type="warning">
-            {{ $t('stateAggregation.status.pending') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown2RecordDetail.status === '2'" type="success">
-            {{ $t('stateAggregation.status.approved') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown2RecordDetail.status === '3'" type="danger">
-            {{ $t('stateAggregation.status.rejected') }}
-          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('stateAggregation.columns.createTime')">
           {{ drillDown2RecordDetail.createTime }}
@@ -761,7 +655,7 @@
             min-width="120"
           >
             <template #default="{ row }">
-              {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+              {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -777,7 +671,11 @@
             prop="totalQuantity"
             :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
             min-width="120"
-          />
+          >
+            <template #default="{ row }">
+              {{ getEffectiveQuantity(row) }}
+            </template>
+          </el-table-column>
         </el-table>
         <el-empty
           v-if="drillDown2AggregationData.length === 0 && !drillDown2AggregationLoading"
@@ -808,20 +706,6 @@
         </el-descriptions-item>
         <el-descriptions-item :label="$t('Kebele Code')">
           {{ drillDown3RecordDetail.sourceCode }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="$t('stateAggregation.columns.status')">
-          <el-tag v-if="drillDown3RecordDetail.status === '0'" type="info">
-            {{ $t('stateAggregation.status.draft') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown3RecordDetail.status === '1'" type="warning">
-            {{ $t('stateAggregation.status.pending') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown3RecordDetail.status === '2'" type="success">
-            {{ $t('stateAggregation.status.approved') }}
-          </el-tag>
-          <el-tag v-else-if="drillDown3RecordDetail.status === '3'" type="danger">
-            {{ $t('stateAggregation.status.rejected') }}
-          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('stateAggregation.columns.createTime')">
           {{ drillDown3RecordDetail.createTime }}
@@ -862,7 +746,7 @@
               min-width="120"
             >
               <template #default="{ row }">
-                {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+                {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
               </template>
             </el-table-column>
             <el-table-column
@@ -878,7 +762,11 @@
               prop="totalQuantity"
               :label="$t('stateAggregation.detailDialog.columns.totalQuantity')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getEffectiveQuantity(row) }}
+              </template>
+            </el-table-column>
           </el-table>
           <el-empty
             v-if="drillDown3AggregationData.length === 0 && !drillDown3AggregationLoading"
@@ -1022,8 +910,7 @@ import {
   getVillageDemandSummaryMainList,
   getVillageDemandSummaryMainListSub,
   getTownAggregationDetail,
-  distributeTask,
-  getVillageAggregationDetail, getZoneAggregationDetail
+  getVillageAggregationDetail
 } from '@/api/villageAggregation'
 import { getFarmerDemandPage } from '@/api/farmerDemand'
 import { useDict } from '@/hooks/useDict'
@@ -1045,20 +932,6 @@ const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0
-})
-
-// 发布全部对话框
-const publishAllDialogVisible = ref(false)
-const publishAllFormRef = ref(null)
-const publishSubmitting = ref(false)
-const publishAllForm = reactive({
-  year: ''
-})
-
-const publishAllRules = reactive({
-  year: [
-    { required: true, message: t('stateAggregation.publishAllDialog.yearRequired'), trigger: 'change' }
-  ]
 })
 
 // 汇聚明细对话框
@@ -1140,6 +1013,23 @@ const exportFilters = reactive({
   season: ''
 })
 
+const getSeasonLabel = (value) => {
+  const seasonMap = {
+    '0': 'Summer',
+    '1': 'Spring',
+    '2': 'Irrigation'
+  }
+  const rawValue = value ?? ''
+  return seasonMap[String(rawValue)] || getLabelByValue('agri_season', rawValue) || rawValue || '-'
+}
+
+const getEffectiveQuantity = (row) => {
+  if (row?.hasAdjustment && row.adjustedQuantity !== null && row.adjustedQuantity !== undefined) {
+    return row.adjustedQuantity
+  }
+  return row?.receivedQuantity ?? row?.totalQuantity ?? '-'
+}
+
 // 加载列表数据
 const loadData = async () => {
   loading.value = true
@@ -1166,38 +1056,12 @@ const loadData = async () => {
   }
 }
 
-// 打开发布全部对话框
-const handlePublishAll = () => {
-  publishAllForm.year = ''
-  publishAllDialogVisible.value = true
-}
-
-// 确认发布全部
-const confirmPublishAll = async () => {
-  if (!publishAllFormRef.value) return
-
-  try {
-    await publishAllFormRef.value.validate()
-
-    publishSubmitting.value = true
-    const res = await distributeTask({
-      year: publishAllForm.year
-    })
-
-    if (res.code === 200) {
-      ElMessage.success(t('stateAggregation.publishAllDialog.success'))
-      publishAllDialogVisible.value = false
-      loadData()
-    } else {
-      ElMessage.error(res.msg || t('stateAggregation.publishAllDialog.failed'))
-    }
-  } catch (error) {
-    if (error !== false) {
-      console.error('Failed to publish all:', error)
-    }
-  } finally {
-    publishSubmitting.value = false
-  }
+// 审核 - 跳转到审核页面
+const handleApprove = (row) => {
+  router.push({
+    name: 'StateDemandAuditView',
+    query: { year: row.year }
+  })
 }
 
 // 查看汇聚明细
@@ -1207,7 +1071,7 @@ const handleDetail = async (row) => {
   detailLoading.value = true
 
   try {
-    const res = await getZoneAggregationDetail({
+    const res = await getTownAggregationDetail({
       sourceCode: row.sourceCode,
       year: row.year
     })
@@ -1628,17 +1492,27 @@ const mapWorkflowStatus = (status) => {
 }
 
 const getMainTableButtons = (row) => {
-  return [
-    { type: 'primary', action: 'view', label:'view', icon: 'ri-list-check' },
-    { type: 'success', action: 'export', rawLabel: t('common.export'), icon: 'ri-download-line' }
+  const buttons = [
+    { type: 'primary', action: 'audit', label: 'stateAggregation.actions.approve', icon: 'ri-file-list-3-line' }
   ]
+
+  buttons.push({ type: 'primary', action: 'view', rawLabel: t('Aggregation detail'), icon: 'ri-list-check' })
+  buttons.push({ type: 'success', action: 'export', rawLabel: t('common.export'), icon: 'ri-download-line' })
+
+  return buttons
 }
 
 const handleAction = (row, action) => {
-  if (action === 'view') {
-    handleDetail(row)
-  } else if (action === 'export') {
-    handleExport(row)
+  switch (action) {
+    case 'audit':
+      handleApprove(row)
+      break
+    case 'view':
+      handleDetail(row)
+      break
+    case 'export':
+      handleExport(row)
+      break
   }
 }
 
@@ -1680,14 +1554,14 @@ const matchesSelectedSeason = (item, selectedSeason) => {
   const recordSeason = item.season ?? item.seasonCode ?? item.season_code
   const recordCandidates = new Set([
     recordSeason,
-    getLabelByValue('agri_season', recordSeason)
+    getSeasonLabel(recordSeason)
   ].filter(Boolean).map(normalizeSeasonValue))
   return [...recordCandidates].some((candidate) => filterCandidates.has(candidate))
 }
 
 const handleExport = async (row) => {
   try {
-    const res = await getZoneAggregationDetail({
+    const res = await getTownAggregationDetail({
       sourceCode: row.sourceCode,
       year: row.year
     })
@@ -1710,9 +1584,9 @@ const handleExport = async (row) => {
         row.sourceName || '-',
         getLabelByValue('input_category', item.inputCategory) || item.inputCategory || '-',
         getLabelByValue('input_type', item.inputType) || item.inputType || '-',
-        getLabelByValue('agri_season', item.season || item.seasonCode || item.season_code) || item.season || item.seasonCode || item.season_code || '-',
+        getSeasonLabel(item.season || item.seasonCode || item.season_code),
         item.variety || '-',
-        item.totalQuantity ?? '-'
+        getEffectiveQuantity(item)
       ])
     ].map((csvRow) => csvRow.map(escapeCsvCell).join(',')).join('\n')
 
@@ -1802,7 +1676,7 @@ const handleFarmerDemandAction = (row, action) => {
   padding-bottom: 8px;
   border-bottom: 2px solid #009A44;
 }
-</style>
+
 .filter-bar {
   display: flex;
   width: 100%;
@@ -1810,3 +1684,4 @@ const handleFarmerDemandAction = (row, action) => {
   align-items: center;
   margin-bottom: 16px;
 }
+</style>

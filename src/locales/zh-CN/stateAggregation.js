@@ -6,21 +6,10 @@ export default {
   // 操作按钮
   actions: {
     addYear: '新增年度',
-    publishAll: '发布全部',
+    approve: '审核',
+    submit: '提交',
     detail: '明细',
     view: '查看',
-  },
-
-  // 发布全部对话框
-  publishAllDialog: {
-    title: '发布全部任务',
-    year: '选择年度',
-    yearPlaceholder: '请选择年度',
-    confirm: '确认',
-    cancel: '取消',
-    success: '任务发布成功',
-    failed: '发布任务失败',
-    yearRequired: '请选择年度',
   },
 
   // 表格列
@@ -55,6 +44,13 @@ export default {
     success: '年度记录创建成功',
     failed: '创建年度记录失败',
     yearRequired: '请选择年度',
+  },
+
+  // 提交对话框
+  submitDialog: {
+    confirmMessage: '确定要提交汇聚数据吗？',
+    success: '汇聚数据提交成功',
+    failed: '提交汇聚数据失败',
   },
 
   // 明细对话框

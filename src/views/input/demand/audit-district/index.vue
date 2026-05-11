@@ -116,58 +116,310 @@
     <el-dialog
       v-model="detailDialogVisible"
       :title="$t('districtAggregationAudit.detailDialog.title')"
-      width="80%"
+      width="96%"
       top="5vh"
+      class="adjustment-dialog"
     >
-      <el-table
-        v-loading="detailLoading"
-        :data="detailData"
-        stripe
-        max-height="500px"
-      >
-        <el-table-column
-          prop="inputCategory"
-          :label="$t('villageAggregation.detailDialog.columns.inputCategory')"
-          min-width="150"
-        >
-          <template #default="{ row }">
-            {{ getLabelByValue('input_category', row.inputCategory) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="inputType"
-          :label="$t('villageAggregation.detailDialog.columns.inputType')"
-          min-width="150"
-        >
-          <template #default="{ row }">
-            {{ getLabelByValue('input_type', row.inputType) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="variety"
-          :label="$t('farmerDemand.form.variety')"
-          min-width="150"
-        >
-          <template #default="{ row }">
-            {{ row.varieties || '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="totalQuantity"
-          :label="$t('villageAggregation.detailDialog.columns.totalQuantity')"
-          min-width="120"
-        />
-<!--        <el-table-column-->
-<!--          prop="totalCount"-->
-<!--          :label="$t('villageAggregation.detailDialog.columns.totalCount')"-->
-<!--          min-width="100"-->
-<!--        />-->
-      </el-table>
+      <div class="adjustment-workspace">
+        <div class="detail-table-panel">
+          <div class="panel-title">
+            {{ $t('districtAggregationAudit.adjustment.title') }}
+          </div>
+          <el-table
+            v-loading="detailLoading"
+            :data="detailData"
+            stripe
+            max-height="560px"
+          >
+            <el-table-column
+              type="index"
+              :label="$t('districtAggregationAudit.adjustment.index')"
+              width="60"
+              fixed="left"
+            />
+            <el-table-column
+              prop="sourceName"
+              :label="$t('districtAggregationAudit.adjustment.woredaName')"
+              min-width="150"
+              fixed="left"
+            />
+            <el-table-column
+              prop="inputType"
+              :label="$t('districtAggregationAudit.adjustment.inputType')"
+              min-width="130"
+            >
+              <template #default="{ row }">
+                {{ getDictLabel('input_type', row.inputType) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="inputCategory"
+              :label="$t('districtAggregationAudit.adjustment.category')"
+              min-width="140"
+            >
+              <template #default="{ row }">
+                {{ getDictLabel('input_category', row.inputCategory) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="variety"
+              :label="$t('districtAggregationAudit.adjustment.variety')"
+              min-width="130"
+            >
+              <template #default="{ row }">
+                {{ row.variety || row.varieties || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="season"
+              :label="$t('districtAggregationAudit.adjustment.season')"
+              min-width="130"
+            >
+              <template #default="{ row }">
+                {{ getSeasonLabel(row.season ?? row.seasonCode ?? row.season_code) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="receivedQuantity"
+              :label="$t('districtAggregationAudit.adjustment.receivedDemand')"
+              min-width="170"
+            >
+              <template #default="{ row }">
+                {{ formatQuantity(row.receivedQuantity, row.unit || row.units) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="adjustedQuantity"
+              :label="$t('districtAggregationAudit.adjustment.adjustedDemand')"
+              min-width="170"
+            >
+              <template #default="{ row }">
+                {{ formatQuantity(row.adjustedQuantity, row.unit || row.units) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="adjustmentRemark"
+              :label="$t('districtAggregationAudit.adjustment.adjustmentRemark')"
+              min-width="220"
+              show-overflow-tooltip
+            >
+              <template #default="{ row }">
+                {{ row.adjustmentRemark || '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="adjustmentStatus"
+              :label="$t('districtAggregationAudit.adjustment.status')"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                <el-tag :type="getAdjustmentStatusType(row.adjustmentStatus)">
+                  {{ getAdjustmentStatusLabel(row.adjustmentStatus) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('common.actions')"
+              fixed="right"
+              min-width="280"
+            >
+              <template #default="{ row }">
+                <div class="detail-actions">
+                  <el-button
+                    v-if="!isDetailLocked(row)"
+                    size="small"
+                    type="primary"
+                    @click="handleAdjust(row)"
+                  >
+                    {{ $t('districtAggregationAudit.adjustment.adjust') }}
+                  </el-button>
+                  <!-- Submit to upper level is temporarily hidden per business flow adjustment. -->
+                  <!--
+                    <el-button
+                      size="small"
+                      type="success"
+                      :loading="submittingToZoneId === row.id"
+                      :disabled="isDetailLocked(row)"
+                      @click="handleSubmitToZone(row)"
+                    >
+                      {{ row.adjustmentStatus === 'submitted'
+                        ? $t('districtAggregationAudit.adjustment.alreadySubmitted')
+                        : $t('districtAggregationAudit.adjustment.submitToZone') }}
+                    </el-button>
+                  -->
+                  <el-button
+                    size="small"
+                    @click="handleViewHistory(row)"
+                  >
+                    {{ $t('districtAggregationAudit.adjustment.viewHistory') }}
+                  </el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
 
-      <el-empty
-        v-if="detailData.length === 0 && !detailLoading"
-        :description="$t('districtAggregationAudit.detailDialog.noData')"
-      />
+          <el-empty
+            v-if="detailData.length === 0 && !detailLoading"
+            :description="$t('districtAggregationAudit.detailDialog.noData')"
+          />
+        </div>
+
+        <aside class="adjustment-side-panel">
+          <el-empty
+            v-if="sidePanelMode === 'empty'"
+            :description="$t('districtAggregationAudit.adjustment.emptyTitle')"
+          >
+            <template #description>
+              <p>{{ $t('districtAggregationAudit.adjustment.emptyTip') }}</p>
+            </template>
+          </el-empty>
+
+          <div v-else-if="sidePanelMode === 'adjust' && selectedDetailRow" class="side-content">
+            <div class="side-header">
+              <h3>{{ $t('districtAggregationAudit.adjustment.adjustPanelTitle') }}</h3>
+              <el-tag :type="getAdjustmentStatusType(selectedDetailRow.adjustmentStatus)">
+                {{ getAdjustmentStatusLabel(selectedDetailRow.adjustmentStatus) }}
+              </el-tag>
+            </div>
+
+            <div class="detail-summary">
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.woredaName') }}</span>
+                <strong>{{ selectedDetailRow.sourceName || '-' }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.inputType') }}</span>
+                <strong>{{ getDictLabel('input_type', selectedDetailRow.inputType) }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.category') }}</span>
+                <strong>{{ getDictLabel('input_category', selectedDetailRow.inputCategory) }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.variety') }}</span>
+                <strong>{{ selectedDetailRow.variety || selectedDetailRow.varieties || '-' }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.season') }}</span>
+                <strong>{{ getSeasonLabel(selectedDetailRow.season ?? selectedDetailRow.seasonCode ?? selectedDetailRow.season_code) }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.receivedDemand') }}</span>
+                <strong>{{ formatQuantity(selectedDetailRow.receivedQuantity, selectedDetailRow.unit || selectedDetailRow.units) }}</strong>
+              </div>
+              <div>
+                <span>{{ $t('districtAggregationAudit.adjustment.currentAdjustedDemand') }}</span>
+                <strong>{{ formatQuantity(selectedDetailRow.adjustedQuantity, selectedDetailRow.unit || selectedDetailRow.units) }}</strong>
+              </div>
+            </div>
+
+            <el-form
+              ref="adjustFormRef"
+              :model="adjustForm"
+              :rules="adjustRules"
+              label-position="top"
+              class="adjust-form"
+            >
+              <el-form-item
+                :label="$t('districtAggregationAudit.adjustment.newAdjustedDemand')"
+                prop="adjustedQuantity"
+              >
+                <el-input-number
+                  v-model="adjustForm.adjustedQuantity"
+                  :min="0"
+                  :precision="2"
+                  :step="1"
+                  controls-position="right"
+                  class="full-width"
+                />
+              </el-form-item>
+              <el-form-item
+                :label="$t('districtAggregationAudit.adjustment.adjustmentRemark')"
+                prop="adjustmentRemark"
+              >
+                <el-input
+                  v-model="adjustForm.adjustmentRemark"
+                  type="textarea"
+                  :rows="4"
+                  maxlength="500"
+                  show-word-limit
+                />
+              </el-form-item>
+            </el-form>
+
+            <div class="side-actions">
+              <el-button @click="resetSidePanel">
+                {{ $t('districtAggregationAudit.adjustment.cancel') }}
+              </el-button>
+              <el-button
+                type="primary"
+                :loading="savingAdjustment"
+                @click="handleSaveAdjustment"
+              >
+                {{ $t('districtAggregationAudit.adjustment.saveAdjustment') }}
+              </el-button>
+            </div>
+          </div>
+
+          <div v-else-if="sidePanelMode === 'history' && selectedDetailRow" class="side-content">
+            <div class="side-header">
+              <h3>{{ $t('districtAggregationAudit.adjustment.historyTitle') }}</h3>
+              <el-button
+                v-if="!isDetailLocked(selectedDetailRow)"
+                size="small"
+                text
+                @click="handleAdjust(selectedDetailRow)"
+              >
+                {{ $t('districtAggregationAudit.adjustment.adjust') }}
+              </el-button>
+            </div>
+            <div class="history-target">
+              {{ selectedDetailRow.sourceName || '-' }} · {{ getDictLabel('input_category', selectedDetailRow.inputCategory) }}
+            </div>
+            <el-table
+              v-loading="historyLoading"
+              :data="historyData"
+              size="small"
+              max-height="430px"
+            >
+              <el-table-column
+                prop="createdTime"
+                :label="$t('districtAggregationAudit.adjustment.operationTime')"
+                min-width="150"
+              />
+              <el-table-column
+                prop="beforeQuantity"
+                :label="$t('districtAggregationAudit.adjustment.beforeQuantity')"
+                min-width="110"
+              />
+              <el-table-column
+                prop="afterQuantity"
+                :label="$t('districtAggregationAudit.adjustment.afterQuantity')"
+                min-width="110"
+              />
+              <el-table-column
+                prop="operatorName"
+                :label="$t('districtAggregationAudit.adjustment.operator')"
+                min-width="110"
+              >
+                <template #default="{ row }">
+                  {{ row.operatorName || '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="remark"
+                :label="$t('districtAggregationAudit.adjustment.remark')"
+                min-width="180"
+                show-overflow-tooltip
+              />
+            </el-table>
+            <el-empty
+              v-if="historyData.length === 0 && !historyLoading"
+              :description="$t('districtAggregationAudit.adjustment.noHistory')"
+            />
+          </div>
+        </aside>
+      </div>
 
       <template #footer>
         <el-button @click="detailDialogVisible = false">
@@ -185,7 +437,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
+  adjustDemandSummaryDetail,
+  getDemandSummaryAdjustmentHistory,
   getSummaryDetail,
+  submitDemandSummaryDetailToZone,
   updateVillageDemandSummaryMain,
   getVillageDemandSummaryMainListSub
 } from '@/api/villageAggregation'
@@ -213,12 +468,136 @@ const pagination = reactive({
 const detailDialogVisible = ref(false)
 const detailLoading = ref(false)
 const detailData = ref([])
+const currentSummaryRow = ref(null)
+const selectedDetailRow = ref(null)
+const sidePanelMode = ref('empty')
+const adjustFormRef = ref(null)
+const savingAdjustment = ref(false)
+const submittingToZoneId = ref('')
+const historyLoading = ref(false)
+const historyData = ref([])
+
+const adjustForm = reactive({
+  adjustedQuantity: null,
+  adjustmentRemark: ''
+})
+
+const adjustRules = reactive({
+  adjustedQuantity: [
+    { required: true, message: t('districtAggregationAudit.adjustment.requiredAdjustedQuantity'), trigger: 'blur' }
+  ],
+  adjustmentRemark: [
+    { required: true, message: t('districtAggregationAudit.adjustment.requiredAdjustmentRemark'), trigger: 'blur' }
+  ]
+})
+
+const getStoredUserInfo = () => {
+  try {
+    return JSON.parse(localStorage.getItem('userInfo') || '{}')
+  } catch (error) {
+    return {}
+  }
+}
+
+const getCurrentUserPayload = () => {
+  const userInfo = getStoredUserInfo()
+  return {
+    currentUserId: userInfo.userId || userInfo.id || userInfo?.userInfo?.user?.id || userInfo?.user?.id || '',
+    currentUserName: userInfo.nickName || userInfo.userName || userInfo.username || userInfo.realName || userInfo?.userInfo?.user?.userName || userInfo?.user?.userName || ''
+  }
+}
+
+const getDictLabel = (dictType, value) => {
+  const label = getLabelByValue(dictType, value)
+  return label || value || '-'
+}
+
+const getSeasonLabel = (value) => {
+  const seasonMap = {
+    '0': 'Summer',
+    '1': 'Spring',
+    '2': 'Irrigation'
+  }
+  return seasonMap[String(value)] || value || '-'
+}
+
+const normalizeDetailRow = (row = {}) => ({
+  ...row,
+  summaryId: row.summaryId || currentSummaryRow.value?.id || '',
+  year: row.year || currentSummaryRow.value?.year || yearParam.value || '',
+  variety: row.variety || row.varieties || '',
+  unit: row.unit || row.units || '',
+  receivedQuantity: row.receivedQuantity ?? row.totalQuantity ?? 0,
+  adjustedQuantity: row.adjustedQuantity ?? 0,
+  adjustmentStatus: row.adjustmentStatus || 'pending',
+  hasAdjustment: Boolean(row.hasAdjustment)
+})
+
+const formatQuantity = (value, unit) => {
+  const displayValue = value ?? 0
+  return unit ? `${displayValue} ${unit}` : displayValue
+}
+
+const getAdjustmentStatusLabel = (status) => {
+  const normalizedStatus = String(status || 'pending').trim().toLowerCase()
+  const key = normalizedStatus === 'submit' ? 'submitted' : normalizedStatus
+  return t(`districtAggregationAudit.adjustmentStatus.${key}`)
+}
+
+const getAdjustmentStatusType = (status) => {
+  const map = {
+    pending: 'info',
+    adjusted: 'warning',
+    submitted: 'success',
+    approved: 'success',
+    rejected: 'danger'
+  }
+  return map[status] || 'info'
+}
+
+const isDetailLocked = (row) => {
+  const adjustmentStatus = String(row?.adjustmentStatus || '').trim().toLowerCase()
+  const detailStatus = String(row?.status || '').trim()
+  const summaryStatus = String(currentSummaryRow.value?.status || '').trim()
+  return ['submit', 'submitted', 'approved'].includes(adjustmentStatus)
+    || detailStatus === '2'
+    || summaryStatus === '2'
+}
+
+const resetSidePanel = () => {
+  selectedDetailRow.value = null
+  sidePanelMode.value = 'empty'
+  historyData.value = []
+  adjustForm.adjustedQuantity = null
+  adjustForm.adjustmentRemark = ''
+  adjustFormRef.value?.clearValidate?.()
+}
+
+const getDetailPayload = (row) => ({
+  detailId: row.id,
+  summaryId: row.summaryId || currentSummaryRow.value?.id || '',
+  year: row.year || currentSummaryRow.value?.year || yearParam.value || '',
+  sourceCode: row.sourceCode,
+  targetCode: row.targetCode,
+  ...getCurrentUserPayload()
+})
+
+const updateDetailRow = (updatedRow) => {
+  const normalized = normalizeDetailRow(updatedRow)
+  const index = detailData.value.findIndex((item) => item.id === normalized.id)
+  if (index !== -1) {
+    detailData.value.splice(index, 1, normalized)
+  }
+  if (selectedDetailRow.value?.id === normalized.id) {
+    selectedDetailRow.value = normalized
+  }
+}
 
 // 加载列表数据
 const loadData = async () => {
   loading.value = true
   try {
-    const stateCode = JSON.parse(localStorage.getItem('userInfo')).deptId
+    const stateCode = getStoredUserInfo().deptId
     const params = {
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
@@ -239,11 +618,103 @@ const loadData = async () => {
   }
 }
 
-// 驳回
-const handleReject = async (row) => {
+// 查看明细
+const handleViewDetail = async (row) => {
+  detailDialogVisible.value = true
+  detailLoading.value = true
+  currentSummaryRow.value = row
+  resetSidePanel()
+  try {
+    const res = await getSummaryDetail({
+      summaryId: row.id
+    })
+
+    if (res.code === 200) {
+      detailData.value = (res.data || []).map(normalizeDetailRow)
+    }
+  } catch (error) {
+    console.error('Failed to load detail data:', error)
+    ElMessage.error(t('districtAggregationAudit.messages.detailLoadFailed'))
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+const handleAdjust = (row) => {
+  if (isDetailLocked(row)) return
+
+  selectedDetailRow.value = row
+  sidePanelMode.value = 'adjust'
+  historyData.value = []
+  adjustForm.adjustedQuantity = row.adjustedQuantity ?? row.receivedQuantity ?? 0
+  adjustForm.adjustmentRemark = row.adjustmentRemark || ''
+  adjustFormRef.value?.clearValidate?.()
+}
+
+const handleSaveAdjustment = async () => {
+  if (!selectedDetailRow.value) return
+  if (isDetailLocked(selectedDetailRow.value)) return
+
+  try {
+    await adjustFormRef.value?.validate()
+  } catch (error) {
+    return
+  }
+
+  savingAdjustment.value = true
+  try {
+    const payload = {
+      ...getDetailPayload(selectedDetailRow.value),
+      adjustedQuantity: adjustForm.adjustedQuantity,
+      adjustmentRemark: adjustForm.adjustmentRemark
+    }
+    const res = await adjustDemandSummaryDetail(payload)
+
+    if (res.code === 200) {
+      updateDetailRow(res.data || {
+        ...selectedDetailRow.value,
+        adjustedQuantity: adjustForm.adjustedQuantity,
+        adjustmentRemark: adjustForm.adjustmentRemark,
+        hasAdjustment: true,
+        adjustmentStatus: 'adjusted'
+      })
+      ElMessage.success(t('districtAggregationAudit.adjustment.saveSuccess'))
+    } else {
+      ElMessage.error(res.msg || t('districtAggregationAudit.adjustment.saveFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to save adjustment:', error)
+    ElMessage.error(t('districtAggregationAudit.adjustment.saveFailed'))
+  } finally {
+    savingAdjustment.value = false
+  }
+}
+
+const handleViewHistory = async (row) => {
+  selectedDetailRow.value = row
+  sidePanelMode.value = 'history'
+  historyLoading.value = true
+  historyData.value = []
+
+  try {
+    const res = await getDemandSummaryAdjustmentHistory(row.id)
+    if (res.code === 200) {
+      historyData.value = res.data || []
+    } else {
+      ElMessage.error(res.msg || t('districtAggregationAudit.adjustment.historyLoadFailed'))
+    }
+  } catch (error) {
+    console.error('Failed to load adjustment history:', error)
+    ElMessage.error(t('districtAggregationAudit.adjustment.historyLoadFailed'))
+  } finally {
+    historyLoading.value = false
+  }
+}
+
+const handleSubmitToZone = async (row) => {
   try {
     await ElMessageBox.confirm(
-      t('districtAggregationAudit.rejectDialog.confirmMessage'),
+      t('districtAggregationAudit.adjustment.submitConfirm'),
       t('common.warning'),
       {
         confirmButtonText: t('common.confirm'),
@@ -252,43 +723,28 @@ const handleReject = async (row) => {
       }
     )
 
-    const res = await updateVillageDemandSummaryMain({
-      id: row.id,
-      sourceCode: row.sourceCode,
-      status: '3' // 审批驳回
+    submittingToZoneId.value = row.id
+    const res = await submitDemandSummaryDetailToZone({
+      ...getDetailPayload(row),
+      level: '2'
     })
 
     if (res.code === 200) {
-      ElMessage.success(t('districtAggregationAudit.messages.rejectSuccess'))
-      loadData()
+      updateDetailRow(res.data || {
+        ...row,
+        adjustmentStatus: 'submitted'
+      })
+      ElMessage.success(t('districtAggregationAudit.adjustment.submitSuccess'))
     } else {
-      ElMessage.error(res.msg || t('districtAggregationAudit.messages.rejectFailed'))
+      ElMessage.error(res.msg || t('districtAggregationAudit.adjustment.submitFailed'))
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('Failed to reject:', error)
-      ElMessage.error(t('districtAggregationAudit.messages.rejectFailed'))
+      console.error('Failed to submit detail to Zone:', error)
+      ElMessage.error(t('districtAggregationAudit.adjustment.submitFailed'))
     }
-  }
-}
-
-// 查看明细
-const handleViewDetail = async (row) => {
-  detailDialogVisible.value = true
-  detailLoading.value = true
-  try {
-    const res = await getSummaryDetail({
-      summaryId: row.id
-    })
-
-    if (res.code === 200) {
-      detailData.value = res.data || []
-    }
-  } catch (error) {
-    console.error('Failed to load detail data:', error)
-    ElMessage.error(t('districtAggregationAudit.messages.detailLoadFailed'))
   } finally {
-    detailLoading.value = false
+    submittingToZoneId.value = ''
   }
 }
 
@@ -321,6 +777,39 @@ const handleApprove = async (row) => {
     if (error !== 'cancel') {
       console.error('Failed to approve:', error)
       ElMessage.error(t('districtAggregationAudit.messages.approveFailed'))
+    }
+  }
+}
+
+// 驳回
+const handleReject = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      t('districtAggregationAudit.rejectDialog.confirmMessage'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
+
+    const res = await updateVillageDemandSummaryMain({
+      id: row.id,
+      sourceCode: row.sourceCode,
+      status: '3' // 审批驳回
+    })
+
+    if (res.code === 200) {
+      ElMessage.success(t('districtAggregationAudit.messages.rejectSuccess'))
+      loadData()
+    } else {
+      ElMessage.error(res.msg || t('districtAggregationAudit.messages.rejectFailed'))
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('Failed to reject:', error)
+      ElMessage.error(t('districtAggregationAudit.messages.rejectFailed'))
     }
   }
 }
@@ -366,15 +855,16 @@ const getTableButtons = (row) => {
     buttons.push({ 
       type: 'success', 
       action: 'approve', 
-      label: 'demandAudit.actions.approve', 
+      rawLabel: 'Aggregate',
       icon: 'ri-check-line' 
     })
-    buttons.push({ 
-      type: 'danger', 
-      action: 'reject', 
-      label: 'demandAudit.actions.reject', 
-      icon: 'ri-close-line' 
-    })
+    // Reject is temporarily hidden per business flow adjustment.
+    // buttons.push({
+    //   type: 'danger',
+    //   action: 'reject',
+    //   label: 'demandAudit.actions.reject',
+    //   icon: 'ri-close-line'
+    // })
   }
   
   return buttons
@@ -403,4 +893,115 @@ onMounted(() => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
+
+.adjustment-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  min-height: 560px;
+}
+
+.detail-table-panel {
+  min-width: 0;
+}
+
+.panel-title {
+  margin-bottom: 12px;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  :deep(.el-button + .el-button) {
+    margin-left: 0;
+  }
+}
+
+.adjustment-side-panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #dfe7df;
+  border-radius: 8px;
+  background: #fbfdfb;
+}
+
+.side-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.detail-summary {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #edf2ed;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+
+  strong {
+    color: #1f2937;
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.adjust-form {
+  :deep(.el-form-item) {
+    margin-bottom: 16px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.side-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.history-target {
+  color: #4b5563;
+  font-size: 13px;
+}
+
+@media screen and (max-width: 1024px) {
+  .adjustment-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .adjustment-side-panel {
+    min-height: 320px;
+  }
+}
 </style>
