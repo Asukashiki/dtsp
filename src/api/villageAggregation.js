@@ -89,6 +89,45 @@ export const getSummaryDetail = (data) => {
 }
 
 /**
+ * 保存 Woreda 对汇总明细的调整
+ * @param {Object} data - 调整参数 { detailId, summaryId, year, sourceCode, targetCode, adjustedQuantity, adjustmentRemark, currentUserId, currentUserName }
+ * @returns {Promise}
+ */
+export const adjustDemandSummaryDetail = (data) => {
+  return request({
+    url: '/demand/input/summary/detail/adjust',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 查询汇总明细调整历史
+ * @param {String} detailId - 汇总明细 ID
+ * @returns {Promise}
+ */
+export const getDemandSummaryAdjustmentHistory = (detailId) => {
+  return request({
+    url: '/demand/input/summary/detail/adjust/history',
+    method: 'get',
+    params: { detailId },
+  })
+}
+
+/**
+ * 提交 Woreda 汇总明细到 Zone
+ * @param {Object} data - 提交参数 { detailId, summaryId, year, sourceCode, targetCode, level, currentUserId, currentUserName }
+ * @returns {Promise}
+ */
+export const submitDemandSummaryDetailToZone = (data) => {
+  return request({
+    url: '/demand/input/summary/detail/submit-to-zone',
+    method: 'post',
+    data,
+  })
+}
+
+/**
  * 查询镇级汇聚统计（明细按钮）
  * @param {Object} data - 查询参数 { sourceCode }
  * @returns {Promise}

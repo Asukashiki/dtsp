@@ -360,7 +360,7 @@
           min-width="120"
         >
           <template #default="{ row }">
-            {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+            {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -376,7 +376,11 @@
           prop="totalQuantity"
           :label="$t('townAggregation.detailDialog.columns.totalQuantity')"
           min-width="120"
-        />
+        >
+          <template #default="{ row }">
+            {{ getEffectiveQuantity(row) }}
+          </template>
+        </el-table-column>
 <!--        <el-table-column-->
 <!--          prop="totalCount"-->
 <!--          :label="$t('townAggregation.detailDialog.columns.totalCount')"-->
@@ -484,7 +488,7 @@
               min-width="120"
             >
               <template #default="{ row }">
-                {{ getLabelByValue('agri_season', row.season || row.seasonCode || row.season_code) || row.season || row.seasonCode || row.season_code || '-' }}
+                {{ getSeasonLabel(row.season || row.seasonCode || row.season_code) }}
               </template>
             </el-table-column>
             <el-table-column
@@ -500,7 +504,11 @@
               prop="totalQuantity"
               :label="$t('townAggregation.detailDialog.columns.totalQuantity')"
               min-width="120"
-            />
+            >
+              <template #default="{ row }">
+                {{ getEffectiveQuantity(row) }}
+              </template>
+            </el-table-column>
           </el-table>
           <el-empty
             v-if="drillDownAggregationData.length === 0 && !drillDownAggregationLoading"
@@ -735,6 +743,23 @@ const farmerSearchForm = reactive({
 const exportFilters = reactive({
   season: ''
 })
+
+const getSeasonLabel = (value) => {
+  const seasonMap = {
+    '0': 'Summer',
+    '1': 'Spring',
+    '2': 'Irrigation'
+  }
+  const rawValue = value ?? ''
+  return seasonMap[String(rawValue)] || getLabelByValue('agri_season', rawValue) || rawValue || '-'
+}
+
+const getEffectiveQuantity = (row) => {
+  if (row?.hasAdjustment && row.adjustedQuantity !== null && row.adjustedQuantity !== undefined) {
+    return row.adjustedQuantity
+  }
+  return row?.receivedQuantity ?? row?.totalQuantity ?? '-'
+}
 
 // 加载某一行已审批数量（已通过村级记录数）
 const loadApprovedCountForRow = async (row) => {
@@ -1254,7 +1279,7 @@ const matchesSelectedSeason = (item, selectedSeason) => {
   const recordSeason = item.season ?? item.seasonCode ?? item.season_code
   const recordCandidates = new Set([
     recordSeason,
-    getLabelByValue('agri_season', recordSeason)
+    getSeasonLabel(recordSeason)
   ].filter(Boolean).map(normalizeSeasonValue))
   return [...recordCandidates].some((candidate) => filterCandidates.has(candidate))
 }
@@ -1284,9 +1309,9 @@ const handleExport = async (row) => {
         row.sourceName || '-',
         getLabelByValue('input_category', item.inputCategory) || item.inputCategory || '-',
         getLabelByValue('input_type', item.inputType) || item.inputType || '-',
-        getLabelByValue('agri_season', item.season || item.seasonCode || item.season_code) || item.season || item.seasonCode || item.season_code || '-',
+        getSeasonLabel(item.season || item.seasonCode || item.season_code),
         item.variety || '-',
-        item.totalQuantity ?? '-'
+        getEffectiveQuantity(item)
       ])
     ].map((csvRow) => csvRow.map(escapeCsvCell).join(',')).join('\n')
 
