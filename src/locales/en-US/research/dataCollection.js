@@ -595,7 +595,7 @@ export default {
     reject: 'Reject',
     return: 'Return',
     archive: 'Archive',
-    cancel: 'void',
+    cancel: 'Delete',
 
     // Rejection info
     rejected: 'Rejected',
@@ -681,7 +681,7 @@ export default {
     submitForReview: 'Submit',
     submitForReviewSuccess: 'Submit for review successfully',
     submitForReviewConfirm: 'Are you sure you want to submit for review?',
-    void: 'Void',
+    void: 'Delete',
     voidSuccess: 'Void successfully',
     voidConfirm: 'Are you sure you want to void this data?',
     voidReason: 'Void Reason',
@@ -859,7 +859,7 @@ export default {
     rejectSuccess: 'Audit rejected',
 
     // Void related
-    void: 'Void',
+    void: 'Delete',
     voidReason: 'Void Reason',
     confirmVoid: 'Are you sure to void this audit?',
     voidSuccess: 'Void successful',
@@ -954,7 +954,7 @@ export default {
     audit: 'Audit',
     approve: 'Approve',
     reject: 'Reject',
-    cancel: 'void',
+    cancel: 'Delete',
     
     // Confirmation messages
     confirmApprove: 'Are you sure to approve this farming record?',

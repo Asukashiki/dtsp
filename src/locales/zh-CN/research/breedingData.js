@@ -64,7 +64,7 @@ export default {
       approve: '审核通过',
       reject: '审核驳回',
       archive: '归档',
-      cancel: '作废'
+      cancel: '删除'
     },
 
     prompt: '提示',
@@ -163,7 +163,7 @@ export default {
     actions: {
       edit: '编辑',
       submit: '提交',
-      cancel: '作废',
+      cancel: '删除',
     },
 
 
@@ -221,7 +221,7 @@ export default {
     approve: '审核通过',
     reject: '审核退回',
     archive: '归档',
-    cancel: '作废',
+    cancel: '删除',
     auditOpinion: '审核意见',
     auditHistory: '审核历史',
     plotInfo: '地块信息',

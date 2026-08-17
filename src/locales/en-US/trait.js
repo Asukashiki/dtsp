@@ -78,7 +78,7 @@ export default {
   },
 
   // Operation button text (Supplement: Buttons used in code)
-  invalid: 'Void', // Supplement: Invalidate button
+  invalid: 'Delete', // Supplement: Delete button
   submitAudit: 'Submit', // Supplement: Initiate audit button
 
   // Message prompts

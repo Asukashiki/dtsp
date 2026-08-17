@@ -627,7 +627,7 @@ export default {
     reject: '退回',
     return: '返回',
     archive: '归档',
-    cancel: '作废',
+    cancel: '删除',
 
     // 退回信息
     rejected: '已退回',
@@ -715,7 +715,7 @@ export default {
     submitForReview: '提交',
     submitForReviewSuccess: '提交审核成功',
     submitForReviewConfirm: '确定要提交审核吗？',
-    void: '作废',
+    void: '删除',
     voidSuccess: '作废成功',
     voidConfirm: '确定要作废该数据吗？',
     voidReason: '作废原因',
@@ -910,7 +910,7 @@ export default {
     rejectSuccess: '审核已退回',
 
     // 作废相关
-    void: '作废',
+    void: '删除',
     voidReason: '作废原因',
     confirmVoid: '确定作废该审核吗？',
     voidSuccess: '作废成功',

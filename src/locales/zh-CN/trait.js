@@ -76,7 +76,7 @@ export default {
     photoInfo: '照片信息'
   },
   // 操作按钮文字（补充：代码中用到的按钮文案）
-  invalid: '作废', // 补充：作废按钮
+  invalid: '删除', // 补充：删除按钮
   submitAudit: '提交', // 补充：发起审核按钮
   // 消息提示
   deleteConfirm: '确定要删除选中的记录吗？',

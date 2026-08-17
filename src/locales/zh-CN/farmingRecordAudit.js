@@ -86,7 +86,7 @@ export default {
   audit: '审批',
   approve: '同意',
   reject: '不同意',
-  cancel: '作废',
+  cancel: '删除',
   
   // 确认消息
   confirmApprove: '确定要同意这条农事记录吗？',

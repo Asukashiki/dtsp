@@ -66,7 +66,7 @@ export default {
       approve: 'Approve',
       reject: 'Reject',
       archive: 'Archive',
-      void: 'Void'
+      void: 'Delete'
     },
 
     prompt: 'Prompt',
@@ -236,7 +236,7 @@ export default {
     approve: 'Approve',
     reject: 'Reject',
     archive: 'Archive',
-    cancel: 'Void',
+    cancel: 'Delete',
     auditOpinion: 'Audit Opinion',
     auditHistory: 'Audit History',
     plotInfo: 'Plot Information',
