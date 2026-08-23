@@ -68,7 +68,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table v-loading="loading" :data="tableData" stripe class="warehouse-manage-table">
               <el-table-column prop="warehouse_code" :label="$t('input.inventory.warehouseManage.columns.warehouseCode')" min-width="160" show-overflow-tooltip />
               <el-table-column prop="warehouse_name" :label="$t('input.inventory.warehouseManage.columns.warehouseName')" min-width="180" show-overflow-tooltip />
               <el-table-column :label="$t('input.inventory.warehouseManage.columns.type')" min-width="130" align="center">
@@ -114,9 +114,15 @@
                   {{ formatMaxStock(row.max_stock) }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('input.inventory.warehouseManage.columns.operatingStatus')" min-width="110" align="center">
+              <el-table-column
+                :label="$t('input.inventory.warehouseManage.columns.operatingStatus')"
+                min-width="160"
+                align="center"
+                header-align="center"
+                class-name="status-column"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="getOperatingStatusType(row.status)" size="small">
+                  <el-tag class="status-tag" :type="getOperatingStatusType(row.status)" size="small">
                     {{ getOperatingStatusLabel(row.status) }}
                   </el-tag>
                 </template>
@@ -506,6 +512,20 @@ onMounted(() => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
 
+:deep(.warehouse-manage-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.warehouse-manage-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
 .warehouse-card {
   background: #fff;
   border: 1px solid #e4e7ed;

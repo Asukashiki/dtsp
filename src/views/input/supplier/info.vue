@@ -135,6 +135,7 @@
           :data="tableData"
           stripe
           style="width: 100%"
+          class="supplier-info-table"
         >
           <el-table-column prop="org_name" :label="$t('input.supplier.info.columns.orgName')" min-width="200" show-overflow-tooltip />
           <el-table-column prop="credit_code" :label="$t('input.supplier.info.columns.creditCode')" min-width="180" show-overflow-tooltip />
@@ -142,12 +143,19 @@
           <el-table-column prop="contact_name" :label="$t('input.supplier.info.columns.contactName')" min-width="120" show-overflow-tooltip />
           <el-table-column prop="contact_phone" :label="$t('input.supplier.info.columns.contactPhone')" min-width="140" />
           <el-table-column prop="ad_code" :label="$t('input.supplier.info.columns.adCode')" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="status" :label="$t('input.supplier.info.columns.status')" min-width="100" align="center">
+          <el-table-column
+            prop="status"
+            :label="$t('input.supplier.info.columns.status')"
+            min-width="160"
+            align="center"
+            header-align="center"
+            class-name="status-column"
+          >
             <template #default="{ row }">
-              <el-tag :type="getStatusTag(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
+              <el-tag class="status-tag" :type="getStatusTag(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('input.supplier.info.columns.actions')" min-width="140" fixed="right">
+          <el-table-column :label="$t('input.supplier.info.columns.actions')" min-width="160" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i> {{ $t('input.supplier.info.actions.view') }}
@@ -472,6 +480,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
+:deep(.supplier-info-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.supplier-info-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
 .supplier-info-container {
   min-height: calc(100vh - 120px);
   position: relative;

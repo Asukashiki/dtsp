@@ -260,24 +260,33 @@ $color-bg-lighter: #F8F9FA;
 }
 
 .action-buttons {
-  display: flex;
-  gap: 8px;
+  display: inline-flex;
+  gap: 6px;
   align-items: center;
   justify-content: flex-start;
-  flex-wrap: wrap;
-  
+  flex-wrap: nowrap;
+  width: max-content;
 
   .el-button {
-    min-height: 36px;
-    min-width: 80px !important;
-    font-size: 16px !important;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: auto !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    min-width: 64px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
   }
 
   i {
-      margin-right: 6px;
-      font-size: 16px !important;
-      vertical-align: middle;
-    }
+    margin-right: 4px !important;
+    font-size: 14px !important;
+    vertical-align: middle;
+  }
 }
 
 // ==================== 分页 ====================
@@ -296,6 +305,139 @@ $color-bg-lighter: #F8F9FA;
 
   &.mobile-only {
     display: none;
+  }
+}
+
+// ==================== 统一表格操作按钮 ====================
+// Keep every operation button in a table row at the same compact size. This
+// intentionally targets the rendered table cell instead of relying on each
+// page to repeat the same class and size attributes.
+.el-table {
+  .el-table__body-wrapper,
+  .el-table__fixed-body-wrapper {
+    .cell {
+      // Direct buttons and buttons wrapped by a component share the same
+      // intrinsic-width cell treatment. This keeps the first and last action
+      // visible even when a page forgot to add an action wrapper.
+      &:has(.el-button) {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        width: max-content !important;
+        max-width: none !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+      }
+
+      .el-button {
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: auto !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        min-width: 64px !important;
+        margin: 0 !important;
+        padding: 0 10px !important;
+        border-radius: 6px !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        vertical-align: middle;
+
+        & + .el-button {
+          // The table cell/action wrapper provides the single 6px gap.
+          margin-left: 0 !important;
+        }
+
+        i,
+        .el-icon {
+          flex: 0 0 auto;
+          margin-right: 4px !important;
+          font-size: 14px !important;
+          line-height: 1;
+        }
+
+        // Link/text actions use the same compact button surface as filled
+        // actions. This prevents a plain text operation from looking smaller
+        // or gaining an underline in another table.
+        &.is-link,
+        &.el-button--text {
+          min-width: 64px !important;
+          padding: 0 10px !important;
+          border: 1px solid $color-border-light !important;
+          background: $color-bg-light !important;
+          color: $color-text-regular !important;
+          box-shadow: none !important;
+          text-decoration: none !important;
+
+          &:hover {
+            border-color: $primary-green !important;
+            background: rgba($primary-green, 0.08) !important;
+            color: $primary-green !important;
+          }
+
+          &.el-button--primary {
+            border-color: rgba($primary-green, 0.35) !important;
+            background: rgba($primary-green, 0.08) !important;
+            color: $primary-green !important;
+          }
+
+          &.el-button--success {
+            border-color: rgba($primary-green, 0.35) !important;
+            background: rgba($primary-green, 0.08) !important;
+            color: $primary-green !important;
+          }
+
+          &.el-button--danger {
+            border-color: rgba($accent-red, 0.35) !important;
+            background: rgba($accent-red, 0.08) !important;
+            color: $accent-red !important;
+          }
+
+          &.el-button--warning {
+            border-color: rgba($accent-yellow, 0.55) !important;
+            background: rgba($accent-yellow, 0.16) !important;
+            color: #856d00 !important;
+          }
+        }
+      }
+
+      // Keep every table action group on one stable line. Render it at its
+      // intrinsic width so fixed columns do not show a scrollbar or clip the
+      // first and last action buttons.
+      &:has(> .action-buttons, > .table-action-buttons,
+        > .workflow-action-buttons, > .farmer-action-buttons,
+        > .inbound-action-buttons, > .outbound-action-buttons,
+        > .transfer-action-buttons, > .stock-check-actions) {
+        overflow: visible !important;
+        white-space: nowrap !important;
+      }
+
+      > .action-buttons,
+      > .table-action-buttons,
+      > .workflow-action-buttons,
+      > .farmer-action-buttons,
+      > .inbound-action-buttons,
+      > .outbound-action-buttons,
+      > .transfer-action-buttons,
+      > .stock-check-actions {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        width: max-content !important;
+        max-width: none !important;
+        overflow: visible !important;
+        padding: 1px 0;
+        white-space: nowrap;
+      }
+    }
   }
 }
 
@@ -319,16 +461,30 @@ $color-bg-lighter: #F8F9FA;
   margin-bottom: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid $color-border-lighter;
+
+  > .el-tag {
+    flex: 0 0 auto;
+    max-width: 100%;
+    white-space: nowrap;
+  }
 }
 
 .mobile-card-title {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
   color: $color-text-primary;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   i {
     font-size: 18px;
@@ -410,6 +566,36 @@ $color-bg-lighter: #F8F9FA;
 }
 
 @media screen and (max-width: 768px) {
+  .action-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .el-table {
+    .el-table__body-wrapper,
+    .el-table__fixed-body-wrapper {
+      .cell:has(.el-button) {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-wrap: wrap !important;
+        overflow: visible !important;
+      }
+
+      .cell > .action-buttons,
+      .cell > .table-action-buttons,
+      .cell > .workflow-action-buttons,
+      .cell > .farmer-action-buttons,
+      .cell > .inbound-action-buttons,
+      .cell > .outbound-action-buttons,
+      .cell > .transfer-action-buttons,
+      .cell > .stock-check-actions {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-wrap: wrap !important;
+      }
+    }
+  }
+
   .page-header {
     margin: -16px -16px 16px -16px;
     padding: 20px 16px;

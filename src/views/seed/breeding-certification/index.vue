@@ -131,7 +131,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="createTime" :label="$t('seed.breedingCertification.columns.createTime')" width="160" />
-          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="280" fixed="right">
+          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="380" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i></el-button>
               <el-button link type="primary" @click="handleEdit(row)" v-if="row.recordStatus === 'draft'"><i class="ri-edit-line"></i></el-button>

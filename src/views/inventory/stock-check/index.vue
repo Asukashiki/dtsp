@@ -100,15 +100,22 @@
               <el-table-column
                 prop="checkStatus"
                 :label="$t('stockCheck.list.checkStatus')"
-                width="100"
+                width="160"
+                align="center"
+                header-align="center"
+                class-name="stock-status-column"
               >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.checkStatus)" size="small">
+                  <el-tag
+                    class="stock-status-tag"
+                    :type="getStatusTag(row.checkStatus)"
+                    size="small"
+                  >
                     {{ getStatusText(row.checkStatus) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="220" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="380" fixed="right" align="center">
                 <template #default="{ row }">
                   <el-button
                     type="primary"
@@ -334,6 +341,22 @@ onMounted(() => {
 }
 
 :deep(.stock-check-table .el-table__header th) {
+  white-space: nowrap;
+}
+
+// Status labels can be wider than the default Element Plus cell content area.
+:deep(.stock-check-table .stock-status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-check-table .stock-status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
   white-space: nowrap;
 }
 </style>

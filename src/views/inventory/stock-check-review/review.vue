@@ -87,6 +87,7 @@
             style="width: 100%"
             border
             :row-class-name="tableRowClassName"
+            class="stock-check-review-detail-table"
           >
             <el-table-column prop="productName" :label="$t('stockCheck.fields.productName')" min-width="150" show-overflow-tooltip/>
             <el-table-column prop="categoryMajor" :label="$t('stockCheck.fields.categoryMajor')" width="100" />
@@ -113,12 +114,18 @@
               </template>
             </el-table-column>
 
-            <el-table-column :label="$t('stockCheck.fields.diffType')" width="100" align="center">
+            <el-table-column
+              :label="$t('stockCheck.fields.diffType')"
+              width="140"
+              align="center"
+              header-align="center"
+              class-name="diff-type-column"
+            >
               <template #default="{ row }">
-                <el-tag v-if="row.diffType === 'SURPLUS'" type="warning" color="#FFF7ED" class="border-[#F59E0B] text-[#F59E0B]">
+                <el-tag v-if="row.diffType === 'SURPLUS'" class="diff-type-tag border-[#F59E0B] text-[#F59E0B]" type="warning" color="#FFF7ED">
                   {{ $t('stockCheck.diffType.SURPLUS') }}
                 </el-tag>
-                <el-tag v-else-if="row.diffType === 'LOSS'" type="danger" color="#FEF2F2" class="border-[#DA121A] text-[#DA121A]">
+                <el-tag v-else-if="row.diffType === 'LOSS'" class="diff-type-tag border-[#DA121A] text-[#DA121A]" type="danger" color="#FEF2F2">
                   {{ $t('stockCheck.diffType.LOSS') }}
                 </el-tag>
                 <span v-else class="text-gray-400">{{ $t('stockCheck.diffType.NONE') }}</span>
@@ -296,5 +303,20 @@ onMounted(() => {
 
 :deep(.el-table .loss-row) {
   background-color: #FEF2F2 !important;
+}
+
+:deep(.stock-check-review-detail-table .diff-type-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-check-review-detail-table .diff-type-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
 }
 </style>

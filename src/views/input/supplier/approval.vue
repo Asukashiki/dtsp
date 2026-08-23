@@ -135,6 +135,7 @@
           :data="tableData"
           stripe
           style="width: 100%"
+          class="supplier-approval-table"
         >
           <el-table-column prop="org_name" :label="$t('input.supplier.approval.columns.orgName')" min-width="200" show-overflow-tooltip />
           <el-table-column prop="credit_code" :label="$t('input.supplier.approval.columns.creditCode')" min-width="180" show-overflow-tooltip />
@@ -142,12 +143,19 @@
           <el-table-column prop="contact_name" :label="$t('input.supplier.approval.columns.contactName')" min-width="120" show-overflow-tooltip />
           <el-table-column prop="contact_phone" :label="$t('input.supplier.approval.columns.contactPhone')" min-width="140" />
           <el-table-column prop="apply_time" :label="$t('input.supplier.approval.columns.applyTime')" min-width="180" />
-          <el-table-column prop="status" :label="$t('input.supplier.approval.columns.status')" min-width="100" align="center">
+          <el-table-column
+            prop="status"
+            :label="$t('input.supplier.approval.columns.status')"
+            min-width="160"
+            align="center"
+            header-align="center"
+            class-name="status-column"
+          >
             <template #default="{ row }">
-              <el-tag :type="getStatusTag(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
+              <el-tag class="status-tag" :type="getStatusTag(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('input.supplier.approval.columns.actions')" min-width="140" fixed="right">
+          <el-table-column :label="$t('input.supplier.approval.columns.actions')" min-width="160" fixed="right">
             <template #default="{ row }">
               <el-button v-if="row.status === 1" link type="primary" @click="handleAudit(row)">
                 <i class="ri-shield-check-line"></i> {{ $t('input.supplier.approval.actions.audit') }}
@@ -574,6 +582,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
+:deep(.supplier-approval-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.supplier-approval-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
 .supplier-approval-container {
   min-height: calc(100vh - 120px);
   position: relative;

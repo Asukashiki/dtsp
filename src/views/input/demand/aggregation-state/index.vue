@@ -217,7 +217,7 @@
                 <el-table-column
                   :label="$t('stateAggregation.columns.actions')"
                   fixed="right"
-                  width="120"
+                  width="280"
                 >
                   <template #default="{ row }">
                     <ActionButtons
@@ -310,7 +310,7 @@
                 <el-table-column
                   :label="$t('stateAggregation.columns.actions')"
                   fixed="right"
-                  width="120"
+                  width="280"
                 >
                   <template #default="{ row }">
                     <ActionButtons
@@ -398,7 +398,7 @@
                 <el-table-column
                   :label="$t('stateAggregation.columns.actions')"
                   fixed="right"
-                  width="120"
+                  width="280"
                 >
                   <template #default="{ row }">
                     <ActionButtons
@@ -856,7 +856,7 @@
             <el-table-column
               :label="$t('common.actions')"
               fixed="right"
-              width="100"
+              width="280"
             >
               <template #default="{ row }">
                 <ActionButtons

@@ -53,7 +53,7 @@
             @tab-change="handleTabChange" />
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table :data="tableData" stripe v-loading="loading" class="outbound-table">
               <el-table-column
                 prop="outboundNo"
                 :label="$t('inventory.outbound.no')"
@@ -106,17 +106,26 @@
               <el-table-column
                 prop="status"
                 :label="$t('common.status')"
-                width="100"
+                width="160"
+                align="center"
+                header-align="center"
+                class-name="status-column"
               >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.status)" size="small">
+                  <el-tag class="status-tag" :type="getStatusTag(row.status)" size="small">
                     {{ getStatusText(row.status) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="250" fixed="right">
+              <el-table-column
+                :label="$t('common.actions')"
+                width="400"
+                fixed="right"
+                align="center"
+                class-name="outbound-actions-column"
+              >
                 <template #default="{ row }">
-                  <div class="action-buttons">
+                  <div class="action-buttons outbound-action-buttons">
                     <el-button class="action-btn action-btn-view" size="small" @click="handleView(row)"><i class="ri-eye-line"></i><span class="btn-text">{{ $t('common.view') }}</span></el-button>
                     <el-button v-if="row.status === 'DRAFT' || row.status === 'SUBMITTED'" class="action-btn action-btn-edit" type="primary" size="small" @click="handleEdit(row)"><i class="ri-edit-line"></i><span class="btn-text">{{ $t('common.edit') }}</span></el-button>
                     <el-button v-if="row.status === 'DRAFT'" class="action-btn action-btn-submit" type="success" size="small" @click="handleSubmit(row)"><i class="ri-checkbox-circle-line"></i><span class="btn-text">{{ $t('common.submit') }}</span></el-button>
@@ -388,9 +397,59 @@ onMounted(() => {
 }
 
 .action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+// Keep desktop outbound actions in one row inside the fixed right column.
+// Mobile cards use their own wrapping footer below.
+:deep(.outbound-actions-column .cell) {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.outbound-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 6px;
+  width: max-content;
+
+  :deep(.el-button.action-btn) {
+    flex: 0 0 auto;
+    min-width: 64px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 14px !important;
+    }
+  }
+}
+
+:deep(.outbound-table .status-column .cell) {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.outbound-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .action-btn {
@@ -470,17 +529,8 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  overflow-x: auto;
+  overflow: visible;
   padding-bottom: 8px;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #dcdfe6;
-    border-radius: 2px;
-  }
 }
 
 .btn-green {

@@ -124,7 +124,7 @@
                   :label="$t('orgRegistration.columns.createTime')"
                   min-width="160"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="200">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="300">
                   <template #default="{ row }">
                     <ActionButtons
                       :custom-buttons="getCustomButtons(row.auditStatus)"

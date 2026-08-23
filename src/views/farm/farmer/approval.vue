@@ -78,7 +78,7 @@
                 <el-table-column
                   :label="$t('farm.farmerApproval.columns.actions')"
                   fixed="right"
-                  min-width="180"
+                  min-width="300"
                 >
                   <template #default="{ row }">
                     <el-button

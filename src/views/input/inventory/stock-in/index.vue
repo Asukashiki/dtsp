@@ -58,7 +58,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="inboundList" stripe v-loading="loading">
+            <el-table :data="inboundList" stripe v-loading="loading" class="stock-in-table">
               <el-table-column
                 prop="inbound_order_id"
                 :label="$t('input.inventory.stockIn.columns.orderId')"
@@ -102,10 +102,13 @@
               <el-table-column
                 prop="inbound_status"
                 :label="$t('input.inventory.stockIn.columns.status')"
-                width="100"
+                width="160"
+                align="center"
+                header-align="center"
+                class-name="status-column"
               >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.inbound_status)" size="small">
+                  <el-tag class="status-tag" :type="getStatusTag(row.inbound_status)" size="small">
                     {{ getStatusText(row.inbound_status) }}
                   </el-tag>
                 </template>
@@ -675,5 +678,20 @@ onMounted(() => {
 /* 隐藏表格列 */
 :deep(.hidden-column) {
   display: none !important;
+}
+
+:deep(.stock-in-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-in-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
 }
 </style>

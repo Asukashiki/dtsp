@@ -91,7 +91,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="calibrationDate" :label="$t('research.iotSensor.columns.calibrationDate')" min-width="170" align="center" />
-          <el-table-column :label="$t('research.iotSensor.columns.actions')" width="200" fixed="right">
+          <el-table-column :label="$t('research.iotSensor.columns.actions')" width="300" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>

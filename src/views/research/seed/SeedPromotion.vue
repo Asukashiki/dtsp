@@ -60,7 +60,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="220" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button size="small" type="primary" @click="handleViewDetail(row)">

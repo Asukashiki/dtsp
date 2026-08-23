@@ -118,7 +118,7 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="80" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="140" fixed="right" align="center">
                 <template #default="{ $index }">
                   <el-button link type="danger" @click="removeAllocationRow($index)">
                     <i class="ri-delete-bin-line"></i>

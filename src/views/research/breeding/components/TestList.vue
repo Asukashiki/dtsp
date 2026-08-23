@@ -34,7 +34,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.actions')" width="200" align="center" fixed="right" v-if="!compact">
+        <el-table-column :label="$t('common.actions')" width="220" align="center" fixed="right" v-if="!compact">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleDetail(row)">{{ $t('common.view') }}</el-button>
             <el-button link type="primary" @click="handleEdit(row)" v-if="trackingId">{{ $t('common.edit') }}</el-button>

@@ -62,6 +62,7 @@
                 :data="tableData"
                 stripe
                 style="width: 100%"
+                class="catalog-table"
                 @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="55" />
@@ -76,9 +77,16 @@
               <el-table-column prop="registerCode" :label="$t('input.catalog.columns.registerCode')" width="140" />
               <el-table-column prop="producerName" :label="$t('input.catalog.columns.producerName')" min-width="200" show-overflow-tooltip />
               <el-table-column prop="createTime" :label="$t('input.catalog.columns.createTime')" width="160" />
-              <el-table-column prop="status" :label="$t('input.catalog.columns.status')" width="100" align="center">
+              <el-table-column
+                prop="status"
+                :label="$t('input.catalog.columns.status')"
+                width="140"
+                align="center"
+                header-align="center"
+                class-name="status-column"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="row.status === 'active' ? 'success' : 'info'" size="small">
+                  <el-tag class="status-tag" :type="row.status === 'active' ? 'success' : 'info'" size="small">
                     {{ $t(`input.catalog.statusOptions.${row.status}`) }}
                   </el-tag>
                 </template>
@@ -378,6 +386,20 @@ onMounted(async () => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
 
+:deep(.catalog-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.catalog-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
 /* 操作按钮样式 */
 .action-buttons {
   display: flex;

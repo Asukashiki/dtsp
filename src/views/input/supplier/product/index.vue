@@ -142,7 +142,7 @@
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('input.supplier.product.columns.actions')" min-width="200" align="center" fixed="right">
+          <el-table-column :label="$t('input.supplier.product.columns.actions')" min-width="300" align="center" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i>

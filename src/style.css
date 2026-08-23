@@ -235,7 +235,8 @@ body {
 .el-button.is-link {
   color: #009A44;
   font-weight: 600;
-  padding: 8px 12px;
+  padding: 0 10px;
+  text-decoration: none;
   border-radius: 6px;
   transition: all 0.2s ease;
 }
@@ -255,8 +256,9 @@ body {
 }
 
 .el-button--small {
-  height: 28px;
-  padding: 6px 12px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 10px;
   font-size: 13px;
   border-radius: 6px;
 }
@@ -649,6 +651,209 @@ body {
 .el-tag--primary {
   background: rgba(0, 154, 68, 0.12);
   color: #009A44;
+}
+
+/* Keep tagged table values readable across modules with status columns. */
+.el-table td.el-table__cell:has(> .cell > .el-tag) {
+  min-width: 140px;
+}
+
+.el-table td.el-table__cell:has(> .cell > .el-tag) > .cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.el-table td.el-table__cell:has(> .cell > .el-tag) .el-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
+
+/* Reserve enough space for table operation buttons. The number of buttons is
+   detected from the rendered cell so pages with different workflow states do
+   not clip their first or last action. */
+.el-table td.el-table__cell:has(> .cell .el-button) {
+  min-width: 140px !important;
+}
+
+.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(2)) {
+  min-width: 220px !important;
+}
+
+.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(3)) {
+  min-width: 300px !important;
+}
+
+.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(4)) {
+  min-width: 380px !important;
+}
+
+.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(5)) {
+  min-width: 460px !important;
+}
+
+.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(6)) {
+  min-width: 540px !important;
+}
+
+/* ==================== 统一表格操作按钮（全局兜底） ====================
+   Some views render table actions without importing page-common.scss. Keep
+   the rendered table cell as the final source of truth so every module uses
+   the same button size, spacing and overflow behavior. */
+.el-table .el-table__body-wrapper .cell:has(.el-button),
+.el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+.el-table .el-table__body-wrapper .cell > .action-buttons,
+.el-table .el-table__fixed-body-wrapper .cell > .action-buttons,
+.el-table .el-table__body-wrapper .cell > [class*="action-buttons"],
+.el-table .el-table__fixed-body-wrapper .cell > [class*="action-buttons"],
+.el-table .el-table__body-wrapper .cell > [class*="table-actions"],
+.el-table .el-table__fixed-body-wrapper .cell > [class*="table-actions"],
+.el-table .el-table__body-wrapper .cell > .stock-check-actions,
+.el-table .el-table__fixed-body-wrapper .cell > .stock-check-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
+  max-width: none !important;
+  overflow: visible !important;
+  padding: 1px 0 !important;
+  white-space: nowrap !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button,
+.el-table .el-table__fixed-body-wrapper .cell .el-button {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  min-width: 64px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  vertical-align: middle !important;
+}
+
+/* Element Plus adds a default margin between adjacent buttons. The parent
+   gap is the only spacing source so direct and wrapped actions match. */
+.el-table .el-table__body-wrapper .cell .el-button + .el-button,
+.el-table .el-table__fixed-body-wrapper .cell .el-button + .el-button {
+  margin-left: 0 !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button > i,
+.el-table .el-table__body-wrapper .cell .el-button > .el-icon,
+.el-table .el-table__fixed-body-wrapper .cell .el-button > i,
+.el-table .el-table__fixed-body-wrapper .cell .el-button > .el-icon {
+  flex: 0 0 auto;
+  margin-right: 4px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+/* Link/text actions keep their semantic color while using the same compact
+   button surface. This removes the underlined, undersized text-only variant. */
+.el-table .el-table__body-wrapper .cell .el-button.is-link,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text {
+  min-width: 64px !important;
+  border: 1px solid var(--el-border-color-light, #e4e7ed) !important;
+  background: #f8fafc !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button.is-link:hover,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text:hover,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link:hover,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text:hover {
+  border-color: var(--el-color-primary, #009a44) !important;
+  background: rgba(0, 154, 68, 0.08) !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button.is-link.el-button--primary,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text.el-button--primary,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link.el-button--primary,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text.el-button--primary {
+  color: #009a44 !important;
+  border-color: rgba(0, 154, 68, 0.35) !important;
+  background: rgba(0, 154, 68, 0.08) !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button.is-link.el-button--success,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text.el-button--success,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link.el-button--success,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text.el-button--success {
+  color: #009a44 !important;
+  border-color: rgba(0, 154, 68, 0.35) !important;
+  background: rgba(0, 154, 68, 0.08) !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button.is-link.el-button--danger,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text.el-button--danger,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link.el-button--danger,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text.el-button--danger {
+  color: #da121a !important;
+  border-color: rgba(218, 18, 26, 0.35) !important;
+  background: rgba(218, 18, 26, 0.08) !important;
+}
+
+.el-table .el-table__body-wrapper .cell .el-button.is-link.el-button--warning,
+.el-table .el-table__body-wrapper .cell .el-button.el-button--text.el-button--warning,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.is-link.el-button--warning,
+.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--text.el-button--warning {
+  color: #856d00 !important;
+  border-color: rgba(254, 221, 0, 0.55) !important;
+  background: rgba(254, 221, 0, 0.16) !important;
+}
+
+@media screen and (max-width: 768px) {
+  .el-table .el-table__body-wrapper .cell:has(.el-button),
+  .el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .el-table .el-table__body-wrapper .cell > .action-buttons,
+  .el-table .el-table__fixed-body-wrapper .cell > .action-buttons,
+  .el-table .el-table__body-wrapper .cell > [class*="action-buttons"],
+  .el-table .el-table__fixed-body-wrapper .cell > [class*="action-buttons"],
+  .el-table .el-table__body-wrapper .cell > [class*="table-actions"],
+  .el-table .el-table__fixed-body-wrapper .cell > [class*="table-actions"],
+  .el-table .el-table__body-wrapper .cell > .stock-check-actions,
+  .el-table .el-table__fixed-body-wrapper .cell > .stock-check-actions {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
 }
 
 .el-tag.is-light {

@@ -137,12 +137,19 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column :label="$t('stockCheck.fields.diffType')" width="100" align="center" fixed="right">
+                <el-table-column
+                  :label="$t('stockCheck.fields.diffType')"
+                  width="140"
+                  align="center"
+                  header-align="center"
+                  fixed="right"
+                  class-name="diff-type-column"
+                >
                   <template #default="{ row }">
-                    <el-tag v-if="row.diffType === 'SURPLUS'" type="warning" color="#FFF7ED" class="border-[#F59E0B] text-[#F59E0B]">
+                    <el-tag v-if="row.diffType === 'SURPLUS'" class="diff-type-tag border-[#F59E0B] text-[#F59E0B]" type="warning" color="#FFF7ED">
                       {{ $t('stockCheck.diffType.SURPLUS') }}
                     </el-tag>
-                    <el-tag v-else-if="row.diffType === 'LOSS'" type="danger" color="#FEF2F2" class="border-[#DA121A] text-[#DA121A]">
+                    <el-tag v-else-if="row.diffType === 'LOSS'" class="diff-type-tag border-[#DA121A] text-[#DA121A]" type="danger" color="#FEF2F2">
                       {{ $t('stockCheck.diffType.LOSS') }}
                     </el-tag>
                     <span v-else class="text-gray-400">{{ $t('stockCheck.diffType.NONE') }}</span>
@@ -454,6 +461,21 @@ onMounted(async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+:deep(.stock-check-details-table .diff-type-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+:deep(.stock-check-details-table .diff-type-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
 }
 
 :deep(.stock-check-details-table .el-input__inner),

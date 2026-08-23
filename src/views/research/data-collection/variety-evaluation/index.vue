@@ -86,7 +86,7 @@
             {{ row.moistureContent }}%
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.actions')" fixed="right" width="200">
+        <el-table-column :label="$t('common.actions')" fixed="right" width="300">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleView(row)">
               <i class="ri-eye-line"></i>

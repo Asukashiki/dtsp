@@ -146,7 +146,7 @@
                       </el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('newFarm.common.actions')" width="220" fixed="right">
+                  <el-table-column :label="$t('newFarm.common.actions')" width="300" fixed="right">
                     <template #default="{ row }">
                       <el-button type="success" size="small" @click="handleViewLandDetail(row.landId)">
                         <i class="ri-eye-line"></i>

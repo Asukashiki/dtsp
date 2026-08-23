@@ -188,29 +188,50 @@ $primary-green-light: #00b350;
 
 // ==================== 表格操作按钮 ====================
 .table-action-buttons {
-  display: flex;
-  gap: 4px;
+  display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 6px;
+  width: max-content;
+  max-width: none;
+  overflow: visible;
+  padding: 1px 0;
+  white-space: nowrap;
+  flex-wrap: nowrap;
 
   .el-button {
-    padding: 5px 10px;
-    font-size: 13px;
-    border-radius: 4px;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    height: 32px !important;
+    min-height: 32px !important;
+    min-width: 64px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
     transition: all 0.2s ease;
 
     &.el-button--text,
     &.is-link {
-      padding: 5px 8px;
+      min-width: 64px !important;
+      padding: 0 10px !important;
+      border: 1px solid $color-border-light !important;
+      background: $color-bg-light !important;
+      color: $color-text-regular !important;
+      text-decoration: none !important;
       
       &:hover {
         background: rgba($primary-green, 0.08);
+        border-color: $primary-green !important;
+        color: $primary-green !important;
       }
     }
 
     i {
-      font-size: 14px;
-      margin-right: 2px;
+      font-size: 14px !important;
+      margin-right: 4px !important;
     }
   }
 }
@@ -411,11 +432,14 @@ $primary-green-light: #00b350;
 
   .table-action-buttons {
     .el-button {
-      padding: 4px 8px;
-      font-size: 12px;
+      height: 32px !important;
+      min-height: 32px !important;
+      min-width: 64px !important;
+      padding: 0 10px !important;
+      font-size: 13px !important;
 
       i {
-        font-size: 13px;
+        font-size: 14px !important;
       }
     }
   }

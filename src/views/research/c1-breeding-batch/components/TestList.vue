@@ -37,7 +37,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="tester" :label="t('research.c1BreedingBatch.test.tester')" min-width="100" align="center" />
-        <el-table-column :label="t('common.actions')" width="200" align="center" fixed="right" v-if="!readonly">
+        <el-table-column :label="t('common.actions')" width="220" align="center" fixed="right" v-if="!readonly">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">{{ $t('common.edit') }}</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">{{ $t('common.delete') }}</el-button>

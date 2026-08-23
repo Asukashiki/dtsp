@@ -697,7 +697,7 @@ export const getBatchDetail = (batchNo, warehouseCode) => {
  */
 export const getInboundList = (params = {}) => {
   const requestParams = {
-    page: params.page || 1,
+    pageNum: params.page || 1,
     pageSize: params.pageSize || 10
   }
 
@@ -715,8 +715,17 @@ export const getInboundList = (params = {}) => {
     method: 'get',
     params: requestParams
   }).then(res => {
-    if (res.data && res.data.list) {
-      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    // The inventory controller returns the RuoYi paged payload with rows at
+    // the top level. Keep compatibility with older data.rows/data.list
+    // wrappers while preserving the camelCase consumed by inventory views.
+    if (Array.isArray(res.rows)) {
+      res.rows = res.rows.map(item => toCamelCase(item))
+    }
+    if (Array.isArray(res.data?.rows)) {
+      res.data.rows = res.data.rows.map(item => toCamelCase(item))
+    }
+    if (Array.isArray(res.data?.list)) {
+      res.data.list = res.data.list.map(item => toCamelCase(item))
     }
     return res
   })
@@ -968,7 +977,7 @@ export const getInventoryProductCategoryTree = () => {
  */
 export const getOutboundList = (params = {}) => {
   const requestParams = {
-    page: params.page || 1,
+    pageNum: params.page || 1,
     pageSize: params.pageSize || 10
   }
 
@@ -986,8 +995,17 @@ export const getOutboundList = (params = {}) => {
     method: 'get',
     params: requestParams
   }).then(res => {
-    if (res.data && res.data.list) {
-      res.data.list = res.data.list.map(item => toSnakeCase(item))
+    // The inventory controller returns the RuoYi paged payload with rows at
+    // the top level. Keep compatibility with older data.rows/data.list
+    // wrappers while preserving the camelCase consumed by inventory views.
+    if (Array.isArray(res.rows)) {
+      res.rows = res.rows.map(item => toCamelCase(item))
+    }
+    if (Array.isArray(res.data?.rows)) {
+      res.data.rows = res.data.rows.map(item => toCamelCase(item))
+    }
+    if (Array.isArray(res.data?.list)) {
+      res.data.list = res.data.list.map(item => toCamelCase(item))
     }
     return res
   })

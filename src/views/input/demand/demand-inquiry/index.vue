@@ -148,7 +148,7 @@
               <el-table-column
                   :label="$t('demandInquiry.actions')"
                   fixed="right"
-                  width="100"
+                  width="160"
                   align="center"
               >
                 <template #default="{ row }">

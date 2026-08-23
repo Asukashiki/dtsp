@@ -110,7 +110,7 @@
                       {{ getLabelByValue('input_material_unit', scope.row.unit_of_measure) || scope.row.unit_of_measure }}
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('common.actions')" width="100" v-if="hasBatchSplits">
+                    <el-table-column :label="$t('common.actions')" width="140" v-if="hasBatchSplits">
                     <template #default="{ row }">
                       <el-button link type="primary" @click="showBatchSplits(row)" v-if="row.batch_splits && row.batch_splits.length > 0">
                         <i class="ri-list-check"></i> {{ $t('input.inventory.stockOut.form.batchSplits') }}

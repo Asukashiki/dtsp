@@ -48,7 +48,7 @@
                 <el-table-column prop="collectTime" :label="$t('research.breedingData.environment.form.collectTime')" min-width="120" />
                 <el-table-column prop="dataSource" :label="$t('research.breedingData.environment.form.dataSource')" min-width="120" />
                 <el-table-column prop="createTime" :label="$t('common.createTime')" min-width="160" />
-                <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+                <el-table-column :label="$t('common.actions')" width="220" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)"><i class="ri-eye-line"></i>{{ $t('common.view') }}</el-button>

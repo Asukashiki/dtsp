@@ -90,7 +90,7 @@
                   <span v-else>-</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="120" fixed="right">
+              <el-table-column :label="$t('common.actions')" width="140" fixed="right">
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button size="small" type="primary" @click="handleView(row)">

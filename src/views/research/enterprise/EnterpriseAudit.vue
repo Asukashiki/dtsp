@@ -111,7 +111,7 @@
                   </el-table-column>
                   <el-table-column
                     :label="$t('research.audit.columns.actions')"
-                    width="150"
+                    width="160"
                     fixed="right"
                   >
                     <template #default="{ row }">

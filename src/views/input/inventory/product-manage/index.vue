@@ -42,7 +42,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table v-loading="loading" :data="tableData" stripe class="product-manage-table">
               <el-table-column prop="product_code" :label="$t('input.inventory.productManage.columns.productCode')" min-width="150"  show-overflow-tooltip />
               <el-table-column prop="product_name" :label="$t('input.inventory.productManage.columns.productName')" min-width="180" show-overflow-tooltip />
               <el-table-column :label="$t('input.inventory.productManage.columns.mainCategory')" min-width="150" align="center"  >
@@ -58,17 +58,29 @@
                 <template #default="{ row }">{{ formatPrice(row.price) }}</template>
               </el-table-column>
               <el-table-column prop="license_no" :label="$t('input.inventory.productManage.columns.licenseNo')" min-width="180" show-overflow-tooltip />
-              <el-table-column :label="$t('input.inventory.productManage.columns.status')" min-width="110" align="center">
+              <el-table-column
+                :label="$t('input.inventory.productManage.columns.status')"
+                min-width="140"
+                align="center"
+                header-align="center"
+                class-name="status-column"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="row.status === '0' ? 'success' : 'info'" size="small">
+                  <el-tag class="status-tag" :type="row.status === '0' ? 'success' : 'info'" size="small">
                     {{ row.status === '0' ? $t('input.inventory.productManage.status.enabled') : $t('input.inventory.productManage.status.disabled') }}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="update_time" :label="$t('input.inventory.productManage.columns.updateTime')" min-width="170" show-overflow-tooltip />
-              <el-table-column :label="$t('input.inventory.productManage.columns.actions')" width="240" fixed="right">
+              <el-table-column
+                :label="$t('input.inventory.productManage.columns.actions')"
+                width="320"
+                fixed="right"
+                align="center"
+                class-name="product-actions-column"
+              >
                 <template #default="{ row }">
-                  <div class="action-buttons">
+                  <div class="action-buttons product-action-buttons">
                     <el-button class="action-btn action-btn-view" size="small" @click="handleView(row)"><i class="ri-eye-line"></i><span class="btn-text">{{ $t('common.view') }}</span></el-button>
                     <el-button class="action-btn action-btn-edit" type="primary" size="small" @click="handleEdit(row)"><i class="ri-edit-line"></i><span class="btn-text">{{ $t('common.edit') }}</span></el-button>
                     <el-button class="action-btn action-btn-delete" type="danger" size="small" @click="handleDelete(row)"><i class="ri-delete-bin-line"></i><span class="btn-text">{{ $t('common.delete') }}</span></el-button>
@@ -337,5 +349,54 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   margin-top: 16px;
+}
+
+// Keep the fixed desktop actions column on one stable line. The shared table
+// styles intentionally support wrapping for other tables, but these three
+// product actions must stay together inside the fixed column.
+:deep(.product-actions-column .cell) {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.product-manage-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.product-manage-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
+
+.product-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  width: 100%;
+
+  :deep(.el-button.action-btn) {
+    flex: 0 0 auto;
+    min-width: 64px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+
+    i {
+      margin-right: 4px;
+      font-size: 14px !important;
+    }
+  }
 }
 </style>

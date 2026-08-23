@@ -201,7 +201,7 @@
                     <el-input-number v-model="scope.row.totalPrice" :min="0" :precision="2" readonly style="width: 100%" />
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('common.actions')" width="100" fixed="right">
+                <el-table-column :label="$t('common.actions')" width="140" fixed="right">
                   <template #default="scope">
                     <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
                   </template>

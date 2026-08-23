@@ -133,13 +133,12 @@
                   min-width="160"
                   sortable="custom"
                 />
-                <el-table-column :label="$t('common.actions')" fixed="right" width="180">
+                <el-table-column :label="$t('common.actions')" fixed="right" width="220">
                   <template #default="{ row }">
                     <el-button
                       type="primary"
                       size="small"
                       @click="handleView(row)"
-                      style="margin-right: 8px"
                     >
                       <i class="ri-eye-line"></i>
                       {{ $t('common.view') }}

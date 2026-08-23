@@ -47,7 +47,7 @@
 
         <InfoCard :title="$t('input.inventory.stockQuery.list')" icon="ri-file-list-3-line">
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table v-loading="loading" :data="tableData" stripe class="stock-query-table">
               <el-table-column prop="warehouse_code" :label="$t('input.inventory.stockQuery.columns.warehouseCode')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="warehouse_name" :label="$t('input.inventory.stockQuery.columns.warehouseName')" min-width="180" show-overflow-tooltip />
               <el-table-column prop="org_name" :label="$t('input.inventory.stockQuery.columns.orgName')" min-width="180" show-overflow-tooltip />
@@ -57,9 +57,15 @@
                   {{ formatStockQty(row.stock_qty) }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('input.inventory.stockQuery.columns.status')" min-width="120" align="center">
+              <el-table-column
+                :label="$t('input.inventory.stockQuery.columns.status')"
+                min-width="140"
+                align="center"
+                header-align="center"
+                class-name="status-column"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.status)" size="small">
+                  <el-tag class="status-tag" :type="getStatusTag(row.status)" size="small">
                     {{ getStatusLabel(row.status) }}
                   </el-tag>
                 </template>
@@ -256,4 +262,26 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
+
+:deep(.stock-query-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-query-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
+
+:deep(.card-tags .status-tag) {
+  display: inline-flex;
+  flex: 0 0 auto;
+  max-width: 100%;
+  white-space: nowrap;
+}
 </style>

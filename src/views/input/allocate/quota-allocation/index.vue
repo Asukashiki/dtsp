@@ -121,7 +121,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="operateTime" :label="$t('quota.allocation.columns.operateTime')" width="160" />
-                <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+                <el-table-column :label="$t('common.actions')" width="300" fixed="right">
                   <template #default="{ row }">
                     <div class="action-buttons">
                       <el-button link type="primary" @click="handleView(row)">

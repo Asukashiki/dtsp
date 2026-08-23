@@ -97,7 +97,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="startDate" :label="$t('research.breeding.breedingBatch.form.startDate')" width="120" align="center" />
-          <el-table-column :label="$t('common.actions')" width="220" fixed="right" align="center">
+          <el-table-column :label="$t('common.actions')" width="300" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row.id)">{{ $t('common.view') }}</el-button>
               <el-button link type="primary" @click="handleEdit(row.id)">{{ $t('common.edit') }}</el-button>

@@ -44,7 +44,12 @@
           :no-padding="true">
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table
+              :data="tableData"
+              stripe
+              v-loading="loading"
+              class="stock-check-review-table"
+            >
               <el-table-column
                 prop="checkId"
                 :label="$t('stockCheck.fields.checkId')"
@@ -93,30 +98,46 @@
               <el-table-column
                 prop="checkStatus"
                 :label="$t('stockCheck.fields.checkStatus')"
-                width="100"
+                width="160"
+                align="center"
+                header-align="center"
+                class-name="stock-status-column"
               >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.checkStatus)" size="small">
+                  <el-tag
+                    class="stock-status-tag"
+                    :type="getStatusTag(row.checkStatus)"
+                    size="small"
+                  >
                     {{ getStatusText(row.checkStatus) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="150" fixed="right">
+              <el-table-column
+                :label="$t('common.actions')"
+                width="220"
+                fixed="right"
+                align="center"
+                header-align="center"
+                class-name="stock-check-action-column"
+              >
                 <template #default="{ row }">
-                  <el-button
-                    type="primary"
-                    link
-                    size="small"
-                    @click="handleView(row)"
-                  >{{ $t('stockCheck.actions.view') }}</el-button>
+                  <div class="stock-check-actions">
+                    <el-button
+                      type="primary"
+                      link
+                      size="small"
+                      @click="handleView(row)"
+                    >{{ $t('stockCheck.actions.view') }}</el-button>
 
-                  <el-button
-                    v-if="['DRAFT', 'PENDING'].includes(row.checkStatus)"
-                    type="warning"
-                    link
-                    size="small"
-                    @click="handleReview(row)"
-                  >{{ $t('stockCheck.actions.review') }}</el-button>
+                    <el-button
+                      v-if="['DRAFT', 'PENDING'].includes(row.checkStatus)"
+                      type="warning"
+                      link
+                      size="small"
+                      @click="handleReview(row)"
+                    >{{ $t('stockCheck.actions.review') }}</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -260,6 +281,37 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+/* Keep the fixed action column stable when the optional review action is shown. */
+:deep(.stock-check-review-table .stock-check-action-column .cell) {
+  padding: 8px 12px;
+  overflow: visible;
+}
+
+.stock-check-actions {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: nowrap;
+
+  :deep(.el-button) {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 64px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 
 :deep(.page-header-green) {
@@ -269,5 +321,25 @@ onMounted(() => {
   .title, .subtitle, .ri-icon {
     color: white !important;
   }
+}
+
+:deep(.stock-check-review-table .el-table__header th) {
+  white-space: nowrap;
+}
+
+// Keep the full status tag visible inside the table cell.
+:deep(.stock-check-review-table .stock-status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-check-review-table .stock-status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
 }
 </style>

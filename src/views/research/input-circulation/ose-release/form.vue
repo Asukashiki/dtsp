@@ -213,7 +213,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('common.actions')" min-width="100" fixed="right">
+                <el-table-column :label="$t('common.actions')" min-width="140" fixed="right">
                   <template #default="scope">
                     <el-button type="danger" link @click="removeDetail(scope.$index)">{{ $t('common.delete') }}</el-button>
                   </template>
@@ -1147,4 +1147,3 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @use '@/assets/styles/page-common.scss';
 </style>
-

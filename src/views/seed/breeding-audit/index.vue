@@ -120,7 +120,7 @@
           </el-table-column>
           <el-table-column prop="auditor" :label="$t('seed.breedingCertification.auditor')" width="120" show-overflow-tooltip />
           <el-table-column prop="auditTime" :label="$t('seed.breedingCertification.auditTime')" width="160" />
-          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="200" fixed="right">
+          <el-table-column :label="$t('seed.breedingCertification.columns.actions')" width="220" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleView(row)">
                 <i class="ri-eye-line"></i> {{ $t('common.view') }}

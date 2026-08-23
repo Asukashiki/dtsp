@@ -342,10 +342,10 @@ $workflow-status-colors: (
 
   .el-button {
     min-height: 36px;
-    min-width: 80px !important;
+    min-width: 80px;
     font-weight: 500;
     transition: all 0.3s ease;
-    font-size: 16px !important;
+    font-size: 16px;
 
     &:hover {
       transform: translateY(-1px);
@@ -359,7 +359,7 @@ $workflow-status-colors: (
     // Icon alignment
     i {
       margin-right: 6px;
-      font-size: 16px !important;
+      font-size: 16px;
       vertical-align: middle;
     }
   }
@@ -367,17 +367,29 @@ $workflow-status-colors: (
   // 表格列表模式 - 紧凑样式，支持换行
   &.is-table-mode {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
     padding: 4px 0;
     justify-content: flex-start;
+    width: max-content;
+    max-width: none;
+    overflow: visible;
+    white-space: nowrap;
 
     .el-button {
-      min-width: auto;
-      padding: 4px 10px;
-      font-size: 12px;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      height: 32px !important;
+      min-height: 32px !important;
+      min-width: 64px !important;
+      padding: 0 10px !important;
+      font-size: 13px !important;
       font-weight: 500;
       margin: 0 !important;
+      border-radius: 6px !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      text-decoration: none !important;
 
       &:hover {
         transform: none;
@@ -385,12 +397,22 @@ $workflow-status-colors: (
       }
 
       i {
-        margin-right: 4px;
-        font-size: 13px;
+        margin-right: 4px !important;
+        font-size: 14px !important;
       }
 
       .btn-text {
         white-space: nowrap;
+      }
+
+      &.is-link,
+      &.el-button--text {
+        min-width: 64px !important;
+        padding: 0 10px !important;
+        border: 1px solid $color-border-light !important;
+        background: $color-bg-light !important;
+        color: $color-text-regular !important;
+        text-decoration: none !important;
       }
     }
   }
@@ -407,6 +429,9 @@ $workflow-status-colors: (
     &.is-table-mode {
       flex-direction: row;
       flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+      overflow: visible;
 
       .el-button {
         width: auto;

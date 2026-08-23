@@ -73,7 +73,7 @@
         <el-table-column prop="farmerName" :label="$t('inputCirculation.farmerName')" width="120" />
         <el-table-column prop="receiveStatus" :label="$t('inputCirculation.receiveStatus')" width="120" />
         <el-table-column prop="createTime" :label="$t('common.createTime')" width="160" />
-        <el-table-column :label="$t('common.actions')" width="120" fixed="right">
+        <el-table-column :label="$t('common.actions')" width="140" fixed="right">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">
               {{ $t('common.view') }}

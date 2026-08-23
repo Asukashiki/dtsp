@@ -78,7 +78,8 @@
             <el-table
               v-loading="loading"
               :data="tableData"
-              stripe>
+              stripe
+              class="stock-out-table">
               <el-table-column prop="outbound_order_id" :label="$t('input.inventory.stockOut.columns.outboundOrderId')" width="180" fixed="left" />
               <el-table-column prop="outbound_type_name" :label="$t('input.inventory.stockOut.columns.type')" width="120" align="center">
                 <template #default="{ row }">
@@ -91,9 +92,16 @@
               <el-table-column prop="outbound_object_name" :label="$t('input.inventory.stockOut.columns.outboundObject')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="outbound_user" :label="$t('input.inventory.stockOut.columns.outboundUser')" width="120" />
               <el-table-column prop="operator" :label="$t('input.inventory.stockOut.columns.operator')" width="120" />
-              <el-table-column prop="outbound_status" :label="$t('input.inventory.stockOut.columns.status')" width="100" align="center">
+              <el-table-column
+                prop="outbound_status"
+                :label="$t('input.inventory.stockOut.columns.status')"
+                width="160"
+                align="center"
+                header-align="center"
+                class-name="status-column"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="getStatusTag(row.outbound_status)" size="small">
+                  <el-tag class="status-tag" :type="getStatusTag(row.outbound_status)" size="small">
                     {{ getStatusText(row.outbound_status) }}
                   </el-tag>
                 </template>
@@ -711,4 +719,19 @@ onMounted(() => {
 @use '@/assets/styles/page-common.scss';
 @use '@/assets/styles/workflow-common.scss';
 @use '@/assets/styles/table-enhanced.scss';
+
+:deep(.stock-out-table .status-column .cell) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+:deep(.stock-out-table .status-tag) {
+  display: inline-flex;
+  align-items: center;
+  max-width: none;
+  white-space: nowrap;
+}
 </style>
