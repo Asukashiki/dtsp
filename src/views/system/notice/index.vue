@@ -55,7 +55,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="noticeList" stripe v-loading="loading">
+            <el-table border :data="noticeList" stripe v-loading="loading">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column :label="$t('system.notice.noticeTitle')" min-width="200" show-overflow-tooltip>
                 <template #default="{ row }">

@@ -343,7 +343,7 @@ $workflow-status-colors: (
   .el-button {
     min-height: 36px;
     min-width: 80px;
-    font-weight: 500;
+    font-weight: var(--app-button-font-weight);
     transition: all 0.3s ease;
     font-size: 16px;
 
@@ -384,7 +384,7 @@ $workflow-status-colors: (
       min-width: 64px !important;
       padding: 0 10px !important;
       font-size: 13px !important;
-      font-weight: 500;
+      font-weight: var(--app-button-font-weight);
       margin: 0 !important;
       border-radius: 6px !important;
       line-height: 1 !important;

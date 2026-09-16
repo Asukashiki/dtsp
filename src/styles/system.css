@@ -312,13 +312,16 @@
 
 /* Button Primary Color */
 .system-page :deep(.el-button--primary) {
-  background-color: #009a4381;
-  border-color: #009A44;
+  background: var(--app-button-primary-background) !important;
+  border-color: var(--app-button-primary-border) !important;
+  color: #ffffff !important;
+  font-weight: var(--app-button-font-weight) !important;
 }
 
 .system-page :deep(.el-button--primary:hover) {
-  background-color: #00803a42;
-  border-color: #00803a;
+  background: var(--app-button-primary-hover-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
 }
 
 /* ==================== Responsive Design ==================== */

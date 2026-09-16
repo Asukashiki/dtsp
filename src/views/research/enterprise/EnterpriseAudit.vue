@@ -53,7 +53,7 @@
 
               <!-- 表格 -->
               <div class="table-wrapper">
-                <el-table
+                <el-table border
                   :data="filteredList"
                   style="width: 100%"
                   v-loading="loading"

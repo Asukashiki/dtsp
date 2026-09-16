@@ -37,7 +37,7 @@
           </template>
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="filteredList" stripe>
+            <el-table border v-loading="loading" :data="filteredList" stripe>
               <el-table-column prop="oseCode" :label="$t('research.breeding.seed.ose.columns.oseCode')" width="250"
                 show-overflow-tooltip />
               <el-table-column prop="oseName" :label="$t('research.breeding.seed.ose.columns.oseName')" min-width="150"

@@ -259,6 +259,16 @@ $color-bg-lighter: #F8F9FA;
   }
 }
 
+// Full-page list tables should grow with their rows so the document owns the
+// vertical scroll. Element Plus only needs an internal scroller when a page
+// explicitly opts into `height`/`max-height` (for example, a dialog table).
+// Keeping that distinction prevents the header and fixed action column from
+// being rendered in separate, out-of-sync vertical viewports.
+.table-wrapper.pc-only > .el-table:not(.el-table--scrollable-y) {
+  height: fit-content !important;
+  max-height: none !important;
+}
+
 .action-buttons {
   display: inline-flex;
   gap: 6px;
@@ -316,17 +326,17 @@ $color-bg-lighter: #F8F9FA;
   .el-table__body-wrapper,
   .el-table__fixed-body-wrapper {
     .cell {
-      // Direct buttons and buttons wrapped by a component share the same
-      // intrinsic-width cell treatment. This keeps the first and last action
-      // visible even when a page forgot to add an action wrapper.
+      // Keep the table cell itself on the width calculated by Element Plus.
+      // Only the action wrapper below should use intrinsic width; changing the
+      // cell width makes the header and body tables disagree after scrolling.
       &:has(.el-button) {
-        display: inline-flex !important;
+        display: flex !important;
         align-items: center !important;
         gap: 6px !important;
-        width: max-content !important;
-        max-width: none !important;
-        overflow: visible !important;
-        white-space: nowrap !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        white-space: normal !important;
       }
 
       .el-button {
@@ -343,7 +353,7 @@ $color-bg-lighter: #F8F9FA;
         padding: 0 10px !important;
         border-radius: 6px !important;
         font-size: 13px !important;
-        font-weight: 500 !important;
+        font-weight: var(--app-button-font-weight) !important;
         line-height: 1 !important;
         white-space: nowrap !important;
         text-decoration: none !important;
@@ -597,9 +607,33 @@ $color-bg-lighter: #F8F9FA;
   }
 
   .page-header {
-    margin: -16px -16px 16px -16px;
+    margin: 16px;
     padding: 20px 16px;
-    border-radius: 0 0 12px 12px;
+    border-radius: 8px;
+    min-height: 112px;
+    height: auto;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .page-header .header-left {
+    min-width: 0;
+    flex: 1 1 220px;
+  }
+
+  .page-header .header-content {
+    min-width: 0;
+  }
+
+  .page-header .page-title,
+  .page-header .page-subtitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .page-header .header-actions {
+    flex: 0 1 auto;
+    max-width: 100%;
   }
 
   .header-icon {
@@ -682,9 +716,21 @@ $color-bg-lighter: #F8F9FA;
 
 @media screen and (max-width: 480px) {
   .page-header {
-    margin: -12px -12px 12px -12px;
+    margin: 12px;
     padding: 16px 12px;
     gap: 12px;
+    min-height: 96px;
+    border-radius: 8px;
+    align-items: flex-start;
+  }
+
+  .page-header .header-left {
+    flex-basis: 100%;
+  }
+
+  .page-header .header-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .header-left {

@@ -35,7 +35,7 @@
             </div>
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table
+              <el-table border
                 v-loading="loading"
                 :data="tableData"
                 stripe
@@ -180,7 +180,7 @@
 
             <!-- 下钻表格 -->
             <div class="table-wrapper">
-              <el-table
+              <el-table border
                 v-loading="drillDownLoading"
                 :data="drillDownData"
                 stripe
@@ -273,7 +273,7 @@
 
             <!-- 第二层下钻表格 -->
             <div class="table-wrapper">
-              <el-table
+              <el-table border
                 v-loading="drillDown2Loading"
                 :data="drillDown2Data"
                 stripe
@@ -367,7 +367,7 @@
 
             <!-- 第三层下钻表格 -->
             <div class="table-wrapper">
-              <el-table
+              <el-table border
                 v-loading="drillDown3Loading"
                 :data="drillDown3Data"
                 stripe
@@ -447,7 +447,7 @@
       width="80%"
       top="5vh"
     >
-      <el-table
+      <el-table border
         v-loading="detailLoading"
         :data="detailData"
         stripe
@@ -535,7 +535,7 @@
       <!-- 汇聚结果列表 -->
       <div class="aggregation-result-section">
         <h4 class="section-title">{{ $t('stateAggregation.detailDialog.title') }}</h4>
-        <el-table
+        <el-table border
           v-loading="drillDownAggregationLoading"
           :data="drillDownAggregationData"
           stripe
@@ -625,7 +625,7 @@
       <!-- 汇聚结果列表 -->
       <div class="aggregation-result-section">
         <h4 class="section-title">{{ $t('stateAggregation.detailDialog.title') }}</h4>
-        <el-table
+        <el-table border
           v-loading="drillDown2AggregationLoading"
           :data="drillDown2AggregationData"
           stripe
@@ -716,7 +716,7 @@
       <el-tabs v-model="activeDetailTab" @tab-change="handleDetailTabChange">
         <!-- 汇聚结果标签页 -->
         <el-tab-pane :label="$t('common.aggregationResults')" name="aggregation">
-          <el-table
+          <el-table border
             v-loading="drillDown3AggregationLoading"
             :data="drillDown3AggregationData"
             stripe
@@ -812,7 +812,7 @@
           </div>
 
           <!-- 农民需求表格 -->
-          <el-table
+          <el-table border
             v-loading="farmerDemandLoading"
             :data="farmerDemandData"
             stripe

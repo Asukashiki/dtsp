@@ -1,0 +1,1336 @@
+/*
+ * Agri Design System
+ *
+ * A standalone, dependency-free CSS contract extracted from the DITS
+ * Agriculture frontend. Import this file after a UI framework stylesheet
+ * when another system needs the same visual language.
+ *
+ * Recommended markup scope:
+ *   <div class="agri-scope agri-page-container">...</div>
+ *
+ * The agri-* classes are framework neutral. Element Plus selectors are
+ * scoped below .agri-scope so this file can coexist with another app.
+ */
+
+:root {
+  /* Brand palette (Ethiopian flag inspired) */
+  --agri-color-primary: #009a44;
+  --agri-color-primary-end: #00b350;
+  --agri-color-primary-hover: #008038;
+  --agri-color-primary-active: #007030;
+  --agri-color-primary-soft: #e7f4ed;
+  --agri-color-primary-softer: #f1faf4;
+  --agri-color-primary-tint: rgba(0, 154, 68, 0.08);
+  --agri-color-primary-shadow: rgba(0, 154, 68, 0.2);
+  --agri-color-yellow: #fedd00;
+  --agri-color-yellow-hover: #ffe94d;
+  --agri-color-red: #da121a;
+  --agri-color-red-end: #ff3d47;
+  --agri-color-red-hover: #c10f17;
+  --agri-color-info: #909399;
+
+  /* Semantic text, surface and border colors */
+  --agri-color-text-primary: #303133;
+  --agri-color-text-regular: #606266;
+  --agri-color-text-secondary: #909399;
+  --agri-color-text-placeholder: #c0c4cc;
+  --agri-color-page: #f0f2f5;
+  --agri-color-surface: #ffffff;
+  --agri-color-surface-muted: #f8fafc;
+  --agri-color-border: #dfe6e1;
+  --agri-color-border-light: #e4e7ed;
+  --agri-color-border-lighter: #f0f2f5;
+
+  /* Typography */
+  --agri-font-family: 'Inter', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --agri-font-size-xs: 12px;
+  --agri-font-size-sm: 13px;
+  --agri-font-size-md: 14px;
+  --agri-font-size-lg: 16px;
+  --agri-font-size-xl: 20px;
+  --agri-font-size-2xl: 24px;
+  --agri-font-weight-regular: 400;
+  --agri-font-weight-medium: 500;
+  --agri-font-weight-semibold: 600;
+  --agri-font-weight-bold: 700;
+  --agri-line-height-base: 1.6;
+  --agri-line-height-control: 1;
+
+  /* Spacing scale */
+  --agri-space-1: 4px;
+  --agri-space-2: 8px;
+  --agri-space-3: 12px;
+  --agri-space-4: 16px;
+  --agri-space-5: 20px;
+  --agri-space-6: 24px;
+  --agri-space-7: 28px;
+  --agri-space-8: 32px;
+  --agri-space-10: 40px;
+
+  /* Shape and elevation */
+  --agri-radius-sm: 6px;
+  --agri-radius-md: 8px;
+  --agri-radius-lg: 10px;
+  --agri-radius-xl: 12px;
+  --agri-radius-2xl: 16px;
+  --agri-radius-round: 20px;
+  --agri-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --agri-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --agri-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --agri-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --agri-shadow-brand: 0 4px 12px rgba(0, 154, 68, 0.3);
+
+  /* Layout contract */
+  --agri-header-height: 60px;
+  --agri-page-header-height: 128px;
+  --agri-page-header-icon-size: 80px;
+  --agri-sidebar-width: 280px;
+  --agri-sidebar-width-tablet: 200px;
+  --agri-sidebar-width-collapsed: 64px;
+  --agri-mobile-drawer-width: 280px;
+
+  /* Button contract */
+  --agri-button-height: 40px;
+  --agri-button-height-small: 32px;
+  --agri-button-height-large: 44px;
+  --agri-button-radius: 8px;
+  --agri-button-primary-background: linear-gradient(
+    135deg,
+    var(--agri-color-primary) 0%,
+    var(--agri-color-primary-end) 100%
+  );
+  --agri-button-primary-hover-background: linear-gradient(
+    135deg,
+    var(--agri-color-primary-hover) 0%,
+    var(--agri-color-primary) 100%
+  );
+  --agri-button-primary-active-background: linear-gradient(
+    135deg,
+    var(--agri-color-primary-active) 0%,
+    var(--agri-color-primary-hover) 100%
+  );
+  --agri-button-danger-background: linear-gradient(
+    135deg,
+    var(--agri-color-red) 0%,
+    var(--agri-color-red-end) 100%
+  );
+  --agri-button-danger-hover-background: linear-gradient(
+    135deg,
+    var(--agri-color-red-hover) 0%,
+    var(--agri-color-red) 100%
+  );
+}
+
+/* ==================== Base ==================== */
+.agri-scope {
+  box-sizing: border-box;
+  color: var(--agri-color-text-primary);
+  font-family: var(--agri-font-family);
+  font-size: var(--agri-font-size-md);
+  font-weight: var(--agri-font-weight-regular);
+  line-height: var(--agri-line-height-base);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.agri-scope *,
+.agri-scope *::before,
+.agri-scope *::after {
+  box-sizing: border-box;
+}
+
+.agri-scope button,
+.agri-scope input,
+.agri-scope select,
+.agri-scope textarea {
+  font: inherit;
+}
+
+.agri-scope button {
+  cursor: pointer;
+}
+
+.agri-page-container {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  background: var(--agri-color-page);
+}
+
+.agri-page-wrapper {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.agri-hide-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.agri-hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.agri-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 154, 68, 0.05) 0%,
+    rgba(254, 221, 0, 0.03) 100%
+  );
+}
+
+.agri-gradient-primary {
+  background: var(--agri-button-primary-background);
+}
+
+.agri-gradient-danger {
+  background: var(--agri-button-danger-background);
+}
+
+.agri-glass {
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ==================== Page shell ==================== */
+.agri-page-header {
+  min-height: var(--agri-page-header-height);
+  height: var(--agri-page-header-height);
+  margin: var(--agri-space-5);
+  padding: 0 var(--agri-space-8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--agri-space-6);
+  border-radius: var(--agri-radius-md);
+  background: var(--agri-button-primary-background);
+  box-shadow: var(--agri-shadow-sm);
+}
+
+.agri-page-header__left {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--agri-space-4);
+}
+
+.agri-page-header__icon {
+  width: var(--agri-page-header-icon-size);
+  height: var(--agri-page-header-icon-size);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--agri-radius-2xl);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 40px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.agri-page-header__content {
+  min-width: 0;
+  color: #ffffff;
+}
+
+.agri-page-header__title {
+  margin: 0 0 2px;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: var(--agri-font-size-xl);
+  font-weight: var(--agri-font-weight-semibold);
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agri-page-header__subtitle {
+  margin: 0;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: var(--agri-font-size-sm);
+  line-height: 1.4;
+  opacity: 0.9;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agri-page-header__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--agri-space-3);
+}
+
+.agri-content-wrapper {
+  min-width: 0;
+  padding: var(--agri-space-5);
+  padding-bottom: 0;
+}
+
+.agri-info-card,
+.agri-search-card {
+  margin-bottom: var(--agri-space-5);
+  overflow: hidden;
+  border: 1px solid var(--agri-color-border-lighter);
+  border-radius: var(--agri-radius-md);
+  background: var(--agri-color-surface);
+  box-shadow: var(--agri-shadow-sm);
+}
+
+.agri-info-card:last-child {
+  margin-bottom: 0;
+}
+
+.agri-info-card__header {
+  min-height: 56px;
+  padding: var(--agri-space-4) var(--agri-space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--agri-space-4);
+  border-bottom: 1px solid var(--agri-color-border-lighter);
+  background: var(--agri-color-surface);
+}
+
+.agri-info-card__title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--agri-space-2);
+  color: var(--agri-color-text-primary);
+  font-size: var(--agri-font-size-lg);
+  font-weight: var(--agri-font-weight-semibold);
+}
+
+.agri-info-card__title > i {
+  flex: 0 0 auto;
+  color: var(--agri-color-primary);
+  font-size: 20px;
+}
+
+.agri-info-card__body {
+  padding: var(--agri-space-5);
+  background: var(--agri-color-surface);
+}
+
+.agri-info-card__body--no-padding {
+  padding: 0;
+}
+
+/* ==================== Search ==================== */
+.agri-search-card {
+  padding: var(--agri-space-5);
+}
+
+.agri-search-section {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--agri-space-4) var(--agri-space-6);
+}
+
+.agri-search-item {
+  min-width: 320px;
+  max-width: 480px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--agri-space-2);
+}
+
+.agri-search-item > input,
+.agri-search-item > select,
+.agri-search-item > textarea {
+  width: 100%;
+}
+
+.agri-search-label {
+  color: var(--agri-color-text-regular);
+  font-size: var(--agri-font-size-md);
+  font-weight: var(--agri-font-weight-semibold);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.agri-search-actions {
+  height: 40px;
+  margin-left: auto;
+  padding: 0;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+  gap: var(--agri-space-3);
+}
+
+/* ==================== Buttons ==================== */
+.agri-button {
+  min-width: 96px;
+  height: var(--agri-button-height);
+  padding: 0 var(--agri-space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--agri-space-1);
+  border: 1px solid transparent;
+  border-radius: var(--agri-button-radius);
+  color: var(--agri-color-text-regular);
+  background: var(--agri-color-surface);
+  font-size: var(--agri-font-size-md);
+  font-weight: var(--agri-font-weight-semibold);
+  line-height: var(--agri-line-height-control);
+  transition: all 0.3s ease;
+}
+
+.agri-button:hover {
+  transform: translateY(-1px);
+}
+
+.agri-button:active {
+  transform: translateY(0);
+}
+
+.agri-button--primary,
+.agri-button--success {
+  border-color: var(--agri-color-primary);
+  color: #ffffff;
+  background: var(--agri-button-primary-background);
+  box-shadow: 0 2px 8px var(--agri-color-primary-shadow);
+}
+
+.agri-button--primary:hover,
+.agri-button--success:hover {
+  border-color: var(--agri-color-primary-hover);
+  background: var(--agri-button-primary-hover-background);
+  box-shadow: var(--agri-shadow-brand);
+}
+
+.agri-button--primary:active,
+.agri-button--success:active {
+  border-color: var(--agri-color-primary-hover);
+  background: var(--agri-button-primary-active-background);
+}
+
+.agri-button--warning {
+  border-color: var(--agri-color-yellow);
+  color: var(--agri-color-text-primary);
+  background: var(--agri-color-yellow);
+  box-shadow: 0 2px 8px rgba(254, 221, 0, 0.2);
+}
+
+.agri-button--warning:hover {
+  background: var(--agri-color-yellow-hover);
+}
+
+.agri-button--danger {
+  border-color: var(--agri-color-red);
+  color: #ffffff;
+  background: var(--agri-button-danger-background);
+  box-shadow: 0 2px 8px rgba(218, 18, 26, 0.2);
+}
+
+.agri-button--danger:hover {
+  border-color: var(--agri-color-red-hover);
+  background: var(--agri-button-danger-hover-background);
+}
+
+.agri-button--plain,
+.agri-button--text {
+  min-width: 64px;
+  border-color: var(--agri-color-border-light);
+  color: var(--agri-color-text-regular);
+  background: var(--agri-color-surface-muted);
+  box-shadow: none;
+}
+
+.agri-button--plain:hover,
+.agri-button--text:hover {
+  border-color: var(--agri-color-primary);
+  color: var(--agri-color-primary);
+  background: var(--agri-color-primary-tint);
+}
+
+.agri-button--small {
+  min-width: 64px;
+  height: var(--agri-button-height-small);
+  padding: 0 10px;
+  border-radius: var(--agri-radius-sm);
+  font-size: var(--agri-font-size-sm);
+}
+
+.agri-button--large {
+  height: var(--agri-button-height-large);
+  padding: 0 var(--agri-space-6);
+  border-radius: var(--agri-radius-lg);
+  font-size: var(--agri-font-size-lg);
+}
+
+.agri-button-group {
+  display: inline-flex;
+}
+
+.agri-button-group > .agri-button {
+  border-radius: 0;
+}
+
+.agri-button-group > .agri-button:first-child {
+  border-radius: var(--agri-radius-md) 0 0 var(--agri-radius-md);
+}
+
+.agri-button-group > .agri-button:last-child {
+  border-radius: 0 var(--agri-radius-md) var(--agri-radius-md) 0;
+}
+
+/* ==================== Native form controls ==================== */
+.agri-input,
+.agri-select,
+.agri-textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--agri-radius-md);
+  outline: none;
+  color: var(--agri-color-text-primary);
+  background: var(--agri-color-surface);
+  font-size: var(--agri-font-size-md);
+  transition: all 0.3s ease;
+}
+
+.agri-input:hover,
+.agri-select:hover,
+.agri-textarea:hover {
+  border-color: var(--agri-color-primary);
+}
+
+.agri-input:focus,
+.agri-select:focus,
+.agri-textarea:focus {
+  border-color: var(--agri-color-primary);
+  box-shadow: 0 0 0 3px var(--agri-color-primary-tint);
+}
+
+.agri-input::placeholder,
+.agri-textarea::placeholder {
+  color: var(--agri-color-text-placeholder);
+}
+
+.agri-input--small,
+.agri-select--small {
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: var(--agri-radius-sm);
+  font-size: var(--agri-font-size-sm);
+}
+
+.agri-input--large,
+.agri-select--large {
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: var(--agri-radius-lg);
+  font-size: var(--agri-font-size-lg);
+}
+
+.agri-form-item {
+  margin-bottom: var(--agri-space-6);
+}
+
+.agri-form-label {
+  display: block;
+  margin-bottom: var(--agri-space-2);
+  color: var(--agri-color-text-regular);
+  font-size: 15px;
+  font-weight: var(--agri-font-weight-semibold);
+  line-height: 1.5;
+}
+
+.agri-form-error {
+  margin-top: var(--agri-space-1);
+  color: var(--agri-color-red);
+  font-size: var(--agri-font-size-sm);
+}
+
+/* ==================== Tables ==================== */
+.agri-table-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--agri-radius-md);
+  background: var(--agri-color-surface);
+}
+
+.agri-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.agri-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--agri-color-border);
+  border-radius: var(--agri-radius-xl);
+  background: var(--agri-color-surface);
+  box-shadow: none;
+  color: var(--agri-color-text-regular);
+  font-size: var(--agri-font-size-md);
+}
+
+.agri-table thead th {
+  height: 56px;
+  padding: 14px 20px;
+  border-right: 1px solid #d8e7dd;
+  border-bottom: 3px solid #3f9a55;
+  color: #348d4e;
+  background: #e7f4ed;
+  font-size: var(--agri-font-size-lg);
+  font-weight: var(--agri-font-weight-bold);
+  line-height: 24px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.agri-table thead th:last-child {
+  border-right: 0;
+}
+
+.agri-table tbody td {
+  height: 56px;
+  padding: 12px 20px;
+  border-right: 1px solid var(--agri-color-border);
+  border-bottom: 1px solid var(--agri-color-border);
+  color: #60666b;
+  line-height: 24px;
+  vertical-align: middle;
+}
+
+.agri-table tbody tr:nth-child(even) td {
+  background: #fbfcfb;
+}
+
+.agri-table tbody tr:hover td {
+  background: var(--agri-color-primary-softer);
+}
+
+.agri-table tbody td:last-child {
+  border-right: 0;
+}
+
+.agri-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.agri-table__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--agri-space-2);
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.agri-table__actions .agri-button {
+  min-width: 84px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--agri-radius-md);
+  font-size: var(--agri-font-size-md);
+}
+
+.agri-table__empty {
+  padding: var(--agri-space-10) 0;
+  color: var(--agri-color-text-secondary);
+  text-align: center;
+}
+
+.agri-fixed-column {
+  background: var(--agri-color-surface);
+  box-shadow: none;
+}
+
+/* Compact variant used by the organization registration tables. */
+.agri-registration-table {
+  min-width: 940px;
+}
+
+.agri-registration-table thead th {
+  height: 44px;
+  padding: 8px 12px;
+  font-size: var(--agri-font-size-md);
+  line-height: 20px;
+}
+
+.agri-registration-table tbody td {
+  height: 44px;
+  padding: 7px 12px;
+  font-size: var(--agri-font-size-md);
+  line-height: 20px;
+}
+
+.agri-registration-table .agri-table__actions .agri-button {
+  min-width: 64px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--agri-radius-sm);
+  font-size: var(--agri-font-size-sm);
+}
+
+/* ==================== Tags, status and pagination ==================== */
+.agri-tag {
+  min-height: 22px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-size: var(--agri-font-size-xs);
+  font-weight: var(--agri-font-weight-regular);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.agri-tag--success,
+.agri-tag--primary {
+  border-color: #c4e8d0;
+  color: var(--agri-color-primary);
+  background: #edf8f1;
+}
+
+.agri-tag--warning {
+  border-color: rgba(254, 221, 0, 0.55);
+  color: #856d00;
+  background: rgba(254, 221, 0, 0.16);
+}
+
+.agri-tag--danger {
+  border-color: rgba(218, 18, 26, 0.35);
+  color: var(--agri-color-red);
+  background: rgba(218, 18, 26, 0.08);
+}
+
+.agri-tag--info {
+  border-color: rgba(144, 147, 153, 0.25);
+  color: var(--agri-color-text-regular);
+  background: rgba(144, 147, 153, 0.12);
+}
+
+.agri-pagination-wrapper {
+  min-height: 68px;
+  padding: var(--agri-space-4) var(--agri-space-5);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--agri-color-border-lighter);
+  background: var(--agri-color-surface);
+}
+
+.agri-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--agri-space-2);
+  color: var(--agri-color-text-regular);
+  font-size: var(--agri-font-size-md);
+}
+
+.agri-pagination__button,
+.agri-pagination__page {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--agri-radius-md);
+  color: var(--agri-color-text-regular);
+  background: var(--agri-color-surface);
+  font-weight: var(--agri-font-weight-semibold);
+}
+
+.agri-pagination__button:hover,
+.agri-pagination__page:hover {
+  border-color: var(--agri-color-primary);
+  color: var(--agri-color-primary);
+  background: var(--agri-color-primary-tint);
+}
+
+.agri-pagination__page--active {
+  border-color: var(--agri-color-primary);
+  color: #ffffff;
+  background: var(--agri-button-primary-background);
+  box-shadow: 0 2px 8px var(--agri-color-primary-shadow);
+}
+
+/* ==================== Mobile card list ==================== */
+.agri-mobile-card-list {
+  display: none;
+}
+
+.agri-mobile-card {
+  margin-bottom: var(--agri-space-4);
+  padding: var(--agri-space-4);
+  overflow: hidden;
+  border: 1px solid var(--agri-color-border-light);
+  border-radius: var(--agri-radius-xl);
+  background: var(--agri-color-surface);
+  transition: all 0.3s ease;
+}
+
+.agri-mobile-card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.agri-mobile-card__header {
+  min-width: 0;
+  margin-bottom: var(--agri-space-3);
+  padding-bottom: var(--agri-space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--agri-space-3);
+  border-bottom: 1px solid var(--agri-color-border-lighter);
+}
+
+.agri-mobile-card__title {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--agri-space-2);
+  color: var(--agri-color-text-primary);
+  font-size: var(--agri-font-size-lg);
+  font-weight: var(--agri-font-weight-semibold);
+}
+
+.agri-mobile-card__title > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agri-mobile-card__title > i {
+  flex: 0 0 auto;
+  color: var(--agri-color-primary);
+  font-size: 18px;
+}
+
+.agri-mobile-card__body {
+  margin-bottom: var(--agri-space-3);
+}
+
+.agri-mobile-card__row {
+  margin-bottom: var(--agri-space-2);
+  display: flex;
+  align-items: baseline;
+  gap: var(--agri-space-2);
+  font-size: var(--agri-font-size-md);
+}
+
+.agri-mobile-card__row:last-child {
+  margin-bottom: 0;
+}
+
+.agri-mobile-card__label {
+  min-width: 80px;
+  flex: 0 0 auto;
+  color: var(--agri-color-text-secondary);
+}
+
+.agri-mobile-card__value {
+  min-width: 0;
+  flex: 1;
+  color: var(--agri-color-text-primary);
+  font-weight: var(--agri-font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.agri-mobile-card__footer {
+  padding-top: var(--agri-space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--agri-space-2);
+  border-top: 1px solid var(--agri-color-border-lighter);
+}
+
+/* ==================== System shell ==================== */
+.agri-system-layout {
+  min-width: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--agri-color-page);
+}
+
+.agri-system-header {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--agri-header-height);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--agri-button-primary-background);
+}
+
+.agri-system-header__content {
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--agri-space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.agri-system-header__left,
+.agri-system-header__right {
+  display: flex;
+  align-items: center;
+}
+
+.agri-system-header__left {
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: var(--agri-space-3);
+  color: #ffffff;
+}
+
+.agri-system-header__right {
+  flex: 0 0 auto;
+  gap: var(--agri-space-2);
+}
+
+.agri-system-header__name {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 18px;
+  font-weight: var(--agri-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agri-system-header__menu-button {
+  width: 40px;
+  height: 40px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--agri-radius-md);
+  color: inherit;
+  background: transparent;
+  font-size: 24px;
+}
+
+.agri-system-header__user {
+  min-height: 42px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--agri-radius-xl);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.agri-system-header__avatar {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: var(--agri-color-primary);
+  background: linear-gradient(135deg, var(--agri-color-yellow) 0%, var(--agri-color-yellow-hover) 100%);
+  font-size: 18px;
+  font-weight: var(--agri-font-weight-bold);
+}
+
+.agri-system-main {
+  min-width: 0;
+  min-height: 100vh;
+  padding-top: var(--agri-header-height);
+  display: flex;
+}
+
+.agri-system-sidebar {
+  position: fixed;
+  z-index: 50;
+  top: var(--agri-header-height);
+  bottom: 0;
+  left: 0;
+  width: var(--agri-sidebar-width);
+  overflow-y: auto;
+  background: var(--agri-color-surface);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.agri-system-sidebar--collapsed {
+  width: var(--agri-sidebar-width-collapsed);
+}
+
+.agri-system-content {
+  min-width: 0;
+  min-height: calc(100vh - var(--agri-header-height));
+  margin-left: var(--agri-sidebar-width);
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--agri-color-page);
+}
+
+.agri-system-sidebar--collapsed + .agri-system-content {
+  margin-left: var(--agri-sidebar-width-collapsed);
+}
+
+/* ==================== Element Plus bridge ==================== */
+.agri-scope .el-button {
+  border-radius: var(--agri-button-radius);
+  font-weight: var(--agri-font-weight-semibold);
+  transition: all 0.3s ease;
+}
+
+.agri-scope .el-button--primary,
+.agri-scope .el-button--success {
+  border-color: var(--agri-color-primary);
+  color: #ffffff;
+  background: var(--agri-button-primary-background);
+  box-shadow: 0 2px 8px var(--agri-color-primary-shadow);
+}
+
+.agri-scope .el-button--primary:hover,
+.agri-scope .el-button--primary:focus,
+.agri-scope .el-button--success:hover,
+.agri-scope .el-button--success:focus {
+  border-color: var(--agri-color-primary-hover);
+  color: #ffffff;
+  background: var(--agri-button-primary-hover-background);
+  box-shadow: var(--agri-shadow-brand);
+  transform: translateY(-1px);
+}
+
+.agri-scope .el-button--danger {
+  border-color: var(--agri-color-red);
+  color: #ffffff;
+  background: var(--agri-button-danger-background);
+}
+
+.agri-scope .el-button--warning {
+  border-color: var(--agri-color-yellow);
+  color: var(--agri-color-text-primary);
+  background: var(--agri-color-yellow);
+}
+
+.agri-scope .el-button--small {
+  height: var(--agri-button-height-small);
+  min-height: var(--agri-button-height-small);
+  padding: 0 10px;
+  border-radius: var(--agri-radius-sm);
+  font-size: var(--agri-font-size-sm);
+}
+
+.agri-scope .el-input__wrapper,
+.agri-scope .el-select__wrapper,
+.agri-scope .el-textarea__inner {
+  border-radius: var(--agri-radius-md);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  transition: all 0.3s ease;
+}
+
+.agri-scope .el-input__wrapper:hover,
+.agri-scope .el-select__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--agri-color-primary) inset;
+}
+
+.agri-scope .el-input__wrapper.is-focus,
+.agri-scope .el-select__wrapper.is-focused,
+.agri-scope .el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--agri-color-primary) inset,
+    0 0 0 3px var(--agri-color-primary-tint);
+}
+
+.agri-scope .el-table {
+  --el-table-border-color: var(--agri-color-border);
+  --el-table-header-bg-color: #e7f4ed;
+  --el-table-header-text-color: #348d4e;
+  --el-table-row-hover-bg-color: var(--agri-color-primary-softer);
+  border: 1px solid var(--agri-color-border) !important;
+  border-radius: var(--agri-radius-xl) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.agri-scope .el-table th.el-table__cell {
+  height: 56px;
+  padding: 14px 20px !important;
+  color: #348d4e !important;
+  background: #e7f4ed !important;
+  border-right: 1px solid #d8e7dd !important;
+  border-bottom: 3px solid #3f9a55 !important;
+  font-size: var(--agri-font-size-lg);
+  font-weight: var(--agri-font-weight-bold);
+}
+
+.agri-scope .el-table td.el-table__cell {
+  height: 56px;
+  padding: 12px 20px !important;
+  color: #60666b !important;
+  border-right: 1px solid var(--agri-color-border) !important;
+  border-bottom: 1px solid var(--agri-color-border) !important;
+  font-size: var(--agri-font-size-md);
+}
+
+.agri-scope .el-table .el-table__row--striped td.el-table__cell {
+  background: #fbfcfb !important;
+}
+
+.agri-scope .el-table .el-table__row:hover td.el-table__cell {
+  background: var(--agri-color-primary-softer) !important;
+}
+
+.agri-scope .el-tag {
+  border-radius: var(--agri-radius-sm);
+  font-size: var(--agri-font-size-xs);
+  font-weight: var(--agri-font-weight-regular);
+}
+
+.agri-scope .el-pagination .el-pager li {
+  min-width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: var(--agri-radius-md);
+}
+
+/* ==================== Responsive contract ==================== */
+@media screen and (max-width: 1200px) {
+  .agri-page-header {
+    padding-right: var(--agri-space-6);
+    padding-left: var(--agri-space-6);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .agri-system-sidebar {
+    width: var(--agri-sidebar-width-tablet);
+  }
+
+  .agri-system-content {
+    margin-left: var(--agri-sidebar-width-tablet);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .agri-page-header {
+    min-height: 112px;
+    height: auto;
+    margin: var(--agri-space-4);
+    padding: var(--agri-space-5) var(--agri-space-4);
+    flex-wrap: wrap;
+  }
+
+  .agri-page-header__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--agri-radius-lg);
+    font-size: 24px;
+  }
+
+  .agri-page-header__title {
+    font-size: var(--agri-font-size-xl);
+  }
+
+  .agri-page-header__subtitle {
+    font-size: var(--agri-font-size-sm);
+  }
+
+  .agri-content-wrapper {
+    padding: var(--agri-space-4);
+  }
+
+  .agri-search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .agri-search-item {
+    min-width: 100%;
+    max-width: none;
+  }
+
+  .agri-search-actions {
+    width: 100%;
+    height: auto;
+    margin-left: 0;
+  }
+
+  .agri-search-actions .agri-button {
+    flex: 1 1 0;
+  }
+
+  .agri-system-header__content {
+    padding-right: var(--agri-space-3);
+    padding-left: var(--agri-space-3);
+  }
+
+  .agri-system-header__menu-button {
+    display: inline-flex;
+  }
+
+  .agri-system-sidebar {
+    display: none;
+  }
+
+  .agri-system-content {
+    margin-left: 0;
+  }
+
+  .agri-system-header__user {
+    padding: 6px;
+  }
+
+  .agri-system-header__user-name {
+    display: none;
+  }
+
+  .agri-table-scroll {
+    overflow-x: auto;
+  }
+
+  .agri-table {
+    min-width: 720px;
+  }
+
+  .agri-table thead th,
+  .agri-table tbody td {
+    padding-right: 14px;
+    padding-left: 14px;
+    font-size: var(--agri-font-size-md);
+  }
+
+  .agri-mobile-card-list {
+    display: block;
+  }
+
+  .agri-table-wrapper--responsive-table {
+    display: none;
+  }
+}
+
+/* Registration pages intentionally keep their desktop table between 601px
+   and 768px, matching the current project reference layout. */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  .agri-registration-page .agri-table-wrapper--responsive-table {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .agri-registration-page .agri-mobile-card-list {
+    display: none;
+  }
+
+  .agri-registration-page .agri-page-header {
+    min-height: var(--agri-page-header-height);
+    height: var(--agri-page-header-height);
+    margin: var(--agri-space-5);
+    padding: 0 var(--agri-space-8);
+    flex-wrap: nowrap;
+  }
+
+  .agri-registration-page .agri-content-wrapper {
+    padding: var(--agri-space-5);
+  }
+
+  .agri-registration-page .agri-registration-table {
+    min-width: 940px;
+  }
+
+  .agri-registration-page .agri-table__actions {
+    flex-wrap: nowrap;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .agri-registration-page .agri-table-wrapper--responsive-table {
+    display: none;
+  }
+
+  .agri-registration-page .agri-mobile-card-list {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .agri-page-header {
+    min-height: 96px;
+    margin: var(--agri-space-3);
+    padding: var(--agri-space-4) var(--agri-space-3);
+    align-items: flex-start;
+  }
+
+  .agri-page-header__left {
+    flex-basis: 100%;
+  }
+
+  .agri-page-header__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--agri-radius-md);
+    font-size: 20px;
+  }
+
+  .agri-page-header__title {
+    font-size: 18px;
+  }
+
+  .agri-page-header__subtitle {
+    font-size: var(--agri-font-size-xs);
+  }
+
+  .agri-content-wrapper {
+    padding: var(--agri-space-3);
+  }
+
+  .agri-info-card__header,
+  .agri-info-card__body,
+  .agri-search-card {
+    padding: var(--agri-space-3);
+  }
+
+  .agri-mobile-card {
+    padding: var(--agri-space-3);
+  }
+
+  .agri-mobile-card__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--agri-space-1);
+  }
+
+  .agri-mobile-card__label {
+    min-width: auto;
+  }
+
+  .agri-system-header {
+    --agri-header-height: 56px;
+  }
+
+  .agri-system-header__name {
+    max-width: 180px;
+    font-size: var(--agri-font-size-md);
+  }
+
+  .agri-system-main {
+    padding-top: 56px;
+  }
+}

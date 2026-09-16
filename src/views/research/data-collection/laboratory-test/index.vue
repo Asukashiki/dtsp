@@ -87,7 +87,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table border v-loading="loading" :data="tableData" stripe>
               <el-table-column type="selection" width="55" align="center" />
                 <el-table-column
                   prop="batchId"

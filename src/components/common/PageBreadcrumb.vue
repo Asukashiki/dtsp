@@ -226,6 +226,7 @@ onUnmounted(() => {
 .tabs-wrapper {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 4px;
   background: white;
   border-radius: 8px;
@@ -283,6 +284,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   flex: 1;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
@@ -430,6 +432,40 @@ onUnmounted(() => {
 
   .tab-label {
     max-width: 60px;
+  }
+}
+
+/* Tablet panes keep the desktop tab rhythm while retaining horizontal
+   scrolling for long route labels. */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  .page-breadcrumb-tabs {
+    padding: 20px 20px 0 20px;
+  }
+
+  .tabs-wrapper {
+    padding: 0 12px;
+    height: 40px;
+  }
+
+  .nav-button {
+    width: 24px;
+    height: 24px;
+  }
+
+  .scroll-button {
+    width: 20px;
+    height: 28px;
+  }
+
+  .tab-item {
+    padding: 0 12px;
+    height: 40px;
+    gap: 6px;
+  }
+
+  .tab-label {
+    font-size: 13px;
+    max-width: 120px;
   }
 }
 </style>

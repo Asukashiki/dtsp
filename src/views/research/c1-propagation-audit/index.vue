@@ -49,7 +49,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe v-loading="loading">
+            <el-table border :data="dataList" stripe v-loading="loading">
               <el-table-column prop="applicantOrgName" :label="$t('research.c1Propagation.columns.applicantOrgName')"
                 min-width="160" show-overflow-tooltip />
               <el-table-column prop="authId" :label="$t('research.c1Propagation.columns.authId')" min-width="140"

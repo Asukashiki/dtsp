@@ -89,7 +89,7 @@
             <div class="card-body">
               <!-- PC端表格 -->
               <div class="pc-view">
-                <el-table :data="detailData.details || []" stripe style="width: 100%">
+                <el-table border :data="detailData.details || []" stripe style="width: 100%">
                   <el-table-column type="index" label="#" width="60" />
                   <el-table-column prop="material_name" :label="$t('input.inventory.stockOut.form.inputName')" min-width="150" />
                   <el-table-column prop="material_type" :label="$t('input.inventory.stockIn.form.inputType')" width="120">
@@ -175,7 +175,7 @@
       width="90%"
       max-width="800px"
     >
-      <el-table :data="currentBatchSplits" stripe>
+      <el-table border :data="currentBatchSplits" stripe>
         <el-table-column type="index" label="#" width="60" />
         <el-table-column prop="inbound_batch_id" :label="$t('input.inventory.stockOut.form.inboundBatchId')" min-width="200" />
         <el-table-column prop="split_quantity" :label="$t('input.inventory.stockOut.form.splitQuantity')" width="120" align="center" />

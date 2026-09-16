@@ -83,7 +83,7 @@
             <div class="card-body">
               <!-- PC端表格 -->
               <div class="pc-view">
-                <el-table :data="detailData.details || []" stripe style="width: 100%">
+                <el-table border :data="detailData.details || []" stripe style="width: 100%">
                   <el-table-column type="index" label="#" width="60" />
                   <el-table-column prop="material_name" :label="$t('input.inventory.stockIn.inputName')" min-width="150" />
                   <el-table-column prop="material_id" :label="$t('input.inventory.stockIn.inputId')" width="150" />

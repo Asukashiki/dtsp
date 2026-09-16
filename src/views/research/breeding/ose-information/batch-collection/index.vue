@@ -50,7 +50,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+            <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
               <el-table-column type="index" width="50" align="center" />
               <el-table-column
                 prop="breedingBatchId"

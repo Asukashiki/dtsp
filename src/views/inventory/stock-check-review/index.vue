@@ -44,7 +44,7 @@
           :no-padding="true">
 
           <div class="table-wrapper pc-only">
-            <el-table
+            <el-table border
               :data="tableData"
               stripe
               v-loading="loading"

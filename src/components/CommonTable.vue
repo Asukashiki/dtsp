@@ -10,8 +10,8 @@
     <el-table
       :data="data"
       stripe
+      border
       style="width: 100%"
-      :header-cell-style="{ background: '#f5f7fa', color: '#606266' }"
       :row-style="{ cursor: 'pointer' }"
       @row-click="handleRowClick"
       empty-text="暂无数据"
@@ -22,6 +22,9 @@
         :prop="column.prop"
         :label="column.label"
         :width="column.width"
+        :min-width="column.minWidth"
+        :column-key="column.columnKey || column.prop || `column-${index}`"
+        :resizable="column.resizable !== false"
       />
     </el-table>
   </div>
@@ -95,4 +98,4 @@ const handleRowClick = (row) => {
 .section-container {
   height: 100%;
 }
-</style> 
+</style>

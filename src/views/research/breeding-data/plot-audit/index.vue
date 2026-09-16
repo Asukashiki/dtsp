@@ -52,7 +52,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe v-loading="loading">
+            <el-table border :data="dataList" stripe v-loading="loading">
               <!-- 复选框列 -->
               <el-table-column type="selection" width="55" align="center" />
               

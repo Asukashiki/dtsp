@@ -54,7 +54,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table border :data="tableData" stripe v-loading="loading">
               <el-table-column prop="batchId" :label="$t('research.c1BreedingBatch.columns.batchId')" min-width="180"
                 fixed="left" show-overflow-tooltip />
               <el-table-column prop="varietyName" :label="$t('research.c1BreedingBatch.columns.varietyName')"

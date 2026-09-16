@@ -66,7 +66,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table border :data="tableData" stripe v-loading="loading">
               <el-table-column prop="batchId" :label="$t('research.breeding.batch.columns.batchId')" width="220" fixed="left" />
               <el-table-column prop="varietyName" :label="$t('research.breeding.batch.columns.varietyName')" min-width="150" />
               <el-table-column prop="cropTypeName" :label="$t('research.breeding.batch.columns.cropType')" min-width="140" align="center">

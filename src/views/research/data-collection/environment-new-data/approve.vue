@@ -70,7 +70,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table border :data="tableData" stripe v-loading="loading" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="plotId" :label="$t('research.environmentNewData.columns.plotId')" min-width="120" />
               <el-table-column prop="batchId" :label="$t('research.environmentNewData.columns.batchId')" min-width="120" />

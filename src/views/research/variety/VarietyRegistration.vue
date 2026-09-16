@@ -61,7 +61,7 @@
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-                <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+                <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
                   <el-table-column prop="registrationNo" :label="$t('research.variety.registration.columns.registrationNo')" min-width="150" />
                   <el-table-column prop="varietyName" :label="$t('research.variety.registration.columns.varietyName')" min-width="150" />
                   <el-table-column prop="varietyCode" :label="$t('research.variety.registration.columns.varietyCode')" min-width="150" />

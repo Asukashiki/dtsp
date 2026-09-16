@@ -41,7 +41,7 @@
           <el-option :label="$t('research.variety.audit.status.published')" value="published" />
         </el-select>
       </div>
-        <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
+        <el-table border :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="registrationNo" :label="$t('research.variety.audit.columns.applicationNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.audit.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.audit.columns.cropType')" min-width="120">

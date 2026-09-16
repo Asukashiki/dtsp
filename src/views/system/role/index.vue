@@ -52,7 +52,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="roleList" stripe v-loading="loading">
+            <el-table border :data="roleList" stripe v-loading="loading">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="roleName" :label="$t('system.role.roleName')" min-width="150" />
               <el-table-column prop="roleKey" :label="$t('system.role.roleKey')" min-width="150">

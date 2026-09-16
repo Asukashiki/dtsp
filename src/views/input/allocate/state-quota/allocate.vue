@@ -167,7 +167,7 @@
             </div>
           </div>
           <div class="card-body">
-            <el-table :data="existingAllocations" stripe>
+            <el-table border :data="existingAllocations" stripe>
               <el-table-column prop="toDivisionId" :label="$t('quota.allocation.columns.toDivision')" min-width="120" />
               <el-table-column prop="toDivisionName" :label="$t('quota.allocation.columns.toDivisionName')" min-width="150" />
               <el-table-column prop="allocatedQuota" :label="$t('quota.allocation.columns.allocatedQuota')" width="140" align="right">

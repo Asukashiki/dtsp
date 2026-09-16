@@ -64,7 +64,7 @@
 
             <!-- PC Table -->
             <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="quotaName" :label="$t('quota.stateQuota.columns.quotaName')" min-width="180" show-overflow-tooltip />
                 <el-table-column prop="year" :label="$t('quota.stateQuota.columns.year')" width="80" />

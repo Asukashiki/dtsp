@@ -65,7 +65,7 @@
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-                <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+                <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
                   <el-table-column prop="trackingId" :label="$t('research.breeding.tracking.columns.trackingId')" min-width="130" />
                   <el-table-column prop="batchId" :label="$t('research.breeding.tracking.columns.batchId')" min-width="150" />
                   <el-table-column prop="stageName" :label="$t('research.breeding.tracking.columns.stageName')" min-width="150" show-overflow-tooltip />

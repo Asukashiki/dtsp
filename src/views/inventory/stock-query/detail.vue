@@ -26,7 +26,7 @@
               :key="item.key"
               :label="item.label"
               :name="item.key">
-              <el-table v-loading="batchLoading" :data="batchList" stripe>
+              <el-table border v-loading="batchLoading" :data="batchList" stripe>
                 <el-table-column prop="batch_no" :label="$t('input.inventory.stockQuery.columns.batchNo')" min-width="160" show-overflow-tooltip />
                 <el-table-column prop="expire_date" :label="$t('input.inventory.stockQuery.columns.expireDate')" min-width="160" :formatter="formatDateTime" />
                 <el-table-column prop="qty" :label="$t('input.inventory.stockQuery.columns.qty')" min-width="120" align="right" />

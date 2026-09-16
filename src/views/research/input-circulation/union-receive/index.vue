@@ -49,7 +49,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="receiveList" stripe v-loading="loading">
+            <el-table border :data="receiveList" stripe v-loading="loading">
               <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="200" show-overflow-tooltip />
               <el-table-column prop="releaseName" :label="$t('inputCirculation.releaseName')" min-width="200" show-overflow-tooltip />
               <el-table-column prop="releaseOrg" :label="$t('inputCirculation.releaseOrg')" min-width="150" show-overflow-tooltip />

@@ -51,7 +51,7 @@
         <InfoCard :title="$t('research.variety.query.title')" icon="ri-file-list-3-line">
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="varietyList" stripe style="width: 100%"
+            <el-table border v-loading="loading" :data="varietyList" stripe style="width: 100%"
               :empty-text="$t('home.noData')">
               <el-table-column :label="$t('research.variety.query.columns.dataType')" width="140" align="center">
                 <template #default="{ row }">

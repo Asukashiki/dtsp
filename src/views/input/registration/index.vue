@@ -69,7 +69,7 @@
           <div class="card-body">
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table v-loading="loading" :data="tableData" stripe>
+              <el-table border v-loading="loading" :data="tableData" stripe>
                 <el-table-column
                   prop="orgName"
                   :label="$t('orgRegistration.columns.orgName')"

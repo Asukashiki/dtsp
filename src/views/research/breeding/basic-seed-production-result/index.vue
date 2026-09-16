@@ -44,7 +44,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="filteredList" stripe v-loading="loading">
+            <el-table border :data="filteredList" stripe v-loading="loading">
               <el-table-column type="index" width="60" align="center" />
               <el-table-column
                 prop="produceBatchId"

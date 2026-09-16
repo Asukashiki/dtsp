@@ -75,7 +75,7 @@
             @tab-change="handleTabChange" />
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading" class="transfer-table">
+            <el-table border :data="tableData" stripe v-loading="loading" class="transfer-table">
               <el-table-column
                 prop="transferType"
                 :label="$t('inventory.transfer.types')"
@@ -529,6 +529,7 @@ onMounted(() => {
   gap: 4px;
   padding: 6px 12px;
   font-size: 13px;
+  font-weight: var(--app-button-font-weight);
   border-radius: 6px;
   
   i {
@@ -541,47 +542,47 @@ onMounted(() => {
 }
 
 .action-btn-view {
-  background-color: #f4f4f5;
-  border-color: #e4e4e7;
-  color: #606266;
+  background: var(--app-button-primary-background);
+  border-color: var(--app-button-primary-border);
+  color: #ffffff;
   
   &:hover {
-    background-color: #e9e9eb;
-    border-color: #d1d1d6;
-    color: #383838;
+    background: var(--app-button-primary-hover-background);
+    border-color: var(--app-button-primary-hover-border);
+    color: #ffffff;
   }
 }
 
 .action-btn-edit {
-  background-color: #409eff;
-  border-color: #409eff;
-  color: white;
+  background: var(--app-button-primary-background);
+  border-color: var(--app-button-primary-border);
+  color: #ffffff;
   
   &:hover {
-    background-color: #66b1ff;
-    border-color: #66b1ff;
+    background: var(--app-button-primary-hover-background);
+    border-color: var(--app-button-primary-hover-border);
   }
 }
 
 .action-btn-submit {
-  background-color: #67c23a;
-  border-color: #67c23a;
-  color: white;
+  background: var(--app-button-primary-background);
+  border-color: var(--app-button-primary-border);
+  color: #ffffff;
   
   &:hover {
-    background-color: #85ce61;
-    border-color: #85ce61;
+    background: var(--app-button-primary-hover-background);
+    border-color: var(--app-button-primary-hover-border);
   }
 }
 
 .action-btn-audit {
-  background-color: #409eff;
-  border-color: #409eff;
-  color: white;
+  background: var(--app-button-primary-background);
+  border-color: var(--app-button-primary-border);
+  color: #ffffff;
 
   &:hover {
-    background-color: #66b1ff;
-    border-color: #66b1ff;
+    background: var(--app-button-primary-hover-background);
+    border-color: var(--app-button-primary-hover-border);
   }
 }
 

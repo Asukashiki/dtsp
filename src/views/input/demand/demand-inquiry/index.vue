@@ -91,7 +91,7 @@
         <div class="info-card">
           <!-- 统一表格 -->
           <div class="table-wrapper">
-            <el-table
+            <el-table border
                 v-loading="loading"
                 :data="tableData"
                 stripe

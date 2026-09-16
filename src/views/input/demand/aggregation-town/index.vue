@@ -34,7 +34,7 @@
             </div>
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table
+              <el-table border
                 v-loading="loading"
                 :data="tableData"
                 stripe
@@ -203,7 +203,7 @@
 
             <!-- 下钻表格 -->
             <div class="table-wrapper">
-              <el-table
+              <el-table border
                 v-loading="drillDownLoading"
                 :data="drillDownData"
                 stripe
@@ -330,7 +330,7 @@
       width="80%"
       top="5vh"
     >
-      <el-table
+      <el-table border
         v-loading="detailLoading"
         :data="detailData"
         stripe
@@ -458,7 +458,7 @@
       <el-tabs v-model="activeDetailTab" @tab-change="handleDetailTabChange">
         <!-- 汇聚结果标签页 -->
         <el-tab-pane :label="$t('common.aggregationResults')" name="aggregation">
-          <el-table
+          <el-table border
             v-loading="drillDownAggregationLoading"
             :data="drillDownAggregationData"
             stripe
@@ -554,7 +554,7 @@
           </div>
 
           <!-- 农民需求表格 -->
-          <el-table
+          <el-table border
             v-loading="farmerDemandLoading"
             :data="farmerDemandData"
             stripe

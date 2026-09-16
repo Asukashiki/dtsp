@@ -47,7 +47,7 @@
           </template>
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="dataList" stripe @selection-change="handleSelectionChange">
+            <el-table border v-loading="loading" :data="dataList" stripe @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" />
               <el-table-column prop="locationId" :label="$t('research.breedingData.researchCenter.columns.locationId')"
                 min-width="200" show-overflow-tooltip />

@@ -110,7 +110,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table
+            <el-table border
               v-loading="loading"
               :data="tableData"
               stripe

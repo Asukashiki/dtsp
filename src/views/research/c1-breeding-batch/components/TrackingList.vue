@@ -20,7 +20,7 @@
         </el-button>
       </div>
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
+      <el-table border v-loading="loading" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="trackingId" :label="t('research.c1BreedingBatch.tracking.trackingId')" min-width="180"
           show-overflow-tooltip />
         <el-table-column prop="seedClass" :label="t('research.c1BreedingBatch.tracking.seedClass')" min-width="100" align="center" />

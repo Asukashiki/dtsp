@@ -37,6 +37,40 @@
   --el-color-error: #DA121A;
   --el-color-info: #909399;
 
+  /* Canonical action-button palette shared by search, add, view, edit and
+     submit actions. Warning and danger actions keep separate semantic hues. */
+  --app-button-primary-start: #009A44;
+  --app-button-primary-end: #00b350;
+  --app-button-primary-hover-start: #008038;
+  --app-button-primary-hover-end: #009A44;
+  --app-button-primary-active: #007030;
+  --app-button-danger-start: #DA121A;
+  --app-button-danger-end: #FF3D47;
+  --app-button-danger-hover-start: #C10F17;
+  --app-button-danger-hover-end: #DA121A;
+  --app-button-font-weight: 600;
+  --app-button-radius: 8px;
+
+  /* Shared gradients are derived from the same start/end tokens so pages
+     cannot drift to a second shade of green. */
+  --app-button-primary-background: linear-gradient(
+    135deg,
+    var(--app-button-primary-start) 0%,
+    var(--app-button-primary-end) 100%
+  );
+  --app-button-primary-hover-background: linear-gradient(
+    135deg,
+    var(--app-button-primary-hover-start) 0%,
+    var(--app-button-primary-hover-end) 100%
+  );
+  --app-button-primary-active-background: linear-gradient(
+    135deg,
+    var(--app-button-primary-active) 0%,
+    var(--app-button-primary-hover-start) 100%
+  );
+  --app-button-primary-border: var(--app-button-primary-start);
+  --app-button-primary-hover-border: var(--app-button-primary-hover-start);
+
   /* 文字颜色 */
   --el-text-color-primary: #303133;
   --el-text-color-regular: #606266;
@@ -122,23 +156,25 @@ body {
 /* ==================== Element Plus 按钮样式覆盖 ==================== */
 /* 主要按钮 - 绿色渐变 */
 .el-button--primary {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  background: var(--app-button-primary-background);
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--app-button-radius);
+  font-weight: var(--app-button-font-weight);
   box-shadow: 0 2px 8px rgba(0, 154, 68, 0.2);
   transition: all 0.3s ease;
 }
 
 .el-button--primary:hover,
 .el-button--primary:focus {
-  background: linear-gradient(135deg, #008038 0%, #009A44 100%);
+  background: var(--app-button-primary-hover-background);
+  border-color: var(--app-button-primary-hover-border);
   box-shadow: 0 4px 12px rgba(0, 154, 68, 0.3);
   transform: translateY(-1px);
 }
 
 .el-button--primary:active {
-  background: linear-gradient(135deg, #007030 0%, #008038 100%);
+  background: var(--app-button-primary-active-background);
+  border-color: var(--app-button-primary-hover-border);
   transform: translateY(0);
 }
 
@@ -149,25 +185,32 @@ body {
 
 /* 成功按钮 */
 .el-button--success {
-  background: linear-gradient(135deg, #009A44 0%, #00b350 100%);
+  background: var(--app-button-primary-background);
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--app-button-radius);
+  font-weight: var(--app-button-font-weight);
   box-shadow: 0 2px 8px rgba(0, 154, 68, 0.2);
 }
 
-.el-button--success:hover {
-  background: linear-gradient(135deg, #008038 0%, #009A44 100%);
+.el-button--success:hover,
+.el-button--success:focus {
+  background: var(--app-button-primary-hover-background);
+  border-color: var(--app-button-primary-hover-border);
   box-shadow: 0 4px 12px rgba(0, 154, 68, 0.3);
+}
+
+.el-button--success:active {
+  background: var(--app-button-primary-active-background);
+  border-color: var(--app-button-primary-hover-border);
 }
 
 /* 警告按钮 - 黄色 */
 .el-button--warning {
   background: #FEDD00;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--app-button-radius);
   color: #303133;
-  font-weight: 600;
+  font-weight: var(--app-button-font-weight);
   box-shadow: 0 2px 8px rgba(254, 221, 0, 0.2);
 }
 
@@ -180,8 +223,8 @@ body {
 .el-button--danger {
   background: linear-gradient(135deg, #DA121A 0%, #FF3D47 100%);
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--app-button-radius);
+  font-weight: var(--app-button-font-weight);
   box-shadow: 0 2px 8px rgba(218, 18, 26, 0.2);
 }
 
@@ -193,14 +236,14 @@ body {
 
 /* 信息按钮 */
 .el-button--info {
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--app-button-radius);
+  font-weight: var(--app-button-font-weight);
 }
 
 /* 默认按钮 */
 .el-button {
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--app-button-radius);
+  font-weight: var(--app-button-font-weight);
   transition: all 0.3s ease;
 }
 
@@ -674,46 +717,19 @@ body {
   white-space: nowrap;
 }
 
-/* Reserve enough space for table operation buttons. The number of buttons is
-   detected from the rendered cell so pages with different workflow states do
-   not clip their first or last action. */
-.el-table td.el-table__cell:has(> .cell .el-button) {
-  min-width: 140px !important;
-}
-
-.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(2)) {
-  min-width: 220px !important;
-}
-
-.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(3)) {
-  min-width: 300px !important;
-}
-
-.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(4)) {
-  min-width: 380px !important;
-}
-
-.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(5)) {
-  min-width: 460px !important;
-}
-
-.el-table td.el-table__cell:has(> .cell .el-button:nth-of-type(6)) {
-  min-width: 540px !important;
-}
-
 /* ==================== 统一表格操作按钮（全局兜底） ====================
    Some views render table actions without importing page-common.scss. Keep
-   the rendered table cell as the final source of truth so every module uses
-   the same button size, spacing and overflow behavior. */
-.el-table .el-table__body-wrapper .cell:has(.el-button),
-.el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
-  display: inline-flex !important;
+   the cell width owned by Element Plus so header/body columns stay aligned;
+   only the nested action group is allowed to use intrinsic width. */
+.el-table.el-table .el-table__body-wrapper .cell:has(.el-button),
+.el-table.el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+  display: flex !important;
   align-items: center !important;
   gap: 6px !important;
-  width: max-content !important;
-  max-width: none !important;
-  overflow: visible !important;
-  white-space: nowrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  white-space: normal !important;
 }
 
 .el-table .el-table__body-wrapper .cell > .action-buttons,
@@ -751,7 +767,7 @@ body {
   padding: 0 10px !important;
   border-radius: 6px !important;
   font-size: 13px !important;
-  font-weight: 500 !important;
+  font-weight: var(--app-button-font-weight) !important;
   line-height: 1 !important;
   white-space: nowrap !important;
   text-decoration: none !important;
@@ -1316,6 +1332,323 @@ body {
 
 .el-empty__description p { color: #909399; font-size: 15px; }
 
+/* ========================================================================
+   Final Element Plus table specification
+   Keep this block last so page-level table rules and legacy overrides cannot
+   produce a different header, row, fixed-column, or action-button treatment.
+   ======================================================================== */
+.el-table {
+  --el-table-border-color: #e0e6e2;
+  --el-table-header-bg-color: #e7f4ed;
+  --el-table-header-text-color: #348d4e;
+  --el-table-text-color: #60666b;
+  --el-table-row-hover-bg-color: #f1faf4;
+  --el-table-current-row-bg-color: #edf8f1;
+  /* Keep table surfaces flat; fixed-column shadows are disabled below. */
+  --el-table-fixed-box-shadow: none;
+  --el-table-fixed-left-column: none;
+  --el-table-fixed-right-column: none;
+  background: #ffffff !important;
+  border: 1px solid #dfe6e1 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.el-table::before,
+.el-table--border::after,
+.el-table .el-table__inner-wrapper::before {
+  display: none !important;
+}
+
+.el-table .el-table__header-wrapper,
+.el-table .el-table__fixed-header-wrapper {
+  background: #e7f4ed !important;
+}
+
+.el-table .el-table__header-wrapper th.el-table__cell,
+.el-table .el-table__fixed-header-wrapper th.el-table__cell,
+.el-table .el-table__header th.el-table-fixed-column--left,
+.el-table .el-table__header th.el-table-fixed-column--right {
+  box-sizing: border-box;
+  height: 56px;
+  padding: 14px 0 !important;
+  background: #e7f4ed !important;
+  color: #348d4e !important;
+  border-right: 1px solid #d8e7dd !important;
+  border-bottom: 3px solid #3f9a55 !important;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.el-table .el-table__header-wrapper th.el-table__cell:last-child,
+.el-table .el-table__fixed-header-wrapper th.el-table__cell:last-child {
+  border-right: 0 !important;
+}
+
+.el-table .el-table__body td.el-table__cell {
+  box-sizing: border-box;
+  height: 56px;
+  padding: 12px 0 !important;
+  background: #ffffff !important;
+  color: #60666b !important;
+  border-right: 1px solid #e0e6e2 !important;
+  border-bottom: 1px solid #e0e6e2 !important;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.el-table .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: #fbfcfb !important;
+}
+
+.el-table .el-table__body tr.el-table__row:hover > td.el-table__cell,
+.el-table .el-table__body tr.current-row > td.el-table__cell {
+  background: #f1faf4 !important;
+}
+
+.el-table .el-table__body td.el-table__cell:last-child {
+  border-right: 0 !important;
+}
+
+.el-table th.el-table__cell > .cell,
+.el-table td.el-table__cell > .cell {
+  box-sizing: border-box;
+  padding-right: 20px;
+  padding-left: 20px;
+  color: inherit;
+  line-height: 24px;
+}
+
+/* Action cells keep their intrinsic button width so the first and last
+   action remain visible in normal and fixed-right table columns. */
+.el-table .el-table__body-wrapper .cell:has(.el-button),
+.el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding-right: 8px !important;
+  padding-left: 8px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell > [class*="action-buttons"],
+.el-table.el-table .el-table__body-wrapper .cell > [class*="table-actions"],
+.el-table.el-table .el-table__body-wrapper .cell > .stock-check-actions,
+.el-table.el-table .el-table__fixed-body-wrapper .cell > [class*="action-buttons"],
+.el-table.el-table .el-table__fixed-body-wrapper .cell > [class*="table-actions"],
+.el-table.el-table .el-table__fixed-body-wrapper .cell > .stock-check-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 84px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button + .el-button,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button + .el-button {
+  margin-left: 0 !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button *,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button * {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button > i,
+.el-table.el-table .el-table__body-wrapper .cell .el-button > .el-icon,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button > i,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button > .el-icon {
+  flex: 0 0 auto;
+  margin-right: 6px !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+/* Filled green actions match the reference table. Warning and danger retain
+   their meaning while using the same dimensions and spacing. */
+.el-table.el-table .el-table__body-wrapper .cell .el-button:not(.el-button--warning):not(.el-button--danger),
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button:not(.el-button--warning):not(.el-button--danger) {
+  background: var(--app-button-primary-background) !important;
+  border-color: var(--app-button-primary-border) !important;
+  color: #ffffff !important;
+  font-weight: var(--app-button-font-weight) !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):hover,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):hover {
+  background: var(--app-button-primary-hover-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):focus,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):focus {
+  background: var(--app-button-primary-hover-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):active,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button:not(.is-disabled):not(:disabled):not(.el-button--warning):not(.el-button--danger):active {
+  background: var(--app-button-primary-active-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button.el-button--warning,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--warning {
+  background: #d59a25 !important;
+  border-color: #d59a25 !important;
+  color: #ffffff !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button.el-button--danger,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button.el-button--danger {
+  background: #d95757 !important;
+  border-color: #d95757 !important;
+  color: #ffffff !important;
+}
+
+.el-table.el-table .el-table__body-wrapper .cell .el-button.is-disabled,
+.el-table.el-table .el-table__body-wrapper .cell .el-button:disabled,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button.is-disabled,
+.el-table.el-table .el-table__fixed-body-wrapper .cell .el-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Fixed columns are opaque, otherwise regular rows can show through while
+   the table is horizontally scrolled. */
+.el-table .el-table__fixed,
+.el-table .el-table__fixed-right,
+.el-table .el-table-fixed-column--left,
+.el-table .el-table-fixed-column--right {
+  background: #ffffff !important;
+}
+
+.el-table .el-table__fixed,
+.el-table .el-table__fixed-right {
+  box-shadow: none !important;
+}
+
+.el-table .el-table-fixed-column--left.is-last-column::before,
+.el-table .el-table-fixed-column--right.is-first-column::before {
+  box-shadow: none !important;
+}
+
+.el-table .el-table-fixed-column--right.is-first-column::before {
+  box-shadow: none !important;
+}
+
+.el-table .el-table__fixed th.el-table__cell,
+.el-table .el-table__fixed-right th.el-table__cell {
+  background: #e7f4ed !important;
+}
+
+.el-table .el-table__fixed td.el-table__cell,
+.el-table .el-table__fixed-right td.el-table__cell {
+  background: #ffffff !important;
+}
+
+.el-table .el-table__fixed .el-table__row--striped td.el-table__cell,
+.el-table .el-table__fixed-right .el-table__row--striped td.el-table__cell {
+  background: #fbfcfb !important;
+}
+
+.el-table .el-table__fixed .el-table__row:hover td.el-table__cell,
+.el-table .el-table__fixed-right .el-table__row:hover td.el-table__cell {
+  background: #f1faf4 !important;
+}
+
+.el-table .el-table__cell.is-center .cell,
+.el-table .el-table__cell.is-center > .cell {
+  padding-right: 8px;
+  padding-left: 8px;
+  text-align: center;
+}
+
+.el-table .el-table__empty-text {
+  padding: 40px 0;
+  color: #909399;
+  font-size: 14px;
+}
+
+/* Element Plus uses this proxy while a header boundary is dragged. Keep it
+   visible above fixed columns so resizing has clear feedback on every table. */
+.el-table--border .el-table__column-resize-proxy {
+  z-index: 12;
+  border-left: 2px solid #3f9a55;
+}
+
+/* Main list tables follow the page scroll. Tables that explicitly opt into
+   an internal vertical viewport keep Element Plus' scrollable-y behavior. */
+.table-wrapper.pc-only > .el-table:not(.el-table--scrollable-y) {
+  height: fit-content !important;
+  max-height: none !important;
+}
+
+@media screen and (max-width: 768px) {
+  .el-table.el-table .el-table__body-wrapper .cell:has(.el-button),
+  .el-table.el-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .el-table .el-table__header-wrapper th.el-table__cell,
+  .el-table .el-table__fixed-header-wrapper th.el-table__cell,
+  .el-table .el-table__body td.el-table__cell {
+    font-size: 14px;
+  }
+
+  .el-table th.el-table__cell > .cell,
+  .el-table td.el-table__cell > .cell {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
 /* ==================== 修复 Select 高度与 Input 对齐 ==================== */
 
 /* 1. 默认尺寸 (对应 Input padding: 8px 12px) */
@@ -1383,100 +1716,320 @@ body {
   padding: 8px 10px !important;
 }
 
-
-/* ==================== Element Plus 表格样式覆盖 ==================== */
-.el-table {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --el-table-border-color: rgba(0, 0, 0, 0.06);
+/* ========================================================================
+   Unified brand-green action buttons
+   Keep action buttons outside tables (including mobile-card actions) in the
+   same visual family as Search/Add and the table action buttons above. The
+   semantic danger/warning variants are intentionally excluded. !important is
+   required here because many legacy SFCs contain scoped action overrides.
+   ======================================================================== */
+.el-button.action-btn,
+.el-button.btn-green,
+.el-button.btn-blue,
+.action-buttons .el-button,
+.table-action-buttons .el-button,
+.workflow-action-buttons .el-button,
+.el-button.el-button--primary,
+.el-button.el-button--success {
+  font-weight: var(--app-button-font-weight) !important;
 }
 
-/* 表格头部 */
-.el-table__header-wrapper {
-  background: linear-gradient(135deg, rgba(0, 154, 68, 0.05) 0%, rgba(254, 221, 0, 0.03) 100%);
+.el-button.action-btn:not(.action-btn-delete):not(.action-btn-warning):not(.el-button--danger):not(.el-button--warning),
+.el-button.btn-green,
+.el-button.btn-blue,
+.el-button.action-btn-view,
+.el-button.action-btn-edit,
+.el-button.action-btn-submit,
+.el-button.action-btn-audit {
+  background: var(--app-button-primary-background) !important;
+  border-color: var(--app-button-primary-border) !important;
+  color: #ffffff !important;
 }
 
-.el-table thead {
-  color: #009A44;
-  font-weight: 700;
+.el-button.action-btn:not(.action-btn-delete):not(.action-btn-warning):not(.el-button--danger):not(.el-button--warning):hover,
+.el-button.action-btn:not(.action-btn-delete):not(.action-btn-warning):not(.el-button--danger):not(.el-button--warning):focus,
+.el-button.btn-green:hover,
+.el-button.btn-green:focus,
+.el-button.btn-blue:hover,
+.el-button.btn-blue:focus,
+.el-button.action-btn-view:hover,
+.el-button.action-btn-view:focus,
+.el-button.action-btn-edit:hover,
+.el-button.action-btn-edit:focus,
+.el-button.action-btn-submit:hover,
+.el-button.action-btn-submit:focus,
+.el-button.action-btn-audit:hover,
+.el-button.action-btn-audit:focus {
+  background: var(--app-button-primary-hover-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
 }
 
-.el-table th.el-table__cell {
-  background: transparent;
-  border-bottom: 2px solid rgba(0, 154, 68, 0.1);
-  padding: 16px 12px;
+.el-button.action-btn:not(.action-btn-delete):not(.action-btn-warning):not(.el-button--danger):not(.el-button--warning):active,
+.el-button.btn-green:active,
+.el-button.btn-blue:active,
+.el-button.action-btn-view:active,
+.el-button.action-btn-edit:active,
+.el-button.action-btn-submit:active,
+.el-button.action-btn-audit:active {
+  background: var(--app-button-primary-active-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+/* Explicit semantic variants keep their meaning even when a legacy page
+   omits Element Plus' type attribute and relies on an action class. */
+.el-button.action-btn-warning {
+  background: var(--el-color-warning) !important;
+  border-color: var(--el-color-warning) !important;
+  color: #303133 !important;
+  font-weight: var(--app-button-font-weight) !important;
+}
+
+.el-button.action-btn-warning:hover,
+.el-button.action-btn-warning:focus {
+  background: #ffe94d !important;
+  border-color: #e6c700 !important;
+  color: #303133 !important;
+}
+
+.el-button.action-btn-warning:active {
+  background: #e6c700 !important;
+  border-color: #c5a900 !important;
+  color: #303133 !important;
+}
+
+.el-button.action-btn-delete {
+  background: linear-gradient(
+    135deg,
+    var(--app-button-danger-start) 0%,
+    var(--app-button-danger-end) 100%
+  ) !important;
+  border-color: var(--app-button-danger-start) !important;
+  color: #ffffff !important;
+  font-weight: var(--app-button-font-weight) !important;
+}
+
+.el-button.action-btn-delete:hover,
+.el-button.action-btn-delete:focus {
+  background: linear-gradient(
+    135deg,
+    var(--app-button-danger-hover-start) 0%,
+    var(--app-button-danger-hover-end) 100%
+  ) !important;
+  border-color: var(--app-button-danger-hover-start) !important;
+  color: #ffffff !important;
+}
+
+.el-button.action-btn-delete:active {
+  background: var(--app-button-danger-hover-start) !important;
+  border-color: var(--app-button-danger-hover-start) !important;
+  color: #ffffff !important;
+}
+
+/* A number of mobile cards render their View action as a plain Element Plus
+   button without an explicit type. Treat those direct card actions as brand
+   actions so desktop tables and mobile cards use the same green treatment.
+   Typed warning/danger/info buttons remain semantic and are excluded. */
+.mobile-card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info),
+.mobile-card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info),
+.card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info),
+.card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info) {
+  background: var(--app-button-primary-background) !important;
+  border-color: var(--app-button-primary-border) !important;
+  color: #ffffff !important;
+  font-weight: var(--app-button-font-weight) !important;
+}
+
+.mobile-card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):hover,
+.mobile-card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):focus,
+.mobile-card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):hover,
+.mobile-card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):focus,
+.card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):hover,
+.card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):focus,
+.card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):hover,
+.card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):focus {
+  background: var(--app-button-primary-hover-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+.mobile-card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):active,
+.mobile-card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):active,
+.card-actions > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):active,
+.card-footer > .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.action-btn-warning):not(.el-button--danger):not(.action-btn-delete):not(.el-button--info):active {
+  background: var(--app-button-primary-active-background) !important;
+  border-color: var(--app-button-primary-hover-border) !important;
+  color: #ffffff !important;
+}
+
+/* Propagation organization registration tables follow the compact reference
+   treatment without changing the denser or more spacious needs of other data grids. */
+.el-table.registration-table {
+  --el-table-border-color: #dfe6e1;
+  --el-table-header-bg-color: #e5f3eb;
+  --el-table-header-text-color: #008f40;
+  --el-table-row-hover-bg-color: #f1faf4;
+  border-color: #dfe6e1 !important;
+  border-radius: 4px !important;
+}
+
+.el-table.registration-table .el-table__header-wrapper,
+.el-table.registration-table .el-table__fixed-header-wrapper {
+  background: #e5f3eb !important;
+}
+
+.el-table.registration-table .el-table__header-wrapper th.el-table__cell,
+.el-table.registration-table .el-table__fixed-header-wrapper th.el-table__cell {
+  height: 44px;
+  padding: 8px 0 !important;
+  background: #e5f3eb !important;
+  color: #008f40 !important;
+  border-right-color: #d7e6dc !important;
+  border-bottom: 1px solid #009a44 !important;
   font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
 }
 
-/* 表格行 - 移除 transition: all，避免影响固定列 */
-.el-table__row {
-  transition: background-color 0.2s ease;
-}
-
-/* 普通单元格 hover 样式 */
-.el-table__row:hover > td.el-table__cell {
-  background-color: rgba(0, 154, 68, 0.04) !important;
-}
-
-/* ===== 固定列关键修复 ===== */
-/* 固定列默认需要实心背景，防止内容穿透 */
-.el-table__body .el-table__row td.el-table-fixed-column--left,
-.el-table__body .el-table__row td.el-table-fixed-column--right {
-  background-color: #ffffff !important;
-  z-index: 2;
-}
-
-/* 固定列 hover 时也使用实心背景色 */
-.el-table__body .el-table__row:hover td.el-table-fixed-column--left,
-.el-table__body .el-table__row:hover td.el-table-fixed-column--right {
-  background-color: #f2f9f5 !important; /* 用实心色代替 rgba(0, 154, 68, 0.04) */
-}
-
-/* 斑马纹下的固定列 */
-.el-table--striped .el-table__body tr.el-table__row--striped td.el-table-fixed-column--left,
-.el-table--striped .el-table__body tr.el-table__row--striped td.el-table-fixed-column--right {
-  background-color: #fafafa !important;
-}
-
-/* 斑马纹 + hover 下的固定列 */
-.el-table--striped .el-table__body tr.el-table__row--striped:hover td.el-table-fixed-column--left,
-.el-table--striped .el-table__body tr.el-table__row--striped:hover td.el-table-fixed-column--right {
-  background-color: #f2f9f5 !important;
-}
-
-/* 固定列表头也要实心背景 */
-.el-table__header th.el-table-fixed-column--left,
-.el-table__header th.el-table-fixed-column--right {
-  background-color: #f8faf9 !important;
-  z-index: 3;
-}
-
-/* 固定列阴影效果 */
-.el-table .el-table-fixed-column--left.is-last-column::before,
-.el-table .el-table-fixed-column--right.is-first-column::before {
-  box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, 0.08);
-}
-
-.el-table .el-table-fixed-column--right.is-first-column::before {
-  box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, 0.08);
-}
-
-/* ===== 结束固定列修复 ===== */
-
-.el-table td.el-table__cell {
-  padding: 14px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-/* 斑马纹 */
-.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-/* 表格空状态 */
-.el-table__empty-text {
-  color: #909399;
+.el-table.registration-table .el-table__body td.el-table__cell {
+  height: 44px;
+  padding: 7px 0 !important;
+  color: #4f575e !important;
+  border-right-color: #dfe6e1 !important;
+  border-bottom-color: #dfe6e1 !important;
   font-size: 14px;
-  padding: 40px 0;
+  line-height: 20px;
+}
+
+.el-table.registration-table .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: #fafcfb !important;
+}
+
+.el-table.registration-table .el-table__body tr.el-table__row:hover > td.el-table__cell,
+.el-table.registration-table .el-table__body tr.current-row > td.el-table__cell {
+  background: #f1faf4 !important;
+}
+
+.el-table.registration-table th.el-table__cell > .cell,
+.el-table.registration-table td.el-table__cell > .cell {
+  padding-right: 12px;
+  padding-left: 12px;
+  line-height: 20px;
+}
+
+.el-tag.registration-data-tag {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.el-tag.registration-data-tag.el-tag--primary,
+.el-tag.registration-data-tag.el-tag--success {
+  --el-tag-bg-color: #edf8f1;
+  --el-tag-border-color: #c4e8d0;
+  --el-tag-text-color: #009a44;
+  background: #edf8f1 !important;
+  border-color: #c4e8d0 !important;
+  color: #009a44 !important;
+}
+
+.el-table.registration-table .action-buttons {
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+}
+
+.el-table.el-table.registration-table .el-table__body-wrapper .cell .el-button,
+.el-table.el-table.registration-table .el-table__fixed-body-wrapper .cell .el-button {
+  min-width: 64px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+}
+
+.el-table.el-table.registration-table .el-table__body-wrapper .cell .el-button > i,
+.el-table.el-table.registration-table .el-table__body-wrapper .cell .el-button > .el-icon,
+.el-table.el-table.registration-table .el-table__fixed-body-wrapper .cell .el-button > i,
+.el-table.el-table.registration-table .el-table__fixed-body-wrapper .cell .el-button > .el-icon {
+  margin-right: 4px !important;
+  font-size: 14px !important;
+}
+
+/* Registration pages use the desktop table in the 601-768px tablet range,
+   matching the reference layout while preserving mobile cards below 600px. */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  .organization-registration-page .table-wrapper.pc-only {
+    display: block !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .organization-registration-page .mobile-card-list.mobile-only {
+    display: none !important;
+  }
+
+  .organization-registration-page .page-header {
+    margin: 20px;
+    padding: 0 32px;
+    min-height: 128px;
+    height: 128px;
+    border-radius: 8px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .organization-registration-page .page-header .header-left {
+    min-width: 0;
+    flex: 1 1 auto;
+    gap: 16px;
+  }
+
+  .organization-registration-page .header-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+  }
+
+  .organization-registration-page .header-icon i {
+    font-size: 40px;
+  }
+
+  .organization-registration-page .page-title {
+    font-size: 20px;
+  }
+
+  .organization-registration-page .page-subtitle {
+    font-size: 13px;
+  }
+
+  .organization-registration-page .content-wrapper {
+    padding: 20px;
+  }
+
+  .organization-registration-page .registration-table {
+    min-width: 940px;
+  }
+
+  .organization-registration-page .registration-table .el-table__body-wrapper .cell:has(.el-button),
+  .organization-registration-page .registration-table .el-table__fixed-body-wrapper .cell:has(.el-button) {
+    flex-wrap: nowrap !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+  }
+
+  .organization-registration-page .registration-table .action-buttons {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+  }
+
+  .organization-registration-page .pagination-wrapper .el-pagination__sizes,
+  .organization-registration-page .pagination-wrapper .el-pagination__jump {
+    display: none !important;
+  }
 }

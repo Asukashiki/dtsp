@@ -64,7 +64,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" />
               <el-table-column prop="batchName" :label="$t('research.breedingData.batch.columns.batchName')" min-width="160" show-overflow-tooltip />
               <el-table-column prop="batchId" :label="$t('research.breedingData.batch.columns.batchId')" min-width="140" show-overflow-tooltip />

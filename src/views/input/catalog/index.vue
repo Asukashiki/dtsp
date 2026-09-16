@@ -57,7 +57,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table
+            <el-table border
                 v-loading="loading"
                 :data="tableData"
                 stripe
@@ -413,7 +413,7 @@ onMounted(async () => {
   min-width: auto;
   padding: 4px 10px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: var(--app-button-font-weight);
   margin: 0 !important;
   display: inline-flex;
   align-items: center;

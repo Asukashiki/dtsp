@@ -31,7 +31,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="promotionList" stripe style="width: 100%"
+            <el-table border v-loading="loading" :data="promotionList" stripe style="width: 100%"
               :empty-text="$t('home.noData')">
               <el-table-column prop="promotionId" :label="$t('research.seedPromotion.columns.promotionId')"
                 min-width="180" show-overflow-tooltip />

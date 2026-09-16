@@ -54,7 +54,7 @@
           <StatusTabs v-model="activeTab" :tabs="tabs" @tab-change="handleTabChange" />
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
+            <el-table border :data="tableData" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
               <template v-if="activeTab === 'field'">
                 <el-table-column prop="trackingId" :label="$t('research.c1BreedingBatch.tracking.trackingId')" min-width="180" show-overflow-tooltip />
                 <el-table-column prop="batchId" :label="$t('research.detection.batchId')" min-width="160" show-overflow-tooltip />

@@ -85,7 +85,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="releaseList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table border :data="releaseList" stripe v-loading="loading" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" />
               <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="farmerId" :label="$t('inputCirculation.farmerId')" width="120" show-overflow-tooltip />

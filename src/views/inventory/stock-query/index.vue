@@ -47,7 +47,7 @@
 
         <InfoCard :title="$t('input.inventory.stockQuery.list')" icon="ri-file-list-3-line">
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe class="stock-query-table">
+            <el-table border v-loading="loading" :data="tableData" stripe class="stock-query-table">
               <el-table-column prop="warehouse_code" :label="$t('input.inventory.stockQuery.columns.warehouseCode')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="warehouse_name" :label="$t('input.inventory.stockQuery.columns.warehouseName')" min-width="180" show-overflow-tooltip />
               <el-table-column prop="org_name" :label="$t('input.inventory.stockQuery.columns.orgName')" min-width="180" show-overflow-tooltip />

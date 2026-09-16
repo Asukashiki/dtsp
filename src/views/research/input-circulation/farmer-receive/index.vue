@@ -56,7 +56,7 @@
         <InfoCard :title="$t('inputCirculation.cooperativeReleaseToFarmer')" icon="ri-file-list-3-line">
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="receiveList" stripe v-loading="loading">
+            <el-table border :data="receiveList" stripe v-loading="loading">
               <el-table-column prop="releaseId" :label="$t('inputCirculation.releaseId')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="farmerName" :label="$t('inputCirculation.farmerName')" min-width="120" show-overflow-tooltip />
               <el-table-column prop="farmerId" :label="$t('inputCirculation.farmerId')" min-width="120" show-overflow-tooltip />

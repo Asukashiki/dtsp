@@ -84,7 +84,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+            <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
               <el-table-column :label="$t('research.breeding.seed.receiveConfirm.columns.distributeId')" width="200">
                 <template #default="{ row }">
                   {{ row.distributeId }}

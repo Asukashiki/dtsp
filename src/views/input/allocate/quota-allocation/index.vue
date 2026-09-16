@@ -92,7 +92,7 @@
 
             <!-- PC Table -->
             <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="allocationName" :label="$t('quota.allocation.columns.allocationName')" min-width="250" show-overflow-tooltip />
                 <el-table-column prop="year" :label="$t('quota.allocation.columns.year')" width="100" />

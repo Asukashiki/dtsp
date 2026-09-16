@@ -58,7 +58,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="inboundList" stripe v-loading="loading" class="stock-in-table">
+            <el-table border :data="inboundList" stripe v-loading="loading" class="stock-in-table">
               <el-table-column
                 prop="inbound_order_id"
                 :label="$t('input.inventory.stockIn.columns.orderId')"

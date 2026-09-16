@@ -232,14 +232,14 @@ const systemModules = computed(() => ({
     external: true,
     newTab: true
   },
-  farm: {
-    name: t('home.modules.farm.name'),
-    desc: t('home.modules.farm.desc'),
-    icon: 'ri-landscape-line',
-    gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
-    path: 'http://196.189.236.220:30006',
-    external: true
-  }
+  // farm: {
+  //   name: t('home.modules.farm.name'),
+  //   desc: t('home.modules.farm.desc'),
+  //   icon: 'ri-landscape-line',
+  //   gradient: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+  //   path: 'http://196.189.236.220:30006',
+  //   external: true
+  // }
 }))
 
 

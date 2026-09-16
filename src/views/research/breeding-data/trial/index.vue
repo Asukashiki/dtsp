@@ -77,7 +77,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" />
               <el-table-column prop="trialId" :label="$t('research.breedingData.trial.columns.trialId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="trialName" :label="$t('research.breedingData.trial.columns.trialName')" min-width="160" show-overflow-tooltip />

@@ -9,7 +9,7 @@
           <StatusTabs v-model="activeStatus" :tabs="statusTabs" @tab-change="handleStatusChange" />
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
+            <el-table border :data="tableData" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
               <el-table-column prop="batchId" :label="$t('research.detection.batchId')" min-width="180" show-overflow-tooltip />
               <el-table-column :label="$t('research.detection.seedClass')" min-width="180" align="center">
                 <template #default="{ row }">

@@ -68,7 +68,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe class="warehouse-manage-table">
+            <el-table border v-loading="loading" :data="tableData" stripe class="warehouse-manage-table">
               <el-table-column prop="warehouse_code" :label="$t('input.inventory.warehouseManage.columns.warehouseCode')" min-width="160" show-overflow-tooltip />
               <el-table-column prop="warehouse_name" :label="$t('input.inventory.warehouseManage.columns.warehouseName')" min-width="180" show-overflow-tooltip />
               <el-table-column :label="$t('input.inventory.warehouseManage.columns.type')" min-width="130" align="center">
@@ -610,7 +610,7 @@ onMounted(() => {
   min-width: auto;
   padding: 4px 10px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: var(--app-button-font-weight);
   margin: 0 !important;
   display: inline-flex;
   align-items: center;

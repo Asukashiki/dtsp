@@ -20,7 +20,7 @@
         </div>
       </template>
 
-      <el-table v-loading="loading" :data="dataList" stripe>
+      <el-table border v-loading="loading" :data="dataList" stripe>
         <el-table-column prop="dictCode" label="ID" width="80" />
         <el-table-column :label="$t('system.dict.dataLabel')" min-width="200">
           <template #default="{ row }">

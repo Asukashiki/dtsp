@@ -52,7 +52,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="userList" stripe v-loading="loading">
+            <el-table border :data="userList" stripe v-loading="loading">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="userName" :label="$t('system.user.username')" min-width="120" />
               <el-table-column prop="nickName" :label="$t('system.user.nickname')" min-width="120" />

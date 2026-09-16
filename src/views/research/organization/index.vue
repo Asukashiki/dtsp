@@ -34,7 +34,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table border :data="tableData" stripe v-loading="loading">
               <el-table-column type="index" label="#" width="60" />
               <el-table-column prop="orgCode" :label="$t('research.organization.orgCode')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="orgName" :label="$t('research.organization.orgName')" min-width="180" show-overflow-tooltip />

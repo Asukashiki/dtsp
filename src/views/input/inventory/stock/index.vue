@@ -64,7 +64,7 @@
         <InfoCard :title="$t('input.inventory.stock.list')" icon="ri-file-list-3-line">
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table
+            <el-table border
               v-loading="loading"
               :data="tableData"
               stripe>

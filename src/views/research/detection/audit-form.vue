@@ -45,7 +45,7 @@
           <div class="card-body">
             <el-tabs v-model="activeTab">
               <el-tab-pane :label="`${$t('research.menu.fieldDetection')} (${fieldList.length})`" name="field">
-                <el-table :data="fieldList" stripe table-layout="fixed">
+                <el-table border :data="fieldList" stripe table-layout="fixed">
                   <el-table-column prop="trackingId" :label="$t('research.c1BreedingBatch.tracking.trackingId')" min-width="170" show-overflow-tooltip />
                   <el-table-column prop="stage" :label="$t('research.c1BreedingBatch.tracking.stage')" min-width="110" align="center" />
                   <el-table-column prop="inspectionValue" :label="$t('research.c1BreedingBatch.tracking.inspectionValue')" min-width="110" align="center" />
@@ -66,7 +66,7 @@
               </el-tab-pane>
 
               <el-tab-pane :label="`${$t('research.menu.labTesting')} (${labList.length})`" name="lab">
-                <el-table :data="labList" stripe table-layout="fixed">
+                <el-table border :data="labList" stripe table-layout="fixed">
                   <el-table-column prop="testId" :label="$t('research.c1BreedingBatch.test.testId')" min-width="170" show-overflow-tooltip />
                   <el-table-column prop="testType" :label="$t('research.c1BreedingBatch.test.testType')" min-width="120" align="center" />
                   <el-table-column prop="testValue" :label="$t('research.c1BreedingBatch.test.testValue')" min-width="120" align="center">

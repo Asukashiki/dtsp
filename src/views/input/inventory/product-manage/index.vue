@@ -42,7 +42,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe class="product-manage-table">
+            <el-table border v-loading="loading" :data="tableData" stripe class="product-manage-table">
               <el-table-column prop="product_code" :label="$t('input.inventory.productManage.columns.productCode')" min-width="150"  show-overflow-tooltip />
               <el-table-column prop="product_name" :label="$t('input.inventory.productManage.columns.productName')" min-width="180" show-overflow-tooltip />
               <el-table-column :label="$t('input.inventory.productManage.columns.mainCategory')" min-width="150" align="center"  >

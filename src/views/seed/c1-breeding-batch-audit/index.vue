@@ -38,7 +38,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table border v-loading="loading" :data="tableData" stripe>
               <el-table-column prop="batchId" :label="$t('seed.c1BatchAudit.columns.batchId')" min-width="180"
                 fixed="left" show-overflow-tooltip />
               <el-table-column prop="varietyName" :label="$t('seed.c1BatchAudit.columns.varietyName')" min-width="140"

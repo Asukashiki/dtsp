@@ -44,7 +44,7 @@
       </div>
 
       <!-- 表格 -->
-      <el-table v-loading="loading" :data="tableData" stripe>
+      <el-table border v-loading="loading" :data="tableData" stripe>
         <el-table-column
           prop="plotId"
           :label="$t('research.dataCollection.varietyEvaluation.form.plotId')"

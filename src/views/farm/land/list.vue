@@ -46,7 +46,7 @@
 
             <!-- PC端表格 -->
             <div class="table-wrapper pc-only">
-              <el-table
+              <el-table border
                 :data="tableData"
                 style="width: 100%"
                 v-loading="loading"

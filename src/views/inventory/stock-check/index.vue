@@ -50,7 +50,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading" class="stock-check-table">
+            <el-table border :data="tableData" stripe v-loading="loading" class="stock-check-table">
               <el-table-column
                 prop="checkId"
                 :label="$t('stockCheck.list.checkId')"

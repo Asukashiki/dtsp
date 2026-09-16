@@ -56,7 +56,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="configList" stripe v-loading="loading">
+            <el-table border :data="configList" stripe v-loading="loading">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="configName" :label="$t('system.config.configName')" min-width="180" show-overflow-tooltip />
               <el-table-column prop="configKey" :label="$t('system.config.configKey')" min-width="200" show-overflow-tooltip />

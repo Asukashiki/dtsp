@@ -37,7 +37,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="plotId" :label="$t('trait-audit.plotId')" min-width="140" show-overflow-tooltip />
               <el-table-column prop="trialId" :label="$t('trait-audit.trialId')" min-width="140" show-overflow-tooltip />

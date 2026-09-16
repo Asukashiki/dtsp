@@ -1,5 +1,6 @@
 <template>
-  <div class="system-layout">
+  <div class="system-layout" :class="{ 'registration-system-layout': isRegistrationRoute }"
+    :style="{ '--configured-menu-width': menuWidth }">
     <!-- 顶部导航栏 -->
     <div class="system-header" :style="headerStyle">
       <div class="header-content" :class="{ 'dark-text': isYellowTheme }">
@@ -58,7 +59,7 @@
     <!-- 主体区域 -->
     <div class="system-main">
       <!-- PC端左侧菜单 -->
-      <div class="system-sidebar pc-only" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { width: menuWidth } : {}">
+      <div class="system-sidebar pc-only" :class="{ collapsed: isCollapsed }">
         <div class="collapse-btn" @click="toggleCollapse">
           <i :class="isCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'"></i>
         </div>
@@ -134,7 +135,7 @@
       </el-drawer>
 
       <!-- 右侧内容区 -->
-      <div class="system-content" :class="{ collapsed: isCollapsed }" :style="!isCollapsed ? { marginLeft: menuWidth } : {}">
+      <div class="system-content" :class="{ collapsed: isCollapsed }">
         <!-- 全局标签页导航 -->
         <PageBreadcrumb />
 
@@ -175,6 +176,8 @@ const config = computed(() => {
   const matched = route.matched.find(r => r.meta.layoutConfig)
   return matched?.meta.layoutConfig || {}
 })
+
+const isRegistrationRoute = computed(() => route.path.startsWith('/research/institution/registration'))
 
 // 侧边栏折叠状态
 const isCollapsed = ref(false)
@@ -342,7 +345,10 @@ onMounted(async () => {
 
 <style scoped>
 .system-layout {
+  --system-header-height: 60px;
+  --system-menu-width: var(--configured-menu-width, 280px);
   height: 100vh;
+  min-width: 0;
   background-color: #f0f2f5;
   display: flex;
   flex-direction: column;
@@ -351,7 +357,7 @@ onMounted(async () => {
 
 /* 顶部导航栏 */
 .system-header {
-  height: 60px;
+  height: var(--system-header-height);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
@@ -363,17 +369,21 @@ onMounted(async () => {
 
 .header-content {
   height: 100%;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
   color: white;
 }
 
@@ -417,12 +427,17 @@ onMounted(async () => {
 .system-name {
   font-size: 18px;
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 0 0 auto;
 }
 
 .header-btn {
@@ -508,20 +523,21 @@ onMounted(async () => {
 .system-main {
   flex: 1;
   display: flex;
+  min-width: 0;
   overflow: hidden;
-  margin-top: 60px;
-  height: calc(100vh - 60px);
+  margin-top: var(--system-header-height);
+  height: calc(100vh - var(--system-header-height));
 }
 
 /* PC端左侧菜单 */
 .system-sidebar {
-  width: 280px;
+  width: var(--system-menu-width);
   background-color: white;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   transition: width 0.3s;
   position: fixed;
   left: 0;
-  top: 60px;
+  top: var(--system-header-height);
   bottom: 0;
   flex-shrink: 0;
   z-index: 50;
@@ -633,11 +649,12 @@ onMounted(async () => {
 /* 右侧内容区 */
 .system-content {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0;
   background-color: #f0f2f5;
-  margin-left: 280px;
+  margin-left: var(--system-menu-width);
   transition: margin-left 0.3s;
   display: flex;
   flex-direction: column;
@@ -649,6 +666,7 @@ onMounted(async () => {
 
 .content-inner {
   flex: 1;
+  min-width: 0;
   position: relative;
 }
 
@@ -666,6 +684,10 @@ onMounted(async () => {
 /* ==================== 响应式设计 ==================== */
 /* 平板 */
 @media screen and (max-width: 1024px) {
+  .system-layout {
+    --system-menu-width: min(var(--configured-menu-width, 280px), 200px);
+  }
+
   .header-content {
     padding: 0 16px;
   }
@@ -675,7 +697,7 @@ onMounted(async () => {
   }
 
   .system-sidebar {
-    width: 200px;
+    width: var(--system-menu-width);
   }
 
   .system-sidebar.collapsed {
@@ -684,7 +706,7 @@ onMounted(async () => {
 
   .system-content {
     padding: 0;
-    margin-left: 200px;
+    margin-left: var(--system-menu-width);
   }
 
   .system-content.collapsed {
@@ -694,6 +716,10 @@ onMounted(async () => {
 
 /* 移动端 */
 @media screen and (max-width: 768px) {
+  .system-layout {
+    --system-menu-width: 0px;
+  }
+
   .header-content {
     padding: 0 12px;
   }
@@ -702,16 +728,9 @@ onMounted(async () => {
     display: flex;
   }
 
-  .header-icon {
-    display: none;
-  }
-
   .system-name {
     font-size: 15px;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: 240px;
   }
 
   .header-right {
@@ -747,17 +766,44 @@ onMounted(async () => {
 
 /* 超小屏幕 */
 @media screen and (max-width: 480px) {
+  .system-layout {
+    --system-header-height: 56px;
+  }
+
   .system-header {
-    height: 56px;
+    height: var(--system-header-height);
   }
 
   .system-name {
     font-size: 14px;
-    max-width: 100px;
+    max-width: 180px;
   }
 
   .system-content {
     padding: 0;
+  }
+}
+
+/* The registration reference keeps the compact mobile shell at tablet widths,
+   but retains the user identity and removes the low-value home shortcut. */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  .registration-system-layout .header-btn {
+    display: none;
+  }
+
+  .registration-system-layout .user-detail {
+    display: flex;
+  }
+
+  .registration-system-layout .user-info {
+    padding: 6px 12px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .registration-system-layout .system-name {
+    font-size: 18px;
+    max-width: 320px;
   }
 }
 </style>

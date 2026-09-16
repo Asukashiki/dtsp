@@ -257,11 +257,14 @@ const toUser = () => {
   align-items: center;
   height: 100%;
   margin: 0 auto;
+  min-width: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .logo {
@@ -297,6 +300,7 @@ const toUser = () => {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .platform-title {
@@ -306,6 +310,9 @@ const toUser = () => {
   margin: 0;
   letter-spacing: 0.5px;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .platform-subtitle {
@@ -375,6 +382,7 @@ const toUser = () => {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 0 0 auto;
 }
 
 .language-switcher {
@@ -530,6 +538,10 @@ const toUser = () => {
 }
 
 @media screen and (max-width: 768px) {
+  .header-content {
+    padding: 0 12px;
+  }
+
   .platform-subtitle {
     display: none;
   }
@@ -545,6 +557,10 @@ const toUser = () => {
 
   .user-detail {
     display: none;
+  }
+
+  .platform-title {
+    max-width: min(52vw, 240px);
   }
 
   .language-text {

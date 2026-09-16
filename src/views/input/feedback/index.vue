@@ -74,7 +74,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
+            <el-table border v-loading="loading" :data="tableData" stripe style="width: 100%">
               <el-table-column prop="feedbackNo" :label="$t('input.feedback.columns.feedbackNo')" width="180" fixed="left" />
               <el-table-column prop="feedbackType" :label="$t('input.feedback.columns.feedbackType')" width="120" align="center">
                 <template #default="{ row }">

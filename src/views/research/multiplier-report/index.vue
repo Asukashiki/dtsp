@@ -36,7 +36,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table :data="tableData" stripe v-loading="loading">
+            <el-table border :data="tableData" stripe v-loading="loading">
               <el-table-column type="index" label="#" width="60" />
               <el-table-column prop="reportDate" :label="$t('research.multiplierReport.reportDate')" width="120" />
               <el-table-column prop="multiplierId" :label="$t('research.multiplierReport.multiplierId')" min-width="140" show-overflow-tooltip />

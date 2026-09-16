@@ -39,7 +39,7 @@
           </template>
 
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
+            <el-table border v-loading="loading" :data="tableData" stripe>
               <el-table-column type="index" :label="$t('common.index')" width="60" align="center" />
               <el-table-column prop="batchId" :label="$t('seed.c1Certificate.columns.batchId')" min-width="180"
                 show-overflow-tooltip />

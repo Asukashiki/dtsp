@@ -24,7 +24,7 @@
         >
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table
+            <el-table border
               v-loading="loading"
               :data="tableData"
               stripe
@@ -125,7 +125,7 @@
           <div class="panel-title">
             {{ $t('townAggregationAudit.adjustment.title') }}
           </div>
-          <el-table
+          <el-table border
             v-loading="detailLoading"
             :data="detailData"
             stripe
@@ -376,7 +376,7 @@
             <div class="history-target">
               {{ selectedDetailRow.sourceName || '-' }} · {{ getDictLabel('input_category', selectedDetailRow.inputCategory) }}
             </div>
-            <el-table
+            <el-table border
               v-loading="historyLoading"
               :data="historyData"
               size="small"

@@ -39,7 +39,7 @@
             </div>
 
             <div class="table-wrapper pc-only">
-              <el-table :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
+              <el-table border :data="dataList" stripe v-loading="loading" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
                 <el-table-column prop="batchId" :label="$t('research.breedingData.environment.form.batchId')" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="trialId" :label="$t('research.breedingData.environment.form.trialId')" min-width="140" show-overflow-tooltip />

@@ -64,7 +64,7 @@
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-                <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+                <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
                   <el-table-column prop="registrationCode" :label="$t('research.breeding.material.columns.registrationCode')" min-width="150" />
                   <el-table-column prop="batchId" :label="$t('research.breeding.material.columns.batchId')" min-width="150" />
                   <el-table-column prop="warehouseInId" :label="$t('research.breeding.material.columns.warehouseInId')" min-width="150" />

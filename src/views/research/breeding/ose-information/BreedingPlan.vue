@@ -75,7 +75,7 @@
 
               <!-- PC端表格 -->
               <div class="table-wrapper pc-only">
-                <el-table :data="filteredList" stripe style="width: 100%" v-loading="loading">
+                <el-table border :data="filteredList" stripe style="width: 100%" v-loading="loading">
                   <el-table-column prop="planName" :label="$t('research.breeding.plan.columns.planName')" min-width="150"  show-overflow-tooltip />
                   <el-table-column prop="batchId" :label="$t('research.breeding.plan.columns.batchId')" min-width="120" />
                   <el-table-column prop="breedingYear" :label="$t('research.breeding.plan.columns.breedingYear')" min-width="100" />

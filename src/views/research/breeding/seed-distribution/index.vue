@@ -46,7 +46,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="filteredList" stripe v-loading="loading">
+            <el-table border :data="filteredList" stripe v-loading="loading">
               <el-table-column
                 prop="distributeId"
                 :label="$t('research.breeding.seed.distribution.columns.distributeId')"

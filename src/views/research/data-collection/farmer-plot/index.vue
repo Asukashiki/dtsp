@@ -96,7 +96,7 @@
 
       <!-- PC端:数据表格 -->
       <div class="table-card pc-view">
-        <el-table
+        <el-table border
           v-loading="loading"
           :data="tableData"
           stripe

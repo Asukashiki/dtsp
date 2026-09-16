@@ -52,7 +52,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dictList" stripe v-loading="loading">
+            <el-table border :data="dictList" stripe v-loading="loading">
               <el-table-column type="selection" width="55" align="center" />
               <el-table-column prop="dictName" :label="$t('system.dict.dictName')" min-width="180" />
               <el-table-column prop="dictType" :label="$t('system.dict.dictType')" min-width="220">

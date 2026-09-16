@@ -43,7 +43,7 @@
 
       <!-- PC端表格 -->
       <div class="table-container pc-only">
-        <el-table :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
+        <el-table border :data="filteredList" stripe style="width: 100%" :empty-text="$t('home.noData')">
           <el-table-column prop="publishNo" :label="$t('research.variety.publish.columns.publishNo')" min-width="150" />
           <el-table-column prop="varietyName" :label="$t('research.variety.publish.columns.varietyName')" min-width="150" />
           <el-table-column prop="cropType" :label="$t('research.variety.publish.columns.cropType')" min-width="120">

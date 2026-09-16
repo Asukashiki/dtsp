@@ -63,7 +63,7 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table :data="dataList" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
+            <el-table border :data="dataList" stripe style="width: 100%" v-loading="loading" table-layout="fixed">
               <el-table-column
                 prop="applicantOrgName"
                 :label="$t('research.c1Propagation.columns.applicantOrgName')"

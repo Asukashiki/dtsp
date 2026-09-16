@@ -76,7 +76,7 @@
 
           <!-- PC端：数据表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
+            <el-table border v-loading="loading" :data="tableData" stripe style="width: 100%">
               <el-table-column prop="daId" :label="$t('newFarm.da.columns.daId')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="daName" :label="$t('newFarm.da.columns.daName')" min-width="150" show-overflow-tooltip />
               <el-table-column prop="phone" :label="$t('newFarm.da.columns.phone')" min-width="130" />

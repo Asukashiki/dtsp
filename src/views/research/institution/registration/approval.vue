@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div class="page-container organization-registration-page">
     <div class="page-wrapper">
       <!-- 页面头部 -->
       <PageHeader icon="ri-checkbox-multiple-line" :title="$t('orgRegistration.audit.title')"
@@ -35,34 +35,43 @@
 
           <!-- PC端表格 -->
           <div class="table-wrapper pc-only">
-            <el-table v-loading="loading" :data="tableData" stripe>
-              <el-table-column prop="orgName" :label="$t('orgRegistration.columns.orgName')" min-width="180"
-                show-overflow-tooltip />
-              <el-table-column prop="orgType" :label="$t('orgRegistration.columns.orgType')" width="180">
+            <el-table v-loading="loading" :data="tableData" stripe border class="registration-table"
+              @header-dragend="handleHeaderDragend">
+              <el-table-column prop="orgName" column-key="orgName" :label="$t('orgRegistration.columns.orgName')"
+                :width="columnWidths.orgName" :min-width="columnMinimums.orgName" show-overflow-tooltip resizable />
+              <el-table-column prop="orgType" column-key="orgType" :label="$t('orgRegistration.columns.orgType')"
+                :width="columnWidths.orgType" :min-width="columnMinimums.orgType" resizable>
                 <template #default="{ row }">
-                  <el-tag :type="row.orgType === 'UNION' ? 'primary' : 'success'">
+                  <el-tag class="registration-data-tag" :type="row.orgType === 'UNION' ? 'primary' : 'success'"
+                    size="small" effect="plain">
                     {{ $t(`orgRegistration.orgType.${row.orgType}`) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="licenseNumber" :label="$t('orgRegistration.columns.licenseNumber')" min-width="150"
-                show-overflow-tooltip />
-              <el-table-column prop="regionName" :label="$t('orgRegistration.columns.regionCode')" min-width="150"
-                show-overflow-tooltip>
+              <el-table-column prop="licenseNumber" column-key="licenseNumber"
+                :label="$t('orgRegistration.columns.licenseNumber')" :width="columnWidths.licenseNumber"
+                :min-width="columnMinimums.licenseNumber" show-overflow-tooltip resizable />
+              <el-table-column prop="regionName" column-key="regionName"
+                :label="$t('orgRegistration.columns.regionCode')" :width="columnWidths.regionName"
+                :min-width="columnMinimums.regionName" show-overflow-tooltip resizable>
                 <template #default="{ row }">
                   <span>{{ formatRegionName(row.regionName) }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="createTime" :label="$t('common.createTime')" width="160" />
-              <el-table-column prop="auditStatus" :label="$t('orgRegistration.columns.auditStatus')" width="180"
-                align="center">
+              <el-table-column prop="createTime" column-key="createTime" :label="$t('common.createTime')"
+                :width="columnWidths.createTime" :min-width="columnMinimums.createTime" resizable />
+              <el-table-column prop="auditStatus" column-key="auditStatus"
+                :label="$t('orgRegistration.columns.auditStatus')" :width="columnWidths.auditStatus"
+                :min-width="columnMinimums.auditStatus" align="center" resizable>
                 <template #default="{ row }">
-                  <el-tag :type="getStatusType(row.auditStatus)" effect="plain">
+                  <el-tag class="registration-data-tag" :type="getStatusType(row.auditStatus)" size="small"
+                    effect="plain">
                     {{ getStatusLabel(row.auditStatus) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('common.actions')" width="220" fixed="right">
+              <el-table-column column-key="actions" :label="$t('common.actions')"
+                :width="columnWidths.actions" :min-width="columnMinimums.actions" resizable>
                 <template #default="{ row }">
                   <div class="action-buttons">
                     <el-button size="small" type="primary" @click="handleView(row)">
@@ -91,7 +100,8 @@
                   <i class="ri-building-line"></i>
                   <span>{{ item.orgName }}</span>
                 </div>
-                <el-tag :type="getStatusType(item.auditStatus)" size="small" effect="plain">
+                <el-tag class="registration-data-tag" :type="getStatusType(item.auditStatus)" size="small"
+                  effect="plain">
                   {{ getStatusLabel(item.auditStatus) }}
                 </el-tag>
               </div>
@@ -130,6 +140,7 @@ import { ElMessage } from 'element-plus'
 import { getRegistrationList } from '@/api/breedingOrgRegistration'
 import { PageHeader, InfoCard, SearchForm, SearchItem } from '@/components/common'
 import { StatusTabs } from '@/components/workflow'
+import { useTableColumnWidths } from '@/hooks/useTableColumnWidths'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -144,6 +155,30 @@ const tabConfig = computed(() => [
 
 const loading = ref(false)
 const tableData = ref([])
+
+const columnMinimums = Object.freeze({
+  orgName: 140,
+  orgType: 120,
+  licenseNumber: 150,
+  regionName: 150,
+  createTime: 140,
+  auditStatus: 130,
+  actions: 150
+})
+
+const { widths: columnWidths, handleHeaderDragend } = useTableColumnWidths(
+  'organization-registration-approval',
+  {
+    orgName: 220,
+    orgType: 180,
+    licenseNumber: 200,
+    regionName: 220,
+    createTime: 180,
+    auditStatus: 160,
+    actions: 220
+  },
+  columnMinimums
+)
 
 const searchForm = reactive({
   keyword: '',
